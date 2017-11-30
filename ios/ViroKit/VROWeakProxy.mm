@@ -7,17 +7,16 @@
 //
 
 #import "VROWeakProxy.h"
-#import "VROViewAR.h"
 
 @implementation VROWeakProxy {
-    __weak VROViewAR *_weakView;
+    __weak GLKView *_weakView;
 }
 
-+ (VROWeakProxy *)weakProxyForObject:(VROViewAR *)viewObject {
++ (VROWeakProxy *)weakProxyForObject:(GLKView *)viewObject {
     return [[VROWeakProxy alloc] initWithView:viewObject];
 }
 
-- (instancetype)initWithView:(VROViewAR *)viewObject {
+- (instancetype)initWithView:(GLKView *)viewObject {
     self = [super init];
     if (self) {
         _weakView = viewObject;

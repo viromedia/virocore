@@ -555,8 +555,8 @@ static VROVector3f const kZeroVector = VROVector3f();
         _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
         
         glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-        _renderer->renderEye2(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
-        _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), _driver);
+        _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
+        _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
         _renderer->endFrame(_driver);
 
         /*
@@ -574,8 +574,8 @@ static VROVector3f const kZeroVector = VROVector3f();
         
         _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
         glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-        _renderer->renderEye2(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
-        _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), _driver);
+        _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
+        _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
         _renderer->endFrame(_driver);
     }
 }

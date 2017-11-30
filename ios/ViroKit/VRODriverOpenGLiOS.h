@@ -35,34 +35,19 @@ public:
     
     virtual ~VRODriverOpenGLiOS() { }
     
-    /*
-     If we're backed by a GLKView, then we should have an sRGB framebuffer.
-     Otherwise use software gamma correction.
-     */
     virtual VROColorRenderingMode getColorRenderingMode() {
-        GLKView *viewGL = _viewGL;
-        if (viewGL) {
-            return VROColorRenderingMode::Linear;
-        }
-        else {
-            return VROColorRenderingMode::LinearSoftware;
-        }
+        return VROColorRenderingMode::Linear;
     }
     
     /*
-     On iOS the primary framebuffer (display) may be tied to a GLKView. To
+     On iOS the primary framebuffer (display) is tied to a GLKView. To
      bind the display we have to go through the GLKView.
      */
-    std::shared_ptr<VRORenderTarget> getDisplay() {
+    virtual std::shared_ptr<VRORenderTarget> getDisplay() {
         if (!_display) {
             GLKView *viewGL = _viewGL;
-            if (!viewGL) {
-                return VRODriverOpenGL::getDisplay();
-            }
-            else {
-                std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-                _display = std::make_shared<VRODisplayOpenGLiOS>(viewGL, driver);
-            }
+            std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+            _display = std::make_shared<VRODisplayOpenGLiOS>(viewGL, driver);
         }
         return _display;
     }
@@ -112,7 +97,7 @@ public:
                                      VROPlatformParseGVRAudioMaterial(floorMaterial));
     }
     
-private:
+protected:
     
     __weak GLKView *_viewGL;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;

@@ -83,8 +83,6 @@
 		8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */; };
 		8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */; };
 		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F0FE66B1CD289FD00A4C297 /* VRORenderLoopCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE6691CD289FD00A4C297 /* VRORenderLoopCardboard.h */; };
-		8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE66A1CD289FD00A4C297 /* VRORenderLoopCardboard.m */; };
 		8F0FE6701CD29BF900A4C297 /* VROViewCardboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */; };
 		8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -116,9 +114,11 @@
 		8F129FC61EDF6AE500341D83 /* VROViewAR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129FC41EDF6AE500341D83 /* VROViewAR.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
-		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
+		8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F17D5391FCE128600141042 /* VROSceneRendererGVR.h */; };
+		8F17D53D1FCE128600141042 /* VROSceneRendererGVR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F17D53A1FCE128600141042 /* VROSceneRendererGVR.cpp */; };
 		8F17D5401FCE165400141042 /* VROViewRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F17D53E1FCE165400141042 /* VROViewRecorder.h */; };
 		8F17D5411FCE165400141042 /* VROViewRecorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F17D53F1FCE165400141042 /* VROViewRecorder.mm */; };
+		8F17D5421FCF1E7500141042 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
 		8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A011F64B61A00156809 /* portal_ship_specular.png */; };
 		8F1B4A131F64B61E00156809 /* portal_ship.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A021F64B61B00156809 /* portal_ship.vrx */; };
 		8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A031F64B61B00156809 /* portal_window_frame_diffuse.png */; };
@@ -205,7 +205,6 @@
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* VROTestRenderDelegate.m */; };
-		8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC51BCDA2BD0017C70B /* Main.storyboard */; };
 		8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC81BCDA2BD0017C70B /* Assets.xcassets */; };
 		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
 		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
@@ -350,11 +349,6 @@
 		8FB5351F1EB85A7C00E8E1A6 /* Nodes.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */; };
 		8FB535271EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535251EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp */; };
 		8FB535281EB8DDBE00E8E1A6 /* VROModelIOUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535261EB8DDBE00E8E1A6 /* VROModelIOUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */; };
-		8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */; };
-		8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */; };
-		8FB659141CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659121CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp */; };
-		8FB659151CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659131CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h */; };
 		8FB659171CD839A000D036EB /* VRODriverOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659161CD839A000D036EB /* VRODriverOpenGL.h */; };
 		8FB6591B1CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659191CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h */; };
 		8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6591D1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h */; };
@@ -592,6 +586,8 @@
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
+		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB31F28F5BA007C7F52 /* porsche911.vrx */; };
 		8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB41F28F5BA007C7F52 /* Porsche911turboS_diff.jpg */; };
@@ -792,8 +788,6 @@
 		8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalTreeRenderPass.cpp; sourceTree = "<group>"; };
 		8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalTreeRenderPass.h; sourceTree = "<group>"; };
 		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
-		8F0FE6691CD289FD00A4C297 /* VRORenderLoopCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderLoopCardboard.h; sourceTree = "<group>"; };
-		8F0FE66A1CD289FD00A4C297 /* VRORenderLoopCardboard.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORenderLoopCardboard.m; sourceTree = "<group>"; };
 		8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewCardboard.h; sourceTree = "<group>"; };
 		8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROViewCardboard.m; sourceTree = "<group>"; };
 		8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = image_fsh.glsl; sourceTree = "<group>"; };
@@ -841,6 +835,8 @@
 		8F1664A51E5E43260062EBCE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		8F1770191E74C01900235C21 /* VROGVRUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROGVRUtil.cpp; sourceTree = "<group>"; };
 		8F17701A1E74C01900235C21 /* VROGVRUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGVRUtil.h; sourceTree = "<group>"; };
+		8F17D5391FCE128600141042 /* VROSceneRendererGVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererGVR.h; sourceTree = "<group>"; };
+		8F17D53A1FCE128600141042 /* VROSceneRendererGVR.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneRendererGVR.cpp; sourceTree = "<group>"; };
 		8F17D53E1FCE165400141042 /* VROViewRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROViewRecorder.h; sourceTree = "<group>"; };
 		8F17D53F1FCE165400141042 /* VROViewRecorder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VROViewRecorder.mm; sourceTree = "<group>"; };
 		8F1B4A011F64B61A00156809 /* portal_ship_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_ship_specular.png; path = ViroSample/portal_ship_specular.png; sourceTree = "<group>"; };
@@ -960,12 +956,11 @@
 		8F517BB61BCDA2BD0017C70B /* ViroSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ViroSample/main.m; sourceTree = "<group>"; };
 		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ViroSample/AppDelegate.h; sourceTree = "<group>"; };
-		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ViroSample/AppDelegate.m; sourceTree = "<group>"; };
+		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = AppDelegate.m; path = ViroSample/AppDelegate.m; sourceTree = "<group>"; };
 		8F517BBF1BCDA2BD0017C70B /* VROTestRenderDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROTestRenderDelegate.h; path = ViroSample/VROTestRenderDelegate.h; sourceTree = "<group>"; };
 		8F517BC01BCDA2BD0017C70B /* VROTestRenderDelegate.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROTestRenderDelegate.m; path = ViroSample/VROTestRenderDelegate.m; sourceTree = "<group>"; };
 		8F517BC21BCDA2BD0017C70B /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSharedStructures.h; sourceTree = "<group>"; };
-		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ViroSample/Assets.xcassets; sourceTree = "<group>"; };
 		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ViroSample/Info.plist; sourceTree = "<group>"; };
@@ -1139,11 +1134,6 @@
 		8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "Libraries/protobuf/libprotobuf-lite.a"; sourceTree = "<group>"; };
 		8FB535251EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROModelIOUtil.cpp; sourceTree = "<group>"; };
 		8FB535261EB8DDBE00E8E1A6 /* VROModelIOUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROModelIOUtil.h; sourceTree = "<group>"; };
-		8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboard.h; sourceTree = "<group>"; };
-		8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneRendererCardboardMetal.cpp; sourceTree = "<group>"; };
-		8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboardMetal.h; sourceTree = "<group>"; };
-		8FB659121CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneRendererCardboardOpenGL.cpp; sourceTree = "<group>"; };
-		8FB659131CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboardOpenGL.h; sourceTree = "<group>"; };
 		8FB659161CD839A000D036EB /* VRODriverOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGL.h; sourceTree = "<group>"; };
 		8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometrySubstrateOpenGL.cpp; sourceTree = "<group>"; };
 		8FB659191CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometrySubstrateOpenGL.h; sourceTree = "<group>"; };
@@ -1329,6 +1319,8 @@
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
 		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
+		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
+		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
 		8FF253B11DC9398A00C1C5C7 /* VRODefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODefines.h; sourceTree = "<group>"; };
 		8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialSubstrateMetal.cpp; sourceTree = "<group>"; };
@@ -1496,23 +1488,20 @@
 			name = Metal;
 			sourceTree = "<group>";
 		};
-		8F0FE6621CD25A3500A4C297 /* Cardboard */ = {
+		8F0FE6621CD25A3500A4C297 /* GVR */ = {
 			isa = PBXGroup;
 			children = (
-				A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */,
+				8F17D5391FCE128600141042 /* VROSceneRendererGVR.h */,
+				8F17D53A1FCE128600141042 /* VROSceneRendererGVR.cpp */,
 				A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */,
+				A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */,
 				A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */,
-				8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */,
-				8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */,
-				8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */,
-				8FB659131CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h */,
-				8FB659121CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp */,
-				8F0FE6691CD289FD00A4C297 /* VRORenderLoopCardboard.h */,
-				8F0FE66A1CD289FD00A4C297 /* VRORenderLoopCardboard.m */,
 				8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */,
 				8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */,
+				8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */,
+				8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */,
 			);
-			name = Cardboard;
+			name = GVR;
 			sourceTree = "<group>";
 		};
 		8F0FE6771CD3DFC800A4C297 /* Shaders */ = {
@@ -2116,7 +2105,7 @@
 			children = (
 				8F129FC11EDF6A8700341D83 /* AR */,
 				8FB659251CD9083800D036EB /* Metal */,
-				8F0FE6621CD25A3500A4C297 /* Cardboard */,
+				8F0FE6621CD25A3500A4C297 /* GVR */,
 			);
 			name = Platforms;
 			sourceTree = "<group>";
@@ -2281,7 +2270,6 @@
 			isa = PBXGroup;
 			children = (
 				8FD4DF301C18F3FA003DC425 /* Supporting Files */,
-				8F517BC51BCDA2BD0017C70B /* Main.storyboard */,
 				8F517BC81BCDA2BD0017C70B /* Assets.xcassets */,
 				8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */,
 				8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */,
@@ -2507,6 +2495,7 @@
 				8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */,
 				A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */,
 				8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */,
+				8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */,
 				8F828EFB1FAF83840068159E /* VROARImperativeSession.h in Headers */,
 				A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */,
 				A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */,
@@ -2565,7 +2554,6 @@
 				8F3488B11EE83DD3008917CB /* VROARFrameInertial.h in Headers */,
 				8ABD8F3A1DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h in Headers */,
 				8A35174E1EE1263B00B6E786 /* VROImageTracker.h in Headers */,
-				8FB659151CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h in Headers */,
 				8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */,
 				8F705DF11E8D5337008BE8F8 /* VROThreadRestricted.h in Headers */,
 				8F83DEA21C4826F80089C31A /* VROTimingFunctionLinear.h in Headers */,
@@ -2578,6 +2566,7 @@
 				8A11C8F51EF5AB9D0003E829 /* VROARDeclarativePlane.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				8FD2A53F1F813C4100E831A6 /* VROPerfTest.h in Headers */,
+				8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */,
 				8A11C8F91EF5B2270003E829 /* VROARConstraintMatcher.h in Headers */,
 				8FD2A5471F813C4100E831A6 /* VRONormalMapTest.h in Headers */,
 				8FD4DF361C18F500003DC425 /* VROGeometrySource.h in Headers */,
@@ -2590,6 +2579,7 @@
 				8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */,
 				8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */,
 				8AABB6FC1F1ECD4E00D48D5C /* VROWeakProxy.h in Headers */,
+				8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */,
 				8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */,
 				8A130D751E3A937D0050D83B /* VROSoundDelegateInternal.h in Headers */,
 				8A3517371EE0B55400B6E786 /* VROImageTrackerOutput.h in Headers */,
@@ -2655,7 +2645,6 @@
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */,
 				8F39A31D1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h in Headers */,
-				8F0FE66B1CD289FD00A4C297 /* VRORenderLoopCardboard.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8F17D5401FCE165400141042 /* VROViewRecorder.h in Headers */,
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
@@ -2741,7 +2730,6 @@
 				8FAE18CC1EE79D880021C7BB /* VROARCameraiOS.h in Headers */,
 				8A130D8D1E3BBEAE0050D83B /* VROSoundDelegateiOS.h in Headers */,
 				8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */,
-				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
 				8A35173C1EE11C4800B6E786 /* VROTrackingHelper.h in Headers */,
 				8F56AEA11DE7619000DD65B6 /* VROGlyph.h in Headers */,
 				8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */,
@@ -2764,7 +2752,6 @@
 				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
 				8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */,
 				8FA2E1641C460C600070DB26 /* VROAction.h in Headers */,
-				8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */,
 				8F5CAA261F20532B00FEEC7E /* VROExecutableNodeAnimation.h in Headers */,
 				8F67B5A01DF1DC930096C26F /* VROKnuthPlassFormatter.h in Headers */,
 			);
@@ -3044,7 +3031,6 @@
 				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F129FBB1ED603BA00341D83 /* fox.vrx in Resources */,
-				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */,
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
@@ -3126,13 +3112,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ViroKit-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		1D59E3A97053F06F0060A165 /* [CP] Copy Pods Resources */ = {
@@ -3141,9 +3130,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-resources.sh",
+				"${PODS_ROOT}/GVRSDK/Resources/CardboardSDK.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitCore.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitDialogs.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitHUD.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/MaterialRobotoFontLoader.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3156,13 +3152,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ViroSample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		62F405512A8B0011924043F4 /* [CP] Embed Pods Frameworks */ = {
@@ -3186,9 +3185,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit-resources.sh",
+				"${PODS_ROOT}/GVRSDK/Resources/CardboardSDK.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitCore.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitDialogs.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitHUD.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/MaterialRobotoFontLoader.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3208,7 +3214,6 @@
 				A58697811E30843000191090 /* VROInputControllerBase.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
-				8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3247,7 +3252,6 @@
 				8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */,
 				8FD4DF061C18ED3C003DC425 /* VROCamera.cpp in Sources */,
 				8F56AEA91DE76E1D00DD65B6 /* VROText.cpp in Sources */,
-				8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */,
 				8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */,
 				8F3C75181FB7B6F80054639C /* VROARSceneController.cpp in Sources */,
 				A59E113B1F5396BF00EB2CEB /* VROPostProcessEffectFactory.cpp in Sources */,
@@ -3273,6 +3277,7 @@
 				8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */,
 				8FD06F211E832760003D3BC4 /* VROCameraTextureiOS.cpp in Sources */,
 				8F828EFA1FAF83840068159E /* VROARImperativeSession.cpp in Sources */,
+				8F17D5421FCF1E7500141042 /* VROGVRUtil.cpp in Sources */,
 				8A3517291EDE035300B6E786 /* VROOpenCV.cpp in Sources */,
 				8F705DF01E8D5337008BE8F8 /* VROThreadRestricted.cpp in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
@@ -3308,7 +3313,6 @@
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,
 				8FD4DF111C18ED3C003DC425 /* VROLight.cpp in Sources */,
 				8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */,
-				8FB659141CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp in Sources */,
 				8FDDB4AA1DAF2A4000DE0968 /* VROPolyline.cpp in Sources */,
 				8FD2A55B1F817D4200E831A6 /* VROPhysicsTest.cpp in Sources */,
 				8FD4DF0F1C18ED3C003DC425 /* VROMaterialVisual.cpp in Sources */,
@@ -3335,6 +3339,7 @@
 				8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */,
 				8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
+				8F17D53D1FCE128600141042 /* VROSceneRendererGVR.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
 				8F92091C1F3CE241003305C8 /* VROImagePostProcessOpenGL.cpp in Sources */,
 				8FD2A54B1F813C4100E831A6 /* VROStereoscopicTest.cpp in Sources */,
@@ -3378,7 +3383,6 @@
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FD2A53C1F813C4100E831A6 /* VRONormalMapTest.cpp in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,
-				8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */,
 				A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */,
 				8FD2A5531F813C4100E831A6 /* VROBloomTest.cpp in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
@@ -3456,15 +3460,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		8F517BC51BCDA2BD0017C70B /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8F517BC61BCDA2BD0017C70B /* Base */,
-			);
-			name = Main.storyboard;
-			path = ViroSample;
-			sourceTree = "<group>";
-		};
 		8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3494,6 +3489,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -3547,6 +3543,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -3583,6 +3580,7 @@
 			baseConfigurationReference = D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = UN8MD7234Y;
@@ -3592,15 +3590,62 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 				);
 				INFOPLIST_FILE = ViroSample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
 					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"AWSCore-iOS9.1\"",
+					"-l\"AWSDynamoDB-iOS9.1\"",
+					"-l\"GTMSessionFetcher-iOS9.1\"",
+					"-l\"GVRAudioSDK\"",
+					"-l\"GVRSDK\"",
+					"-l\"GoogleToolboxForMac-iOS9.1\"",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"AudioToolbox\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"CoreVideo\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GLKit\"",
+					"-framework",
+					"\"GVRKit\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"OpenGLES\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -3609,6 +3654,7 @@
 			baseConfigurationReference = B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = UN8MD7234Y;
@@ -3618,15 +3664,62 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 				);
 				INFOPLIST_FILE = ViroSample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
 					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"AWSCore-iOS9.1\"",
+					"-l\"AWSDynamoDB-iOS9.1\"",
+					"-l\"GTMSessionFetcher-iOS9.1\"",
+					"-l\"GVRAudioSDK\"",
+					"-l\"GVRSDK\"",
+					"-l\"GoogleToolboxForMac-iOS9.1\"",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"AudioToolbox\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"CoreVideo\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GLKit\"",
+					"-framework",
+					"\"GVRKit\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"OpenGLES\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

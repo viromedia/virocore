@@ -7,53 +7,42 @@
 //
 
 #include "VROSceneRendererGVR.h"
-
-#include <android/log.h>
+#include "VROLog.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <cmath>
 #include <random>
 #include <VROTime.h>
-
-#include "VRODriverOpenGLAndroidGVR.h"
+#include "VROEye.h"
 #include "VROGVRUtil.h"
-#include "VROMatrix4f.h"
 #include "VROViewport.h"
 #include "VRORenderer.h"
-#include "VROSceneController.h"
-#include "VRORenderDelegate.h"
 #include "VROReticle.h"
-#include "VROInputControllerDaydream.h"
-#include "VROInputControllerCardboard.h"
+#include "VRODisplayOpenGLiOSGVR.h"
 #include "VROAllocationTracker.h"
+
 static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 #pragma mark - Setup
 
-VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
-                                                     std::shared_ptr<gvr::AudioApi> gvrAudio) :
+VROSceneRendererGVR::VROSceneRendererGVR(gvr_context *gvr_context,
+                                         std::shared_ptr<gvr::AudioApi> gvrAudio,
+                                         int width, int height, UIInterfaceOrientation orientation,
+                                         float contentScaleFactor,
+                                         std::shared_ptr<VRORenderer> renderer,
+                                         std::shared_ptr<VRODriver> driver) :
+    _frame(0),
+    _contentScaleFactor(contentScaleFactor),
+    _renderer(renderer),
+    _driver(driver),
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _sceneViewport(_gvr->CreateBufferViewport()),
     _rendererSuspended(true),
+    _sizeChanged(false),
     _vrModeEnabled(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()) {
-
-    // Create corresponding controllers - cardboard, or daydream if supported.
-    std::shared_ptr<VROInputControllerBase> controller;
-    _viewerType = _gvr->GetViewerType();
-
-    if (_viewerType == GVR_VIEWER_TYPE_DAYDREAM) {
-        controller = std::make_shared<VROInputControllerDaydream>(gvr_context);
-    } else if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD){
-        controller = std::make_shared<VROInputControllerCardboard>();
-    } else {
-        perror("Unrecognized Viewer type! Falling back to Cardboard Controller as default.");
-        controller = std::make_shared<VROInputControllerCardboard>();
-    }
-
-    // Create renderer and attach the controller to it.
-    _renderer = std::make_shared<VRORenderer>(controller);
-    _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
+        _viewerType = _gvr->GetViewerType();
+        setSurfaceSizeInternal(width, height, orientation);
 }
 
 VROSceneRendererGVR::~VROSceneRendererGVR() {
@@ -64,25 +53,21 @@ VROSceneRendererGVR::~VROSceneRendererGVR() {
 
 void VROSceneRendererGVR::initGL() {
     _gvr->InitializeGl();
-
-    // Because we are using 2X MSAA, we can render to half as many pixels and
-    // achieve similar quality.
-    _renderSize = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
-
     std::vector<gvr::BufferSpec> specs;
 
-    // Buffer specification for the Scene
+    // Buffer specification for the Scene. Do not multisample; we'll do that when rendering
+    // from GVR into the GLKView
     specs.push_back(_gvr->CreateBufferSpec());
     specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
     specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24_STENCIL_8);
-    specs[0].SetSize(_renderSize);
-    specs[0].SetSamples(2);
+    specs[0].SetSize(_surfaceSize);
+    specs[0].SetSamples(1);
 
     // Buffer specification for the HUD
     specs.push_back(_gvr->CreateBufferSpec());
     specs[1].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
     specs[1].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_NONE);
-    specs[1].SetSize(_renderSize);
+    specs[1].SetSize(_surfaceSize);
     specs[1].SetSamples(1);
 
     _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
@@ -97,20 +82,15 @@ void VROSceneRendererGVR::initGL() {
     _hudViewport.SetReprojection(GVR_REPROJECTION_NONE);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_SCISSOR_TEST);
 }
 
 void VROSceneRendererGVR::onDrawFrame() {
-    // Because we are using 2X MSAA, we can render to half as many pixels and
-    // achieve similar quality. If the size changed, resize the framebuffer
-    gvr::Sizei recommended_size = _vrModeEnabled ?
-            halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize()) : _surfaceSize;
-    if (_renderSize.width != recommended_size.width || _renderSize.height != recommended_size.height) {
+    if (_sizeChanged) {
         if (_vrModeEnabled) {
-            // For some reason, Samsung phones won't work if this line is run when switching to
-            // Mono/360 mode (the Axon/Pixel work, so i wonder if it's a diff in Mali vs Adreno GPUs)
-            _swapchain->ResizeBuffer(0, recommended_size);
+            _swapchain->ResizeBuffer(0, _surfaceSize);
+            _swapchain->ResizeBuffer(1, _surfaceSize);
         }
-        _renderSize = recommended_size;
     }
 
     // Obtain the latest, predicted head pose
@@ -119,7 +99,6 @@ void VROSceneRendererGVR::onDrawFrame() {
 
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
     VROMatrix4f headView = VROGVRUtil::toMatrix4f(_headView);
-
     if (!_rendererSuspended) {
         if (_vrModeEnabled) {
             renderStereo(headView);
@@ -131,7 +110,7 @@ void VROSceneRendererGVR::onDrawFrame() {
     else {
         _viewportList->SetToRecommendedBufferViewports();
         gvr::Frame frame = _swapchain->AcquireFrame();
-        std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
+        std::dynamic_pointer_cast<VRODisplayOpenGLiOSGVR>(_driver->getDisplay())->setFrame(frame);
         frame.BindBuffer(0);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -157,6 +136,7 @@ void VROSceneRendererGVR::onDrawFrame() {
 // buffers in the Frame. The Submit() call at the end takes the viewports and performs
 // distortion and async reprojection.
 void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
+    gvr::Sizei renderSize = _surfaceSize;
     VROMatrix4f headRotation = headView.invert();
 
     // Update the viewports to the latest (these change if the user changed the viewer)
@@ -164,7 +144,7 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
 
     // Acquire a frame from the swap chain
     gvr::Frame frame = _swapchain->AcquireFrame();
-    std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
+    std::dynamic_pointer_cast<VRODisplayOpenGLiOSGVR>(_driver->getDisplay())->setFrame(frame);
 
     // Get the eye, view, and projection matrices
     VROMatrix4f eyeFromHeadMatrices[GVR_NUM_EYES];
@@ -180,13 +160,13 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
 
         _viewportList->GetBufferViewport(eye, &_sceneViewport);
 
-        extractViewParameters(_sceneViewport, &viewports[i], &fovs[i]);
+        extractViewParameters(_sceneViewport, renderSize, &viewports[i], &fovs[i]);
         projectionMatrices[i] = fovs[i].toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
 
         // Setup the HUD viewport for this eye. The HUD viewport has the same parameters as the
         // scene viewport (its common properties however, configured in initGL, are different)
-        _hudViewport.SetTargetEye(eye);
         _hudViewport.SetTransform(_sceneViewport.GetTransform());
+        _hudViewport.SetTargetEye(eye);
         _hudViewport.SetSourceFov(_sceneViewport.GetSourceFov());
         _hudViewport.SetSourceUv(_sceneViewport.GetSourceUv());
         _viewportList->SetBufferViewport(2 + i, _hudViewport);
@@ -231,9 +211,10 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
 // the gvr::Frame and its buffers (so long as gvr::Frame.BindBuffer is not
 // called, the GLSurfaceView's primary default framebuffer is bound)
 void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
+    headView = _orientationMatrix * headView;
     VROMatrix4f headRotation = headView.invert();
 
-    const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, {0, 1, 0, 1});
+    const gvr::Recti rect = calculatePixelSpaceRect(_surfaceSize, {0, 1, 0, 1});
     VROViewport viewport(rect.left, rect.bottom,
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
@@ -244,51 +225,16 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
 
     clearViewport(viewport, false);
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, projection, _driver);
-    _renderer->renderEye(VROEyeType::Monocular, headView, projection, viewport,  _driver);
+    _renderer->renderEye(VROEyeType::Monocular, headView, projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, eyeFromHeadMatrix, projection, _driver);
     _renderer->endFrame(_driver);
-}
-
-void VROSceneRendererGVR::onSurfaceChanged(jobject surface, jint width, jint height) {
-    VROThreadRestricted::setThread(VROThreadName::Renderer);
-    _surfaceSize.width = width;
-    _surfaceSize.height = height;
-}
-
-void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {
-    if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD) {
-        std::shared_ptr<VROInputControllerBase> baseController =  _renderer->getInputController();
-        std::shared_ptr<VROInputControllerCardboard> cardboardController
-                = std::dynamic_pointer_cast<VROInputControllerCardboard>(baseController);
-        cardboardController->updateScreenTouch(action);
-    }
-}
-
-void VROSceneRendererGVR::onPause() {
-    std::shared_ptr<VROSceneRendererGVR> shared = shared_from_this();
-
-    VROPlatformDispatchAsyncRenderer([shared] {
-        shared->_renderer->getInputController()->onPause();
-        shared->_gvr->PauseTracking();
-        shared->_driver->onPause();
-    });
-}
-
-void VROSceneRendererGVR::onResume() {
-    std::shared_ptr<VROSceneRendererGVR> shared = shared_from_this();
-
-    VROPlatformDispatchAsyncRenderer([shared] {
-        shared->_renderer->getInputController()->onResume();
-        shared->_gvr->RefreshViewerProfile();
-        shared->_gvr->ResumeTracking();
-        shared->_driver->onResume();
-    });
 }
 
 #pragma mark - Utility Methods
 
 void VROSceneRendererGVR::clearViewport(VROViewport viewport, bool transparent) {
-    glEnable(GL_SCISSOR_TEST); // Must enable to ensure glClear only clears active 'eye'
+    // Scissor must be enabled to ensure we only clear the viewport's area
+    glEnable(GL_SCISSOR_TEST);
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     glScissor (viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     if (transparent) {
@@ -300,8 +246,7 @@ void VROSceneRendererGVR::clearViewport(VROViewport viewport, bool transparent) 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-gvr::Rectf VROSceneRendererGVR::modulateRect(const gvr::Rectf &rect, float width,
-                                             float height) {
+gvr::Rectf VROSceneRendererGVR::modulateRect(const gvr::Rectf &rect, float width, float height) {
     gvr::Rectf result = {rect.left * width, rect.right * width,
                          rect.bottom * height, rect.top * height};
     return result;
@@ -318,21 +263,13 @@ gvr::Recti VROSceneRendererGVR::calculatePixelSpaceRect(const gvr::Sizei &textur
     return result;
 }
 
-gvr::Sizei VROSceneRendererGVR::halfPixelCount(const gvr::Sizei& in) {
-    // Scale each dimension by sqrt(2)/2 ~= 7/10ths.
-    gvr::Sizei out;
-    out.width = (7 * in.width) / 10;
-    out.height = (7 * in.height) / 10;
-    return out;
-}
-
-void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
+void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport, gvr::Sizei renderSize,
                                                 VROViewport *outViewport, VROFieldOfView *outFov) {
-
-    const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, viewport.GetSourceUv());
+    const gvr::Recti rect = calculatePixelSpaceRect(renderSize, viewport.GetSourceUv());
     *outViewport = VROViewport(rect.left, rect.bottom,
                                rect.right - rect.left,
                                rect.top   - rect.bottom);
+    outViewport->setContentScaleFactor(_contentScaleFactor);
     const gvr::Rectf fov = viewport.GetSourceFov();
     *outFov = VROFieldOfView(fov.left, fov.right, fov.bottom, fov.top);
 }
@@ -343,6 +280,34 @@ void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
 
 void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
     _rendererSuspended = suspendRenderer;
+}
+
+void VROSceneRendererGVR::setSurfaceSize(int width, int height, UIInterfaceOrientation orientation) {
+    int previousWidth = _surfaceSize.width;
+    int previousHeight = _surfaceSize.height;
+    setSurfaceSizeInternal(width, height, orientation);
+    
+    if (width != previousWidth || height != previousHeight) {
+        _sizeChanged = true;
+    }
+}
+
+void VROSceneRendererGVR::setSurfaceSizeInternal(int width, int height, UIInterfaceOrientation orientation) {
+    _surfaceSize.width = width;
+    _surfaceSize.height = height;
+    _orientationMatrix = VROMatrix4f::identity();
+    
+    if (!_vrModeEnabled) {
+        if (orientation == UIInterfaceOrientationPortrait) {
+            _orientationMatrix.rotateZ(-M_PI_2);
+        }
+        else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+            _orientationMatrix.rotateZ(M_PI_2);
+        }
+        else if (orientation == UIInterfaceOrientationLandscapeLeft) {
+            _orientationMatrix.rotateZ(M_PI);
+        }
+    }
 }
 
 

@@ -7,15 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@class VROViewAR;
+#import <GLKit/GLKit.h>
 
 @interface VROWeakProxy : NSObject
 
-+ (VROWeakProxy *)weakProxyForObject:(VROViewAR *)viewObject;
-
-- (instancetype)initWithView:(VROViewAR *)viewObject;
-
++ (VROWeakProxy *)weakProxyForObject:(GLKView *)viewObject;
+- (instancetype)initWithView:(GLKView *)viewObject;
 - (void)display;
 
 @end

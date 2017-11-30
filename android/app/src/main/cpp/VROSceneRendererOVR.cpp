@@ -791,10 +791,10 @@ static void ovrRenderer_RenderFrame(ovrRenderer *rendererOVR, const ovrJava *jav
 
         // We use our projection matrix because the one computed by OVR appears to be identical for
         // left an right, but with fixed NCP and FCP. Our projection uses the correct NCP and FCP.
-        renderer->renderEye2(eyeType,
-                             toMatrix4f(updatedTracking.Eye[eye].ViewMatrix),
-                             projection,
-                             viewport, driver);
+        renderer->renderEye(eyeType,
+                            toMatrix4f(updatedTracking.Eye[eye].ViewMatrix),
+                            projection,
+                            viewport, driver);
 
         ovrRenderer_clearBorder(frameBuffer);
         ovrFramebuffer_Resolve(frameBuffer);
@@ -815,7 +815,7 @@ static void ovrRenderer_RenderFrame(ovrRenderer *rendererOVR, const ovrJava *jav
         GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
 
         VROEyeType eyeType = (eye == VRAPI_FRAME_LAYER_EYE_LEFT) ? VROEyeType::Left : VROEyeType::Right;
-        renderer->renderHUD(eyeType, eyeFromHeadMatrix[eye], driver);
+        renderer->renderHUD(eyeType, eyeFromHeadMatrix[eye], projection, driver);
 
         ovrRenderer_clearBorder(frameBuffer);
         ovrFramebuffer_Resolve(frameBuffer);

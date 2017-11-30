@@ -149,10 +149,16 @@ public:
      prepareFrame: eyeView is typically the *inverse* of the headRotation, translated by the
      interpupillary distance for the given eye.
      */
-    void renderEye2(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f projection,
+    void renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eyeProjection,
                     VROViewport viewport, std::shared_ptr<VRODriver> driver);
 
-    void renderHUD(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, std::shared_ptr<VRODriver> driver);
+    /*
+     Render the HUD for the eye. The HUD follows the view, but is not 2D in that HUD elements
+     can appear at different depths. The eyeFromHeadMatrix and eyeProjection are required for
+     this simulation.
+     */
+    void renderHUD(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f eyeProjection,
+                   std::shared_ptr<VRODriver> driver);
 
     /*
      Performs end-frame cleanup.

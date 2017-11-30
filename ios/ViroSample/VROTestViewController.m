@@ -14,8 +14,8 @@ enum class VROTestSceneType {
 };
 
 // Set to NO to test using an AR view
-static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::ARPlane;
+static const VROTestSceneType kTestType = VROTestSceneType::VR;
+static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 @interface VROTestViewController ()
 
@@ -29,7 +29,6 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ARPlane;
         view.testingMode = YES;
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;
-        [view awakeFromNib];
         
         self.renderDelegate.view = view;
         self.renderDelegate.test = kRendererTest;
@@ -93,6 +92,16 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ARPlane;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    if (kTestType == VROTestSceneType::VR) {
+        // GVR only supports landscape right orientation for inserting the phone in the viewer.
+        return UIInterfaceOrientationMaskLandscapeRight;
+    }
+    else {
+        return UIInterfaceOrientationMaskAll;
+    }
 }
 
 @end
