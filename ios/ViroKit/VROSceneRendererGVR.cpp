@@ -53,24 +53,8 @@ VROSceneRendererGVR::~VROSceneRendererGVR() {
 
 void VROSceneRendererGVR::initGL() {
     _gvr->InitializeGl();
-    std::vector<gvr::BufferSpec> specs;
-
-    // Buffer specification for the Scene. Do not multisample; we'll do that when rendering
-    // from GVR into the GLKView
-    specs.push_back(_gvr->CreateBufferSpec());
-    specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
-    specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24_STENCIL_8);
-    specs[0].SetSize(_surfaceSize);
-    specs[0].SetSamples(1);
-
-    // Buffer specification for the HUD
-    specs.push_back(_gvr->CreateBufferSpec());
-    specs[1].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
-    specs[1].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_NONE);
-    specs[1].SetSize(_surfaceSize);
-    specs[1].SetSamples(1);
-
-    _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
+    createSwapchain();
+    
     _viewportList.reset(new gvr::BufferViewportList(_gvr->CreateEmptyBufferViewportList()));
 
     // Configure the common properties of the HUD viewport. Each frame this viewport gets
@@ -85,12 +69,34 @@ void VROSceneRendererGVR::initGL() {
     glEnable(GL_SCISSOR_TEST);
 }
 
+void VROSceneRendererGVR::createSwapchain() {
+    std::vector<gvr::BufferSpec> specs;
+    
+    // Buffer specification for the Scene. Do not multisample; we'll do that when rendering
+    // from GVR into the GLKView
+    specs.push_back(_gvr->CreateBufferSpec());
+    specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
+    specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24_STENCIL_8);
+    specs[0].SetSize(_surfaceSize);
+    specs[0].SetSamples(1);
+    
+    // Buffer specification for the HUD
+    specs.push_back(_gvr->CreateBufferSpec());
+    specs[1].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
+    specs[1].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_NONE);
+    specs[1].SetSize(_surfaceSize);
+    specs[1].SetSamples(1);
+    
+    _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
+}
+
 void VROSceneRendererGVR::onDrawFrame() {
     if (_sizeChanged) {
         if (_vrModeEnabled) {
             _swapchain->ResizeBuffer(0, _surfaceSize);
             _swapchain->ResizeBuffer(1, _surfaceSize);
         }
+        _sizeChanged = false;
     }
 
     // Obtain the latest, predicted head pose
@@ -285,8 +291,8 @@ void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
 void VROSceneRendererGVR::setSurfaceSize(int width, int height, UIInterfaceOrientation orientation) {
     int previousWidth = _surfaceSize.width;
     int previousHeight = _surfaceSize.height;
-    setSurfaceSizeInternal(width, height, orientation);
     
+    setSurfaceSizeInternal(width, height, orientation);
     if (width != previousWidth || height != previousHeight) {
         _sizeChanged = true;
     }

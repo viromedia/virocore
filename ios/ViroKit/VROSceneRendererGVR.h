@@ -52,6 +52,7 @@ public:
 
 private:
 
+    void createSwapchain();
     void renderStereo(VROMatrix4f &headView);
     void renderMono(VROMatrix4f &headView);
 

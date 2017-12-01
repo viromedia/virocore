@@ -37,7 +37,6 @@
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererGVR> sceneRenderer;
-@property (readwrite, nonatomic) VROViewport viewport;
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 
 @end
