@@ -64,7 +64,6 @@ public:
     void computeFrustum();
     
     float getWorldPerScreen(float distance) const;
-    
 private:
     
     VROVector3f _position;
@@ -125,6 +124,15 @@ private:
     
     void onRotationChanged();
     
+};
+
+class VROCameraDelegate{
+public:
+    VROCameraDelegate() {};
+    virtual ~VROCameraDelegate(){};
+    virtual void onCameraTransformationUpdate(VROVector3f pos,
+                                              VROVector3f rot,
+                                              VROVector3f forward) = 0;
 };
 
 #endif /* VROCamera_h */

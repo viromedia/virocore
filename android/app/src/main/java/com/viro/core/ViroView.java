@@ -251,6 +251,13 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
+     * Sets a lister to be notified for updates.
+     */
+    public void setCameraListener(CameraListener listener) {
+        getRenderer().setCameraListener(listener);
+    }
+
+    /**
      * (Used by Java API, mApiKey picked up from Metadata in Android Manifest) Your Viro API key must be validated, via this method, prior to rendering content. Content
      * will render during the validation process; if the key fails validation, the screen will
      * deactivate and render black.

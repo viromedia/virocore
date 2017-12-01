@@ -205,6 +205,13 @@ public:
     VROVector3f getCameraForwardRealTime() const {
         return _lastComputedCameraForward.load();
     }
+
+     /*
+     TODO: Revisit unifying Camera APIs in VIRO-2235.
+     */
+     void setCameraDelegate(std::shared_ptr<VROCameraDelegate> delegate) {
+         _cameraDelegate = delegate;
+     }
 private:
 
     bool _rendererInitialized;
@@ -257,6 +264,7 @@ private:
     std::atomic<VROVector3f> _lastComputedCameraPosition;
     std::atomic<VROVector3f> _lastComputedCameraRotation;
     std::atomic<VROVector3f> _lastComputedCameraForward;
+    std::shared_ptr<VROCameraDelegate> _cameraDelegate;
 
 #pragma mark - [Private] FPS Computation
     

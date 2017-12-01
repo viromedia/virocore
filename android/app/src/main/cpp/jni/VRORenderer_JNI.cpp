@@ -9,7 +9,6 @@
 #include <jni.h>
 #include <memory>
 #include <PersistentRef.h>
-#include <VROCamera.h>
 
 #include <VROARHitTestResult.h>
 #include <VROFrameListener.h>
@@ -32,6 +31,8 @@
 #include "FrameListener_JNI.h"
 #include "object.hpp"
 #include "ARUtils_JNI.h"
+#include "Camera_JNI.h"
+
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -566,6 +567,19 @@ JNI_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(JNIEnv *env,
                                                          jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
+}
+
+JNI_METHOD(void, nativeSetCameraListener)(JNIEnv *env,
+                                            jobject obj,
+                                            jlong native_renderer,
+                                            jboolean enabled) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    if (enabled) {
+        std::shared_ptr<CameraDelegateJNI> listener = std::make_shared<CameraDelegateJNI>(obj);
+        renderer->getRenderer()->setCameraDelegate(listener);
+    } else {
+        renderer->getRenderer()->setCameraDelegate(nullptr);
+    }
 }
 
 }  // extern "C"

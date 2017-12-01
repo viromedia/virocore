@@ -200,6 +200,14 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
     _lastComputedCameraPosition.store(camera.getPosition());
     _lastComputedCameraRotation.store(camera.getRotation().toEuler());
     _lastComputedCameraForward.store(camera.getForward());
+
+    if (_cameraDelegate) {
+        _cameraDelegate->onCameraTransformationUpdate(
+                camera.getPosition(),
+                camera.getRotation().toEuler(),
+                camera.getForward());
+    }
+
     return camera;
 }
 
