@@ -9,6 +9,7 @@
 #include "ARUtils_JNI.h"
 #include "VROARPointCloud.h"
 
+
 /**
  * Creates an ARAnchor from the given VROARPlaneAnchor.
  */
@@ -66,6 +67,15 @@ jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
     jfloat tempArr[3];
     tempArr[0] = vector.x; tempArr[1] = vector.y; tempArr[2] = vector.z;
     env->SetFloatArrayRegion(returnArray, 0, 3, tempArr);
+    return returnArray;
+}
+
+jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jfloatArray returnArray = env->NewFloatArray(16);
+
+    const float *array = matrix.getArray();
+    env->SetFloatArrayRegion(returnArray, 0, 16, array);
     return returnArray;
 }
 

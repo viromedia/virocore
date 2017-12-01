@@ -561,6 +561,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         return mVisible;
     }
 
+    public Matrix getWorldTransformRealTime() {
+        return new Matrix(nativeGetWorldTransform(mNativeRef));
+    }
     /**
      * Set the behavior of dragging if this Node has an attached {@link DragListener}.
      *
@@ -1402,6 +1405,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeRemoveParticleEmitter(long nodeRef);
     private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
+    private native float[] nativeGetWorldTransform(long nodeReference);
 
 // +---------------------------------------------------------------------------+
 // | TRANSFORM LISTENER

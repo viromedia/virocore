@@ -16,6 +16,7 @@
 // Helper functions to create a Java ARAnchor object
 jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor);
 jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector);
+jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix);
 jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment);
 jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result);
 

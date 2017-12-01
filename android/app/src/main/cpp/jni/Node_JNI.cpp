@@ -646,4 +646,12 @@ JNI_METHOD(void, nativeRemoveTransformDelegate)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<TransformDelegate_JNI> *>(delegateRef);
 }
 
+
+JNI_METHOD(jfloatArray, nativeGetWorldTransform)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong node_j) {
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    return ARUtilsCreateFloatArrayFromMatrix(node->getLastWorldTransform());
+}
+
 }  // extern "C"
