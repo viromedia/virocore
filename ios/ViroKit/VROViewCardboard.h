@@ -14,6 +14,7 @@
 
 @interface VROViewCardboard : GLKView <VROView, GVROverlayViewDelegate>
 
-@property (nonatomic) IBInspectable BOOL testingMode;
+@property (readwrite, nonatomic) BOOL paused;
+@property (readwrite, nonatomic) IBInspectable BOOL testingMode;
 
 @end

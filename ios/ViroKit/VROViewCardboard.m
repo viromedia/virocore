@@ -21,9 +21,7 @@
 #import "VROInputControllerCardboardiOS.h"
 #import "VRODriverOpenGLiOSGVR.h"
 #import "VROSceneRendererGVR.h"
-#include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
-#include "vr/gvr/capi/include/gvr_types.h"
 
 @interface VROViewCardboard () {
     std::shared_ptr<VROSceneController> _sceneController;
@@ -31,13 +29,14 @@
     std::shared_ptr<VRODriverOpenGL> _driver;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     CADisplayLink *_displayLink;
-    gvr_context *_gvr;
-    GVROverlayView *_gvrOverlay;
+    GVROverlayView *_overlayView;
 }
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererGVR> sceneRenderer;
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
+@property (readwrite, nonatomic) BOOL initialized;
+@property (readwrite, nonatomic) BOOL VRModeEnabled;
 
 @end
 
@@ -66,7 +65,6 @@
 
 - (void)dealloc {
     VROThreadRestricted::unsetThread();
-    gvr_destroy(&_gvr);
 }
 
 - (void)setTestingMode:(BOOL)testingMode {
@@ -85,6 +83,14 @@
     }
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     
+    _VRModeEnabled = YES;
+    _paused = YES;
+    
+    _overlayView = [[GVROverlayView alloc] initWithFrame:self.bounds];
+    _overlayView.hidesBackButton = NO;
+    _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self addSubview:_overlayView];
+    
     /*
      Setup the GLKView.
      */
@@ -95,15 +101,6 @@
     self.drawableMultisample = GLKViewDrawableMultisample4X;
     
     [EAGLContext setCurrentContext:self.context];
-    [self bindDrawable];
-    _gvr = gvr_create();
-    
-    /*
-     Setup the animation loop for the GLKView.
-     */
-    VROWeakProxy *proxy = [VROWeakProxy weakProxyForObject:self];
-    _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
-    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     /*
      Disable going to sleep, and setup notifications.
@@ -125,24 +122,11 @@
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOSGVR>(self, self.context, _gvrAudio);
     _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
-    _sceneRenderer = std::make_shared<VROSceneRendererGVR>(_gvr, _gvrAudio,
+    _sceneRenderer = std::make_shared<VROSceneRendererGVR>(_gvrAudio,
                                                            self.bounds.size.width * self.contentScaleFactor,
                                                            self.bounds.size.height * self.contentScaleFactor,
                                                            [[UIApplication sharedApplication] statusBarOrientation],
                                                            self.contentScaleFactor, _renderer, _driver);
-    _sceneRenderer->initGL();
-    [self setVrMode:true];
-    
-    /*
-     Set up the Audio Session properly for recording and playing back audio. We need
-     to do this *AFTER* we init _gvrAudio, because it resets some setting, else audio
-     recording won't work.
-     */
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord
-             withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
-                   error:nil];
-    
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
     
     /*
@@ -153,36 +137,161 @@
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
-    _renderer->getInputController()->onPause();
-    gvr_pause_tracking(_gvr);
-    _gvrAudio->Pause();
+    self.paused = YES;
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
-    _renderer->getInputController()->onResume();
-    gvr_refresh_viewer_profile(_gvr);
-    gvr_resume_tracking(_gvr);
-    _gvrAudio->Resume();
-}
-
-- (void)setDebugHUDEnabled:(BOOL)enabled {
-    self.renderer->setDebugHUDEnabled(enabled);
+    NSLog(@"GVR: application did become active");
+    self.paused = NO;
 }
 
 - (void)setVrMode:(BOOL)enabled {
-    // Pull down the GVR overlay if it's already displayed
-    if (_gvrOverlay && _gvrOverlay.superview) {
-        [_gvrOverlay removeFromSuperview];
-    }
-    
-    // If turning VR on display the GVR overlay view for inserting the device into the headset
-    if (enabled) {
-        _gvrOverlay = [[GVROverlayView alloc] initWithFrame:self.bounds];
-        _gvrOverlay.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _gvrOverlay.delegate = self;
-        [self addSubview:_gvrOverlay];
+    if (_VRModeEnabled == enabled) {
+        return;
     }
     _sceneRenderer->setVRModeEnabled(enabled);
+    _VRModeEnabled = enabled;
+}
+
+- (void)setPaused:(BOOL)paused {
+    _paused = paused;
+    if (_paused) {
+        _renderer->getInputController()->onPause();
+        _gvrAudio->Pause();
+        _sceneRenderer->pause();
+    }
+    else {
+        _renderer->getInputController()->onResume();
+        _gvrAudio->Resume();
+        _sceneRenderer->resume();
+    }
+    
+    _displayLink.paused = (self.superview == nil || _paused);
+}
+
+- (void)didMoveToSuperview {
+    [super didMoveToSuperview];
+    if (self.superview) {
+        [self startRenderer];
+    }
+    else {
+        [self stopRenderer];
+    }
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if (!_initialized && self.bounds.size.width > 0 && self.bounds.size.height > 0) {
+        _initialized = YES;
+        [self bindDrawable];
+        _sceneRenderer->initGL();
+    }
+    
+    // This check is needed for some rare cases where we're getting layoutSubviews
+    // invoked mid-orientation change, resulting in 0 width or height
+    if (self.bounds.size.width > 0 && self.bounds.size.height > 0) {
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+        _sceneRenderer->setSurfaceSize(self.bounds.size.width * self.contentScaleFactor,
+                                       self.bounds.size.height * self.contentScaleFactor,
+                                       orientation);
+    }
+}
+
+- (void)updateOverlayView {
+    // Transition view is always shown when VR mode is toggled ON.
+    _overlayView.hidesTransitionView = _overlayView.hidesTransitionView || !_VRModeEnabled;
+    _overlayView.hidesSettingsButton = !_VRModeEnabled;
+    _overlayView.hidesAlignmentMarker = !_VRModeEnabled;
+    _overlayView.hidesFullscreenButton = !_VRModeEnabled;
+    _overlayView.hidesCardboardButton = _VRModeEnabled;
+    
+    [_overlayView setNeedsLayout];
+}
+
+#pragma mark - Rendering
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    if (!_initialized) {
+        return;
+    }
+    @autoreleasepool {
+        _sceneRenderer->onDrawFrame();
+    }
+}
+
+- (void)startRenderer {
+    if (!_displayLink) {
+        VROWeakProxy *proxy = [VROWeakProxy weakProxyForObject:self];
+        _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
+        if ([_displayLink respondsToSelector:@selector(preferredFramesPerSecond)]) {
+            _displayLink.preferredFramesPerSecond = 60;
+        }
+        
+        [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        _displayLink.paused = _paused;
+    }
+    
+    [self updateOverlayView];
+}
+
+- (void)stopRenderer {
+    [_displayLink invalidate];
+    _displayLink = nil;
+}
+
+#pragma mark - ViroView
+
+/*
+ This function will asynchronously validate the given API key and notify the
+ renderer if the key is invalid.
+ */
+- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
+    // If the user gives us a key, then let them use the API until we successfully checked the key.
+    _sceneRenderer->setSuspended(false);
+    __weak typeof(self) weakSelf = self;
+    
+    VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
+        VROViewCardboard *strongSelf = weakSelf;
+        if (!strongSelf) {
+            return;
+        }
+        
+        strongSelf->_sceneRenderer->setSuspended(!valid);
+        completionBlock(valid);
+        NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
+    };
+    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
+}
+
+- (void)recenterTracking {
+    _sceneRenderer->recenterTracking();
+}
+
+- (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
+    _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
+    self.renderer->setDelegate(_renderDelegateWrapper);
+}
+
+- (void)setPointOfView:(std::shared_ptr<VRONode>)node {
+    self.renderer->setPointOfView(node);
+}
+
+- (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
+    _sceneController = sceneController;
+    _renderer->setSceneController(_sceneController, _driver);
+}
+
+- (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
+                  duration:(float)seconds
+            timingFunction:(VROTimingFunctionType)timingFunctionType {
+    _sceneController = sceneController;
+    _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
+}
+
+- (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer {
+    return _renderer->getFrameSynchronizer();
 }
 
 - (NSString *)getPlatform {
@@ -197,30 +306,8 @@
     return [NSString stringWithUTF8String:_renderer->getInputController()->getController().c_str()];
 }
 
-/*
- This function will asynchronously validate the given API key and notify the
- renderer if the key is invalid.
- */
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
-    // If the user gives us a key, then let them use the API until we successfully checked the key.
-    _sceneRenderer->setSuspended(false);
-    __weak typeof(self) weakSelf = self;
-  
-    VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
-        VROViewCardboard *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-      
-        strongSelf->_sceneRenderer->setSuspended(!valid);
-        completionBlock(valid);
-        NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
-    };
-    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
-}
-
-- (void)recenterTracking {
-    gvr_recenter_tracking(_gvr);
+- (void)setDebugHUDEnabled:(BOOL)enabled {
+    self.renderer->setDebugHUDEnabled(enabled);
 }
 
 #pragma mark - Recording and Screenshots
@@ -239,54 +326,6 @@
       saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     // no-op
-}
-
-#pragma mark - Settings
-
-- (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
-    _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
-    self.renderer->setDelegate(_renderDelegateWrapper);
-}
-
-#pragma mark - Camera
-
-- (void)setPointOfView:(std::shared_ptr<VRONode>)node {
-    self.renderer->setPointOfView(node);
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    _sceneRenderer->setSurfaceSize(self.bounds.size.width * self.contentScaleFactor,
-                                   self.bounds.size.height * self.contentScaleFactor,
-                                   [[UIApplication sharedApplication] statusBarOrientation]);
-}
-
-#pragma mark - Scene Loading
-
-- (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
-    _sceneController = sceneController;
-    _renderer->setSceneController(_sceneController, _driver);
-}
-
-- (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
-                  duration:(float)seconds
-            timingFunction:(VROTimingFunctionType)timingFunctionType {
-    _sceneController = sceneController;
-    _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
-}
-
-#pragma mark - Rendering
-
-- (void)drawRect:(CGRect)rect {
-    @autoreleasepool {
-        _sceneRenderer->onDrawFrame();
-    }
-}
-
-#pragma mark - Frame Listeners
-
-- (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer {
-    return _renderer->getFrameSynchronizer();
 }
 
 #pragma mark - GVROverlayViewDelegate
@@ -318,7 +357,7 @@
 }
 
 - (void)didChangeViewerProfile {
-    gvr_refresh_viewer_profile(_gvr);
+    _sceneRenderer->refreshViewerProfile();
 }
 
 - (void)shouldDisableIdleTimer:(BOOL)shouldDisable {

@@ -145,6 +145,8 @@
 		8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */; };
 		8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */; };
 		8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DF5A81F36408700886805 /* VROPortalFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F1E01001FD10D7D00DF9068 /* VROViewControllerGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F1E01011FD10D7D00DF9068 /* VROViewControllerGVR.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E00FF1FD10D7D00DF9068 /* VROViewControllerGVR.m */; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */; };
@@ -865,6 +867,8 @@
 		8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_diffuse.png; path = ViroSample/pug_body_diffuse.png; sourceTree = "<group>"; };
 		8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalFrame.cpp; sourceTree = "<group>"; };
 		8F1DF5A81F36408700886805 /* VROPortalFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalFrame.h; sourceTree = "<group>"; };
+		8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROViewControllerGVR.h; sourceTree = "<group>"; };
+		8F1E00FF1FD10D7D00DF9068 /* VROViewControllerGVR.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROViewControllerGVR.m; sourceTree = "<group>"; };
 		8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARAnchor.h; sourceTree = "<group>"; };
 		8F1F06591EF06FBB006FC8C2 /* VROARCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARCamera.h; sourceTree = "<group>"; };
 		8F1F065A1EF06FBB006FC8C2 /* VROARFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARFrame.h; sourceTree = "<group>"; };
@@ -1491,6 +1495,8 @@
 		8F0FE6621CD25A3500A4C297 /* GVR */ = {
 			isa = PBXGroup;
 			children = (
+				8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */,
+				8F1E00FF1FD10D7D00DF9068 /* VROViewControllerGVR.m */,
 				8F17D5391FCE128600141042 /* VROSceneRendererGVR.h */,
 				8F17D53A1FCE128600141042 /* VROSceneRendererGVR.cpp */,
 				A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */,
@@ -2508,6 +2514,7 @@
 				A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */,
 				8F9209151F3CAF72003305C8 /* VROImageShaderProgram.h in Headers */,
 				A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */,
+				8F1E01001FD10D7D00DF9068 /* VROViewControllerGVR.h in Headers */,
 				A5EC659F1EBD34C000FE220E /* VROPhysicsWorld.h in Headers */,
 				A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */,
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
@@ -3295,6 +3302,7 @@
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
 				8FD4DF131C18ED44003DC425 /* OrientationEKF.mm in Sources */,
 				8FD2A54A1F813C4100E831A6 /* VROTorusTest.cpp in Sources */,
+				8F1E01011FD10D7D00DF9068 /* VROViewControllerGVR.m in Sources */,
 				8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */,
 				8F53D39E1DCA883A001C91A8 /* VROConvert.cpp in Sources */,
 				8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */,

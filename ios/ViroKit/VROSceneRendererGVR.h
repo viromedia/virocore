@@ -31,8 +31,7 @@ public:
     /*
      Create a VROSceneRendererGVR using a given |gvr_context|.
      */
-    VROSceneRendererGVR(gvr_context *gvr_context,
-                        std::shared_ptr<gvr::AudioApi> gvrAudio,
+    VROSceneRendererGVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
                         int width, int height, UIInterfaceOrientation orientation,
                         float contentScaleFactor,
                         std::shared_ptr<VRORenderer> renderer,
@@ -42,13 +41,14 @@ public:
     void initGL();
     void onDrawFrame();
     void onTouchEvent(int action, float x, float y);
+    void recenterTracking();
+    void refreshViewerProfile();
+    
     void setVRModeEnabled(bool enabled);
     void setSuspended(bool suspendRenderer);
     void setSurfaceSize(int width, int height, UIInterfaceOrientation orientation);
-    
-    bool isVRModeEnabled() const {
-        return _vrModeEnabled;
-    }
+    void pause();
+    void resume();
 
 private:
 

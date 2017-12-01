@@ -25,8 +25,7 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 #pragma mark - Setup
 
-VROSceneRendererGVR::VROSceneRendererGVR(gvr_context *gvr_context,
-                                         std::shared_ptr<gvr::AudioApi> gvrAudio,
+VROSceneRendererGVR::VROSceneRendererGVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
                                          int width, int height, UIInterfaceOrientation orientation,
                                          float contentScaleFactor,
                                          std::shared_ptr<VRORenderer> renderer,
@@ -35,28 +34,29 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context *gvr_context,
     _contentScaleFactor(contentScaleFactor),
     _renderer(renderer),
     _driver(driver),
-    _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
-    _sceneViewport(_gvr->CreateBufferViewport()),
     _rendererSuspended(true),
     _sizeChanged(false),
     _vrModeEnabled(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()) {
-        _viewerType = _gvr->GetViewerType();
         setSurfaceSizeInternal(width, height, orientation);
 }
 
 VROSceneRendererGVR::~VROSceneRendererGVR() {
-
+    _viewportList.release();
+    _swapchain.release();
+    _gvr.release();
 }
 
 #pragma mark - Rendering
 
 void VROSceneRendererGVR::initGL() {
+    _gvr = gvr::GvrApi::Create();
     _gvr->InitializeGl();
     createSwapchain();
     
     _viewportList.reset(new gvr::BufferViewportList(_gvr->CreateEmptyBufferViewportList()));
-
+    _sceneViewport = _gvr->CreateBufferViewport();
+    
     // Configure the common properties of the HUD viewport. Each frame this viewport gets
     // modified for each eye and copied into the viewport list. The most important property
     // here is setting the source buffer index to 1, so GVR knows to read from buffer 1 to
@@ -236,6 +236,72 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
     _renderer->endFrame(_driver);
 }
 
+#pragma mark - Lifecycle and Settings
+
+void VROSceneRendererGVR::refreshViewerProfile() {
+    if (!_gvr) {
+        return;
+    }
+    _gvr->RefreshViewerProfile();
+}
+
+void VROSceneRendererGVR::recenterTracking() {
+    if (!_gvr) {
+        return;
+    }
+    _gvr->RecenterTracking();
+}
+
+void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
+    _vrModeEnabled = enabled;
+}
+
+void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
+    _rendererSuspended = suspendRenderer;
+}
+
+void VROSceneRendererGVR::pause() {
+    if (!_gvr) {
+        return;
+    }
+    _gvr->PauseTracking();
+}
+
+void VROSceneRendererGVR::resume() {
+    if (!_gvr) {
+        return;
+    }
+    _gvr->ResumeTracking();
+}
+
+void VROSceneRendererGVR::setSurfaceSize(int width, int height, UIInterfaceOrientation orientation) {
+    int previousWidth = _surfaceSize.width;
+    int previousHeight = _surfaceSize.height;
+    
+    setSurfaceSizeInternal(width, height, orientation);
+    if (width != previousWidth || height != previousHeight) {
+        _sizeChanged = true;
+    }
+}
+
+void VROSceneRendererGVR::setSurfaceSizeInternal(int width, int height, UIInterfaceOrientation orientation) {
+    _surfaceSize.width = width;
+    _surfaceSize.height = height;
+    _orientationMatrix = VROMatrix4f::identity();
+    
+    if (!_vrModeEnabled) {
+        if (orientation == UIInterfaceOrientationPortrait) {
+            _orientationMatrix.rotateZ(-M_PI_2);
+        }
+        else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+            _orientationMatrix.rotateZ(M_PI_2);
+        }
+        else if (orientation == UIInterfaceOrientationLandscapeLeft) {
+            _orientationMatrix.rotateZ(M_PI);
+        }
+    }
+}
+
 #pragma mark - Utility Methods
 
 void VROSceneRendererGVR::clearViewport(VROViewport viewport, bool transparent) {
@@ -278,42 +344,6 @@ void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport, g
     outViewport->setContentScaleFactor(_contentScaleFactor);
     const gvr::Rectf fov = viewport.GetSourceFov();
     *outFov = VROFieldOfView(fov.left, fov.right, fov.bottom, fov.top);
-}
-
-void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
-    _vrModeEnabled = enabled;
-}
-
-void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
-    _rendererSuspended = suspendRenderer;
-}
-
-void VROSceneRendererGVR::setSurfaceSize(int width, int height, UIInterfaceOrientation orientation) {
-    int previousWidth = _surfaceSize.width;
-    int previousHeight = _surfaceSize.height;
-    
-    setSurfaceSizeInternal(width, height, orientation);
-    if (width != previousWidth || height != previousHeight) {
-        _sizeChanged = true;
-    }
-}
-
-void VROSceneRendererGVR::setSurfaceSizeInternal(int width, int height, UIInterfaceOrientation orientation) {
-    _surfaceSize.width = width;
-    _surfaceSize.height = height;
-    _orientationMatrix = VROMatrix4f::identity();
-    
-    if (!_vrModeEnabled) {
-        if (orientation == UIInterfaceOrientationPortrait) {
-            _orientationMatrix.rotateZ(-M_PI_2);
-        }
-        else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
-            _orientationMatrix.rotateZ(M_PI_2);
-        }
-        else if (orientation == UIInterfaceOrientationLandscapeLeft) {
-            _orientationMatrix.rotateZ(M_PI);
-        }
-    }
 }
 
 
