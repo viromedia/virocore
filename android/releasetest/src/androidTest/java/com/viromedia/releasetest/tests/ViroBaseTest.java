@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.viro.core.ARHitTestResult;
+import com.viro.core.ARPointCloud;
 import com.viro.core.ARScene;
 import com.viro.core.EventDelegate;
 import com.viro.core.Material;
@@ -366,8 +367,13 @@ public abstract class ViroBaseTest {
         }
 
         @Override
-        public void onCameraARHitTest(final int source, final ARHitTestResult[] results) {
-            Log.e(TAG, delegateTag + " On Camera AR Hit Test");
+        public void onCameraARHitTest(ARHitTestResult[] results) {
+
+        }
+
+        @Override
+        public void onARPointCloudUpdate(ARPointCloud pointCloud) {
+
         }
     }
 

@@ -79,15 +79,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(':arcore_client')
+    implementation project(':arcore_client')
     implementation project(':app')
-    compile project(':libs:gvr')
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    implementation project(':libs:gvr')
+    implementation 'com.android.support:appcompat-v7:25.0.0'
     // testing dependencies
-    androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'org.awaitility:awaitility:3.0.0'
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'org.awaitility:awaitility:3.0.0'
 }
