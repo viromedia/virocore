@@ -661,13 +661,13 @@ static void ovrRenderer_Create(ovrRenderer *renderer, const ovrJava *java, const
     for ( int eye = 0; eye < renderer->NumBuffers; eye++ )
     {
         ovrFramebuffer_Create( &renderer->FrameBuffer[eye], useMultiview,
-                               VRAPI_TEXTURE_FORMAT_8888,
+                               VRAPI_TEXTURE_FORMAT_8888_sRGB,
                                vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH),
                                vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT),
                                NUM_MULTI_SAMPLES);
 
         ovrFramebuffer_Create( &renderer->HUDFrameBuffer[eye], useMultiview,
-                               VRAPI_TEXTURE_FORMAT_8888,
+                               VRAPI_TEXTURE_FORMAT_8888_sRGB,
                                vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH),
                                vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT),
                                NUM_MULTI_SAMPLES);
@@ -909,7 +909,7 @@ static void ovrApp_HandleVrModeChanges( ovrApp * app )
             ovrModeParms parms = vrapi_DefaultModeParms( &app->Java );
             // Must reset the FLAG_FULLSCREEN window flag when using a SurfaceView
             parms.Flags |= VRAPI_MODE_FLAG_RESET_WINDOW_FULLSCREEN;
-
+            parms.Flags |= VRAPI_MODE_FLAG_FRONT_BUFFER_SRGB;
             parms.Flags |= VRAPI_MODE_FLAG_NATIVE_WINDOW;
             parms.Display = (size_t)app->Egl.Display;
             parms.WindowSurface = (size_t)app->NativeWindow;

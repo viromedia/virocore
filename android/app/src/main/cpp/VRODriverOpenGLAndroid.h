@@ -86,9 +86,9 @@ public:
         } else {
             _gvrAudio->EnableRoom(true);
             _gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
-                                         VROPlatformParseGVRAudioMaterial(wallMaterial),
-                                         VROPlatformParseGVRAudioMaterial(ceilingMaterial),
-                                         VROPlatformParseGVRAudioMaterial(floorMaterial));
+                                         (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(wallMaterial),
+                                         (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(ceilingMaterial),
+                                         (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(floorMaterial));
         }
     }
 

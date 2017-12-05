@@ -19,11 +19,9 @@ public:
     /*
      OVR most likely works with an sRGB framebuffer but we have not yet
      enabled this, so use software conversion.
-
-     TODO VIRO-1937 Enable OVR hardware sRGB conversion
      */
     virtual VROColorRenderingMode getColorRenderingMode() {
-        return VROColorRenderingMode::LinearSoftware;
+        return VROColorRenderingMode::Linear;
     }
 
     /*
