@@ -10,6 +10,7 @@
 package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
+import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.AnimationTimingFunction;
@@ -17,11 +18,14 @@ import com.viro.core.AnimationTransaction;
 import com.viro.core.Box;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.Text;
 import com.viro.core.Vector;
 
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -32,16 +36,18 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
 
     private Node boxNode;
     private Box mBox;
+    private Material mMaterial;
+    private AnimationTransaction mTransaction;
     @Override
     void configureTestScene() {
         final AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
         mScene.getRootNode().addLight(light);
         boxNode = new Node();
         mBox = new Box(1, 1, 1);
-        final Material material = new Material();
-        material.setLightingModel(Material.LightingModel.BLINN);
-        material.setDiffuseColor(Color.BLUE);
-        mBox.setMaterials(Arrays.asList(material));
+        mMaterial = new Material();
+        mMaterial.setLightingModel(Material.LightingModel.BLINN);
+        mMaterial.setDiffuseColor(Color.BLUE);
+        mBox.setMaterials(Arrays.asList(mMaterial));
         boxNode.setGeometry(mBox);
         boxNode.setPosition(new Vector(-3,0, -3));
         mScene.getRootNode().addChildNode(boxNode);
@@ -50,13 +56,14 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
 
     @Test
     public void animationTest() {
-            testAnimationPosition();
-            testAnimationRotation();
-            testAnimationScale();
-            testAnimationOpacity();
-            testAnimationEasing();
-            testAnimationMaterial();
-            testAnimationChained();
+//        testAnimationPosition();
+//        testAnimationRotation();
+//        testAnimationScale();
+//        testAnimationOpacity();
+//        testAnimationEasing();
+//        testAnimationMaterial();
+//        testAnimationChained();
+        testAnimationLoop();
     }
 
     private void testAnimationPosition() {
@@ -130,6 +137,25 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         });
     }
 
+    private void testAnimationLoop() {
+        AnimationTransaction.begin();
+        AnimationTransaction.setAnimationDuration(1000);
+        AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
+        AnimationTransaction.setAnimationLoop(true);
+        boxNode.setRotation(new Vector(0, 0.78, 0.78));
+        final List<Integer> colors = Arrays.asList(Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN);
+        final Iterator<Integer> itr = Iterables.cycle(colors).iterator();
+        AnimationTransaction.setListener(transaction -> {
+            mMaterial.setDiffuseColor(itr.next());
+            mBox.setMaterials(Arrays.asList(mMaterial));
+        });
+        mTransaction = AnimationTransaction.commit();
+        assertPass("Loop Animate rotation to 45 degrees on y and z axis," +
+                " should change color every second", ()->{
+            boxNode.setRotation(new Vector(0, 0, 0));
+        });
+
+    }
     private void testAnimationEasing() {
         for (final AnimationTimingFunction animationTimingFunction : AnimationTimingFunction.values()) {
             testEasing(animationTimingFunction);

@@ -96,6 +96,15 @@ void VROTransaction::setAnimationDuration(float durationSeconds) {
     animation->_durationSeconds = durationSeconds;
 }
 
+void VROTransaction::setAnimationLoop(bool loop) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+
+    animation -> _loop = loop;
+}
+
 float VROTransaction::getAnimationDuration() {
     std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
@@ -173,7 +182,17 @@ void VROTransaction::update() {
 
         float percent = (passedTimeInSeconds - transaction->_delayTimeSeconds) / transaction->_durationSeconds;
         if (isinf(percent) || percent > 1.0 - kEpsilon) {
-            transaction->onTermination();
+
+            // if _loop set, reset _t to 0 (done inside processAnimations(percent)
+            if (transaction->_loop) {
+                if (transaction -> _finishCallback) {
+                    transaction -> _finishCallback();
+                }
+                transaction->_startTimeSeconds = VROTimeCurrentSeconds();
+                transaction->processAnimations(0);
+            } else {
+                transaction->onTermination();
+            }
         }
         else {
             transaction->processAnimations(percent);
@@ -219,3 +238,4 @@ void VROTransaction::onTermination() {
         _finishCallback();
     }
 }
+

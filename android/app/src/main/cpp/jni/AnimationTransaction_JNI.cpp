@@ -42,7 +42,6 @@ JNI_METHOD(void, nativeCommit)(JNIEnv *env, jclass clazz, jobject obj) {
                 }
 
                 VROPlatformCallJavaFunction(obj_s2, "onAnimationFinished", "()V");
-                env->DeleteWeakGlobalRef(obj_w2);
                 env->DeleteLocalRef(obj_s2);
             });
         });
@@ -61,6 +60,12 @@ JNI_METHOD(void, nativeSetAnimationDelay)(JNIEnv *env, jclass clazz, float delay
 JNI_METHOD(void, nativeSetAnimationDuration)(JNIEnv *env, jclass clazz, float duration) {
     VROPlatformDispatchAsyncRenderer([duration] {
         VROTransaction::setAnimationDuration(duration);
+    });
+}
+
+JNI_METHOD(void, nativeSetAnimationLoop)(JNIEnv *env, jclass clazz, jboolean loop) {
+    VROPlatformDispatchAsyncRenderer([loop] {
+        VROTransaction::setAnimationLoop(loop);
     });
 }
 

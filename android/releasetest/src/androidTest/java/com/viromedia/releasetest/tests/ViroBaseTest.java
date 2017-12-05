@@ -84,10 +84,10 @@ public abstract class ViroBaseTest {
     protected Scene mScene;
     protected Node mYesButtonNode;
     protected Node mNoButtonNode;
+    protected Node mExpectedMessageNode;
     protected ViroReleaseTestActivity mActivity;
     private Node mTestClassNameNode;
     private Node mTestMethodNameNode;
-    private Node mExpectedMessageNode;
     private GenericEventCallback callbackOne;
     private GenericEventCallback callbackTwo;
 

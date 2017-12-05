@@ -115,6 +115,14 @@ public class AnimationTransaction {
     }
 
     /**
+     * Set to true to make this AnimationTransaction automatically loop to the beginning on finish
+     * @param loop True to loop
+     */
+    public static void setAnimationLoop(boolean loop) {
+        nativeSetAnimationLoop(loop);
+    }
+
+    /**
      * Set a {@link Listener} to invoke when the active transaction completes.
      *
      * @param listener The {@link Listener} to use for the current transaction.
@@ -192,6 +200,7 @@ public class AnimationTransaction {
     private static native void nativeCommit(AnimationTransaction transaction);
     private static native void nativeSetAnimationDuration(float durationSeconds);
     private static native void nativeSetAnimationDelay(float delaySeconds);
+    private static native void nativeSetAnimationLoop(boolean loop);
     private static native void nativeSetTimingFunction(String timingFunction);
     private native void nativeDispose(long nativeRef);
     private native void nativePause(long nativeRef);
