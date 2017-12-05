@@ -24,12 +24,10 @@
 }
 
 - (BOOL)shouldAutorotate {
-    // TODO Not sure if this is necessary?
     return NO;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    // TODO Not sure if this is necessary, since we're forcing orientation below
     return UIInterfaceOrientationMaskLandscapeRight;
 }
 
@@ -39,8 +37,11 @@
     
     // Force to landscape right; this appears to be the only reliable way to do this
     // When we tried doing this any other way we run into a GVR bug where the viewport
-    // gets cut in half. Specifically this occurs when the device beings in portrait
+    // gets cut in half. Specifically this occurs when the device begins in portrait
     // mode.
+    
+    // Note this fix sometimes creates an issue where the height of the *superview*
+    // becomes zero. We check for (and fix) this in VROViewGVR.layoutSubviews().
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight]
                                 forKey:@"orientation"];
 }

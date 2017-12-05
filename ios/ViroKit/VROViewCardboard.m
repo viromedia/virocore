@@ -156,7 +156,6 @@
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
-    NSLog(@"GVR: application did become active");
     self.paused = NO;
 }
 
@@ -180,7 +179,6 @@
         _gvrAudio->Resume();
         _sceneRenderer->resume();
     }
-    
     _displayLink.paused = (self.superview == nil || _paused);
 }
 
@@ -197,7 +195,28 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    if (!_initialized && self.bounds.size.width > 0 && self.bounds.size.height > 0) {
+    // This sanity check fixes an issue where when we enter an app in portrait
+    // mode then enter GVR, the height goes to zero and results in an invalid
+    // framebuffer. This occurs because in VROViewControllerGVR we force the
+    // orientation to landscape right, during which some race condition occurs
+    // creating the distortion. (Note that we do this in VROViewControllerGVR
+    // because of a separate GVR issue that results in a half-size viewport).
+    // Effectively then this patches a bug caused by a patch of an underlying GVR
+    // issue.
+    if (self.bounds.size.height == 0 || self.bounds.size.width == 0) {
+        NSLog(@"Invalid bounds on GVR view (%f, %f): making fullscreen",
+              self.bounds.size.width, self.bounds.size.height);
+        if (self.superview) {
+            [self.superview setFrame:[UIScreen mainScreen].bounds];
+            [self setFrame:self.superview.bounds];
+            
+            NSLog(@"Corrected superview bounds to full screen (%f, %f)",
+                  self.superview.frame.size.width, self.superview.frame.size.height);
+        }
+    }
+    
+    if (!_initialized) {
+        pinfo("Initializing GVR renderer with bounds (%f, %f)", self.bounds.size.width, self.bounds.size.height);
         _initialized = YES;
         [self bindDrawable];
         _sceneRenderer->initGL();
@@ -205,12 +224,10 @@
     
     // This check is needed for some rare cases where we're getting layoutSubviews
     // invoked mid-orientation change, resulting in 0 width or height
-    if (self.bounds.size.width > 0 && self.bounds.size.height > 0) {
-        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-        _sceneRenderer->setSurfaceSize(self.bounds.size.width * self.contentScaleFactor,
-                                       self.bounds.size.height * self.contentScaleFactor,
-                                       orientation);
-    }
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    _sceneRenderer->setSurfaceSize(self.bounds.size.width * self.contentScaleFactor,
+                                   self.bounds.size.height * self.contentScaleFactor,
+                                   orientation);
 }
 
 - (void)updateOverlayView {
@@ -235,6 +252,8 @@
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     if (!_initialized) {
+        pinfo("GVR not initialized, not drawing with bounds (%f, %f)",
+              self.bounds.size.width, self.bounds.size.height);
         return;
     }
     @autoreleasepool {
