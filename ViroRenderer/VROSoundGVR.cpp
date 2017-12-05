@@ -10,6 +10,7 @@
 #include "VROSoundGVR.h"
 #include "VROSoundDataGVR.h"
 #include "VROLog.h"
+#include "vr/gvr/capi/include/gvr_audio.h"
 
 std::shared_ptr<VROSoundGVR> VROSoundGVR::create(std::string path,
                                                  std::shared_ptr<gvr::AudioApi> gvrAudio,
@@ -37,6 +38,7 @@ VROSoundGVR::VROSoundGVR(std::string path,
     _type = type;
     std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(path, isLocalFile);
     _data = std::dynamic_pointer_cast<VROSoundData>(data);
+    _gvrRolloffType = GVR_AUDIO_ROLLOFF_NONE;
 }
 
 VROSoundGVR::VROSoundGVR(std::shared_ptr<VROSoundData> data, std::shared_ptr<gvr::AudioApi> gvrAudio,
@@ -44,6 +46,7 @@ VROSoundGVR::VROSoundGVR(std::shared_ptr<VROSoundData> data, std::shared_ptr<gvr
     _data(data),
     _gvrAudio(gvrAudio) {
     _type = type;
+    _gvrRolloffType = GVR_AUDIO_ROLLOFF_NONE;
 }
 
 VROSoundGVR::~VROSoundGVR() {
@@ -192,7 +195,7 @@ void VROSoundGVR::setDistanceRolloffModel(VROSoundRolloffModel model, float minD
     }
     
     if (_audioId != -1 && _type == VROSoundType::Spatial) {
-        _gvrAudio->SetSoundObjectDistanceRolloffModel(_audioId, _gvrRolloffType,
+        _gvrAudio->SetSoundObjectDistanceRolloffModel(_audioId, (gvr_audio_distance_rolloff_type) _gvrRolloffType,
                                                       _rolloffMinDistance, _rolloffMaxDistance);
     }
 }
@@ -227,7 +230,7 @@ void VROSoundGVR::setProperties() {
     if (_type == VROSoundType::Spatial) {
         _gvrAudio->SetSoundObjectPosition(_audioId, _transformedPosition.x, _transformedPosition.y,
                                           _transformedPosition.z);
-        _gvrAudio->SetSoundObjectDistanceRolloffModel(_audioId, _gvrRolloffType,
+        _gvrAudio->SetSoundObjectDistanceRolloffModel(_audioId, (gvr_audio_distance_rolloff_type) _gvrRolloffType,
                                                       _rolloffMinDistance, _rolloffMaxDistance);
     } else if (_type == VROSoundType::SoundField) {
         _gvrAudio->SetSoundfieldRotation(_audioId,

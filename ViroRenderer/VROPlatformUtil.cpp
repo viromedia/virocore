@@ -769,6 +769,7 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
 
 #include "VROStringUtil.h"
+#include "vr/gvr/capi/include/gvr_audio.h"
 
 void *VROPlatformLoadFile(std::string filename, int *outLength) {
     FILE *fl = fopen(filename.c_str(), "r");
@@ -783,7 +784,7 @@ void *VROPlatformLoadFile(std::string filename, int *outLength) {
     return ret;
 }
 
-gvr_audio_material_type VROPlatformParseGVRAudioMaterial(std::string property) {
+int VROPlatformParseGVRAudioMaterial(std::string property) {
     if (VROStringUtil::strcmpinsensitive(property, "transparent")) {
         return GVR_AUDIO_MATERIAL_TRANSPARENT;
     } else if (VROStringUtil::strcmpinsensitive(property, "acoustic_ceiling_tiles")) {

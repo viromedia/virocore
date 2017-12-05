@@ -10,6 +10,7 @@
 #define VRODisplayOpenGLiOS_hpp
 
 #include "VRODisplayOpenGL.h"
+#include <GLKit/GLKit.h>
 
 class VRODriverOpenGL;
 

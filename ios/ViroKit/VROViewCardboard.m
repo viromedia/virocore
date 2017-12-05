@@ -21,7 +21,14 @@
 #import "VROInputControllerCardboardiOS.h"
 #import "VRODriverOpenGLiOSGVR.h"
 #import "VROSceneRendererGVR.h"
+#import "GVROverlayView.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
+
+@interface VROOverlayViewDelegate : NSObject <GVROverlayViewDelegate>
+
+@property (readwrite, nonatomic, weak) VROViewCardboard *view;
+
+@end
 
 @interface VROViewCardboard () {
     std::shared_ptr<VROSceneController> _sceneController;
@@ -37,6 +44,7 @@
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) BOOL initialized;
 @property (readwrite, nonatomic) BOOL VRModeEnabled;
+@property (readwrite, nonatomic) VROOverlayViewDelegate *gvrDelegate;
 
 @end
 
@@ -90,6 +98,13 @@
     _overlayView.hidesBackButton = NO;
     _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:_overlayView];
+    
+    /*
+     Create the delegate.
+     */
+    _gvrDelegate = [[VROOverlayViewDelegate alloc] init];
+    _gvrDelegate.view = self;
+    [_overlayView setDelegate:_gvrDelegate];
     
     /*
      Setup the GLKView.
@@ -207,6 +222,12 @@
     _overlayView.hidesCardboardButton = _VRModeEnabled;
     
     [_overlayView setNeedsLayout];
+}
+
+- (void)didTapGLView:(id)sender {
+    std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
+    std::shared_ptr<VROInputControllerCardboardiOS> cardboardController = std::dynamic_pointer_cast<VROInputControllerCardboardiOS>(baseController);
+    cardboardController->onScreenClicked();
 }
 
 #pragma mark - Rendering
@@ -328,20 +349,21 @@
     // no-op
 }
 
+@end
+
 #pragma mark - GVROverlayViewDelegate
 
-- (void)didTapGLView:(id)sender {
-    std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
-    std::shared_ptr<VROInputControllerCardboardiOS> cardboardController = std::dynamic_pointer_cast<VROInputControllerCardboardiOS>(baseController);
-    cardboardController->onScreenClicked();
-}
+@implementation VROOverlayViewDelegate
 
 - (void)didTapBackButton {
-    _renderer->requestExitVR();
+    VROViewCardboard *view = self.view;
+    if (view) {
+        view.renderer->requestExitVR();
+    }
 }
 
 - (UIViewController *)parentViewController {
-    UIResponder *responder = self;
+    UIResponder *responder = self.view;
     while ([responder isKindOfClass:[UIView class]]) {
         responder = [responder nextResponder];
     }
@@ -357,7 +379,10 @@
 }
 
 - (void)didChangeViewerProfile {
-    _sceneRenderer->refreshViewerProfile();
+    VROViewCardboard *view = self.view;
+    if (view) {
+        self.view.sceneRenderer->refreshViewerProfile();
+    }
 }
 
 - (void)shouldDisableIdleTimer:(BOOL)shouldDisable {

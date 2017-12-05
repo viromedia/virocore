@@ -10,9 +10,8 @@
 #import <GLKit/GLKit.h>
 #import <UIKit/UIKit.h>
 #import "VROView.h"
-#import "GVROverlayView.h"
 
-@interface VROViewCardboard : GLKView <VROView, GVROverlayViewDelegate>
+@interface VROViewCardboard : GLKView <VROView>
 
 @property (readwrite, nonatomic) BOOL paused;
 @property (readwrite, nonatomic) IBInspectable BOOL testingMode;

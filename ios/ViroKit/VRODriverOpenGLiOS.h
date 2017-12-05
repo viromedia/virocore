@@ -15,7 +15,6 @@
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROTypefaceiOS.h"
 #include "VRODisplayOpenGLiOS.h"
-#include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROPlatformUtil.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
@@ -88,14 +87,9 @@ public:
         
         return typeface;
     }
-
+    
     void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
-                      std::string ceilingMaterial, std::string floorMaterial) {
-        _gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
-                                     VROPlatformParseGVRAudioMaterial(wallMaterial),
-                                     VROPlatformParseGVRAudioMaterial(ceilingMaterial),
-                                     VROPlatformParseGVRAudioMaterial(floorMaterial));
-    }
+                      std::string ceilingMaterial, std::string floorMaterial);
     
 protected:
     

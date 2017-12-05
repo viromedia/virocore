@@ -1,10 +1,6 @@
-pod 'GVRKit'
-pod 'GVRAudioSDK'
-source 'https://github.com/CocoaPods/Specs.git'
-pod 'AWSDynamoDB'
-
 target 'ViroKit' do
-end
-
-target 'ViroSample' do
+    pod 'GVRKit'
+    pod 'GVRAudioSDK'
+    source 'https://github.com/CocoaPods/Specs.git'
+    pod 'AWSDynamoDB'
 end
