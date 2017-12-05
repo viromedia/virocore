@@ -25,7 +25,7 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 - (void)loadView {
     if (kTestType == VROTestSceneType::VR) {
-        VROViewCardboard *view = [[VROViewCardboard alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        VROViewGVR *view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds];
         view.testingMode = YES;
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;

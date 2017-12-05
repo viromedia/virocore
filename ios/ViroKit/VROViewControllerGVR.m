@@ -7,12 +7,12 @@
 //
 
 #import "VROViewControllerGVR.h"
-#import "VROViewCardboard.h"
+#import "VROViewGVR.h"
 
 @implementation VROViewControllerGVR
 
-- (VROViewCardboard *)rendererView {
-    return (VROViewCardboard *)self.view;
+- (VROViewGVR *)rendererView {
+    return (VROViewGVR *)self.view;
 }
 
 - (void)dealloc {
@@ -20,7 +20,7 @@
 }
 
 - (void)loadView {
-    self.view = [[VROViewCardboard alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds];
 }
 
 - (BOOL)shouldAutorotate {

@@ -1,12 +1,12 @@
 //
-//  VROViewCardboard.m
+//  VROViewGVR.m
 //  ViroRenderer
 //
 //  Created by Raj Advani on 4/28/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#import "VROViewCardboard.h"
+#import "VROViewGVR.h"
 #import <memory>
 #import "VRORenderer.h"
 #import "VROWeakProxy.h"
@@ -26,11 +26,11 @@
 
 @interface VROOverlayViewDelegate : NSObject <GVROverlayViewDelegate>
 
-@property (readwrite, nonatomic, weak) VROViewCardboard *view;
+@property (readwrite, nonatomic, weak) VROViewGVR *view;
 
 @end
 
-@interface VROViewCardboard () {
+@interface VROViewGVR () {
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
@@ -48,7 +48,7 @@
 
 @end
 
-@implementation VROViewCardboard
+@implementation VROViewGVR
 
 @dynamic renderDelegate;
 @dynamic sceneController;
@@ -160,11 +160,11 @@
 }
 
 - (void)setVrMode:(BOOL)enabled {
-    if (_VRModeEnabled == enabled) {
-        return;
+    if (_VRModeEnabled != enabled) {
+        _sceneRenderer->setVRModeEnabled(enabled);
+        _VRModeEnabled = enabled;
     }
-    _sceneRenderer->setVRModeEnabled(enabled);
-    _VRModeEnabled = enabled;
+    [self updateOverlayView];
 }
 
 - (void)setPaused:(BOOL)paused {
@@ -293,7 +293,7 @@
     __weak typeof(self) weakSelf = self;
     
     VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
-        VROViewCardboard *strongSelf = weakSelf;
+        VROViewGVR *strongSelf = weakSelf;
         if (!strongSelf) {
             return;
         }
@@ -375,7 +375,7 @@
 @implementation VROOverlayViewDelegate
 
 - (void)didTapBackButton {
-    VROViewCardboard *view = self.view;
+    VROViewGVR *view = self.view;
     if (view) {
         view.renderer->requestExitVR();
     }
@@ -398,7 +398,7 @@
 }
 
 - (void)didChangeViewerProfile {
-    VROViewCardboard *view = self.view;
+    VROViewGVR *view = self.view;
     if (view) {
         self.view.sceneRenderer->refreshViewerProfile();
     }

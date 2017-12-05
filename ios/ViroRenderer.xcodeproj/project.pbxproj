@@ -82,9 +82,9 @@
 		8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */; };
 		8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */; };
 		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F0FE6701CD29BF900A4C297 /* VROViewCardboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */; };
+		8F0FE6701CD29BF900A4C297 /* VROViewGVR.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE66E1CD29BF900A4C297 /* VROViewGVR.m */; };
 		8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F0FE6761CD2D47900A4C297 /* VROViewGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE66D1CD29BF900A4C297 /* VROViewGVR.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0FE67A1CD3DFF800A4C297 /* image_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */; };
 		8F0FE67B1CD3DFF800A4C297 /* image_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F0FE6791CD3DFF800A4C297 /* image_vsh.glsl */; };
 		8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */; };
@@ -789,8 +789,8 @@
 		8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalTreeRenderPass.cpp; sourceTree = "<group>"; };
 		8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalTreeRenderPass.h; sourceTree = "<group>"; };
 		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
-		8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewCardboard.h; sourceTree = "<group>"; };
-		8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROViewCardboard.m; sourceTree = "<group>"; };
+		8F0FE66D1CD29BF900A4C297 /* VROViewGVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewGVR.h; sourceTree = "<group>"; };
+		8F0FE66E1CD29BF900A4C297 /* VROViewGVR.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROViewGVR.m; sourceTree = "<group>"; };
 		8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = image_fsh.glsl; sourceTree = "<group>"; };
 		8F0FE6791CD3DFF800A4C297 /* image_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = image_vsh.glsl; sourceTree = "<group>"; };
 		8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROShaderProgram.cpp; sourceTree = "<group>"; };
@@ -1489,6 +1489,8 @@
 		8F0FE6621CD25A3500A4C297 /* GVR */ = {
 			isa = PBXGroup;
 			children = (
+				8F0FE66D1CD29BF900A4C297 /* VROViewGVR.h */,
+				8F0FE66E1CD29BF900A4C297 /* VROViewGVR.m */,
 				8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */,
 				8F1E00FF1FD10D7D00DF9068 /* VROViewControllerGVR.m */,
 				8F17D5391FCE128600141042 /* VROSceneRendererGVR.h */,
@@ -1496,8 +1498,6 @@
 				A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */,
 				A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */,
 				A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */,
-				8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */,
-				8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */,
 				8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */,
 				8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */,
 			);
@@ -2551,7 +2551,7 @@
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
 				8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */,
 				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
-				8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */,
+				8F0FE6761CD2D47900A4C297 /* VROViewGVR.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
 				8F3488B11EE83DD3008917CB /* VROARFrameInertial.h in Headers */,
 				8ABD8F3A1DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h in Headers */,
@@ -3189,7 +3189,7 @@
 				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
 				8F0E5E9C1F3BA9120007AD03 /* VROChoreographer.cpp in Sources */,
-				8F0FE6701CD29BF900A4C297 /* VROViewCardboard.m in Sources */,
+				8F0FE6701CD29BF900A4C297 /* VROViewGVR.m in Sources */,
 				8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */,
 				8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */,
 				8A11C8F81EF5B2270003E829 /* VROARConstraintMatcher.cpp in Sources */,
