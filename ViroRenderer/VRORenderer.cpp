@@ -291,9 +291,19 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
     _context->setZNear(kZNear);
     _context->setZFar(getFarClippingPlane());
     _context->setInputController(_inputController);
-    
-    renderEye(eye, driver);
-    
+
+    if (_sceneController) {
+       // TODO Viro-2277 Re-enable outgoing scene transitions. These cause a crash on Daydream when
+       //                moving from the release menu to the ViroShadowTest
+       // if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
+       //     _choreographer->render(eye, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
+       //     _choreographer->render(eye, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
+       // }
+       // else {
+            _choreographer->render(eye, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
+       // }
+    }
+
     _context->getPencil()->render(*_context.get(), driver);
     
     // This unbinds the last shader to even out our pglpush and pops
@@ -346,20 +356,6 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     
     driver->didRenderFrame(timer, *_context.get());
     pglpop();
-}
-
-void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {
-    if (_sceneController) {
-        if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
-            // TODO VIRO-2277 Re-enable outgoing transitions. These cause a crash on Daydream
-            //                when transitioning from the release test menu to the ViroShadowTest
-            //_choreographer->render(eyeType, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
-            _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
-        }
-        else {
-            _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
-        }
-    }
 }
 
 #pragma mark - Scene Loading

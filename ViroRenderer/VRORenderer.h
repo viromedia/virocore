@@ -305,10 +305,6 @@ private:
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROSceneController> _outgoingSceneController;
 
-#pragma mark - [Private] Scene Rendering
-    
-    void renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver);
-
 #pragma mark - [Private] Frame Listeners
     
     /*

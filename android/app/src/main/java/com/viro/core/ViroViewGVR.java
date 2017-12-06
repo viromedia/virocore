@@ -213,7 +213,6 @@ public class ViroViewGVR extends ViroView {
 
         final Context activityContext = getContext();
 
-
         // Initialize the native renderer.
         final GLSurfaceView glSurfaceView = createSurfaceView();
 
