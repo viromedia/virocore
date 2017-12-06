@@ -57,6 +57,7 @@ public:
 
         _depthWritingEnabled = true;
         _depthReadingEnabled = true;
+        glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         glDepthFunc(GL_LEQUAL);
         

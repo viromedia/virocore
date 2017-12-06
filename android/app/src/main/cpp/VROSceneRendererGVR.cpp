@@ -95,8 +95,6 @@ void VROSceneRendererGVR::initGL() {
     _hudViewport = _gvr->CreateBufferViewport();
     _hudViewport.SetSourceBufferIndex(1);
     _hudViewport.SetReprojection(GVR_REPROJECTION_NONE);
-
-    glEnable(GL_DEPTH_TEST);
 }
 
 void VROSceneRendererGVR::onDrawFrame() {
