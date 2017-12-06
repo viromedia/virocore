@@ -15,6 +15,7 @@
 #include "VROHitTestResult.h"
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
+#include "VROPencil.h"
 #include "VROToneMappingRenderPass.h"
 #include <stack>
 #include <algorithm>

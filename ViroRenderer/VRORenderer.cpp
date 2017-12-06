@@ -24,6 +24,7 @@
 #include "VROFrameTimer.h"
 #include "VROFrameScheduler.h"
 #include "VROChoreographer.h"
+#include "VROPencil.h"
 #include "VROPortalTreeRenderPass.h"
 #include "VRORenderMetadata.h"
 #include "VROToneMappingRenderPass.h"

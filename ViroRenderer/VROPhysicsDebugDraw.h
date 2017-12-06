@@ -14,6 +14,7 @@
 #include "VRODriver.h"
 #include "VRORenderParameters.h"
 #include "VRONode.h"
+#include "VROPencil.h"
 #include "VROMaterial.h"
 #include "VROGeometry.h"
 #include "VROPolyline.h"

@@ -5,10 +5,13 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#include "VROPencil.h"
 #include "VROPhysicsBody.h"
 #include "VRONode.h"
 #include "VROPolyline.h"
 #include "VROMaterial.h"
+
+std::shared_ptr<VROMaterial> sPencilMaterial;
 
 VROPencil::~VROPencil() {
     _paths.clear();
@@ -25,25 +28,27 @@ void VROPencil::clear() {
     _paths.clear();
 }
 
-void VROPencil::render(const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver) {
+void VROPencil::render(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (_paths.size() == 0) {
         return;
     }
-    
-    // Creates a single VROPolyline that represents a vector of paths
-    // with a preset width and color.
-    std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->getDiffuse().setColor({1.0, 0, 0, 1.0});
-    material->setCullMode(VROCullMode::None);
-    material->setLightingModel(VROLightingModel::Constant);
-    line->setMaterials({ material });
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
-    material->bindShader(0, {}, driver);
-    material->bindProperties(driver);
 
-    VROMatrix4f parentTransform;
-    line->render(0, material, parentTransform,
-           parentTransform.invert().transpose(), 1.0, renderContext, driver);
+    if (!sPencilMaterial) {
+        sPencilMaterial = std::make_shared<VROMaterial>();
+        sPencilMaterial->getDiffuse().setColor({1.0, 0, 0, 1.0});
+        sPencilMaterial->setCullMode(VROCullMode::None);
+        sPencilMaterial->setLightingModel(VROLightingModel::Constant);
+        sPencilMaterial->setWritesToDepthBuffer(false);
+        sPencilMaterial->setReadsFromDepthBuffer(false);
+        sPencilMaterial->bindShader(0, {}, driver);
+        sPencilMaterial->bindProperties(driver);
+    }
+
+    std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
+    line->setMaterials({ sPencilMaterial });
+
+    sPencilMaterial->bindShader(0, {}, driver);
+    sPencilMaterial->bindProperties(driver);
+    line->render(0, sPencilMaterial, VROMatrix4f::identity(), VROMatrix4f::identity(),
+                 1.0, context, driver);
 }

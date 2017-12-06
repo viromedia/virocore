@@ -14,6 +14,7 @@
 #include "VROPortal.h"
 #include "VROScene.h"
 #include "VRORenderContext.h"
+#include "VROPencil.h"
 #include "VROLight.h"
 #include "VROPortalFrame.h"
 #include "VROShadowMapRenderPass.h" // For drawing light frustra
@@ -40,7 +41,7 @@ VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScen
     driver->setColorWritingEnabled(true);
     target->clearDepthAndColor();
     target->clearStencil(0);
-    
+
     if (kDebugShadowMaps) {
         drawLightFrustra(scene, context, driver);
     }
@@ -48,7 +49,7 @@ VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScen
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
     treeNodes.push_back(scene->getPortalTree());
     render(treeNodes, target, *context, driver);
-    
+
     VRORenderPassInputOutput output;
     output[kRenderTargetSingleOutput] = target;
     

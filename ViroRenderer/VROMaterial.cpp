@@ -216,6 +216,15 @@ void VROMaterial::removeShaderModifier(std::shared_ptr<VROShaderModifier> modifi
     updateSubstrate();
 }
 
+bool VROMaterial::hasShaderModifier(std::shared_ptr<VROShaderModifier> modifier) {
+    for (std::shared_ptr<VROShaderModifier> &candidate : _shaderModifiers) {
+        if (modifier == candidate) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void VROMaterial::removeOutgoingMaterial() {
     _outgoing.reset();
 }
