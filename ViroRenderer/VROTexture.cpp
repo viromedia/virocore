@@ -181,8 +181,8 @@ void VROTexture::setNumSubstrates(int numSubstrates) {
 }
 
 void VROTexture::setSubstrate(int index, std::unique_ptr<VROTextureSubstrate> substrate) {
-    passert_msg(index < _substrates.size(), "Cannot set substrate %d, numSubstrates only %lu",
-                index, _substrates.size());
+    passert_msg(index < _substrates.size(), "Cannot set substrate %d, numSubstrates only %d",
+                index, (int) _substrates.size());
     _substrates[index] = std::move(substrate);
 }
 

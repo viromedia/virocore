@@ -231,7 +231,7 @@ VROVector3f VROInputControllerAR::getNextDragPosition(std::vector<VROARHitTestRe
             // ensure the position is within bounds and is foward wrt the camera forward
             if (isDistanceWithinBounds(cameraPos, featurePointPos) && _latestCamera.getForward().dot(ray) > 0) {
                 float candDistance = _latestCamera.getPosition().distance(featurePointPos);
-                float distanceDiff = abs(_lastDraggedNode->_draggedDistanceFromController - candDistance);
+                float distanceDiff = fabs(_lastDraggedNode->_draggedDistanceFromController - candDistance);
                 if (candDistance > 2 || distanceDiff > _lastDraggedNode->_draggedDistanceFromController
                     || distanceDiff / _lastDraggedNode->_draggedDistanceFromController < .33) {
                     return featurePointPos;
@@ -302,7 +302,7 @@ void VROInputControllerAR::processCenterCameraHitTest() {
             }
 
             //using formula : abs(q1.dot(q2)) > 1-EPS to determine equality of quaternions
-            float quatDotProduct = abs(quaternion.dotProduct(_cameraLastQuaternion));
+            float quatDotProduct = fabs(quaternion.dotProduct(_cameraLastQuaternion));
             if(quatDotProduct <= (1- .000001)) {
                 bCameraChanged = true;
             }
