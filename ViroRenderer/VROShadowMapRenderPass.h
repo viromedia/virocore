@@ -25,15 +25,16 @@ class VROShaderModifier;
 enum class VROSilhouetteFilter;
 
 /*
- Setting this to true enable shadow map debug mode. This will:
- 
- 1. Disable using texture arrays, which limits us to one shadow but
-    enables us to use the Xcode OpenGL snapshot (the snapshot crashes if
-    used with texture arrays).
- 
- 2. Draw the shadow frustum using the VROPencil.
+ Setting this to true enable shadow map debug mode. This willdisable using
+ texture arrays, which limits us to one shadow but enables us to use the
+ Xcode OpenGL snapshot (the snapshot crashes if used with texture arrays).
  */
 const bool kDebugShadowMaps = false;
+
+/*
+ Set to true to use the VROPencil to draw the shadow frustra each frame.
+ */
+const bool kDrawShadowFrusta = false;
 
 /*
  The maximum number of shadow maps allowed. Note that while kMaxLights
@@ -84,9 +85,9 @@ private:
     VROMatrix4f computeLightViewMatrix() const;
 
     /*
-     Debug function to draw the light frustra.
+     Debug function to draw the shadow frusta.
      */
-    void drawLightFrustra(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+    void drawShadowFrusta(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                           std::shared_ptr<VRODriver> &driver);
 };
 

@@ -97,8 +97,8 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     _light->setShadowViewMatrix(shadowView);
     _light->setShadowProjectionMatrix(shadowProjection);
 
-    if (kDebugShadowMaps) {
-        drawLightFrustra(scene, context, driver);
+    if (kDrawShadowFrusta) {
+        drawShadowFrusta(scene, context, driver);
     }
     
     // Restore state
@@ -164,7 +164,7 @@ VROMatrix4f VROShadowMapRenderPass::computeLightViewMatrix() const {
     return VROMathComputeLookAtMatrix(_light->getTransformedPosition(), lightForward, lightUp);
 }
 
-void VROShadowMapRenderPass::drawLightFrustra(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+void VROShadowMapRenderPass::drawShadowFrusta(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                                               std::shared_ptr<VRODriver> &driver) {
     const std::vector<std::shared_ptr<VROLight>> &lights = scene->getLights();
     for (const std::shared_ptr<VROLight> &light : lights) {
