@@ -460,11 +460,32 @@ void VROShaderProgram::bindAttributes() {
 }
 
 void VROShaderProgram::bindUniformBlocks() {
+    // The calls to glUniformBlockBinding link the shader's block index to the binding point.
+    // Within each Viro UBO class we use glBindBuffer base to then link the actual UBO data
+    // the same binding point.
+
     _lightingFragmentBlockIndex = glGetUniformBlockIndex(_program, "lighting_fragment");
+    if (_lightingFragmentBlockIndex != GL_INVALID_INDEX) {
+        glUniformBlockBinding(_program, _lightingFragmentBlockIndex, sLightingFragmentUBOBindingPoint);
+    }
     _lightingVertexBlockIndex = glGetUniformBlockIndex(_program, "lighting_vertex");
+    if (_lightingVertexBlockIndex != GL_INVALID_INDEX) {
+        glUniformBlockBinding(_program, _lightingVertexBlockIndex, sLightingVertexUBOBindingPoint);
+    }
+    
     _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
+    if (_bonesBlockIndex != GL_INVALID_INDEX) {
+        glUniformBlockBinding(_program, _bonesBlockIndex, sBonesUBOBindingPoint);
+    }
+    
     _particlesVertexBlockIndex = glGetUniformBlockIndex(_program, "particles_vertex_data");
+    if (_particlesVertexBlockIndex != GL_INVALID_INDEX) {
+        glUniformBlockBinding(_program, _particlesVertexBlockIndex, sParticleVertexUBOBindingPoint);
+    }
     _particlesFragmentBlockIndex = glGetUniformBlockIndex(_program, "particles_fragment_data");
+    if (_particlesFragmentBlockIndex != GL_INVALID_INDEX) {
+        glUniformBlockBinding(_program, _particlesFragmentBlockIndex, sParticleFragmentUBOBindingPoint);
+    }
 }
 
 void VROShaderProgram::addStandardUniforms() {

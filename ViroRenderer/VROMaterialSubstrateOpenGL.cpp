@@ -53,7 +53,6 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
     driver->bindShader(_activeBinding->getProgram());
 
     if (lights.empty()) {
-        VROLightingUBO::unbind(_activeBinding->getProgram());
         _lightingUBO.reset();
         return;
     }

@@ -80,13 +80,14 @@ class VRODriverOpenGL;
  layout in lighting_general_functions.glsl. We write into _lightingUBO
  whenever the lights change, updating the fields.
  
- The _lightingUBOBindingPoint is similar to a texture unit. It is independent
- of shaders, and there are fixed number of these in our EGL context.
- Every time we create a new UBO *type*, we have to create a new binding point.
- The binding point is re-used for all UBO instances of a specific type. E.g. there is
- one binding point for all bone UBOs, one for all lighting UBOs, etc.
- Before rendering we have to bind our specific UBO to the binding point of
- that UBO's type via glBindBufferBase.
+ The VROShaderProgram::sLightingFragmentUBOBindingPoint is similar to
+ a texture unit. It is independent of shaders, and there are fixed number
+ of these in our EGL context. Every time we create a new UBO *type*, we
+ have to create a new binding point. The binding point is re-used for all
+ UBO instances of a specific type. E.g. there is one binding point for all
+ bone UBOs, one for all lighting UBOs, etc. Before rendering we have to
+ bind our specific UBO to the binding point of that UBO's type via
+ glBindBufferBase.
  
  Finally, the _lightingBlockIndex is *shader-specific*; it's found in 
  VROShaderProgram. It's similar to a shader's uniform location. When we
@@ -101,7 +102,9 @@ class VRODriverOpenGL;
  
  1. We can have multiple batches of lights, each represented by their 
     own UBO. To switch from one batch to another, we just have to call 
-    glUniformBlockBinding, and the shader will now point to a new batch.
+    glBindBuffer. OpenGL will know what binding point corresponds to the
+    buffer (because of glBindBufferBase), and will also know what shader
+    block index corresponds to that binding point (from glUniformBlockBinding).
  
  2. When we update lights, we don't have to update every shader. We just 
     glBufferSubData into the _lightingUBO for each batch that uses those
@@ -118,8 +121,6 @@ class VRODriverOpenGL;
 class VROLightingUBO {
     
 public:
-    
-    static void unbind(std::shared_ptr<VROShaderProgram> &program);
     
     VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights,
                    std::shared_ptr<VRODriverOpenGL> driver);
@@ -149,12 +150,6 @@ public:
     }
     
 private:
-    
-    /*
-     The binding points for lighting parameters in the vertex and fragment shaders.
-     */
-    static int sLightingFragmentUBOBindingPoint;
-    static int sLightingVertexUBOBindingPoint;
     
     int _hash;
     

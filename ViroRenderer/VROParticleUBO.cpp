@@ -15,8 +15,6 @@
 #include "VROParticleEmitter.h"
 
 int VROParticleUBO::sInstances = 0;
-int VROParticleUBO::sUBOVertexBindingPoint = 0;
-int VROParticleUBO::sUBOFragmentBindingPoint = 0;
 GLuint VROParticleUBO::sUBOVertexBufferID = 0;
 GLuint VROParticleUBO::sUBOFragmentBufferID = 0;
 
@@ -29,14 +27,12 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     }
 
     // Set up Vertex UBO;
-    sUBOVertexBindingPoint = std::static_pointer_cast<VRODriverOpenGL>(driver)->generateBindingPoint();
     glGenBuffers(1, &sUBOVertexBufferID);
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Set up Fragment UBO;
-    sUBOFragmentBindingPoint = std::static_pointer_cast<VRODriverOpenGL>(driver)->generateBindingPoint();
     glGenBuffers(1, &sUBOFragmentBufferID);
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), NULL, GL_DYNAMIC_DRAW);
@@ -52,10 +48,7 @@ VROParticleUBO::~VROParticleUBO() {
 
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
-        std::static_pointer_cast<VRODriverOpenGL>(driver)->internBindingPoint(sUBOVertexBindingPoint);
         glDeleteBuffers(1, &sUBOVertexBufferID);
-
-        std::static_pointer_cast<VRODriverOpenGL>(driver)->internBindingPoint(sUBOFragmentBindingPoint);
         glDeleteBuffers(1, &sUBOFragmentBufferID);
     }
 }
@@ -86,23 +79,12 @@ std::vector<std::shared_ptr<VROShaderModifier>>  VROParticleUBO::createInstanceS
     return modifiers;
 }
 
-void VROParticleUBO::unbind(std::shared_ptr<VROShaderProgram> &program) {
-    if (program->hasParticlesVertexBlock()) {
-        glUniformBlockBinding(program->getProgram(), program->getParticlesVertexBlockIndex(), 0);
-    }
-    if (program->hasParticlesFragmentBlock()) {
-       glUniformBlockBinding(program->getProgram(), program->getParticlesFragmentBlockIndex(), 0);
-    }
-}
-
 void VROParticleUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
     if (program->hasParticlesVertexBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, sUBOVertexBindingPoint, sUBOVertexBufferID);
-        glUniformBlockBinding(program->getProgram(), program->getParticlesVertexBlockIndex(), sUBOVertexBindingPoint);
+        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, sUBOVertexBufferID);
     }
     if (program->hasParticlesFragmentBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, sUBOFragmentBindingPoint, sUBOFragmentBufferID);
-        glUniformBlockBinding(program->getProgram(), program->getParticlesFragmentBlockIndex(), sUBOFragmentBindingPoint);
+        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, sUBOFragmentBufferID);
     }
 }
 

@@ -325,28 +325,6 @@ public:
         return lightingUBO;
     }
     
-    /*
-     Generate a new binding point for a UBO.
-     */
-    int generateBindingPoint() {
-        if (!_bindingPoints.empty()) {
-            int gen = _bindingPoints.back();
-            _bindingPoints.pop_back();
-            
-            return gen;
-        }
-        else {
-            return ++_bindingPointGenerator;
-        }
-    }
-
-    /*
-     Return a binding point that is no longer needed.
-     */
-    void internBindingPoint(int bindingPoint) {
-        _bindingPoints.push_back(bindingPoint);
-    }
-    
     std::unique_ptr<VROShaderFactory> &getShaderFactory() {
         return _shaderFactory;
     }
@@ -360,14 +338,6 @@ protected:
 
 private:
     
-    /*
-     List of unused binding points. Binding points bind a UBO to the OpenGL context. 
-     They are shader program independent (are shared across programs). These are
-     generated incrementally, but returned to this list whenever a UBO is destroyed.
-     */
-    std::list<int> _bindingPoints;
-    int _bindingPointGenerator = 0;
-
     /*
      Map of light hashes to corresponding lighting UBOs.
      */

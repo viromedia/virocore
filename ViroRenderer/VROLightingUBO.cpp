@@ -13,9 +13,6 @@
 #include "VROShaderProgram.h"
 #include "VRODriverOpenGL.h"
 
-int VROLightingUBO::sLightingVertexUBOBindingPoint = 0;
-int VROLightingUBO::sLightingFragmentUBOBindingPoint = 0;
-
 VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights,
                                std::shared_ptr<VRODriverOpenGL> driver) :
     _hash(hash),
@@ -23,11 +20,6 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
     _driver(driver),
     _needsFragmentUpdate(false),
     _needsVertexUpdate(false) {
-        
-    if (sLightingVertexUBOBindingPoint == 0) {
-        sLightingFragmentUBOBindingPoint = driver->generateBindingPoint();
-        sLightingVertexUBOBindingPoint = driver->generateBindingPoint();
-    }
 
     // Initialize the fragment VBO
     glGenBuffers(1, &_lightingFragmentUBO);
@@ -53,15 +45,6 @@ VROLightingUBO::~VROLightingUBO() {
     }
 }
 
-void VROLightingUBO::unbind(std::shared_ptr<VROShaderProgram> &program) {
-    if (program->hasLightingFragmentBlock()) {
-        glUniformBlockBinding(program->getProgram(), program->getLightingFragmentBlockIndex(), 0);
-    }
-    if (program->hasLightingVertexBlock()) {
-        glUniformBlockBinding(program->getProgram(), program->getLightingVertexBlockIndex(), 0);
-    }
-}
-
 void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
     if (_needsFragmentUpdate) {
         updateLightsFragment();
@@ -70,12 +53,10 @@ void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
         updateLightsVertex();
     }
     if (program->hasLightingFragmentBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
-        glUniformBlockBinding(program->getProgram(), program->getLightingFragmentBlockIndex(), sLightingFragmentUBOBindingPoint);
+        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
     }
     if (program->hasLightingVertexBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, sLightingVertexUBOBindingPoint, _lightingVertexUBO);
-        glUniformBlockBinding(program->getProgram(), program->getLightingVertexBlockIndex(), sLightingVertexUBOBindingPoint);
+        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
     }
 }
 

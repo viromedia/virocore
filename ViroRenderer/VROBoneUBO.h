@@ -55,8 +55,7 @@ class VROBoneUBO {
 public:
     
     static std::shared_ptr<VROShaderModifier> createSkinningShaderModifier(bool hasScaling);
-    static void unbind(std::shared_ptr<VROShaderProgram> &program);
-    
+
     VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROBoneUBO();
     
@@ -72,11 +71,6 @@ public:
     void update(const std::unique_ptr<VROSkinner> &skinner);
     
 private:
-    
-    /*
-     The binding point for bone parameters.
-     */
-    static int sBonesUBOBindingPoint;
     
     /*
      The uniform buffer object ID.

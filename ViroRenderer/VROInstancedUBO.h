@@ -31,10 +31,9 @@ public:
     virtual ~VROInstancedUBO(){};
 
     /*
-     Functions for Binding / unbinding UBOs to the currently active shader program.
+     Functions for binding UBOs to the currently active shader program.
      */
     virtual void bind(std::shared_ptr<VROShaderProgram> &program) = 0;
-    virtual void unbind(std::shared_ptr<VROShaderProgram> &program) = 0;
 
     /*
      Creates fragment and/or vertex shader modifiers to process per-instance data bounded
