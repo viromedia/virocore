@@ -148,9 +148,6 @@ public:
                   VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
                   VROVector3f cameraPosition, VROEyeType eyeType);
     
-    void bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO);
-    void bindInstanceUBO(const std::shared_ptr<VROInstancedUBO> &instancedUBO);
-
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         passert (_activeBinding != nullptr);
         return _activeBinding->getTextures();

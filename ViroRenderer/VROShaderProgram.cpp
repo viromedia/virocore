@@ -323,7 +323,6 @@ bool VROShaderProgram::compileAndLink() {
         pabort("Failed to link program %d, name %s", _program, _shaderName.c_str());
         return false;
     }
-    bindUniformBlocks();
 
     /*
      Release vertex and fragment shaders.
@@ -352,6 +351,7 @@ bool VROShaderProgram::bind() {
 
     // Bind uniform locations here, if required.
     if (_uniformsNeedRebind) {
+        bindUniformBlocks();
         findUniformLocations();
         _uniformsNeedRebind = false;
     }

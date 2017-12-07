@@ -44,7 +44,7 @@ public:
     VROParticleUBO(std::shared_ptr<VRODriver> driver);
     virtual ~VROParticleUBO();
 
-    void bind(std::shared_ptr<VROShaderProgram> &program);
+    void bind();
     std::vector<std::shared_ptr<VROShaderModifier>> createInstanceShaderModifier();
 
     /*

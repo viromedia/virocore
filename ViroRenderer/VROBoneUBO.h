@@ -60,9 +60,9 @@ public:
     virtual ~VROBoneUBO();
     
     /*
-     Bind this bone UBO into the "bones" block for the given program.
+     Bind this bone UBO into the bones binding point.
      */
-    void bind(std::shared_ptr<VROShaderProgram> &program);
+    void bind();
     
     /*
      Update the data in this UBO with the latest transformation 

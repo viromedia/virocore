@@ -94,10 +94,8 @@ VROBoneUBO::~VROBoneUBO() {
     }
 }
 
-void VROBoneUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
-    if (program->hasBonesBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sBonesUBOBindingPoint, _bonesUBO);
-    }
+void VROBoneUBO::bind() {
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sBonesUBOBindingPoint, _bonesUBO);
 }
 
 void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {

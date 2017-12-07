@@ -57,8 +57,6 @@ std::vector<std::shared_ptr<VROShaderModifier>>  VROParticleUBO::createInstanceS
             "_transforms.model_matrix = particles_vertex_transform[v_instance_id];",
     };
 
-
-
     // Note: A surface modifier is used here due to a bug in adding shader modifier code:
     // This is because bloom effects are applied before this code is run, resulting in
     // undesired effects. To get around that, we apply a surface modifier instead.
@@ -77,13 +75,9 @@ std::vector<std::shared_ptr<VROShaderModifier>>  VROParticleUBO::createInstanceS
     return modifiers;
 }
 
-void VROParticleUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
-    if (program->hasParticlesVertexBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, sUBOVertexBufferID);
-    }
-    if (program->hasParticlesFragmentBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, sUBOFragmentBufferID);
-    }
+void VROParticleUBO::bind() {
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, sUBOVertexBufferID);
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, sUBOFragmentBufferID);
 }
 
 int VROParticleUBO::getNumberOfDrawCalls() {

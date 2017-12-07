@@ -250,17 +250,16 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         pglpush("Geometry [%s]", geoName.c_str());
     }
     
-    VROGeometryElementOpenGL element = _elements[elementIndex];
-    
-    VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     if (_boneUBO) {
-        substrate->bindBoneUBO(_boneUBO);
+        _boneUBO->bind();
     }
-
     const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
     if (instancedUBO != nullptr) {
-        substrate->bindInstanceUBO(instancedUBO);
+        instancedUBO->bind();
     }
+
+    VROGeometryElementOpenGL element = _elements[elementIndex];
+    VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                         context.getCamera().getPosition(), context.getEyeType());
     
@@ -345,12 +344,11 @@ void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
     pglpush("Silhouette [%s]", geometry.getName().c_str());
     for (int i = 0; i < geometry.getGeometryElements().size(); i++) {
         VROGeometryElementOpenGL &element = _elements[i];
-        
-        VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
         if (_boneUBO) {
-            substrate->bindBoneUBO(_boneUBO);
+            _boneUBO->bind();
         }
         
+        VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
         substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                             context.getCamera().getPosition(), context.getEyeType());
         
@@ -383,12 +381,16 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     
     pglpush("Silhouette [%s]", geometry.getName().c_str());
     
-    VROGeometryElementOpenGL &element = _elements[elementIndex];
-    VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     if (_boneUBO) {
-        substrate->bindBoneUBO(_boneUBO);
+        _boneUBO->bind();
+    }
+    const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
+    if (instancedUBO != nullptr) {
+        instancedUBO->bind();
     }
     
+    VROGeometryElementOpenGL &element = _elements[elementIndex];
+    VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                         context.getCamera().getPosition(), context.getEyeType());
     

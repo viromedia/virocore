@@ -43,18 +43,18 @@ VROLightingUBO::~VROLightingUBO() {
     }
 }
 
-void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
+void VROLightingUBO::bind() {
     if (_needsFragmentUpdate) {
         updateLightsFragment();
     }
-    else if (program->hasLightingFragmentBlock()) {
+    else {
         glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
     }
         
     if (_needsVertexUpdate) {
         updateLightsVertex();
     }
-    else if (program->hasLightingVertexBlock()) {
+    else {
         glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
     }
 }

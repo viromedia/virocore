@@ -126,9 +126,9 @@ public:
     virtual ~VROLightingUBO();
     
     /*
-     Bind this lighting UBO into the "lighting" block for the given program.
+     Bind this lighting UBO into the lighting binding points.
      */
-    void bind(std::shared_ptr<VROShaderProgram> &program);
+    void bind();
     
     /*
      Invoke to indicate that a light in this UBO has changed. When this occurs

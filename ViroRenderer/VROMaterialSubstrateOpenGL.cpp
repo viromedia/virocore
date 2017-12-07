@@ -69,7 +69,7 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
             _lightingUBO = glDriver.createLightingUBO(lightsHash, lights);
         }
     }
-    _lightingUBO->bind(_activeBinding->getProgram());
+    _lightingUBO->bind();
 }
 
 void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,
@@ -78,16 +78,6 @@ void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f v
     passert(_activeBinding != nullptr);
     _activeBinding->bindViewUniforms(modelMatrix, viewMatrix, projectionMatrix, normalMatrix,
                                      cameraPosition, eyeType);
-}
-
-void VROMaterialSubstrateOpenGL::bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO) {
-    passert(_activeBinding != nullptr);
-    boneUBO->bind(_activeBinding->getProgram());
-}
-
-void VROMaterialSubstrateOpenGL::bindInstanceUBO(const std::shared_ptr<VROInstancedUBO> &instanceUBO) {
-    passert(_activeBinding != nullptr);
-    instanceUBO->bind(_activeBinding->getProgram());
 }
 
 #pragma mark - Updating Sort Key and Textures
