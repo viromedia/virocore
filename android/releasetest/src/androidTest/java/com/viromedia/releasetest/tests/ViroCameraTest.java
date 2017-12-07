@@ -4,12 +4,17 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 
 import com.viro.core.AmbientLight;
+import com.viro.core.Animation;
+import com.viro.core.AnimationTimingFunction;
+import com.viro.core.AnimationTransaction;
 import com.viro.core.Box;
+import com.viro.core.CameraListener;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Quaternion;
 import com.viro.core.Renderer;
+import com.viro.core.Text;
 import com.viro.core.Vector;
 import com.viro.core.Camera;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
@@ -17,6 +22,7 @@ import com.viromedia.releasetest.ViroReleaseTestActivity;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 
 public class ViroCameraTest extends ViroBaseTest {
     private Camera mCamera;
@@ -60,6 +66,7 @@ public class ViroCameraTest extends ViroBaseTest {
         testCameraOrbitMode();
         testCameraRotationQuaternion();
         testCameraRotationEuler();
+        testCameraCalbacks();
     }
 
     private void testCameraOrbitMode() {
@@ -119,6 +126,46 @@ public class ViroCameraTest extends ViroBaseTest {
         q.y = (float)((cy * cr * sp) + (sy * sr * cp));
         q.z = (float)((sy * cr * cp) - (cy * sr * sp));
         return q;
+    }
+
+    private void testCameraCalbacks(){
+        Text output = new Text(mViroView.getViroContext(), "",
+                "Roboto", 18, Color.WHITE, 9f, 2f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 4);
+
+        Node textNode = new Node();
+        textNode.setGeometry(output);
+        textNode.setRotationPivot(new Vector(-4,0,0));
+        textNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD));
+        mScene.getRootNode().addChildNode(textNode);
+        textNode.setPosition(new Vector(0f, 4f, -3.3f));
+
+        // Set the camera at preset positions
+        mCamera.setPosition(new Vector(0, 0, 0));
+        mCamera.setRotation(new Vector(0,Math.toRadians(0),0));
+
+        // Animate the camera
+        AnimationTransaction.begin();
+        AnimationTransaction.setAnimationDuration(20000);
+        AnimationTransaction.setTimingFunction(AnimationTimingFunction.Linear);
+        mCamera.setPosition(new Vector(0, 5, 0));
+        mCamera.setRotation(new Vector(0,Math.toRadians(45),0));
+        AnimationTransaction transaction = AnimationTransaction.commit();
+
+        // Listen for camera transformation updates as the camera animates
+        mViroView.setCameraListener(new CameraListener() {
+            @Override
+            public void onTransformUpdate(Vector pos, Vector rot, Vector forward) {
+                Vector ro2 = new Vector(0,Math.toDegrees(rot.y), 0);
+                String msg = "You should see the position and rotation of the camera animate increase\n Pos: " + pos.toString() + " Rot: " + ro2.toString();
+                output.setText(msg);
+            }
+        });
+
+        assertPass("Camera position Changes.", ()->{mCamera.setPosition(new Vector(0, 0, 0));});
+        transaction.terminate();
+        textNode.removeFromParentNode();
+        textNode.dispose();
     }
 }
 
