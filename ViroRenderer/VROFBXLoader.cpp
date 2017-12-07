@@ -122,24 +122,12 @@ void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType typ
             std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
             std::string base = resource.substr(0, resource.find_last_of('/'));
 
-            // TODO VIRO-2286 Determine why asynchronous FBX loading breaks OVR
-            if (VROPlatformGetType() == VROPlatformType::AndroidOVR) {
-                VROPlatformDispatchAsyncRenderer([node, path, base, isTemp, type, onFinish] {
-                    std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
-                    injectFBX(fbxNode, node, onFinish);
-                    if (isTemp) {
-                        VROPlatformDeleteFile(path);
-                    }
-                });
-            }
-            else {
-                std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
-                VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
-                    injectFBX(fbxNode, node, onFinish);
-                });
-                if (isTemp) {
-                    VROPlatformDeleteFile(path);
-                }
+            std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
+            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
+                injectFBX(fbxNode, node, onFinish);
+            });
+            if (isTemp) {
+                VROPlatformDeleteFile(path);
             }
         });
     }
@@ -168,25 +156,12 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
 
             // Note: since we're loading from resources, that meant that we copied the resources over to
             // a local file and so, the new type (from here on out) is LocalFile
-
-            // TODO VIRO-2286 Determine why asynchronous FBX loading breaks OVR
-            if (VROPlatformGetType() == VROPlatformType::AndroidOVR) {
-                VROPlatformDispatchAsyncRenderer([node, path, isTemp, fileMap, onFinish] {
-                    std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
-                    injectFBX(fbxNode, node, onFinish);
-                    if (isTemp) {
-                        VROPlatformDeleteFile(path);
-                    }
-                });
-            }
-            else {
-                std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
-                VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
-                    injectFBX(fbxNode, node, onFinish);
-                });
-                if (isTemp) {
-                    VROPlatformDeleteFile(path);
-                }
+            std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
+            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
+                injectFBX(fbxNode, node, onFinish);
+            });
+            if (isTemp) {
+                VROPlatformDeleteFile(path);
             }
         });
     }
