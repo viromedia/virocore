@@ -209,13 +209,22 @@ public class ViroViewGVR extends ViroView {
 
     private void init(final Context context, final RendererStartListener rendererStartListener, final Runnable vrExitListener) {
         mGVRLayout = new GvrLayout(context);
+
+        // Turn on async reprojection (which skews existing frames and fills them in when we're
+        // dropping under 60 FPS). Async reprojection is only available on Daydream-enabled devices.
+        // This must be set prior to GVR initialization.
+        // TODO VIRO-2269 Async reprojection is causing shadowing issues, so it's disabled here
+        //                by using if (false)
+        if (false && mGVRLayout.setAsyncReprojectionEnabled(true)) {
+            // Scanline racing decouples the app framerate from the display framerate,
+            // allowing immersive interaction even at the throttled clockrates set by
+            // sustained performance mode.
+            AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
+        }
         addView(mGVRLayout);
 
         final Context activityContext = getContext();
-
-        // Initialize the native renderer.
         final GLSurfaceView glSurfaceView = createSurfaceView();
-
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
                 new GLSurfaceViewQueue(glSurfaceView),
@@ -228,47 +237,31 @@ public class ViroViewGVR extends ViroView {
                 mAssetManager, mPlatformUtil,
                 mGVRLayout.getGvrApi().getNativeGvrContext());
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
-
         mRenderStartListener = rendererStartListener;
+
+        // We want Android's VR mode on as long as the app is in either release or the device
+        // is using Daydream. We don't want this on in Debug mode because it this option turns
+        // off the "Draw over other apps" permission that React Native requires during development.
+        // The renderer (library) is always in release, so we use BuildInfo to check the debug
+        // status of the app we're compiled into.
+        if (!BuildInfo.isDebug(context) || !getHeadset().equalsIgnoreCase("cardboard")) {
+            // According to the GVR documentation, this only sets the activity to "VR mode" and is only
+            // supported on Android Nougat and up.
+            AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
+        }
 
         // Add the GLSurfaceView to the GvrLayout.
         mGVRLayout.setPresentationView(glSurfaceView);
 
-        // We want Android's VR mode on as long as the app is in either release or the device
-        // is using Daydream. The renderer (library) is always in release, so we use BuildInfo to
-        // check the debug status of the app we're compiled into.
-        if (!BuildInfo.isDebug(context) || !getHeadset().equalsIgnoreCase("cardboard")) {
-            // According to the GVR documentation, this only sets the activity to "VR mode" and is only
-            // supported on Android Nougat and up.
-            // NOTE: this turns off "Draw over other apps" permissions that React Native needs in debug
-            AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
-        }
-
-        // Turn on async reprojection (which skews existing frames and fills them in when we're
-        // dropping under 60 FPS). Async reprojection is only available on Daydream-enabled devices.
-        // If we're using a fixed pointer, then do *not* use async reprojection, because it not
-        // compatible with any HUD elements: it makes them wobble.
-
-        // TODO VIRO-2269 Async reprojection is causing shadowing issues, so it's disabled here
-        //                by using if (false)
-        if (false && getControllerType().equalsIgnoreCase("daydream")){
-            if (mGVRLayout.setAsyncReprojectionEnabled(true)) {
-                // Scanline racing decouples the app framerate from the display framerate,
-                // allowing immersive interaction even at the throttled clockrates set by
-                // sustained performance mode.
-                AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
-            }
-        }
-
-        final Activity activity = (Activity) getContext();
-
         // Prevent screen from dimming/locking.
+        final Activity activity = (Activity) getContext();
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (vrExitListener != null) {
             mGVRLayout.getUiLayout().setCloseButtonListener(vrExitListener);
         }
-        // default the mode to VR
+
+        // Default the mode to VR
         setVRModeEnabled(true);
 
         if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
