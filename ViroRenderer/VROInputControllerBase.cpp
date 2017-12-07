@@ -170,13 +170,6 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     // Trigger orientation delegate callbacks within the scene.
     processOnFuseEvent(source, _hitResult->getNode());
 
-    std::shared_ptr<VRONode> gazableNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnHover,
-                                                                _hitResult->getNode());
-    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
-        delegate->onGazeHit(source, gazableNode, *_hitResult.get());
-    }
-    processGazeEvent(source, gazableNode);
-
     std::shared_ptr<VRONode> movableNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove,
                                                                 _hitResult->getNode());
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
@@ -324,7 +317,13 @@ void VROInputControllerBase::onScroll(int source, float x, float y) {
     }
 }
 
-void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONode> newNode) {
+void VROInputControllerBase::processGazeEvent(int source) {
+    std::shared_ptr<VRONode> newNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnHover,
+                                                                _hitResult->getNode());
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onGazeHit(source, newNode, *_hitResult.get());
+    }
+
     if (_lastHoveredNode == newNode) {
         return;
     }
@@ -334,7 +333,7 @@ void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONod
     if (_hitResult->isBackgroundHit()) {
         pos.clear();
     }
-    
+
     if (newNode && newNode->getEventDelegate()) {
         std::shared_ptr<VROEventDelegate> delegate = newNode->getEventDelegate();
         if (delegate) {

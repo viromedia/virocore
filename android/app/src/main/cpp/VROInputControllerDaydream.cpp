@@ -129,6 +129,7 @@ void VROInputControllerDaydream::updateOrientation(const VROCamera &camera) {
 
     // Process orientation and update delegates
     VROInputControllerBase::onMove(ViroDayDream::InputSource::Controller, controllerPosition, rotation, forwardVector);
+    VROInputControllerBase::processGazeEvent(ViroOculus::InputSource::Controller);
 }
 
 // Tilt the controller forwards by 15 degrees as required by Daydream.

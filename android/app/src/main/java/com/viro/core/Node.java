@@ -1270,7 +1270,8 @@ public class Node implements EventDelegate.EventDelegateCallback {
     @Override
     public void onHover(int source, Node node, boolean isHovering, float[] hitLoc) {
         if (mHoverListener != null) {
-            mHoverListener.onHover(source, node, isHovering, new Vector(hitLoc));
+            Vector hitLocVec = hitLoc != null ? new Vector(hitLoc) : null;
+            mHoverListener.onHover(source, node, isHovering, hitLocVec);
         }
     }
     /**

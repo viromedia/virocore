@@ -68,4 +68,5 @@ void VROInputControllerOVR::onProcess(const VROCamera &camera) {
 
     // Process orientation and update delegates
     VROInputControllerBase::onMove(ViroOculus::InputSource::Controller, camera.getPosition(), rotation, controllerForward);
+    VROInputControllerBase::processGazeEvent(ViroOculus::InputSource::Controller);
 }

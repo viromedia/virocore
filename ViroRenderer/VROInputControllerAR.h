@@ -108,7 +108,8 @@ protected:
      to determine where the object should go based on the real world.
      */
     virtual void processDragging(int source);
-    
+    virtual void processGazeEvent(int source);
+
 private:
     float _viewportWidth;
     float _viewportHeight;

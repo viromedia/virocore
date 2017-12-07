@@ -212,7 +212,14 @@ protected:
     std::set<std::shared_ptr<VROEventDelegate>> _delegates;
     
     std::shared_ptr<VROScene> _scene;
-    
+
+    /*
+     Returns the hit test result for the closest node that was hit.
+     */
+    VROHitTestResult hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly);
+
+    virtual void processGazeEvent(int source);
+
 private:
     
     /*
@@ -242,18 +249,11 @@ private:
     std::shared_ptr<VRONode> _lastHoveredNode;
 
     /*
-     Returns the hit test result for the closest node that was hit.
-     */
-    VROHitTestResult hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly);
-
-    /*
      Returns the first node that is able to handle the event action by bubbling it up.
      If nothing is able to handle the event, nullptr is returned.
      */
     std::shared_ptr<VRONode> getNodeToHandleEvent(VROEventDelegate::EventAction action,
                                                   std::shared_ptr<VRONode> startingNode);
-
-    void processGazeEvent(int source, std::shared_ptr<VRONode> node);
 
     /*
      Current node that we are fusing on.

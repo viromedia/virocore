@@ -30,6 +30,7 @@ void VROInputControllerAR::onProcess(const VROCamera &camera) {
     processTouchMovement();
     processCenterCameraHitTest();
     notifyARPointCloud();
+    processGazeEvent(ViroCardBoard::InputSource::Controller);
 }
 
 void VROInputControllerAR::onRotateStart(VROVector3f touchPos) {
@@ -383,3 +384,19 @@ VROVector3f VROInputControllerAR::calculateCameraRay(VROVector3f touchPos) {
     return (resultFar - resultNear).normalize();
 }
 
+
+void VROInputControllerAR::processGazeEvent(int source) {
+    if (_scene == nullptr){
+        return;
+    }
+
+    std::shared_ptr<VROHitTestResult> result = _hitResult;
+
+    _hitResult = std::make_shared<VROHitTestResult>(
+            hitTest(_latestCamera, _latestCamera.getPosition(), _latestCamera.getForward(), false));
+
+    VROInputControllerBase::processGazeEvent(ViroCardBoard::InputSource::Controller);
+
+    // Restore the hit result.
+    _hitResult = result;
+}
