@@ -85,7 +85,6 @@ VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
     glGenBuffers(1, &_bonesUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 VROBoneUBO::~VROBoneUBO() {
@@ -146,7 +145,6 @@ void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
     
     glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROBonesData), &data);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     
     pglpop();
 }

@@ -102,9 +102,8 @@ class VRODriverOpenGL;
  
  1. We can have multiple batches of lights, each represented by their 
     own UBO. To switch from one batch to another, we just have to call 
-    glBindBuffer. OpenGL will know what binding point corresponds to the
-    buffer (because of glBindBufferBase), and will also know what shader
-    block index corresponds to that binding point (from glUniformBlockBinding).
+    glBindBufferBase. OpenGL will know what what shader block index corresponds
+    to that binding point (from glUniformBlockBinding).
  
  2. When we update lights, we don't have to update every shader. We just 
     glBufferSubData into the _lightingUBO for each batch that uses those

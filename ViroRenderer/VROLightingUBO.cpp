@@ -25,13 +25,11 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
     glGenBuffers(1, &_lightingFragmentUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, _lightingFragmentUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
             
     // Initialize the vertex VBO
     glGenBuffers(1, &_lightingVertexUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, _lightingVertexUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
         
     updateLightsFragment();
     updateLightsVertex();
@@ -49,13 +47,14 @@ void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
     if (_needsFragmentUpdate) {
         updateLightsFragment();
     }
+    else if (program->hasLightingFragmentBlock()) {
+        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
+    }
+        
     if (_needsVertexUpdate) {
         updateLightsVertex();
     }
-    if (program->hasLightingFragmentBlock()) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
-    }
-    if (program->hasLightingVertexBlock()) {
+    else if (program->hasLightingVertexBlock()) {
         glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
     }
 }
@@ -96,9 +95,8 @@ void VROLightingUBO::updateLightsFragment() {
     
     ambientLight.toArray(data.ambient_light_color);
     
-    glBindBuffer(GL_UNIFORM_BUFFER, _lightingFragmentUBO);
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingFragmentData), &data);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     
     pglpop();
     _needsFragmentUpdate = false;
@@ -124,9 +122,8 @@ void VROLightingUBO::updateLightsVertex() {
         vertexData.num_lights++;
     }
     
-    glBindBuffer(GL_UNIFORM_BUFFER, _lightingVertexUBO);
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingVertexData), &vertexData);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     
     pglpop();
     _needsVertexUpdate = false;

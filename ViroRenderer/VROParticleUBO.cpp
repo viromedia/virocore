@@ -30,13 +30,11 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     glGenBuffers(1, &sUBOVertexBufferID);
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Set up Fragment UBO;
     glGenBuffers(1, &sUBOFragmentBufferID);
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     _lastKnownBoundingBox = VROBoundingBox(0,0,0,0,0,0);
 }
 
@@ -130,13 +128,11 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
     pglpush("Particles");
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOVertexData), &batchedData);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     pglpop();
 
     pglpush("ParticlesFragment");
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOFragmentData), &batchedDataFragment);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     pglpop();
     return end - start;
 }
