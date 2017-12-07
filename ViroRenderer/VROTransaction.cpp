@@ -101,8 +101,7 @@ void VROTransaction::setAnimationLoop(bool loop) {
     if (!animation) {
         pabort();
     }
-
-    animation -> _loop = loop;
+    animation->_loop = loop;
 }
 
 float VROTransaction::getAnimationDuration() {
@@ -215,7 +214,8 @@ VROTransaction::VROTransaction() :
         _t(0),
         _durationSeconds(0),
         _startTimeSeconds(0),
-        _delayTimeSeconds(0){
+        _delayTimeSeconds(0),
+        _loop(false) {
     _timingFunction = std::unique_ptr<VROTimingFunction>(new VROTimingFunctionLinear());
 }
 

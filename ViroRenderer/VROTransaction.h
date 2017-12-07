@@ -98,8 +98,8 @@ public:
     static void setAnimationDelay(float delaySeconds);
 
     /*
-     * Set to true to make this transaction automatically loop to the beginning on finish.
-     * In effect - reset _time to beginning of animation onFinish if _loop is set.
+     Set to true to make this transaction automatically loop to the beginning on finish.
+     In effect - reset _time to beginning of animation onFinish if _loop is set.
      */
     static void setAnimationLoop(bool loop);
 
