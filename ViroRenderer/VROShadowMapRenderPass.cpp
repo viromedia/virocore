@@ -96,6 +96,10 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     // Store generated shadow map properties in the VROLight
     _light->setShadowViewMatrix(shadowView);
     _light->setShadowProjectionMatrix(shadowProjection);
+
+    if (kDebugShadowMaps) {
+        drawLightFrustra(scene, context, driver);
+    }
     
     // Restore state
     driver->setColorWritingEnabled(true);
@@ -158,4 +162,15 @@ VROMatrix4f VROShadowMapRenderPass::computeLightViewMatrix() const {
     VROVector3f lightUp = rotateX.multiply(lightForward);
     
     return VROMathComputeLookAtMatrix(_light->getTransformedPosition(), lightForward, lightUp);
+}
+
+void VROShadowMapRenderPass::drawLightFrustra(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                              std::shared_ptr<VRODriver> &driver) {
+    const std::vector<std::shared_ptr<VROLight>> &lights = scene->getLights();
+    for (const std::shared_ptr<VROLight> &light : lights) {
+        if (!light->getCastsShadow()) {
+            continue;
+        }
+        light->drawLightFrustum(context->getPencil());
+    }
 }

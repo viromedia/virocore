@@ -305,8 +305,6 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
        // }
     }
 
-    _context->getPencil()->render(*_context.get(), driver);
-    
     // This unbinds the last shader to even out our pglpush and pops
     driver->unbindShader();
     pglpop();

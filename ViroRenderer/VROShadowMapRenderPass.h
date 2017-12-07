@@ -82,6 +82,12 @@ private:
     
     VROMatrix4f computeLightProjectionMatrix() const;
     VROMatrix4f computeLightViewMatrix() const;
+
+    /*
+     Debug function to draw the light frustra.
+     */
+    void drawLightFrustra(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                          std::shared_ptr<VRODriver> &driver);
 };
 
 #endif /* VROShadowMapRenderPass_h */
