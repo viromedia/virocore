@@ -56,7 +56,7 @@ std::shared_ptr<VROTransaction> VROTransaction::commit() {
     return animation;
 }
 
-void VROTransaction::setFinishCallback(std::function<void ()> finishCallback) {
+void VROTransaction::setFinishCallback(std::function<void (bool terminate)> finishCallback) {
     std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
         pabort();
@@ -185,7 +185,7 @@ void VROTransaction::update() {
             // if _loop set, reset _t to 0 (done inside processAnimations(percent)
             if (transaction->_loop) {
                 if (transaction -> _finishCallback) {
-                    transaction -> _finishCallback();
+                    transaction -> _finishCallback(false);
                 }
                 transaction->_startTimeSeconds = VROTimeCurrentSeconds();
                 transaction->processAnimations(0);
@@ -235,7 +235,7 @@ void VROTransaction::onTermination() {
         animation->onTermination();
     }
     if (_finishCallback) {
-        _finishCallback();
+        _finishCallback(true);
     }
 }
 

@@ -151,7 +151,7 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
             VROTransaction::setAnimationDuration(.1);
             draggedNode->setPosition(position);
             std::weak_ptr<VRONode> weakNode = draggedNode;
-            VROTransaction::setFinishCallback([weakNode]() {
+            VROTransaction::setFinishCallback([weakNode](bool terminate) {
                 std::shared_ptr<VRONode> strongNode = weakNode.lock();
                 if (strongNode) {
                     strongNode->setIsAnimatingDrag(false);

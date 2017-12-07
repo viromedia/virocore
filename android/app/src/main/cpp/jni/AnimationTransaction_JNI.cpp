@@ -22,32 +22,20 @@ JNI_METHOD(long, nativeBegin)(JNIEnv *env, jclass clazz) {
 }
 
 JNI_METHOD(void, nativeCommit)(JNIEnv *env, jclass clazz, jobject obj) {
-    jweak obj_w = env->NewWeakGlobalRef(obj);
-    VROPlatformDispatchAsyncRenderer([obj_w] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject obj_s = env->NewLocalRef(obj_w);
-        if (obj_s == NULL) {
-            env->DeleteWeakGlobalRef(obj_w);
-            return;
-        }
+    jobject jGlobalObj = env->NewGlobalRef(obj);
+    VROPlatformDispatchAsyncRenderer([jGlobalObj] {
 
-        jobject obj_w2 = env->NewWeakGlobalRef(obj_s);
-        VROTransaction::setFinishCallback([obj_w2] {
-            VROPlatformDispatchAsyncApplication([obj_w2] {
+        VROTransaction::setFinishCallback([jGlobalObj](bool terminate) {
+
+            VROPlatformDispatchAsyncApplication([jGlobalObj, terminate] {
                 JNIEnv *env = VROPlatformGetJNIEnv();
-                jobject obj_s2 = env->NewLocalRef(obj_w2);
-                if (obj_s2 == NULL) {
-                    env->DeleteWeakGlobalRef(obj_w2);
-                    return;
+                VROPlatformCallJavaFunction(jGlobalObj, "onAnimationFinished", "()V");
+                if (terminate) {
+                    env->DeleteGlobalRef(jGlobalObj);
                 }
-
-                VROPlatformCallJavaFunction(obj_s2, "onAnimationFinished", "()V");
-                env->DeleteLocalRef(obj_s2);
             });
         });
         VROTransaction::commit();
-        env->DeleteWeakGlobalRef(obj_w);
-        env->DeleteLocalRef(obj_s);
     });
 }
 

@@ -80,7 +80,7 @@ void VROAnimationGroup::execute(std::shared_ptr<VRONode> node,
     animateRotation(node);
 
     std::weak_ptr<VROAnimationGroup> weakSelf = shared_from_this();
-    VROTransaction::setFinishCallback([weakSelf, onFinished]{
+    VROTransaction::setFinishCallback([weakSelf, onFinished](bool terminate){
         std::shared_ptr<VROAnimationGroup> group = weakSelf.lock();
         if (group) {
             group->_transaction.reset();

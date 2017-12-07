@@ -97,7 +97,7 @@ void VROActionAnimated::execute(VRONode *node) {
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(_duration);
     VROTransaction::setTimingFunction(_timingFunctionType);
-    VROTransaction::setFinishCallback([shared, node]() {
+    VROTransaction::setFinishCallback([shared, node](bool terminate) {
         if (shared->shouldRepeat()) {
             node->runAction(shared);
         }

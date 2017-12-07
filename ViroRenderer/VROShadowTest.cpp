@@ -104,7 +104,7 @@ void VROShadowTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronize
     boxNode->setPositionZ(-2.75);
     boxNode->setPositionY(-2.75);
     boxNode->setRotationEulerX(M_PI_2);
-    VROTransaction::setFinishCallback([boxNode] {
+    VROTransaction::setFinishCallback([boxNode](bool terminate) {
         VROTransaction::begin();
         VROTransaction::setAnimationDelay(2);
         VROTransaction::setAnimationDuration(10);

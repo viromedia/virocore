@@ -63,7 +63,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     }
     
     std::weak_ptr<VROSkeletalAnimation> weakSelf = shared_from_this();
-    VROTransaction::setFinishCallback([weakSelf, onFinished]{
+    VROTransaction::setFinishCallback([weakSelf, onFinished](bool terminate){
         std::shared_ptr<VROSkeletalAnimation> skeletal = weakSelf.lock();
         if (skeletal) {
             skeletal->_transaction.reset();

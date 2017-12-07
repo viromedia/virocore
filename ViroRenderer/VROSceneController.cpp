@@ -80,7 +80,7 @@ void VROSceneController::startIncomingTransition(float duration, VROTimingFuncti
     
     // Set callback delegates
     std::weak_ptr<VROSceneController> weakPtr = shared_from_this();
-    VROTransaction::setFinishCallback([weakPtr]() {
+    VROTransaction::setFinishCallback([weakPtr](bool terminate) {
         std::shared_ptr<VROSceneController> scene = weakPtr.lock();
         if (scene) {
             scene->setActiveTransitionAnimation(false);
@@ -118,7 +118,7 @@ void VROSceneController::startOutgoingTransition(float duration, VROTimingFuncti
     // At the end of the animation, restore the opacity and position of the
     // nodes (since they are no longer visible)
     std::weak_ptr<VROSceneController> weakPtr = shared_from_this();
-    VROTransaction::setFinishCallback([weakPtr, preservedOpacity, forward]() {
+    VROTransaction::setFinishCallback([weakPtr, preservedOpacity, forward](bool terminate) {
         std::shared_ptr<VROSceneController> scene = weakPtr.lock();
         if (scene) {
             std::shared_ptr<VRONode> root = scene->getScene()->getRootNode();
