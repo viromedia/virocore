@@ -142,7 +142,9 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     return driver->newImagePostProcess(shader);
 }
 
-VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene,
+                                                          std::shared_ptr<VROScene> outgoingScene,
+                                                          VRORenderPassInputOutput &inputs,
                                                           VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
     if (!_postProcess) {

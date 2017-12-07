@@ -31,7 +31,9 @@ public:
     VROGaussianBlurRenderPass();
     virtual ~VROGaussianBlurRenderPass();
     
-    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
+                                    std::shared_ptr<VROScene> outgoingScene,
+                                    VRORenderPassInputOutput &inputs,
                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
 
     /*

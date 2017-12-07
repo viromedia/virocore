@@ -57,7 +57,9 @@ VROShadowMapRenderPass::~VROShadowMapRenderPass() {
     
 }
 
-VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
+                                                        std::shared_ptr<VROScene> outgoingScene,
+                                                        VRORenderPassInputOutput &inputs,
                                                         VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
     VROMatrix4f previousProjection = context->getProjectionMatrix();

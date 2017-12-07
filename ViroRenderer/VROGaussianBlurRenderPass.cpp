@@ -79,8 +79,10 @@ void VROGaussianBlurRenderPass::setNumBlurIterations(int numIterations) {
     }
 }
 
-VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
-                                                          VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
+                                                           std::shared_ptr<VROScene> outgoingScene,
+                                                           VRORenderPassInputOutput &inputs,
+                                                           VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
     if (!_gaussianBlur) {
         initPostProcess(driver);

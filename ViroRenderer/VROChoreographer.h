@@ -39,7 +39,9 @@ public:
     VROChoreographer(std::shared_ptr<VRODriver> driver);
     virtual ~VROChoreographer();
     
-    virtual void render(VROEyeType eye, std::shared_ptr<VROScene> scene,
+    virtual void render(VROEyeType eye,
+                        std::shared_ptr<VROScene> scene,
+                        std::shared_ptr<VROScene> outgoingScene,
                         const std::shared_ptr<VRORenderMetadata> &metadata,
                         VRORenderContext *context,
                         std::shared_ptr<VRODriver> &driver);
@@ -113,10 +115,12 @@ private:
     void initTargets(std::shared_ptr<VRODriver> driver);
     
     /*
-     Render the base pass, which renders the 3D scene to the first render target.
+     Render the 3D scene (and an optional outgoing scene), and perform post-processing.
      */
-    void renderBasePass(std::shared_ptr<VROScene> scene, const std::shared_ptr<VRORenderMetadata> &metadata,
-                        VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
+    void renderScene(std::shared_ptr<VROScene> scene,
+                     std::shared_ptr<VROScene> outgoingScene,
+                     const std::shared_ptr<VRORenderMetadata> &metadata,
+                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 #pragma mark - Render to Texture
     

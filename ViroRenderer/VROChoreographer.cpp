@@ -135,24 +135,26 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
 
 #pragma mark - Main Render Cycle
 
-void VROChoreographer::render(VROEyeType eye, std::shared_ptr<VROScene> scene,
+void VROChoreographer::render(VROEyeType eye,
+                              std::shared_ptr<VROScene> scene,
+                              std::shared_ptr<VROScene> outgoingScene,
                               const std::shared_ptr<VRORenderMetadata> &metadata,
                               VRORenderContext *context,
                               std::shared_ptr<VRODriver> &driver) {
     
     if (!_renderShadows) {
-        renderBasePass(scene, metadata, context, driver);
+        renderScene(scene, outgoingScene, metadata, context, driver);
     }
     else {
         if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
             renderShadowPasses(scene, context, driver);
         }
-        renderBasePass(scene, metadata, context, driver);
+        renderScene(scene, outgoingScene, metadata, context, driver);
     }
 }
 
 void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                                        std::shared_ptr<VRODriver> &driver) {
+                                          std::shared_ptr<VRODriver> &driver) {
     
     const std::vector<std::shared_ptr<VROLight>> &lights = scene->getLights();
     
@@ -201,7 +203,7 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         
         VRORenderPassInputOutput inputs;
         inputs[kRenderTargetSingleOutput] = _shadowTarget;
-        shadowPass->render(scene, inputs, context, driver);
+        shadowPass->render(scene, nullptr, inputs, context, driver);
         
         driver->unbindShader();
         pglpop();
@@ -223,21 +225,22 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
     _shadowPasses = activeShadowPasses;
 }
 
-void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene,
-                                      const std::shared_ptr<VRORenderMetadata> &metadata,
-                                      VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
+                                   std::shared_ptr<VROScene> outgoingScene,
+                                   const std::shared_ptr<VRORenderMetadata> &metadata,
+                                   VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     VRORenderPassInputOutput inputs;
     if (_renderHDR) {
         if (_renderBloom && metadata->requiresBloomPass()) {
             // Render the scene + bloom to the floating point HDR MRT target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
-            _baseRenderPass->render(scene, inputs, context, driver);
+            _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Blur the image. The finished result will reside in _blurTargetB.
             inputs[kGaussianInput] = _hdrTarget;
             inputs[kGaussianPingPongA] = _blurTargetA;
             inputs[kGaussianPingPongB] = _blurTargetB;
-            _gaussianBlurPass->render(scene, inputs, context, driver);
+            _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Additively blend the bloom back into the image, store in _postProcessTarget
             _additiveBlendPostProcess->blit(_hdrTarget, 0, _postProcessTarget, { _blurTargetB->getTexture(0) }, driver);
@@ -254,18 +257,18 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene,
             }
             if (_renderToTexture) {
                 inputs[kToneMappingOutput] = _blitTarget;
-                _toneMappingPass->render(scene, inputs, context, driver);
+                _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_blitTarget, driver);
             }
             else {
                 inputs[kToneMappingOutput] = driver->getDisplay();
-                _toneMappingPass->render(scene, inputs, context, driver);
+                _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
             }
         }
         else {
             // Render the scene to the floating point HDR target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
-            _baseRenderPass->render(scene, inputs, context, driver);
+            _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Run additional post-processing on the HDR image
             bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_hdrTarget, _postProcessTarget, driver);
@@ -279,24 +282,24 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene,
             }
             if (_renderToTexture) {
                 inputs[kToneMappingOutput] = _blitTarget;
-                _toneMappingPass->render(scene, inputs, context, driver);
+                _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_blitTarget, driver);
             }
             else {
                 inputs[kToneMappingOutput] = driver->getDisplay();
-                _toneMappingPass->render(scene, inputs, context, driver);
+                _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
             }
         }
     }
     else if (_renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
-        _baseRenderPass->render(scene, inputs, context, driver);        
+        _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
         renderToTextureAndDisplay(_blitTarget, driver);
     }
     else {
         // Render to the display directly
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
-        _baseRenderPass->render(scene, inputs, context, driver);
+        _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
     }
 }
 

@@ -294,15 +294,14 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
     _context->setInputController(_inputController);
 
     if (_sceneController) {
-       // TODO Viro-2277 Re-enable outgoing scene transitions. These cause a crash on Daydream when
-       //                moving from the release menu to the ViroShadowTest
-       // if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
-       //     _choreographer->render(eye, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
-       //     _choreographer->render(eye, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
-       // }
-       // else {
-            _choreographer->render(eye, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
-       // }
+       if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
+            _choreographer->render(eye, _sceneController->getScene(), _outgoingSceneController->getScene(),
+                                   _renderMetadata, _context.get(), driver);
+        }
+        else {
+            _choreographer->render(eye, _sceneController->getScene(), nullptr,
+                                   _renderMetadata, _context.get(), driver);
+        }
     }
 
     // This unbinds the last shader to even out our pglpush and pops

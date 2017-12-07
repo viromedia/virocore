@@ -53,12 +53,15 @@ public:
     virtual ~VRORenderPass() {}
     
     /*
-     Perform the render pass. This is implemented by the subclasses.
+     Perform the render pass. This is implemented by the subclasses. The outgoing scene is optional,
+     and it used when we need to render the transition between two scenes.
      
      It is common and expected for render passes to re-use the same output render targets
      each frame.
      */
-    virtual VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+    virtual VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
+                                            std::shared_ptr<VROScene> outgoingScene,
+                                            VRORenderPassInputOutput &inputs,
                                             VRORenderContext *context, std::shared_ptr<VRODriver> &driver) = 0;
     
 };

@@ -170,7 +170,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
             return;
         }
         super.setScene(scene);
-        mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
+        mNativeRenderer.setSceneController(scene.mNativeRef, 0.5f);
     }
 
     /**

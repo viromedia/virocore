@@ -51,7 +51,9 @@ public:
     VROShadowMapRenderPass(const std::shared_ptr<VROLight> light, std::shared_ptr<VRODriver> driver);
     virtual ~VROShadowMapRenderPass();
     
-    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
+                                    std::shared_ptr<VROScene> outgoingScene,
+                                    VRORenderPassInputOutput &inputs,
                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 private:

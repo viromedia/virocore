@@ -31,26 +31,48 @@ VROPortalTreeRenderPass::~VROPortalTreeRenderPass() {
     
 }
 
-VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene,
+                                                         std::shared_ptr<VROScene> outgoingScene,
+                                                         VRORenderPassInputOutput &inputs,
                                                          VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
-    
+
     std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
     passert (target);
     driver->bindRenderTarget(target);
-    
+
     driver->setColorWritingEnabled(true);
     target->clearDepthAndColor();
     target->clearStencil(0);
-    
+
+    // Get the top portal for the outgoing tree if we have an outgoing scene; this
+    // way we can render the background of the outgoing scene with the background
+    // of the regular scene, preventing blending artifacts during transitions
+    std::vector<tree<std::shared_ptr<VROPortal>>> outgoingTreeNodes;
+    std::shared_ptr<VROPortal> outgoingTopPortal;
+    if (outgoingScene) {
+        outgoingTreeNodes.push_back(outgoingScene->getPortalTree());
+        if (!outgoingTreeNodes.empty()) {
+            outgoingTopPortal = outgoingTreeNodes.front().value;
+        }
+    }
+
+    // Render the regular scene; if an outgoing scene is present this will render
+    // its top-level background as well
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
     treeNodes.push_back(scene->getPortalTree());
-    render(treeNodes, target, *context, driver);
+    render(treeNodes, outgoingTopPortal, true, target, *context, driver);
 
+    // Render the outgoing scene (if available). The outgoing scene is rendered
+    // without backgrounds here
+    if (outgoingScene) {
+        render(outgoingTreeNodes, nullptr, false, target, *context, driver);
+    }
+
+    // Render the pencil
     context->getPencil()->render(*context, driver);
 
     VRORenderPassInputOutput output;
     output[kRenderTargetSingleOutput] = target;
-    
     return output;
 }
 
@@ -63,6 +85,7 @@ VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScen
 // into each other (e.g. that an over-size object from one portal doesn't appear
 // in any of its siblings).
 void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,
+                                     std::shared_ptr<VROPortal> outgoingTopPortal, bool renderBackgrounds,
                                      std::shared_ptr<VRORenderTarget> &target,
                                      const VRORenderContext &context,
                                      std::shared_ptr<VRODriver> &driver) {
@@ -110,7 +133,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         // Recurse down to children. This way we continue rendering portal
         // silhouettes (of children, not siblings) before moving on to rendering
         // actual content.
-        render(treeNode.children, target, context, driver);
+        render(treeNode.children, nullptr, true, target, context, driver);
         
         // Now we're unwinding from recursion, prepare for scene rendering.
         pglpush("Contents");
@@ -128,7 +151,12 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         //    levels. An object at level 2 will not be drawn into an area
         //    belonging to level 1.
         target->setStencilPassBits(VROFace::FrontAndBack, portal->getRecursionLevel(), true);
-        portal->renderBackground(context, driver);
+        if (renderBackgrounds) {
+            if (outgoingTopPortal != nullptr && i == 0) {
+                outgoingTopPortal->renderBackground(context, driver);
+            }
+            portal->renderBackground(context, driver);
+        }
         portal->renderContents(context, driver);
         driver->unbindShader();
         pglpop();

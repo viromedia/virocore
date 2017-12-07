@@ -22,7 +22,9 @@ public:
     VROPortalTreeRenderPass();
     virtual ~VROPortalTreeRenderPass();
     
-    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
+    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
+                                    std::shared_ptr<VROScene> outgoingScene,
+                                    VRORenderPassInputOutput &inputs,
                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 private:
@@ -38,6 +40,7 @@ private:
      and content on the way up.
      */
     void render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,
+                std::shared_ptr<VROPortal> outgoingTopPortal, bool renderBackgrounds,
                 std::shared_ptr<VRORenderTarget> &target,
                 const VRORenderContext &context,
                 std::shared_ptr<VRODriver> &driver);
