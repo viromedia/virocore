@@ -96,37 +96,45 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
         return 0;
     }
 
-    // Grab the window of particles that corresponds to this currentDrawCallIndex to be bounded.
+    // Grab the window of particles that corresponds to this currentDrawCallIndex
     int start = currentDrawCallIndex * kMaxParticlesPerUBO;
     int end = (currentDrawCallIndex + 1) * kMaxParticlesPerUBO;
     if (_lastKnownParticles.size() < end ) {
         end = (int) _lastKnownParticles.size() - 1;
     }
 
-    // Parse / serialize the data into the uniform buffer object.
-    VROParticlesUBOVertexData batchedData;
-    VROParticlesUBOFragmentData batchedDataFragment;
-    for (int i = start; i < end; i ++) {
+    // Parse / serialize the data into the uniform buffer object
+    VROParticlesUBOVertexData vertexData;
+    VROParticlesUBOFragmentData fragmentData;
+    for (int i = start; i < end; i++) {
         const float *transformArray = _lastKnownParticles[i].currentWorldTransform.getArray();
-        memcpy(&batchedData.particles_transform[(i-start) * kMaxFloatsPerTransform],
+        memcpy(&vertexData.particles_transform[(i - start) * kMaxFloatsPerTransform],
                transformArray,
                kMaxFloatsPerTransform * sizeof(float));
 
-        batchedDataFragment.frag_particles_color[(i-start) * 4 + 0] = _lastKnownParticles[i].colorCurrent.x;
-        batchedDataFragment.frag_particles_color[(i-start) * 4 + 1] = _lastKnownParticles[i].colorCurrent.y;
-        batchedDataFragment.frag_particles_color[(i-start) * 4 + 2] = _lastKnownParticles[i].colorCurrent.z;
-        batchedDataFragment.frag_particles_color[(i-start) * 4 + 3] = _lastKnownParticles[i].colorCurrent.w;
+        fragmentData.frag_particles_color[(i - start) * 4 + 0] = _lastKnownParticles[i].colorCurrent.x;
+        fragmentData.frag_particles_color[(i - start) * 4 + 1] = _lastKnownParticles[i].colorCurrent.y;
+        fragmentData.frag_particles_color[(i - start) * 4 + 2] = _lastKnownParticles[i].colorCurrent.z;
+        fragmentData.frag_particles_color[(i - start) * 4 + 3] = _lastKnownParticles[i].colorCurrent.w;
     }
 
     // Finally bind the UBO to its corresponding buffers.
     pglpush("Particles");
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOVertexData), &batchedData);
+#if VRO_AVOID_BUFFER_SUB_DATA
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
+#else
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOVertexData), &vertexData);
+#endif
     pglpop();
 
     pglpush("ParticlesFragment");
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOFragmentData), &batchedDataFragment);
+#if VRO_AVOID_BUFFER_SUB_DATA
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
+#else
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOFragmentData), &fragmentData);
+#endif
     pglpop();
     return end - start;
 }

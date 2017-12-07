@@ -96,7 +96,11 @@ void VROLightingUBO::updateLightsFragment() {
     ambientLight.toArray(data.ambient_light_color);
     
     glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
+#if VRO_AVOID_BUFFER_SUB_DATA
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), &data, GL_DYNAMIC_DRAW);
+#else
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingFragmentData), &data);
+#endif
     
     pglpop();
     _needsFragmentUpdate = false;
@@ -123,8 +127,12 @@ void VROLightingUBO::updateLightsVertex() {
     }
     
     glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
+#if VRO_AVOID_BUFFER_SUB_DATA
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), &vertexData, GL_DYNAMIC_DRAW);
+#else
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingVertexData), &vertexData);
-    
+#endif
+
     pglpop();
     _needsVertexUpdate = false;
 }
