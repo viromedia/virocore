@@ -702,6 +702,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     env->CallVoidMethodV(javaObject, method, args);
     if (env->ExceptionOccurred()) {
         perr("Exception occured when calling %s.", functionName.c_str());
+        env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling " + functionName;
         throw std::runtime_error(errorString.c_str());
     }
@@ -734,6 +735,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     jlong result = env->CallLongMethodV(javaObject, method, args);
     if (env->ExceptionOccurred()) {
         perr("Exception occured when calling %s.", functionName.c_str());
+        env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling " + functionName;
         throw std::runtime_error(errorString.c_str());
     }

@@ -38,6 +38,7 @@ void SoundDelegate::soundIsReady() {
     env->CallVoidMethod(_javaObject, method);
     if (env->ExceptionOccurred()) {
         perr("Exception occurred while invoking soundIsReady()");
+        env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling soundIsReady";
         throw std::runtime_error(errorString.c_str());
     }
@@ -63,6 +64,7 @@ void SoundDelegate::soundDidFinish() {
     env->CallVoidMethod(_javaObject, method);
     if (env->ExceptionOccurred()) {
         perr("Exception occurred while invoking soundDidFinish()");
+        env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling soundDidFinish";
         throw std::runtime_error(errorString.c_str());
     }
@@ -89,6 +91,7 @@ void SoundDelegate::soundDidFail(std::string error) {
     env->CallVoidMethod(_javaObject, method, jerror);
     if (env->ExceptionOccurred()) {
         perr("Exception occurred while invoking soundDidFail()");
+        env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling soundDidFail";
         throw std::runtime_error(errorString.c_str());
     }

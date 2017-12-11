@@ -80,6 +80,7 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
                 env->CallVoidMethod(obj_g, method);
                 if (env->ExceptionOccurred()) {
                     perr("Exception encountered calling ExecutableAnimation::animationDidFinish");
+                    env->ExceptionDescribe();
                 }
                 env->DeleteLocalRef(javaClass);
                 env->DeleteGlobalRef(obj_g);
