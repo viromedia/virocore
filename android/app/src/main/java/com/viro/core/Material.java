@@ -792,4 +792,153 @@ public class Material {
     private native void nativeDestroyMaterial(long nativeRef);
     private native void nativeSetBloomThreshold(long nativeRef, float bloomThreshold);
     private native void nativeSetShadowMode(long nativeRef, String shadowMode);
+
+
+    /**
+     * Builder for creating {@link Material} objects
+     */
+    public static MaterialBuilder builder() {
+        return new MaterialBuilder();
+    }
+
+    /**
+     * Builder class for creating {@link Material} objects
+     */
+    public static class MaterialBuilder {
+        private Material material;
+
+        /**
+         * Constructor for {@link MaterialBuilder}
+         */
+        public MaterialBuilder() {
+            material = new Material();
+        }
+
+        /**
+         * Refer to {@link Material#setWritesToDepthBuffer(boolean)}
+         */
+        public MaterialBuilder writesToDepthBuffer(boolean writesToDepthBuffer) {
+            material.setWritesToDepthBuffer(writesToDepthBuffer);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setReadsFromDepthBuffer(boolean)}
+         */
+        public MaterialBuilder readsFromDepthBuffer(boolean readsFromDepthBuffer) {
+            material.setReadsFromDepthBuffer(readsFromDepthBuffer);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setDiffuseTexture(Texture)}
+         */
+        public MaterialBuilder diffuseTexture(Texture texture) {
+            material.setDiffuseTexture(texture);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setDiffuseColor(int)}
+         */
+        public MaterialBuilder diffuseColor(int color) {
+            material.setDiffuseColor(color);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setDiffuseIntensity(float)}
+         */
+        public MaterialBuilder diffuseIntensity(float diffuseIntensity) {
+            material.setDiffuseIntensity(diffuseIntensity);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setSpecularTexture(Texture)}
+         */
+        public MaterialBuilder specularTexture(Texture texture) {
+            material.setSpecularTexture(texture);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setNormalMap(Texture)}
+         */
+        public MaterialBuilder normalMap(Texture normalMap) {
+            material.setNormalMap(normalMap);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setShininess(float)}
+         */
+        public MaterialBuilder shininess(float shininess) {
+            material.setShininess(shininess);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setFresnelExponent(float)}
+         */
+        public MaterialBuilder fresnelExponent(float fresnelExponent) {
+            material.setFresnelExponent(fresnelExponent);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setLightingModel(LightingModel)}
+         */
+        public MaterialBuilder lightingModel(LightingModel lightingModel) {
+            material.setLightingModel(lightingModel);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setBlendMode(BlendMode)}
+         */
+        public MaterialBuilder blendMode(BlendMode blendMode) {
+            material.setBlendMode(blendMode);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setTransparencyMode(TransparencyMode)}
+         */
+        public MaterialBuilder transparencyMode(TransparencyMode transparencyMode) {
+            material.setTransparencyMode(transparencyMode);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setCullMode(CullMode)}
+         */
+        public MaterialBuilder cullMode(CullMode cullMode) {
+            material.setCullMode(cullMode);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setBloomThreshold(float)}
+         */
+        public MaterialBuilder bloomThreshold(float bloomThreshold) {
+            material.setBloomThreshold(bloomThreshold);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setShadowMode(ShadowMode)}
+         */
+        public MaterialBuilder shadowMode(ShadowMode shadowMode) {
+            material.setShadowMode(shadowMode);
+            return this;
+        }
+
+        /**
+         * Returns the built Material object
+         */
+        public Material build() {
+            return material;
+        }
+    }
 }

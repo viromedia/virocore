@@ -190,20 +190,26 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
 
         final PhysicsShapeSphere physicsShapeSphere = new PhysicsShapeSphere(scaleSize(BALL_RADIUS));
 
+
         // Cue Ball
+        Node.NodeBuilder ballNodeBuilder = new Node.NodeBuilder();
+
+        // TODO NodeBuilder for Materials
         final Material cueBallMaterial = new Material();
         final Bitmap cueBallBitmap = getBitmapFromAssets(mActivity, "BallCue.jpg");
+        // TODO NodeBuilder for Textures
         final Texture cueBallTexture = new Texture(cueBallBitmap, Texture.Format.RGBA8, true, true);
         cueBallMaterial.setDiffuseTexture(cueBallTexture);
         cueBallMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node cueBallNode = new Node();
         mCueBall = new Sphere(scaleSize(BALL_RADIUS));
         mCueBall.setMaterials(Arrays.asList(cueBallMaterial));
-        cueBallNode.setGeometry(mCueBall);
-        cueBallNode.setPosition(new Vector(0, 5, -30));
-        cueBallNode.setLightReceivingBitMask(3);
-        cueBallNode.setShadowCastingBitMask(3);
-        mCueBallPhysics = cueBallNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node cueBallNode = ballNodeBuilder.geometry(mCueBall)
+                .position(new Vector(0, 5,-30))
+                .lightReceivingBitMask(3)
+                .shadowCastingBitMask(3)
+                .physicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere)
+                .build();
+        mCueBallPhysics = cueBallNode.getPhysicsBody();
         playGroundNode.addChildNode(cueBallNode);
 
         final Bitmap ballSpecularBitmap = getBitmapFromAssets(mActivity, "pool_ball_specular.png");
@@ -216,14 +222,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballOneMaterial.setDiffuseTexture(ballOneTexture);
         ballOneMaterial.setSpecularTexture(specularTexture);
         ballOneMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballOneNode = new Node();
         mBall1 = new Sphere(scaleSize(BALL_RADIUS));
         mBall1.setMaterials(Arrays.asList(ballOneMaterial));
-        ballOneNode.setGeometry(mBall1);
-        ballOneNode.setPosition(new Vector(-7f, 5, 30));
-        ballOneNode.setLightReceivingBitMask(3);
-        ballOneNode.setShadowCastingBitMask(3);
-        mBall1Physics = ballOneNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballOneNode = ballNodeBuilder.geometry(mBall1)
+                .position(new Vector(-7f, 5, 30))
+                .build();
+        mBall1Physics = ballOneNode.getPhysicsBody();
         playGroundNode.addChildNode(ballOneNode);
 
         // Ball 2
@@ -233,14 +237,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballTwoMaterial.setDiffuseTexture(ballTwoTexture);
         ballTwoMaterial.setSpecularTexture(specularTexture);
         ballTwoMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballTwoNode = new Node();
         mBall2 = new Sphere(scaleSize(BALL_RADIUS));
         mBall2.setMaterials(Arrays.asList(ballTwoMaterial));
-        ballTwoNode.setGeometry(mBall2);
-        ballTwoNode.setPosition(new Vector(7f, 5, 30));
-        ballTwoNode.setLightReceivingBitMask(3);
-        ballTwoNode.setShadowCastingBitMask(3);
-        mBall2Physics = ballTwoNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballTwoNode = ballNodeBuilder.geometry(mBall2)
+                .position(new Vector(7f, 5, 30))
+                .build();
+        mBall2Physics = ballTwoNode.getPhysicsBody();
         playGroundNode.addChildNode(ballTwoNode);
 
         // Ball 3
@@ -250,14 +252,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballThreeMaterial.setDiffuseTexture(ballThreeTexture);
         ballThreeMaterial.setSpecularTexture(specularTexture);
         ballThreeMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballThreeNode = new Node();
         mBall3 = new Sphere(scaleSize(BALL_RADIUS));
         mBall3.setMaterials(Arrays.asList(ballThreeMaterial));
-        ballThreeNode.setGeometry(mBall3);
-        ballThreeNode.setPosition(new Vector(-3.5f, 5, 30));
-        ballThreeNode.setLightReceivingBitMask(3);
-        ballThreeNode.setShadowCastingBitMask(3);
-        mBall3Physics = ballThreeNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballThreeNode = ballNodeBuilder.geometry(mBall3)
+                .position(new Vector(-3.5f, 5, 30))
+                .build();
+        mBall3Physics = ballThreeNode.getPhysicsBody();
         playGroundNode.addChildNode(ballThreeNode);
 
         // Ball 4
@@ -267,14 +267,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballFourMaterial.setDiffuseTexture(ballFourTexture);
         ballFourMaterial.setSpecularTexture(specularTexture);
         ballFourMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballFourNode = new Node();
         mBall4 = new Sphere(scaleSize(BALL_RADIUS));
         mBall4.setMaterials(Arrays.asList(ballFourMaterial));
-        ballFourNode.setGeometry(mBall4);
-        ballFourNode.setPosition(new Vector(0, 5, 30));
-        ballFourNode.setLightReceivingBitMask(3);
-        ballFourNode.setShadowCastingBitMask(3);
-        mBall4Physics = ballFourNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballFourNode = ballNodeBuilder.geometry(mBall4)
+                .position(new Vector(0, 5, 30))
+                .build();
+        mBall4Physics = ballFourNode.getPhysicsBody();
         playGroundNode.addChildNode(ballFourNode);
 
         // Ball 5
@@ -284,14 +282,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballFiveMaterial.setDiffuseTexture(ballFiveTexture);
         ballFiveMaterial.setSpecularTexture(specularTexture);
         ballFiveMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballFiveNode = new Node();
         mBall5 = new Sphere(scaleSize(BALL_RADIUS));
         mBall5.setMaterials(Arrays.asList(ballFiveMaterial));
-        ballFiveNode.setGeometry(mBall5);
-        ballFiveNode.setPosition(new Vector(3.5f, 5, 30));
-        ballFiveNode.setLightReceivingBitMask(3);
-        ballFiveNode.setShadowCastingBitMask(3);
-        mBall5Physics = ballFiveNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballFiveNode = ballNodeBuilder.geometry(mBall5)
+                .position(new Vector(3.5f, 5, 30))
+                .build();
+        mBall5Physics = ballFiveNode.getPhysicsBody();
         playGroundNode.addChildNode(ballFiveNode);
 
         // Ball 6
@@ -301,14 +297,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballSixMaterial.setDiffuseTexture(ballSixTexture);
         ballSixMaterial.setSpecularTexture(specularTexture);
         ballSixMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballSixNode = new Node();
         mBall6 = new Sphere(scaleSize(BALL_RADIUS));
         mBall6.setMaterials(Arrays.asList(ballSixMaterial));
-        ballSixNode.setGeometry(mBall6);
-        ballSixNode.setPosition(new Vector(1.75f, 5, 24));
-        ballSixNode.setLightReceivingBitMask(3);
-        ballSixNode.setShadowCastingBitMask(3);
-        mBall6Physics = ballSixNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballSixNode = ballNodeBuilder.geometry(mBall6)
+                .position(new Vector(1.75f, 5, 24))
+                .build();
+        mBall6Physics = ballSixNode.getPhysicsBody();
         playGroundNode.addChildNode(ballSixNode);
 
         // Ball 7
@@ -318,14 +312,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballSevenMaterial.setDiffuseTexture(ballSevenTexture);
         ballSevenMaterial.setSpecularTexture(specularTexture);
         ballSevenMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballSevenNode = new Node();
         mBall7 = new Sphere(scaleSize(BALL_RADIUS));
         mBall7.setMaterials(Arrays.asList(ballSevenMaterial));
-        ballSevenNode.setGeometry(mBall7);
-        ballSevenNode.setPosition(new Vector(-1.75f, 5, 24));
-        ballSevenNode.setLightReceivingBitMask(3);
-        ballSevenNode.setShadowCastingBitMask(3);
-        mBall7Physics = ballSevenNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballSevenNode = ballNodeBuilder.geometry(mBall7)
+                .position(new Vector(-1.75f, 5, 24))
+                .build();
+        mBall7Physics = ballSevenNode.getPhysicsBody();
         playGroundNode.addChildNode(ballSevenNode);
 
         // Ball 8
@@ -335,14 +327,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballEightMaterial.setDiffuseTexture(ballEightTexture);
         ballEightMaterial.setSpecularTexture(specularTexture);
         ballEightMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballEightNode = new Node();
         mBall8 = new Sphere(scaleSize(BALL_RADIUS));
         mBall8.setMaterials(Arrays.asList(ballEightMaterial));
-        ballEightNode.setGeometry(mBall8);
-        ballEightNode.setPosition(new Vector(-5.25f, 5, 24));
-        ballEightNode.setLightReceivingBitMask(3);
-        ballEightNode.setShadowCastingBitMask(3);
-        mBall8Physics = ballEightNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballEightNode = ballNodeBuilder.geometry(mBall8)
+                .position(new Vector(-5.25f, 5, 24))
+                .build();
+        mBall8Physics = ballEightNode.getPhysicsBody();
         playGroundNode.addChildNode(ballEightNode);
 
         // Ball 9
@@ -352,14 +342,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballNineMaterial.setDiffuseTexture(ballNineTexture);
         ballNineMaterial.setSpecularTexture(specularTexture);
         ballNineMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballNineNode = new Node();
         mBall9 = new Sphere(scaleSize(BALL_RADIUS));
         mBall9.setMaterials(Arrays.asList(ballNineMaterial));
-        ballNineNode.setGeometry(mBall9);
-        ballNineNode.setPosition(new Vector(5.25f, 5, 24));
-        ballNineNode.setLightReceivingBitMask(3);
-        ballNineNode.setShadowCastingBitMask(3);
-        mBall9Physics = ballNineNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballNineNode = ballNodeBuilder.geometry(mBall9)
+                .position(new Vector(5.25f, 5, 24))
+                .build();
+        mBall9Physics = ballNineNode.getPhysicsBody();
         playGroundNode.addChildNode(ballNineNode);
 
         // Ball 10
@@ -369,14 +357,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballTenMaterial.setDiffuseTexture(ballTenTexture);
         ballTenMaterial.setSpecularTexture(specularTexture);
         ballTenMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballTenNode = new Node();
         mBall10 = new Sphere(scaleSize(BALL_RADIUS));
         mBall10.setMaterials(Arrays.asList(ballTenMaterial));
-        ballTenNode.setGeometry(mBall10);
-        ballTenNode.setPosition(new Vector(0f, 5, 18));
-        ballTenNode.setLightReceivingBitMask(3);
-        ballTenNode.setShadowCastingBitMask(3);
-        mBall10Physics = ballTenNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballTenNode = ballNodeBuilder.geometry(mBall10)
+                .position(new Vector(0f, 5, 18))
+                .build();
+        mBall10Physics = ballTenNode.getPhysicsBody();
         playGroundNode.addChildNode(ballTenNode);
 
         // Ball 11
@@ -386,14 +372,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballElevenMaterial.setDiffuseTexture(ballElevenTexture);
         ballElevenMaterial.setSpecularTexture(specularTexture);
         ballElevenMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballElevenNode = new Node();
         mBall11 = new Sphere(scaleSize(BALL_RADIUS));
         mBall11.setMaterials(Arrays.asList(ballElevenMaterial));
-        ballElevenNode.setGeometry(mBall11);
-        ballElevenNode.setPosition(new Vector(3.5f, 5, 18));
-        ballElevenNode.setLightReceivingBitMask(3);
-        ballElevenNode.setShadowCastingBitMask(3);
-        mBall11Physics = ballElevenNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballElevenNode = ballNodeBuilder.geometry(mBall11)
+                .position(new Vector(3.5f, 5, 18))
+                .build();
+        mBall11Physics = ballElevenNode.getPhysicsBody();
         playGroundNode.addChildNode(ballElevenNode);
 
         // Ball 12
@@ -403,14 +387,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballTwelveMaterial.setDiffuseTexture(ballTwelveTexture);
         ballTwelveMaterial.setSpecularTexture(specularTexture);
         ballTwelveMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballTwelveNode = new Node();
         mBall12 = new Sphere(scaleSize(BALL_RADIUS));
         mBall12.setMaterials(Arrays.asList(ballTwelveMaterial));
-        ballTwelveNode.setGeometry(mBall12);
-        ballTwelveNode.setPosition(new Vector(1.75f, 5, 12));
-        ballTwelveNode.setLightReceivingBitMask(3);
-        ballTwelveNode.setShadowCastingBitMask(3);
-        mBall12Physics = ballTwelveNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballTwelveNode = ballNodeBuilder.geometry(mBall12)
+                .position(new Vector(1.75f, 5, 12))
+                .build();
+        mBall12Physics = ballTwelveNode.getPhysicsBody();
         playGroundNode.addChildNode(ballTwelveNode);
 
         // Ball 13
@@ -420,14 +402,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballThirteenMaterial.setDiffuseTexture(ballThirteenTexture);
         ballThirteenMaterial.setSpecularTexture(specularTexture);
         ballThirteenMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballThirteenNode = new Node();
         mBall13 = new Sphere(scaleSize(BALL_RADIUS));
         mBall13.setMaterials(Arrays.asList(ballThirteenMaterial));
-        ballThirteenNode.setGeometry(mBall13);
-        ballThirteenNode.setPosition(new Vector(-1.75f, 5, 12));
-        ballThirteenNode.setLightReceivingBitMask(3);
-        ballThirteenNode.setShadowCastingBitMask(3);
-        mBall13Physics = ballThirteenNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballThirteenNode = ballNodeBuilder.geometry(mBall13)
+                .position(new Vector(-1.75f, 5, 12))
+                .build();
+        mBall13Physics = ballThirteenNode.getPhysicsBody();
         playGroundNode.addChildNode(ballThirteenNode);
 
         // Ball 14
@@ -437,14 +417,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballFourteenMaterial.setDiffuseTexture(ballFourteenTexture);
         ballFourteenMaterial.setSpecularTexture(specularTexture);
         ballFourteenMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballFourteenNode = new Node();
         mBall14 = new Sphere(scaleSize(BALL_RADIUS));
         mBall14.setMaterials(Arrays.asList(ballFourteenMaterial));
-        ballFourteenNode.setGeometry(mBall14);
-        ballFourteenNode.setPosition(new Vector(0f, 5, 6));
-        ballFourteenNode.setLightReceivingBitMask(3);
-        ballFourteenNode.setShadowCastingBitMask(3);
-        mBall14Physics = ballFourteenNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballFourteenNode = ballNodeBuilder.geometry(mBall14)
+                .position(new Vector(0f, 5, 6))
+                .build();
+        mBall14Physics = ballFourteenNode.getPhysicsBody();
         playGroundNode.addChildNode(ballFourteenNode);
 
         // Ball 15
@@ -454,14 +432,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         ballFifteenMaterial.setDiffuseTexture(ballFifteenTexture);
         ballFifteenMaterial.setSpecularTexture(specularTexture);
         ballFifteenMaterial.setLightingModel(Material.LightingModel.PHONG);
-        final Node ballFifteenNode = new Node();
         mBall15 = new Sphere(scaleSize(BALL_RADIUS));
         mBall15.setMaterials(Arrays.asList(ballFifteenMaterial));
-        ballFifteenNode.setGeometry(mBall15);
-        ballFifteenNode.setPosition(new Vector(-3.5f, 5, 18));
-        ballFifteenNode.setLightReceivingBitMask(3);
-        ballFifteenNode.setShadowCastingBitMask(3);
-        mBall15Physics = ballFifteenNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
+        final Node ballFifteenNode = ballNodeBuilder.geometry(mBall15)
+                .position(new Vector(-3.5f, 5, 18))
+                .build();
+        mBall15Physics = ballFifteenNode.getPhysicsBody();
         playGroundNode.addChildNode(ballFifteenNode);
 
         mScene.getRootNode().addChildNode(playGroundNode);

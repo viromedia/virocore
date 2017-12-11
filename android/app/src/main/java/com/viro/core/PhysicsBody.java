@@ -93,6 +93,14 @@ public class PhysicsBody {
     }
 
     /**
+     * Get the {@link RigidBodyType} that is set on this PhysicsBody
+     * @return {@link RigidBodyType}
+     */
+    public RigidBodyType getRigidBodyType() {
+        return mRigidBodyType;
+    }
+
+    /**
      * Set the {@link PhysicsShape} that should be used to approximate the PhysicsBody during the
      * physics simulation.
      *
@@ -427,5 +435,4 @@ public class PhysicsBody {
     private native long nativeSetPhysicsDelegate(long nodeReference);
     private native void nativeClearPhysicsDelegate(long nodeReference, long delegateRef);
     private native void nativeSetPhysicsVelocity(long nodeReference, float[] velocity, boolean isConstant);
-
 }

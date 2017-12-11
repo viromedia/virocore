@@ -668,6 +668,8 @@ public class ParticleEmitter {
     }
 
     long mNativeRef;
+    // TODO Move all these magic numbers to default member fields. Until then, if you change this
+    // value, change in the builder class too
     private int mDelay = 0;
     private int mDuration = 2000;
     private boolean mLoop = true;
@@ -1336,4 +1338,130 @@ public class ParticleEmitter {
                                                   float range[][], float interval[][], float points[][]);
     private native boolean nativeSetParticleBlendMode(long ref, String blendMode);
     private native void nativeSetBloomThreshold(long ref, float threshold);
+
+    /**
+     * Builder for {@link ParticleEmitter} objects
+     */
+    public static ParticleEmitterBuilder builder(ViroContext viroContext,
+                                                 Surface surface) {
+        return new ParticleEmitterBuilder(viroContext, surface);
+    }
+
+    /**
+     * Builder class for {@link ParticleEmitter} objects
+     */
+    public static class ParticleEmitterBuilder {
+        private  ParticleEmitter particleEmitter;
+
+        /**
+         * Constructor for ParticleEmitterBuilder
+         */
+        public ParticleEmitterBuilder(ViroContext viroContext,Surface surface) {
+            particleEmitter = new ParticleEmitter(viroContext, surface);
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setDelay(int)}
+         */
+        public ParticleEmitterBuilder delay(int delay) {
+            particleEmitter.setDelay(delay);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setDuration(int)}
+         */
+        public ParticleEmitterBuilder duration(int duration) {
+            particleEmitter.setDuration(duration);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setLoop(boolean)}
+         */
+        public ParticleEmitterBuilder loop(boolean loop) {
+            particleEmitter.setLoop(loop);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setFixedToEmitter(boolean)}
+         */
+        public ParticleEmitterBuilder fixedToEmitter(boolean fixedToEmitter) {
+            particleEmitter.setFixedToEmitter(fixedToEmitter);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setEmissionRatePerSecond(int, int)}
+         */
+        public ParticleEmitterBuilder emissionRatePerSecond(int emissionRatePerSecondMin, int emissionRatePerSecondMax) {
+            particleEmitter.setEmissionRatePerSecond(emissionRatePerSecondMin, emissionRatePerSecondMax);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setEmissionRatePerMeter(int, int)}
+         */
+        public ParticleEmitterBuilder emissionRatePerMeter(int emissionRatePerMeterMin, int emissionRatePerMeterMax) {
+            particleEmitter.setEmissionRatePerMeter(emissionRatePerMeterMin, emissionRatePerMeterMax);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setParticleLifetime(int, int)}
+         */
+        public ParticleEmitterBuilder particleLifetimeMin(int particleLifetimeMin, int particleLifetimeMax) {
+            particleEmitter.setParticleLifetime(particleLifetimeMin, particleLifetimeMax);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setMaxParticles(int)}
+         */
+        public ParticleEmitterBuilder maxParticles(int maxParticles) {
+            particleEmitter.setMaxParticles(maxParticles);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setEmissionBursts(List)}
+         */
+        public ParticleEmitterBuilder emissionBursts(List<EmissionBurst> emissionBursts) {
+            particleEmitter.setEmissionBursts(emissionBursts);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setSpawnVolume(SpawnVolume, boolean)}
+         */
+        public ParticleEmitterBuilder spawnVolume(SpawnVolume spawnVolume, boolean spawnOnSurface) {
+            particleEmitter.setSpawnVolume(spawnVolume, spawnOnSurface);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setBlendMode(Material.BlendMode)}
+         */
+        public ParticleEmitterBuilder blendMode(Material.BlendMode blendMode) {
+            particleEmitter.setBlendMode(blendMode);
+            return this;
+        }
+
+        /**
+         * Refer to {@link ParticleEmitter#setBloomThreshold(float)}
+         */
+        public ParticleEmitterBuilder bloomThreshold(float bloomThreshold) {
+            particleEmitter.setBloomThreshold(bloomThreshold);
+            return this;
+        }
+
+        /**
+         * Return the built {@link ParticleEmitter} object
+         */
+        public ParticleEmitter build() {
+            return particleEmitter;
+
+        }
+    }
 }

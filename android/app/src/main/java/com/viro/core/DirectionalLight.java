@@ -280,4 +280,97 @@ public class DirectionalLight extends Light {
     private native void nativeSetShadowNearZ(long lightRef, float shadowNearZ);
     private native void nativeSetShadowFarZ(long lightRef, float shadowFarZ);
     private native void nativeSetShadowOpacity(long lightRef, float opacity);
+
+    /**
+     * Builder for building {@link DirectionalLightBuilder} objects
+     */
+    public static DirectionalLightBuilder<? extends Light, ? extends DirectionalLightBuilder> builder() {
+        return new DirectionalLightBuilder<>();
+    }
+
+    /**
+     * Builder class for building {@link DirectionalLightBuilder} objects
+     */
+    public static class DirectionalLightBuilder<R extends Light, B extends DirectionalLightBuilder<R, B>> {
+        private DirectionalLight light;
+
+        /**
+         * Constructor for DirectionalLightBuilder
+         */
+        public DirectionalLightBuilder() {
+            light = new DirectionalLight();
+        }
+
+        /**
+         * Refer to {@link Spotlight#setDirection(Vector)}
+         */
+        public DirectionalLightBuilder direction(Vector direction) {
+            light.setDirection(direction);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setCastsShadow(boolean)}
+         */
+        public DirectionalLightBuilder castsShadow(boolean castsShadow) {
+            light.setCastsShadow(castsShadow);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setShadowOrthographicSize(float)}
+         */
+        public DirectionalLightBuilder shadowOrthographicSize(float orthographicSize) {
+            light.setShadowOrthographicSize(orthographicSize);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setShadowOrthographicPosition(Vector)}
+         */
+        public DirectionalLightBuilder shadowOrthographicPosition(Vector position) {
+            light.setShadowOrthographicPosition(position);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setShadowMapSize(int)}
+         */
+        public DirectionalLightBuilder shadowMapSize(int shadowMapSize) {
+            light.setShadowMapSize(shadowMapSize);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setShadowBias(float)}
+         */
+        public DirectionalLightBuilder shadowBias(float shadowBias) {
+            light.setShadowBias(shadowBias);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setShadowNearZ(float)}
+         */
+        public DirectionalLightBuilder shadowNearZ(float shadowNearZ) {
+            light.setShadowNearZ(shadowNearZ);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLightBuilder#setShadowFarZ(float)}
+         */
+        public DirectionalLightBuilder shadowFarZ(float shadowFarZ) {
+            light.setShadowFarZ(shadowFarZ);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link DirectionalLight#setShadowOpacity(float)}
+         */
+        public DirectionalLightBuilder shadowOpacity(float opacity) {
+            light.setShadowOpacity(opacity);
+            return (B) this;
+        }
+    }
 }

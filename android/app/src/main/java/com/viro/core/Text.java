@@ -160,18 +160,27 @@ public class Text extends Geometry {
         }
     };
 
+    private static final String DEFAULT_FONT_FAMILY = "Roboto";
+    private static final int DEFAULT_FONT_SIZE = 12;
+    private static final long DEFAULT_COLOR = Color.WHITE;
+    private static final HorizontalAlignment DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER;
+    private static final VerticalAlignment DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER;
+    private static final LineBreakMode DEFAULT_LINE_BREAK_MODE = LineBreakMode.WORD_WRAP;
+    private static final ClipMode DEFAULT_CLIP_MODE = ClipMode.CLIP_TO_BOUNDS;
+    private static final int DEFAULT_MAX_LINES = 0;
+
     private ViroContext mViroContext;
     private String mText;
-    private String mFontFamilyName;
-    private int mFontSize;
-    private long mColor;
     private float mWidth;
     private float mHeight;
-    private HorizontalAlignment mHorizontalAlignment;
-    private VerticalAlignment mVerticalAlignment;
-    private LineBreakMode mLineBreakMode;
-    private ClipMode mClipMode;
-    private int mMaxLines;
+    private String mFontFamilyName = DEFAULT_FONT_FAMILY;
+    private int mFontSize = DEFAULT_FONT_SIZE;
+    private long mColor = DEFAULT_COLOR;
+    private HorizontalAlignment mHorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT;
+    private VerticalAlignment mVerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT;
+    private LineBreakMode mLineBreakMode = DEFAULT_LINE_BREAK_MODE;
+    private ClipMode mClipMode = DEFAULT_CLIP_MODE;
+    private int mMaxLines = DEFAULT_MAX_LINES;
 
     /**
      * Create a new Text with the given set of minimum parameters: the text to display, and the
@@ -184,8 +193,9 @@ public class Text extends Geometry {
      * @param height The height of the bounds within which to display the text.
      */
     public Text(ViroContext viroContext, String text, float width, float height) {
-        this(viroContext, text, "Roboto", 12, Color.WHITE, width, height,
-                HorizontalAlignment.CENTER, VerticalAlignment.CENTER, LineBreakMode.WORD_WRAP, ClipMode.CLIP_TO_BOUNDS, 0);
+        this(viroContext, text, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, DEFAULT_COLOR, width, height,
+                DEFAULT_HORIZONTAL_ALIGNMENT, DEFAULT_VERTICAL_ALIGNMENT, DEFAULT_LINE_BREAK_MODE,
+                DEFAULT_CLIP_MODE, DEFAULT_MAX_LINES);
     }
 
     /**
@@ -490,4 +500,134 @@ public class Text extends Geometry {
     private native void nativeSetClipMode(long textRef, String clipMode);
     private native void nativeSetMaxLines(long textRef, int maxLines);
 
+    /**
+     * Builder for creating {@link Text} objects
+     */
+    public static TextBuilder builder() {
+        return new TextBuilder();
+    }
+
+    /**
+     * Builder class for creating {@link Text} objects
+     */
+    public static class TextBuilder {
+
+        private ViroContext mViroContext;
+        private String mText;
+        private float mWidth;
+        private float mHeight;
+        private String mFontFamilyName = DEFAULT_FONT_FAMILY;
+        private int mFontSize = DEFAULT_FONT_SIZE;
+        private long mColor = DEFAULT_COLOR;
+        private HorizontalAlignment mHorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT;
+        private VerticalAlignment mVerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT;
+        private LineBreakMode mLineBreakMode = DEFAULT_LINE_BREAK_MODE;
+        private ClipMode mClipMode = DEFAULT_CLIP_MODE;
+        private int mMaxLines = DEFAULT_MAX_LINES;
+
+        /**
+         * Set the ViroContext to be used while building Text object
+         */
+        public TextBuilder viroContext(ViroContext mViroContext) {
+            this.mViroContext = mViroContext;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setText(String)}
+         */
+        public TextBuilder textString(String mText) {
+            this.mText = mText;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setFontFamilyName(String)}
+         */
+        public TextBuilder fontFamilyName(String mFontFamilyName) {
+            this.mFontFamilyName = mFontFamilyName;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setFontSize(int)}
+         */
+        public TextBuilder fontSize(int mFontSize) {
+            this.mFontSize = mFontSize;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setColor(long)}
+         */
+        public TextBuilder color(long mColor) {
+            this.mColor = mColor;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setWidth(float)}
+         */
+        public TextBuilder width(float mWidth) {
+            this.mWidth = mWidth;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setHeight(float)}
+         */
+        public TextBuilder height(float mHeight) {
+            this.mHeight = mHeight;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setHorizontalAlignment(HorizontalAlignment)}
+         */
+        public TextBuilder horizontalAlignment(HorizontalAlignment mHorizontalAlignment) {
+            this.mHorizontalAlignment = mHorizontalAlignment;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setVerticalAlignment(VerticalAlignment)}
+         */
+        public TextBuilder verticalAlignment(VerticalAlignment mVerticalAlignment) {
+            this.mVerticalAlignment = mVerticalAlignment;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setLineBreakMode(LineBreakMode)}
+         */
+        public TextBuilder lineBreakMode(LineBreakMode mLineBreakMode) {
+            this.mLineBreakMode = mLineBreakMode;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setClipMode(ClipMode)}
+         */
+        public TextBuilder clipMode(ClipMode mClipMode) {
+            this.mClipMode = mClipMode;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setMaxLines(int)}
+         */
+        public TextBuilder maxLines(int mMaxLines) {
+            this.mMaxLines = mMaxLines;
+            return this;
+        }
+
+        /**
+         * Return the built Text object
+         */
+        public Text build() {
+            return new Text(mViroContext, mText, mFontFamilyName,mFontSize, mColor, mWidth, mHeight,
+            mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
+        }
+
+    }
 }

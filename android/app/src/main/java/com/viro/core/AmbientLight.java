@@ -39,4 +39,25 @@ public class AmbientLight extends Light {
 
     private native long nativeCreateAmbientLight(long color, float intensity);
 
+    /**
+     * Builder for creating {@link AmbientLight} objects
+     */
+    public static AmbientLightBuilder<? extends Light, ? extends AmbientLightBuilder> builder() {
+        return new AmbientLightBuilder<>();
+    }
+
+    /**
+     * Builder class for creating {@link AmbientLight} objects
+     */
+    public static class AmbientLightBuilder<R extends Light, B extends AmbientLightBuilder<R, B>> {
+        private AmbientLight light;
+
+        /**
+         * Constructor for AmbientLightBuilder objects
+         */
+        public AmbientLightBuilder() {
+            light = new AmbientLight();
+        }
+
+    }
 }

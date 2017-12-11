@@ -163,7 +163,16 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
     };
 
-    private static long INVALID_REF = Long.MAX_VALUE;
+    private static final long INVALID_REF = Long.MAX_VALUE;
+    private static final float DEFAULT_OPACITY = 1.0f;
+    private static final boolean DEFAULT_VISIBLE = true;
+    private static final DragType DEFAULT_DRAGTYPE = DragType.FIXED_DISTANCE;
+    private static final int DEFAULT_LIGHT_RECEIVING_BIT_MASK = 1;
+    private static final int DEFAULT_SHADOW_CASTING_BIT_MASK = 1;
+    private static final boolean DEFAULT_HIGH_ACCURACY_GAZE = false;
+    private static final boolean DEFAULT_IGNORE_EVENT_HANDLING = false;
+
+
     protected long mNativeRef;
 
     protected boolean mDestroyed = false;
@@ -176,16 +185,16 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private ArrayList<SpatialSound> mSounds = new ArrayList<SpatialSound>();
     private Vector mScalePivot;
     private Vector mRotationPivot;
-    private float mOpacity = 1.0f;
-    private boolean mVisible = true;
-    private DragType mDragType = DragType.FIXED_DISTANCE;
-    private boolean mHighAccuracyGaze = false;
-    private boolean mIgnoreEventHandling = false;
+    private float mOpacity = DEFAULT_OPACITY;
+    private boolean mVisible = DEFAULT_VISIBLE;
+    private DragType mDragType = DEFAULT_DRAGTYPE;
+    protected int mLightReceivingBitMask = DEFAULT_LIGHT_RECEIVING_BIT_MASK;
+    protected int mShadowCastingBitMask = DEFAULT_SHADOW_CASTING_BIT_MASK;
+    private boolean mHighAccuracyGaze = DEFAULT_HIGH_ACCURACY_GAZE;
+    private boolean mIgnoreEventHandling = DEFAULT_IGNORE_EVENT_HANDLING;
     private EnumSet<TransformBehavior> mTransformBehaviors;
     private String mTag;
     private Camera mCamera;
-    protected int mLightReceivingBitMask = 1;
-    protected int mShadowCastingBitMask = 1;
 
     private EventDelegate mEventDelegate;
     private ClickListener mClickListener;
@@ -206,6 +215,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
         mNativeRef = nativeCreateNode();
         initWithNativeRef(mNativeRef);
     }
+
 
     /**
      * @hide
@@ -1479,5 +1489,278 @@ public class Node implements EventDelegate.EventDelegateCallback {
             nativeRemoveTransformDelegate(mNativeRef, mNativeTransformDelegate);
             mNativeTransformDelegate = INVALID_REF;
         }
+    }
+
+    /**
+     * Creates a builder for building complex {@link Node} objects
+     * @return {@link NodeBuilder} object
+     */
+    public static NodeBuilder<? extends Node, ? extends NodeBuilder> builder() {
+        return new NodeBuilder<>();
+    }
+// +---------------------------------------------------------------------------+
+// | NodeBuilder class for Node
+// +---------------------------------------------------------------------------+
+
+    /**
+     * NodeBuilder class for {@link Node}
+     */
+    public static class NodeBuilder<R extends Node, B extends NodeBuilder<R,B>> {
+        private R node;
+
+        /**
+         * Constructor for NodeBuilder class
+         */
+        public NodeBuilder() {
+            this.node = (R) new Node();
+        }
+
+        /**
+         * Refer to {@link Node#setGeometry(Geometry)}
+         */
+        public NodeBuilder geometry(Geometry geometry) {
+            node.setGeometry(geometry);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setPosition(Vector)}
+         */
+        public NodeBuilder position(Vector position) {
+            node.setPosition(position);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setParticleEmitter(ParticleEmitter)}
+         */
+        public NodeBuilder particleEmitter(ParticleEmitter particleEmitter) {
+            node.setParticleEmitter(particleEmitter);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#initPhysicsBody(PhysicsBody.RigidBodyType, float, PhysicsShape)}
+         */
+        public NodeBuilder physicsBody(PhysicsBody.RigidBodyType rigidBodyType, float mass,
+                                       PhysicsShape shape) {
+            node.initPhysicsBody(rigidBodyType, mass, shape);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#addChildNode(Node)}
+         */
+        public NodeBuilder children(ArrayList<Node> children) {
+            for (Node child: children) {
+                node.addChildNode(child);
+            }
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#addLight(Light)}
+         */
+        public NodeBuilder lights(ArrayList<Light> lights) {
+            for (Light light: lights) {
+                node.addLight(light);
+            }
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#addSound(SpatialSound)}
+         */
+        public NodeBuilder sounds(ArrayList<SpatialSound> sounds) {
+            for (SpatialSound sound: sounds) {
+                node.addSound(sound);
+            }
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setScale(Vector)}
+         */
+        public NodeBuilder scale(Vector scale) {
+            node.setScale(scale);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setScalePivot(Vector)}
+         */
+        public NodeBuilder scalePivot(Vector scalePivot) {
+            node.setScalePivot(scalePivot);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setRotationPivot(Vector)}
+         */
+        public NodeBuilder rotationPivot(Vector rotationpivot) {
+            node.setRotationPivot(rotationpivot);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setOpacity(float)}
+         */
+        public NodeBuilder opacity(float opacity) {
+            node.setOpacity(opacity);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setVisible(boolean)}
+         */
+        public NodeBuilder visible(boolean visible) {
+            node.setVisible(visible);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setDragType(DragType)}
+         */
+        public NodeBuilder dragType(DragType dragType) {
+            node.setDragType(dragType);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setLightReceivingBitMask(int)}
+         */
+        public NodeBuilder lightReceivingBitMask(int lightReceivingBitMask) {
+            node.setLightReceivingBitMask(lightReceivingBitMask);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setShadowCastingBitMask(int)}
+         */
+        public NodeBuilder shadowCastingBitMask(int shadowCastingBitMask) {
+            node.setShadowCastingBitMask(shadowCastingBitMask);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setHighAccuracyGaze(boolean)}
+         */
+        public NodeBuilder highAccuracyGaze(boolean highAccuracyGaze) {
+            node.setHighAccuracyGaze(highAccuracyGaze);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setIgnoreEventHandling(boolean)}
+         */
+        public NodeBuilder ignoreEventHandling(boolean ignoreEventHandling) {
+            node.setIgnoreEventHandling(ignoreEventHandling);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setTransformBehaviors(EnumSet)}
+         */
+        public NodeBuilder transformBehaviors(EnumSet<TransformBehavior> transformBehaviors) {
+            node.setTransformBehaviors(transformBehaviors);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setTag(String)}
+         */
+        public NodeBuilder tag(String tag) {
+            node.setTag(tag);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setCamera(Camera)}
+         */
+        public NodeBuilder camera(Camera camera) {
+            node.setCamera(camera);
+            return (B) this;
+        }
+
+
+        /**
+         * Refer to {@link Node#setClickListener(ClickListener)}
+         */
+        public NodeBuilder clickListener(ClickListener clickListener) {
+            node.setClickListener(clickListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setHoverListener(HoverListener)}
+         */
+        public NodeBuilder hoverListener(HoverListener hoverListener) {
+            node.setHoverListener(hoverListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setTouchpadTouchListener(TouchpadTouchListener)}
+         */
+        public NodeBuilder touchpadTouchListener(TouchpadTouchListener touchpadTouchListener) {
+            node.setTouchpadTouchListener(touchpadTouchListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setTouchpadSwipeListener(TouchpadSwipeListener)}
+         */
+        public NodeBuilder touchpadSwipeListener(TouchpadSwipeListener touchpadSwipeListener) {
+            node.setTouchpadSwipeListener(touchpadSwipeListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setTouchpadScrollListener(TouchpadScrollListener)}
+         */
+        public NodeBuilder touchpadScrollListener(TouchpadScrollListener touchpadScrollListener) {
+            node.setTouchpadScrollListener(touchpadScrollListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setDragListener(DragListener)}
+         */
+        public NodeBuilder dragListener(DragListener dragListener) {
+            node.setDragListener(dragListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setFuseListener(FuseListener)}
+         */
+        public NodeBuilder fuseListener(FuseListener fuseListener) {
+            node.setFuseListener(fuseListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setGesturePinchListener(GesturePinchListener)}
+         */
+        public NodeBuilder gesturePinchListener(GesturePinchListener gesturePinchListener) {
+            node.setGesturePinchListener(gesturePinchListener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Node#setGestureRotateListener(GestureRotateListener)}
+         */
+        public NodeBuilder gestureRotateListener(GestureRotateListener gestureRotateListener) {
+            node.setGestureRotateListener(gestureRotateListener);
+            return (B) this;
+        }
+
+        /**
+         * Returns the Built {@link Node} object
+         */
+        public R build() {
+            return node;
+        }
+
     }
 }

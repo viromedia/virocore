@@ -235,4 +235,78 @@ public class PortalScene extends Node {
             mEntryListener.onPortalExit(this);
         }
     }
+
+// +---------------------------------------------------------------------------+
+// | PortalSceneBuilder class for PortalScene
+// +---------------------------------------------------------------------------+
+
+    /**
+     * PortalSceneBuilder class for {@link PortalScene}
+     */
+    public static class PortalSceneBuilder<R extends Node, B extends PortalSceneBuilder<R,B>> {
+        private PortalScene portalScene;
+
+        /**
+         * Constructor for PortalSceneBuilder class
+         */
+        public PortalSceneBuilder() {
+            portalScene = new PortalScene();
+        }
+
+        /**
+         * Refer to {@link PortalScene#setPassable(boolean)}
+         */
+        public PortalSceneBuilder passable(boolean passable) {
+            portalScene.setPassable(passable);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link PortalScene#setPortalEntrance(Portal)}
+         */
+        public PortalSceneBuilder portalEntrance(Portal portal) {
+            portalScene.setPortalEntrance(portal);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link PortalScene#setEntryListener(EntryListener)}
+         */
+        public PortalSceneBuilder entryListener(EntryListener delegate) {
+            portalScene.setEntryListener(delegate);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link PortalScene#setBackgroundTexture(Texture)}
+         */
+        public PortalSceneBuilder backgroundTexture(Texture texture) {
+            portalScene.setBackgroundTexture(texture);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link PortalScene#setBackgroundRotation(Vector)}
+         */
+        public PortalSceneBuilder backgroundRotation(Vector rotation){
+            portalScene.setBackgroundRotation(rotation);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link PortalScene#setBackgroundCubeTexture(Texture)}
+         */
+        public PortalSceneBuilder backgroundCubeTexture(Texture cubeTexture) {
+            portalScene.setBackgroundCubeTexture(cubeTexture);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link PortalScene#setBackgroundCubeWithColor(long)}
+         */
+        public PortalSceneBuilder backgroundCubeWithColor(long color) {
+            portalScene.setBackgroundCubeWithColor(color);
+            return (B) this;
+        }
+    }
 }

@@ -132,4 +132,44 @@ public abstract class Light {
     private native void nativeSetIntensity(long lightRef, float intensity);
     private native void nativeSetInfluenceBitMask(long lightRef, int bitMask);
 
+// +---------------------------------------------------------------------------+
+// | LightBuilder abstract class for Light
+// +---------------------------------------------------------------------------+
+    /**
+     * LightBuilder abstract class for building subclasses of {@link Light}
+     */
+    public static abstract class LightBuilder<R extends Light, B extends LightBuilder<R, B>> {
+        private R light;
+
+        /**
+         * Refer to {@link Light#setInfluenceBitMask(int)}
+         */
+        public LightBuilder influenceBitMask(int bitMask) {
+            light.setInfluenceBitMask(bitMask);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Light#setInfluenceBitMask(int)}
+         */
+        public LightBuilder intensity(float intensity) {
+            light.setIntensity(intensity);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Light#setColor(long)}
+         */
+        public LightBuilder color(long color) {
+            light.setColor(color);
+            return (B) this;
+        }
+
+        /**
+         * Returns the built subclass of {@link Light}
+         */
+        public R build() {
+            return light;
+        }
+    }
 }

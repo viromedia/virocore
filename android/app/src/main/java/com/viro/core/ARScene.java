@@ -284,4 +284,69 @@ public class ARScene extends Scene {
             mListener.onAnchorRemoved(anchor, node);
         }
     }
+
+    /**
+     * Creates a builder for building complex {@link ARScene} objects
+     * @return {@link ARSceneBuilder} object
+     */
+    public static ARSceneBuilder<? extends Scene, ? extends SceneBuilder> builder() {
+        return new ARSceneBuilder<>();
+    }
+// +---------------------------------------------------------------------------+
+// | ARSceneBuilder class for ARScene
+// +---------------------------------------------------------------------------+
+
+    /**
+     * ARSceneBuilder class for building {@link ARScene}
+     */
+    public static class ARSceneBuilder<R extends ARScene, B extends ARSceneBuilder<R, B>> extends SceneBuilder<R, B> {
+        private R aRScene;
+
+        /**
+         * Constructor for SceneBuilder class
+         */
+        public ARSceneBuilder() {
+            this.aRScene = (R) new ARScene();
+        }
+
+        /**
+         * Refer to {@link ARScene#setListener(Listener)}
+         */
+        public ARSceneBuilder listener(Listener listener) {
+            aRScene.setListener(listener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link ARScene#displayPointCloud(boolean)}
+         */
+        public ARSceneBuilder displayPointCloud(boolean displayPointCloud) {
+            aRScene.displayPointCloud(displayPointCloud);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link ARScene#setPointCloudSurface(Surface)}
+         */
+        public ARSceneBuilder pointCloudSurface(Surface pointCloudSurface) {
+            aRScene.setPointCloudSurface(pointCloudSurface);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link ARScene#setPointCloudSurfaceScale(Vector)}
+         */
+        public ARSceneBuilder pointCloudSurfaceScale(Vector pointCloudSurfaceScale) {
+            aRScene.setPointCloudSurfaceScale(pointCloudSurfaceScale);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link ARScene#setPointCloudMaxPoints(int)}
+         */
+        public ARSceneBuilder pointCloudMaxPoints(Integer pointCloudMaxPoints) {
+            aRScene.setPointCloudMaxPoints(pointCloudMaxPoints);
+            return (B) this;
+        }
+    }
 }

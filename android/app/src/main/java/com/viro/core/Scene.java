@@ -466,4 +466,78 @@ public class Scene {
         findCollisionsWithShapeAsync(mNativeRef, from,to, shapeType, params, tag, callback);
     }
 
+    /**
+     * Creates a builder for building complex {@link Scene} objects
+     * @return {@link SceneBuilder} object
+     */
+    public static SceneBuilder<? extends Scene, ? extends SceneBuilder> builder() {
+        return new SceneBuilder<>();
+    }
+
+// +---------------------------------------------------------------------------+
+// | SceneBuilder class for Scene
+// +---------------------------------------------------------------------------+
+
+    /**
+     * SceneBuilder class for {@link Scene}
+     */
+    public static class SceneBuilder<R extends Scene, B extends SceneBuilder<R, B>> {
+        private R scene;
+
+        /**
+         * Constructor for SceneBuilder class
+         */
+        public SceneBuilder() {
+            this.scene = (R) new Scene();
+        }
+
+        /**
+         * Refer to {@link Scene#setVisibilityListener(VisibilityListener)}
+         */
+        public SceneBuilder listener(VisibilityListener listener) {
+            this.scene.setVisibilityListener(listener);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Scene#setBackgroundTexture(Texture)}
+         */
+        public SceneBuilder backgroundTexture(Texture backgroundTexture) {
+            this.scene.setBackgroundTexture(backgroundTexture);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Scene#setBackgroundRotation(Vector)}
+         */
+        public SceneBuilder backgroundRotation(Vector backgroundRotation) {
+            this.scene.setBackgroundRotation(backgroundRotation);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Scene#setBackgroundCubeWithColor(long)}}
+         */
+        public SceneBuilder backgroundCubeWithColor(long backgroundCubeWithColor) {
+            this.scene.setBackgroundCubeWithColor(backgroundCubeWithColor);
+            return (B) this;
+        }
+
+        /**
+         * Refer to {@link Scene#setSoundRoom(ViroContext, Vector, AudioMaterial, AudioMaterial, AudioMaterial)}
+         */
+        public SceneBuilder soundRoom(ViroContext viroContext, Vector size, AudioMaterial wall,
+                                      AudioMaterial ceiling, AudioMaterial floor) {
+            this.scene.setSoundRoom(viroContext,size, wall, ceiling, floor);
+            return (B) this;
+        }
+
+        /**
+         * Returns the built {@link Scene} object
+         */
+        public R build() {
+            return scene;
+        }
+
+    }
 }
