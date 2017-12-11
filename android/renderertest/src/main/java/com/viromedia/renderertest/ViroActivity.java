@@ -160,8 +160,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     public void onRendererStart() {
         Log.e("ViroActivity", "onRendererStart called");
-        initializeVrScene();
-        //initializeArScene();
+        //initializeVrScene();
+        initializeArScene();
     }
 
     private void initializeVrScene() {
@@ -370,21 +370,23 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private void testSceneLighting(final Node node) {
-        final float[] lightDirection = {0, 0, -1};
+        final float[] lightDirection = {0, -1, 0};
         final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
         node.addLight(ambientLightJni);
 
-        final DirectionalLight directionalLightJni = new DirectionalLight(Color.BLUE, 1000.0f, new Vector(lightDirection));
-        node.addLight(directionalLightJni);
+        final DirectionalLight directional = new DirectionalLight(Color.BLUE, 1000.0f, new Vector(lightDirection));
+        directional.setCastsShadow(true);
+        directional.setShadowOrthographicSize(10);
+        node.addLight(directional);
 
         final float[] omniLightPosition = {1, 0, 0};
-        final OmniLight omniLightJni = new OmniLight(Color.RED, 1000.0f, 1, 10, new Vector(omniLightPosition));
-        node.addLight(omniLightJni);
+        final OmniLight omni = new OmniLight(Color.RED, 1000.0f, 1, 10, new Vector(omniLightPosition));
+        node.addLight(omni);
 
         final float[] spotLightPosition = {-2, 0, 3};
-        final Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
+        final Spotlight spot = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
                 new Vector(lightDirection), (float) Math.toRadians(2), (float) Math.toRadians(10));
-        node.addLight(spotLightJni);
+        node.addLight(spot);
     }
 
     private List<Node> testSurfaceVideo(final Context context) {
@@ -795,6 +797,18 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
                 Log.i("Viro", "Found anchor!");
                 node.addChildNode(loadObjectNode());
+
+                Surface surface = new Surface(2, 2);
+                Material material = new Material();
+                material.setDiffuseColor(Color.BLACK);
+                material.setShadowMode(Material.ShadowMode.TRANSPARENT);
+                surface.setMaterials(Arrays.asList(material));
+
+                Node surfaceNode = new Node();
+                surfaceNode.setPosition(new Vector(0, -0.5f, 0));
+                surfaceNode.setRotation(new Vector((float) -Math.PI / 2, 0, 0));
+                surfaceNode.setGeometry(surface);
+                node.addChildNode(surfaceNode);
             }
 
             @Override

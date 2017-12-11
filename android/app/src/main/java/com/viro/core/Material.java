@@ -265,10 +265,70 @@ public class Material {
         }
     };
 
+    /**
+     * ShadowMode defines in what form a {@link Material} receives shadows. Shadows for this
+     * surface can either be disabled, rendered normally through shading, or rendered set to a special AR mode for
+     * use on transparent surfaces.
+     */
+    public enum ShadowMode {
+        /**
+         * Shadows are disabled for this material. Surfaces using this material will be illuminated
+         * by lights as though there are no occluding objects.
+         */
+        DISABLED("Disabled"),
+
+        /**
+         * Shadows are enabled and behave normally. Surfaces using this material will be illuminated
+         * by lights <i>except</i> over areas where the light is occluded.
+         */
+        NORMAL("Normal"),
+
+        /**
+         * Shadows are enabled, but behave by setting the <i>alpha</i> channel of the surface.
+         * Surfaces using this material are set to <i>black</i> and <i>transparent</i>. Over areas
+         * where the surface is occluded from the light, the alpha value will be be greater than
+         * zero. Over areas where the surface is in full view of the light, the alpha value is
+         * zero.
+         * <p>
+         * This setting is used primarily in AR, in cases where you wish to have virtual objects
+         * cast shadows on real-world surfaces. You can achieve this by creating a transparent
+         * surface and aligning it with the real-world surface you wish to receive shadows. Then set
+         * the transparent surface's material to this shadow mode.
+         */
+        TRANSPARENT("Transparent");
+
+        private String mStringValue;
+        private ShadowMode(String value) {
+            this.mStringValue = value;
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public String getStringValue() {
+            return mStringValue;
+        }
+
+        private static Map<String, ShadowMode> map = new HashMap<String, ShadowMode>();
+        static {
+            for (ShadowMode value : ShadowMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static ShadowMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
+    };
+
     long mNativeRef;
     private boolean mWritesToDepthBuffer = true;
     private boolean mReadsFromDepthBuffer = true;
     private LightingModel mLightingModel = LightingModel.CONSTANT;
+    private ShadowMode mShadowMode = ShadowMode.NORMAL;
     private Texture mDiffuseTexture;
     private int mDiffuseColor = Color.WHITE;
     private float mDiffuseIntensity = 1.0f;
@@ -691,6 +751,28 @@ public class Material {
         return mBloomThreshold;
     }
 
+    /**
+     * Set the {@link ShadowMode} for this Material, which defines how surfaces using this
+     * Material render shadows. See {@link ShadowMode} for details. The default value is
+     * {@link ShadowMode#NORMAL}.
+     *
+     * @param shadowMode The {@link ShadowMode} to use for this Material.
+     */
+    public void setShadowMode(ShadowMode shadowMode) {
+        mShadowMode = shadowMode;
+        nativeSetShadowMode(mNativeRef, shadowMode.getStringValue());
+    }
+
+    /**
+     * Get the {@link ShadowMode} used by this Material, which defines how surfaces using
+     * this material render shadows. See {@link ShadowMode} for details.
+     *
+     * @return The {@link ShadowMode} used by this Material.
+     */
+    public ShadowMode getShadowMode() {
+        return mShadowMode;
+    }
+
     private native long nativeCreateMaterial();
     private native long nativeCreateImmutableMaterial(String lightingModel, long diffuseColor, long diffuseTexture, float diffuseIntensity, long specularTexture,
                                                       float shininess, float fresnelExponent, long normalMap, String cullMode,
@@ -709,4 +791,5 @@ public class Material {
     private native void nativeSetDiffuseIntensity(long nativeRef, float diffuseIntensity);
     private native void nativeDestroyMaterial(long nativeRef);
     private native void nativeSetBloomThreshold(long nativeRef, float bloomThreshold);
+    private native void nativeSetShadowMode(long nativeRef, String shadowMode);
 }

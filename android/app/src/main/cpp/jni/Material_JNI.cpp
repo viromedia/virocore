@@ -9,6 +9,7 @@
 #include "Material_JNI.h"
 #include "VROStringUtil.h"
 #include "VROLog.h"
+#include "VROARShadow.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -305,6 +306,32 @@ JNI_METHOD(void, nativeDestroyMaterial)(JNIEnv *env,
                                         jobject obj,
                                         jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROMaterial> *>(nativeRef);
+}
+
+JNI_METHOD(void, nativeSetShadowMode(JNIEnv *env, jobject obj,
+                                     jlong material_j, jstring shadow_j)) {
+    std::string shadow_s = VROPlatformGetString(shadow_j, env);
+    std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
+
+    VROPlatformDispatchAsyncRenderer([material_w, shadow_s] {
+        std::shared_ptr<VROMaterial> material = material_w.lock();
+        if (!material) {
+            return;
+        }
+
+        if (VROStringUtil::strcmpinsensitive(shadow_s, "Disabled")) {
+            VROARShadow::remove(material);
+            material->setReceivesShadows(false);
+        }
+        else if (VROStringUtil::strcmpinsensitive(shadow_s, "Transparent")) {
+            VROARShadow::apply(material);
+            material->setReceivesShadows(true);
+        }
+        else { // Normal
+            VROARShadow::remove(material);
+            material->setReceivesShadows(true);
+        }
+    });
 }
 
 }  // extern "C"

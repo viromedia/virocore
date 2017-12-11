@@ -15,10 +15,32 @@ static std::shared_ptr<VROShaderModifier> sShadowARLightingModifier;
 static std::shared_ptr<VROShaderModifier> sShadowARFragmentModifier;
 
 void VROARShadow::apply(std::shared_ptr<VROMaterial> material) {
+    createSurfaceModifier();
+    createLightingModifier();
+    createFragmentModifier();
+
     material->setLightingModel(VROLightingModel::Lambert);
-    material->addShaderModifier(createSurfaceModifier());
-    material->addShaderModifier(createLightingModifier());
-    material->addShaderModifier(createFragmentModifier());
+    if (!material->hasShaderModifier(sShadowARSurfaceModifier)) {
+        material->addShaderModifier(sShadowARSurfaceModifier);
+    }
+    if (!material->hasShaderModifier(sShadowARLightingModifier)) {
+        material->addShaderModifier(sShadowARLightingModifier);
+    }
+    if (!material->hasShaderModifier(sShadowARFragmentModifier)) {
+        material->addShaderModifier(sShadowARFragmentModifier);
+    }
+}
+
+void VROARShadow::remove(std::shared_ptr<VROMaterial> material) {
+    if (sShadowARFragmentModifier != nullptr) {
+        material->removeShaderModifier(sShadowARFragmentModifier);
+    }
+    if (sShadowARLightingModifier != nullptr) {
+        material->removeShaderModifier(sShadowARLightingModifier);
+    }
+    if (sShadowARSurfaceModifier != nullptr) {
+        material->removeShaderModifier(sShadowARSurfaceModifier);
+    }
 }
 
 std::shared_ptr<VROShaderModifier> VROARShadow::createSurfaceModifier() {
