@@ -441,12 +441,8 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
         _computedTransform.translate(_computedPosition.scale(-1));
         _computedTransform = billboardRotation.multiply(_computedTransform);
         _computedTransform.translate(_computedPosition);
+        
         updated = true;
-    }
-
-    // Update the bounding box with the latest constraint-computed transform.
-    if (_geometry) {
-        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
     }
     
     /*
