@@ -166,7 +166,7 @@ void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamer
     _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, rotation.invert(), projection, viewport, _driver);
+    _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
     _renderer->endFrame(_driver);
 
@@ -186,7 +186,7 @@ void VROSceneRendererARCore::renderWaitingForTracking(VROViewport viewport) {
 
     _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
+    _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
     _renderer->endFrame(_driver);
 }

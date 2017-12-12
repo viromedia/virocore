@@ -789,10 +789,22 @@ static void ovrRenderer_RenderFrame(ovrRenderer *rendererOVR, const ovrJava *jav
         VROEyeType eyeType = (eye == VRAPI_FRAME_LAYER_EYE_LEFT) ? VROEyeType::Left : VROEyeType::Right;
         VROViewport viewport = { 0, 0, frameBuffer->Width, frameBuffer->Height };
 
+        VROMatrix4f viroHeadView = renderer->getLookAtMatrix();
+        VROMatrix4f ovrEyeView = toMatrix4f(updatedTracking.Eye[eye].ViewMatrix);
+
+        // Copy over the values from the OVR eye view matrix into our Viro head view matrix to
+        // get the correct translation (this appears to be the only thing OVR is changing to
+        // derive its eye view matrix from its head view matrix). Note we don't pass the OVR eye
+        // view matrix directly into Viro because we need to take Viro's pointOfView into account,
+        // which is captured in the viroHeadView
+        for (int i = 12; i < 15; i++) {
+            viroHeadView[i] += ovrEyeView[i];
+        } //After these additions, viroHeadView is really viroEyeView
+
         // We use our projection matrix because the one computed by OVR appears to be identical for
-        // left an right, but with fixed NCP and FCP. Our projection uses the correct NCP and FCP.
+        // left and right, but with fixed NCP and FCP. Our projection uses the correct NCP and FCP.
         renderer->renderEye(eyeType,
-                            toMatrix4f(updatedTracking.Eye[eye].ViewMatrix),
+                            viroHeadView,
                             projection,
                             viewport, driver);
 

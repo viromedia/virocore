@@ -165,7 +165,6 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
 
     // Get the eye, view, and projection matrices
     VROMatrix4f eyeFromHeadMatrices[GVR_NUM_EYES];
-    VROMatrix4f eyeViewMatrices[GVR_NUM_EYES];
     VROFieldOfView fovs[GVR_NUM_EYES];
     VROViewport viewports[GVR_NUM_EYES];
     VROMatrix4f projectionMatrices[GVR_NUM_EYES];
@@ -173,10 +172,8 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
     for (int i = 0; i < GVR_NUM_EYES; i++) {
         gvr::Eye eye = (gvr::Eye) i;
         eyeFromHeadMatrices[i] = VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(eye));
-        eyeViewMatrices[i] = eyeFromHeadMatrices[i].multiply(headView);
 
         _viewportList->GetBufferViewport(eye, &_sceneViewport);
-
         extractViewParameters(_sceneViewport, &viewports[i], &fovs[i]);
         projectionMatrices[i] = fovs[i].toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
 
@@ -193,14 +190,14 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
     _renderer->prepareFrame(_frame, viewports[0], fovs[0], headRotation, projectionMatrices[0], _driver);
     clearViewport(viewports[0], false);
     _renderer->renderEye(VROEyeType::Left,
-                         eyeViewMatrices[GVR_LEFT_EYE],
+                         eyeFromHeadMatrices[GVR_LEFT_EYE].multiply(_renderer->getLookAtMatrix()),
                          projectionMatrices[GVR_LEFT_EYE],
                          viewports[GVR_LEFT_EYE], _driver);
 
     // Render the right eye
     clearViewport(viewports[1], false);
     _renderer->renderEye(VROEyeType::Right,
-                         eyeViewMatrices[GVR_RIGHT_EYE],
+                         eyeFromHeadMatrices[GVR_RIGHT_EYE].multiply(_renderer->getLookAtMatrix()),
                          projectionMatrices[GVR_RIGHT_EYE],
                          viewports[GVR_RIGHT_EYE], _driver);
     frame.Unbind();
@@ -242,7 +239,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
 
     clearViewport(viewport, false);
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, projection, _driver);
-    _renderer->renderEye(VROEyeType::Monocular, headView, projection, viewport,  _driver);
+    _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport,  _driver);
     _renderer->renderHUD(VROEyeType::Monocular, eyeFromHeadMatrix, projection, _driver);
     _renderer->endFrame(_driver);
 }

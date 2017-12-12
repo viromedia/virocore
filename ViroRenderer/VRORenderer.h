@@ -109,6 +109,13 @@ public:
      */
     float getFarClippingPlane() const;
 
+    /*
+     Get the camera look-at matrix, which is computed each frame after prepareFrame
+     is invoked. This takes into account the headRotation provided in prepareFrame and
+     the specified pointOfView.
+     */
+    VROMatrix4f getLookAtMatrix() const;
+
 #pragma mark - Scene Controllers
 
     void setSceneController(std::shared_ptr<VROSceneController> sceneController,
@@ -206,12 +213,13 @@ public:
         return _lastComputedCameraForward.load();
     }
 
-     /*
+    /*
      TODO: Revisit unifying Camera APIs in VIRO-2235.
      */
      void setCameraDelegate(std::shared_ptr<VROCameraDelegate> delegate) {
          _cameraDelegate = delegate;
      }
+
 private:
 
     bool _rendererInitialized;
@@ -254,7 +262,7 @@ private:
      view from which we display the scene.
      */
     std::shared_ptr<VRONode> _pointOfView;
-  
+
     VROCamera updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
                            const VROMatrix4f &headRotation, const VROMatrix4f &projection);
 

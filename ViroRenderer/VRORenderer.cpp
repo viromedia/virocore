@@ -143,6 +143,10 @@ void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
     _pointOfView = node;
 }
 
+VROMatrix4f VRORenderer::getLookAtMatrix() const {
+    return _context->getCamera().getLookAtMatrix();
+}
+
 VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
                                     const VROMatrix4f &headRotation, const VROMatrix4f &projection) {
     
