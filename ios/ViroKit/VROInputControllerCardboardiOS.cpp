@@ -41,5 +41,6 @@ void VROInputControllerCardboardiOS::updateOrientation(const VROCamera &camera){
     
     // Process orientation and update delegates
     VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, camera.getPosition(), rotation, controllerForward);
+    VROInputControllerBase::processGazeEvent(ViroCardBoard::InputSource::Controller);
 }
 
