@@ -174,7 +174,7 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
         self.texture = texture;
         self.cache = cache;
         self.driver = driver;
-        self.trackingHelper = [[VROTrackingHelper alloc] init];
+        // self.trackingHelper = [[VROTrackingHelper alloc] init];
     }
     
     return self;
