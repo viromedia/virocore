@@ -74,6 +74,12 @@ public:
     void detachScene() {
         _scene = nullptr;
     }
+    
+    /*
+     Set the current view and projection matrices.
+     */
+    void setView(VROMatrix4f view);
+    void setProjection(VROMatrix4f projection);
 
     /*
      Get the presenter, creating it if it does not yet exist. Must be invoked on the
@@ -98,7 +104,6 @@ public:
     void registerEventDelegate(std::shared_ptr<VROEventDelegate> delegate){
         _delegates.insert(delegate);
     }
-
     void removeEventDelegate(std::shared_ptr<VROEventDelegate> delegate){
         _delegates.erase(delegate);
     }
@@ -204,6 +209,11 @@ protected:
      Last known rotation value in radians.
      */
     float _lastRotation;
+    
+    /*
+     The view and projection matrices, updated each render cycle.
+     */
+    VROMatrix4f _view, _projection;
 
     /*
      Delegates registered within the manager to be notified of events

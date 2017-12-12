@@ -48,11 +48,11 @@ JNI_METHOD(void, nativeGetCameraOrientation)(JNIEnv *env,
             return;
         }
 
-        std::shared_ptr<VRORenderContext> context = helperContext->getContext();
-        VROVector3f position = context->getCamera().getPosition();
-        VROVector3f rotation = context->getCamera().getRotation().toEuler();
-        VROVector3f forward = context->getCamera().getForward();
-        VROVector3f up = context->getCamera().getUp();
+        const VROCamera &camera = helperContext->getCamera();
+        VROVector3f position = camera.getPosition();
+        VROVector3f rotation = camera.getRotation().toEuler();
+        VROVector3f forward = camera.getForward();
+        VROVector3f up = camera.getUp();
 
         VROPlatformCallJavaFunction(jCallback,
                                     "onGetCameraOrientation", "(FFFFFFFFFFFF)V",

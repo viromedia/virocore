@@ -54,7 +54,6 @@ VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gv
     std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0,0);
 
     _renderer = std::make_shared<VRORenderer>(controller);
-    controller->setRenderer(_renderer);
     controller->setSession(_session);
 
     _pointOfView = std::make_shared<VRONode>();
@@ -360,7 +359,7 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(float x
 }
 
 std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
-    VROVector3f cameraForward = getRenderer()->getRenderContext()->getCamera().getForward();
+    VROVector3f cameraForward = getRenderer()->getCamera().getForward();
     if (cameraForward.dot(ray) <= 0) {
         return std::vector<VROARHitTestResult>();
     }
@@ -368,8 +367,8 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVect
     int viewportArr[4] = {0, 0, _surfaceSize.width, _surfaceSize.height};
 
     // create the mvp (in this case, the model mat is identity).
-    VROMatrix4f projectionMat = getRenderer()->getRenderContext()->getProjectionMatrix();
-    VROMatrix4f viewMat = getRenderer()->getRenderContext()->getViewMatrix();
+    VROMatrix4f projectionMat = getRenderer()->getCamera().getProjection();
+    VROMatrix4f viewMat = getRenderer()->getCamera().getLookAtMatrix();
     VROMatrix4f vpMat = projectionMat.multiply(viewMat);
 
     VROVector3f point;

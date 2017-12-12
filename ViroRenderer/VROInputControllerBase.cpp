@@ -53,6 +53,13 @@ void VROInputControllerBase::debugMoveReticle() {
 #endif
 }
 
+void VROInputControllerBase::setView(VROMatrix4f view) {
+    _view = view;
+}
+
+void VROInputControllerBase::setProjection(VROMatrix4f projection) {
+    _projection = projection;
+}
 
 void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState){
     // Return if we have not focused on any node upon which to trigger events.

@@ -478,7 +478,7 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
     VROVector3f positionVec = VROVector3f(positionStart[0], positionStart[1], positionStart[2]);
     env->ReleaseFloatArrayElements(position, positionStart, 0);
 
-    VROVector3f cameraVec = renderer->getRenderer()->getRenderContext()->getCamera().getPosition();
+    VROVector3f cameraVec = renderer->getRenderer()->getCamera().getPosition();
     // the ray we want to use is (given position - camera position)
     VROVector3f rayVec = positionVec - cameraVec;
 

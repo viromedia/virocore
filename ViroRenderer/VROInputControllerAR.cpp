@@ -360,18 +360,8 @@ void VROInputControllerAR::processTouchMovement() {
 }
  
 VROVector3f VROInputControllerAR::calculateCameraRay(VROVector3f touchPos) {
-    std::shared_ptr<VRORenderer> renderer = _weakRenderer.lock();
-    if (!renderer) {
-        return VROVector3f();
-    }
-    
     int viewportArr[4] = {0, 0, (int) _viewportWidth, (int) _viewportHeight};
-    
-    // calculate the mvp matrix
-    VROMatrix4f projectionMat = renderer->getRenderContext()->getProjectionMatrix();
-    VROMatrix4f viewMat = renderer->getRenderContext()->getViewMatrix();
-
-    VROMatrix4f mvp = projectionMat.multiply(viewMat);
+    VROMatrix4f mvp = _projection.multiply(_view);
 
     // unproject the touchPos vector at z = 0 and z = 1
     VROVector3f resultNear;

@@ -35,8 +35,8 @@ public:
         return persistedContext->get();
     }
 
-    std::shared_ptr<VRORenderContext> getContext() {
-        return _renderer->getRenderer()->getRenderContext();
+    const VROCamera &getCamera() {
+        return _renderer->getRenderer()->getCamera();
     }
     std::shared_ptr<VRODriver> getDriver() {
         return _renderer->getDriver();

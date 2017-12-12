@@ -151,7 +151,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
                                                                  self.frame.size.height * self.contentScaleFactor);
     _renderer = std::make_shared<VRORenderer>(_inputController);
-    _inputController->setRenderer(_renderer);
     _hasTrackingInitialized = false;
     
     /*
@@ -320,7 +319,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (std::vector<VROARHitTestResult>)performARHitTest:(VROVector3f)ray {
     // check that the ray is in front of the camera
-    VROVector3f cameraForward = _renderer->getRenderContext()->getCamera().getForward();
+    VROVector3f cameraForward = _renderer->getCamera().getForward();
     if (cameraForward.dot(ray) <= 0) {
         return std::vector<VROARHitTestResult>();
     }
@@ -330,8 +329,8 @@ static VROVector3f const kZeroVector = VROVector3f();
         (int) (self.bounds.size.height * self.contentScaleFactor)};
 
     // create the mvp (in this case, the model mat is identity).
-    VROMatrix4f projectionMat = _renderer->getRenderContext()->getProjectionMatrix();
-    VROMatrix4f viewMat = _renderer->getRenderContext()->getViewMatrix();
+    VROMatrix4f projectionMat = _renderer->getCamera().getProjection();
+    VROMatrix4f viewMat = _renderer->getCamera().getLookAtMatrix();
     VROMatrix4f vpMat = projectionMat.multiply(viewMat);
 
     // get the 2D point

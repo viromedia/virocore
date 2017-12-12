@@ -179,16 +179,16 @@ public:
     std::shared_ptr<VROInputControllerBase> getInputController(){
         return _inputController;
     }
-
-    std::shared_ptr<VRORenderContext> getRenderContext() {
-        return _context;
+    
+#pragma mark - Camera
+   
+    /*
+     Get the camera used in the last frame.
+     */
+    const VROCamera &getCamera() const {
+        return _context->getCamera();
     }
     
-#pragma mark - VR Framework Specific
-    
-    // Some VR frameworks provide controls to allow the user to exit VR
-    void requestExitVR();
-
     /*
      Returns the last computed camera position.
      TODO: Revisit unifying Camera APIs in VIRO-2235.
@@ -196,7 +196,7 @@ public:
     VROVector3f getCameraPositionRealTime() const {
         return _lastComputedCameraPosition.load();
     }
-
+    
     /*
      Returns the last computed camera euler rotation.
      TODO: Revisit unifying Camera APIs in VIRO-2235.
@@ -204,7 +204,7 @@ public:
     VROVector3f getCameraRotationRealTime() const {
         return _lastComputedCameraRotation.load();
     }
-
+    
     /*
      Returns the last computed camera forward.
      TODO: Revisit unifying Camera APIs in VIRO-2235.
@@ -212,13 +212,19 @@ public:
     VROVector3f getCameraForwardRealTime() const {
         return _lastComputedCameraForward.load();
     }
-
+    
     /*
+     Set a delegate to receive camera movent events.
      TODO: Revisit unifying Camera APIs in VIRO-2235.
      */
-     void setCameraDelegate(std::shared_ptr<VROCameraDelegate> delegate) {
-         _cameraDelegate = delegate;
-     }
+    void setCameraDelegate(std::shared_ptr<VROCameraDelegate> delegate) {
+        _cameraDelegate = delegate;
+    }
+    
+#pragma mark - VR Framework Specific
+    
+    // Some VR frameworks provide controls to allow the user to exit VR
+    void requestExitVR();
 
 private:
 

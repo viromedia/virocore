@@ -57,6 +57,9 @@ public:
     VROMatrix4f getLookAtMatrix() const {
         return _lookAtMatrix;
     }
+    VROMatrix4f getProjection() const {
+        return _projection;
+    }
     const VROFrustum &getFrustum() const {
         return _frustum;
     }

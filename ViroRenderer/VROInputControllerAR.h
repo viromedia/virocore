@@ -21,7 +21,6 @@ const double kARDragAnimationDuration = .075; // seconds
 const double kARMinDragDistance = .33; // meters
 const double kARMaxDragDistance = 5; // meters
 
-
 class VROInputControllerAR : public VROInputControllerBase {
 public:
     VROInputControllerAR(float viewportWidth, float viewportHeight);
@@ -32,10 +31,6 @@ public:
         _viewportHeight = height;
     }
     
-    void setRenderer(std::shared_ptr<VRORenderer> renderer) {
-        _weakRenderer = renderer;
-    }
-
     void setSession(std::shared_ptr<VROARSession> session) {
         _weakSession = session;
     }
@@ -120,7 +115,6 @@ private:
     bool _isRotateOngoing;
     double _lastProcessDragTimeMillis;
 
-    std::weak_ptr<VRORenderer> _weakRenderer;
     std::weak_ptr<VROARSession> _weakSession;
     VROCamera _latestCamera;
     VROVector3f _latestTouchPos;
