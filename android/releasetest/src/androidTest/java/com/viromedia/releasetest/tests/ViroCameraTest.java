@@ -155,9 +155,9 @@ public class ViroCameraTest extends ViroBaseTest {
         // Listen for camera transformation updates as the camera animates
         mViroView.setCameraListener(new CameraListener() {
             @Override
-            public void onTransformUpdate(Vector pos, Vector rot, Vector forward) {
-                Vector ro2 = new Vector(0,Math.toDegrees(rot.y), 0);
-                String msg = "You should see the position and rotation of the camera animate increase\n Pos: " + pos.toString() + " Rot: " + ro2.toString();
+            public void onTransformUpdate(Vector position, Vector rotation, Vector forward) {
+                Vector ro2 = new Vector(0,Math.toDegrees(rotation.y), 0);
+                String msg = "You should see the position and rotation of the camera animate increase\n Pos: " + position.toString() + " Rot: " + ro2.toString();
                 output.setText(msg);
             }
         });

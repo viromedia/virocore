@@ -126,10 +126,10 @@ private:
     
 };
 
-class VROCameraDelegate{
+class VROCameraDelegate {
 public:
     VROCameraDelegate() {};
-    virtual ~VROCameraDelegate(){};
+    virtual ~VROCameraDelegate() {};
     virtual void onCameraTransformationUpdate(VROVector3f pos,
                                               VROVector3f rot,
                                               VROVector3f forward) = 0;

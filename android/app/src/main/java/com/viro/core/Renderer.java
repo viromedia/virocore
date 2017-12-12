@@ -24,7 +24,7 @@ import com.viro.core.internal.PlatformUtil;
 public class Renderer {
 
     protected long mNativeRef;
-    private CameraListener mListener;
+    private CameraListener mCameraListener;
 
     /* ----------     Scene view only methods    ---------- */
 
@@ -148,24 +148,24 @@ public class Renderer {
         return new Vector(nativeGetCameraRotationRealtime(mNativeRef));
     }
 
-    public Vector getLastCameraForwardRealtime(){
+    public Vector getLastCameraForwardRealtime() {
         return new Vector(nativeGetCameraForwardRealtime(mNativeRef));
     }
 
-    public void setCameraListener(CameraListener listener){
+    public void setCameraListener(CameraListener listener) {
         nativeSetCameraListener(mNativeRef, listener != null);
-        mListener = listener;
+        mCameraListener = listener;
     }
 
-    private void onCameraTransformationUpdate(float[] pos, float[] rotEuler, float[] forward){
-        if (mListener == null){
+    private void onCameraTransformationUpdate(float[] pos, float[] rotEuler, float[] forward) {
+        if (mCameraListener == null) {
             return;
         }
 
         Vector vPos = new Vector(pos);
         Vector vRotEuler = new Vector(rotEuler);
         Vector vForward = new Vector(forward);
-        mListener.onTransformUpdate(vPos, vRotEuler, vForward);
+        mCameraListener.onTransformUpdate(vPos, vRotEuler, vForward);
     }
 
     /* ----------     Native methods    ---------- */

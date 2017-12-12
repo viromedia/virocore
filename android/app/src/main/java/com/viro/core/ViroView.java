@@ -251,7 +251,10 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
-     * Sets a lister to be notified for updates.
+     * Set a {@link CameraListener} to receive updates whenever the camera's position or orientation
+     * changes. The camera is the current point of view of the user.
+     *
+     * @param listener The {@link CameraListener} to receive updates.
      */
     public void setCameraListener(CameraListener listener) {
         getRenderer().setCameraListener(listener);
