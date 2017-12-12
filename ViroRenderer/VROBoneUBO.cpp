@@ -93,11 +93,7 @@ VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
         memcpy(&data.bone_transforms[i * kFloatsPerBone], identity.getArray(), kFloatsPerBone * sizeof(float));
     }
     glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
-#if VRO_AVOID_BUFFER_SUB_DATA
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), &data, GL_DYNAMIC_DRAW);
-#else
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROBonesData), &data);
-#endif
 }
 
 VROBoneUBO::~VROBoneUBO() {
