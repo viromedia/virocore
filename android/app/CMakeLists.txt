@@ -93,9 +93,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/OBJLoaderDelegate_JNI.cpp
              src/main/cpp/jni/LazyMaterial_JNI.cpp
              src/main/cpp/jni/Polyline_JNI.cpp
-             src/main/cpp/jni/OpenCV_JNI.cpp
-             src/main/cpp/jni/ImageTracker_JNI.cpp
-             src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
+             # src/main/cpp/jni/OpenCV_JNI.cpp
+             # src/main/cpp/jni/ImageTracker_JNI.cpp
+             # src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
              src/main/cpp/jni/PhysicsDelegate_JNI.cpp
              src/main/cpp/jni/TransformDelegate_JNI.cpp
              src/main/cpp/jni/ParticleEmitter_JNI.cpp
@@ -252,8 +252,8 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPointCloudEmitter.cpp
 
              # Image Tracking
-             ../../ViroRenderer/VROImageTracker.cpp
-             ../../ViroRenderer/VROImageTrackerOutput.cpp
+             # ../../ViroRenderer/VROImageTracker.cpp
+             # ../../ViroRenderer/VROImageTrackerOutput.cpp
 
              # Renderer Test
              ../../ViroRenderer/VRORendererTestHarness.cpp
@@ -345,12 +345,12 @@ set_target_properties( lib-LinearMath
 
 # -- OpenCV Libraries --
 
-add_library( lib-OpenCV-Java3
-             SHARED
-             IMPORTED )
-set_target_properties (lib-OpenCV-Java3
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so )
+# add_library( lib-OpenCV-Java3
+#              SHARED
+#              IMPORTED )
+# set_target_properties (lib-OpenCV-Java3
+#                        PROPERTIES IMPORTED_LOCATION
+#                        ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so )
 
 
 add_library( lib-OpenCV-Calib3D
@@ -571,7 +571,7 @@ target_link_libraries( # Specifies the target library.
                        lib-LinearMath
 
                        # OpenCV Libs
-                       lib-OpenCV-Java3
+                       # lib-OpenCV-Java3
                        lib-OpenCV-Calib3D
                        lib-OpenCV-Core
                        lib-OpenCV-Features2D
