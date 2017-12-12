@@ -10,102 +10,95 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.memoryleaktest.MemoryLeakTest">
 
-    <Button
-        android:text="Box Test Memory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sphere_button"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="41dp"
-        android:layout_marginTop="15dp"
-        android:id="@+id/box_button" />
+        <Button
+            android:text="Box Test Memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="15dp"
+            android:id="@+id/box_button" />
 
-    <Button
-        android:text="Sphere Test Memory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sphere_button"
-        android:layout_below="@+id/box_button"
-        android:layout_alignStart="@+id/box_button" />
+        <Button
+            android:text="Sphere Test Memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sphere_button"
+            android:layout_below="@+id/box_button"
+            android:layout_alignStart="@+id/box_button" />
 
-    <Button
-        android:text="Video Test Memory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/video_button"
-        android:layout_below="@+id/sphere_button"
-        android:layout_alignStart="@+id/sphere_button" />
+        <Button
+            android:text="Video Test Memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/video_button"
+            android:layout_below="@+id/sphere_button"
+            android:layout_alignStart="@+id/sphere_button" />
 
-    <Button
-        android:text="3d Object Test Memory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/object_button"
-        android:layout_below="@+id/video_button"
-        android:layout_alignStart="@+id/video_button" />
+        <Button
+            android:text="3d Object Test Memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/object_button"
+            android:layout_below="@+id/video_button"
+            android:layout_alignStart="@+id/video_button" />
 
-    <Button
-        android:text="Scene BG Stereo Vid Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/stereo_bg_button"
-        android:layout_below="@+id/object_button"
-        android:layout_alignStart="@+id/object_button" />
+        <Button
+            android:text="Scene BG Stereo Vid Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/stereo_bg_button"
+            android:layout_below="@+id/object_button"
+            android:layout_alignStart="@+id/object_button" />
 
-    <Button
-        android:text="Particle Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/particle_button"
-        android:layout_below="@+id/stereo_bg_button"
-        android:layout_alignStart="@+id/stereo_bg_button"
-        android:layout_marginTop="45dp" />
+        <Button
+            android:text="Particle Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/particle_button"
+            android:layout_below="@+id/stereo_bg_button"
+            android:layout_alignStart="@+id/stereo_bg_button"
+            android:layout_marginTop="45dp" />
 
-    <Button
-        android:text="Light Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/light_button"
-        android:layout_below="@+id/stereo_bg_button"
-        android:layout_alignStart="@+id/stereo_bg_button" />
+        <Button
+            android:text="Light Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/light_button"
+            android:layout_below="@+id/stereo_bg_button"
+            android:layout_alignStart="@+id/stereo_bg_button" />
 
-    <Button
-        android:text="Event Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/event_button"
-        android:layout_below="@+id/particle_button"
-        android:layout_alignStart="@+id/particle_button" />
+        <Button
+            android:text="Event Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/event_button"
+            android:layout_below="@+id/particle_button"
+            android:layout_alignStart="@+id/particle_button" />
 
-    <Button
-        android:text="Audio Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/audio_button"
-        android:layout_below="@+id/event_button"
-        android:layout_alignStart="@+id/event_button" />
+        <Button
+            android:text="Audio Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/audio_button"
+            android:layout_below="@+id/event_button"
+            android:layout_alignStart="@+id/event_button" />
 
-    <Button
-        android:text="Anim Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/anim_button"
-        android:layout_toEndOf="@+id/particle_button"
-        android:layout_alignBottom="@+id/audio_button" />
+        <Button
+            android:text="Anim Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/anim_button"
+            android:layout_toEndOf="@+id/particle_button"
+            android:layout_alignBottom="@+id/audio_button" />
 
-    <Button
-        android:id="@+id/arscene_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/image_test_button"
-        android:layout_toEndOf="@+id/particle_button"
-        android:text="ARScene Test" />
+        <Button
+            android:id="@+id/arscene_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/anim_button"
+            android:layout_toEndOf="@+id/particle_button"
+            android:text="ARScene Test" />
 
-    <Button
-        android:id="@+id/image_test_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/anim_button"
-        android:layout_below="@+id/particle_button"
-        android:text="Image Test" />
 </RelativeLayout>
