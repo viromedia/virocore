@@ -13,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
+import android.util.Log;
 
+import com.viro.core.ARScene;
 import com.viro.core.AmbientLight;
 import com.viro.core.Box;
 import com.viro.core.DirectionalLight;
@@ -71,7 +73,7 @@ public class ViroSceneTest extends ViroBaseTest {
             videoTexture.setLoop(true);
             videoTexture.play();
         });
-        assertPass("The scene  background should display a video of a climber.");
+        assertPass("The scene background should display a video of a climber.");
     }
 
     private void testSceneBackgroundRotation() {
@@ -113,13 +115,12 @@ public class ViroSceneTest extends ViroBaseTest {
         // Set scene (with audio), set an onClickListener on a box, on Click change scene
         final AmbientLight light = new AmbientLight(Color.WHITE, 200f);
         final DirectionalLight directionalLight = new DirectionalLight();
-        final Material material = new Material();
 
+        final Material material = new Material();
         material.setLightingModel(Material.LightingModel.BLINN);
         material.setDiffuseColor(Color.BLUE);
 
-
-        final Scene scene1 = new Scene();
+        final Scene scene1 = new ARScene();
         scene1.getRootNode().addLight(light);
         scene1.getRootNode().addLight(directionalLight);
         final Node boxNode = new Node();
@@ -128,6 +129,7 @@ public class ViroSceneTest extends ViroBaseTest {
         boxNode.setGeometry(box1);
         boxNode.setPosition(new Vector(0, -2.5f, -3.3f));
         scene1.getRootNode().addChildNode(boxNode);
+
         runOnUiThread(() -> {
             final Sound sound = new Sound(mViroView.getViroContext(),
                     Uri.parse("file:///android_asset/flies_mono.wav"), new Sound.PlaybackListener() {
@@ -149,7 +151,7 @@ public class ViroSceneTest extends ViroBaseTest {
             sound.setLoop(true);
         });
 
-        final Scene scene2 = new Scene();
+        final Scene scene2 = new ARScene();
         scene2.getRootNode().addLight(light);
         scene2.getRootNode().addLight(directionalLight);
         final Node sphereNode = new Node();
@@ -191,15 +193,14 @@ public class ViroSceneTest extends ViroBaseTest {
                 public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float totalDuration) {
 
                 }
-            },
-                    Texture.StereoMode.TOP_BOTTOM);
+            }, Texture.StereoMode.TOP_BOTTOM);
+
             videoTexture.setVolume(1);
             videoTexture.setLoop(true);
             final Material videoMaterial = new Material();
             videoMaterial.setDiffuseTexture(videoTexture);
             scene2.setBackgroundTexture(videoTexture);
         });
-
 
         final List<Scene> scenes = Arrays.asList(scene1, scene1, scene2, scene2);
         final Iterator<Scene> iterator = Iterables.cycle(scenes).iterator();

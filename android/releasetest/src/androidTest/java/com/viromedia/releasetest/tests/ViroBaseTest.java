@@ -246,8 +246,11 @@ public abstract class ViroBaseTest {
         if (testMethod == null) {
             return;
         }
-
-        testMethod.mutableTest();
+        try {
+            testMethod.mutableTest();
+        } catch(Exception e) {
+            Log.e(TAG, "Exception running mutable test method", e);
+        }
     }
 
     @After
