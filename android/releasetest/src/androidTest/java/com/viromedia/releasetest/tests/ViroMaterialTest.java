@@ -38,7 +38,6 @@ public class ViroMaterialTest extends ViroBaseTest {
 
     @Override
     void configureTestScene() {
-
         mScene.setBackgroundCubeWithColor(Color.BLUE);
         mDirectionalLight = new DirectionalLight(Color.WHITE, 2000.0f, new Vector(0, 0, -1));
         mScene.getRootNode().addLight(mDirectionalLight);
@@ -68,7 +67,7 @@ public class ViroMaterialTest extends ViroBaseTest {
         mNodeBox.setRotation(new Vector(0f, 45f, 0f));
         mMaterialBoxList = new ArrayList();
         int[] colorArray = {Color.DKGRAY, Color.GRAY, Color.LTGRAY, Color.MAGENTA, Color.CYAN, Color.YELLOW};
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             Material material = new Material();
             material.setLightingModel(Material.LightingModel.CONSTANT);
             material.setDiffuseColor(colorArray[i]);
@@ -80,30 +79,22 @@ public class ViroMaterialTest extends ViroBaseTest {
 
     @Test
     public void testMaterial() {
-        //test material lighting model.
         testMaterialLightingModelConstant();
         testMaterialLightingModelBlinn();
         testMaterialLightingModelPhong();
         testMaterialLightingModelLambert();
 
-        //test specular texture
         testMaterialSpecularTexture();
-
-        //test normal map texture.
         testMaterialNormalMapTexture();
-
         testMaterialShininess();
 
-        //test blend modes
         testMaterialBlendNone();
         testMaterialBlendAlpha();
         testMaterialBlendAdd();
 
-        //test transparency modes.
         testMaterialTransparencyModeAOne();
         testMaterialTransparencyModeRGBZero();
 
-        //test cull mode
         testMaterialCullMode();
         testMaterialReadsFromDepthBuffer();
         testMaterialWritesToDepthBuffer();
@@ -191,9 +182,9 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(mNodeBox);
         mMutableTestMethod = () -> {
             Material.CullMode newCullMode = Material.CullMode.BACK;
-            if(mMaterialBoxList.get(0).getCullMode() == Material.CullMode.BACK) {
+            if (mMaterialBoxList.get(0).getCullMode() == Material.CullMode.BACK) {
                  newCullMode  = Material.CullMode.FRONT;
-            }else if(mMaterialBoxList.get(0).getCullMode() == Material.CullMode.FRONT) {
+            } else if(mMaterialBoxList.get(0).getCullMode() == Material.CullMode.FRONT) {
                 newCullMode = Material.CullMode.NONE;
             } else if(mMaterialBoxList.get(0).getCullMode() == Material.CullMode.NONE) {
                 newCullMode = Material.CullMode.BACK;
@@ -228,11 +219,10 @@ public class ViroMaterialTest extends ViroBaseTest {
         mNodeBox.setPosition(new Vector(0, 0, -15));
         mMaterial.setBloomThreshold(0.0f);
         mMutableTestMethod = () -> {
-            if(mMaterial.getBloomThreshold() <= 1.0f) {
+            if (mMaterial.getBloomThreshold() <= 1.0f) {
                 mMaterial.setBloomThreshold(mMaterial.getBloomThreshold() + .1f);
-                mSphere.setMaterials(Arrays.asList(mMaterial));
             }
         };
-        assertPass("Bloom threshold on sphere changes high to low ");
+        assertPass("Bloom threshold changes low to high (sphere goes from bright to dim)");
     }
 }
