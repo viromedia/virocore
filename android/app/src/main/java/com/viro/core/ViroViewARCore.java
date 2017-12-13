@@ -438,7 +438,9 @@ public class ViroViewARCore extends ViroView {
         if (mMediaRecorder != null) {
             mMediaRecorder.dispose();
         }
-        mARTouchGestureListener.destroy();
+        if (mARTouchGestureListener != null) {
+            mARTouchGestureListener.destroy();
+        }
         super.dispose();
     }
 

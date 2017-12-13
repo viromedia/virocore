@@ -76,17 +76,38 @@ public class Renderer {
 
     /* ----------     Common lifecycle methods    ---------- */
 
-    public void destroy() { nativeDestroyRenderer(mNativeRef); }
+    public void destroy() {
+        if (mNativeRef != 0) {
+            nativeDestroyRenderer(mNativeRef);
+        }
+        mNativeRef = 0;
+    }
+
     public void initalizeGl() { nativeInitializeGl(mNativeRef); }
 
-    public void onStart() { nativeOnStart(mNativeRef); }
+    public void onStart() {
+        if (mNativeRef != 0) {
+            nativeOnStart(mNativeRef);
+        }
+    }
+
     public void onPause() {
-        nativeOnPause(mNativeRef);
+        if (mNativeRef != 0) {
+            nativeOnPause(mNativeRef);
+        }
     }
     public void onResume() {
-        nativeOnResume(mNativeRef);
+        if (mNativeRef != 0) {
+            nativeOnResume(mNativeRef);
+        }
     }
-    public void onStop() { nativeOnStop(mNativeRef); }
+
+    public void onStop() {
+        if (mNativeRef != 0) {
+            nativeOnStop(mNativeRef);
+        }
+    }
+
     public void onSurfaceCreated(Surface surface) { nativeOnSurfaceCreated(surface, mNativeRef); }
     public void onSurfaceChanged(Surface surface, int width, int height) { nativeOnSurfaceChanged(surface, width, height, mNativeRef); }
 
