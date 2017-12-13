@@ -331,6 +331,13 @@
     
     NSError *error;
     _audioRecorder = [[AVAudioRecorder alloc] initWithURL:url settings:audioRecordSettings error:&error];
+    
+    // We need to set this now because something cough*gvr*cough keeps changing the category such that
+    // we aren't able to record.
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+                                     withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
+                                           error:nil];
+
     if ([_audioRecorder prepareToRecord]) {
         [_audioRecorder record];
     } else {

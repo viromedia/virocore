@@ -211,7 +211,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     [tapGesture setDelegate:self];
     [self addGestureRecognizer:tapGesture];
     
-    self.viewRecorder = [[VROViewRecorder alloc] init];
+    self.viewRecorder = [[VROViewRecorder alloc] initWithView:self renderer:_renderer driver:_driver];
 }
 
 #pragma mark Gesture handlers
