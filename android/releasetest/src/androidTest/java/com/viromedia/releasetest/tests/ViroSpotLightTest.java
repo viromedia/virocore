@@ -180,11 +180,11 @@ public class ViroSpotLightTest extends ViroBaseTest {
     }
 
     private void testSetInnerAngle() {
-        final List<Vector> positions = Arrays.asList(new Vector(0, 0, -1), new Vector(0, -1, -1), new Vector(0, -1, 0));
-        final Iterator<Vector> itr = Iterables.cycle(positions).iterator();
+        final List<Float> innerAnglesList = Arrays.asList((float)Math.toRadians(20), (float)Math.toRadians(45), (float)Math.toRadians(90));
+        final Iterator<Float> itr = Iterables.cycle(innerAnglesList).iterator();
         mMutableTestMethod = () -> {
             if (mSpotLight != null) {
-                mSpotLight.setPosition(itr.next());
+                mSpotLight.setInnerAngle(itr.next());
             }
         };
         assertPass("running testSetInnerAngle()");
@@ -192,11 +192,11 @@ public class ViroSpotLightTest extends ViroBaseTest {
     }
 
     private void testSetOuterAngle() {
-        final List<Vector> positions = Arrays.asList(new Vector(0, 0, -1), new Vector(0, -1, -1), new Vector(0, -1, 0));
-        final Iterator<Vector> itr = Iterables.cycle(positions).iterator();
+        final List<Float> outerAnglesList = Arrays.asList((float)Math.toRadians(20), (float)Math.toRadians(45), (float)Math.toRadians(90));
+        final Iterator<Float> itr = Iterables.cycle(outerAnglesList).iterator();
         mMutableTestMethod = () -> {
             if (mSpotLight != null) {
-                mSpotLight.setPosition(itr.next());
+                mSpotLight.setOuterAngle(itr.next());
             }
         };
         assertPass("running testSetOuterAngle()");
