@@ -25,16 +25,23 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     if (sInstances > 1) {
         return;
     }
+    
+    // Initialize data to something sane
+    VROParticlesUBOVertexData vertexData;
+    memset(vertexData.particles_transform, 0x0, kMaxParticlesPerUBO * kMaxFloatsPerTransform * sizeof(float));
+    
+    VROParticlesUBOFragmentData fragmentData;
+    memset(fragmentData.frag_particles_color, 0x0, kMaxParticlesPerUBO * kMaxFloatsPerColor * sizeof(float));
 
-    // Set up Vertex UBO;
+    // Set up Vertex UBO
     glGenBuffers(1, &sUBOVertexBufferID);
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
 
-    // Set up Fragment UBO;
+    // Set up Fragment UBO
     glGenBuffers(1, &sUBOFragmentBufferID);
     glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
     _lastKnownBoundingBox = VROBoundingBox(0,0,0,0,0,0);
 }
 
