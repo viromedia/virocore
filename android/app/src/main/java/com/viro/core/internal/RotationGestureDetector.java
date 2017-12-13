@@ -40,19 +40,27 @@ public class RotationGestureDetector {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
+        int pointerIndex1 = 0;
+        int pointerIndex2 = 0;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mPointer1 = event.getPointerId(event.getActionIndex());
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 mPointer2 = event.getPointerId(event.getActionIndex());
-                mFirstLine = new Line(event, event.findPointerIndex(mPointer1),
-                        event.findPointerIndex(mPointer2));
+                pointerIndex1 = event.findPointerIndex(mPointer1);
+                pointerIndex2 = event.findPointerIndex(mPointer2);
+                if (pointerIndex1 == -1 || pointerIndex2 == -1) {
+                    // Like below, this is for the S8 where for some reason, a "non-primary"
+                    // pointer has touched down, while the "primary" (mPointer1) is not valid
+                    break;
+                }
+                mFirstLine = new Line(event, pointerIndex1, pointerIndex2);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mPointer1 != INVALID_POINTER && mPointer2 != INVALID_POINTER) {
-                    int pointerIndex1 = event.findPointerIndex(mPointer1);
-                    int pointerIndex2 = event.findPointerIndex(mPointer2);
+                    pointerIndex1 = event.findPointerIndex(mPointer1);
+                    pointerIndex2 = event.findPointerIndex(mPointer2);
                     if (pointerIndex1 == -1 || pointerIndex2 == -1) {
                         // saw this on S8, we get a "move" before an ACTION_POINTER_UP was
                         // called so mPointer2 isn't == INVALID_POINTER, but it really is.
