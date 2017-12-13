@@ -318,6 +318,13 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
         }
     }
 
+    if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
+        _lastLeftEyeView = eyeView;
+    }
+    else {
+        _lastRightEyeView = eyeView;
+    }
+
     // This unbinds the last shader to even out our pglpush and pops
     driver->unbindShader();
     pglpop();
@@ -338,12 +345,21 @@ void VRORenderer::renderHUD(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setViewMatrix(eyeFromHeadMatrix);
     _context->setProjectionMatrix(eyeProjection);
     _context->setEyeType(eye);
-    
+    _debugHUD->renderEye(eye, *_context.get(), driver);
+
+    /*
+     For the reticle, we choose our view matrix based on whether or not it's headlocked.
+     */
     std::shared_ptr<VROReticle> reticle = _inputController->getPresenter()->getReticle();
     if (reticle) {
+        if (reticle->isHeadlocked()) {
+            _context->setViewMatrix(eyeFromHeadMatrix);
+        }
+        else {
+            _context->setViewMatrix(eye == VROEyeType::Right ? _lastRightEyeView : _lastLeftEyeView);
+        }
         reticle->renderEye(eye, *_context.get(), driver);
     }
-    _debugHUD->renderEye(eye, *_context.get(), driver);
 
     // This unbinds the last shader to even out our pglpush and pops
     driver->unbindShader();

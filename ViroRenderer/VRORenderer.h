@@ -280,6 +280,9 @@ private:
     std::atomic<VROVector3f> _lastComputedCameraForward;
     std::shared_ptr<VROCameraDelegate> _cameraDelegate;
 
+    VROMatrix4f _lastLeftEyeView;
+    VROMatrix4f _lastRightEyeView;
+
 #pragma mark - [Private] FPS Computation
     
     /*

@@ -23,7 +23,7 @@ static const float kCircleSegments = 64;
 static const float kFuseRadiusMultiplier = 3;
 
 VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
-    _isPointerFixed(true),
+    _isHeadlocked(true),
     _enabled(true),
     _isFusing(false),
     _size(0.01),
@@ -155,11 +155,11 @@ void VROReticle::setRadius(float radius) {
 }
 
 void VROReticle::setPointerFixed(bool fixed){
-    _isPointerFixed = fixed;
+    _isHeadlocked = fixed;
 
     // Add billboard constraints if the pointer is not fixed, so that the reticle always faces the
     // user even if it's pointed at a sharp angle.
-    if (!_isPointerFixed) {
+    if (!_isHeadlocked) {
         _reticleBaseNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
         _fuseNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
         _fuseBackgroundNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
@@ -172,8 +172,8 @@ void VROReticle::setPointerFixed(bool fixed){
     }
 }
 
-bool VROReticle::isPointerFixed() {
-    return _isPointerFixed;
+bool VROReticle::isHeadlocked() {
+    return _isHeadlocked;
 }
 
 void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver) {
