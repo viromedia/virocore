@@ -48,8 +48,15 @@ public class ViroVideoTextureTest extends ViroBaseTest {
         final AmbientLight ambientLight = new AmbientLight(Color.WHITE, 300);
         mScene.getRootNode().addLight(ambientLight);
 
-
         runOnUiThread(() -> {
+            mDelegateText = new Text(mViroView.getViroContext(), "Delegate text", "Roboto", 25,
+                    Color.WHITE, 3f, 1f, Text.HorizontalAlignment.LEFT,
+                    Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+            final Node textNode = new Node();
+            textNode.setPosition(new Vector(0f, 1f, -3.3f));
+            textNode.setGeometry(mDelegateText);
+            mScene.getRootNode().addChildNode(textNode);
+            
             final VideoTexture.PlaybackListener delegate = new VideoTexture.PlaybackListener() {
                 private static final String TAG = "VideoDelegate: ";
 
@@ -107,13 +114,6 @@ public class ViroVideoTextureTest extends ViroBaseTest {
 
         mScene.getRootNode().addChildNode(mBoxNode);
         animateBox();
-        mDelegateText = new Text(mViroView.getViroContext(), "Delegate text", "Roboto", 25,
-                Color.WHITE, 3f, 1f, Text.HorizontalAlignment.LEFT,
-                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final Node textNode = new Node();
-        textNode.setPosition(new Vector(0f, 1f, -3.3f));
-        textNode.setGeometry(mDelegateText);
-        mScene.getRootNode().addChildNode(textNode);
     }
 
     @Test
