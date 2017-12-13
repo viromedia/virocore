@@ -225,7 +225,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
 
     clearViewport(viewport, false);
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, projection, _driver);
-    _renderer->renderEye(VROEyeType::Monocular, headView, projection, viewport, _driver);
+    _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, eyeFromHeadMatrix, projection, _driver);
     _renderer->endFrame(_driver);
 }
