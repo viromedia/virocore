@@ -66,7 +66,7 @@ public class ViroCameraTest extends ViroBaseTest {
         testCameraOrbitMode();
         testCameraRotationQuaternion();
         testCameraRotationEuler();
-        testCameraCalbacks();
+        testCameraCallbacks();
     }
 
     private void testCameraOrbitMode() {
@@ -128,7 +128,7 @@ public class ViroCameraTest extends ViroBaseTest {
         return q;
     }
 
-    private void testCameraCalbacks(){
+    private void testCameraCallbacks(){
         Text output = new Text(mViroView.getViroContext(), "",
                 "Roboto", 18, Color.WHITE, 9f, 2f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 4);

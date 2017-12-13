@@ -100,7 +100,7 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
         testSetCastsShadow();
         testSetDirection();
 
-        // TODO Create bug for shadows not working with directional light
+        // TODO Fix tests - VIRO-2428.
 //        testSetInfluenceBitMask();
 //        testSetShadowOrthographicSize();
 //        testSetShadowOrthographicPosition();
@@ -170,8 +170,6 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
         assertPass("Changing direction of light from -z to -y axis", () -> {
             mDirectionalLight.setDirection(directions.get(0));
         });
-        assertPass("running testColorChange()");
-
     }
 
 

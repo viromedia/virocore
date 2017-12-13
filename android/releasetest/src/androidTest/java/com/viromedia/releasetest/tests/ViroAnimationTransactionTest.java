@@ -56,13 +56,13 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
 
     @Test
     public void animationTest() {
-//        testAnimationPosition();
-//        testAnimationRotation();
-//        testAnimationScale();
-//        testAnimationOpacity();
-//        testAnimationEasing();
-//        testAnimationMaterial();
-//        testAnimationChained();
+        testAnimationPosition();
+        testAnimationRotation();
+        testAnimationScale();
+        testAnimationOpacity();
+        testAnimationEasing();
+        testAnimationMaterial();
+        testAnimationChained();
         testAnimationLoop();
     }
 

@@ -154,8 +154,8 @@ public class ViroVideoTextureTest extends ViroBaseTest {
                 intArray.clear();
                 intArray.add(newCount);
             } else {
-                //mVideoTexture.play();
-                //mDelegateText.setText("Video Playing");
+                mVideoTexture.play();
+                mDelegateText.setText("Video Playing");
             }
         };
 
