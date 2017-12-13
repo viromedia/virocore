@@ -304,6 +304,12 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
 }
 
 void VROPlatformDeleteFile(std::string filename) {
+    // As SoundData finalizers in Java can get called after the renderer is destroyed,
+    // we perform a null check here. TODO VIRO-2441: Perform Proper sound data cleanup.
+    if (sPlatformUtil == NULL){
+        return;
+    }
+
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jfilename = env->NewStringUTF(filename.c_str());
 
