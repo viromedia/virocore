@@ -32,30 +32,21 @@ public:
     
     void bind() {
         if (_frame != nullptr) {
-            // Unbind first, ensures the previous framebuffer is invalidated (preventing
-            // logical buffer stores). Also prevents GVR log spam.
-            gvr_frame_unbind(_frame);
-            gvr_frame_bind_buffer(_frame, 0);
+            // Do *not* directly call gvr_frame_bind or gvr_frame_unbind here; instead,
+            // get the underlying FBO ID for buffer 0 in the frame and bind that.
+            // We don't call the gvr functions directly because frame bind and unbind
+            // appear to do much more than just bind the underlying FBO. In particular,
+            // if we call gvr_frame_unbind in the midst of a render cycle, we are likely
+            // to get driver-level (BufferObjectDisableReorderCheck) crashes on S3 devices.
+            // And if we call gvr_frame_bind without calling gvr_frame_unbind, we get
+            // recurring log spam about performance degradation from GVR.
+            _framebuffer = gvr_frame_get_framebuffer_object(_frame, 0);
+            VRODisplayOpenGL::bind();
         }
         else {
-            // 360 mode, we don't use the gvr frame but we have a GLKView
-            VRODisplayOpenGLiOS::bind();
-            return;
+            // 360 mode, we don't use the gvr frame but we have a valid framebuffer object
+            VRODisplayOpenGL::bind();
         }
-        
-        /*
-         Bind the viewport and scissor when the render target changes. The scissor
-         ensures we only clear (e.g. glClear) over the designated area; this is
-         particularly important in VR mode where we have two 'eyes' each with a
-         different viewport over the same framebuffer.
-         */
-        glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
-        glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
-        
-        /*
-         Prevent logical buffer load by immediately clearing.
-         */
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
     
     void setFrame(gvr::Frame &frame) {
