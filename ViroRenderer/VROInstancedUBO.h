@@ -31,11 +31,6 @@ public:
     virtual ~VROInstancedUBO(){};
 
     /*
-     Bind the UBO to its associated binding point.
-     */
-    virtual void bind() = 0;
-
-    /*
      Creates fragment and/or vertex shader modifiers to process per-instance data bounded
      by this UBO when rendering. Instances can be referred to with the "v_instance_id",
      for example: geometry_model_matrix = particles_mat4_transform[v_instance_id];

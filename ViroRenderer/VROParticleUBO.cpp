@@ -14,18 +14,10 @@
 #include "VRODriverOpenGL.h"
 #include "VROParticleEmitter.h"
 
-int VROParticleUBO::sInstances = 0;
-GLuint VROParticleUBO::sUBOVertexBufferID = 0;
-GLuint VROParticleUBO::sUBOFragmentBufferID = 0;
-
 VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     _driver = driver;
+    _lastKnownBoundingBox = VROBoundingBox(0, 0, 0, 0, 0, 0);
 
-    sInstances++;
-    if (sInstances > 1) {
-        return;
-    }
-    
     // Initialize data to something sane
     VROParticlesUBOVertexData vertexData;
     memset(vertexData.particles_transform, 0x0, kMaxParticlesPerUBO * kMaxFloatsPerTransform * sizeof(float));
@@ -34,31 +26,25 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     memset(fragmentData.frag_particles_color, 0x0, kMaxParticlesPerUBO * kMaxFloatsPerColor * sizeof(float));
 
     // Set up Vertex UBO
-    glGenBuffers(1, &sUBOVertexBufferID);
-    glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
+    glGenBuffers(1, &_particleVertexUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, _particleVertexUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
 
     // Set up Fragment UBO
-    glGenBuffers(1, &sUBOFragmentBufferID);
-    glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
+    glGenBuffers(1, &_particleFragmentUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, _particleFragmentUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
-    _lastKnownBoundingBox = VROBoundingBox(0,0,0,0,0,0);
 }
 
 VROParticleUBO::~VROParticleUBO() {
-    sInstances --;
-    if (sInstances > 1) {
-        return;
-    }
-
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
-        glDeleteBuffers(1, &sUBOVertexBufferID);
-        glDeleteBuffers(1, &sUBOFragmentBufferID);
+        glDeleteBuffers(1, &_particleVertexUBO);
+        glDeleteBuffers(1, &_particleFragmentUBO);
     }
 }
 
-std::vector<std::shared_ptr<VROShaderModifier>>  VROParticleUBO::createInstanceShaderModifier() {
+std::vector<std::shared_ptr<VROShaderModifier>> VROParticleUBO::createInstanceShaderModifier() {
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     std::vector<std::string> vertexModifierCode =  {
             "_transforms.model_matrix = particles_vertex_transform[v_instance_id];",
@@ -80,11 +66,6 @@ std::vector<std::shared_ptr<VROShaderModifier>>  VROParticleUBO::createInstanceS
     modifiers.push_back(
             std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, surfaceModifierCode));
     return modifiers;
-}
-
-void VROParticleUBO::bind() {
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, sUBOVertexBufferID);
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, sUBOFragmentBufferID);
 }
 
 int VROParticleUBO::getNumberOfDrawCalls() {
@@ -127,7 +108,8 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
 
     // Finally bind the UBO to its corresponding buffers.
     pglpush("Particles");
-    glBindBuffer(GL_UNIFORM_BUFFER, sUBOVertexBufferID);
+    glGenBuffers(1, &_particleVertexUBO);
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, _particleVertexUBO);
 #if VRO_AVOID_BUFFER_SUB_DATA
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
 #else
@@ -136,7 +118,8 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
     pglpop();
 
     pglpush("ParticlesFragment");
-    glBindBuffer(GL_UNIFORM_BUFFER, sUBOFragmentBufferID);
+    glGenBuffers(1, &_particleFragmentUBO);
+    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, _particleFragmentUBO);
 #if VRO_AVOID_BUFFER_SUB_DATA
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
 #else

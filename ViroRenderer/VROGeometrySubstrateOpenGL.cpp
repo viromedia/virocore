@@ -253,10 +253,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     if (_boneUBO) {
         _boneUBO->bind();
     }
-    const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
-    if (instancedUBO != nullptr) {
-        instancedUBO->bind();
-    }
 
     VROGeometryElementOpenGL element = _elements[elementIndex];
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
@@ -384,11 +380,7 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     if (_boneUBO) {
         _boneUBO->bind();
     }
-    const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
-    if (instancedUBO != nullptr) {
-        instancedUBO->bind();
-    }
-    
+
     VROGeometryElementOpenGL &element = _elements[elementIndex];
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
