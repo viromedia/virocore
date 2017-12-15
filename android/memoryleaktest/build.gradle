@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 
 android {
@@ -76,6 +80,9 @@ dependencies {
     compile project(':libs:gvr')
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6-SNAPSHOT'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6-SNAPSHOT'
+    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true;
+    }
 }
 
 repositories {

@@ -86,6 +86,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class ViroActivity extends AppCompatActivity implements RendererStartListener {
     private static final String TAG = ViroActivity.class.getSimpleName();
@@ -100,7 +102,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Fabric.with(this, new Crashlytics());
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
             mViroView = new ViroViewGVR(this, this, new Runnable(){
                 @Override

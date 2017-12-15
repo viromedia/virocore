@@ -31,6 +31,10 @@
                 <category android:name="com.google.intent.category.DAYDREAM" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="***REMOVED***"
+            />
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
