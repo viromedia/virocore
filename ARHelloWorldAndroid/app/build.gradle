@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "com.example.virosample"
         minSdkVersion 21
@@ -21,23 +21,28 @@ android {
         }
     }
 
+    flavorDimensions "platform"
     productFlavors {
         gvr {
+            dimension "platform"
             resValue "string", "app_name", "ViroSample-gvr"
             applicationIdSuffix ".gvr"
             buildConfigField "String", "VIRO_PLATFORM", "\"GVR\""
         }
         ovr {
+            dimension "platform"
             resValue "string", "app_name", "ViroSample-ovr"
             applicationIdSuffix ".ovr"
             buildConfigField "String", "VIRO_PLATFORM", "\"OVR\""
         }
         arcore {
+            dimension "platform"
             resValue "string", "app_name", "ViroSample-arcore"
             applicationIdSuffix ".arcore"
             buildConfigField "String", "VIRO_PLATFORM", "\"ARCore\""
         }
         scene {
+            dimension "platform"
             resValue "string", "app_name", "ViroSample-scene"
             applicationIdSuffix ".scene"
             buildConfigField "String", "VIRO_PLATFORM", "\"Scene\""
@@ -47,7 +52,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -56,10 +61,10 @@ dependencies {
     compile project(':gvr_common')
     compile project(':arcore_client')
     compile project(':viro_core')
-    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
-    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.1.0'
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.22'
+    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.22'
+    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.22'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.22'
+    compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.22'
 }
