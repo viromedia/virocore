@@ -32,6 +32,10 @@ platform :ios do
        # build scheme
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release | xcpretty -c")
      end
+     changelog_from_git_commits(commits_count: 5,
+                   pretty: "- (%ae) %s",
+                   date_format: "short",
+                   merge_commit_filtering: "exclude_merges")
 #    gym(workspace: "ViroRenderer.xcworkspace",
 #       scheme: "ViroKit",
 #        configuration: "Release",
