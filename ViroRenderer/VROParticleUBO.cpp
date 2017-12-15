@@ -108,7 +108,6 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
 
     // Finally bind the UBO to its corresponding buffers.
     pglpush("Particles");
-    glGenBuffers(1, &_particleVertexUBO);
     glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, _particleVertexUBO);
 #if VRO_AVOID_BUFFER_SUB_DATA
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
@@ -118,7 +117,6 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
     pglpop();
 
     pglpush("ParticlesFragment");
-    glGenBuffers(1, &_particleFragmentUBO);
     glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, _particleFragmentUBO);
 #if VRO_AVOID_BUFFER_SUB_DATA
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
