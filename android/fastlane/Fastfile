@@ -23,6 +23,8 @@ platform :android do
   desc "Build react library version ViroRenderer - viro_renderer-release.aar"
   desc "And copy it to ../../../react-viro/android/viro_renderer/"
   lane :release_renderer_react_lib do
+    ensure_git_status_clean
+    git_pull
     gradle(task: "assembleViro_reactRelease")
   end
 
