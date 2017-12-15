@@ -11,8 +11,9 @@
 
 void VRODriverOpenGLiOS::setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
                                       std::string ceilingMaterial, std::string floorMaterial) {
-    _gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
-                                 (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(wallMaterial),
-                                 (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(ceilingMaterial),
-                                 (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(floorMaterial));
+    // TODO: VIRO-2464 don't use _gvrAudio because it hasn't been initialized
+//    _gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
+//                                 (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(wallMaterial),
+//                                 (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(ceilingMaterial),
+//                                 (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(floorMaterial));
 }
