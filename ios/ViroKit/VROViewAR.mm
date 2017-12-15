@@ -143,7 +143,8 @@ static VROVector3f const kZeroVector = VROVector3f();
      Create Viro renderer objects.
      */
     _gvrAudio = std::make_shared<gvr::AudioApi>();
-    _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
+    // TODO: VIRO-2464 dont init the gvr::AudioApi (we're disabling it)
+    //_gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context, _gvrAudio);
     _frame = 0;
     _suspendedNotificationTime = VROTimeCurrentSeconds();

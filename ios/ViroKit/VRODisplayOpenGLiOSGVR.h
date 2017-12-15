@@ -45,7 +45,7 @@ public:
         }
         else {
             // 360 mode, we don't use the gvr frame but we have a valid framebuffer object
-            VRODisplayOpenGL::bind();
+            VRODisplayOpenGLiOS::bind();
         }
     }
     
