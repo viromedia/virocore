@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,11 +24,10 @@ import com.viro.core.GestureRotateListener;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
 import com.viro.core.PinchState;
+import com.viro.core.RendererStartListener;
 import com.viro.core.RotateState;
-
 import com.viro.core.Vector;
 import com.viro.core.ViroViewARCore;
-import com.viro.core.RendererStartListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -43,84 +41,15 @@ import java.util.List;
  * button to get a dialog of objects to place in the scene. Drag, rotate and scale the object using pinch and rotate
  * gestures.
  */
-public class ViroARHitTestDemoActivity extends ViroActivity  implements RendererStartListener  {
+public class ViroARHitTestDemoActivity extends ViroActivity implements RendererStartListener {
 
     // Constants used to determine if plane or point is within bounds. Units in meters.
     static final float MIN_DISTANCE = .2f;
     static final float MAX_DISTANCE = 10f;
-
-    /*
-      Private class that contains logic for placing, dragging, rotating and scaling a 3D object in AR.
-     */
-    private class Draggable3dObject {
-        private String mFileName;
-        private float rotateStart;
-        private float scaleStart;
-
-
-        public Draggable3dObject(String filename) {
-            mFileName = filename;
-        }
-
-        private void addModelToPosition(Vector position) {
-            final Object3D object3D = new Object3D();
-            object3D.setPosition(position);
-            // Shrink the objects as the original size is too large.
-            object3D.setScale(new Vector(.2f, .2f, .2f));
-            object3D.setGestureRotateListener(new GestureRotateListener() {
-                @Override
-                public void onRotate(int i, Node node, float rotation, RotateState rotateState) {
-                    if(rotateState == RotateState.ROTATE_START) {
-                        rotateStart = object3D.getRotationEulerRealtime().y;
-                    }
-                    float totalRotationY = rotateStart + rotation;
-                    object3D.setRotation(new Vector(0, totalRotationY, 0));
-                }
-            });
-
-            object3D.setGesturePinchListener(new GesturePinchListener() {
-                @Override
-                public void onPinch(int i, Node node, float scale, PinchState pinchState) {
-                    if(pinchState == PinchState.PINCH_START) {
-                        scaleStart = object3D.getScaleRealtime().x;
-                    } else {
-                        object3D.setScale(new Vector(scaleStart * scale, scaleStart * scale, scaleStart * scale));
-                    }
-                }
-            });
-
-            object3D.setDragListener(new DragListener() {
-                @Override
-                public void onDrag(int i, Node node, Vector vector, Vector vector1) {
-
-                }
-            });
-
-            // Load the Android model asynchronously.
-            object3D.loadModel(Uri.parse(mFileName), Object3D.Type.FBX, new AsyncObject3DListener() {
-                @Override
-                public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
-                  //TODO: Display toast saying model loaded successfully.
-                }
-
-                @Override
-                public void onObject3DFailed(String s) {
-                    Toast.makeText(ViroARHitTestDemoActivity.this, "An error occured when loading the 3d Object!", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            // Make the object draggable.
-            object3D.setDragType(Node.DragType.FIXED_TO_WORLD);
-            mScene.getRootNode().addChildNode(object3D);
-
-        }
-    }
-
     /*
     Reference to the arScene we will be creating within this activity
     */
     private ARScene mScene;
-
     /*
      List of draggable 3d objects in our scene.
      */
@@ -144,19 +73,18 @@ public class ViroARHitTestDemoActivity extends ViroActivity  implements Renderer
         View.inflate(this, R.layout.viro_view_ar_hit_test_hud, ((ViewGroup) mViroView));
     }
 
-
     private void placeObject(final String fileName) {
-        ViroViewARCore viewARView = (ViroViewARCore)mViroView;
-        final Vector cameraPos  = viewARView.getLastCameraPositionRealtime();
+        ViroViewARCore viewARView = (ViroViewARCore) mViroView;
+        final Vector cameraPos = viewARView.getLastCameraPositionRealtime();
         viewARView.performARHitTestWithRay(viewARView.getLastCameraForwardRealtime(), new ARHitTestListener() {
             @Override
             public void onHitTestFinished(ARHitTestResult[] arHitTestResults) {
-                if(arHitTestResults != null ) {
-                    if(arHitTestResults.length > 0) {
+                if (arHitTestResults != null) {
+                    if (arHitTestResults.length > 0) {
                         for (int i = 0; i < arHitTestResults.length; i++) {
                             ARHitTestResult result = arHitTestResults[i];
                             float distance = result.getPosition().distance(cameraPos);
-                            if(distance > MIN_DISTANCE && distance < MAX_DISTANCE) {
+                            if (distance > MIN_DISTANCE && distance < MAX_DISTANCE) {
                                 // If we found a plane of feature point greater than .2 and less than 10 meters away
                                 // then choose it!
                                 add3dDraggableObject(fileName, result.getPosition());
@@ -169,7 +97,6 @@ public class ViroARHitTestDemoActivity extends ViroActivity  implements Renderer
             }
         });
     }
-
 
     /*
       Add a 3d object with the given filename to the scene at the specified world position.
@@ -223,11 +150,11 @@ public class ViroARHitTestDemoActivity extends ViroActivity  implements Renderer
         @Override
         public void onTrackingInitialized() {
             Activity activity = mCurrentActivityWeak.get();
-            if (activity == null){
+            if (activity == null) {
                 return;
             }
 
-            TextView initText = (TextView)activity.findViewById(R.id.initText);
+            TextView initText = (TextView) activity.findViewById(R.id.initText);
             initText.setText("AR is initialized.");
         }
 
@@ -248,6 +175,73 @@ public class ViroARHitTestDemoActivity extends ViroActivity  implements Renderer
 
         @Override
         public void onAnchorUpdated(ARAnchor arAnchor, ARNode arNode) {
+
+        }
+    }
+
+    /*
+          Private class that contains logic for placing, dragging, rotating and scaling a 3D object in AR.
+         */
+    private class Draggable3dObject {
+        private String mFileName;
+        private float rotateStart;
+        private float scaleStart;
+
+
+        public Draggable3dObject(String filename) {
+            mFileName = filename;
+        }
+
+        private void addModelToPosition(Vector position) {
+            final Object3D object3D = new Object3D();
+            object3D.setPosition(position);
+            // Shrink the objects as the original size is too large.
+            object3D.setScale(new Vector(.2f, .2f, .2f));
+            object3D.setGestureRotateListener(new GestureRotateListener() {
+                @Override
+                public void onRotate(int i, Node node, float rotation, RotateState rotateState) {
+                    if (rotateState == RotateState.ROTATE_START) {
+                        rotateStart = object3D.getRotationEulerRealtime().y;
+                    }
+                    float totalRotationY = rotateStart + rotation;
+                    object3D.setRotation(new Vector(0, totalRotationY, 0));
+                }
+            });
+
+            object3D.setGesturePinchListener(new GesturePinchListener() {
+                @Override
+                public void onPinch(int i, Node node, float scale, PinchState pinchState) {
+                    if (pinchState == PinchState.PINCH_START) {
+                        scaleStart = object3D.getScaleRealtime().x;
+                    } else {
+                        object3D.setScale(new Vector(scaleStart * scale, scaleStart * scale, scaleStart * scale));
+                    }
+                }
+            });
+
+            object3D.setDragListener(new DragListener() {
+                @Override
+                public void onDrag(int i, Node node, Vector vector, Vector vector1) {
+
+                }
+            });
+
+            // Load the Android model asynchronously.
+            object3D.loadModel(Uri.parse(mFileName), Object3D.Type.FBX, new AsyncObject3DListener() {
+                @Override
+                public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                    //TODO: Display toast saying model loaded successfully.
+                }
+
+                @Override
+                public void onObject3DFailed(String s) {
+                    Toast.makeText(ViroARHitTestDemoActivity.this, "An error occured when loading the 3d Object!", Toast.LENGTH_LONG).show();
+                }
+            });
+
+            // Make the object draggable.
+            object3D.setDragType(Node.DragType.FIXED_TO_WORLD);
+            mScene.getRootNode().addChildNode(object3D);
 
         }
     }

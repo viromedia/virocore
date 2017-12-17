@@ -86,7 +86,7 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
         mViroView.setScene(mScene);
     }
 
-    private void createDroidAtPosition(Vector position){
+    private void createDroidAtPosition(Vector position) {
         // Create a droid on the surface
         final Bitmap bot = ViroHelper.getBitmapFromAsset(this, "andy.png");
         final Object3D object3D = new Object3D();
@@ -128,7 +128,7 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
         private HashMap<String, Node> surfaces = new HashMap<String, Node>();
         private Set<ClickListener> mPlaneClickListeners = new HashSet<ClickListener>();
 
-        public TrackedPlanesController(Activity activity, View rootView){
+        public TrackedPlanesController(Activity activity, View rootView) {
             mCurrentActivityWeak = new WeakReference<Activity>(activity);
 
             // Inflate viro_view_hud.xml layout to display a "Searching for surfaces" text view.
@@ -140,12 +140,12 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
          * on tracked planes. In this example, a listener is registered during scene creation,
          * so as spawn 3d droids on a click.
          */
-        public void addOnPlaneClickListener(ClickListener listener){
+        public void addOnPlaneClickListener(ClickListener listener) {
             mPlaneClickListeners.add(listener);
         }
 
-        public void removeOnPlaneClickListener(ClickListener listener){
-            if (mPlaneClickListeners.contains(listener)){
+        public void removeOnPlaneClickListener(ClickListener listener) {
+            if (mPlaneClickListeners.contains(listener)) {
                 mPlaneClickListeners.remove(listener);
             }
         }
@@ -153,14 +153,14 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
         /**
          * Once a Tracked plane is found, we can hide the our "Searching for Surfaces" UI.
          */
-        private void hideIsTrackingLayoutUI(){
-            if (searchingForPlanesLayoutIsVisible){
+        private void hideIsTrackingLayoutUI() {
+            if (searchingForPlanesLayoutIsVisible) {
                 return;
             }
             searchingForPlanesLayoutIsVisible = true;
 
             Activity activity = mCurrentActivityWeak.get();
-            if (activity == null){
+            if (activity == null) {
                 return;
             }
 
@@ -171,12 +171,12 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
         @Override
         public void onAnchorFound(ARAnchor arAnchor, ARNode arNode) {
             // Spawn a visual plane if a PlaneAnchor was found
-            if (arAnchor.getType() == ARAnchor.Type.PLANE){
-                ARPlaneAnchor planeAnchor = (ARPlaneAnchor)arAnchor;
+            if (arAnchor.getType() == ARAnchor.Type.PLANE) {
+                ARPlaneAnchor planeAnchor = (ARPlaneAnchor) arAnchor;
 
                 // Create the visual geometry representing this plane
                 Vector dimensions = planeAnchor.getExtent();
-                Surface plane = new Surface(1,1);
+                Surface plane = new Surface(1, 1);
                 plane.setWidth(dimensions.x);
                 plane.setHeight(dimensions.z);
 
@@ -199,7 +199,7 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
                 planeNode.setClickListener(new ClickListener() {
                     @Override
                     public void onClick(int i, Node node, Vector vector) {
-                        for (ClickListener listener : mPlaneClickListeners){
+                        for (ClickListener listener : mPlaneClickListeners) {
                             listener.onClick(i, node, vector);
                         }
                     }
@@ -217,8 +217,8 @@ public class ViroARPlanesDemoActivity extends ViroActivity implements RendererSt
 
         @Override
         public void onAnchorUpdated(ARAnchor arAnchor, ARNode arNode) {
-            if (arAnchor.getType() == ARAnchor.Type.PLANE){
-                ARPlaneAnchor planeAnchor = (ARPlaneAnchor)arAnchor;
+            if (arAnchor.getType() == ARAnchor.Type.PLANE) {
+                ARPlaneAnchor planeAnchor = (ARPlaneAnchor) arAnchor;
 
                 // Update the mesh surface geometry
                 Node node = surfaces.get(arAnchor.getAnchorId());
