@@ -22,8 +22,8 @@
 #include <algorithm>
 #include "VROPlatformUtil.h"
 
-VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
-    VROARSession(trackingType),
+VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment worldAlignment, std::shared_ptr<VRODriver> driver) :
+    VROARSession(trackingType, worldAlignment),
     _sessionPaused(true) {
         
     if (@available(iOS 11.0, *)) {
@@ -43,6 +43,18 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<V
         ARWorldTrackingConfiguration *config = [[ARWorldTrackingConfiguration alloc] init];
         config.planeDetection = NO;
         config.lightEstimationEnabled = YES;
+        switch(getWorldAlignment()) {
+            case VROWorldAlignment::Camera:
+                config.worldAlignment = ARWorldAlignmentCamera;
+                break;
+            case VROWorldAlignment::GravityAndHeading:
+                config.worldAlignment = ARWorldAlignmentGravityAndHeading;
+                break;
+            case VROWorldAlignment::Gravity:
+            default:
+                config.worldAlignment = ARWorldAlignmentGravity;
+                break;
+        }
         
         _sessionConfiguration = config;
     }

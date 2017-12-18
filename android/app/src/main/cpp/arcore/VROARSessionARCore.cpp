@@ -23,7 +23,7 @@
 VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
                                        jni::Object<arcore::ViroViewARCore> viroViewJNI,
                                        std::shared_ptr<VRODriverOpenGL> driver) :
-    VROARSession(VROTrackingType::DOF6),
+    VROARSession(VROTrackingType::DOF6, VROWorldAlignment::Gravity),
     _lightingMode(arcore::config::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),
     _updateMode(arcore::config::UpdateMode::Blocking) {

@@ -49,6 +49,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     int _frame;
     double _suspendedNotificationTime;
     bool _hasTrackingInitialized;
+
+    VROWorldAlignment _worldAlignment;
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -66,14 +68,16 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
+        _worldAlignment = VROWorldAlignment::Gravity;
         [self initRenderer];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context {
+- (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context worldAlignment:(VROWorldAlignment)worldAlignment {
     self = [super initWithFrame:frame context:context];
     if (self) {
+        _worldAlignment = worldAlignment;
         [self initRenderer];
     }
     return self;
@@ -173,7 +177,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         // in the 3DOF case, tracking doesn't take time to initialize, but the sceneController hasn't yet been set.
         _hasTrackingInitialized = true;
     } else {
-        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _driver);
+        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _worldAlignment, _driver);
     }
 
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));

@@ -23,7 +23,9 @@ class VROVideoTextureCacheOpenGL;
 class VROARSessioniOS : public VROARSession, public std::enable_shared_from_this<VROARSessioniOS> {
 public:
     
-    VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver);
+    VROARSessioniOS(VROTrackingType trackingType,
+                    VROWorldAlignment worldAlignment,
+                    std::shared_ptr<VRODriver> driver);
     virtual ~VROARSessioniOS();
     
     void run();

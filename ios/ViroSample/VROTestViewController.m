@@ -36,7 +36,8 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
     }
     else {
         VROViewAR *view = [[VROViewAR alloc] initWithFrame:[UIScreen mainScreen].bounds
-                                                   context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]];
+                                                   context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]
+                                            worldAlignment:VROWorldAlignment::Gravity];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;
         

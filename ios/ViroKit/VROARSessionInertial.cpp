@@ -15,7 +15,7 @@
 #include "VROLog.h"
 
 VROARSessionInertial::VROARSessionInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
-    VROARSession(trackingType) {
+    VROARSession(trackingType, VROWorldAlignment::Gravity) {
     _camera = std::make_shared<VROARCameraInertial>(driver);
 }
 
