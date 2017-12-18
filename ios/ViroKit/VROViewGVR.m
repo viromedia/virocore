@@ -236,7 +236,7 @@
     _overlayView.hidesSettingsButton = !_VRModeEnabled;
     _overlayView.hidesAlignmentMarker = !_VRModeEnabled;
     _overlayView.hidesFullscreenButton = !_VRModeEnabled;
-    _overlayView.hidesCardboardButton = _VRModeEnabled;
+    _overlayView.hidesCardboardButton = YES;
     
     [_overlayView setNeedsLayout];
 }

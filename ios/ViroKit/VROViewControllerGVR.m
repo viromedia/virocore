@@ -11,6 +11,14 @@
 
 @implementation VROViewControllerGVR
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        _forceLandscape = YES;
+    }
+    return self;
+}
+
 - (VROViewGVR *)rendererView {
     return (VROViewGVR *)self.view;
 }
@@ -42,8 +50,10 @@
     
     // Note this fix sometimes creates an issue where the height of the *superview*
     // becomes zero. We check for (and fix) this in VROViewGVR.layoutSubviews().
-    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight]
-                                forKey:@"orientation"];
+    if (self.forceLandscape) {
+        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight]
+                                    forKey:@"orientation"];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
