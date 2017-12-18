@@ -68,6 +68,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
+        _suspended = YES;
         _worldAlignment = VROWorldAlignment::Gravity;
         [self initRenderer];
     }
@@ -77,6 +78,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context worldAlignment:(VROWorldAlignment)worldAlignment {
     self = [super initWithFrame:frame context:context];
     if (self) {
+        _suspended = YES;
         _worldAlignment = worldAlignment;
         [self initRenderer];
     }
