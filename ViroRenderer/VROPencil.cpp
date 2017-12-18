@@ -11,8 +11,6 @@
 #include "VROPolyline.h"
 #include "VROMaterial.h"
 
-std::shared_ptr<VROMaterial> sPencilMaterial;
-
 VROPencil::~VROPencil() {
     _paths.clear();
 }
@@ -33,22 +31,20 @@ void VROPencil::render(const VRORenderContext &context, std::shared_ptr<VRODrive
         return;
     }
 
-    if (!sPencilMaterial) {
-        sPencilMaterial = std::make_shared<VROMaterial>();
-        sPencilMaterial->getDiffuse().setColor({1.0, 0, 0, 1.0});
-        sPencilMaterial->setCullMode(VROCullMode::None);
-        sPencilMaterial->setLightingModel(VROLightingModel::Constant);
-        sPencilMaterial->setWritesToDepthBuffer(false);
-        sPencilMaterial->setReadsFromDepthBuffer(false);
-        sPencilMaterial->bindShader(0, {}, driver);
-        sPencilMaterial->bindProperties(driver);
-    }
+    std::shared_ptr<VROMaterial> pencilMaterial = std::make_shared<VROMaterial>();
+    pencilMaterial->getDiffuse().setColor({1.0, 0, 0, 1.0});
+    pencilMaterial->setCullMode(VROCullMode::None);
+    pencilMaterial->setLightingModel(VROLightingModel::Constant);
+    pencilMaterial->setWritesToDepthBuffer(false);
+    pencilMaterial->setReadsFromDepthBuffer(false);
+    pencilMaterial->bindShader(0, {}, driver);
+    pencilMaterial->bindProperties(driver);
 
     std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
-    line->setMaterials({ sPencilMaterial });
+    line->setMaterials({ pencilMaterial });
 
-    sPencilMaterial->bindShader(0, {}, driver);
-    sPencilMaterial->bindProperties(driver);
-    line->render(0, sPencilMaterial, VROMatrix4f::identity(), VROMatrix4f::identity(),
+    pencilMaterial->bindShader(0, {}, driver);
+    pencilMaterial->bindProperties(driver);
+    line->render(0, pencilMaterial, VROMatrix4f::identity(), VROMatrix4f::identity(),
                  1.0, context, driver);
 }
