@@ -1,0 +1,6 @@
+target 'ViroKit' do
+    pod 'GVRKit', '1.100.0'
+    pod 'GVRAudioSDK', '1.100.0'
+    source 'https://github.com/CocoaPods/Specs.git'
+    pod 'AWSDynamoDB', '2.6.7'
+end

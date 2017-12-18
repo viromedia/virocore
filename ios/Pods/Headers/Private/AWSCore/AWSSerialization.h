@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/Serialization/AWSSerialization.h
