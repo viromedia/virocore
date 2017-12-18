@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Viro Java API" pattern="src[app]:com.viro.core.Sphere" />
-</component>

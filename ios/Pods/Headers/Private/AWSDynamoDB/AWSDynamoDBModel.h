@@ -1,1 +1,0 @@
-../../../AWSDynamoDB/AWSDynamoDB/AWSDynamoDBModel.h
