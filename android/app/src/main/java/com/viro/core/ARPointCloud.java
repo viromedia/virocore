@@ -8,6 +8,8 @@ package com.viro.core;
 /**
  * ARPointCloud contains a collection of points that the AR subsystem has detected in the
  * user's real world.
+ *
+ * @hide
  */
 public class ARPointCloud {
     private float[] mPoints;

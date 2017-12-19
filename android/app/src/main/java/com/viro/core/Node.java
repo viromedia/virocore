@@ -350,6 +350,21 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Get the real-time world transform of this Node. The world transform is the 4x4
+     * {@link Matrix} transform that defines the Node's position, rotation, and scale. This
+     * is the <i>world</i> transform, meaning it takes into account all the transforms from parent
+     * Nodes. The transform is also <i>real-time</i>, so it may not match the position, rotation, or
+     * scale last set via {@link #setPosition(Vector)}, {@link #setRotation(Vector)}, and
+     * {@link #setScale(Vector)} because its value is influenced by many other concurrent factors
+     * including animation, the physics simulation, and more.
+     *
+     * @return The world transform as a 4x4 {@link Matrix}.
+     */
+    public Matrix getWorldTransformRealTime() {
+        return new Matrix(nativeGetWorldTransform(mNativeRef));
+    }
+
+    /**
      * Set the position of this Node. The position defines the Node's location within the coordinate
      * system of its parent. The default position is (0, 0, 0): the origin of the parent node’s
      * coordinate system.
@@ -561,9 +576,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
         return mVisible;
     }
 
-    public Matrix getWorldTransformRealTime() {
-        return new Matrix(nativeGetWorldTransform(mNativeRef));
-    }
     /**
      * Set the behavior of dragging if this Node has an attached {@link DragListener}.
      *

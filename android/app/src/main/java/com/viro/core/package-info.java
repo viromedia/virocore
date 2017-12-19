@@ -4,9 +4,8 @@
  * <p>
  * ViroCore combines a high-performance rendering engine with a descriptive API for creating
  * immersive AR/VR apps. While lower-level APIs like OpenGL require you to learn and precisely
- * implement rendering algorithms, ViroCore requires only high-level scene descriptions and the
- * events and interactions you desire. Easily add animations, physics, particle effects, and more to
- * your Android applications.
+ * implement rendering algorithms, ViroCore requires only high-level scene descriptions. Easily add
+ * animations, physics, particle effects, and more to your Android applications.
  * <p>
  * For help getting started using ViroCore, try the <a href="https://virocore.viromedia.com/docs/getting-started">Getting
  * Started</a> guide, or take a look at <a href="https://github.com/viromedia/virocore">Code

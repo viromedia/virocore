@@ -6,7 +6,8 @@ package com.viro.core;
 
 /**
  * Callback interface for responding to Camera driven events, such as position and rotation
- * changes. CameraListener can be registered to receive events via {@link ViroView#setCameraListener(CameraListener)}.
+ * changes. CameraListener can be registered to receive events via {@link ViroView#setCameraListener(CameraListener)}
+ * in {@link ViroView}.
  */
 public interface CameraListener {
 

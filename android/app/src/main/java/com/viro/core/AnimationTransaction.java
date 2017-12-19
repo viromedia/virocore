@@ -61,7 +61,8 @@ public class AnimationTransaction {
     public interface Listener {
         /**
          * Invoked when an {@link AnimationTransaction} naturally finishes, or when it is
-         * forcibly terminated through {@link AnimationTransaction#terminate()}.
+         * forcibly terminated through {@link AnimationTransaction#terminate()}. For looping
+         * animations, this callback is invoked on the completion of each loop.
          *
          * @param transaction The transaction that finished.
          */
@@ -115,8 +116,9 @@ public class AnimationTransaction {
     }
 
     /**
-     * Set to true to make this AnimationTransaction automatically loop to the beginning on finish
-     * @param loop True to loop
+     * Set to true to make this AnimationTransaction automatically loop to the beginning on finish.
+     *
+     * @param loop True to loop back to the beginning when finished.
      */
     public static void setAnimationLoop(boolean loop) {
         nativeSetAnimationLoop(loop);
