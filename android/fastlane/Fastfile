@@ -26,6 +26,10 @@ platform :android do
     ensure_git_status_clean
     git_pull
     gradle(task: "assembleViro_reactRelease")
+    changelog_from_git_commits(commits_count: 5,
+                   pretty: "- (%ae) %s",
+                   date_format: "short",
+                   merge_commit_filtering: "exclude_merges") 
   end
 
 
