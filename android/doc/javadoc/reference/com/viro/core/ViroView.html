@@ -205,6 +205,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></li>
@@ -307,6 +308,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.TransparencyMode.html">Material.TransparencyMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></li>
@@ -1031,6 +1033,34 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#setCameraListener(com.viro.core.CameraListener)">setCameraListener</a>(<a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a> listener)
+      </code>
+      
+        <p>Set a <code><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></code> to receive updates whenever the camera's position or orientation
+ changes.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/ViroView.html#setPointOfView(com.viro.core.Node)">setPointOfView</a>(<a href="../../../../reference/com/viro/core/Node.html">Node</a> node)
       </code>
       
@@ -1453,6 +1483,37 @@ void recenterTracking ()</pre>
   <p>For VR applications, re-centers the head orientation. This resets the yaw to zero, but leaves
  pitch and roll unmodified.
 </p></p>
+
+</div>
+
+
+<A NAME="setCameraListener(com.viro.core.CameraListener)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setCameraListener</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setCameraListener (<a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a> listener)</pre>
+    
+    
+
+    
+  <p>Set a <code><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></code> to receive updates whenever the camera's position or orientation
+ changes. The camera is the current point of view of the user.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>listener</code></td>
+        <td width="100%">
+          <code>CameraListener</code>: The <code><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></code> to receive updates.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 

@@ -205,6 +205,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></li>
@@ -307,6 +308,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.TransparencyMode.html">Material.TransparencyMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></li>
@@ -1902,6 +1904,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Return the <code><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></code>s used by this Node.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Node.html#getWorldTransformRealTime()">getWorldTransformRealTime</a>()
+      </code>
+      
+        <p>Get the real-time world transform of this Node.
         
     
 </p>
@@ -4320,6 +4349,41 @@ int getShadowCastingBitMask ()</pre>
       <tr>
         <td><code><a href="http://d.android.com/reference/java/util/EnumSet.html">EnumSet</a>&lt;<a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a>&gt;</code></td>
         <td width="100%">The TransformBehaviors in an EnumSet.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getWorldTransformRealTime()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getWorldTransformRealTime</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> getWorldTransformRealTime ()</pre>
+    
+    
+
+    
+  <p>Get the real-time world transform of this Node. The world transform is the 4x4
+ <code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code> transform that defines the Node's position, rotation, and scale. This
+ is the <i>world</i> transform, meaning it takes into account all the transforms from parent
+ Nodes. The transform is also <i>real-time</i>, so it may not match the position, rotation, or
+ scale last set via <code><a href="../../../../reference/com/viro/core/Node.html#setPosition(com.viro.core.Vector)">setPosition(Vector)</a></code>, <code><a href="../../../../reference/com/viro/core/Node.html#setRotation(com.viro.core.Vector)">setRotation(Vector)</a></code>, and
+ <code><a href="../../../../reference/com/viro/core/Node.html#setScale(com.viro.core.Vector)">setScale(Vector)</a></code> because its value is influenced by many other concurrent factors
+ including animation, the physics simulation, and more.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The world transform as a 4x4 <code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>.
 </p></td>
       </tr>
     </table>

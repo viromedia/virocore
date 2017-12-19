@@ -205,6 +205,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></li>
@@ -307,6 +308,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.TransparencyMode.html">Material.TransparencyMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></li>
@@ -686,7 +688,8 @@ void onFinish (<a href="../../../../reference/com/viro/core/AnimationTransaction
 
     
   <p>Invoked when an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code> naturally finishes, or when it is
- forcibly terminated through <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#terminate()">terminate()</a></code>.</p></p>
+ forcibly terminated through <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#terminate()">terminate()</a></code>. For looping
+ animations, this callback is invoked on the completion of each loop.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>

@@ -186,6 +186,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+        <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></li>
@@ -288,6 +289,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
+        <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.TransparencyMode.html">Material.TransparencyMode</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></li>
@@ -507,9 +509,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
  <p>
  ViroCore combines a high-performance rendering engine with a descriptive API for creating
  immersive AR/VR apps. While lower-level APIs like OpenGL require you to learn and precisely
- implement rendering algorithms, ViroCore requires only high-level scene descriptions and the
- events and interactions you desire. Easily add animations, physics, particle effects, and more to
- your Android applications.
+ implement rendering algorithms, ViroCore requires only high-level scene descriptions. Easily add
+ animations, physics, particle effects, and more to your Android applications.
  <p>
  For help getting started using ViroCore, try the <a href="https://virocore.viromedia.com/docs/getting-started">Getting
  Started</a> guide, or take a look at <a href="https://github.com/viromedia/virocore">Code
@@ -587,6 +588,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       
     
       <tr class=" api apilevel-" >
+        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></td>
+        <td class="jd-descrcol" width="100%">
+          Callback interface for responding to Camera driven events, such as position and rotation
+ changes.&nbsp;
+          
+    
+
+        </td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to click events, which occur when any Controller button is
@@ -598,7 +611,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to status change events for a Controller.&nbsp;
@@ -609,7 +622,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to drag events, which occur when the Controller pressed
@@ -621,7 +634,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/FuseListener.html">FuseListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to fuse events, which occur when the user hovers the
@@ -633,7 +646,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/GesturePinchListener.html">GesturePinchListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to pinch events, which occur when the user pinches with two
@@ -645,7 +658,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/GestureRotateListener.html">GestureRotateListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to rotate events, which occur when the user places two
@@ -657,7 +670,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/HoverListener.html">HoverListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to hover events, which occur when the Controller hovers
@@ -669,7 +682,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Node.TransformListener.html">Node.TransformListener</a></td>
         <td class="jd-descrcol" width="100%">
           The TransformListener receives callbacks when the Node's position has changed.&nbsp;
@@ -680,7 +693,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ParticleEmitter.ParticleModifier.html">ParticleEmitter.ParticleModifier</a></td>
         <td class="jd-descrcol" width="100%">
           ParticleModifier is used by various <code><a href="../../../../reference/com/viro/core/ParticleEmitter.html">ParticleEmitter</a></code> properties to set not only how
@@ -692,7 +705,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ParticleEmitter.SpawnVolume.html">ParticleEmitter.SpawnVolume</a></td>
         <td class="jd-descrcol" width="100%">
           Interface for volumes that can be defined for spawning particles.&nbsp;
@@ -703,7 +716,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to PhysicsBody collisions.&nbsp;
@@ -714,7 +727,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></td>
         <td class="jd-descrcol" width="100%">
           The physics simulation approximates physics bodies with simplified shapes.&nbsp;
@@ -725,7 +738,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback used when hit tests are completed.&nbsp;
@@ -736,7 +749,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to users entering or exiting a PortalScene.&nbsp;
@@ -747,7 +760,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback runnable that is used for responding to Viro renderer being closed by the user.&nbsp;
@@ -758,7 +771,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to the Viro renderer finishing initialization.&nbsp;
@@ -769,7 +782,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></td>
         <td class="jd-descrcol" width="100%">
           Receives callbacks in response to a <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> appearing and disappearing.&nbsp;
@@ -780,7 +793,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to <code><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></code> events.&nbsp;
@@ -791,7 +804,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/SoundField.PlaybackListener.html">SoundField.PlaybackListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to <code><a href="../../../../reference/com/viro/core/SoundField.html">SoundField</a></code> events.&nbsp;
@@ -802,7 +815,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/SpatialSound.PlaybackListener.html">SpatialSound.PlaybackListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to <code><a href="../../../../reference/com/viro/core/SpatialSound.html">SpatialSound</a></code> events.&nbsp;
@@ -813,7 +826,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/TouchpadScrollListener.html">TouchpadScrollListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to touchpad scroll events, which occur when the finger is
@@ -825,7 +838,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to touchpad swipe events, which occur when a finger is
@@ -837,7 +850,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to touchpad touch events, which occur when a finger
@@ -849,7 +862,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to video lifecycle and playback events.&nbsp;
@@ -860,7 +873,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></td>
         <td class="jd-descrcol" width="100%">
           Listener for responding to recording success and failure.&nbsp;
@@ -871,7 +884,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></td>
         <td class="jd-descrcol" width="100%">
           Listener for responding to errors when starting a recording, and for responding to errors
@@ -1653,6 +1666,17 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       
     
       <tr class=" api apilevel-" >
+        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></td>
+        <td class="jd-descrcol" width="100%">
+          ShadowMode defines in what form a <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> receives shadows.&nbsp;
+          
+    
+
+        </td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Material.TransparencyMode.html">Material.TransparencyMode</a></td>
         <td class="jd-descrcol" width="100%">
           TransparencyMode determines how the opacity of pixels is computed.&nbsp;
@@ -1663,7 +1687,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></td>
         <td class="jd-descrcol" width="100%">
           Specifies the behavior of dragging if the Node has an attached <code><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></code>.&nbsp;
@@ -1674,7 +1698,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></td>
         <td class="jd-descrcol" width="100%">
           TransformBehaviors change the way a Node computes its position, rotation and scale.&nbsp;
@@ -1685,7 +1709,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></td>
         <td class="jd-descrcol" width="100%">
           Supported model formats for loading into an <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code>.&nbsp;
@@ -1696,7 +1720,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ParticleEmitter.Factor.html">ParticleEmitter.Factor</a></td>
         <td class="jd-descrcol" width="100%">
           Factor is used to distinguish between various particle emission properties that can either
@@ -1708,7 +1732,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/PhysicsBody.RigidBodyType.html">PhysicsBody.RigidBodyType</a></td>
         <td class="jd-descrcol" width="100%">
           The RigidBodyType of a PhysicsBody controls how the body responds to forces and collisions.&nbsp;
@@ -1719,7 +1743,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/PinchState.html">PinchState</a></td>
         <td class="jd-descrcol" width="100%">
           Indicates that status of a pinch gesture made on a screen, for use with the <code><a href="../../../../reference/com/viro/core/GesturePinchListener.html">GesturePinchListener</a></code>.&nbsp;
@@ -1730,7 +1754,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/RotateState.html">RotateState</a></td>
         <td class="jd-descrcol" width="100%">
           Indicates the status of a rotate gesture made on a screen, for use with the <code><a href="../../../../reference/com/viro/core/GestureRotateListener.html">GestureRotateListener</a></code>.&nbsp;
@@ -1741,7 +1765,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Scene.AudioMaterial.html">Scene.AudioMaterial</a></td>
         <td class="jd-descrcol" width="100%">
           AudioMaterial is used to define the Scene's reverb effects.&nbsp;
@@ -1752,7 +1776,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/SpatialSound.Rolloff.html">SpatialSound.Rolloff</a></td>
         <td class="jd-descrcol" width="100%">
           The attenuation function that determines how the volume of the SpatialSound changes with
@@ -1764,7 +1788,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/SwipeState.html">SwipeState</a></td>
         <td class="jd-descrcol" width="100%">
           Indicates the status of a touchpad swipe event, for use with the <code><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></code>.&nbsp;
@@ -1775,7 +1799,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a></td>
         <td class="jd-descrcol" width="100%">
           Controls whether text clips when it exceeds its bounds.&nbsp;
@@ -1786,7 +1810,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></td>
         <td class="jd-descrcol" width="100%">
           Controls the horizontal alignment of Text within its bounds.&nbsp;
@@ -1797,7 +1821,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></td>
         <td class="jd-descrcol" width="100%">
           Controls the way in which text wraps when it exceeds its bound's width.&nbsp;
@@ -1808,7 +1832,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></td>
         <td class="jd-descrcol" width="100%">
           Controls the vertical alignment of Text within its bounds.&nbsp;
@@ -1819,7 +1843,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></td>
         <td class="jd-descrcol" width="100%">
           FilterMode determines how samples are chosen from the <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> when its rendered
@@ -1831,7 +1855,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></td>
         <td class="jd-descrcol" width="100%">
           Texture.Format identifies the format of the pixel-data underlying the <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>.&nbsp;
@@ -1842,7 +1866,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></td>
         <td class="jd-descrcol" width="100%">
           StereoMode is used in VR to render a <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> in stereo.&nbsp;
@@ -1853,7 +1877,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></td>
         <td class="jd-descrcol" width="100%">
           WrapMode determines what happens when the texture coordinates extend outside the [0.0, 1.0]
@@ -1865,7 +1889,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></td>
         <td class="jd-descrcol" width="100%">
           Indicates the status of a touchpad touch event, for use with <code><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></code>.&nbsp;
@@ -1876,7 +1900,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></td>
         <td class="jd-descrcol" width="100%">
           Enum indicating what error (if any) was encountered during a recording operation.&nbsp;
@@ -1887,7 +1911,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></td>
         <td class="jd-descrcol" width="100%">
           ARCore, which underlies Viro's augmented reality system, can be set to detect various types

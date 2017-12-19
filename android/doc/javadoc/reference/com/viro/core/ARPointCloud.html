@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARPlaneAnchor.Alignment | Android Developers
+  <title>ARPointCloud | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -244,6 +244,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
@@ -301,7 +302,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTimingFunction.html">AnimationTimingFunction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.Type.html">ARAnchor.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.Type.html">ARHitTestResult.Type</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
@@ -523,28 +524,22 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARPlaneAnchor.Alignment</h1>
+<h1 class="api-title">ARPointCloud</h1>
 <p>
 <code class="api-signature">
   public
-  static
-  final
   
-  enum
-  ARPlaneAnchor.Alignment
+  
+  
+  class
+  ARPointCloud
 </code>
 <br>
 
 
 <code class="api-signature">
   
-  
-  
-</code>
-
-<code class="api-signature">
-  
-    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a>&gt;
+    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
   
   
   
@@ -561,7 +556,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -570,18 +565,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">com.viro.core.ARPlaneAnchor.Alignment</a>&gt;
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;</td>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARPlaneAnchor.Alignment
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARPointCloud
     </td>
   </tr>
   
@@ -594,7 +578,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Specifies the alignment of the ARPlaneAnchor with respect to gravity.
+  <p>ARPointCloud contains a collection of points that the AR subsystem has detected in the
+ user's real world.
 </p>
 
 
@@ -615,49 +600,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-<!-- =========== ENUM CONSTANT SUMMARY =========== -->
-<table id="enumconstants" class="responsive constants">
-  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
-
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>HORIZONTAL_DOWNWARD</code>
-      <p>The <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is horizontal, facing downwrad (e.g.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>HORIZONTAL_UPWARD</code>
-      <p>The <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is horizontal, facing upward (e.g.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>NON_HORIZONTAL</code>
-      <p>The <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is not horizontal.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
 
 
 
@@ -689,16 +631,22 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
-        static
         
         
-        <a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code>
+        
+        float[]</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
+      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoints()">getPoints</a>()
       </code>
+      
+        <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
+ plus a confidence value (from 0 to 1).
+        
+    
+</p>
       
     </td>
   </tr>
@@ -711,16 +659,21 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
-        static
-        final
         
-        <a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">Alignment[]</a></code>
+        
+        
+        int</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html#values()">values</a>()
+      <a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size</a>()
       </code>
+      
+        <p>Returns the number of points in the ARPointCloud.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -740,85 +693,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Enum Values -->
-
-
-<!-- ========= ENUM CONSTANTS DETAIL ======== -->
-<h2 class="api-section">Enum values</h2>
-
-
-
-
-<A NAME="HORIZONTAL_DOWNWARD"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">HORIZONTAL_DOWNWARD</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a> HORIZONTAL_DOWNWARD</pre>
-    
-    
-
-    
-  <p>The <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is horizontal, facing downwrad (e.g. a ceiling).
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="HORIZONTAL_UPWARD"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">HORIZONTAL_UPWARD</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a> HORIZONTAL_UPWARD</pre>
-    
-    
-
-    
-  <p>The <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is horizontal, facing upward (e.g. a tabletop).
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="NON_HORIZONTAL"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">NON_HORIZONTAL</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a> NON_HORIZONTAL</pre>
-    
-    
-
-    
-  <p>The <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is not horizontal.
-</p></p>
-
-    
-</div>
-
-
 
 
 <!-- Constants -->
@@ -843,10 +717,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="valueOf(java.lang.String)"></A>
+<A NAME="getPoints()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">valueOf</h3>
+    <h3 class="api-name">getPoints</h3>
     <div class="api-level">
       <div></div>
       
@@ -854,35 +728,30 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
+float[] getPoints ()</pre>
     
     
 
     
-  <p></p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>name</code></td>
-        <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
+  <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
+ plus a confidence value (from 0 to 1). Each point therefore takes up 4 floats in the array
+ and are arranged in no particular order.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
+        <td><code>float[]</code></td>
+        <td width="100%">A single float array containing the position and confidence of each point.
+</p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="values()"></A>
+<A NAME="size()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">values</h3>
+    <h3 class="api-name">size</h3>
     <div class="api-level">
       <div></div>
       
@@ -890,17 +759,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">Alignment[]</a> values ()</pre>
+int size ()</pre>
     
     
 
     
-  <p></p></p>
+  <p>Returns the number of points in the ARPointCloud.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">Alignment[]</a></code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
+        <td><code>int</code></td>
+        <td width="100%">the number of points in the ARPointCloud.
+</p></td>
       </tr>
     </table>
 
