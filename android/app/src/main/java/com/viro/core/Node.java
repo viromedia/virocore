@@ -179,13 +179,13 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private float mOpacity = 1.0f;
     private boolean mVisible = true;
     private DragType mDragType = DragType.FIXED_DISTANCE;
-    private int mLightReceivingBitMask = 1;
-    private int mShadowCastingBitMask = 1;
     private boolean mHighAccuracyGaze = false;
     private boolean mIgnoreEventHandling = false;
     private EnumSet<TransformBehavior> mTransformBehaviors;
     private String mTag;
     private Camera mCamera;
+    protected int mLightReceivingBitMask = 1;
+    protected int mShadowCastingBitMask = 1;
 
     private EventDelegate mEventDelegate;
     private ClickListener mClickListener;
@@ -603,7 +603,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void setLightReceivingBitMask(int bitMask) {
         mLightReceivingBitMask = bitMask;
-        nativeSetLightReceivingBitMask(mNativeRef, bitMask);
+        nativeSetLightReceivingBitMask(mNativeRef, bitMask, false);
     }
 
     /**
@@ -624,7 +624,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void setShadowCastingBitMask(int bitMask) {
         mShadowCastingBitMask = bitMask;
-        nativeSetShadowCastingBitMask(mNativeRef, bitMask);
+        nativeSetShadowCastingBitMask(mNativeRef, bitMask, false);
     }
 
     /**
@@ -1391,8 +1391,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetDragType(long nodeReference, String dragType);
-    private native void nativeSetLightReceivingBitMask(long nodeReference, int bitMask);
-    private native void nativeSetShadowCastingBitMask(long nodeReference, int bitMask);
     private native void nativeSetIgnoreEventHandling(long nodeReference, boolean visible);
     private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
@@ -1419,6 +1417,8 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeGetWorldTransform(long nodeReference);
+    protected native void nativeSetLightReceivingBitMask(long nodeReference, int bitMask, boolean recursive);
+    protected native void nativeSetShadowCastingBitMask(long nodeReference, int bitMask, boolean recursive);
 
 // +---------------------------------------------------------------------------+
 // | TRANSFORM LISTENER

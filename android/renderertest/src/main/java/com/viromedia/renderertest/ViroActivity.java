@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import com.viro.core.ARAnchor;
 import com.viro.core.ARPointCloud;
 import com.viro.core.ClickListener;
+import com.viro.core.DragListener;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
 import com.viro.core.ARHitTestListener;
@@ -759,13 +760,15 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         return list;
     }
 
-    private Object3D loadObjectNode() {
+    private Object3D loadObjectNode(final int bitmask) {
         final Object3D objectNode = new Object3D();
         objectNode.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, 0));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
+                object.setLightReceivingBitMask(bitmask);
+                object.setShadowCastingBitMask(bitmask);
 
                 final Animation animation = object.getAnimation("02_spin");
                 //animation.setDelay(5000);
@@ -797,12 +800,27 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
             @Override
             public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
+                int bitmask = 4;
+
                 Log.i("Viro", "Found anchor!");
-                node.addChildNode(loadObjectNode());
+                final Spotlight spot = new Spotlight(Color.RED, 1000.0f, 1,
+                        10, new Vector(0, 4, 0),
+                        new Vector(0, -1, 0), (float) Math.toRadians(2), (float) Math.toRadians(10));
+                spot.setInfluenceBitMask(bitmask);
+                spot.setCastsShadow(true);
+
+                node.addLight(spot);
+                node.addChildNode(loadObjectNode(bitmask | 1));
+                node.setDragListener(new DragListener() {
+                    @Override
+                    public void onDrag(int source, Node node, Vector worldLocation, Vector localLocation) {
+
+                    }
+                });
 
                 Surface surface = new Surface(2, 2);
                 Material material = new Material();
-                material.setDiffuseColor(Color.BLACK);
+                material.setDiffuseColor(Color.WHITE);
                 material.setShadowMode(Material.ShadowMode.TRANSPARENT);
                 surface.setMaterials(Arrays.asList(material));
 
@@ -810,12 +828,13 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
                 surfaceNode.setPosition(new Vector(0, -0.5f, 0));
                 surfaceNode.setRotation(new Vector((float) -Math.PI / 2, 0, 0));
                 surfaceNode.setGeometry(surface);
+                surfaceNode.setLightReceivingBitMask(bitmask | 1);
                 node.addChildNode(surfaceNode);
             }
 
             @Override
             public void onAnchorUpdated(final ARAnchor anchor, final ARNode node) {
-                Log.i("Viro", "Node position is " + node.getPositionRealtime().x + ", " + node.getPositionRealtime().y + ", " + node.getPositionRealtime().z);
+                //Log.i("Viro", "Node position is " + node.getPositionRealtime().x + ", " + node.getPositionRealtime().y + ", " + node.getPositionRealtime().z);
 
             }
 

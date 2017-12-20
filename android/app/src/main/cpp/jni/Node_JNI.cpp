@@ -448,12 +448,13 @@ JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
 JNI_METHOD(void, nativeSetLightReceivingBitMask)(JNIEnv *env,
                                                   jobject obj,
                                                   jlong native_node_ref,
-                                                  jint bitMask) {
+                                                  jint bitMask,
+                                                  jboolean recursive) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w,bitMask] {
+    VROPlatformDispatchAsyncRenderer([node_w, bitMask, recursive] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->setLightReceivingBitMask(bitMask);
+            node->setLightReceivingBitMask(bitMask, recursive);
         }
     });
 }
@@ -461,12 +462,13 @@ JNI_METHOD(void, nativeSetLightReceivingBitMask)(JNIEnv *env,
 JNI_METHOD(void, nativeSetShadowCastingBitMask)(JNIEnv *env,
                                                  jobject obj,
                                                  jlong native_node_ref,
-                                                 jint bitMask) {
+                                                 jint bitMask,
+                                                 jboolean recursive) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w,bitMask] {
+    VROPlatformDispatchAsyncRenderer([node_w, bitMask, recursive] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->setShadowCastingBitMask(bitMask);
+            node->setShadowCastingBitMask(bitMask, recursive);
         }
     });
 }
