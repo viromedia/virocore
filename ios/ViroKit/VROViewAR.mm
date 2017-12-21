@@ -435,10 +435,11 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 #pragma mark - Scene Loading
 
-- (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
+- (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController {
     _sceneController = std::dynamic_pointer_cast<VROARSceneController>(sceneController);
-    _renderer->setSceneController(sceneController, _driver);
+    passert_msg (_sceneController != nullptr, "AR View requires an AR Scene Controller!");
     
+    _renderer->setSceneController(sceneController, _driver);
     if (_hasTrackingInitialized) {
         std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
         passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
@@ -560,7 +561,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         _renderer->endFrame(_driver);
 
         /*
-         notify scene of the updated ambient light estimates
+         Notify scene of the updated ambient light estimates.
          */
         std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_arSession->getScene());
         scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());

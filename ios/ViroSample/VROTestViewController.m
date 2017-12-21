@@ -14,7 +14,7 @@ enum class VROTestSceneType {
 };
 
 // Set to NO to test using an AR view
-static const VROTestSceneType kTestType = VROTestSceneType::VR;
+static const VROTestSceneType kTestType = VROTestSceneType::AR;
 static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 @interface VROTestViewController ()
@@ -40,6 +40,7 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
                                             worldAlignment:VROWorldAlignment::Gravity];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;
+        view.suspended = NO;
         
         self.renderDelegate.view = view;
         self.renderDelegate.test = kRendererTest;
