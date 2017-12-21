@@ -34,7 +34,7 @@ public:
     void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
                    std::shared_ptr<VRODriver> driver);
     
-    virtual void setViewport(VROViewport viewport);
+    virtual bool setViewport(VROViewport viewport);
     int getWidth() const;
     int getHeight() const;
     
@@ -42,12 +42,12 @@ public:
     
     virtual bool hasTextureAttached(int attachment);
     virtual void clearTextures();
-    virtual void attachNewTextures();
+    virtual bool attachNewTextures();
     virtual void attachTexture(std::shared_ptr<VROTexture> texture, int attachment);
     virtual void setTextureImageIndex(int index, int attachment);
     virtual const std::shared_ptr<VROTexture> getTexture(int attachment) const;
     virtual void deleteFramebuffers();
-    virtual void restoreFramebuffers();
+    virtual bool restoreFramebuffers();
     
 #pragma mark - Render Target Rendering
     
@@ -113,12 +113,12 @@ private:
     /*
      Create a color render-to-texture target with a depth render buffer.
      */
-    void createColorTextureTarget();
+    bool createColorTextureTarget();
     
     /*
      Create a depth render-to-texture target with a color render buffer.
      */
-    void createDepthTextureTarget();
+    bool createDepthTextureTarget();
     
 };
 

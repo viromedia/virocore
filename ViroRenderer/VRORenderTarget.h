@@ -69,8 +69,10 @@ public:
      
      If the viewport size is changed, this may invalidate the current texture.
      This must be invoked before using the render target.
+     
+     Returns true on success, false if the viewport size is not supported.
      */
-    virtual void setViewport(VROViewport viewport) = 0;
+    virtual bool setViewport(VROViewport viewport) = 0;
     
     /*
      Get the dimensions of this render target.
@@ -116,9 +118,9 @@ public:
     virtual void deleteFramebuffers() = 0;
     
     /*
-     Restores the frame-buffer if the context was lost.
+     Restores the frame-buffer if the context was lost. Returns false on failure.
      */
-    virtual void restoreFramebuffers() = 0;
+    virtual bool restoreFramebuffers() = 0;
     
 #pragma mark - Render to Texture Setup
     
@@ -142,8 +144,9 @@ public:
      will be bound.
      
      New textures will be created for all attachment points.
+     Returns true if successful, and false if an error was encountered.
      */
-    virtual void attachNewTextures() = 0;
+    virtual bool attachNewTextures() = 0;
     
     /*
      Set the index of the image to write to via this FBO. This is only valid if

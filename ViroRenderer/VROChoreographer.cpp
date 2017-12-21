@@ -32,6 +32,7 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _driver(driver),
     _renderToTexture(false),
     _renderShadows(true),
+    _maxSupportedShadowMapSize(2048),
     _blurScaling(0.25) {
         
     initTargets(driver);
@@ -171,10 +172,28 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         // No lights are casting a shadow
         return;
     }
-    _shadowTarget->setViewport({ 0, 0, maxSize, maxSize });
+    
+    // Use the smallest of our max supported shadow map size and our max requested size
+    int shadowMapSize = std::min(maxSize, _maxSupportedShadowMapSize);
+    int minRequiredShadowMapSize = 128;
+    
+    // Set the shadow target's viewport. If we fail to create a shadow render target of
+    // requested size, cut the size in half. If we continue to fail, then shadows map not
+    // be supported by this device; in this case, return without rendering them.
+    while (shadowMapSize >= minRequiredShadowMapSize) {
+        if (_shadowTarget->setViewport({ 0, 0, shadowMapSize, shadowMapSize })) {
+            break;
+        }
+        else {
+            shadowMapSize /= 2;
+            _maxSupportedShadowMapSize = shadowMapSize;
+        }
+    }
+    if (shadowMapSize < minRequiredShadowMapSize) {
+        return;
+    }
     
     std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> activeShadowPasses;
-    
     int i = 0;
     for (const std::shared_ptr<VROLight> &light : lights) {
         if (!light->getCastsShadow()) {

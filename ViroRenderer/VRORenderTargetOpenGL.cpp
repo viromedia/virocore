@@ -109,17 +109,19 @@ void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destinati
     }
 }
 
-void VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
+bool VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
     float previousWidth = _viewport.getWidth();
     float previousHeight = _viewport.getHeight();
     
     _viewport = viewport;
 
     // If size changed, recreate the target
-    if (previousWidth  != viewport.getWidth() ||
-        previousHeight != viewport.getHeight()) {
+    if (previousWidth  != viewport.getWidth() || previousHeight != viewport.getHeight()) {
         deleteFramebuffers();
-        restoreFramebuffers();
+        return restoreFramebuffers();
+    }
+    else {
+        return true;
     }
 }
 
@@ -185,13 +187,17 @@ void VRORenderTargetOpenGL::setTextureImageIndex(int index, int attachmentIndex)
     glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, index);
 }
 
-void VRORenderTargetOpenGL::attachNewTextures() {
+bool VRORenderTargetOpenGL::attachNewTextures() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (!driver) {
-        return;
+        pinfo("Failed to attach new render target textures: driver was released");
+        return false;
     }
-    passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
-                "Must invoke setViewport before using a render target");
+    
+    if (_viewport.getWidth() <= 0 || _viewport.getHeight() <= 0) {
+        pinfo("Failed to attach new render target textures: viewport was not set (width or height was 0)");
+        return false;
+    }
     
     if (_type == VRORenderTargetType::ColorTexture ||
         _type == VRORenderTargetType::ColorTextureSRGB ||
@@ -272,7 +278,7 @@ void VRORenderTargetOpenGL::attachNewTextures() {
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
                 pinfo("   Unsupported");
             }
-            pabort();
+            return false;
         }
     }
     else if (_type == VRORenderTargetType::DepthTexture) {
@@ -297,7 +303,8 @@ void VRORenderTargetOpenGL::attachNewTextures() {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texName, 0);
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pabort("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            return false;
         }
         
         std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
@@ -327,15 +334,19 @@ void VRORenderTargetOpenGL::attachNewTextures() {
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texName, 0, 0);
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pabort("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            return false;
         }
         
         std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
         _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     }
     else {
-        pabort("FBO does not have a texture type, cannot create texture");
+        pinfo("FBO does not have a texture type, cannot create texture");
+        return false;
     }
+    
+    return true;
 }
 
 GLint VRORenderTargetOpenGL::getTextureName(int attachment) const {
@@ -372,27 +383,27 @@ GLenum VRORenderTargetOpenGL::getTextureAttachmentType(int attachment) const {
 
 #pragma mark - Lifecycle
 
-void VRORenderTargetOpenGL::restoreFramebuffers() {
+bool VRORenderTargetOpenGL::restoreFramebuffers() {
     switch (_type) {
         case VRORenderTargetType::Renderbuffer:
             createColorDepthRenderbuffers();
-            break;
+            return true;
             
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
-            createColorTextureTarget();
-            break;
+            return createColorTextureTarget();
             
         case VRORenderTargetType::DepthTexture:
         case VRORenderTargetType::DepthTextureArray:
-            createDepthTextureTarget();
-            break;
+            return createDepthTextureTarget();
             
         default:
-            pabort("Invalid render target");
+            pinfo("Invalid render target type, cannot restore framebuffers");
+            return false;
     }
+    return true;
 }
 
 void VRORenderTargetOpenGL::deleteFramebuffers() {
@@ -461,19 +472,22 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
             pinfo("   Unsupported");
         }
-        
         pabort("Failed to create offscreen render buffer");
     }
 }
 
-void VRORenderTargetOpenGL::createColorTextureTarget() {
+bool VRORenderTargetOpenGL::createColorTextureTarget() {
     passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
                 "Must invoke setViewport before using a render target");
     /*
      Create framebuffer.
      */
     glGenFramebuffers(1, &_framebuffer);
-    attachNewTextures();
+    if (!attachNewTextures()) {
+        pinfo("Failed to create color texture target: texture creation failed");
+        glDeleteFramebuffers(1, &_framebuffer);
+        return false;
+    }
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -490,17 +504,25 @@ void VRORenderTargetOpenGL::createColorTextureTarget() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
             pinfo("   Unsupported");
         }
-        
-        pabort("Failed to create color texture render target");
+        pinfo("Failed to create color texture render target");
+        glDeleteFramebuffers(1, &_framebuffer);
+        return false;
     }
+    return true;
 }
 
-void VRORenderTargetOpenGL::createDepthTextureTarget() {
+bool VRORenderTargetOpenGL::createDepthTextureTarget() {
     passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
                 "Must invoke setViewport before using a render target");
 
     glGenFramebuffers(1, &_framebuffer);
-    attachNewTextures();
+    if (!attachNewTextures()) {
+        pinfo("Failed to create depth texture target [width %d, height %d]: texture creation failed",
+              _viewport.getWidth(), _viewport.getHeight());
+        glDeleteFramebuffers(1, &_framebuffer);
+        return false;
+    }
+    
     GLenum none[] = { GL_NONE };
     glDrawBuffers(1, none);
     glReadBuffer(GL_NONE);
@@ -520,8 +542,11 @@ void VRORenderTargetOpenGL::createDepthTextureTarget() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
             pinfo("   Unsupported");
         }
-        pabort("Failed to create depth texture render target");
+        pinfo("Failed to create depth texture render target");
+        glDeleteFramebuffers(1, &_framebuffer);
+        return false;
     }
+    return true;
 }
 
 #pragma mark - Rendering Operations

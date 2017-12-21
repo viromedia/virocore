@@ -23,17 +23,17 @@ public:
     }
     virtual ~VRODisplayOpenGL() {}
     virtual void unbind() {};
-    void setViewport(VROViewport viewport) { _viewport = viewport; }
+    bool setViewport(VROViewport viewport) { _viewport = viewport; return true; }
     
 #pragma mark - Unsupported by Displays
     
     void clearTextures() { pabort(); }
-    void attachNewTextures() { pabort(); }
+    bool attachNewTextures() { pabort(); return false; }
     void setTextureImageIndex(int index, int attachment) { pabort(); }
     void attachTexture(std::shared_ptr<VROTexture> texture, int attachment) { pabort(); }
     const std::shared_ptr<VROTexture> getTexture(int attachment) const { pabort(); return nullptr; }
     void discardFramebuffers() { pabort(); }
-    void restoreFramebuffers() { pabort(); }
+    bool restoreFramebuffers() { pabort(); return false; }
     
 };
 

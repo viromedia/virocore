@@ -87,6 +87,7 @@ public:
      a reference to the final VRORenderTarget containing a texture representing the rendered scene.
      */
     void setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate);
+    
 private:
     
     std::weak_ptr<VRODriver> _driver;
@@ -143,12 +144,18 @@ private:
      representing the rendered scene that is needed for recording / screen capturing.
      */
     std::shared_ptr<VRORenderToTextureDelegate> _renderToTextureDelegate;
+    
 #pragma mark - Shadows
     
     /*
      True if shadow maps are enabled.
      */
     bool _renderShadows;
+    
+    /*
+     The max supported shadow map size for the current device.
+     */
+    int _maxSupportedShadowMapSize;
     
     /*
      The render target for the shadow passes. This target uses a depth texture array
