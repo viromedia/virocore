@@ -509,7 +509,7 @@ void VROShaderProgram::addStandardUniforms() {
     addUniform(VROShaderProperty::Mat4, 1, "view_matrix");
     addUniform(VROShaderProperty::Mat4, 1, "projection_matrix");
     addUniform(VROShaderProperty::Vec3, 1, "camera_position");
-    addUniform(VROShaderProperty::Int, 1, "eye_type");
+    addUniform(VROShaderProperty::Float, 1, "eye_type");
 
     addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");

@@ -564,32 +564,26 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier
         modifier = sStereoscopicTextureModifiers[currentStereoMode];
     }
     else {
-        // Assume leftRight stereoscopic image by default.
-        std::string stereoAxis = "x";
-        std::string eye_left = VROStringUtil::toString(static_cast<int>(VROEyeType::Left));
-        std::string eye_right = VROStringUtil::toString(static_cast<int>(VROEyeType::Right));
-        std::string eye_mono = VROStringUtil::toString(static_cast<int>(VROEyeType::Monocular));
-
-
         // If stereoscopic image is vertical, change stereoAxis to y
+        std::string stereoAxis = "x";
         if (currentStereoMode == VROStereoMode::TopBottom || currentStereoMode == VROStereoMode::BottomTop) {
             stereoAxis = "y";
         }
-        
-        // For stereo modes where the eyes are switched, we flip them.
-        if (currentStereoMode == VROStereoMode::RightLeft || currentStereoMode == VROStereoMode::BottomTop) {
-            std::string tmp = eye_left;
-            eye_left = eye_right;
-            eye_right = tmp;
+
+        std::vector<std::string> surfaceModifierCode;
+        if (currentStereoMode == VROStereoMode::LeftRight || currentStereoMode == VROStereoMode::TopBottom) {
+            surfaceModifierCode = {
+                "uniform highp float eye_type;",
+                "_surface.diffuse_texcoord." + stereoAxis + " = _surface.diffuse_texcoord." + stereoAxis + " * 0.5 + eye_type * 0.5;",
+            };
         }
-        
-        // Create the shader modifier
-        std::vector<std::string> surfaceModifierCode = {
-            "uniform int eye_type;",
-            "if (eye_type == "+eye_left+") {_surface.diffuse_texcoord."+stereoAxis+" = _surface.diffuse_texcoord."+stereoAxis+" * 0.5;}",
-            "else if (eye_type == "+eye_right+") {_surface.diffuse_texcoord."+stereoAxis+" = (_surface.diffuse_texcoord."+stereoAxis+" * 0.5) + 0.5;}",
-            "else if (eye_type == "+eye_mono+") {_surface.diffuse_texcoord."+stereoAxis+" = (_surface.diffuse_texcoord."+stereoAxis+" * 0.5) + 0.5;}"
-        };
+        // For stereo modes where the eyes are switched, we flip them.
+        else {
+            surfaceModifierCode = {
+                "uniform highp float eye_type;",
+                "_surface.diffuse_texcoord." + stereoAxis + " = _surface.diffuse_texcoord." + stereoAxis + " * 0.5 + (1.0 - eye_type) * 0.5;",
+            };
+        }
         
         modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, surfaceModifierCode);
         modifier->setName("stereo");

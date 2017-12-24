@@ -225,8 +225,13 @@ void VROMaterialShaderBinding::bindViewUniforms(VROMatrix4f &modelMatrix, VROMat
     if (_cameraPositionUniform != nullptr) {
         _cameraPositionUniform->setVec3(cameraPosition);
     }
-    if (_eyeTypeUniform != nullptr){
-        _eyeTypeUniform->setInt(static_cast<int>(eyeType));
+    if (_eyeTypeUniform != nullptr) {
+        if (eyeType == VROEyeType::Left || eyeType == VROEyeType::Monocular) {
+            _eyeTypeUniform->setFloat(0);
+        }
+        else {
+            _eyeTypeUniform->setFloat(1.0);
+        }
     }
 }
 
