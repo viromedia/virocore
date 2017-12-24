@@ -18,6 +18,7 @@
 #include "VROAllocationTracker.h"
 #include "VROBoneUBO.h"
 #include "VROStringUtil.h"
+#include "VRODriverOpenGL.h"
 #include <atomic>
 
 #define kDebugShaders 0
@@ -63,9 +64,23 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
 
     _fragmentSource = loadTextAsset(fragmentShader);
     inflateIncludes(_fragmentSource);
-    
+
     inflateVertexShaderModifiers(modifiers, _vertexSource);
     inflateFragmentShaderModifiers(modifiers, _fragmentSource);
+
+    if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
+        std::map<std::string, std::string> adrenoReplacements;
+        adrenoReplacements["_surface."] = "_surface_";
+        adrenoReplacements["_vertex."] = "_vertex_";
+        adrenoReplacements["_geometry."] = "_geometry_";
+        adrenoReplacements["_transforms."] = "_transforms_";
+
+        for (auto kv : adrenoReplacements) {
+            VROStringUtil::replaceAll(_vertexSource, kv.first, kv.second);
+            VROStringUtil::replaceAll(_fragmentSource, kv.first, kv.second);
+        }
+        pinfo("Inflated Adreno 330 replacements for shader source");
+    }
         
     passert (!_vertexSource.empty() && !_fragmentSource.empty());
        

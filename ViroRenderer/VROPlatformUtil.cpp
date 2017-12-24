@@ -259,6 +259,7 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
     std::string assetName = resource + "." + type;
 
     AAsset *asset = AAssetManager_open(sAssetMgr, assetName.c_str(), AASSET_MODE_BUFFER);
+    passert_msg(asset != nullptr , "Failed to load resource %s.%s as string", resource.c_str(), type.c_str());
     size_t length = AAsset_getLength(asset);
     
     char *buffer = (char *)malloc(length + 1);

@@ -64,6 +64,7 @@ VRORenderer::~VRORenderer() {
 
 void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     initBlankTexture(*_context);
+    driver->readGPUType();
     driver->readDisplayFramebuffer();
 
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();

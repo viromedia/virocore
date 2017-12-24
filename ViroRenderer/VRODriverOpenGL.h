@@ -35,6 +35,7 @@ class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VR
 public:
     
     VRODriverOpenGL() :
+        _gpuType(VROGPUType::Normal),
         _lastPurgeFrame(0),
         _depthWritingEnabled(true),
         _depthReadingEnabled(true),
@@ -281,7 +282,30 @@ public:
     std::shared_ptr<VROImagePostProcess> newImagePostProcess(std::shared_ptr<VROShaderProgram> shader) {
         return std::make_shared<VROImagePostProcessOpenGL>(shader);
     }
-    
+
+    void readGPUType() {
+        std::string vendor = std::string((char *) glGetString(GL_VENDOR));
+        std::string renderer = std::string((char *) glGetString(GL_RENDERER));
+        pinfo("GPU vendor [%s], renderer [%s]", vendor.c_str(), renderer.c_str());
+
+        if (VROStringUtil::strcmpinsensitive(vendor, "Qualcomm")) {
+            if (renderer.find("302") != std::string::npos ||
+                renderer.find("304") != std::string::npos ||
+                renderer.find("305") != std::string::npos ||
+                renderer.find("306") != std::string::npos ||
+                renderer.find("308") != std::string::npos ||
+                renderer.find("320") != std::string::npos ||
+                renderer.find("330") != std::string::npos) {
+                pinfo("   Detected antiquated Qualcomm GPU, rendering will be limited");
+                _gpuType = VROGPUType::Adreno330OrOlder;
+            }
+        }
+    }
+
+    VROGPUType getGPUType() {
+        return _gpuType;
+    }
+
     void readDisplayFramebuffer() {
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_displayFramebuffer);
     }
@@ -337,6 +361,8 @@ protected:
     std::shared_ptr<VRORenderTarget> _display;
 
 private:
+
+    VROGPUType _gpuType;
     
     /*
      Map of light hashes to corresponding lighting UBOs.

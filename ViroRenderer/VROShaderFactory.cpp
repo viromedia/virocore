@@ -211,7 +211,18 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
     }
     else {
-        fragmentShader = "standard_fsh";
+        // Adreno 330 and older do not support our standard lighting setup, because they do not support
+        // the OpenGL 3.0 spec correctly (specifically, the use of structs cause it to fail)
+        if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
+            fragmentShader = "constant_fsh";
+        }
+        else {
+            fragmentShader = "standard_fsh";
+        }
+    }
+    if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
+        vertexShader   += "_adreno";
+        fragmentShader += "_adreno";
     }
     
     std::vector<std::string> samplers;
