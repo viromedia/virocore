@@ -22,4 +22,6 @@
 
 - (void)processBuffer:(CMSampleBufferRef)newBuffer;
 
+- (void)processPixelBufferRef:(CVPixelBufferRef)pixelBuffer forceRun:(BOOL)forceRun;
+
 @end

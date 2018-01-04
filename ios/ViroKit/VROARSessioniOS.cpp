@@ -58,6 +58,8 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
         
         _sessionConfiguration = config;
     }
+    
+    //_trackingHelper = [[VROTrackingHelper alloc] init];
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -175,7 +177,10 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     std::vector<std::unique_ptr<VROTextureSubstrate>> substrates = _videoTextureCache->createYCbCrTextureSubstrates(frameiOS->getImage());
     _background->setSubstrate(0, std::move(substrates[0]));
     _background->setSubstrate(1, std::move(substrates[1]));
-    
+
+    // Uncomment the below line to enable running image recognition
+    // [_trackingHelper processPixelBufferRef:frameiOS->getImage() forceRun:false];
+
     return _currentFrame;
 }
 

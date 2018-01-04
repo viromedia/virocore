@@ -12,6 +12,7 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 #include "VROARSession.h"
 #include "VROViewport.h"
+//#include "VROTrackingHelper.h"
 #include <ARKit/ARKit.h>
 #include <map>
 #include <vector>
@@ -65,6 +66,11 @@ private:
     ARConfiguration *_sessionConfiguration;
     VROARKitSessionDelegate *_delegateAR;
 
+    /*
+     Image Tracking Helper.
+     */
+    // VROTrackingHelper* _trackingHelper;
+    
     /*
      Whether or not the session has been paused.
      */

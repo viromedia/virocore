@@ -62,18 +62,38 @@
         if (!_ready) {
             _count++;
             if (_count % 20 == 1) {
-                NSLog(@"VROTrackingHelper, not ready for next frame! count %ld", _count);
+                NSLog(@"VROTrackingHelper, not ready for next frame! count %ld", (long)_count);
             }
             return;
         } else {
-            NSLog(@"VROTrackingHelper, ready for next frame! skipped %ld frames", _count);
+            NSLog(@"VROTrackingHelper, ready for next frame! skipped %ld frames", (long)_count);
             _count = 0;
             _ready = NO;
         }
     }
 
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(newBuffer);
-    
+
+    [self processPixelBufferRef:pixelBuffer forceRun:YES];
+}
+
+- (void)processPixelBufferRef:(CVPixelBufferRef)pixelBuffer forceRun:(BOOL)forceRun {
+    if (!forceRun) {
+        @synchronized(self) {
+            if (!_ready) {
+                _count++;
+                if (_count % 20 == 1) {
+                    NSLog(@"VROTrackingHelper, not ready for next frame! count %ld", (long)_count);
+                }
+                return;
+            } else {
+                NSLog(@"VROTrackingHelper, ready for next frame! skipped %ld frames", (long)_count);
+                _count = 0;
+                _ready = NO;
+            }
+        }
+    }
+
     CVPixelBufferLockBaseAddress( pixelBuffer, 0 );
     
     unsigned char *base = (unsigned char *)CVPixelBufferGetBaseAddress( pixelBuffer );
@@ -84,14 +104,15 @@
     cv::Mat bgraImage = cv::Mat((int)height, (int)extendedWidth, CV_8UC4, base);
     cv::Mat rgbImage;
     cv::cvtColor(bgraImage, rgbImage, cv::COLOR_BGRA2RGB);
-
+    
     CVPixelBufferUnlockBaseAddress( pixelBuffer, 0 );
-
+    
     // anything higher than "low" priority and we start skipping frames (probably because
     // the low level camera notification API's notify on the background thread).
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         [self runTracking:rgbImage];
     });
+    
 }
 
 #pragma mark AVCaptureVideoDataOutputSampleBufferDelegate
