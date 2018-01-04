@@ -23,6 +23,7 @@ public:
     void run();
     void pause();
     bool isReady() const;
+    void resetSession(bool resetTracking, bool removeAnchors);
     
     void setAnchorDetection(std::set<VROAnchorDetection> types);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);

@@ -86,6 +86,13 @@ bool VROARSessioniOS::isReady() const {
     return getScene() != nullptr && _currentFrame.get() != nullptr;
 }
 
+void VROARSessioniOS::resetSession(bool resetTracking, bool removeAnchors) {
+    if (_session && (resetTracking || removeAnchors)) {
+        NSUInteger options = ((resetTracking ? ARSessionRunOptionResetTracking : 0) | (removeAnchors ? ARSessionRunOptionRemoveExistingAnchors : 0));
+        [_session runWithConfiguration:_sessionConfiguration options:options];
+    }
+}
+
 void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
     if (types.find(VROAnchorDetection::PlanesHorizontal) != types.end()) {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {

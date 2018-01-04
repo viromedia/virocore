@@ -41,6 +41,10 @@ bool VROARSessionInertial::isReady() const {
     return getScene() != nullptr;
 }
 
+void VROARSessionInertial::resetSession(bool resetTracking, bool removeAnchors) {
+    return; // does nothing in inertial.
+}
+
 void VROARSessionInertial::setAnchorDetection(std::set<VROAnchorDetection> types) {
     // Unsupported
 }
