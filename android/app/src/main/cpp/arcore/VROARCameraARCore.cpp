@@ -77,7 +77,7 @@ VROVector3f VROARCameraARCore::getPosition() const {
 }
 
 VROMatrix4f VROARCameraARCore::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
-    VROMatrix4f projection = _session->getProjectionMatrix(near, far);
+    VROMatrix4f projection = arcore::frame::getProjectionMatrix(*_frame.get(), near, far);
     float fovX = toDegrees(atan(1.0f / projection[0]) * 2.0);
     float fovY = toDegrees(atan(1.0f / projection[5]) * 2.0);
     *outFOV = VROFieldOfView(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);

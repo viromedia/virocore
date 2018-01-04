@@ -51,8 +51,7 @@ public:
      Internal methods.
      */
     void initGL(std::shared_ptr<VRODriverOpenGL> driver);
-    VROMatrix4f getProjectionMatrix(float near, float far);
-    std::shared_ptr<VROARAnchor> getAnchorForNative(jni::Object<arcore::Plane> plane);
+    std::shared_ptr<VROARAnchor> getAnchorForNative(jni::Object<arcore::Anchor> anchor);
 
 private:
     /*

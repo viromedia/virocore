@@ -10,23 +10,29 @@
 #include "ARCore_JNI.h"
 #include "VROPlatformUtil.h"
 #include "VROMatrix4f.h"
+#include <stdio.h>
+#include <sstream>
+#include <string>
+#include "VROStringUtil.h"
+#include "VROLog.h"
 
 namespace arcore {
 
     struct Config { static constexpr auto Name() { return "com/google/ar/core/Config"; } };
-    struct LightingModeEnum { static constexpr auto Name() { return "com/google/ar/core/Config$LightingMode"; } };
+    struct LightingModeEnum { static constexpr auto Name() { return "com/google/ar/core/Config$LightEstimationMode"; } };
     struct PlaneFindingModeEnum { static constexpr auto Name() { return "com/google/ar/core/Config$PlaneFindingMode"; } };
     struct UpdateModeEnum { static constexpr auto Name() { return "com/google/ar/core/Config$UpdateMode"; } };
 
     struct Pose { static constexpr auto Name() { return "com/google/ar/core/Pose"; } };
     struct Anchor { static constexpr auto Name() { return "com/google/ar/core/Anchor"; } };
-    struct AnchorTrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/Anchor$TrackingState"; } };
-    struct Plane { static constexpr auto Name() { return "com/google/ar/core/Plane"; } };
-    struct PlaneTrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/Plane$TrackingState"; } };
+    struct TrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/Trackable$TrackingState"; } };
+    struct Trackable { static constexpr auto Name() { return "com/google/ar/core/Trackable"; } };
+    struct Point { static constexpr auto Name() { return "com/google/ar/core/Point"; } };
     struct PlaneTypeEnum { static constexpr auto Name() { return "com/google/ar/core/Plane$Type"; } };
     struct LightEstimate { static constexpr auto Name() { return "com/google/ar/core/LightEstimate"; } };
+    struct LightEstimateStateEnum { static constexpr auto Name() { return "com/google/ar/core/LightEstimate$State"; } };
     struct Frame { static constexpr auto Name() { return "com/google/ar/core/Frame"; } };
-    struct FrameTrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/Frame$TrackingState"; } };
+    struct Camera { static constexpr auto Name() { return "com/google/ar/core/Camera"; } };
     struct HitResult { static constexpr auto Name() { return "com/google/ar/core/HitResult"; } };
     struct PointCloudHitResult { static constexpr auto Name() { return "com/google/ar/core/PointCloudHitResult"; } };
     struct PointCloud {static constexpr auto Name() { return "com/google/ar/core/PointCloud"; } };
@@ -34,6 +40,7 @@ namespace arcore {
 
     struct ViroViewARCore { static constexpr auto Name() { return "com/viro/core/ViroViewARCore"; } };
 
+    struct Class { static constexpr auto Name() { return "java/lang/Class"; } };
     struct Object { static constexpr auto Name() { return "java/lang/Object"; } };
     struct Collection { static constexpr auto Name() { return "java/util/Collection"; } };
     struct List { static constexpr auto Name() { return "java/util/List"; } };
@@ -41,14 +48,14 @@ namespace arcore {
 
     namespace config {
 
-        jni::Object<Config> getConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
+        jni::Object<Config> getConfig(jni::Object<Session> session,
+                                      LightingMode lightingMode, PlaneFindingMode planeFindingMode,
                                       UpdateMode updateMode) {
             // Create the default config
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto ConfigClass = *jni::Class<Config>::Find(env).NewGlobalRef(env).release();
-            auto createDefaultConfig =
-                    ConfigClass.GetStaticMethod<jni::Object<Config>()>(env, "createDefaultConfig");
-            jni::Object<Config> config = ConfigClass.Call(env, createDefaultConfig);
+            jni::Constructor<Config, jni::Object<Session>> createDefaultConfig = ConfigClass.GetConstructor<jni::Object<Session>>(env);
+            jni::Object<Config> config = ConfigClass.New(env, createDefaultConfig, session);
 
             // Convert LightingMode (c++ enum) to LightingModeEnum (java enum)
             static auto LightingModeEnumClass = *jni::Class<LightingModeEnum>::Find(env).NewGlobalRef(env).release();
@@ -69,7 +76,7 @@ namespace arcore {
 
             // Set the lightingMode on Config
             auto setLightingModeMethod =
-                    ConfigClass.GetMethod<void(jni::Object<LightingModeEnum>)>(env, "setLightingMode");
+                    ConfigClass.GetMethod<void(jni::Object<LightingModeEnum>)>(env, "setLightEstimationMode");
             config.Call(env, setLightingModeMethod, lightingModeEnum);
 
             // Convert PlaneFindingMode (c++ enum) to PlaneFindingModeEnum (java enum)
@@ -240,12 +247,16 @@ namespace arcore {
     }
 
     namespace anchor {
-        const char* getId(jni::Object<Anchor> anchor) {
+
+        std::string getId(jni::Object<Anchor> anchor) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto AnchorClass = *jni::Class<Anchor>::Find(env).NewGlobalRef(env).release();
-            auto method = AnchorClass.GetMethod<jni::String()>(env, "getId");
-            jni::String idJni = anchor.Call(env, method);
-            return env.GetStringUTFChars((jstring)idJni.Get(), NULL);
+            auto nativeHandleField = AnchorClass.GetField<jni::jlong>(env, "nativeHandle");
+            jni::jlong nativeHandle = anchor.Get(env, nativeHandleField);
+
+            std::stringstream ss;
+            ss << nativeHandle;
+            return ss.str();
         }
 
         jni::Object<Pose> getPose(jni::Object<Anchor> anchor) {
@@ -255,20 +266,27 @@ namespace arcore {
             return anchor.Call(env, method);
         }
 
+        jint getHashCode(jni::Object<Anchor> anchor) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto AnchorClass = *jni::Class<Anchor>::Find(env).NewGlobalRef(env).release();
+            auto method = AnchorClass.GetMethod<jint()>(env, "hashCode");
+            return anchor.Call(env, method);
+        }
+
         TrackingState getTrackingState(jni::Object<Anchor> anchor) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto AnchorClass = *jni::Class<Anchor>::Find(env).NewGlobalRef(env).release();
-            auto method = AnchorClass.GetMethod<jni::Object<AnchorTrackingStateEnum>()>(env, "getTrackingState");
-            jni::Object<AnchorTrackingStateEnum> trackingState = anchor.Call(env, method);
+            auto method = AnchorClass.GetMethod<jni::Object<TrackingStateEnum>()>(env, "getTrackingState");
+            jni::Object<TrackingStateEnum> trackingState = anchor.Call(env, method);
 
-            static auto TrackingStateEnumClass = *jni::Class<AnchorTrackingStateEnum>::Find(env).NewGlobalRef(env).release();
+            static auto TrackingStateEnumClass = *jni::Class<TrackingStateEnum>::Find(env).NewGlobalRef(env).release();
             auto ordinalMethod = TrackingStateEnumClass.GetMethod<jni::jint()>(env, "ordinal");
             jni::jint ordinal = trackingState.Call(env, ordinalMethod);
 
-            /* Anchor TrackingState enum value/order:
-             TRACKING,
-             NOT_CURRENTLY_TRACKING,
-             STOPPED_TRACKING;
+            /* Trackable.TrackingState enum value/order:
+             TRACKING(0),
+             PAUSED(1),
+             STOPPED(2);
              */
             if (ordinal == 0) {
                 return TrackingState::Tracking;
@@ -276,6 +294,16 @@ namespace arcore {
             else {
                 return TrackingState::NotTracking;
             }
+        }
+    }
+
+    namespace trackable {
+
+        jni::Object<Anchor> createAnchor(jni::Object<Trackable> trackable, jni::Object<Pose> pose) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto TrackableClass = *jni::Class<Trackable>::Find(env).NewGlobalRef(env).release();
+            auto createAnchor = TrackableClass.GetMethod<jni::Object<Anchor>(jni::Object<Pose>)>(env, "createAnchor");
+            return trackable.Call(env, createAnchor, pose);
         }
     }
 
@@ -319,17 +347,17 @@ namespace arcore {
         TrackingState getTrackingState(jni::Object<Plane> plane) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto PlaneClass = *jni::Class<Plane>::Find(env).NewGlobalRef(env).release();
-            auto method = PlaneClass.GetMethod<jni::Object<PlaneTrackingStateEnum>()>(env, "getTrackingState");
-            jni::Object<PlaneTrackingStateEnum> trackingState = plane.Call(env, method);
+            auto method = PlaneClass.GetMethod<jni::Object<TrackingStateEnum>()>(env, "getTrackingState");
+            jni::Object<TrackingStateEnum> trackingState = plane.Call(env, method);
 
-            static auto TrackingStateEnumClass = *jni::Class<PlaneTrackingStateEnum>::Find(env).NewGlobalRef(env).release();
+            static auto TrackingStateEnumClass = *jni::Class<TrackingStateEnum>::Find(env).NewGlobalRef(env).release();
             auto ordinalMethod = TrackingStateEnumClass.GetMethod<jni::jint()>(env, "ordinal");
             jni::jint ordinal = trackingState.Call(env, ordinalMethod);
 
-            /* Plane TrackingState enum value/order:
-             TRACKING,
-             NOT_CURRENTLY_TRACKING,
-             STOPPED_TRACKING;
+            /* Trackable.TrackingState enum value/order:
+             TRACKING(0),
+             PAUSED(1),
+             STOPPED(2);
              */
             if (ordinal == 0) {
                 return TrackingState::Tracking;
@@ -363,6 +391,20 @@ namespace arcore {
                     return PlaneType::NonHorizontal;
             }
         }
+
+        jboolean isPoseInExtents(jni::Object<Plane> plane, jni::Object<Pose> pose) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto PlaneClass = *jni::Class<Plane>::Find(env).NewGlobalRef(env).release();
+            auto method = PlaneClass.GetMethod<jni::jboolean(jni::Object<Pose>)>(env, "isPoseInExtents");
+            return plane.Call(env, method, pose);
+        }
+
+        jboolean isPoseInPolygon(jni::Object<Plane> plane, jni::Object<Pose> pose) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto PlaneClass = *jni::Class<Plane>::Find(env).NewGlobalRef(env).release();
+            auto method = PlaneClass.GetMethod<jni::jboolean(jni::Object<Pose>)>(env, "isPoseInPolygon");
+            return plane.Call(env, method, pose);
+        }
     }
 
     namespace light_estimate {
@@ -377,8 +419,24 @@ namespace arcore {
         jni::jboolean isValid(jni::Object<LightEstimate> lightEstimate) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto LightEstimateClass = *jni::Class<LightEstimate>::Find(env).NewGlobalRef(env).release();
-            auto method = LightEstimateClass.GetMethod<jni::jboolean()>(env, "isValid");
-            return lightEstimate.Call(env, method);
+
+            auto method = LightEstimateClass.GetMethod<jni::Object<LightEstimateStateEnum>()>(env, "getState");
+            jni::Object<LightEstimateStateEnum> lightEstimateState = lightEstimate.Call(env, method);
+
+            static auto LightEstimateStateEnumClass = *jni::Class<LightEstimateStateEnum>::Find(env).NewGlobalRef(env).release();
+            auto ordinalMethod = LightEstimateStateEnumClass.GetMethod<jni::jint()>(env, "ordinal");
+            jni::jint ordinal = lightEstimateState.Call(env, ordinalMethod);
+
+            /* LightEstimate.State enum value/order:
+                NOT_VALID(0),
+                VALID(1);
+             */
+            if (ordinal == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
         }
 
     }
@@ -388,11 +446,35 @@ namespace arcore {
         VROMatrix4f getViewMatrix(jni::Object<Frame> frame) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<void(jni::Array<jni::jfloat>, jint)>(env, "getViewMatrix");
 
+            static auto CameraClass = *jni::Class<Camera>::Find(env).NewGlobalRef(env).release();
+            auto getCamera = FrameClass.GetMethod<jni::Object<Camera>()>(env, "getCamera");
+            jni::Object<Camera> camera = frame.Call(env, getCamera);
+
+            auto method = CameraClass.GetMethod<void(jni::Array<jni::jfloat>, jint)>(env, "getViewMatrix");
             std::vector<float> vector(16, 0);
             jni::Array<jni::jfloat> array = jni::Make<jni::Array<jni::jfloat>>(env, vector);
-            frame.Call(env, method, array, 0);
+            camera.Call(env, method, array, 0);
+
+            jfloat *elements = env.GetFloatArrayElements((jfloatArray)array.Get(), NULL);
+            VROMatrix4f matrix(elements);
+            env.ReleaseFloatArrayElements((jfloatArray)array.Get(), elements, JNI_ABORT);
+
+            return matrix;
+        }
+
+        VROMatrix4f getProjectionMatrix(jni::Object<Frame> frame, float near, float far) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
+
+            static auto CameraClass = *jni::Class<Camera>::Find(env).NewGlobalRef(env).release();
+            auto getCamera = FrameClass.GetMethod<jni::Object<Camera>()>(env, "getCamera");
+            jni::Object<Camera> camera = frame.Call(env, getCamera);
+
+            auto method = CameraClass.GetMethod<void(jni::Array<jni::jfloat>, jint, jfloat, jfloat)>(env, "getProjectionMatrix");
+            std::vector<float> vector(16, 0);
+            jni::Array<jni::jfloat> array = jni::Make<jni::Array<jni::jfloat>>(env, vector);
+            camera.Call(env, method, array, 0, near, far);
 
             jfloat *elements = env.GetFloatArrayElements((jfloatArray)array.Get(), NULL);
             VROMatrix4f matrix(elements);
@@ -404,10 +486,15 @@ namespace arcore {
         TrackingState getTrackingState(jni::Object<Frame> frame) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<jni::Object<FrameTrackingStateEnum>()>(env, "getTrackingState");
-            jni::Object<FrameTrackingStateEnum> trackingState = frame.Call(env, method);
 
-            static auto TrackingStateEnumClass = *jni::Class<FrameTrackingStateEnum>::Find(env).NewGlobalRef(env).release();
+            static auto CameraClass = *jni::Class<Camera>::Find(env).NewGlobalRef(env).release();
+            auto getCamera = FrameClass.GetMethod<jni::Object<Camera>()>(env, "getCamera");
+            jni::Object<Camera> camera = frame.Call(env, getCamera);
+
+            auto method = CameraClass.GetMethod<jni::Object<TrackingStateEnum>()>(env, "getTrackingState");
+            jni::Object<TrackingStateEnum> trackingState = camera.Call(env, method);
+
+            static auto TrackingStateEnumClass = *jni::Class<TrackingStateEnum>::Find(env).NewGlobalRef(env).release();
             auto ordinalMethod = TrackingStateEnumClass.GetMethod<jni::jint()>(env, "ordinal");
             jni::jint ordinal = trackingState.Call(env, ordinalMethod);
 
@@ -429,7 +516,7 @@ namespace arcore {
         jni::jlong getTimestampNs(jni::Object<Frame> frame) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<jni::jlong()>(env, "getTimestampNs");
+            auto method = FrameClass.GetMethod<jni::jlong()>(env, "getTimestamp");
             return frame.Call(env, method);
         }
 
@@ -443,14 +530,33 @@ namespace arcore {
         jni::Object<Collection> getUpdatedPlanes(jni::Object<Frame> frame) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<jni::Object<Collection>()>(env, "getUpdatedPlanes");
-            return frame.Call(env, method);
+            static auto ClassClass = *jni::Class<Class>::Find(env).NewGlobalRef(env).release();
+
+            auto forName = ClassClass.GetStaticMethod<jni::Object<Class>(jni::String)>(env, "forName");
+            jni::String planeClassString = jni::Make<jni::String>(env, "com.google.ar.core.Plane");
+            jni::Object<Class> planeClass = ClassClass.Call(env, forName, planeClassString);
+
+            auto method = FrameClass.GetMethod<jni::Object<Collection>(jni::Object<Class>)>(env, "getUpdatedTrackables");
+            return frame.Call(env, method, planeClass);
         }
 
-        jni::jboolean isDisplayRotationChanged(jni::Object<Frame> frame) {
+        jni::Object<Collection> getUpdatedPoints(jni::Object<Frame> frame) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<jni::jboolean()>(env, "isDisplayRotationChanged");
+            static auto ClassClass = *jni::Class<Class>::Find(env).NewGlobalRef(env).release();
+
+            auto forName = ClassClass.GetStaticMethod<jni::Object<Class>(jni::String)>(env, "forName");
+            jni::String pointClassString = jni::Make<jni::String>(env, "com.google.ar.core.Point");
+            jni::Object<Class> pointClass = ClassClass.Call(env, forName, pointClassString);
+
+            auto method = FrameClass.GetMethod<jni::Object<Collection>(jni::Object<Class>)>(env, "getUpdatedTrackables");
+            return frame.Call(env, method, pointClass);
+        }
+
+        jni::jboolean hasDisplayGeometryChanged(jni::Object<Frame> frame) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
+            auto method = FrameClass.GetMethod<jni::jboolean()>(env, "hasDisplayGeometryChanged");
             return frame.Call(env, method);
         }
 
@@ -508,19 +614,12 @@ namespace arcore {
             return result;
         }
 
+        // TODO This must be released after it's used
         jni::Object<PointCloud> getPointCloud(jni::Object<Frame> frame) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<jni::Object<PointCloud>()>(env, "getPointCloud");
+            auto method = FrameClass.GetMethod<jni::Object<PointCloud>()>(env, "acquirePointCloud");
             return frame.Call(env, method);
-        }
-
-        VROMatrix4f getPointCloudPose(jni::Object<Frame> frame) {
-            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
-            static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
-            auto method = FrameClass.GetMethod<jni::Object<Pose>()>(env, "getPointCloudPose");
-            jni::Object<Pose> pose = frame.Call(env, method);
-            return pose::toMatrix(pose);
         }
     }
 
@@ -531,6 +630,13 @@ namespace arcore {
             static auto PointCloudClass = *jni::Class<PointCloud>::Find(env).NewGlobalRef(env).release();
             auto method = PointCloudClass.GetMethod<jni::Object<FloatBuffer>()>(env, "getPoints");
             return pointCloud.Call(env, method);
+        }
+
+        void release(jni::Object<PointCloud> pointCloud) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto PointCloudClass = *jni::Class<PointCloud>::Find(env).NewGlobalRef(env).release();
+            auto method = PointCloudClass.GetMethod<void()>(env, "release");
+            pointCloud.Call(env, method);
         }
 
     }
@@ -544,57 +650,38 @@ namespace arcore {
             return hitResult.Call(env, method);
         }
 
-        VROMatrix4f getPose(jni::Object<HitResult> hitResult) {
+        jni::Object<Pose> getPose(jni::Object<HitResult> hitResult) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
             static auto HitResultClass = *jni::Class<HitResult>::Find(env).NewGlobalRef(env).release();
             auto method = HitResultClass.GetMethod<jni::Object<Pose>()>(env, "getHitPose");
-            jni::Object<Pose> pose = hitResult.Call(env, method);
-            return pose::toMatrix(pose);
-        }
-
-    }
-
-    namespace planehitresult {
-
-        jni::Object<Plane> getPlane(jni::Object<PlaneHitResult> hitResult) {
-            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
-            static auto PlaneHitResultClass = *jni::Class<PlaneHitResult>::Find(env).NewGlobalRef(env).release();
-            auto method = PlaneHitResultClass.GetMethod<jni::Object<Plane>()>(env, "getPlane");
             return hitResult.Call(env, method);
         }
 
-        jboolean isHitInExtents(jni::Object<PlaneHitResult> hitResult) {
+        TrackableType getTrackableType(jni::Object<HitResult> hitResult) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();
-            static auto PlaneHitResultClass = *jni::Class<PlaneHitResult>::Find(env).NewGlobalRef(env).release();
-            auto method = PlaneHitResultClass.GetMethod<jni::jboolean()>(env, "isHitInExtents");
+            static auto HitResultClass = *jni::Class<HitResult>::Find(env).NewGlobalRef(env).release();
+            auto getTrackable = HitResultClass.GetMethod<jni::Object<Trackable>()>(env, "getTrackable");
+            jni::Object<Trackable> trackable = hitResult.Call(env, getTrackable);
+
+            static auto PlaneClass = *jni::Class<Plane>::Find(env).NewGlobalRef(env).release();
+            if (trackable.IsInstanceOf(env, PlaneClass)) {
+                return TrackableType::Plane;
+            }
+            else {
+                return TrackableType::Point;
+            }
+        }
+
+        jni::Object<Trackable> getTrackable(jni::Object<HitResult> hitResult) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto HitResultClass = *jni::Class<HitResult>::Find(env).NewGlobalRef(env).release();
+            auto method = HitResultClass.GetMethod<jni::Object<Trackable>()>(env, "getTrackable");
             return hitResult.Call(env, method);
         }
 
-        jboolean isHitInPolygon(jni::Object<PlaneHitResult> hitResult) {
-            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
-            static auto PlaneHitResultClass = *jni::Class<PlaneHitResult>::Find(env).NewGlobalRef(env).release();
-            auto method = PlaneHitResultClass.GetMethod<jni::jboolean()>(env, "isHitInPolygon");
-            return hitResult.Call(env, method);
-        }
     }
 
     namespace session {
-
-        VROMatrix4f getProjectionMatrix(jni::Object<Session> session, float near, float far) {
-            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
-            static auto SessionClass = *jni::Class<Session>::Find(env).NewGlobalRef(env).release();
-            auto method = SessionClass.GetMethod<void(jni::Array<jni::jfloat>, jint, jfloat, jfloat)>(env, "getProjectionMatrix");
-
-            std::vector<float> vector(16, 0);
-            jni::Array<jni::jfloat> array = jni::Make<jni::Array<jni::jfloat>>(env, vector);
-            session.Call(env, method, array, 0, near, far);
-
-            jfloat *elements = env.GetFloatArrayElements((jfloatArray)array.Get(), NULL);
-            VROMatrix4f matrix(elements);
-            env.ReleaseFloatArrayElements((jfloatArray)array.Get(), elements, JNI_ABORT);
-
-            return matrix;
-        }
 
         void setCameraTextureName(jni::Object<Session> session, jni::jint textureName) {
             jni::JNIEnv &env = *VROPlatformGetJNIEnv();

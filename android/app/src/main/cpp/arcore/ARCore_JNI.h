@@ -21,11 +21,11 @@ namespace arcore {
     struct Config;
     struct Pose;
     struct Anchor;
-    struct Plane;
+    struct Trackable;
+    struct Plane { static constexpr auto Name() { return "com/google/ar/core/Plane"; } };
     struct LightEstimate;
     struct Frame;
     struct HitResult;
-    struct PlaneHitResult { static constexpr auto Name() { return "com/google/ar/core/PlaneHitResult"; } };
     struct PointCloud;
     struct Session;
     struct Object;
@@ -37,6 +37,11 @@ namespace arcore {
     enum class TrackingState {
         NotTracking,
         Tracking
+    };
+
+    enum class TrackableType {
+        Plane,
+        Point
     };
 
     enum class PlaneType {
@@ -60,7 +65,8 @@ namespace arcore {
             LatestCameraImage
         };
 
-        jni::Object<Config> getConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
+        jni::Object<Config> getConfig(jni::Object<arcore::Session> session,
+                                      LightingMode lightingMode, PlaneFindingMode planeFindingMode,
                                       UpdateMode updateMode);
 
     }
@@ -88,12 +94,20 @@ namespace arcore {
     }
 
     namespace anchor {
-        const char* getId(jni::Object<Anchor> anchor);
+
+        jint getHashCode(jni::Object<Anchor> anchor);
+        std::string getId(jni::Object<Anchor> anchor);
         jni::Object<Pose> getPose(jni::Object<Anchor> anchor);
         TrackingState getTrackingState(jni::Object<Anchor> anchor);
     }
 
+    namespace trackable {
+
+        jni::Object<Anchor> createAnchor(jni::Object<Trackable> trackable, jni::Object<Pose> pose);
+    }
+
     namespace plane {
+
         jint getHashCode(jni::Object<Plane> plane);
         jni::Object<Pose> getCenterPose(jni::Object<Plane> plane);
         jni::jfloat getExtentX(jni::Object<Plane> plane);
@@ -101,6 +115,8 @@ namespace arcore {
         jni::Object<Plane> getSubsumedBy(jni::Object<Plane> plane);
         TrackingState getTrackingState(jni::Object<Plane> plane);
         PlaneType getType(jni::Object<Plane> plane);
+        jboolean isPoseInExtents(jni::Object<Plane> plane, jni::Object<Pose> pose);
+        jboolean isPoseInPolygon(jni::Object<Plane> plane, jni::Object<Pose> pose);
     }
 
     namespace light_estimate {
@@ -113,42 +129,37 @@ namespace arcore {
     namespace frame {
 
         VROMatrix4f getViewMatrix(jni::Object<Frame> frame);
+        VROMatrix4f getProjectionMatrix(jni::Object<Frame> frame, float near, float far);
         TrackingState getTrackingState(jni::Object<Frame> frame);
         jni::Object<LightEstimate> getLightEstimate(jni::Object<Frame> frame);
-        jni::jboolean isDisplayRotationChanged(jni::Object<Frame> frame);
+        jni::jboolean hasDisplayGeometryChanged(jni::Object<Frame> frame);
         jni::Object<List> hitTest(jni::Object<Frame> frame, float x, float y);
         jni::jlong getTimestampNs(jni::Object<Frame> frame);
         jni::Object<Collection> getUpdatedAnchors(jni::Object<Frame> frame);
         jni::Object<Collection> getUpdatedPlanes(jni::Object<Frame> frame);
         std::vector<float> getBackgroundTexcoords(jni::Object<Frame> frame);
         jni::Object<PointCloud> getPointCloud(jni::Object<Frame> frame);
-        VROMatrix4f getPointCloudPose(jni::Object<Frame> frame);
 
     }
 
     namespace pointcloud {
 
         jni::Object<FloatBuffer> getPoints(jni::Object<PointCloud> pointCloud);
+        void release(jni::Object<PointCloud> pointCloud);
 
     }
 
     namespace hitresult {
 
         jfloat getDistance(jni::Object<HitResult> hitResult);
-        VROMatrix4f getPose(jni::Object<HitResult> hitResult);
+        jni::Object<Pose> getPose(jni::Object<HitResult> hitResult);
+        TrackableType getTrackableType(jni::Object<HitResult> hitResult);
+        jni::Object<Trackable> getTrackable(jni::Object<HitResult> hitResult);
 
-    }
-
-    namespace planehitresult {
-
-        jni::Object<Plane> getPlane(jni::Object<PlaneHitResult> hitResult);
-        jboolean isHitInExtents(jni::Object<PlaneHitResult> hitResult);
-        jboolean isHitInPolygon(jni::Object<PlaneHitResult> hitResult);
     }
 
     namespace session {
 
-        VROMatrix4f getProjectionMatrix(jni::Object<Session> session, float near, float far);
         void setCameraTextureName(jni::Object<Session> session, jni::jint textureName);
         void pause(jni::Object<Session> session);
         void resume(jni::Object<Session> session, jni::Object<Config> config);

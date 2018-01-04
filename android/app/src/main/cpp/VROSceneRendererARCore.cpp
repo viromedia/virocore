@@ -146,7 +146,7 @@ void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamer
         }
     }
 
-    if (backgroundNeedsReset || ((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
+    if (backgroundNeedsReset || ((VROARFrameARCore *) frame.get())->hasDisplayGeometryChanged()) {
         VROVector3f BL, BR, TL, TR;
         ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
 

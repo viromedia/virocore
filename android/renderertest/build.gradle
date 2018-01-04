@@ -17,7 +17,9 @@ android {
         versionCode 1
         versionName "1.0"
         missingDimensionStrategy 'product', 'viro_react'
-
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi", "mips"
+        }
     }
     buildTypes {
         release {

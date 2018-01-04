@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Display;
+import android.view.Surface;
 import android.widget.Toast;
 
 import com.google.ar.core.Config;
@@ -145,7 +146,7 @@ public class ViroViewARCore extends ViroView {
 
             // Notify ARCore session that the view size changed so that the perspective matrix and
             // the video background can be properly adjusted.
-            view.mSession.setDisplayGeometry(width, height);
+            view.mSession.setDisplayGeometry(Surface.ROTATION_90, width, height);
         }
 
         @Override
@@ -236,7 +237,7 @@ public class ViroViewARCore extends ViroView {
         final Display display = activity.getWindowManager().getDefaultDisplay();
         final Point size = new Point();
         display.getSize(size);
-        mSession.setDisplayGeometry(size.x, size.y);
+        mSession.setDisplayGeometry(Surface.ROTATION_90, size.x, size.y);
 
         // Initialize the native renderer.
         initSurfaceView();
@@ -258,12 +259,13 @@ public class ViroViewARCore extends ViroView {
         setOnTouchListener(mARTouchGestureListener);
 
         // Create default config, check is supported, create session from that config.
-        mConfig = Config.createDefaultConfig();
+        mConfig = new Config(mSession);
         if (!mSession.isSupported(mConfig)) {
             Toast.makeText(activity, "This device does not support AR", Toast.LENGTH_LONG).show();
             activity.finish();
             return;
         }
+        mSession.configure(mConfig);
 
         if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
             validateAPIKeyFromManifest();
@@ -403,7 +405,7 @@ public class ViroViewARCore extends ViroView {
         // permission on Android M and above, now is a good time to ask the user for it.
         if (CameraPermissionHelper.hasCameraPermission(activity)) {
             // Note that order matters - see the note in onPause(), the reverse applies here.
-            mSession.resume(mConfig);
+            mSession.resume();
             mSurfaceView.onResume();
         } else {
             CameraPermissionHelper.requestCameraPermission(activity);
@@ -529,7 +531,8 @@ public class ViroViewARCore extends ViroView {
     public void setConfig(Config config) {
         if (mSession.isSupported(config) && !mActivityPaused) {
             mConfig = config;
-            mSession.resume(mConfig);
+            mSession.configure(config);
+            mSession.resume();
         }
     }
 

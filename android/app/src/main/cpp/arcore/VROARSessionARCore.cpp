@@ -93,7 +93,7 @@ void VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
 void VROARSessionARCore::updateARCoreConfig() {
     jni::Object<arcore::ViroViewARCore> view = *_viroViewJNI.get();
     if (view) {
-        arcore::viroview::setConfig(view, arcore::config::getConfig(_lightingMode, _planeFindingMode, _updateMode));
+        arcore::viroview::setConfig(view, arcore::config::getConfig(*_sessionJNI.get(), _lightingMode, _planeFindingMode, _updateMode));
     }
 }
 
@@ -162,13 +162,10 @@ std::shared_ptr<VROTexture> VROARSessionARCore::getCameraBackgroundTexture() {
 
 std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
     jni::Object<arcore::Frame> frameJNI = arcore::session::update(*_sessionJNI.get());
-
     _currentFrame = std::make_unique<VROARFrameARCore>(frameJNI, _viewport, shared_from_this());
 
     VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
-
     processUpdatedAnchors(arFrame);
-
     return _currentFrame;
 }
 
@@ -186,12 +183,8 @@ void VROARSessionARCore::setOrientation(VROCameraOrientation orientation) {
 
 #pragma mark - Internal Methods
 
-VROMatrix4f VROARSessionARCore::getProjectionMatrix(float near, float far) {
-    return arcore::session::getProjectionMatrix(*_sessionJNI.get(), near, far);
-}
-
-std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(jni::Object<arcore::Plane> plane) {
-    std::string key = VROStringUtil::toString(arcore::plane::getHashCode(plane));
+std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(jni::Object<arcore::Anchor> anchor) {
+    std::string key = VROStringUtil::toString(arcore::anchor::getHashCode(anchor));
     auto it = _nativeAnchorMap.find(key);
     if (it != _nativeAnchorMap.end()) {
         return it->second;
