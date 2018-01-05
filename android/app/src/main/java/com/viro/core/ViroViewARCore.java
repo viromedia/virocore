@@ -7,6 +7,7 @@ package com.viro.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Display;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.widget.Toast;
 
@@ -146,7 +148,9 @@ public class ViroViewARCore extends ViroView {
 
             // Notify ARCore session that the view size changed so that the perspective matrix and
             // the video background can be properly adjusted.
-            view.mSession.setDisplayGeometry(Surface.ROTATION_90, width, height);
+            view.mWidth = width;
+            view.mHeight = height;
+            view.mSession.setDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
         }
 
         @Override
@@ -164,6 +168,8 @@ public class ViroViewARCore extends ViroView {
     }
 
     private Renderer mRenderer;
+    private int mRotation = Surface.ROTATION_0;
+    private int mWidth, mHeight;
     private GLSurfaceView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
@@ -173,6 +179,7 @@ public class ViroViewARCore extends ViroView {
     private Session mSession;
     private ARTouchGestureListener mARTouchGestureListener;
     private ViroMediaRecorder mMediaRecorder;
+    private OrientationEventListener mOrientationListener;
 
     /**
      * Create a new ViroViewARCore.
@@ -237,7 +244,9 @@ public class ViroViewARCore extends ViroView {
         final Display display = activity.getWindowManager().getDefaultDisplay();
         final Point size = new Point();
         display.getSize(size);
-        mSession.setDisplayGeometry(Surface.ROTATION_90, size.x, size.y);
+        mWidth = size.x;
+        mHeight = size.y;
+        mSession.setDisplayGeometry(mRotation, mWidth, mHeight);
 
         // Initialize the native renderer.
         initSurfaceView();
@@ -581,5 +590,49 @@ public class ViroViewARCore extends ViroView {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPoint(point.x, point.y, callback);
         }
+    }
+
+    public void setCameraRotationAutomatic(boolean automatic) {
+        Activity activity = mWeakActivity.get();
+        if (activity == null) {
+            return;
+        }
+
+        if (automatic) {
+            mOrientationListener = new OrientationEventListener(activity) {
+                @Override
+                public void onOrientationChanged(int orientation) {
+
+                }
+            };
+        }
+        else {
+            mOrientationListener = null;
+        }
+    }
+
+    /**
+     * Set the rotation of the background camera view. This is derived from one of the {@link Surface}
+     * constants for rotation; e.g. {@link Surface#ROTATION_0}, {@link Surface#ROTATION_90},
+     * {@link Surface#ROTATION_180}, or {@link Surface#ROTATION_270}.
+     * <p>
+     * Typically this value should be changed when the device orientation changes; e.g.,
+     * in Activity{@link #onConfigurationChanged(Configuration)}. For example:
+     * <p>
+     * <tt>
+     * <pre>
+     *  public void onConfigurationChanged(Configuration newConfig) {
+     *      super.onConfigurationChanged(newConfig);
+     *      Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+     *      mViroViewARCore.setCameraRotation(display.getRotation());
+     *  }
+     * </pre>
+     * </tt>
+     *
+     * @param rotation The rotation constant for the background camera view.
+     */
+    public void setCameraRotation(int rotation) {
+        mRotation = rotation;
+        mSession.setDisplayGeometry(mRotation, mWidth, mHeight);
     }
 }

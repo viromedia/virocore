@@ -19,8 +19,7 @@
         <activity
             android:name="com.viromedia.renderertest.ViroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:enableVrMode="false"
-            android:screenOrientation="landscape" >
+            android:enableVrMode="false">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,6 +9,7 @@
 package com.viromedia.renderertest;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.viro.core.ARAnchor;
@@ -128,6 +131,16 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         // uncomment the below line to test AR.
         //testEdgeDetect();
         //testFindTarget();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mViroView instanceof ViroViewARCore) {
+            ViroViewARCore arView = (ViroViewARCore) mViroView;
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            arView.setCameraRotation(display.getRotation());
+        }
     }
 
     @Override
