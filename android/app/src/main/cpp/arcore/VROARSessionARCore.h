@@ -31,6 +31,7 @@ public:
     void run();
     void pause();
     bool isReady() const;
+    void resetSession(bool resetTracking, bool removeAnchors);
     
     void setScene(std::shared_ptr<VROScene> scene);
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);

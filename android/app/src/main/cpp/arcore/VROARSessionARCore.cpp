@@ -69,6 +69,11 @@ bool VROARSessionARCore::isReady() const {
     return getScene() != nullptr;
 }
 
+void VROARSessionARCore::resetSession(bool resetTracking, bool removeAnchors) {
+    return; // no-op
+}
+
+
 void VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) {
     std::set<VROAnchorDetection>::iterator it;
     for (it = types.begin(); it != types.end(); it++) {
