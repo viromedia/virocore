@@ -21,7 +21,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.viro.core.internal.BuildInfo;
 import com.viro.core.internal.keys.KeyValidationListener;
 import com.viro.core.internal.keys.KeyValidator;
 
@@ -50,6 +52,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
 
     private final static String TAG = ViroView.class.getSimpleName();
     private final static String API_KEY_METADATA_TAG = "com.viromedia.API_KEY";
+    private final static String INVALID_KEY_MESSAGE = "Your API key is missing/invalid!";
 
     // Available renderer flavors, can be accessed through com.viro.renderer.BuildConfig.FLAVOR
     public final static String FLAVOR_VIRO_REACT = "viro_react";
@@ -268,16 +271,9 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @hide
      */
      final void validateAPIKeyFromManifest() {
-        mNativeRenderer.setSuspended(false);
-        // we actually care more about the headset than platform in this case.
-        mKeyValidator.validateKey(mApiKey, getHeadset(), new KeyValidationListener() {
-            @Override
-            public void onResponse(boolean success) {
-                if (!mDestroyed) {
-                    mNativeRenderer.setSuspended(!success);
-                }
-            }
-        });
+         mNativeRenderer.setSuspended(false);
+         // we actually care more about the headset than platform in this case.
+         validateAPIKey(mApiKey);
     }
 
     /**
@@ -299,6 +295,21 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
                     if(renderer != null ) {
                         renderer.setSuspended(!success);
                     }
+                }
+
+                // If the key was invalid in a debug build, then let's show a toast!
+                if (!success && BuildInfo.isDebug(getContext())) {
+
+                    Handler mainHandler = new Handler(getContext().getMainLooper());
+                    Runnable showToastRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast toast = Toast.makeText(getContext().getApplicationContext(),
+                                    INVALID_KEY_MESSAGE, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    };
+                    mainHandler.post(showToastRunnable);
                 }
             }
         });
