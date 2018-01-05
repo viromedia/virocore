@@ -344,17 +344,25 @@ static VROVector3f const kZeroVector = VROVector3f();
     VROVector3f point;
     VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
 
+    return [self performARHitTestWithPoint:point.x y:point.y];
+}
+
+- (std::vector<VROARHitTestResult>)performARHitTestWithPoint:(int)x y:(int)y {
+    int viewportArr[4] = {0, 0,
+        (int) (self.bounds.size.width  * self.contentScaleFactor),
+        (int) (self.bounds.size.height * self.contentScaleFactor)};
+
     // check the 2D point, perform and return the results from the AR hit test
     std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
-    if (frame && point.x >= 0 && point.x <= viewportArr[2] && point.y >= 0 && point.y <= viewportArr[3]) {
-        std::vector<VROARHitTestResult> results = frame->hitTest(point.x,
-                                                                 point.y,
+    if (frame && x >= 0 && x <= viewportArr[2] && y >= 0 && y <= viewportArr[3]) {
+        std::vector<VROARHitTestResult> results = frame->hitTest(x, y,
                                                                  { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                                                   VROARHitTestResultType::ExistingPlane,
-                                                                   VROARHitTestResultType::EstimatedHorizontalPlane,
-                                                                   VROARHitTestResultType::FeaturePoint });
+                                                                     VROARHitTestResultType::ExistingPlane,
+                                                                     VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                     VROARHitTestResultType::FeaturePoint });
         return results;
     }
+
     return std::vector<VROARHitTestResult>();
 }
 
