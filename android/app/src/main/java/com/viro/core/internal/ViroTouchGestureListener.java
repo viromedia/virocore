@@ -14,10 +14,10 @@ import android.view.View;
 import com.viro.core.Renderer;
 
 /*
- Class that handles touches and gestures for AR and notifies the RendererJni. This extends
+ Class that handles and notifies RendererJni with touch and gesture events. This extends
  SimpleOnGestureListener, because we only want to listen to a subset of the gestures.
  */
-public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListener
+public class ViroTouchGestureListener extends GestureDetector.SimpleOnGestureListener
         implements View.OnTouchListener, ScaleGestureDetector.OnScaleGestureListener,
         RotationGestureDetector.OnRotateGestureListener {
 
@@ -46,7 +46,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
     private float mLastTouchX = 0;
     private float mLastTouchY = 0;
 
-    public ARTouchGestureListener(Context context, Renderer rendererJni) {
+    public ViroTouchGestureListener(Context context, Renderer rendererJni) {
         mNativeRenderer = rendererJni;
         mScaleDetector = new ScaleGestureDetector(context, this);
         mScaleDetector.setQuickScaleEnabled(false);

@@ -20,6 +20,7 @@ import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
+import com.viro.core.internal.ViroTouchGestureListener;
 import com.viro.renderer.BuildConfig;
 
 import java.lang.ref.WeakReference;
@@ -105,6 +106,7 @@ public class ViroViewScene extends ViroView {
     private PlatformUtil mPlatformUtil;
     private boolean mActivityPaused = true;
     private ViroMediaRecorder mMediaRecorder;
+    private ViroTouchGestureListener mViroTouchGestureListener;
 
     /**
      * Create a new ViroViewScene.
@@ -174,6 +176,8 @@ public class ViroViewScene extends ViroView {
                 mAssetManager, mPlatformUtil);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
+        mViroTouchGestureListener = new ViroTouchGestureListener(activity, mNativeRenderer);
+        setOnTouchListener(mViroTouchGestureListener);
 
         if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
             validateAPIKeyFromManifest();
@@ -209,6 +213,18 @@ public class ViroViewScene extends ViroView {
         }
         super.setScene(scene);
         mNativeRenderer.setSceneController(scene.mNativeRef, 0.5f);
+    }
+
+    @Override
+    public void setOnTouchListener(OnTouchListener listener) {
+        // If we're adding our own ViroTouchGestureListener, then we add it as the actual
+        // touch listener otherwise, we attach the listener to the ViroTouchGestureListener
+        // which will forward the touches to the given listener before processing them itself.
+        if (listener instanceof ViroTouchGestureListener) {
+            super.setOnTouchListener(listener);
+        } else if(mViroTouchGestureListener != null) {
+            mViroTouchGestureListener.setOnTouchListener(listener);
+        }
     }
 
     /**
@@ -268,6 +284,10 @@ public class ViroViewScene extends ViroView {
     public void dispose() {
         if (mMediaRecorder != null) {
             mMediaRecorder.dispose();
+        }
+
+        if (mViroTouchGestureListener != null) {
+            mViroTouchGestureListener.destroy();
         }
         super.dispose();
     }

@@ -26,7 +26,7 @@ import android.widget.Toast;
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
 import com.google.vr.cardboard.ContextUtils;
-import com.viro.core.internal.ARTouchGestureListener;
+import com.viro.core.internal.ViroTouchGestureListener;
 import com.viro.core.internal.CameraPermissionHelper;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
@@ -176,7 +176,7 @@ public class ViroViewARCore extends ViroView {
     private boolean mActivityPaused = true;
     private Config mConfig;
     private Session mSession;
-    private ARTouchGestureListener mARTouchGestureListener;
+    private ViroTouchGestureListener mViroTouchGestureListener;
     private ViroMediaRecorder mMediaRecorder;
     private OrientationEventListener mOrientationListener;
 
@@ -263,8 +263,8 @@ public class ViroViewARCore extends ViroView {
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
         mRenderStartListener = rendererStartListener;
-        mARTouchGestureListener = new ARTouchGestureListener(activity, mNativeRenderer);
-        setOnTouchListener(mARTouchGestureListener);
+        mViroTouchGestureListener = new ViroTouchGestureListener(activity, mNativeRenderer);
+        setOnTouchListener(mViroTouchGestureListener);
 
         // Create default config, check is supported, create session from that config.
         mConfig = new Config(mSession);
@@ -346,13 +346,13 @@ public class ViroViewARCore extends ViroView {
 
     @Override
     public void setOnTouchListener(OnTouchListener listener) {
-        // If we're adding our own ARTouchGestureListener, then we add it as the actual
-        // touch listener otherwise, we attach the listener to the ARTouchGestureListener
+        // If we're adding our own ViroTouchGestureListener, then we add it as the actual
+        // touch listener otherwise, we attach the listener to the ViroTouchGestureListener
         // which will forward the touches to the given listener before processing them itself.
-        if (listener instanceof ARTouchGestureListener) {
+        if (listener instanceof ViroTouchGestureListener) {
             super.setOnTouchListener(listener);
-        } else if(mARTouchGestureListener != null) {
-            mARTouchGestureListener.setOnTouchListener(listener);
+        } else if(mViroTouchGestureListener != null) {
+            mViroTouchGestureListener.setOnTouchListener(listener);
         }
     }
 
@@ -432,7 +432,7 @@ public class ViroViewARCore extends ViroView {
           As a temporary patch, we null out our viro components here to free up
           most of our 3D controls in memory.
          */
-        mARTouchGestureListener = null;
+        mViroTouchGestureListener = null;
         mPlatformUtil = null;
         mAssetManager = null;
         mSurfaceView = null;
@@ -447,8 +447,8 @@ public class ViroViewARCore extends ViroView {
         if (mMediaRecorder != null) {
             mMediaRecorder.dispose();
         }
-        if (mARTouchGestureListener != null) {
-            mARTouchGestureListener.destroy();
+        if (mViroTouchGestureListener != null) {
+            mViroTouchGestureListener.destroy();
         }
         super.dispose();
     }
