@@ -121,6 +121,9 @@ public:
         return _renderer->getFrameSynchronizer();
     }
 
+    void setClearColor(VROVector4f color) {
+        _renderer->setClearColor(color, _driver);
+    }
 protected:
 
     int _frame;

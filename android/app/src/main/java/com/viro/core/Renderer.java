@@ -146,6 +146,9 @@ public class Renderer {
             nativeSetPointOfView(mNativeRef, 0);
         }
     }
+    public void setClearColor(int color) {
+        nativeSetClearColor(mNativeRef, color);
+    }
     public String getHeadset() {
         return nativeGetHeadset(mNativeRef);
     }
@@ -230,6 +233,7 @@ public class Renderer {
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
+    private native void nativeSetClearColor(long sceneRef, int color);
 
     private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
     private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);

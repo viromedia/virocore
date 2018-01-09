@@ -179,6 +179,8 @@ public:
     std::shared_ptr<VROInputControllerBase> getInputController(){
         return _inputController;
     }
+
+    void setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver);
     
 #pragma mark - Camera
    

@@ -513,6 +513,27 @@ JNI_METHOD(void, nativePerformARHitTestWithPoint) (JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetClearColor)(JNIEnv *env,
+                                           jobject object,
+                                           jlong native_renderer,
+                                           jint color) {
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
+    VROPlatformDispatchAsyncRenderer([renderer_w, color] {
+        std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+        if (!renderer) {
+            return;
+        }
+        // Get the color
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = (color & 0xFF) / 255.0f;
+
+        VROVector4f vecColor(r, g, b, a);
+        renderer->setClearColor(vecColor);
+    });
+}
+
 JNI_METHOD(void, nativeAddFrameListener)(JNIEnv *env, jobject obj, jlong native_renderer, jlong frame_listener) {
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);

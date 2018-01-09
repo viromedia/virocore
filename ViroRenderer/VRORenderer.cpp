@@ -148,6 +148,14 @@ VROMatrix4f VRORenderer::getLookAtMatrix() const {
     return _context->getCamera().getLookAtMatrix();
 }
 
+void VRORenderer::setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver) {
+    if (_choreographer == nullptr) {
+        pwarn("Viro: Renderer has not yet initialized - Unable to set clearColor!");
+        return;
+    }
+    _choreographer->setClearColor(color, driver);
+}
+
 VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
                                     const VROMatrix4f &headRotation, const VROMatrix4f &projection) {
     

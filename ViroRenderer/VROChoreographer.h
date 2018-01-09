@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include "VROVector4f.h"
 
 class VROScene;
 class VRODriver;
@@ -87,9 +88,14 @@ public:
      a reference to the final VRORenderTarget containing a texture representing the rendered scene.
      */
     void setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate);
-    
+
+    /*
+     Updates the main set of render targets used in the rendering pipeline with the
+     following clear color.
+     */
+    void setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver);
+
 private:
-    
     std::weak_ptr<VRODriver> _driver;
 
     /*
@@ -180,7 +186,7 @@ private:
                             std::shared_ptr<VRODriver> &driver);
     
 #pragma mark - HDR
-    
+
     /*
      True if HDR rendering is enabled. When HDR rendering is enabled, the scene
      is rendered to a floating point texture, then a tone-mapping algorithm is

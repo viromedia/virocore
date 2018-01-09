@@ -7,6 +7,7 @@ package com.viro.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import android.util.AttributeSet;
 import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
+import com.viro.core.internal.GLTextureView;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.core.internal.ViroTouchGestureListener;
 import com.viro.renderer.BuildConfig;
@@ -45,8 +47,7 @@ public class ViroViewScene extends ViroView {
     }
 
 
-    private static class ViroARRenderer implements GLSurfaceView.Renderer {
-
+    private static class ViroARRenderer implements GLTextureView.Renderer {
         private WeakReference<ViroViewScene> mView;
 
         public ViroARRenderer(ViroViewScene view) {
@@ -59,7 +60,7 @@ public class ViroViewScene extends ViroView {
                 return;
             }
 
-            view.mNativeRenderer.onSurfaceCreated(view.mSurfaceView.getHolder().getSurface());
+            view.mNativeRenderer.onSurfaceCreated(null);
             view.mNativeRenderer.initalizeGl();
             if (view.mRenderStartListener != null) {
                 Runnable myRunnable = new Runnable() {
@@ -81,7 +82,7 @@ public class ViroViewScene extends ViroView {
             if (view == null) {
                 return;
             }
-            view.mNativeRenderer.onSurfaceChanged(view.mSurfaceView.getHolder().getSurface(), width, height);
+            view.mNativeRenderer.onSurfaceChanged(null, width, height);
         }
 
         @Override
@@ -99,7 +100,7 @@ public class ViroViewScene extends ViroView {
     }
 
     private Renderer mRenderer;
-    private GLSurfaceView mSurfaceView;
+    private GLTextureView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private RendererStartListener mRenderStartListener = null;
@@ -157,7 +158,7 @@ public class ViroViewScene extends ViroView {
     }
 
     private void init(Context context, RendererStartListener rendererStartListener) {
-        mSurfaceView = new GLSurfaceView(context);
+        mSurfaceView = new GLTextureView(context);
         addView(mSurfaceView);
 
         final Context activityContext = getContext();
@@ -192,10 +193,22 @@ public class ViroViewScene extends ViroView {
         mSurfaceView.setEGLContextClientVersion(3);
         mSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
         mSurfaceView.setPreserveEGLContextOnPause(true);
-        mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
 
         mSurfaceView.setRenderer(new ViroARRenderer(this));
         mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+    }
+
+    /**
+     * Sets the background color of this Viro renderer Android view. This will be
+     * the color that renders behind all Viro views.
+     *
+     * @param color The {@link android.graphics.Color}'s int value.
+     */
+    @Override
+    public void setBackgroundColor(int color) {
+        int alpha  = Color.alpha(color);
+        mSurfaceView.setOpaque(alpha > 0);
+        mNativeRenderer.setClearColor(color);
     }
 
     /**

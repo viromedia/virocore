@@ -33,7 +33,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     std::vector<std::string> samplers = { "hdr_texture" };
     std::vector<std::string> code = {
         "uniform sampler2D hdr_texture;",
-        "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
+        "highp vec4 hdr_color = texture(hdr_texture, v_texcoord).rgba;",
     };
     
     /*
@@ -42,13 +42,13 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     std::vector<std::string> toneMappingCode;
     if (_method == VROToneMappingMethod::Disabled) {
         toneMappingCode = {
-            "highp vec3 mapped = hdr_color;",
+            "highp vec3 mapped = hdr_color.rgb;",
         };
     }
     else if (_method == VROToneMappingMethod::Reinhard) {
         toneMappingCode = {
             "uniform lowp float exposure;",
-            "highp vec3 mapped = hdr_color / (hdr_color + vec3(1.0));",
+            "highp vec3 mapped = hdr_color.rgb / (hdr_color.rgb + vec3(1.0));",
         };
     }
     else if (_method == VROToneMappingMethod::Hable) {
@@ -61,7 +61,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
             "highp float D = 0.20;",
             "highp float E = 0.02;",
             "highp float F = 0.30;",
-            "highp vec3 H = hdr_color * pow(2.0, exposure);",
+            "highp vec3 H = hdr_color.rgb * pow(2.0, exposure);",
             "highp vec3 W = vec3(white_point);",
             "highp vec3 hdr_mapped   = ((H * (A * H + C * B) + D * E) / (H * (A * H + B) + D * F)) - E / F;",
             "highp vec3 white_mapped = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;",
@@ -78,7 +78,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
             "highp float D = 0.20;",
             "highp float E = 0.02;",
             "highp float F = 0.30;",
-            "highp vec3 H = hdr_color * pow(2.0, exposure);",
+            "highp vec3 H = hdr_color.rgb * pow(2.0, exposure);",
             "highp vec3 W = vec3(white_point);",
             "highp float luminance_H = dot(H, vec3(0.2126, 0.7152, 0.0722));",
             "highp float luminance_W = dot(W, vec3(0.2126, 0.7152, 0.0722));",
@@ -92,7 +92,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     else {
         toneMappingCode = {
             "uniform lowp float exposure;",
-            "highp vec3 mapped = vec3(1.0) - exp(-hdr_color * exposure);",
+            "highp vec3 mapped = vec3(1.0) - exp(-hdr_color.rgb * exposure);",
         };
     }
     code.insert(code.end(), toneMappingCode.begin(), toneMappingCode.end());
@@ -103,12 +103,12 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     if (_gammaCorrectionEnabled) {
         code.push_back("const highp float gamma = 2.2;");
         code.push_back("mapped = pow(mapped, vec3(1.0 / gamma));");
-        code.push_back("frag_color = vec4(mapped, 1.0);");
+        code.push_back("frag_color = vec4(mapped, hdr_color.a);");
     
         pinfo("Software gamma correction enabled in tone-mapper");
     }
     else {
-        code.push_back("frag_color = vec4(mapped, 1.0);");
+        code.push_back("frag_color = vec4(mapped, hdr_color.a);");
 
         pinfo("No gamma correction enabled in tone-mapper");
     }

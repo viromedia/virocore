@@ -96,9 +96,9 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
         std::vector<std::string> code = {
             "uniform sampler2D hdr_texture;",
             "uniform sampler2D bloom_texture;",
-            "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
-            "highp vec3 bloom_color = texture(bloom_texture, v_texcoord).rgb;",
-            "frag_color = vec4(hdr_color + bloom_color, 1.0);",
+            "highp vec4 hdr_rgba = texture(hdr_texture, v_texcoord).rgba;",
+            "highp vec4 bloom_rbga = texture(bloom_texture, v_texcoord).rgba;",
+            "frag_color = vec4(hdr_rgba + bloom_rbga);",
         };
         _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
     }
@@ -332,6 +332,16 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
     }
+}
+
+void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver) {
+    // Set the default clear color for the following targets
+    driver->getDisplay()->setClearColor(color);
+    _blitTarget->setClearColor(color);
+    _hdrTarget->setClearColor(color);
+    _blurTargetA->setClearColor(color);
+    _blurTargetB->setClearColor(color);
+    _postProcessTarget->setClearColor(color);
 }
 
 #pragma mark - Render to Texture
