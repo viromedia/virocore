@@ -26,27 +26,31 @@ VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
     VROARSession(VROTrackingType::DOF6, VROWorldAlignment::Gravity),
     _lightingMode(arcore::config::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),
-    _updateMode(arcore::config::UpdateMode::Blocking) {
+    _updateMode(arcore::config::UpdateMode::Blocking),
+    _cameraTextureId(0) {
     _sessionJNI = sessionJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
     _viroViewJNI = viroViewJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
 }
 
+GLuint VROARSessionARCore::getCameraTextureId() const {
+    return _cameraTextureId;
+}
+
 void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
     // Generate the background texture
-    GLuint textureId;
-    glGenTextures(1, &textureId);
-
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+    glGenTextures(1, &_cameraTextureId);
+    
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, _cameraTextureId);
     glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
-            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, textureId, driver, true));
+            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _cameraTextureId, driver, true));
     _background = std::make_shared<VROTexture>(VROTextureType::TextureEGLImage, std::move(substrate));
 
-    arcore::session::setCameraTextureName( *_sessionJNI.get(), textureId);
+    arcore::session::setCameraTextureName( *_sessionJNI.get(), _cameraTextureId);
 }
 
 VROARSessionARCore::~VROARSessionARCore() {

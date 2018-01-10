@@ -71,6 +71,10 @@ void VROSceneRendererARCore::initGL() {
     _session->initGL(_driver);
 }
 
+GLuint VROSceneRendererARCore::getCameraTextureId() const {
+    return _session->getCameraTextureId();
+}
+
 void VROSceneRendererARCore::onDrawFrame() {
     if (!_rendererSuspended) {
         renderFrame();

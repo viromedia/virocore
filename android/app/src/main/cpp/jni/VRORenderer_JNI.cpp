@@ -390,6 +390,14 @@ JNI_METHOD(void, nativeRecenterTracking)(JNIEnv *env,
     ovrRenderer->recenterTracking();
 }
 
+JNI_METHOD(jint, nativeGetCameraTextureId)(JNIEnv *env,
+                                           jobject object,
+                                           jlong renderer_j) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    return arRenderer->getCameraTextureId();
+}
+
 void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");

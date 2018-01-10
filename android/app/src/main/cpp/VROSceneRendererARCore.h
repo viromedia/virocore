@@ -80,6 +80,11 @@ public:
     void onSurfaceDestroyed() {}
 
     /*
+     Retrieves the texture ID used for the camera background.
+     */
+    GLuint getCameraTextureId() const;
+
+    /*
      AR hit test using point on the screen in 2D coordinate system.
      */
     std::vector<VROARHitTestResult> performARHitTest(float x, float y);

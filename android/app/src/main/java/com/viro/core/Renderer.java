@@ -62,6 +62,10 @@ public class Renderer {
         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
     }
 
+    public int getCameraTextureId() {
+        return nativeGetCameraTextureId(mNativeRef);
+    }
+
     public void performARHitTestWithRay(float[] ray, ARHitTestListener callback) {
         nativePerformARHitTestWithRay(mNativeRef, ray, callback);
     }
@@ -222,6 +226,7 @@ public class Renderer {
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
     private native void nativeRecenterTracking(long nativeRenderer);
+    private native int nativeGetCameraTextureId(long nativeRenderer);
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);

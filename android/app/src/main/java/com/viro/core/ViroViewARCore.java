@@ -167,7 +167,6 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
-    private Renderer mRenderer;
     private int mRotation = Surface.ROTATION_0;
     private int mWidth, mHeight;
     private GLSurfaceView mSurfaceView;
@@ -437,7 +436,6 @@ public class ViroViewARCore extends ViroView {
         mPlatformUtil = null;
         mAssetManager = null;
         mSurfaceView = null;
-        mRenderer = null;
         mSession = null;
         mFrameListeners.clear();
         mFrameListeners = null;
@@ -634,5 +632,18 @@ public class ViroViewARCore extends ViroView {
     public void setCameraRotation(int rotation) {
         mRotation = rotation;
         mSession.setDisplayGeometry(mRotation, mWidth, mHeight);
+    }
+
+    /**
+     * Get the OpenGL texture name (ID) that ViroCore uses to render the camera background each
+     * frame. This may be used by advanced applications that want to process raw image data
+     * received from the camera. The texture is of type GL_TEXTURE_EXTERNAL_OES, and uses a
+     * <tt>samplerExternalOES</tt> in shaders. Returns 0 if the camera texture has not yet been
+     * initialized.
+     *
+     * @return The camera texture ID. Returns 0 if the camera texture has not yet been initialized.
+     */
+    public int getCameraTextureName() {
+        return mNativeRenderer.getCameraTextureId();
     }
 }

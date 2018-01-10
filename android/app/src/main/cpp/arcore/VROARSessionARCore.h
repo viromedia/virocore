@@ -12,6 +12,7 @@
 #include "VROARSession.h"
 #include "VROARFrameARCore.h"
 #include "VROViewport.h"
+#include "VROOpenGL.h"
 #include "arcore/ARCore_JNI.h"
 #include <map>
 #include <vector>
@@ -46,6 +47,8 @@ public:
     
     void setViewport(VROViewport viewport);
     void setOrientation(VROCameraOrientation orientation);
+
+    GLuint getCameraTextureId() const;
     
     /*
      Internal methods.
@@ -96,12 +99,14 @@ private:
      */
     std::shared_ptr<VROTexture> _background;
 
+    /*
+     The GL_TEXTURE_EXTERNAL_OES texture used for the camera background.
+     */
+    GLuint _cameraTextureId;
+
     void updateARCoreConfig();
-
     void processUpdatedAnchors(VROARFrameARCore *frame);
-
     void updateAnchorFromJni(std::shared_ptr<VROARAnchor> anchor, jni::Object<arcore::Anchor> anchorJni);
-
     void updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> plane, jni::Object<arcore::Plane> planeJni);
 };
 
