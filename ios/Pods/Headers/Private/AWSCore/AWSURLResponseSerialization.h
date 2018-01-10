@@ -1,1 +1,0 @@
-../../../AWSCore/AWSCore/Serialization/AWSURLResponseSerialization.h

@@ -1,1 +1,0 @@
-../../../AWSCore/AWSCore/CognitoIdentity/AWSCognitoIdentityResources.h
