@@ -99,11 +99,14 @@ namespace arcore {
         std::string getId(jni::Object<Anchor> anchor);
         jni::Object<Pose> getPose(jni::Object<Anchor> anchor);
         TrackingState getTrackingState(jni::Object<Anchor> anchor);
+        void detach(jni::Object<Anchor> anchor);
+
     }
 
     namespace trackable {
 
         jni::Object<Anchor> createAnchor(jni::Object<Trackable> trackable, jni::Object<Pose> pose);
+
     }
 
     namespace plane {
@@ -155,6 +158,7 @@ namespace arcore {
         jni::Object<Pose> getPose(jni::Object<HitResult> hitResult);
         TrackableType getTrackableType(jni::Object<HitResult> hitResult);
         jni::Object<Trackable> getTrackable(jni::Object<HitResult> hitResult);
+        jni::Object<Anchor> createAnchor(jni::Object<HitResult> hitResult);
 
     }
 

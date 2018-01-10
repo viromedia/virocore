@@ -35,7 +35,7 @@ const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
     return _camera;
 }
 
-// TODO: VIRO-1940 filter results based on types. Right now, devs can't set this, so no use filtering.
+// TODO: VIRO-1940 filter results based on types. Right now, devs can't set this, so don't use filtering.
 std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
     jni::Object<arcore::List> hitResultsJni = arcore::frame::hitTest(*_frameJNI.get(), x, y);
 
@@ -70,6 +70,7 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
 
             jni::Object<arcore::Anchor> anchor = arcore::trackable::createAnchor(trackable, pose);
             vAnchor = session->getAnchorForNative(anchor);
+            arcore::anchor::detach(anchor);
         } else {
             type = VROARHitTestResultType::FeaturePoint;
         }

@@ -295,6 +295,14 @@ namespace arcore {
                 return TrackingState::NotTracking;
             }
         }
+
+        void detach(jni::Object<Anchor> anchor) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto AnchorClass = *jni::Class<Anchor>::Find(env).NewGlobalRef(env).release();
+            auto detach = AnchorClass.GetMethod<void()>(env, "detach");
+            anchor.Call(env, detach);
+        }
+
     }
 
     namespace trackable {
@@ -677,6 +685,13 @@ namespace arcore {
             static auto HitResultClass = *jni::Class<HitResult>::Find(env).NewGlobalRef(env).release();
             auto method = HitResultClass.GetMethod<jni::Object<Trackable>()>(env, "getTrackable");
             return hitResult.Call(env, method);
+        }
+
+        jni::Object<Anchor> createAnchor(jni::Object<HitResult> hitResult) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto HitResultClass = *jni::Class<HitResult>::Find(env).NewGlobalRef(env).release();
+            auto createAnchor = HitResultClass.GetMethod<jni::Object<Anchor>()>(env, "createAnchor");
+            return hitResult.Call(env, createAnchor);
         }
 
     }
