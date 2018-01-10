@@ -55,6 +55,7 @@
 		8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF0E0891FA928480083CBAE /* point_cloud.png */; };
 		8AF0E08E1FABA4C50083CBAE /* VROARPointCloud.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E08C1FABA4C40083CBAE /* VROARPointCloud.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AFCC4B82005627300AD8B8D /* ViroKit.podspec in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8AFCC4B72005627300AD8B8D /* ViroKit.podspec */; };
 		8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B2F2A481F6B9D0A000C9924 /* VROPortalDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -694,6 +695,7 @@
 			dstPath = "$(PROJECT_DIR)/../../react-viro/ios/ViroRenderer";
 			dstSubfolderSpec = 0;
 			files = (
+				8AFCC4B82005627300AD8B8D /* ViroKit.podspec in CopyFiles */,
 				8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -762,6 +764,7 @@
 		8AF0E0891FA928480083CBAE /* point_cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = point_cloud.png; sourceTree = "<group>"; };
 		8AF0E08C1FABA4C40083CBAE /* VROARPointCloud.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARPointCloud.h; sourceTree = "<group>"; };
 		8AF39AB51F2295F700229AC0 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		8AFCC4B72005627300AD8B8D /* ViroKit.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViroKit.podspec; sourceTree = "<group>"; };
 		8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegate.h; sourceTree = "<group>"; };
 		8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegateiOS.h; sourceTree = "<group>"; };
 		8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLazyMaterial.h; sourceTree = "<group>"; };
@@ -1749,6 +1752,7 @@
 				8F517BE01BCDA2BE0017C70B /* ViroRendererUITests */,
 				8FD4DEDC1C18ECD4003DC425 /* ViroKitTests */,
 				8F517BB71BCDA2BD0017C70B /* Products */,
+				8AFCC4B72005627300AD8B8D /* ViroKit.podspec */,
 				95E5BC90E51A0FC2C3AA4D42 /* Frameworks */,
 				305D8D8D1ADA8A9CF8C5BF77 /* Pods */,
 			);
