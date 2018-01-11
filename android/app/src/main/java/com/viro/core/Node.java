@@ -207,6 +207,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private FuseListener mFuseListener;
     private GesturePinchListener mGesturePinchListener;
     private GestureRotateListener mGestureRotateListener;
+    private ARHitTestListener mHitTestListener;
 
     /**
      * Construct a new Node centered at the origin, with no geometry.
@@ -1224,6 +1225,24 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Set the {@link ARHitTestListener} to respond to AR hit test events that are fired from the
+     * the camera into the scene as the user looks around within his AR environment.
+     *
+     * This is used for real-time hit point testing, only by the VRTARScene. Not exposed to Java API.
+     *
+     * @hide
+     */
+    void setARHitTestListener(ARHitTestListener listener){
+        mHitTestListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_CAMERA_AR_HIT_TEST, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_CAMERA_AR_HIT_TEST, false);
+        }
+    }
+
+    /**
      * Get the {@link GestureRotateListener} that is currently installed for this {@link Node}.
      *
      * @return The installed listener, or null if none is installed.
@@ -1258,14 +1277,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
         return new Vector(nativeConvertWorldPositionToLocalSpace(mNativeRef, worldPosition.x, worldPosition.y, worldPosition.z));
     }
 
-    /**
-     * This is used for real-time depth testing, only by the VRTScene. Not exposed to Java API.
-     * @hide
-     */
-    @Override
-    public void onCameraARHitTest(ARHitTestResult[] results) {
-
-    }
     /**
      * This is used to notify the developer of the current point cloud. Not exposed to the Java API.
      * @hide
@@ -1373,6 +1384,16 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void onRotate(int source, Node node, float rotateRadians, RotateState rotateState) {
         if (mGestureRotateListener != null) {
             mGestureRotateListener.onRotate(source, node, rotateRadians, rotateState);
+        }
+    }
+    /**
+     * This is used for real-time depth testing, only by the VRTARScene. Not exposed to Java API.
+     * @hide
+     */
+    @Override
+    public void onCameraARHitTest(ARHitTestResult[] results) {
+        if (mHitTestListener != null) {
+            mHitTestListener.onHitTestFinished(results);
         }
     }
 
