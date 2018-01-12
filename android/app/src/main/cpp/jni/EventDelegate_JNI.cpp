@@ -101,6 +101,7 @@ void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool 
         VROPlatformCallJavaFunction(localObj,
                                     "onHover", "(IIZ[F)V", source, nodeId, isHovering, positionArray);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -132,6 +133,7 @@ void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, Click
         VROPlatformCallJavaFunction(localObj,
                                     "onClick", "(III[F)V", source, nodeId, clickState, positionArray);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -150,6 +152,7 @@ void EventDelegate_JNI::onTouch(int source, std::shared_ptr<VRONode> node, Touch
         VROPlatformCallJavaFunction(localObj,
                                     "onTouch", "(IIIFF)V", source, nodeId, touchState, x, y);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -171,6 +174,7 @@ void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) 
         VROPlatformCallJavaFunction(localObj,
                                     "onControllerStatus", "(II)V", source, status);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -193,6 +197,7 @@ void EventDelegate_JNI::onSwipe(int source, std::shared_ptr<VRONode> node, Swipe
         VROPlatformCallJavaFunction(localObj,
                                     "onSwipe", "(III)V", source, nodeId, swipeState);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -211,6 +216,7 @@ void EventDelegate_JNI::onScroll(int source, std::shared_ptr<VRONode> node, floa
         VROPlatformCallJavaFunction(localObj,
                                     "onScroll", "(IIFF)V", source, nodeId, x, y);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -230,6 +236,7 @@ void EventDelegate_JNI::onDrag(int source, std::shared_ptr<VRONode> node, VROVec
                                     "onDrag", "(IIFFF)V", source, nodeId, newPosition.x, newPosition.y,
                                     newPosition.z);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -257,6 +264,7 @@ void EventDelegate_JNI::onFuse(int source, std::shared_ptr<VRONode> node, float 
         VROPlatformCallJavaFunction(localObj,
                                     "onFuse", "(II)V", source, nodeId, timeToFuseRatio);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -275,6 +283,7 @@ void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float
         VROPlatformCallJavaFunction(localObj,
                                     "onPinch", "(IIFI)V", source, nodeId, scaleFactor, pinchState);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -293,6 +302,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
         VROPlatformCallJavaFunction(localObj,
                                     "onRotate", "(IIFI)V", source, nodeId, rotationRadians, rotateState);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -318,6 +328,7 @@ void EventDelegate_JNI::onCameraARHitTest(std::vector<VROARHitTestResult> result
         VROPlatformCallJavaFunction(localObj,
                                     "onCameraARHitTest", "([Lcom/viro/core/ARHitTestResult;)V", resultsArray);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -341,5 +352,7 @@ void EventDelegate_JNI::onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> po
 
         jobject jPointCloud = ARUtilsCreateARPointCloud(pointCloud);
         VROPlatformCallJavaFunction(localObj, "onARPointCloudUpdate", "(Lcom/viro/core/ARPointCloud;)V", jPointCloud);
+        env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
