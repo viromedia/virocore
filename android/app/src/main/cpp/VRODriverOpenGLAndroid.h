@@ -28,11 +28,21 @@ public:
     virtual ~VRODriverOpenGLAndroid() { }
 
     virtual VROColorRenderingMode getColorRenderingMode() {
-        return VROColorRenderingMode::Linear;
+        switch (getGPUType()) {
+            case VROGPUType::Adreno330OrOlder:
+                return VROColorRenderingMode::NonLinear;
+            default:
+                return VROColorRenderingMode::Linear;
+        }
     }
 
     virtual bool isBloomEnabled() {
-        return true;
+        switch (getGPUType()) {
+            case VROGPUType::Adreno330OrOlder:
+                return false;
+            default:
+                return true;
+        }
     }
 
     void willRenderFrame(const VRORenderContext &context) {

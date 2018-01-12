@@ -30,17 +30,23 @@
 
 VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _driver(driver),
+    _mrtEnabled(driver->getGPUType() != VROGPUType::Adreno330OrOlder),
     _renderToTexture(false),
-    _renderShadows(true),
+    _renderShadows(driver->getGPUType() != VROGPUType::Adreno330OrOlder),
     _maxSupportedShadowMapSize(2048),
     _blurScaling(0.25) {
-        
-    initTargets(driver);
-        
-    // We use HDR only if linear rendering is enabled
-    _renderHDR = driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
-    _renderBloom = driver->isBloomEnabled();
-    initHDR(driver);
+
+    if (_mrtEnabled) {
+        initTargets(driver);
+        // We use HDR only if linear rendering is enabled
+        _renderHDR = driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
+        _renderBloom = driver->isBloomEnabled();
+        initHDR(driver);
+    }
+    else {
+        _renderHDR = false;
+        _renderBloom = false;
+    }
 
     _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
     _renderToTextureDelegate = nullptr;
@@ -117,10 +123,16 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
      on the display because we gave the display the fully specified viewport.
      */
     VROViewport rtViewport = VROViewport(0, 0, viewport.getWidth(), viewport.getHeight());
-    
-    _blitTarget->setViewport(rtViewport);
-    _postProcessTarget->setViewport(rtViewport);
-    _renderToTextureTarget->setViewport(rtViewport);
+
+    if (_blitTarget) {
+        _blitTarget->setViewport(rtViewport);
+    }
+    if (_postProcessTarget) {
+        _postProcessTarget->setViewport(rtViewport);
+    }
+    if (_renderToTextureTarget) {
+        _renderToTextureTarget->setViewport(rtViewport);
+    }
     if (_hdrTarget) {
         _hdrTarget->setViewport(rtViewport);
     }
@@ -310,7 +322,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             }
         }
     }
-    else if (_renderToTexture) {
+    else if (_mrtEnabled && _renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
         renderToTextureAndDisplay(_blitTarget, driver);

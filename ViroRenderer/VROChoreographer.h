@@ -91,6 +91,11 @@ public:
 private:
     
     std::weak_ptr<VRODriver> _driver;
+
+    /*
+     True if the GPU supports multiple render targets.
+     */
+    bool _mrtEnabled;
     
 #pragma mark - Render Scene
     

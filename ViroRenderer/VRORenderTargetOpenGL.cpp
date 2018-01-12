@@ -29,7 +29,11 @@ VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAt
     _colorbuffer(0),
     _numImages(numImages),
     _driver(driver) {
-    
+
+    // Adreno330 or older does not support offscreen render targets
+    if (type != VRORenderTargetType::Display) {
+        passert (driver->getGPUType() != VROGPUType::Adreno330OrOlder);
+    }
     for (int i = 0; i < numAttachments; i++) {
         _textures.push_back({});
     }
