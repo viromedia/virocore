@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
 		8A11C8F51EF5AB9D0003E829 /* VROARDeclarativePlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F41EF5A8E30003E829 /* VROARDeclarativePlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A11C8F81EF5B2270003E829 /* VROARConstraintMatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A11C8F61EF5B2270003E829 /* VROARConstraintMatcher.cpp */; };
 		8A11C8F91EF5B2270003E829 /* VROARConstraintMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F71EF5B2270003E829 /* VROARConstraintMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -589,6 +588,7 @@
 		8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */; };
 		8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */; };
 		8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */; };
+		A32EB6C57187C9CE1B5638E3 /* Pods_ViroSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7A7748CC8659A11C76D30F3 /* Pods_ViroSample.framework */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */; };
@@ -637,6 +637,7 @@
 		A5EC65B61EBFF57B00FE220E /* VROPhysicsBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */; };
 		A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65941EBD16F000FE220E /* VROPhysicsShape.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EAD7E32D2DFA518AEAAB48C2 /* Pods_ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -705,7 +706,8 @@
 /* Begin PBXFileReference section */
 		2D50EA9016C5481FBEA660D5 /* Pods-ViroARKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroARKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroARKit/Pods-ViroARKit.release.xcconfig"; sourceTree = "<group>"; };
 		48567375A658D093284ACEDD /* libPods-ViroARKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroARKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6447C487DE6546AF514106CC /* libPods-ViroKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ViroKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0CEA72E0151981092A1C77 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
 		69FBDCF89ECBB5500043C227 /* Pods-ViroARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroARKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroARKit/Pods-ViroARKit.debug.xcconfig"; sourceTree = "<group>"; };
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
@@ -1374,7 +1376,8 @@
 		A5EC65961EBD16F000FE220E /* VROPhysicsWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsWorld.h; sourceTree = "<group>"; };
 		A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhysicsBody.cpp; sourceTree = "<group>"; };
 		A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBody.h; sourceTree = "<group>"; };
-		BF43BA975D626635F2D5584C /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF35B190A2BFFFEF0165D701 /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
+		E7A7748CC8659A11C76D30F3 /* Pods_ViroSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ViroSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1384,6 +1387,7 @@
 			files = (
 				8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */,
 				8F129FA61ECF323300341D83 /* ViroKit.framework in Frameworks */,
+				A32EB6C57187C9CE1B5638E3 /* Pods_ViroSample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1425,7 +1429,7 @@
 				8FD4DF241C18EDBF003DC425 /* CoreGraphics.framework in Frameworks */,
 				8FD4DF1F1C18EDA4003DC425 /* CoreMotion.framework in Frameworks */,
 				8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */,
-				6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */,
+				EAD7E32D2DFA518AEAAB48C2 /* Pods_ViroKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1447,6 +1451,8 @@
 				710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */,
 				69FBDCF89ECBB5500043C227 /* Pods-ViroARKit.debug.xcconfig */,
 				2D50EA9016C5481FBEA660D5 /* Pods-ViroARKit.release.xcconfig */,
+				5C0CEA72E0151981092A1C77 /* Pods-ViroSample.debug.xcconfig */,
+				CF35B190A2BFFFEF0165D701 /* Pods-ViroSample.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -2455,9 +2461,9 @@
 				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
 				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
-				6447C487DE6546AF514106CC /* libPods-ViroKit.a */,
-				BF43BA975D626635F2D5584C /* libPods-ViroSample.a */,
 				48567375A658D093284ACEDD /* libPods-ViroARKit.a */,
+				574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */,
+				E7A7748CC8659A11C76D30F3 /* Pods_ViroSample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2756,10 +2762,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F517BE61BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroSample" */;
 			buildPhases = (
+				30D87D3B7742F6AFBF0FA125 /* [CP] Check Pods Manifest.lock */,
 				8F517BB21BCDA2BD0017C70B /* Sources */,
 				8F517BB31BCDA2BD0017C70B /* Frameworks */,
 				8F517BB41BCDA2BD0017C70B /* Resources */,
 				8F129FAA1ECF323300341D83 /* Embed Frameworks */,
+				23C7A528B2CCACA51C6E249C /* [CP] Embed Pods Frameworks */,
+				C3BEDF58C43550CB45447D67 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3111,6 +3120,70 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		23C7A528B2CCACA51C6E249C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSDynamoDB/AWSDynamoDB.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSDynamoDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		30D87D3B7742F6AFBF0FA125 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ViroSample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C3BEDF58C43550CB45447D67 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-resources.sh",
+				"${PODS_ROOT}/GVRSDK/Resources/CardboardSDK.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitCore.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitDialogs.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/GoogleKitHUD.bundle",
+				"${PODS_ROOT}/GVRSDK/Resources/MaterialRobotoFontLoader.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */ = {
@@ -3509,6 +3582,7 @@
 		};
 		8F517BE71BCDA2BE0017C70B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C0CEA72E0151981092A1C77 /* Pods-ViroSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
@@ -3574,6 +3648,7 @@
 		};
 		8F517BE81BCDA2BE0017C70B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF35B190A2BFFFEF0165D701 /* Pods-ViroSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
