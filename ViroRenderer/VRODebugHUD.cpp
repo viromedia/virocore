@@ -38,7 +38,7 @@ void VRODebugHUD::initRenderer(std::shared_ptr<VRODriver> driver) {
      */
     _typeface = driver->newTypeface("Helvetica", 26);
     _typeface->preloadGlyphs("0123456789.");
-    _node->setPosition({-1, 1, -2.5});
+    _node->setPosition({-.5, .5, -2.5});
 }
 
 void VRODebugHUD::setEnabled(bool enabled) {
