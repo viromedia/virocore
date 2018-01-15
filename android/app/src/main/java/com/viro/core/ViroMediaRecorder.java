@@ -187,6 +187,8 @@ public class ViroMediaRecorder {
      */
     private boolean mIsPendingDestory = false;
 
+    private boolean mIsDestroyed = false;
+
     /*
      Guards the list of queued screen shots as they are both processed
      by the renderer thread and background ui thread.
@@ -214,8 +216,17 @@ public class ViroMediaRecorder {
         if (mIsRecording) {
             stopRecordingAsync(null);
         } else {
-            nativeDeleteNativeRecorder(mNativeRecorderRef);
+            deleteNativeRecorder();
         }
+    }
+
+    private void deleteNativeRecorder(){
+        if (mIsDestroyed){
+            return;
+        }
+
+        mIsDestroyed = true;
+        nativeDeleteNativeRecorder(mNativeRecorderRef);
     }
 
     private static boolean hasAudioAndRecordingPermissions(Context context) {
@@ -425,7 +436,7 @@ public class ViroMediaRecorder {
         mPendingStopRecording.set(false);
 
         if (mIsPendingDestory) {
-            nativeDeleteNativeRecorder(mNativeRecorderRef);
+            deleteNativeRecorder();
         }
 
         return cleanupSucceded;
@@ -454,9 +465,6 @@ public class ViroMediaRecorder {
 
                 mVideoRecordingErrorDelegate = null;
                 mVideoRecordingFilename = null;
-                if (mIsPendingDestory) {
-                    nativeDeleteNativeRecorder(mNativeRecorderRef);
-                }
             }
         };
         nativeEnableFrameRecording(mNativeRecorderRef, false);
@@ -488,9 +496,6 @@ public class ViroMediaRecorder {
 
                 mVideoRecordingErrorDelegate = null;
                 mVideoRecordingFilename = null;
-                if (mIsPendingDestory) {
-                    nativeDeleteNativeRecorder(mNativeRecorderRef);
-                }
             }
         };
         nativeEnableFrameRecording(mNativeRecorderRef, false);
