@@ -605,9 +605,10 @@ public class Texture {
     private native void nativeSetMipFilter(long nativeRef, String mipFilter);
     private native void nativeDestroyTexture(long nativeRef);
 
-
     /**
-     * Builder for creating {@link Texture} objects with cube map bitmaps (px, nx, pz, nz, py, zy)
+     * Builder for creating {@link Texture} objects with cube map bitmaps (px, nx, pz, nz, py, zy).
+     *
+     * @return The {@link TextureBuilder}.
      */
     public static TextureBuilder builderWithPx(Bitmap px) {
         return new TextureBuilder().px(px).setBuilderType(TextureBuilder.BuilderType.CUBE_MAP);
@@ -616,19 +617,26 @@ public class Texture {
     /**
      * Builder for creating {@link Texture} objects with bitmap images. This builder can be used to
      * build textures with normal bitmap images as well as bitmap images with any {@link StereoMode}
-     * configuration
+     * configuration.
+     *
+     * @return The {@link TextureBuilder}.
      */
     public static TextureBuilder builderWithImage(Bitmap image) {
         return new TextureBuilder().image(image).setBuilderType(TextureBuilder.BuilderType.IMAGE);
     }
 
     /**
-     * Builder for creating {@link Texture} objects from given {@ByteBuffer data}
+     * Builder for creating {@link Texture} objects from given {@link ByteBuffer} data.
+     *
+     * @return The {@link TextureBuilder}.
      */
     public static TextureBuilder builderWithData(ByteBuffer data) {
         return new TextureBuilder().data(data).setBuilderType(TextureBuilder.BuilderType.DATA);
     }
 
+    /**
+     * Builder for creating {@link Texture} objects.
+     */
     public static class TextureBuilder {
         /**
          * @hide
@@ -683,7 +691,9 @@ public class Texture {
         private Format inputFormat;
 
         /**
-         * The {@link Bitmap} to use for the right side of the cube.
+         * Set the {@link Bitmap} to use for the right side of the cube.
+         *
+         * @return This builder.
          */
         public TextureBuilder px(Bitmap px) {
             this.px = px;
@@ -691,7 +701,9 @@ public class Texture {
         }
 
         /**
-         * The {@link Bitmap} to use for the left side of the cube.
+         * Set the {@link Bitmap} to use for the left side of the cube.
+         *
+         * @return This builder.
          */
         public TextureBuilder nx(Bitmap nx) {
             this.nx = nx;
@@ -699,7 +711,9 @@ public class Texture {
         }
 
         /**
-         * The {@link Bitmap} to use for the left side of the cube.
+         * Set the {@link Bitmap} to use for the left side of the cube.
+         *
+         * @return This builder.
          */
         public TextureBuilder py(Bitmap py) {
             this.py = py;
@@ -707,7 +721,9 @@ public class Texture {
         }
 
         /**
-         * The {@link Bitmap} to use for the bottom side of the cube.
+         * Set the {@link Bitmap} to use for the bottom side of the cube.
+         *
+         * @return This builder.
          */
         public TextureBuilder ny(Bitmap ny) {
             this.ny = ny;
@@ -715,7 +731,9 @@ public class Texture {
         }
 
         /**
-         * The {@link Bitmap} to use for the far side of the cube.
+         * Set the {@link Bitmap} to use for the far side of the cube.
+         *
+         * @return This builder.
          */
         public TextureBuilder pz(Bitmap pz) {
             this.pz = pz;
@@ -723,7 +741,9 @@ public class Texture {
         }
 
         /**
-         * The {@link Bitmap} to use for the far side of the cube.
+         * Set the {@link Bitmap} to use for the far side of the cube.
+         *
+         * @return This builder.
          */
         public TextureBuilder nz(Bitmap nz) {
             this.nz = nz;
@@ -731,7 +751,9 @@ public class Texture {
         }
 
         /**
-         * The {@link Bitmap} to turn into a Texture.
+         * Set the {@link Bitmap} to turn into a Texture.
+         *
+         * @return This builder.
          */
         public TextureBuilder image(Bitmap image) {
             this.image = image;
@@ -739,7 +761,9 @@ public class Texture {
         }
 
         /**
-         * The format in which to store the texture in memory.
+         * Set the format in which to store the texture in memory.
+         *
+         * @return This builder.
          */
         public TextureBuilder storageFormat(Format storageFormat) {
             this.storageFormat = storageFormat;
@@ -747,9 +771,11 @@ public class Texture {
         }
 
         /**
-         * True if the image is in a gamma-corrected (sRGB) format. If true, Viro  will linearize
+         * Set to true if the image is in a gamma-corrected (sRGB) format. If true, Viro  will linearize
          * the texture during shading computations. This option should generally be set to true for
          * diffuse and specular images, and false for non-visual images like normal maps.
+         *
+         * @return This builder.
          */
         public TextureBuilder sRGB(boolean sRGB) {
             this.sRGB = sRGB;
@@ -757,9 +783,11 @@ public class Texture {
         }
 
         /**
-         * True if Viro should generate mipmaps for the image and store them in the Texture.
+         * Set to true if Viro should generate mipmaps for the image and store them in the Texture.
          * Mipmapping dramatically improves the visual quality and performance of Textures when
          * they are rendered onto small surfaces.
+         *
+         * @return This builder.
          */
         public TextureBuilder generateMipmaps(boolean generateMipmaps) {
             this.generateMipmaps = generateMipmaps;
@@ -767,9 +795,11 @@ public class Texture {
         }
 
         /**
-         * The {@link StereoMode} indicating which half of the image to render to
-         *                        the left eye, and which to render to the right eye. Null if the image
-         *                        is not stereo.
+         * Set the {@link StereoMode} indicating which half of the image to render to
+         * the left eye, and which to render to the right eye. Null if the image
+         * is not stereo.
+         *
+         * @return This builder.
          */
         public TextureBuilder stereoMode(StereoMode stereoMode) {
             this.stereoMode = stereoMode;
@@ -777,9 +807,11 @@ public class Texture {
         }
 
         /**
-         * The raw image data to turn into a Texture. This must be a <i>direct</i>
+         * Set the raw image data to turn into a Texture. This must be a <i>direct</i>
          * {@link ByteBuffer}. The image data must start at position 0 in the buffer and end at the
          * buffer's capacity.
+         *
+         * @return This builder.
          */
         public TextureBuilder data(ByteBuffer data) {
             this.data = data;
@@ -788,6 +820,8 @@ public class Texture {
 
         /**
          * The format of the data stored in <tt>data</tt>.
+         *
+         * @return This builder.
          */
         public TextureBuilder inputFormat(Format inputFormat) {
             this.inputFormat = inputFormat;
@@ -796,6 +830,8 @@ public class Texture {
 
         /**
          * The width of the image stored in <tt>data</tt>.
+         *
+         * @return This builder.
          */
         public TextureBuilder width(int width) {
             this.width = width;
@@ -804,6 +840,8 @@ public class Texture {
 
         /**
          * The height of the image stored in <tt>data</tt>.
+         *
+         * @return This builder.
          */
         public TextureBuilder height(int height) {
             this.height = height;
@@ -811,7 +849,9 @@ public class Texture {
         }
 
         /**
-         * Refer to {@link Texture#setWrapS(WrapMode)}
+         * Refer to {@link Texture#setWrapS(WrapMode)}.
+         *
+         * @return This builder.
          */
         public TextureBuilder wrapS(WrapMode wrapS) {
             this.wrapS = wrapS;
@@ -819,7 +859,9 @@ public class Texture {
         }
 
         /**
-         * Refer to {@link Texture#setWrapT(WrapMode)}
+         * Refer to {@link Texture#setWrapT(WrapMode)}.
+         *
+         * @return This builder.
          */
         public TextureBuilder wrapT(WrapMode wrapT) {
             this.wrapT = wrapT;
@@ -827,7 +869,9 @@ public class Texture {
         }
 
         /**
-         * Refer to {@link Texture#setMinificationFilter(FilterMode)}
+         * Refer to {@link Texture#setMinificationFilter(FilterMode)}.
+         *
+         * @return This builder.
          */
         public TextureBuilder minificationFilter(FilterMode minificationFilter) {
             this.minificationFilter = minificationFilter;
@@ -835,7 +879,9 @@ public class Texture {
         }
 
         /**
-         * Refer to {@link Texture#setMagnificationFilter(FilterMode)}
+         * Refer to {@link Texture#setMagnificationFilter(FilterMode)}.
+         *
+         * @return This builder.
          */
         public TextureBuilder magnificationFilter(FilterMode magnificationFilter) {
             this.magnificationFilter = magnificationFilter;
@@ -843,7 +889,9 @@ public class Texture {
         }
 
         /**
-         * Refer to {@link Texture#setMipFilter(FilterMode)}
+         * Refer to {@link Texture#setMipFilter(FilterMode)}.
+         *
+         * @return This builder.
          */
         public TextureBuilder mipFilter(FilterMode mipFilter) {
             this.mipFilter = mipFilter;
@@ -851,7 +899,9 @@ public class Texture {
         }
 
         /**
-         * Build the Texture object using the appropriate constructor
+         * Build the {@link Texture} object.
+         *
+         * @return The built {@link Texture}.
          */
         public Texture build() {
             if (builderType.equals(BuilderType.CUBE_MAP)) {

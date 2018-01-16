@@ -199,8 +199,8 @@ public class ViroViewScene extends ViroView {
     }
 
     /**
-     * Sets the background color of this Viro renderer Android view. This will be
-     * the color that renders behind all Viro views.
+     * Set the background color of view. This is the color that will be rendered behind
+     * behind the Viro scenegraph.
      *
      * @param color The {@link android.graphics.Color}'s int value.
      */
@@ -228,6 +228,10 @@ public class ViroViewScene extends ViroView {
         mNativeRenderer.setSceneController(scene.mNativeRef, 0.5f);
     }
 
+    /**
+     * @hide
+     * @param listener
+     */
     @Override
     public void setOnTouchListener(OnTouchListener listener) {
         // If we're adding our own ViroTouchGestureListener, then we add it as the actual

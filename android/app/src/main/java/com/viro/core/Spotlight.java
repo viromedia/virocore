@@ -378,27 +378,29 @@ public class Spotlight extends Light {
     private native void nativeSetShadowOpacity(long lightRef, float opacity);
 
     /**
-     * Builder for building {@link Spotlight} objects
+     * Builder for building {@link Spotlight} objects.
      */
     public static SpotlightBuilder<? extends Light, ? extends SpotlightBuilder> builder() {
         return new SpotlightBuilder<>();
     }
 
     /**
-     * Builder class for building {@link Spotlight} objects
+     * Builder for creating {@link Spotlight} objects.
      */
     public static class SpotlightBuilder<R extends Light, B extends SpotlightBuilder<R, B>> {
         private Spotlight light;
 
         /**
-         * Constructor for SpotLightBuilder
+         * Constructor for SpotLightBuilder.
          */
         public SpotlightBuilder() {
             light = new Spotlight();
         }
 
         /**
-         * Refer to {@link Spotlight#setPosition(Vector)}
+         * Refer to {@link Spotlight#setPosition(Vector)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder position(Vector position) {
             light.setPosition(position);
@@ -406,7 +408,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setAttenuationStartDistance(float)}
+         * Refer to {@link Spotlight#setAttenuationStartDistance(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder attenuationStartDistance(float attenuationStartDistance) {
             light.setAttenuationStartDistance(attenuationStartDistance);
@@ -414,7 +418,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setAttenuationEndDistance(float)}
+         * Refer to {@link Spotlight#setAttenuationEndDistance(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder attenuationEndDistance(float attenuationEndDistance) {
             light.setAttenuationEndDistance(attenuationEndDistance);
@@ -422,7 +428,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setInnerAngle(float)}
+         * Refer to {@link Spotlight#setInnerAngle(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder innerAngle(float innerAngle) {
             light.setInnerAngle(innerAngle);
@@ -430,7 +438,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setOuterAngle(float)}
+         * Refer to {@link Spotlight#setOuterAngle(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder outerAngle(float outerAngle) {
             light.setOuterAngle(outerAngle);
@@ -438,7 +448,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setDirection(Vector)}
+         * Refer to {@link Spotlight#setDirection(Vector)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder direction(Vector direction) {
             light.setDirection(direction);
@@ -446,7 +458,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setCastsShadow(boolean)}
+         * Refer to {@link Spotlight#setCastsShadow(boolean)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder castsShadow(boolean castsShadow) {
             light.setCastsShadow(castsShadow);
@@ -454,7 +468,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setShadowMapSize(int)}
+         * Refer to {@link Spotlight#setShadowMapSize(int)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder shadowMapSize(int shadowMapSize) {
             light.setShadowMapSize(shadowMapSize);
@@ -462,7 +478,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setShadowBias(float)}
+         * Refer to {@link Spotlight#setShadowBias(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder shadowBias(float shadowBias) {
             light.setShadowBias(shadowBias);
@@ -470,7 +488,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setShadowNearZ(float)}
+         * Refer to {@link Spotlight#setShadowNearZ(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder shadowNearZ(float shadowNearZ) {
             light.setShadowNearZ(shadowNearZ);
@@ -478,7 +498,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setShadowFarZ(float)}
+         * Refer to {@link Spotlight#setShadowFarZ(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder shadowFarZ(float shadowFarZ) {
             light.setShadowFarZ(shadowFarZ);
@@ -486,7 +508,9 @@ public class Spotlight extends Light {
         }
 
         /**
-         * Refer to {@link Spotlight#setShadowOpacity(float)}
+         * Refer to {@link Spotlight#setShadowOpacity(float)}.
+         *
+         * @return This builder.
          */
         public SpotlightBuilder shadowOpacity(float opacity) {
             light.setShadowOpacity(opacity);

@@ -128,20 +128,20 @@ public class OmniLight extends Light {
     private native void nativeSetPosition(long lightRef, float positionX, float positionY, float positionZ);
 
     /**
-     * Builder for building {@link OmniLight} objects
+     * Builder for creating {@link OmniLight} objects.
      */
     public static OmniLightBuilder<? extends Light, ? extends OmniLightBuilder> builder() {
         return new OmniLightBuilder<>();
     }
 
     /**
-     * Builder class for building {@link OmniLight} objects
+     * Builder for creating {@link OmniLight} objects.
      */
     public static class OmniLightBuilder<R extends Light, B extends OmniLightBuilder<R, B>> {
         private OmniLight light;
 
         /**
-         * Constructor for OmniLightBuilder
+         * Constructor for OmniLightBuilder.
          */
         public OmniLightBuilder() {
             light = new OmniLight();
@@ -156,7 +156,9 @@ public class OmniLight extends Light {
         }
 
         /**
-         * Refer to {@link OmniLight#setAttenuationStartDistance(float)}
+         * Refer to {@link OmniLight#setAttenuationStartDistance(float)}.
+         *
+         * @return This builder.
          */
         public OmniLightBuilder attenuationStartDistance(float attenuationStartDistance) {
             light.setAttenuationStartDistance(attenuationStartDistance);
@@ -164,7 +166,9 @@ public class OmniLight extends Light {
         }
 
         /**
-         * Refer to {@link OmniLight#setAttenuationEndDistance(float)}
+         * Refer to {@link OmniLight#setAttenuationEndDistance(float)}.
+         *
+         * @return This builder.
          */
         public OmniLightBuilder attenuationEndDistance(float attenuationEndDistance) {
             light.setAttenuationEndDistance(attenuationEndDistance);

@@ -501,14 +501,14 @@ public class Text extends Geometry {
     private native void nativeSetMaxLines(long textRef, int maxLines);
 
     /**
-     * Builder for creating {@link Text} objects
+     * Builder for creating {@link Text} objects.
      */
     public static TextBuilder builder() {
         return new TextBuilder();
     }
 
     /**
-     * Builder class for creating {@link Text} objects
+     * Builder for creating {@link Text} objects.
      */
     public static class TextBuilder {
 
@@ -526,7 +526,9 @@ public class Text extends Geometry {
         private int mMaxLines = DEFAULT_MAX_LINES;
 
         /**
-         * Set the ViroContext to be used while building Text object
+         * Set the {@link ViroContext} to be used while building Text object.
+         *
+         * @return This builder.
          */
         public TextBuilder viroContext(ViroContext mViroContext) {
             this.mViroContext = mViroContext;
@@ -534,7 +536,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setText(String)}
+         * Refer to {@link Text#setText(String)}.
+         *
+         * @return This builder.
          */
         public TextBuilder textString(String mText) {
             this.mText = mText;
@@ -542,7 +546,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setFontFamilyName(String)}
+         * Refer to {@link Text#setFontFamilyName(String)}.
+         *
+         * @return This builder.
          */
         public TextBuilder fontFamilyName(String mFontFamilyName) {
             this.mFontFamilyName = mFontFamilyName;
@@ -550,7 +556,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setFontSize(int)}
+         * Refer to {@link Text#setFontSize(int)}.
+         *
+         * @return This builder.
          */
         public TextBuilder fontSize(int mFontSize) {
             this.mFontSize = mFontSize;
@@ -558,7 +566,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setColor(long)}
+         * Refer to {@link Text#setColor(long)}.
+         *
+         * @return This builder.
          */
         public TextBuilder color(long mColor) {
             this.mColor = mColor;
@@ -566,7 +576,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setWidth(float)}
+         * Refer to {@link Text#setWidth(float)}.
+         *
+         * @return This builder.
          */
         public TextBuilder width(float mWidth) {
             this.mWidth = mWidth;
@@ -574,7 +586,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setHeight(float)}
+         * Refer to {@link Text#setHeight(float)}.
+         *
+         * @return This builder.
          */
         public TextBuilder height(float mHeight) {
             this.mHeight = mHeight;
@@ -582,7 +596,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setHorizontalAlignment(HorizontalAlignment)}
+         * Refer to {@link Text#setHorizontalAlignment(HorizontalAlignment)}.
+         *
+         * @return This builder.
          */
         public TextBuilder horizontalAlignment(HorizontalAlignment mHorizontalAlignment) {
             this.mHorizontalAlignment = mHorizontalAlignment;
@@ -590,7 +606,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setVerticalAlignment(VerticalAlignment)}
+         * Refer to {@link Text#setVerticalAlignment(VerticalAlignment)}.
+         *
+         * @return This builder.
          */
         public TextBuilder verticalAlignment(VerticalAlignment mVerticalAlignment) {
             this.mVerticalAlignment = mVerticalAlignment;
@@ -598,7 +616,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setLineBreakMode(LineBreakMode)}
+         * Refer to {@link Text#setLineBreakMode(LineBreakMode)}.
+         *
+         * @return This builder.
          */
         public TextBuilder lineBreakMode(LineBreakMode mLineBreakMode) {
             this.mLineBreakMode = mLineBreakMode;
@@ -606,7 +626,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setClipMode(ClipMode)}
+         * Refer to {@link Text#setClipMode(ClipMode)}.
+         *
+         * @return This builder.
          */
         public TextBuilder clipMode(ClipMode mClipMode) {
             this.mClipMode = mClipMode;
@@ -614,7 +636,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Refer to {@link Text#setMaxLines(int)}
+         * Refer to {@link Text#setMaxLines(int)}.
+         *
+         * @return This builder.
          */
         public TextBuilder maxLines(int mMaxLines) {
             this.mMaxLines = mMaxLines;
@@ -622,7 +646,9 @@ public class Text extends Geometry {
         }
 
         /**
-         * Return the built Text object
+         * Return the built {@link Text}.
+         *
+         * @return The built Text.
          */
         public Text build() {
             return new Text(mViroContext, mText, mFontFamilyName,mFontSize, mColor, mWidth, mHeight,

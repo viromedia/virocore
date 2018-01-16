@@ -1513,8 +1513,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Creates a builder for building complex {@link Node} objects
-     * @return {@link NodeBuilder} object
+     * Creates a builder for building complex {@link Node} objects.
+     *
+     * @return {@link NodeBuilder} object.
      */
     public static NodeBuilder<? extends Node, ? extends NodeBuilder> builder() {
         return new NodeBuilder<>();
@@ -1524,20 +1525,22 @@ public class Node implements EventDelegate.EventDelegateCallback {
 // +---------------------------------------------------------------------------+
 
     /**
-     * NodeBuilder class for {@link Node}
+     * NodeBuilder for creating {@link Node} objects.
      */
     public static class NodeBuilder<R extends Node, B extends NodeBuilder<R,B>> {
         private R node;
 
         /**
-         * Constructor for NodeBuilder class
+         * Constructor for NodeBuilder.
          */
         public NodeBuilder() {
             this.node = (R) new Node();
         }
 
         /**
-         * Refer to {@link Node#setGeometry(Geometry)}
+         * Refer to {@link Node#setGeometry(Geometry)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder geometry(Geometry geometry) {
             node.setGeometry(geometry);
@@ -1545,7 +1548,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setPosition(Vector)}
+         * Refer to {@link Node#setPosition(Vector)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder position(Vector position) {
             node.setPosition(position);
@@ -1553,7 +1558,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setParticleEmitter(ParticleEmitter)}
+         * Refer to {@link Node#setParticleEmitter(ParticleEmitter)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder particleEmitter(ParticleEmitter particleEmitter) {
             node.setParticleEmitter(particleEmitter);
@@ -1561,7 +1568,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#initPhysicsBody(PhysicsBody.RigidBodyType, float, PhysicsShape)}
+         * Refer to {@link Node#initPhysicsBody(PhysicsBody.RigidBodyType, float, PhysicsShape)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder physicsBody(PhysicsBody.RigidBodyType rigidBodyType, float mass,
                                        PhysicsShape shape) {
@@ -1570,7 +1579,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#addChildNode(Node)}
+         * Refer to {@link Node#addChildNode(Node)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder children(ArrayList<Node> children) {
             for (Node child: children) {
@@ -1580,7 +1591,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#addLight(Light)}
+         * Refer to {@link Node#addLight(Light)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder lights(ArrayList<Light> lights) {
             for (Light light: lights) {
@@ -1590,7 +1603,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#addSound(SpatialSound)}
+         * Refer to {@link Node#addSound(SpatialSound)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder sounds(ArrayList<SpatialSound> sounds) {
             for (SpatialSound sound: sounds) {
@@ -1600,7 +1615,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setScale(Vector)}
+         * Refer to {@link Node#setScale(Vector)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder scale(Vector scale) {
             node.setScale(scale);
@@ -1608,7 +1625,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setScalePivot(Vector)}
+         * Refer to {@link Node#setScalePivot(Vector)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder scalePivot(Vector scalePivot) {
             node.setScalePivot(scalePivot);
@@ -1616,7 +1635,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setRotationPivot(Vector)}
+         * Refer to {@link Node#setRotationPivot(Vector)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder rotationPivot(Vector rotationpivot) {
             node.setRotationPivot(rotationpivot);
@@ -1624,7 +1645,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setOpacity(float)}
+         * Refer to {@link Node#setOpacity(float)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder opacity(float opacity) {
             node.setOpacity(opacity);
@@ -1632,7 +1655,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setVisible(boolean)}
+         * Refer to {@link Node#setVisible(boolean)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder visible(boolean visible) {
             node.setVisible(visible);
@@ -1640,7 +1665,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setDragType(DragType)}
+         * Refer to {@link Node#setDragType(DragType)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder dragType(DragType dragType) {
             node.setDragType(dragType);
@@ -1648,7 +1675,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setLightReceivingBitMask(int)}
+         * Refer to {@link Node#setLightReceivingBitMask(int)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder lightReceivingBitMask(int lightReceivingBitMask) {
             node.setLightReceivingBitMask(lightReceivingBitMask);
@@ -1656,7 +1685,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setShadowCastingBitMask(int)}
+         * Refer to {@link Node#setShadowCastingBitMask(int)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder shadowCastingBitMask(int shadowCastingBitMask) {
             node.setShadowCastingBitMask(shadowCastingBitMask);
@@ -1664,7 +1695,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setHighAccuracyGaze(boolean)}
+         * Refer to {@link Node#setHighAccuracyGaze(boolean)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder highAccuracyGaze(boolean highAccuracyGaze) {
             node.setHighAccuracyGaze(highAccuracyGaze);
@@ -1672,7 +1705,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setIgnoreEventHandling(boolean)}
+         * Refer to {@link Node#setIgnoreEventHandling(boolean)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder ignoreEventHandling(boolean ignoreEventHandling) {
             node.setIgnoreEventHandling(ignoreEventHandling);
@@ -1680,7 +1715,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setTransformBehaviors(EnumSet)}
+         * Refer to {@link Node#setTransformBehaviors(EnumSet)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder transformBehaviors(EnumSet<TransformBehavior> transformBehaviors) {
             node.setTransformBehaviors(transformBehaviors);
@@ -1688,7 +1725,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setTag(String)}
+         * Refer to {@link Node#setTag(String)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder tag(String tag) {
             node.setTag(tag);
@@ -1696,16 +1735,19 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setCamera(Camera)}
+         * Refer to {@link Node#setCamera(Camera)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder camera(Camera camera) {
             node.setCamera(camera);
             return (B) this;
         }
 
-
         /**
-         * Refer to {@link Node#setClickListener(ClickListener)}
+         * Refer to {@link Node#setClickListener(ClickListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder clickListener(ClickListener clickListener) {
             node.setClickListener(clickListener);
@@ -1713,7 +1755,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setHoverListener(HoverListener)}
+         * Refer to {@link Node#setHoverListener(HoverListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder hoverListener(HoverListener hoverListener) {
             node.setHoverListener(hoverListener);
@@ -1721,7 +1765,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setTouchpadTouchListener(TouchpadTouchListener)}
+         * Refer to {@link Node#setTouchpadTouchListener(TouchpadTouchListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder touchpadTouchListener(TouchpadTouchListener touchpadTouchListener) {
             node.setTouchpadTouchListener(touchpadTouchListener);
@@ -1729,7 +1775,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setTouchpadSwipeListener(TouchpadSwipeListener)}
+         * Refer to {@link Node#setTouchpadSwipeListener(TouchpadSwipeListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder touchpadSwipeListener(TouchpadSwipeListener touchpadSwipeListener) {
             node.setTouchpadSwipeListener(touchpadSwipeListener);
@@ -1737,7 +1785,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setTouchpadScrollListener(TouchpadScrollListener)}
+         * Refer to {@link Node#setTouchpadScrollListener(TouchpadScrollListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder touchpadScrollListener(TouchpadScrollListener touchpadScrollListener) {
             node.setTouchpadScrollListener(touchpadScrollListener);
@@ -1745,7 +1795,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setDragListener(DragListener)}
+         * Refer to {@link Node#setDragListener(DragListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder dragListener(DragListener dragListener) {
             node.setDragListener(dragListener);
@@ -1753,7 +1805,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setFuseListener(FuseListener)}
+         * Refer to {@link Node#setFuseListener(FuseListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder fuseListener(FuseListener fuseListener) {
             node.setFuseListener(fuseListener);
@@ -1761,7 +1815,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setGesturePinchListener(GesturePinchListener)}
+         * Refer to {@link Node#setGesturePinchListener(GesturePinchListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder gesturePinchListener(GesturePinchListener gesturePinchListener) {
             node.setGesturePinchListener(gesturePinchListener);
@@ -1769,7 +1825,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Refer to {@link Node#setGestureRotateListener(GestureRotateListener)}
+         * Refer to {@link Node#setGestureRotateListener(GestureRotateListener)}.
+         *
+         * @return This builder.
          */
         public NodeBuilder gestureRotateListener(GestureRotateListener gestureRotateListener) {
             node.setGestureRotateListener(gestureRotateListener);
@@ -1777,7 +1835,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
 
         /**
-         * Returns the Built {@link Node} object
+         * Returns the Built {@link Node}.
+         *
+         * @return The built Node.
          */
         public R build() {
             return node;

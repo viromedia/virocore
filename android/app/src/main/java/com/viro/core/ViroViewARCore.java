@@ -344,6 +344,10 @@ public class ViroViewARCore extends ViroView {
         mNativeRenderer.setSceneController(scene.mNativeRef, 0.5f);
     }
 
+    /**
+     * @hide
+     * @param listener
+     */
     @Override
     public void setOnTouchListener(OnTouchListener listener) {
         // If we're adding our own ViroTouchGestureListener, then we add it as the actual
@@ -610,12 +614,12 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * Set the rotation of the background camera view. This is derived from one of the {@link Surface}
-     * constants for rotation; e.g. {@link Surface#ROTATION_0}, {@link Surface#ROTATION_90},
-     * {@link Surface#ROTATION_180}, or {@link Surface#ROTATION_270}.
+     * Set the rotation of the background camera view. This is derived from one of the {@link android.view.Surface}
+     * constants for rotation; e.g. {@link android.view.Surface#ROTATION_0}, {@link android.view.Surface#ROTATION_90},
+     * {@link android.view.Surface#ROTATION_180}, or {@link android.view.Surface#ROTATION_270}.
      * <p>
      * Typically this value should be changed when the device orientation changes; e.g.,
-     * in Activity{@link #onConfigurationChanged(Configuration)}. For example:
+     * in {@link android.app.Activity#onConfigurationChanged(Configuration)}. For example:
      * <p>
      * <tt>
      * <pre>

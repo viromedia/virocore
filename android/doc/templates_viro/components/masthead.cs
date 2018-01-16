@@ -83,7 +83,7 @@
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://viromedia.com">Viro Home</a>
+          <a class="dac-header-tab" href="https://viromedia.com/virocore">Viro Home</a>
           </li>
           <li>
 

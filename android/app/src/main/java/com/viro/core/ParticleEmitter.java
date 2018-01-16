@@ -1340,7 +1340,7 @@ public class ParticleEmitter {
     private native void nativeSetBloomThreshold(long ref, float threshold);
 
     /**
-     * Builder for {@link ParticleEmitter} objects
+     * Builder for {@link ParticleEmitter} objects.
      */
     public static ParticleEmitterBuilder builder(ViroContext viroContext,
                                                  Surface surface) {
@@ -1348,20 +1348,22 @@ public class ParticleEmitter {
     }
 
     /**
-     * Builder class for {@link ParticleEmitter} objects
+     * Builder for creating {@link ParticleEmitter} objects.
      */
     public static class ParticleEmitterBuilder {
         private  ParticleEmitter particleEmitter;
 
         /**
-         * Constructor for ParticleEmitterBuilder
+         * Constructor for ParticleEmitterBuilder.
          */
         public ParticleEmitterBuilder(ViroContext viroContext,Surface surface) {
             particleEmitter = new ParticleEmitter(viroContext, surface);
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setDelay(int)}
+         * Refer to {@link ParticleEmitter#setDelay(int)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder delay(int delay) {
             particleEmitter.setDelay(delay);
@@ -1369,7 +1371,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setDuration(int)}
+         * Refer to {@link ParticleEmitter#setDuration(int)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder duration(int duration) {
             particleEmitter.setDuration(duration);
@@ -1377,7 +1381,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setLoop(boolean)}
+         * Refer to {@link ParticleEmitter#setLoop(boolean)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder loop(boolean loop) {
             particleEmitter.setLoop(loop);
@@ -1385,7 +1391,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setFixedToEmitter(boolean)}
+         * Refer to {@link ParticleEmitter#setFixedToEmitter(boolean)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder fixedToEmitter(boolean fixedToEmitter) {
             particleEmitter.setFixedToEmitter(fixedToEmitter);
@@ -1393,7 +1401,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setEmissionRatePerSecond(int, int)}
+         * Refer to {@link ParticleEmitter#setEmissionRatePerSecond(int, int)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder emissionRatePerSecond(int emissionRatePerSecondMin, int emissionRatePerSecondMax) {
             particleEmitter.setEmissionRatePerSecond(emissionRatePerSecondMin, emissionRatePerSecondMax);
@@ -1401,7 +1411,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setEmissionRatePerMeter(int, int)}
+         * Refer to {@link ParticleEmitter#setEmissionRatePerMeter(int, int)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder emissionRatePerMeter(int emissionRatePerMeterMin, int emissionRatePerMeterMax) {
             particleEmitter.setEmissionRatePerMeter(emissionRatePerMeterMin, emissionRatePerMeterMax);
@@ -1409,7 +1421,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setParticleLifetime(int, int)}
+         * Refer to {@link ParticleEmitter#setParticleLifetime(int, int)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder particleLifetimeMin(int particleLifetimeMin, int particleLifetimeMax) {
             particleEmitter.setParticleLifetime(particleLifetimeMin, particleLifetimeMax);
@@ -1417,7 +1431,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setMaxParticles(int)}
+         * Refer to {@link ParticleEmitter#setMaxParticles(int)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder maxParticles(int maxParticles) {
             particleEmitter.setMaxParticles(maxParticles);
@@ -1425,7 +1441,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setEmissionBursts(List)}
+         * Refer to {@link ParticleEmitter#setEmissionBursts(List)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder emissionBursts(List<EmissionBurst> emissionBursts) {
             particleEmitter.setEmissionBursts(emissionBursts);
@@ -1433,7 +1451,7 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setSpawnVolume(SpawnVolume, boolean)}
+         * Refer to {@link ParticleEmitter#setSpawnVolume(SpawnVolume, boolean)}.
          */
         public ParticleEmitterBuilder spawnVolume(SpawnVolume spawnVolume, boolean spawnOnSurface) {
             particleEmitter.setSpawnVolume(spawnVolume, spawnOnSurface);
@@ -1441,7 +1459,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setBlendMode(Material.BlendMode)}
+         * Refer to {@link ParticleEmitter#setBlendMode(Material.BlendMode)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder blendMode(Material.BlendMode blendMode) {
             particleEmitter.setBlendMode(blendMode);
@@ -1449,7 +1469,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Refer to {@link ParticleEmitter#setBloomThreshold(float)}
+         * Refer to {@link ParticleEmitter#setBloomThreshold(float)}.
+         *
+         * @return This builder.
          */
         public ParticleEmitterBuilder bloomThreshold(float bloomThreshold) {
             particleEmitter.setBloomThreshold(bloomThreshold);
@@ -1457,7 +1479,9 @@ public class ParticleEmitter {
         }
 
         /**
-         * Return the built {@link ParticleEmitter} object
+         * Return the built {@link ParticleEmitter} object.
+         *
+         * @return The built ParticleEmitter.
          */
         public ParticleEmitter build() {
             return particleEmitter;

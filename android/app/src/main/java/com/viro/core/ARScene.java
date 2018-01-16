@@ -286,8 +286,9 @@ public class ARScene extends Scene {
     }
 
     /**
-     * Creates a builder for building complex {@link ARScene} objects
-     * @return {@link ARSceneBuilder} object
+     * Creates a builder for building complex {@link ARScene} objects.
+     *
+     * @return {@link ARSceneBuilder} object.
      */
     public static ARSceneBuilder<? extends Scene, ? extends SceneBuilder> builder() {
         return new ARSceneBuilder<>();
@@ -297,20 +298,22 @@ public class ARScene extends Scene {
 // +---------------------------------------------------------------------------+
 
     /**
-     * ARSceneBuilder class for building {@link ARScene}
+     * ARSceneBuilder for building {@link ARScene}.
      */
     public static class ARSceneBuilder<R extends ARScene, B extends ARSceneBuilder<R, B>> extends SceneBuilder<R, B> {
         private R aRScene;
 
         /**
-         * Constructor for SceneBuilder class
+         * Constructor for SceneBuilder class.
          */
         public ARSceneBuilder() {
             this.aRScene = (R) new ARScene();
         }
 
         /**
-         * Refer to {@link ARScene#setListener(Listener)}
+         * Refer to {@link ARScene#setListener(Listener)}.
+         *
+         * @return This builder.
          */
         public ARSceneBuilder listener(Listener listener) {
             aRScene.setListener(listener);
@@ -318,7 +321,9 @@ public class ARScene extends Scene {
         }
 
         /**
-         * Refer to {@link ARScene#displayPointCloud(boolean)}
+         * Refer to {@link ARScene#displayPointCloud(boolean)}.
+         *
+         * @return This builder.
          */
         public ARSceneBuilder displayPointCloud(boolean displayPointCloud) {
             aRScene.displayPointCloud(displayPointCloud);
@@ -326,7 +331,9 @@ public class ARScene extends Scene {
         }
 
         /**
-         * Refer to {@link ARScene#setPointCloudSurface(Surface)}
+         * Refer to {@link ARScene#setPointCloudSurface(Surface)}.
+         *
+         * @return This builder.
          */
         public ARSceneBuilder pointCloudSurface(Surface pointCloudSurface) {
             aRScene.setPointCloudSurface(pointCloudSurface);
@@ -334,7 +341,9 @@ public class ARScene extends Scene {
         }
 
         /**
-         * Refer to {@link ARScene#setPointCloudSurfaceScale(Vector)}
+         * Refer to {@link ARScene#setPointCloudSurfaceScale(Vector)}.
+         *
+         * @return This builder.
          */
         public ARSceneBuilder pointCloudSurfaceScale(Vector pointCloudSurfaceScale) {
             aRScene.setPointCloudSurfaceScale(pointCloudSurfaceScale);
@@ -342,7 +351,9 @@ public class ARScene extends Scene {
         }
 
         /**
-         * Refer to {@link ARScene#setPointCloudMaxPoints(int)}
+         * Refer to {@link ARScene#setPointCloudMaxPoints(int)}.
+         *
+         * @return This builder.
          */
         public ARSceneBuilder pointCloudMaxPoints(Integer pointCloudMaxPoints) {
             aRScene.setPointCloudMaxPoints(pointCloudMaxPoints);

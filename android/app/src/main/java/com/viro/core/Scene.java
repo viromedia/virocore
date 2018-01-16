@@ -467,8 +467,9 @@ public class Scene {
     }
 
     /**
-     * Creates a builder for building complex {@link Scene} objects
-     * @return {@link SceneBuilder} object
+     * Creates a builder for building complex {@link Scene} objects.
+     *
+     * @return {@link SceneBuilder} object.
      */
     public static SceneBuilder<? extends Scene, ? extends SceneBuilder> builder() {
         return new SceneBuilder<>();
@@ -479,20 +480,22 @@ public class Scene {
 // +---------------------------------------------------------------------------+
 
     /**
-     * SceneBuilder class for {@link Scene}
+     * SceneBuilder for creating {@link Scene} objects.
      */
     public static class SceneBuilder<R extends Scene, B extends SceneBuilder<R, B>> {
         private R scene;
 
         /**
-         * Constructor for SceneBuilder class
+         * Constructor for SceneBuilder class.
          */
         public SceneBuilder() {
             this.scene = (R) new Scene();
         }
 
         /**
-         * Refer to {@link Scene#setVisibilityListener(VisibilityListener)}
+         * Refer to {@link Scene#setVisibilityListener(VisibilityListener)}.
+         *
+         * @return This builder.
          */
         public SceneBuilder listener(VisibilityListener listener) {
             this.scene.setVisibilityListener(listener);
@@ -500,7 +503,9 @@ public class Scene {
         }
 
         /**
-         * Refer to {@link Scene#setBackgroundTexture(Texture)}
+         * Refer to {@link Scene#setBackgroundTexture(Texture)}.
+         *
+         * @return This builder.
          */
         public SceneBuilder backgroundTexture(Texture backgroundTexture) {
             this.scene.setBackgroundTexture(backgroundTexture);
@@ -508,7 +513,9 @@ public class Scene {
         }
 
         /**
-         * Refer to {@link Scene#setBackgroundRotation(Vector)}
+         * Refer to {@link Scene#setBackgroundRotation(Vector)}.
+         *
+         * @return This builder.
          */
         public SceneBuilder backgroundRotation(Vector backgroundRotation) {
             this.scene.setBackgroundRotation(backgroundRotation);
@@ -516,7 +523,9 @@ public class Scene {
         }
 
         /**
-         * Refer to {@link Scene#setBackgroundCubeWithColor(long)}}
+         * Refer to {@link Scene#setBackgroundCubeWithColor(long)}}.
+         *
+         * @return This builder.
          */
         public SceneBuilder backgroundCubeWithColor(long backgroundCubeWithColor) {
             this.scene.setBackgroundCubeWithColor(backgroundCubeWithColor);
@@ -524,7 +533,9 @@ public class Scene {
         }
 
         /**
-         * Refer to {@link Scene#setSoundRoom(ViroContext, Vector, AudioMaterial, AudioMaterial, AudioMaterial)}
+         * Refer to {@link Scene#setSoundRoom(ViroContext, Vector, AudioMaterial, AudioMaterial, AudioMaterial)}.
+         *
+         * @return This builder.
          */
         public SceneBuilder soundRoom(ViroContext viroContext, Vector size, AudioMaterial wall,
                                       AudioMaterial ceiling, AudioMaterial floor) {
@@ -533,7 +544,9 @@ public class Scene {
         }
 
         /**
-         * Returns the built {@link Scene} object
+         * Returns the built {@link Scene} object.
+         *
+         * @return The build Scene.
          */
         public R build() {
             return scene;

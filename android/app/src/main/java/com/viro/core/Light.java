@@ -136,13 +136,13 @@ public abstract class Light {
 // | LightBuilder abstract class for Light
 // +---------------------------------------------------------------------------+
     /**
-     * LightBuilder abstract class for building subclasses of {@link Light}
+     * LightBuilder abstract class for building subclasses of {@link Light}.
      */
     public static abstract class LightBuilder<R extends Light, B extends LightBuilder<R, B>> {
         private R light;
 
         /**
-         * Refer to {@link Light#setInfluenceBitMask(int)}
+         * Refer to {@link Light#setInfluenceBitMask(int)}.
          */
         public LightBuilder influenceBitMask(int bitMask) {
             light.setInfluenceBitMask(bitMask);
@@ -150,7 +150,9 @@ public abstract class Light {
         }
 
         /**
-         * Refer to {@link Light#setInfluenceBitMask(int)}
+         * Refer to {@link Light#setInfluenceBitMask(int)}.
+         *
+         * @return This builder.
          */
         public LightBuilder intensity(float intensity) {
             light.setIntensity(intensity);
@@ -158,7 +160,9 @@ public abstract class Light {
         }
 
         /**
-         * Refer to {@link Light#setColor(long)}
+         * Refer to {@link Light#setColor(long)}.
+         *
+         * @return This builder.
          */
         public LightBuilder color(long color) {
             light.setColor(color);
@@ -166,7 +170,9 @@ public abstract class Light {
         }
 
         /**
-         * Returns the built subclass of {@link Light}
+         * Returns the built subclass of {@link Light}.
+         *
+         * @return The built Light.
          */
         public R build() {
             return light;
