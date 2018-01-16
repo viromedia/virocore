@@ -70,13 +70,11 @@ android {
         }
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
-    testOptions {
-        unitTests.all {
-            testLogging {
-                events "passed", "skipped", "failed", "standardOut", "standardError"
-                outputs.upToDateWhen { false }
-                showStandardStreams = true
-            }
+    tasks.withType(Test) {
+        testLogging {
+            exceptionFormat "full"
+            events "started", "skipped", "passed", "failed"
+            showStandardStreams true
         }
     }
     // Keep the following configuration in order to target Java 8.
@@ -98,7 +96,7 @@ dependencies {
     // testing dependencies
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'org.awaitility:awaitility:3.0.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
 }

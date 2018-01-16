@@ -43,7 +43,7 @@ import com.viro.core.TouchState;
 import com.viromedia.releasetest.BuildConfig;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 
@@ -69,7 +69,7 @@ public abstract class ViroBaseTest {
     private static final String TAG = ViroBaseTest.class.getName();
     private static final String TEST_PASSED_TAG = "testPassed";
     private static final String TEST_FAILED_TAG = "testFailed";
-    private static final Integer TEST_FAILED = 1;
+    private static final Integer TEST_FAILED = -1;
     private static final Integer TEST_PASSED = 1;
     // TODO This is this large just for testing
     private static final Integer TEST_MAX_DURATION_SEC = 120;
@@ -103,6 +103,7 @@ public abstract class ViroBaseTest {
         } else {
             mScene = new Scene();
         }
+
         createBaseTestScene();
         configureTestScene();
         mViroView.setScene(mScene);
@@ -218,6 +219,7 @@ public abstract class ViroBaseTest {
             }
         });
     }
+
     protected void assertPass(final String expectedMessage) {
 
         mTestButtonsClicked.set(false);
@@ -251,11 +253,6 @@ public abstract class ViroBaseTest {
         } catch(Exception e) {
             Log.e(TAG, "Exception running mutable test method", e);
         }
-    }
-
-    @After
-    public void tearDown() throws InterruptedException {
-
     }
 
     protected Bitmap getBitmapFromAssets(final Context context, final String filePath) {

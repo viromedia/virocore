@@ -2,6 +2,7 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.test.annotation.UiThreadTest;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.Animation;
@@ -12,12 +13,15 @@ import com.viro.core.Text;
 import com.viro.core.Vector;
 
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Created by vadvani on 11/2/17.
  */
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Viro3DObjectTest extends ViroBaseTest {
     private Object3D mObject3D;
     private Animation mAnimation;
@@ -34,15 +38,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     @Test
-    public void test3DObject() {
-        testLoadModelFBX();
-        testFBXAnimPause();
-        testFBXAnimStop();
-        testLoadModelOBJ();
-        testLoadModelError();
-    }
-
-    private void testLoadModelFBX() {
+    @UiThreadTest
+    public void stage1_testLoadModelFBX() {
         mObject3D.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
@@ -64,7 +61,9 @@ public class Viro3DObjectTest extends ViroBaseTest {
         assertPass("Star model loads and begins to animate.");
     }
 
-    private void testFBXAnimPause() {
+    @Test
+    @UiThreadTest
+    public void stage2_testFBXAnimPause() {
         mMutableTestMethod = () -> {
             if(!mIsAnimPaused) {
                 mAnimation.pause();
@@ -84,13 +83,17 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
     }
 
-    private void testFBXAnimStop() {
+    @Test
+    @UiThreadTest
+    public void stage3_testFBXAnimStop() {
         mMutableTestMethod = null;
         mAnimation.stop();
         assertPass("FBX animation stops.");
     }
 
-    private void testLoadModelOBJ() {
+    @Test
+    @UiThreadTest
+    public void stage4_testLoadModelOBJ() {
         mObject3D.setPosition(new Vector(0, 0, -11));
         mObject3D.setScale(new Vector(0.04f, 0.04f, 0.04f));
         mObject3D.loadModel((Uri.parse("file:///android_asset/male02.obj")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
@@ -108,7 +111,9 @@ public class Viro3DObjectTest extends ViroBaseTest {
         assertPass("Tom Cruise lookalike model loads and displays.");
     }
 
-    private void testLoadModelError() {
+    @Test
+    @UiThreadTest
+    public void stage5_testLoadModelError() {
         mObject3D.loadModel((Uri.parse("file:///android_asset/momentslogo.pong")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {

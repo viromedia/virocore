@@ -43,7 +43,12 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         Fabric.with(this, new Crashlytics());
         System.out.println("onCreate called");
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            setContentView(R.layout.activity_main_gvr_vr_enabled);
+            if (BuildConfig.VR_ENABLED == 1) {
+                setContentView(R.layout.activity_main_gvr_vr_enabled);
+            }
+            if (BuildConfig.VR_ENABLED == 0) {
+                setContentView(R.layout.activity_main_gvr_vr_disabled);
+            }
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             setContentView(R.layout.activity_main_ovr);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
@@ -60,10 +65,13 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
             mViroView.setVRModeEnabled(BuildConfig.VR_ENABLED == 1);
         }
 
-        LayoutInflater inflater = LayoutInflater.from(this);
+//        LayoutInflater inflater = LayoutInflater.from(this);
 
-        mThumbsUp = (ImageView) findViewById(R.id.thumbsUp);
-        mThumbsDown = (ImageView) findViewById(R.id.thumbsDown);
+        if (BuildConfig.VR_ENABLED == 0) {
+
+            mThumbsUp = (ImageView) findViewById(R.id.thumbsUp);
+            mThumbsDown = (ImageView) findViewById(R.id.thumbsDown);
+        }
 
         mHandler = new Handler(getMainLooper());
     }

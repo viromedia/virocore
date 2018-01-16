@@ -56,7 +56,10 @@ platform :android do
     gradle(task: "assembleRelease")
   end
 
-
+  # This block contains all the lanes to run virocore releasetests and memoryleaktests
+  lane :run_releasetest do |options|
+    gradle(task: ":releaseTest:connectedSceneDebugAndroidTest")
+  end
   after_all do |lane|
     # This block is called, only if the executed lane was successful
 

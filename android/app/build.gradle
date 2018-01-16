@@ -21,7 +21,6 @@ android {
             abiFilters 'armeabi-v7a'
         }
     }
-    publishNonDefault true
 
     buildTypes {
         release {

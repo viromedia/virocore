@@ -53,7 +53,13 @@ public class ViroActivityTestRule<T extends Activity> extends ActivityTestRule {
 
         // Fake the activity to be destroyed. The new ActivityTestRule does not exeercise
         // the complete Android Lifecycle from onCreate -> onDestroy
-        viroView.onActivityStopped(activity);
-        viroView.onActivityDestroyed(activity);
+        try {
+            runOnUiThread(() -> {
+                viroView.onActivityStopped(activity);
+                viroView.onActivityDestroyed(activity);
+            });
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 }

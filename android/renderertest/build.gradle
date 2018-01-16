@@ -66,13 +66,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':arcore_client')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':arcore_client')
     implementation project(':app')
-    compile project(':libs:gvr')
+    implementation project(':libs:gvr')
     implementation project(':app')
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    implementation 'com.android.support:appcompat-v7:25.0.0'
+    implementation ('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
 }
