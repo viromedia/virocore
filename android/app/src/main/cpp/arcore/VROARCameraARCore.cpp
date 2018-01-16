@@ -17,9 +17,8 @@
 #include "VROMatrix4f.h"
 #include "VROARSessionARCore.h"
 
-VROARCameraARCore::VROARCameraARCore(jni::Object<arcore::Frame> frame, std::shared_ptr<VROARSessionARCore> session) :
-    _session(session) {
-    _frame = frame.NewGlobalRef(*VROPlatformGetJNIEnv());
+VROARCameraARCore::VROARCameraARCore(jni::Object<arcore::Frame> frame) {
+    _frame = frame.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
 
     VROMatrix4f viewMatrix = arcore::frame::getViewMatrix(frame);
     VROMatrix4f cameraMatrix = viewMatrix.invert();
@@ -51,7 +50,7 @@ VROARCameraARCore::VROARCameraARCore(jni::Object<arcore::Frame> frame, std::shar
 }
 
 VROARCameraARCore::~VROARCameraARCore() {
-    
+    _frame.release();
 }
 
 VROARTrackingState VROARCameraARCore::getTrackingState() const {

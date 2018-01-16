@@ -19,12 +19,12 @@ VROARFrameARCore::VROARFrameARCore(jni::Object<arcore::Frame> frameJNI,
     _session(session),
     _viewport(viewport) {
 
-    _frameJNI = frameJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
-    _camera = std::make_shared<VROARCameraARCore>(frameJNI, session);
+    _frameJNI = frameJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
+    _camera = std::make_shared<VROARCameraARCore>(frameJNI);
 }
 
 VROARFrameARCore::~VROARFrameARCore() {
-    
+    _frameJNI.release();
 }
 
 double VROARFrameARCore::getTimestamp() const {

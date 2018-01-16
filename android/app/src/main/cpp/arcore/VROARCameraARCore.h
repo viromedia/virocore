@@ -18,7 +18,7 @@ enum class VROCameraOrientation;
 class VROARCameraARCore : public VROARCamera {
 public:
     
-    VROARCameraARCore(jni::Object<arcore::Frame> frame, std::shared_ptr<VROARSessionARCore> session);
+    VROARCameraARCore(jni::Object<arcore::Frame> frame);
     virtual ~VROARCameraARCore();
     
     VROARTrackingState getTrackingState() const;
@@ -32,8 +32,7 @@ public:
     
 private:
     
-    std::shared_ptr<VROARSessionARCore> _session;
-    jni::UniqueObject<arcore::Frame> _frame;
+    jni::UniqueWeakObject <arcore::Frame> _frame;
 
     VROVector3f _position;
     VROMatrix4f _rotation;

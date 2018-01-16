@@ -28,7 +28,7 @@ VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
     _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),
     _updateMode(arcore::config::UpdateMode::Blocking),
     _cameraTextureId(0) {
-    _sessionJNI = sessionJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
+    _sessionJNI = sessionJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
     _viroViewJNI = viroViewJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
 }
 
@@ -54,7 +54,8 @@ void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
- 
+    _sessionJNI.release();
+    _viroViewJNI.release();
 }
 
 #pragma mark - VROARSession implementation

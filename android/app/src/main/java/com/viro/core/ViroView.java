@@ -144,7 +144,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
          */
         mCurrentScene = null;
         mDestroyed = true;
-        mNativeViroContext.dispose();
+        mNativeViroContext = null;
         mNativeRenderer.destroy();
 
         Activity activity = mWeakActivity.get();
