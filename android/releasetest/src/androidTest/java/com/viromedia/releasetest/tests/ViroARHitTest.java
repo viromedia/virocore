@@ -38,6 +38,7 @@ public class ViroARHitTest extends ViroBaseTest {
 
     @Test
     public void testARHitTest() {
+        testARCameraHitTest();
         testPerformARHitTestWithRay();
         testPerformARHitTestWithPosition();
         testPerformARHitTest();
@@ -66,6 +67,28 @@ public class ViroARHitTest extends ViroBaseTest {
         };
 
         assertPass("Should see rendered results from AR HIT with ray (blue balls).");
+    }
+
+    private void testARCameraHitTest() {
+        mViewARCore.setCameraARHitTestListener(new ARHitTestListener() {
+            @Override
+            public void onHitTestFinished(ARHitTestResult[] results) {
+                for(ARHitTestResult result: results) {
+                    Sphere sphere = new Sphere(.1f);
+                    Material material = new Material();
+                    material.setLightingModel(Material.LightingModel.BLINN);
+                    material.setDiffuseColor(Color.RED);
+                    sphere.setMaterials(Arrays.asList(material));
+                    Node nodeSphere = new Node();
+                    nodeSphere.setPosition(result.getPosition());
+                    nodeSphere.setGeometry(sphere);
+                    mScene.getRootNode().addChildNode(nodeSphere);
+                }
+            }
+        });
+
+        assertPass("Should see rendered results from Camera AR HIT Test in Red.");
+
     }
 
     private void testPerformARHitTestWithPosition() {
