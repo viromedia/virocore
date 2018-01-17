@@ -103,7 +103,6 @@ public class ViroViewScene extends ViroView {
     private GLTextureView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private RendererStartListener mRenderStartListener = null;
     private PlatformUtil mPlatformUtil;
     private boolean mActivityPaused = true;
     private ViroMediaRecorder mMediaRecorder;
