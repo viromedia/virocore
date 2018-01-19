@@ -180,6 +180,8 @@
 		8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */; };
 		8F3C75161FB608B60054639C /* VROSceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C75151FB608B60054639C /* VROSceneController.cpp */; };
 		8F3C75181FB7B6F80054639C /* VROARSceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C75171FB7B6F80054639C /* VROARSceneController.cpp */; };
+		8F3CE70B201113B900FF0214 /* VROPBRDirectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */; };
+		8F3CE70C201113B900FF0214 /* VROPBRDirectTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3CE70A201113B900FF0214 /* VROPBRDirectTest.h */; };
 		8F4054191F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */; };
 		8F40541A1F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */; };
 		8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */; };
@@ -912,6 +914,8 @@
 		8F3C75151FB608B60054639C /* VROSceneController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROSceneController.cpp; sourceTree = "<group>"; };
 		8F3C75171FB7B6F80054639C /* VROARSceneController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARSceneController.cpp; sourceTree = "<group>"; };
 		8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pbr_fsh.glsl; sourceTree = "<group>"; };
+		8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPBRDirectTest.cpp; sourceTree = "<group>"; };
+		8F3CE70A201113B900FF0214 /* VROPBRDirectTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPBRDirectTest.h; sourceTree = "<group>"; };
 		8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROGaussianBlurRenderPass.cpp; sourceTree = "<group>"; };
 		8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROGaussianBlurRenderPass.h; sourceTree = "<group>"; };
 		8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = portal_ring.obj; path = ViroSample/portal_ring.obj; sourceTree = "<group>"; };
@@ -2241,6 +2245,8 @@
 				8FD2A50F1F81323500E831A6 /* VROBoxTest.cpp */,
 				8F3AF9911F95024D0087BA73 /* VROPolylineTest.h */,
 				8F3AF9901F95024D0087BA73 /* VROPolylineTest.cpp */,
+				8F3CE70A201113B900FF0214 /* VROPBRDirectTest.h */,
+				8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2514,6 +2520,7 @@
 				A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */,
 				8F1E01001FD10D7D00DF9068 /* VROViewControllerGVR.h in Headers */,
 				A5EC659F1EBD34C000FE220E /* VROPhysicsWorld.h in Headers */,
+				8F3CE70C201113B900FF0214 /* VROPBRDirectTest.h in Headers */,
 				A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */,
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
 				8F828EF61FAD07660068159E /* VROARDeclarativeSession.h in Headers */,
@@ -3263,6 +3270,7 @@
 				8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */,
 				8FD4DF061C18ED3C003DC425 /* VROCamera.cpp in Sources */,
 				8F56AEA91DE76E1D00DD65B6 /* VROText.cpp in Sources */,
+				8F3CE70B201113B900FF0214 /* VROPBRDirectTest.cpp in Sources */,
 				8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */,
 				8F3C75181FB7B6F80054639C /* VROARSceneController.cpp in Sources */,
 				A59E113B1F5396BF00EB2CEB /* VROPostProcessEffectFactory.cpp in Sources */,
