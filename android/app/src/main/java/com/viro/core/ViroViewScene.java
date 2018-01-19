@@ -192,7 +192,7 @@ public class ViroViewScene extends ViroView {
         mSurfaceView.setEGLContextClientVersion(3);
         mSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
         mSurfaceView.setPreserveEGLContextOnPause(true);
-
+        mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLTextureWindowSurfaceFactory());
         mSurfaceView.setRenderer(new ViroARRenderer(this));
         mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
