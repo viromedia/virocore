@@ -1,7 +1,10 @@
 ViroCore
 =====================
 
-Viro Media is a platform for developers to rapidly build augmented reality (AR) and virtual reality (VR) experiences. With ViroCore, developers can develop in Android with Java and deploy onto ARCore supported phones for AR and Google Daydream, Samsung, GearVR, Google Cardboard for VR. ViroCore can also be used for apps that want a lightweight easy to use 3d library for Android without using AR/VR.
+ViroCore is SceneKit for Android, a 3D framework for developers to build immersive applications using Java. ViroCore combines a high-performance rendering engine with a descriptive API for creating 3D/AR/VR apps. While lower-level APIs like OpenGL require you to learn and precisely implement rendering algorithms, ViroCore requires only high-level scene descriptions and the events and interactions you desire.
+
+Platforms supported: 
+Android, ARCore, Google Daydream, Samsung GearVR, Google Cardboard VR
 
 [Sign up](https://viromedia.com/signup) for an API key. The platform is free to use with no limits on distribution.
 
