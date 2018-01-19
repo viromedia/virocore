@@ -1,7 +1,7 @@
 ViroCore
 =====================
 
-Viro Media is a platform for developers to rapidly build augmented reality (AR) and virtual reality (VR) experiences. Developers can develop in Android with Java and deploy onto Google Daydream, Samsung, GearVR, Google Cardboard.
+Viro Media is a platform for developers to rapidly build augmented reality (AR) and virtual reality (VR) experiences. With ViroCore, developers can develop in Android with Java and deploy onto ARCore supported phones for AR and Google Daydream, Samsung, GearVR, Google Cardboard for VR. ViroCore can also be used for apps that want a lightweight easy to use 3d library for Android without using AR/VR.
 
 [Sign up](https://viromedia.com/signup) for an API key. The platform is free to use with no limits on distribution.
 
@@ -24,3 +24,20 @@ Viro Media Website: https://viromedia.com/
 ViroCore Documentation: https://virocore.viromedia.com/
 
 API Reference(Java Docs): https://developer.viromedia.com/
+
+Join our Slack group [here](https://join.slack.com/t/virodevelopers/shared_invite/enQtMjk2MzY4ODQ0NDM1LTVjZGEwZjJhNWJiZDVmZWE4MWI3ODg3ZGZhMzcyNWNlZDlhOTZlMDcyOTcwZWRjNDFmMDdkNWFkOTNhMDI2MDE)!
+
+
+## Sample Code Overview
+
+### [AR Hit Test Sample](https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARHitTestDemoActivity.java)
+
+<a href="https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARHitTestDemoActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ViroARHitTestDemoActivity.gif">
+</a>
+
+### [AR Planes Sample](https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARPlanesDemoActivity.java)
+
+<a href="https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARPlanesDemoActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ViroARPlanesDemoActivity.gif">
+</a>
