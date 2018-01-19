@@ -169,32 +169,24 @@ std::shared_ptr<VROTexture> VROTestUtil::loadDiffuseTexture(std::string texture,
 }
 
 std::shared_ptr<VROTexture> VROTestUtil::loadSpecularTexture(std::string texture) {
-    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
-    
-#if VRO_PLATFORM_IOS
-    return std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
-                                        std::make_shared<VROImageiOS>([UIImage imageNamed:[NSString stringWithUTF8String:texture.c_str()]], format));
-#else
-    if (texture.find(".") == std::string::npos) {
-        texture = texture + ".png";
-    }
-    return std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
-                                        std::make_shared<VROImageAndroid>(texture.c_str(), format));
-
-#endif
+    return loadTexture(texture, true);
 }
 
 std::shared_ptr<VROTexture> VROTestUtil::loadNormalTexture(std::string texture) {
+    return loadTexture(texture, false);
+}
+
+std::shared_ptr<VROTexture> VROTestUtil::loadTexture(std::string texture, bool sRGB) {
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
 #if VRO_PLATFORM_IOS
-    return std::make_shared<VROTexture>(format, false, VROMipmapMode::Runtime,
+    return std::make_shared<VROTexture>(format, sRGB, VROMipmapMode::Runtime,
                                         std::make_shared<VROImageiOS>([UIImage imageNamed:[NSString stringWithUTF8String:texture.c_str()]], format));
 #else
     if (texture.find(".") == std::string::npos) {
         texture = texture + ".png";
     }
-    return std::make_shared<VROTexture>(format, false, VROMipmapMode::Runtime,
+    return std::make_shared<VROTexture>(format, sRGB, VROMipmapMode::Runtime,
                                         std::make_shared<VROImageAndroid>(texture.c_str(), format));
 #endif
 }

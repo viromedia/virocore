@@ -582,6 +582,13 @@
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */; };
+		8FEACED82012605F0082D18B /* pbr_sample_roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED32012605E0082D18B /* pbr_sample_roughness.png */; };
+		8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED42012605F0082D18B /* pbr_sample_ao.png */; };
+		8FEACEDA2012605F0082D18B /* pbr_sample_albedo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED52012605F0082D18B /* pbr_sample_albedo.png */; };
+		8FEACEDB2012605F0082D18B /* pbr_sample_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED62012605F0082D18B /* pbr_sample_normal.png */; };
+		8FEACEDC2012605F0082D18B /* pbr_sample_metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED72012605F0082D18B /* pbr_sample_metallic.png */; };
+		8FEACEE0201260C80082D18B /* VROPBRTexturedTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEDE201260B70082D18B /* VROPBRTexturedTest.h */; };
+		8FEACEE1201262EE0082D18B /* VROPBRTexturedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */; };
 		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
 		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1325,6 +1332,13 @@
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
 		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
+		8FEACED32012605E0082D18B /* pbr_sample_roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_roughness.png; path = ViroSample/pbr_sample_roughness.png; sourceTree = "<group>"; };
+		8FEACED42012605F0082D18B /* pbr_sample_ao.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_ao.png; path = ViroSample/pbr_sample_ao.png; sourceTree = "<group>"; };
+		8FEACED52012605F0082D18B /* pbr_sample_albedo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_albedo.png; path = ViroSample/pbr_sample_albedo.png; sourceTree = "<group>"; };
+		8FEACED62012605F0082D18B /* pbr_sample_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_normal.png; path = ViroSample/pbr_sample_normal.png; sourceTree = "<group>"; };
+		8FEACED72012605F0082D18B /* pbr_sample_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_metallic.png; path = ViroSample/pbr_sample_metallic.png; sourceTree = "<group>"; };
+		8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPBRTexturedTest.cpp; sourceTree = "<group>"; };
+		8FEACEDE201260B70082D18B /* VROPBRTexturedTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPBRTexturedTest.h; sourceTree = "<group>"; };
 		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
@@ -2247,6 +2261,8 @@
 				8F3AF9901F95024D0087BA73 /* VROPolylineTest.cpp */,
 				8F3CE70A201113B900FF0214 /* VROPBRDirectTest.h */,
 				8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */,
+				8FEACEDE201260B70082D18B /* VROPBRTexturedTest.h */,
+				8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2296,6 +2312,11 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FEACED52012605F0082D18B /* pbr_sample_albedo.png */,
+				8FEACED42012605F0082D18B /* pbr_sample_ao.png */,
+				8FEACED72012605F0082D18B /* pbr_sample_metallic.png */,
+				8FEACED62012605F0082D18B /* pbr_sample_normal.png */,
+				8FEACED32012605E0082D18B /* pbr_sample_roughness.png */,
 				8FD2A5951F8694F800E831A6 /* wooden.vhd */,
 				8FD2A5931F868B1200E831A6 /* sunrise.vhd */,
 				8FD2A5671F848E2800E831A6 /* interior_viro.jpg */,
@@ -2557,6 +2578,7 @@
 				8FA2E15F1C45DD270070DB26 /* VROReticle.h in Headers */,
 				8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */,
 				8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */,
+				8FEACEE0201260C80082D18B /* VROPBRTexturedTest.h in Headers */,
 				8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */,
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
 				8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */,
@@ -2959,6 +2981,8 @@
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
 				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
+				8FEACEDB2012605F0082D18B /* pbr_sample_normal.png in Resources */,
+				8FEACEDA2012605F0082D18B /* pbr_sample_albedo.png in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
@@ -2969,6 +2993,7 @@
 				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
 				8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */,
+				8FEACEDC2012605F0082D18B /* pbr_sample_metallic.png in Resources */,
 				8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */,
 				8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */,
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
@@ -3013,6 +3038,7 @@
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
 				8FCED0801EBBD35200C19BCA /* Sven_Hair_Normal.png in Resources */,
+				8FEACED82012605F0082D18B /* pbr_sample_roughness.png in Resources */,
 				8FCED07B1EBBD35200C19BCA /* Sven_Eye_Color.png in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
@@ -3027,6 +3053,7 @@
 				8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */,
 				8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */,
 				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
+				8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */,
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
 				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
@@ -3431,6 +3458,7 @@
 				8F53C8F81E00F03E008314B4 /* tiny_obj_loader.cc in Sources */,
 				8F129F951ECB41EE00341D83 /* VROSkeletalAnimation.cpp in Sources */,
 				8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */,
+				8FEACEE1201262EE0082D18B /* VROPBRTexturedTest.cpp in Sources */,
 				8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */,
 				8FD2A5541F813C4100E831A6 /* VROParticleTest.cpp in Sources */,
 				8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */,

@@ -35,6 +35,7 @@ public:
                                                           VROStereoMode stereo = VROStereoMode::None);
     static std::shared_ptr<VROTexture> loadSpecularTexture(std::string texture);
     static std::shared_ptr<VROTexture> loadNormalTexture(std::string texture);
+    static std::shared_ptr<VROTexture> loadTexture(std::string texture, bool sRGB);
     
     static std::shared_ptr<VROTexture> loadHDRTexture(std::string texture);
     

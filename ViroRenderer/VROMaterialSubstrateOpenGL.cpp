@@ -210,6 +210,15 @@ void VROMaterialShaderBinding::loadTextures() {
         else if (sampler == "reflect_texture") {
             _textures.push_back(_material.getReflective().getTexture());
         }
+        else if (sampler == "roughness_map") {
+            _textures.push_back(_material.getRoughness().getTexture());
+        }
+        else if (sampler == "metalness_map") {
+            _textures.push_back(_material.getMetalness().getTexture());
+        }
+        else if (sampler == "ao_map") {
+            _textures.push_back(_material.getAmbientOcclusion().getTexture());
+        }
     }
 }
 

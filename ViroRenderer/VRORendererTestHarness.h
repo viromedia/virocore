@@ -36,6 +36,7 @@ enum class VRORendererTestType {
     Perf,
     Polyline,
     PBRDirect,
+    PBRTextured,
     NumTests,
 };
 
