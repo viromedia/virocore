@@ -646,8 +646,12 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRSurfaceModifier() 
      */
     if (!sPBRSurfaceModifier) {
         std::vector<std::string> modifierCode =  {
+            "highp vec3 albedo = _surface.diffuse_color.xyz;",
             "highp vec3 F0 = vec3(0.04);",
-            "F0 = mix(F0, _surface.diffuse_color.xyz, _surface.metalness);",
+            "F0 = mix(F0, albedo, _surface.metalness);",
+            "highp vec3 V = _surface.view;",
+            "highp vec3 N = _surface.normal;",
+            
         };
         sPBRSurfaceModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                   modifierCode);
@@ -664,12 +668,13 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
         std::vector<std::string> modifierCode = {
             // Per-light radiance
             "highp vec3 L = _light.surface_to_light;",
-            "highp vec3 V = _surface.view;",
-            "highp vec3 N = _surface.normal;",
             "highp vec3 H = normalize(V + L);",
             
+            // Compute inverse-square falloff (temporary, we should use the light's parameterized falloff)
             "highp float distance = length(_light.position - _surface.position);",
             "_light.attenuation = 1.0 / (distance * distance);"
+            
+            // Compute the radiance
             "highp vec3 radiance = _light.color * _light.attenuation;",
             
             // Cook-Torrance BRDF
@@ -677,9 +682,9 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
             "highp float G   = geometry_smith(N, V, L, _surface.roughness);",
             "highp vec3  F   = fresnel_schlick(clamp(dot(H, V), 0.0, 1.0), F0);",
             
-            "highp vec3 nominator = NDF * G * F;",
-            "highp float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);",
-            "highp vec3 specular = nominator / max(denominator, 0.001);",
+            "highp vec3  nominator = NDF * G * F;",
+            "highp float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;",
+            "highp vec3  specular = nominator / denominator;",
             
             // kS (specular component) is equal to fresnel
             "highp vec3 kS = F;",
@@ -691,7 +696,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
             // Apply the incidence of the light
             "highp float NdotL = max(dot(N, L), 0.0);",
             // Add the outgoing radiance to the diffuse lighting contribution term
-            "_lightingContribution.diffuse = (kD * _surface.diffuse_color.xyz / PI + specular);",
+            "_lightingContribution.diffuse += (kD * albedo / PI + specular) * radiance * NdotL;",
         };
         
         sPBRDirectLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
@@ -704,10 +709,8 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRFragmentModifier() {
     if (!sPBRFragmentModifier) {
         std::vector<std::string> modifierCode=  {
-            "highp vec3 pbr_ambient = vec3(0.03) * _surface.diffuse_color.xyz * _surface.ao;",
+            "highp vec3 pbr_ambient = vec3(0.03) * albedo * _surface.ao;",
             "highp vec3 rgb_color = pbr_ambient + _diffuse;",
-            "rgb_color = rgb_color / (rgb_color + vec3(1.0));",
-            
             "_output_color = vec4(rgb_color, _output_color.a);",
         };
         sPBRFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,

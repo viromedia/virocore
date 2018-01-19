@@ -25,7 +25,7 @@ highp float distribution_ggx(highp vec3 N, highp vec3 H, highp float roughness) 
     highp float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
     
-    return nom / max(denom, 0.001);
+    return nom / denom;
 }
 
 /*
