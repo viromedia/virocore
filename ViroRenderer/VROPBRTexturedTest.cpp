@@ -21,7 +21,7 @@ VROPBRTexturedTest::~VROPBRTexturedTest() {
 }
 
 void VROPBRTexturedTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, std::shared_ptr<VRODriver> driver) {
-    _sceneController = std::make_shared<VROSceneController>();
+    _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
@@ -49,13 +49,8 @@ void VROPBRTexturedTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchr
     // Render an array of spheres, varying roughness and metalness
     for (int row = 0; row < rows; ++row) {
         float radius = 1;
-        //float metalness = (float) row / (float) rows;
-        
+
         for (int col = 0; col < columns; ++col) {
-            // Clamp the roughness to [0.05, 1.0] as perfectly smooth surfaces (roughness of 0.0)
-            // tend to look off on direct lighting
-            //float roughness = VROMathClamp((float) col / (float) columns, 0.05, 1.0);
-            
             std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(radius, 20, 20, true);
             const std::shared_ptr<VROMaterial> &material = sphere->getMaterials().front();
             material->getDiffuse().setTexture(albedo);

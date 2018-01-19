@@ -21,7 +21,7 @@ VROPBRDirectTest::~VROPBRDirectTest() {
 }
 
 void VROPBRDirectTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, std::shared_ptr<VRODriver> driver) {
-    _sceneController = std::make_shared<VROSceneController>();
+    _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();

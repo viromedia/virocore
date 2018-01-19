@@ -151,8 +151,10 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
                 material->getReflective().setTexture(texture);
             } else if (VROStringUtil::strcmpinsensitive(strName, "emissionTexture")) {
                 material->getEmission().setTexture(texture);
-            } else if (VROStringUtil::strcmpinsensitive(strName, "transparentTexture")) {
-                material->getTransparent().setTexture(texture);
+            } else if (VROStringUtil::strcmpinsensitive(strName, "roughnessTexture")) {
+                material->getRoughness().setTexture(texture);
+            } else if (VROStringUtil::strcmpinsensitive(strName, "metalnessTexture")) {
+                material->getMetalness().setTexture(texture);
             } else if (VROStringUtil::strcmpinsensitive(strName, "multiplyTexture")) {
                 material->getMultiply().setTexture(texture);
             } else if (VROStringUtil::strcmpinsensitive(strName, "ambientOcclusionTexture")) {
@@ -186,8 +188,6 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
                 material->getReflective().setColor(vecColor);
             } else if (VROStringUtil::strcmpinsensitive(strName, "emissionColor")) {
                 material->getEmission().setColor(vecColor);
-            } else if (VROStringUtil::strcmpinsensitive(strName, "transparentColor")) {
-                material->getTransparent().setColor(vecColor);
             } else if (VROStringUtil::strcmpinsensitive(strName, "multiplyColor")) {
                 material->getMultiply().setColor(vecColor);
             } else if (VROStringUtil::strcmpinsensitive(strName, "ambientOcclusionColor")) {
