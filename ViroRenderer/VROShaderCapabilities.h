@@ -26,6 +26,7 @@ struct VROMaterialShaderCapabilities {
     bool specularTexture;
     bool normalTexture;
     bool reflectiveTexture;
+    bool roughnessMap, metalnessMap, aoMap;
     bool bloom;
     bool receivesShadows;
     std::string additionalModifierKeys;

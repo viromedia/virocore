@@ -26,9 +26,16 @@ static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
 static std::shared_ptr<VROShaderModifier> sSpecularTextureModifier;
 static std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
 static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
+static std::shared_ptr<VROShaderModifier> sRoughnessTextureModifier;
+static std::shared_ptr<VROShaderModifier> sMetalnessTextureModifier;
+static std::shared_ptr<VROShaderModifier> sAOTextureModifier;
+
 static std::shared_ptr<VROShaderModifier> sLambertLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPhongLightingModifier;
 static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
+static std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
+static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
+static std::shared_ptr<VROShaderModifier> sPBRFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
@@ -93,6 +100,9 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
     cap.specularTexture = false;
     cap.normalTexture = false;
     cap.reflectiveTexture = false;
+    cap.roughnessMap = false;
+    cap.metalnessMap = false;
+    cap.aoMap = false;
     cap.diffuseTextureStereoMode = VROStereoMode::None;
     cap.bloom = false;
     cap.receivesShadows = true;
@@ -107,6 +117,9 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
     VROMaterialVisual &specular   = material.getSpecular();
     VROMaterialVisual &normal     = material.getNormal();
     VROMaterialVisual &reflective = material.getReflective();
+    VROMaterialVisual &roughness = material.getRoughness();
+    VROMaterialVisual &metalness = material.getMetalness();
+    VROMaterialVisual &ao = material.getAmbientOcclusion();
     
     // Diffuse Map
     if (diffuse.getTextureType() == VROTextureType::Texture2D || diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
@@ -148,6 +161,17 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
         cap.reflectiveTexture = true;
     }
     
+    // PBR Maps
+    if (roughness.getTextureType() == VROTextureType::Texture2D) {
+        cap.roughnessMap = true;
+    }
+    if (metalness.getTextureType() == VROTextureType::Texture2D) {
+        cap.metalnessMap = true;
+    }
+    if (ao.getTextureType() == VROTextureType::Texture2D) {
+        cap.aoMap = true;
+    }
+    
     // Lighting Model. If we don't have a specular texture then we fall back to Lambert
     if (lightingModel == VROLightingModel::Constant) {
         cap.lightingModel = VROLightingModel::Constant;
@@ -170,6 +194,9 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
         else {
             cap.lightingModel = VROLightingModel::Phong;
         }
+    }
+    else if (lightingModel == VROLightingModel::PhysicallyBased) {
+        cap.lightingModel = VROLightingModel::PhysicallyBased;
     }
 
     // Shadows
@@ -256,10 +283,43 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         modifiers.push_back(createEGLImageModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
     
-    // Specular Map
-    if (materialCapabilities.specularTexture) {
-        samplers.push_back("specular_texture");
-        modifiers.push_back(createSpecularTextureModifier());
+    // PBR lighting model
+    if (materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased) {
+        if (materialCapabilities.roughnessMap) {
+            samplers.push_back("roughness_map");
+            modifiers.push_back(createRoughnessTextureModifier());
+        }
+        if (materialCapabilities.metalnessMap) {
+            samplers.push_back("metalness_map");
+            modifiers.push_back(createMetalnessTextureModifier());
+        }
+        if (materialCapabilities.aoMap) {
+            samplers.push_back("ao_map");
+            modifiers.push_back(createAOTextureModifier());
+        }
+        modifiers.push_back(createPBRSurfaceModifier());
+        modifiers.push_back(createPBRDirectLightingModifier());
+        modifiers.push_back(createPBRFragmentModifier());
+    }
+    
+    // All other lighting models
+    else {
+        // Specular Map
+        if (materialCapabilities.specularTexture) {
+            samplers.push_back("specular_texture");
+            modifiers.push_back(createSpecularTextureModifier());
+        }
+        
+        // Lighting Model modifiers
+        if (materialCapabilities.lightingModel == VROLightingModel::Lambert) {
+            modifiers.push_back(createLambertLightingModifier());
+        }
+        else if (materialCapabilities.lightingModel == VROLightingModel::Blinn) {
+            modifiers.push_back(createBlinnLightingModifier());
+        }
+        else if (materialCapabilities.lightingModel == VROLightingModel::Phong) {
+            modifiers.push_back(createPhongLightingModifier());
+        }
     }
     
     // Normal Map
@@ -272,17 +332,6 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     if (materialCapabilities.reflectiveTexture) {
         samplers.push_back("reflect_texture");
         modifiers.push_back(createReflectiveTextureModifier());
-    }
-    
-    // Lighting Model modifiers
-    if (materialCapabilities.lightingModel == VROLightingModel::Lambert) {
-        modifiers.push_back(createLambertLightingModifier());
-    }
-    else if (materialCapabilities.lightingModel == VROLightingModel::Blinn) {
-        modifiers.push_back(createBlinnLightingModifier());
-    }
-    else if (materialCapabilities.lightingModel == VROLightingModel::Phong) {
-        modifiers.push_back(createPhongLightingModifier());
     }
     
     // Shadow modifiers
@@ -328,7 +377,6 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createDiffuseTextureModifie
                                                                       modifierCode);
         sDiffuseTextureModifier->setName("diffuse");
     }
-    
     return sDiffuseTextureModifier;
 }
 
@@ -345,7 +393,6 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createSpecularTextureModifi
                                                                        modifierCode);
         sSpecularTextureModifier->setName("spec");
     }
-    
     return sSpecularTextureModifier;
 }
 
@@ -363,8 +410,46 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createNormalMapTextureModif
                                                                         modifierCode);
         sNormalMapTextureModifier->setName("normal");
     }
-    
     return sNormalMapTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createRoughnessTextureModifier() {
+    if (!sRoughnessTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform sampler2D roughness_map;",
+            "_surface.roughness = texture(roughness_map, _surface.diffuse_texcoord).r;"
+        };
+        sRoughnessTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                        modifierCode);
+        sRoughnessTextureModifier->setName("roughness");
+    }
+    return sRoughnessTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createMetalnessTextureModifier() {
+    if (!sMetalnessTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform sampler2D metalness_map;",
+            "_surface.metalness = texture(metalness_map, _surface.diffuse_texcoord).r;"
+        };
+        sMetalnessTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                        modifierCode);
+        sMetalnessTextureModifier->setName("metalness");
+    }
+    return sMetalnessTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createAOTextureModifier() {
+    if (!sAOTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform sampler2D ao_map;",
+            "_surface.ao = texture(ao_map, _surface.diffuse_texcoord).r;"
+        };
+        sAOTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                 modifierCode);
+        sAOTextureModifier->setName("diffuse");
+    }
+    return sAOTextureModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapGeometryModifier() {
@@ -553,6 +638,83 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBlinnLightingModifier
         sBlinnLightingModifier->setName("blinn");
     }
     return sBlinnLightingModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRSurfaceModifier() {
+    /*
+     Computes PBR values that apply to all lights.
+     */
+    if (!sPBRSurfaceModifier) {
+        std::vector<std::string> modifierCode =  {
+            "highp vec3 F0 = vec3(0.04);",
+            "F0 = mix(F0, _surface.diffuse_color.xyz, _surface.metalness);",
+        };
+        sPBRSurfaceModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                  modifierCode);
+        sPBRSurfaceModifier->setName("pbr_surface");
+    }
+    return sPBRSurfaceModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModifier() {
+    /*
+     Modifier that implements physically based lighting from direct light sources.
+     */
+    if (!sPBRDirectLightingModifier) {
+        std::vector<std::string> modifierCode = {
+            // Per-light radiance
+            "highp vec3 L = _light.surface_to_light;",
+            "highp vec3 V = _surface.view;",
+            "highp vec3 N = _surface.normal;",
+            "highp vec3 H = normalize(V + L);",
+            
+            "highp float distance = length(_light.position - _surface.position);",
+            "_light.attenuation = 1.0 / (distance * distance);"
+            "highp vec3 radiance = _light.color * _light.attenuation;",
+            
+            // Cook-Torrance BRDF
+            "highp float NDF = distribution_ggx(N, H, _surface.roughness);",
+            "highp float G   = geometry_smith(N, V, L, _surface.roughness);",
+            "highp vec3  F   = fresnel_schlick(clamp(dot(H, V), 0.0, 1.0), F0);",
+            
+            "highp vec3 nominator = NDF * G * F;",
+            "highp float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);",
+            "highp vec3 specular = nominator / max(denominator, 0.001);",
+            
+            // kS (specular component) is equal to fresnel
+            "highp vec3 kS = F;",
+            // kD (diffuse component) is derived from energy conservation
+            "highp vec3 kD = vec3(1.0) - kS;",
+            // Only non-metals have diffuse lighting
+            "kD *= (1.0 - _surface.metalness);",
+            
+            // Apply the incidence of the light
+            "highp float NdotL = max(dot(N, L), 0.0);",
+            // Add the outgoing radiance to the diffuse lighting contribution term
+            "_lightingContribution.diffuse = (kD * _surface.diffuse_color.xyz / PI + specular);",
+        };
+        
+        sPBRDirectLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
+                                                                         modifierCode);
+        sPBRDirectLightingModifier->setName("pbr_direct");
+    }
+    return sPBRDirectLightingModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRFragmentModifier() {
+    if (!sPBRFragmentModifier) {
+        std::vector<std::string> modifierCode=  {
+            "highp vec3 pbr_ambient = vec3(0.03) * _surface.diffuse_color.xyz * _surface.ao;",
+            "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+            "rgb_color = rgb_color / (rgb_color + vec3(1.0));",
+            
+            "_output_color = vec4(rgb_color, _output_color.a);",
+        };
+        sPBRFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                         modifierCode);
+        sPBRFragmentModifier->setName("pbr_frag");
+    }
+    return sPBRFragmentModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier(VROStereoMode currentStereoMode) {

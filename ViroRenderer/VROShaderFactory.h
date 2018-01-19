@@ -85,9 +85,16 @@ private:
     std::shared_ptr<VROShaderModifier> createSpecularTextureModifier();
     std::shared_ptr<VROShaderModifier> createNormalMapTextureModifier();
     std::shared_ptr<VROShaderModifier> createReflectiveTextureModifier();
+    std::shared_ptr<VROShaderModifier> createRoughnessTextureModifier();
+    std::shared_ptr<VROShaderModifier> createMetalnessTextureModifier();
+    std::shared_ptr<VROShaderModifier> createAOTextureModifier();
+    
     std::shared_ptr<VROShaderModifier> createLambertLightingModifier();
     std::shared_ptr<VROShaderModifier> createPhongLightingModifier();
     std::shared_ptr<VROShaderModifier> createBlinnLightingModifier();
+    std::shared_ptr<VROShaderModifier> createPBRSurfaceModifier();
+    std::shared_ptr<VROShaderModifier> createPBRDirectLightingModifier();
+    std::shared_ptr<VROShaderModifier> createPBRFragmentModifier();
     std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier(bool linearizeColor);
     std::shared_ptr<VROShaderModifier> createEGLImageModifier(bool linearizeColor);
     std::shared_ptr<VROShaderModifier> createShadowMapGeometryModifier();

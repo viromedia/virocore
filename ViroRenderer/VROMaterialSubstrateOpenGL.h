@@ -85,6 +85,9 @@ private:
     VROUniform *_diffuseIntensityUniform;
     VROUniform *_alphaUniform;
     VROUniform *_shininessUniform;
+    VROUniform *_roughnessUniform;
+    VROUniform *_metalnessUniform;
+    VROUniform *_aoUniform;
     
     VROUniform *_normalMatrixUniform;
     VROUniform *_modelMatrixUniform;

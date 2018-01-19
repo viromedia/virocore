@@ -515,6 +515,10 @@ void VROShaderProgram::addStandardUniforms() {
     addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
     addUniform(VROShaderProperty::Float, 1, "material_alpha");
     addUniform(VROShaderProperty::Float, 1, "material_shininess");
+    
+    addUniform(VROShaderProperty::Float, 1, "material_roughness");
+    addUniform(VROShaderProperty::Float, 1, "material_metalness");
+    addUniform(VROShaderProperty::Float, 1, "material_ao");
 }
 
 #pragma mark - Source Inflation and Shader Modifiers

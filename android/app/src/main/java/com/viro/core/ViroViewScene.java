@@ -198,7 +198,7 @@ public class ViroViewScene extends ViroView {
     }
 
     /**
-     * Set the background color of view. This is the color that will be rendered behind
+     * Set the background color of view. This is the color that will be rendered
      * behind the Viro scenegraph.
      *
      * @param color The {@link android.graphics.Color}'s int value.

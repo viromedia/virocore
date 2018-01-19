@@ -45,7 +45,8 @@ enum class VROLightingModel {
     Phong,
     Blinn,
     Lambert,
-    Constant
+    Constant,
+    PhysicallyBased
 };
 
 class VROLight;
@@ -115,6 +116,12 @@ public:
     VROMaterialVisual &getDiffuse() const {
         return *_diffuse;
     }
+    VROMaterialVisual &getRoughness() const {
+        return *_roughness;
+    }
+    VROMaterialVisual &getMetalness() const {
+        return *_metalness;
+    }
     VROMaterialVisual &getSpecular() const {
         return *_specular;
     }
@@ -126,9 +133,6 @@ public:
     }
     VROMaterialVisual &getEmission() const {
         return *_emission;
-    }
-    VROMaterialVisual &getTransparent() const {
-        return *_transparent;
     }
     VROMaterialVisual &getMultiply() const {
         return *_multiply;
@@ -298,16 +302,30 @@ private:
     uint32_t _materialId;
     
     /*
-     The visual properties associated with the material.
+     Properties used for PBR.
      */
     VROMaterialVisual *_diffuse;
-    VROMaterialVisual *_specular;
-    VROMaterialVisual *_normal;
-    VROMaterialVisual *_reflective;
-    VROMaterialVisual *_emission;
-    VROMaterialVisual *_transparent;
-    VROMaterialVisual *_multiply;
+    VROMaterialVisual *_roughness;
+    VROMaterialVisual *_metalness;
     VROMaterialVisual *_ambientOcclusion;
+    
+    /*
+     Properties used for standard lighting.
+     */
+    VROMaterialVisual *_specular;
+    VROMaterialVisual *_reflective;
+    
+    /*
+     Properties used for special effects.
+     */
+    VROMaterialVisual *_normal;
+    VROMaterialVisual *_emission;         // Unsupported (TODO VIRO-1188)
+    VROMaterialVisual *_multiply;         // Unsupported (TODO VIRO-1190)
+    
+    /*
+     Currently unsupported. This will be used to override the Scene's overall environment 
+     map with a material-specific environment map.
+     */
     VROMaterialVisual *_selfIllumination;
     
     /*

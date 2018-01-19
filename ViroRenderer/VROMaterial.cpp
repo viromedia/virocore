@@ -40,15 +40,19 @@ VROMaterial::VROMaterial() :
                                                      (int)VROTextureType::Texture2D |
                                                      (int)VROTextureType::TextureCube |
                                                      (int)VROTextureType::TextureEGLImage);
+    _roughness        = new VROMaterialVisual(*this, (int)VROTextureType::None |
+                                                     (int)VROTextureType::Texture2D);
+    _metalness        = new VROMaterialVisual(*this, (int)VROTextureType::None |
+                                                     (int)VROTextureType::Texture2D);
     _specular         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
     _normal           = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
     _reflective       = new VROMaterialVisual(*this, (int)VROTextureType::TextureCube);
+    _ambientOcclusion = new VROMaterialVisual(*this, (int)VROTextureType::None |
+                                                     (int)VROTextureType::Texture2D);
         
     // TODO These are not yet implemented
     _emission         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
-    _transparent      = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
     _multiply         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
-    _ambientOcclusion = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
     _selfIllumination = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
         
     ALLOCATION_TRACKER_ADD(Materials, 1);
@@ -72,11 +76,12 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
  _substrate(nullptr) {
  
      _diffuse = new VROMaterialVisual(*material->_diffuse);
+     _roughness = new VROMaterialVisual(*material->_roughness);
+     _metalness = new VROMaterialVisual(*material->_metalness);
      _specular = new VROMaterialVisual(*material->_specular);
      _normal = new VROMaterialVisual(*material->_normal);
      _reflective = new VROMaterialVisual(*material->_reflective);
      _emission = new VROMaterialVisual(*material->_emission);
-     _transparent = new VROMaterialVisual(*material->_transparent);
      _multiply = new VROMaterialVisual(*material->_multiply);
      _ambientOcclusion = new VROMaterialVisual(*material->_ambientOcclusion);
      _selfIllumination = new VROMaterialVisual(*material->_selfIllumination);
@@ -86,11 +91,12 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
 
 VROMaterial::~VROMaterial() {
     delete (_diffuse);
+    delete (_roughness);
+    delete (_metalness);
     delete (_specular);
     delete (_normal);
     delete (_reflective);
     delete (_emission);
-    delete (_transparent);
     delete (_multiply);
     delete (_ambientOcclusion);
     delete (_selfIllumination);
@@ -101,11 +107,12 @@ VROMaterial::~VROMaterial() {
 
 void VROMaterial::deleteGL() {
     _diffuse->deleteGL();
+    _roughness->deleteGL();
+    _metalness->deleteGL();
     _specular->deleteGL();
     _normal->deleteGL();
     _reflective->deleteGL();
     _emission->deleteGL();
-    _transparent->deleteGL();
     _multiply->deleteGL();
     _ambientOcclusion->deleteGL();
     _selfIllumination->deleteGL();
@@ -129,11 +136,12 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _substrate = nullptr;
     
     _diffuse->copyFrom(*material->_diffuse);
+    _roughness->copyFrom(*material->_roughness);
+    _metalness->copyFrom(*material->_metalness);
     _specular->copyFrom(*material->_specular);
     _normal->copyFrom(*material->_normal);
     _reflective->copyFrom(*material->_reflective);
     _emission->copyFrom(*material->_emission);
-    _transparent->copyFrom(*material->_transparent);
     _multiply->copyFrom(*material->_multiply);
     _ambientOcclusion->copyFrom(*material->_ambientOcclusion);
     _selfIllumination->copyFrom(*material->_selfIllumination);

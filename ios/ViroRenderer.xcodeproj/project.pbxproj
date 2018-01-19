@@ -579,6 +579,7 @@
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */; };
 		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
 		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -910,6 +911,7 @@
 		8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shanghai_tower.obj; path = ViroSample/shanghai_tower.obj; sourceTree = "<group>"; };
 		8F3C75151FB608B60054639C /* VROSceneController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROSceneController.cpp; sourceTree = "<group>"; };
 		8F3C75171FB7B6F80054639C /* VROARSceneController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARSceneController.cpp; sourceTree = "<group>"; };
+		8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pbr_fsh.glsl; sourceTree = "<group>"; };
 		8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROGaussianBlurRenderPass.cpp; sourceTree = "<group>"; };
 		8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROGaussianBlurRenderPass.h; sourceTree = "<group>"; };
 		8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = portal_ring.obj; path = ViroSample/portal_ring.obj; sourceTree = "<group>"; };
@@ -1512,6 +1514,7 @@
 				8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */,
 				A540C5C31F3E7190007986E6 /* particles_vsh.glsl */,
 				A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */,
+				8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */,
 				8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */,
 				8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */,
 				8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */,
@@ -3080,6 +3083,7 @@
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
 				8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */,
+				8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */,
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */,
