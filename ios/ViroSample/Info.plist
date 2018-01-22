@@ -26,6 +26,8 @@
 	<string>Camera is used to scan the QR code of your VR headset</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Record Audio with Video</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Add videos/photos to library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Add videos/photos to library</string>
 	<key>UILaunchStoryboardName</key>

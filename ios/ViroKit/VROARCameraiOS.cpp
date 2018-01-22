@@ -100,4 +100,16 @@ VROVector3f VROARCameraiOS::getImageSize() {
     return { (float) size.width, (float) size.height, 0 };
 }
 
+float* VROARCameraiOS::getIntrinsics() const {
+    matrix_float3x3 intrinsics = _camera.intrinsics;
+    float *mat = (float *)malloc(9 * sizeof(float));
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            mat[i * 3 + j] = intrinsics.columns[i][j];
+        }
+    }
+    return mat;
+}
+
 #endif

@@ -52,6 +52,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
+@property (readwrite, nonatomic) UIImageView *trackerOutputView;
 
 @end
 
@@ -101,6 +102,12 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_inputController) {
         _inputController->setViewportSize(self.frame.size.width * self.contentScaleFactor,
                                           self.frame.size.height * self.contentScaleFactor);
+    }
+
+    if (_trackerOutputView) {
+        float width = self.frame.size.width / 3;
+        float height = self.frame.size.height / 3;
+        _trackerOutputView.frame = CGRectMake(self.frame.size.width - width, self.frame.size.height - height, width, height);
     }
 }
 
@@ -181,6 +188,20 @@ static VROVector3f const kZeroVector = VROVector3f();
 
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
     _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
+
+    if (NSClassFromString(@"ARSession") != nil) {
+        // Create a new ImageView for displaying image tracking
+        float width = self.frame.size.width * self.contentScaleFactor / 3;
+        float height = self.frame.size.height * self.contentScaleFactor / 3;
+        _trackerOutputView = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width - width, self.frame.size.height - height, width, height)];
+        _trackerOutputView.contentMode = UIViewContentModeScaleToFill;
+        _trackerOutputView.alpha = .65;
+        
+        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(_arSession);
+        arSessioniOS->setTrackerOutputView(_trackerOutputView);
+
+        [self addSubview:_trackerOutputView];
+    }
     
     /*
      Set the point of view to a special node that will follow the user's

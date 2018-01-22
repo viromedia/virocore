@@ -37,15 +37,17 @@ public:
 
     // Finds the _targetImage in the inputImage (assumes RGB format).
     std::shared_ptr<VROImageTrackerOutput> findTarget(cv::Mat inputImage);
+    std::shared_ptr<VROImageTrackerOutput> findTarget(cv::Mat inputImage, float* intrinsics);
     std::shared_ptr<VROImageTrackerOutput> findTarget(std::vector<cv::KeyPoint> inputKeypoints,
-                                                      cv::Mat inputDescriptors);
+                                                      cv::Mat inputDescriptors, cv::Mat inputImage);
 
 private:
     
     void updateTargetInfo();
 
+    std::shared_ptr<VROImageTrackerOutput> findTargetInternal(cv::Mat inputImage);
     std::shared_ptr<VROImageTrackerOutput> findTargetBF(std::vector<cv::KeyPoint> inputKeypoints,
-                                                        cv::Mat inputDescriptors);
+                                                        cv::Mat inputDescriptors,  cv::Mat inputImage);
 
     long getCurrentTimeMs();
     long _startTime;
@@ -55,6 +57,8 @@ private:
     int _matcherType;
     std::vector<cv::KeyPoint> _targetKeyPoints;
     cv::Mat _targetDescriptors;
+
+    float *_intrinsics;
 };
 
 #endif /* VROImageTracker_h */

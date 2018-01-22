@@ -23,6 +23,8 @@
 #include "VROPlatformUtil.h"
 #include "VROARImageTargetiOS.h"
 #include "VROARImageAnchor.h"
+#include "VROARCameraiOS.h"
+#include "VROImageTrackerOutput.h"
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment worldAlignment, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, worldAlignment),
@@ -72,7 +74,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
         _sessionConfiguration = config;
     }
     
-    //_trackingHelper = [[VROTrackingHelper alloc] init];
+    _trackingHelper = [[VROTrackingHelper alloc] init];
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -256,6 +258,10 @@ std::shared_ptr<VROTexture> VROARSessioniOS::getCameraBackgroundTexture() {
     return _background;
 }
 
+void VROARSessioniOS::setTrackerOutputView(UIImageView *view) {
+    _trackerOutputView = view;
+}
+
 std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     VROARFrameiOS *frameiOS = (VROARFrameiOS *)_currentFrame.get();
     
@@ -267,7 +273,19 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     _background->setSubstrate(1, std::move(substrates[1]));
 
     // Uncomment the below line to enable running image recognition
-    // [_trackingHelper processPixelBufferRef:frameiOS->getImage() forceRun:false];
+    std::shared_ptr<VROARCameraiOS> arCameraiOS = std::dynamic_pointer_cast<VROARCameraiOS>(frameiOS->getCamera());
+    float* intrinsics = arCameraiOS->getIntrinsics();
+    [_trackingHelper setIntrinsics:intrinsics];
+    [_trackingHelper processPixelBufferRef:frameiOS->getImage()
+                                  forceRun:false
+                                completion:
+     ^(VROTrackingHelperOutput *output) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (_trackerOutputView != nil) {
+                [_trackerOutputView setImage:[output getOutputImage]];
+            }
+        });
+    }];
 
     return _currentFrame;
 }

@@ -17,6 +17,9 @@ public:
     std::vector<cv::Point2f> corners;
     cv::Mat translation;
     cv::Mat rotation;
+    
+    // TODO: remove this?
+    cv::Mat outputImage;
 
     static std::shared_ptr<VROImageTrackerOutput> createFalseOutput();
     VROImageTrackerOutput(bool found);

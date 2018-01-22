@@ -84,14 +84,24 @@ void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     LOG_DETECT_TIME("finish detect keypoints & descriptors");
 }
 
+std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
+    _intrinsics = intrinsics;
+    return findTargetInternal(inputImage);
+}
+
 std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat inputImage) {
+    _intrinsics = NULL;
+    return findTargetInternal(inputImage);
+}
+
+std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetInternal(cv::Mat inputImage) {
 
     std::vector<cv::KeyPoint> inputKeyPoints;
     cv::Mat inputDescriptors;
 
     pinfo("[Viro] raw input size is %d x %d", inputImage.rows, inputImage.cols);
     
-    float xScale = .5; float yScale = .5;
+    float xScale = 1; float yScale = 1;
     
     _startTime = getCurrentTimeMs();
     cv::Size quarterSize(inputImage.cols * xScale, inputImage.rows * yScale);
@@ -102,7 +112,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat input
 
     detectKeypointsAndDescriptors(resizedInput, inputKeyPoints, inputDescriptors);
 
-    std::shared_ptr<VROImageTrackerOutput> output = findTarget(inputKeyPoints, inputDescriptors);
+    std::shared_ptr<VROImageTrackerOutput> output = findTarget(inputKeyPoints, inputDescriptors, inputImage);
     
     // Since we scaled the input image, we need to revert that scale when we return the corners!
     if (output->found) {
@@ -114,7 +124,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat input
     return output;
 }
 
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors) {
+std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
     if (inputKeypoints.size() == 0 || inputDescriptors.cols == 0) {
         pwarn("[Viro] Could not find keypoints and/or descriptors for the input image.");
         return VROImageTrackerOutput::createFalseOutput();
@@ -124,16 +134,13 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(std::vector<c
     switch (_type) {
         case VROImageTrackerType::BRISK:
         default:
-            return findTargetBF(inputKeypoints, inputDescriptors);
+            return findTargetBF(inputKeypoints, inputDescriptors, inputImage);
     }
 }
 
 // TODO: split out pose estimation
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors) {
-    std::vector<cv::Point2f> inputCorners;
-    cv::Mat inputTranslation;
-    cv::Mat inputRotation;
-    
+std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
+
     LOG_DETECT_TIME("start matching keypoints");
     cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(_matcherType, false);
     std::vector<cv::DMatch> matches;
@@ -194,6 +201,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
     objectCorners[2] = cvPoint(_targetImage.cols, _targetImage.rows);
     objectCorners[3] = cvPoint(0, _targetImage.rows);
     
+    std::vector<cv::Point2f> inputCorners;
     perspectiveTransform(objectCorners, inputCorners, homographyMat);
     
     // filter out false positives.
@@ -212,32 +220,49 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     LOG_DETECT_TIME("start finding object pose");
 
-    // TODO: either get actual camera calibration or simply use input image's size like we do below.
-    double focalLength = _targetImage.cols; // Approximate focal length.
-    cv::Point2d center = cv::Point2d(_targetImage.cols/2,_targetImage.rows/2);
-    double cameraArr[3][3] = {{focalLength, 0, center.x},{0 , focalLength, center.y},{0,0,1}};
-    cv::Mat cameraMatrix(3, 3, CV_32FC1, &cameraArr);
+    cv::Mat cameraMatrix;
+    if (_intrinsics == NULL) {
+        // There aren't any intrinsics, so calculate them here...
+        double focalLength = inputImage.cols; // Approximate focal length.
+        cv::Point2d center = cv::Point2d(inputImage.cols / 2, inputImage.rows / 2);
+        double cameraArr[3][3] = {{focalLength, 0, center.x},{0 , focalLength, center.y},{0,0,1}};
+        cameraMatrix = cv::Mat(3, 3, CV_32FC1, &cameraArr);
+    } else {
+        // There are intrinsics, so don't calculate them!
+        cameraMatrix = cv::Mat(3, 3, CV_32FC1, &_intrinsics);
+    }
+    
     cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assuming no lens distortion
 
     // Output rotation and translation
-    cv::Mat rotation_vector; // Rotation in axis-angle form
-    cv::Mat translation_vector;
-
-    std::vector<cv::Point3d> targetPoints;
-    targetPoints.push_back(cvPoint3D32f(0, 0, 0));
-    targetPoints.push_back(cvPoint3D32f(_targetImage.cols, 0, 0));
-    targetPoints.push_back(cvPoint3D32f(_targetImage.cols, _targetImage.rows, 0));
-    targetPoints.push_back(cvPoint3D32f(0, _targetImage.rows, 0));
+    std::vector<cv::Point3d> targetCorners;
+    targetCorners.push_back(cvPoint3D32f(0, 0, 0));
+    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, 0, 0));
+    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, _targetImage.rows, 0));
+    targetCorners.push_back(cvPoint3D32f(0, _targetImage.rows, 0));
 
     // Solve for pose
-    cv::solvePnP(targetPoints, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation);
+    cv::Mat inputTranslation(3, 1, cv::DataType<double>::type);
+    cv::Mat inputRotation(3, 1, cv::DataType<double>::type);
+    cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation);
 
     LOG_DETECT_TIME("finished detection & pose extraction");
 
 #if ENABLE_DETECT_LOGGING
     for (int i = 0; i < inputCorners.size(); i++) {
-        pinfo("[Viro] found corner point (before re-scaling): %f, %f", inputCorners[i].x, inputCorners[i].y);
+        pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
     }
+    
+    // This conversion rate is based on the fact that the target image (100 bill) is 505x1188 pixels
+    // vs its real world size of 2.61x6.14 inches
+    double pixPerMeter = 7617.58;
+    
+    pinfo("[Viro] pre-translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
+    
+    inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
+    inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
+    inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
+    
     pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
     pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
 #endif

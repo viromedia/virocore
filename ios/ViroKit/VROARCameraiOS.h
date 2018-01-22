@@ -30,6 +30,8 @@ public:
     
     VROVector3f getImageSize();
     
+    float* getIntrinsics() const;
+    
 private:
     
     ARCamera *_camera;

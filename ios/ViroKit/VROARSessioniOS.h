@@ -12,7 +12,7 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 #include "VROARSession.h"
 #include "VROViewport.h"
-//#include "VROTrackingHelper.h"
+#include "VROTrackingHelper.h"
 #include <ARKit/ARKit.h>
 #include <map>
 #include <vector>
@@ -63,6 +63,8 @@ public:
     void addAnchor(ARAnchor *anchor);
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
+
+    void setTrackerOutputView(UIImageView *view);
     
 private:
     
@@ -80,7 +82,12 @@ private:
     /*
      Image Tracking Helper.
      */
-    // VROTrackingHelper* _trackingHelper;
+    VROTrackingHelper *_trackingHelper;
+
+    /*
+     The UIImageView used to display the image tracking output.
+     */
+    UIImageView *_trackerOutputView;
     
     /*
      Whether or not the session has been paused.
