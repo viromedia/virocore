@@ -37,7 +37,7 @@ Check out our [blog](https://blog.viromedia.com/) for news, updates and tutorial
 ### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroARHelloWorldActivity.java)
 
 <a href="https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroARHelloWorldActivity.java">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARHelloWorldAndroid/ViroARHitTestDemoActivity.gif">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARHelloWorldAndroid/ViroARPlanesDemoActivity.gif">
 </a>
 
 ### [AR Placing Objects](https://github.com/viromedia/virocore/blob/master/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroARObjectPlacementActivity.java)
