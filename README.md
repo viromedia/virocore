@@ -14,10 +14,11 @@ To report bugs/issues with Viro platform, please file new issues on this reposit
 
 1. Follow the prerequisite directions on our [Quick start guide](https://virocore.viromedia.com/docs/getting-started) to setup dependencies for trying these sample projects with the Viro Media App.
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
-3. Open the root directory in Android studio. Edit AndroidManifest.xml, and replace "API_KEY_HERE" with the key emailed to you with signup.
-4. Click on Build Variants, and select arcoreDebug as the build variant.
-5. (Optional) Clean and gradle sync
-6. Built and deploy.
+3. Choose the code sample you wish to deploy, and open the root directory in Android studio. 
+4. Edit AndroidManifest.xml, and replace "API_KEY_HERE" with the key emailed to you with signup.
+5. Click on Build Variants, and select arcoreDebug as the build variant.
+6. (Optional) Clean and gradle sync
+7. Built and deploy.
 8. You should now be in the application! Enjoy!
 
 ## More Information
@@ -32,7 +33,7 @@ Join our Slack group [here](https://join.slack.com/t/virodevelopers/shared_invit
 
 Check out our [blog](https://blog.viromedia.com/) for news, updates and tutorials.
 
-## Sample Code Overview
+## Sample Code List
 
 ### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroARHelloWorldActivity.java)
 
