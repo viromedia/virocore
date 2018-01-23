@@ -45,3 +45,9 @@ Check out our [blog](https://blog.viromedia.com/) for news, updates and tutorial
 <a href="https://github.com/viromedia/virocore/blob/master/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroARObjectPlacementActivity.java">
 <img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARPlacingObjects/ViroARHitTestDemoActivity.gif">
 </a>
+
+### [AR Retail](https://github.com/viromedia/virocore/blob/master/ARRetail/app/src/main/java/com/example/virosample/ProductARActivityComplete.java)
+
+<a href="https://github.com/viromedia/virocore/blob/master/ARRetail/app/src/main/java/com/example/virosample/ProductARActivityComplete.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARRetail/ARRetailActivity.gif">
+</a>
