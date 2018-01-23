@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.virosample.ProductSelectionActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- -->
+        <android.support.v7.widget.RecyclerView
+            android:background="#FFFFFF"
+            android:id="@+id/categorial_list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- -->
+        <GridView
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:layout_below="@id/categorial_list_view"
+            android:id="@+id/product_grid_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="4"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:scrollbars="none"/>
+
+        <ImageView
+            android:layout_below="@id/categorial_list_view"
+            android:layout_width="800dp"
+            android:layout_height="10dp"
+            android:src="@drawable/toolbar_shadow"
+            android:scaleType="fitXY"/>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
