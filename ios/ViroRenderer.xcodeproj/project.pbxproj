@@ -1339,6 +1339,7 @@
 		8FEACED72012605F0082D18B /* pbr_sample_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_metallic.png; path = ViroSample/pbr_sample_metallic.png; sourceTree = "<group>"; };
 		8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPBRTexturedTest.cpp; sourceTree = "<group>"; };
 		8FEACEDE201260B70082D18B /* VROPBRTexturedTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPBRTexturedTest.h; sourceTree = "<group>"; };
+		8FEACEE2201697810082D18B /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
@@ -2193,6 +2194,7 @@
 		8FCB6C851C3C826C00C14158 /* IO */ = {
 			isa = PBXGroup;
 			children = (
+				8FEACEE2201697810082D18B /* stb_image.h */,
 				8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */,
 				8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */,
 				8F53C8F31E00EE07008314B4 /* VROOBJLoader.h */,
@@ -3820,6 +3822,14 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/opencv",
 				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/GVRAudioSDK\"",
+					"\"${PODS_ROOT}/Headers/Public/GVRKit\"",
+					"\"${PODS_ROOT}/Headers/Public/GVRSDK\"",
+					"$(SRCROOT)/../ViroRenderer/glm",
+				);
 				INFOPLIST_FILE = ViroKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -3855,6 +3865,14 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/GVRAudioSDK\"",
+					"\"${PODS_ROOT}/Headers/Public/GVRKit\"",
+					"\"${PODS_ROOT}/Headers/Public/GVRSDK\"",
+					"$(SRCROOT)/../ViroRenderer/glm",
 				);
 				INFOPLIST_FILE = ViroKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
