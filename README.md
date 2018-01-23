@@ -3,7 +3,7 @@ ViroCore
 
 ViroCore is SceneKit for Android, a 3D framework for developers to build immersive applications using Java. ViroCore combines a high-performance rendering engine with a descriptive API for creating 3D/AR/VR apps. While lower-level APIs like OpenGL require you to learn and precisely implement rendering algorithms, ViroCore requires only high-level scene descriptions and the events and interactions you desire.
 
-Platforms supported: 
+Platforms supported:
 Android, ARCore, Google Daydream, Samsung GearVR, Google Cardboard VR
 
 [Sign up](https://viromedia.com/signup) for an API key. The platform is free to use with no limits on distribution.
@@ -34,14 +34,14 @@ Check out our [blog](https://blog.viromedia.com/) for news, updates and tutorial
 
 ## Sample Code Overview
 
-### [AR Hit Test Sample](https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARHitTestDemoActivity.java)
+### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroARHelloWorldActivity.java)
 
-<a href="https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARHitTestDemoActivity.java">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ViroARHitTestDemoActivity.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroARHelloWorldActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARHelloWorldAndroid/ViroARHitTestDemoActivity.gif">
 </a>
 
-### [AR Planes Sample](https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARPlanesDemoActivity.java)
+### [AR Placing Objects](https://github.com/viromedia/virocore/blob/master/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroARObjectPlacementActivity.java)
 
-<a href="https://github.com/viromedia/virocore/blob/master/app/src/main/java/com/example/virosample/ViroARPlanesDemoActivity.java">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ViroARPlanesDemoActivity.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroARObjectPlacementActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARPlacingObjects/ViroARHitTestDemoActivity.gif">
 </a>
