@@ -5,6 +5,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 include_directories(../../ViroRenderer
+                    ../../ViroRenderer/glm
                     src/main/cpp
                     ../libs/gvr/include
                     ../libs/ovr/include
@@ -143,6 +144,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROFBXLoader.cpp
              ../../ViroRenderer/VROModelIOUtil.cpp
              ../../ViroRenderer/VROOBJLoader.cpp
+             ../../ViroRenderer/VROHDRLoader.cpp
              ../../ViroRenderer/tiny_obj_loader.cc
              ../../ViroRenderer/VROGVRUtil.cpp
              ../../ViroRenderer/VROThreadRestricted.cpp
