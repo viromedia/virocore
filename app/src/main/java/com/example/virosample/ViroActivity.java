@@ -36,7 +36,7 @@ import com.viro.core.ViroViewScene;
  * Similar to {@link ViroARPlanesDemoActivity}, simply extend and
  * override onRendererStart() to start building your 3D scenes.
  */
-public class ViroActivity extends Activity implements RendererStartListener{
+public class ViroActivity extends Activity implements RendererStartListener {
     private static final String TAG = ViroActivity.class.getSimpleName();
     protected ViroView mViroView;
 
@@ -81,7 +81,7 @@ public class ViroActivity extends Activity implements RendererStartListener{
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         mViroView.onActivityPaused(this);
     }

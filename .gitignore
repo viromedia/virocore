@@ -4,17 +4,6 @@
 /ios/Pods/Pods.xcodeproj/xcuserdata/**
 .DS_Store
 
-# Gradle
-android/.idea/
-android/.idea/misc.xml
-android/.idea/gradle.xml
-android/app/.idea/
-android/app/gradle/
-android/app/local.properties
-android/renderertest/.idea/
-android/renderertest/gradle/
-android/renderertest/local.properties
-
 # [Android] ========================
 # Built application files
 *.apk
@@ -43,10 +32,6 @@ proguard/
 # Log Files
 *.log
 
-
-## Directory-based project format:
-.idea/
-
 ## File-based project format:
 *.ipr
 *.iws
@@ -55,9 +40,6 @@ proguard/
 
 # IntelliJ
 out/
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
@@ -96,8 +78,11 @@ trestle.keystore
 hs_err_pid*
 
 # Misc
-/.idea/workspace.xml
 .DS_Store
 /captures
-**/*.iml
+*.iml
 *.class
+
+.idea/*
+!codeStyleSettings.xml
+
