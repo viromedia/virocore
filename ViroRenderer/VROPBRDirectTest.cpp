@@ -26,6 +26,7 @@ void VROPBRDirectTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchron
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
+    rootNode->setBackgroundSphere(VROTestUtil::loadRadianceHDRTexture("newport_loft"));
     
     VROVector3f lightPositions[] = {
         VROVector3f(-10,  10, 10),

@@ -37,6 +37,7 @@ public:
     static std::shared_ptr<VROTexture> loadNormalTexture(std::string texture);
     static std::shared_ptr<VROTexture> loadTexture(std::string texture, bool sRGB);
     
+    static std::shared_ptr<VROTexture> loadRadianceHDRTexture(std::string texture);
     static std::shared_ptr<VROTexture> loadHDRTexture(std::string texture);
     
     static std::shared_ptr<VRONode> loadFBXModel(std::string model, VROVector3f position, VROVector3f scale,

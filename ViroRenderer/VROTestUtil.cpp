@@ -18,6 +18,7 @@
 #include "VROTextureUtil.h"
 #include "VROCompress.h"
 #include "VROModelIOUtil.h"
+#include "VROHDRLoader.h"
 
 #if VRO_PLATFORM_IOS
 #include <UIKit/UIKit.h>
@@ -128,6 +129,18 @@ std::shared_ptr<VROTexture> VROTestUtil::loadWestlakeBackground() {
                                         std::make_shared<VROImageAndroid>("360_westlake.jpg",
                                                                           VROTextureInternalFormat::RGBA8));
 #endif
+}
+
+std::shared_ptr<VROTexture> VROTestUtil::loadRadianceHDRTexture(std::string texture) {
+    std::string path;
+#if VRO_PLATFORM_IOS
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:texture.c_str()]
+                                                        ofType:@"hdr"];
+    path = std::string([fbxPath UTF8String]);
+#else
+    path = "file:///android_asset/" + texture + ".hdr";
+#endif
+    return VROHDRLoader::loadRadianceHDRTexture(path);
 }
 
 std::shared_ptr<VROTexture> VROTestUtil::loadHDRTexture(std::string texture) {
