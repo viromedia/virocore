@@ -45,6 +45,7 @@ public:
     virtual bool attachNewTextures();
     virtual void attachTexture(std::shared_ptr<VROTexture> texture, int attachment);
     virtual void setTextureImageIndex(int index, int attachment);
+    virtual void setTextureCubeFace(int face, int mipLevel, int attachmentIndex);
     virtual const std::shared_ptr<VROTexture> getTexture(int attachment) const;
     virtual void deleteFramebuffers();
     virtual bool restoreFramebuffers();

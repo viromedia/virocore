@@ -1,31 +1,32 @@
 //
-//  VROPBRDirectTest.cpp
+//  VROIBLTest.cpp
 //  ViroKit
 //
 //  Created by Raj Advani on 1/18/18.
 //  Copyright © 2018 Viro Media. All rights reserved.
 //
 
-#include "VROPBRDirectTest.h"
+#include "VROIBLTest.h"
 #include "VROTestUtil.h"
 #include "VROCompress.h"
 #include "VROSphere.h"
 
-VROPBRDirectTest::VROPBRDirectTest() :
+VROIBLTest::VROIBLTest() :
     VRORendererTest(VRORendererTestType::PBRDirect) {
         _angle = 0;
 }
 
-VROPBRDirectTest::~VROPBRDirectTest() {
+VROIBLTest::~VROIBLTest() {
     
 }
 
-void VROPBRDirectTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, std::shared_ptr<VRODriver> driver) {
+void VROIBLTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, std::shared_ptr<VRODriver> driver) {
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
+    rootNode->setLightingEnvironment(VROTestUtil::loadRadianceHDRTexture("newport_loft"));
     
     VROVector3f lightPositions[] = {
         VROVector3f(-10,  10, 10),

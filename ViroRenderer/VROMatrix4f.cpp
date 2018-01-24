@@ -26,6 +26,15 @@ VROMatrix4f::VROMatrix4f(const float *matrix) {
     memcpy(_mtx, matrix, sizeof(float) * 16);
 }
 
+VROMatrix4f::VROMatrix4f(const glm::mat4x4 mat) {
+    for (int i = 0; i < 4; i++) {
+        _mtx[i * 4 + 0] = mat[i].x;
+        _mtx[i * 4 + 1] = mat[i].y;
+        _mtx[i * 4 + 2] = mat[i].z;
+        _mtx[i * 4 + 3] = mat[i].w;
+    }
+}
+
 void VROMatrix4f::toIdentity() {
     memset(_mtx, 0, 16 * sizeof(float));
     _mtx[0] = _mtx[5] = _mtx[10] = _mtx[15] = 1;

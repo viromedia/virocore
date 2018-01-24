@@ -28,6 +28,7 @@
 #include "VROPolylineTest.h"
 #include "VROPBRDirectTest.h"
 #include "VROPBRTexturedTest.h"
+#include "VROIBLTest.h"
 #include "VROVideoSphereTest.h"
 
 VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
@@ -107,6 +108,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VROPBRDirectTest>();
         case VRORendererTestType::PBRTextured:
             return std::make_shared<VROPBRTexturedTest>();
+        case VRORendererTestType::IBL:
+            return std::make_shared<VROIBLTest>();
         default:
             pabort();
             return nullptr;

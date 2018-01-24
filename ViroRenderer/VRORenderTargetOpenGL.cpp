@@ -69,6 +69,9 @@ void VRORenderTargetOpenGL::unbind() {
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
+        case VRORenderTargetType::CubeTexture:
+        case VRORenderTargetType::CubeTextureHDR16:
+        case VRORenderTargetType::CubeTextureHDR32:
             GLenum attachments[2];
             attachments[0] = GL_DEPTH_ATTACHMENT;
             attachments[1] = GL_STENCIL_ATTACHMENT;
@@ -173,6 +176,11 @@ void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture, i
         _type == VRORenderTargetType::DepthTexture) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, name, 0);
     }
+    else if (_type == VRORenderTargetType::CubeTexture ||
+             _type == VRORenderTargetType::CubeTextureHDR16 ||
+             _type == VRORenderTargetType::CubeTextureHDR32) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X, name, 0);
+    }
     else if (_type == VRORenderTargetType::DepthTextureArray) {
         glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, 0);
     }
@@ -189,6 +197,19 @@ void VRORenderTargetOpenGL::setTextureImageIndex(int index, int attachmentIndex)
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
     glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, index);
+}
+
+void VRORenderTargetOpenGL::setTextureCubeFace(int face, int mipLevel, int attachmentIndex) {
+    GLint name = getTextureName(attachmentIndex);
+    GLenum attachment = getTextureAttachmentType(attachmentIndex);
+    passert (attachment != 0);
+    passert (_type == VRORenderTargetType::CubeTexture ||
+             _type == VRORenderTargetType::CubeTextureHDR16 ||
+             _type == VRORenderTargetType::CubeTextureHDR32);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, name, mipLevel);
 }
 
 bool VRORenderTargetOpenGL::attachNewTextures() {
@@ -257,6 +278,87 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
+        }
+        
+        /*
+         Tell the system we're drawing to all attached color buffers.
+         */
+        GLuint attachments[_numAttachments];
+        for (int i = 0; i < _numAttachments; i++) {
+            attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+        }
+        glDrawBuffers(_numAttachments, attachments);
+        
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+                pinfo("   Incomplete attachment");
+            }
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+                pinfo("   Incomplete dimensions");
+            }
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+                pinfo("   Missing attachment");
+            }
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
+                pinfo("   Unsupported");
+            }
+            return false;
+        }
+    }
+    else if (_type == VRORenderTargetType::CubeTexture ||
+             _type == VRORenderTargetType::CubeTextureHDR16 ||
+             _type == VRORenderTargetType::CubeTextureHDR32) {
+        
+        GLenum target = GL_TEXTURE_CUBE_MAP;
+        GLint internalFormat = GL_RGBA;
+        GLint format = GL_RGBA;
+        GLenum texType = GL_UNSIGNED_BYTE;
+        
+        if (_type == VRORenderTargetType::CubeTextureHDR16) {
+            internalFormat = GL_RGBA16F;
+            texType = GL_FLOAT;
+        }
+        else if (_type == VRORenderTargetType::CubeTextureHDR32) {
+            internalFormat = GL_RGBA32F;
+            texType = GL_FLOAT;
+        }
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+        GLuint texNames[_numAttachments];
+        glGenTextures(_numAttachments, texNames);
+        
+        for (int i = 0 ; i < _numAttachments; i++) {
+            glBindTexture(target, texNames[i]);
+            GLenum attachment = getTextureAttachmentType(i);
+            
+            glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameterf(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameterf(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            
+            for (int s = 0; s < 6; s++) {
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + s, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(),
+                             0, format, texType, nullptr);
+            }
+            
+            glBindTexture(target, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texNames[i], 0);
+            
+            std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
+            _textures[i] = std::make_shared<VROTexture>(VROTextureType::TextureCube, std::move(substrate));
+        }
+        
+        /*
+         Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to
+         the framebuffer's depth attachment point.
+         */
+        if (_depthStencilbuffer == 0) {
+            glGenRenderbuffers(1, &_depthStencilbuffer);
+            glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight());
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
         }
         
         /*
@@ -376,6 +478,9 @@ GLenum VRORenderTargetOpenGL::getTextureAttachmentType(int attachment) const {
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
+        case VRORenderTargetType::CubeTexture:
+        case VRORenderTargetType::CubeTextureHDR16:
+        case VRORenderTargetType::CubeTextureHDR32:
             return GL_COLOR_ATTACHMENT0 + attachment;
         case VRORenderTargetType::DepthTexture:
         case VRORenderTargetType::DepthTextureArray:
@@ -397,6 +502,9 @@ bool VRORenderTargetOpenGL::restoreFramebuffers() {
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
+        case VRORenderTargetType::CubeTexture:
+        case VRORenderTargetType::CubeTextureHDR16:
+        case VRORenderTargetType::CubeTextureHDR32:
             return createColorTextureTarget();
             
         case VRORenderTargetType::DepthTexture:

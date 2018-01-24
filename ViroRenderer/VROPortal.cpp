@@ -194,6 +194,16 @@ void VROPortal::deactivateCulling(std::shared_ptr<VRONode> node) {
     }
 }
 
+#pragma mark - Lighting Environment
+
+void VROPortal::setLightingEnvironment(std::shared_ptr<VROTexture> texture) {
+    _lightingEnvironment = texture;
+}
+
+std::shared_ptr<VROTexture> VROPortal::getLightingEnvironment() const {
+    return _lightingEnvironment;
+}
+
 #pragma mark - Backgrounds
 
 static std::shared_ptr<VROShaderModifier> sBackgroundShaderModifier;

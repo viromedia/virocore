@@ -37,7 +37,10 @@ enum class VRORenderTargetType {
     ColorTextureHDR16,  // Uses a Float16 color texture and a depth renderbuffer
     ColorTextureHDR32,  // Uses a Float32 color texture and a depth renderbuffer
     DepthTexture,       // Uses a depth texture and no color buffer
-    DepthTextureArray   // Uses a depth texture array no color buffer
+    DepthTextureArray,  // Uses a depth texture array no color buffer
+    CubeTexture,        // Uses a color texture and a depth renderbuffer
+    CubeTextureHDR16,   // Uses a Float16 color texture and a depth renderbuffer
+    CubeTextureHDR32,   // Uses a Float32 color texture and a depth renderbuffer
 };
 
 /*
@@ -149,11 +152,18 @@ public:
     virtual bool attachNewTextures() = 0;
     
     /*
-     Set the index of the image to write to via this FBO. This is only valid if
-     this render target is of array type.
+     Set the index of the image to write to via this render target. This is only
+     valid if this render target is of array type.
      */
     virtual void setTextureImageIndex(int index, int attachment) = 0;
     
+    /*
+     Set the face of the image to write to via this render target. This is only
+     valid if this render target is of one of the cube types. The miplevel
+     to write can also be set here.
+     */
+    virtual void setTextureCubeFace(int face, int mipLevel, int attachmentIndex) = 0;
+
     /*
      Attach the given texture to this render-target. The width and height of
      the texture must match that of the render-target.

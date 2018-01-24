@@ -23,6 +23,7 @@
 #include "VRORenderToTextureDelegate.h"
 #include "VROPreprocess.h"
 #include "VROShadowPreprocess.h"
+#include "VROIBLPreprocess.h"
 #include <vector>
 
 #pragma mark - Initialization
@@ -72,6 +73,7 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     if (_renderShadows) {
         _preprocesses.push_back(std::make_shared<VROShadowPreprocess>(driver));
     }
+    _preprocesses.push_back(std::make_shared<VROIBLPreprocess>());
 }
 
 void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {

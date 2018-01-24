@@ -188,6 +188,8 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPostProcessEffectFactory.cpp
              ../../ViroRenderer/VROToneMappingRenderPass.cpp
              ../../ViroRenderer/VROGaussianBlurRenderPass.cpp
+             ../../ViroRenderer/VROIBLPreprocess.cpp
+             ../../ViroRenderer/VROEquirectangularToCubeRenderPass.cpp
 
              # AR
              ../../ViroRenderer/VROARSceneController.cpp
@@ -282,6 +284,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPolylineTest.cpp
              ../../ViroRenderer/VROPBRDirectTest.cpp
              ../../ViroRenderer/VROPBRTexturedTest.cpp
+             ../../ViroRenderer/VROIBLTest.cpp
              )
 
 # Add pre-built libraries

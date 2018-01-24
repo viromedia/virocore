@@ -592,9 +592,17 @@
 		8FEACEE620169EA90082D18B /* VROHDRLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEE420169EA90082D18B /* VROHDRLoader.cpp */; };
 		8FEACEE720169EA90082D18B /* VROHDRLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEE520169EA90082D18B /* VROHDRLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FEACEE92016B1270082D18B /* newport_loft.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACEE82016B1260082D18B /* newport_loft.hdr */; };
+		8FEACEEC2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEEA2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp */; };
+		8FEACEED2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEEB2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h */; };
+		8FEACEF02017E58D0082D18B /* equirect_to_cube_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACEEE2017E58C0082D18B /* equirect_to_cube_vsh.glsl */; };
+		8FEACEF12017E58D0082D18B /* equirect_to_cube_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACEEF2017E58C0082D18B /* equirect_to_cube_fsh.glsl */; };
 		8FEACEF52018061B0082D18B /* VROPreprocess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEF32018061B0082D18B /* VROPreprocess.h */; };
+		8FEACEF82018073D0082D18B /* VROIBLPreprocess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEF62018073D0082D18B /* VROIBLPreprocess.cpp */; };
+		8FEACEF92018073D0082D18B /* VROIBLPreprocess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */; };
 		8FEACEFC20180CB40082D18B /* VROShadowPreprocess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEFA20180CB40082D18B /* VROShadowPreprocess.cpp */; };
 		8FEACEFD20180CB40082D18B /* VROShadowPreprocess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEFB20180CB40082D18B /* VROShadowPreprocess.h */; };
+		8FEACF0020181DDF0082D18B /* VROIBLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */; };
+		8FEACF0120181DDF0082D18B /* VROIBLTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEFF20181DDF0082D18B /* VROIBLTest.h */; };
 		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
 		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1347,9 +1355,17 @@
 		8FEACEE420169EA90082D18B /* VROHDRLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROHDRLoader.cpp; sourceTree = "<group>"; };
 		8FEACEE520169EA90082D18B /* VROHDRLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROHDRLoader.h; sourceTree = "<group>"; };
 		8FEACEE82016B1260082D18B /* newport_loft.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = newport_loft.hdr; path = ViroSample/newport_loft.hdr; sourceTree = "<group>"; };
+		8FEACEEA2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROEquirectangularToCubeRenderPass.cpp; sourceTree = "<group>"; };
+		8FEACEEB2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROEquirectangularToCubeRenderPass.h; sourceTree = "<group>"; };
+		8FEACEEE2017E58C0082D18B /* equirect_to_cube_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equirect_to_cube_vsh.glsl; sourceTree = "<group>"; };
+		8FEACEEF2017E58C0082D18B /* equirect_to_cube_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equirect_to_cube_fsh.glsl; sourceTree = "<group>"; };
 		8FEACEF32018061B0082D18B /* VROPreprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPreprocess.h; sourceTree = "<group>"; };
+		8FEACEF62018073D0082D18B /* VROIBLPreprocess.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROIBLPreprocess.cpp; sourceTree = "<group>"; };
+		8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROIBLPreprocess.h; sourceTree = "<group>"; };
 		8FEACEFA20180CB40082D18B /* VROShadowPreprocess.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShadowPreprocess.cpp; sourceTree = "<group>"; };
 		8FEACEFB20180CB40082D18B /* VROShadowPreprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShadowPreprocess.h; sourceTree = "<group>"; };
+		8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIBLTest.cpp; sourceTree = "<group>"; };
+		8FEACEFF20181DDF0082D18B /* VROIBLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROIBLTest.h; sourceTree = "<group>"; };
 		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
@@ -1546,8 +1562,10 @@
 				8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */,
 				8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */,
 				8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */,
-				8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */,
 				8F0FE6791CD3DFF800A4C297 /* image_vsh.glsl */,
+				8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */,
+				8FEACEEE2017E58C0082D18B /* equirect_to_cube_vsh.glsl */,
+				8FEACEEF2017E58C0082D18B /* equirect_to_cube_fsh.glsl */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -1661,6 +1679,10 @@
 				8F37D9ED1F4B21A80029D23E /* VROToneMappingRenderPass.cpp */,
 				8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */,
 				8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */,
+				8FEACEEB2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h */,
+				8FEACEEA2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp */,
+				8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */,
+				8FEACEF62018073D0082D18B /* VROIBLPreprocess.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -2280,6 +2302,8 @@
 				8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */,
 				8FEACEDE201260B70082D18B /* VROPBRTexturedTest.h */,
 				8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */,
+				8FEACEFF20181DDF0082D18B /* VROIBLTest.h */,
+				8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2548,6 +2572,7 @@
 				8F828EFB1FAF83840068159E /* VROARImperativeSession.h in Headers */,
 				A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */,
 				A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */,
+				8FEACEED2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h in Headers */,
 				A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */,
 				8FD2A55A1F817D4200E831A6 /* VROPhysicsTest.h in Headers */,
 				A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */,
@@ -2583,6 +2608,7 @@
 				A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */,
 				8FE382101EF06FED005038CB /* VROARSession.h in Headers */,
 				8F37D9F01F4B21A80029D23E /* VROToneMappingRenderPass.h in Headers */,
+				8FEACEF92018073D0082D18B /* VROIBLPreprocess.h in Headers */,
 				A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */,
 				8FD2A53D1F813C4100E831A6 /* VROTorusTest.h in Headers */,
 				8FD2A5441F813C4100E831A6 /* VROFBXTest.h in Headers */,
@@ -2722,6 +2748,7 @@
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */,
+				8FEACF0120181DDF0082D18B /* VROIBLTest.h in Headers */,
 				8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
@@ -3138,6 +3165,7 @@
 			files = (
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
+				8FEACEF12017E58D0082D18B /* equirect_to_cube_fsh.glsl in Resources */,
 				8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */,
 				8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */,
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
@@ -3147,6 +3175,7 @@
 				8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */,
 				8FC6E1D91CECB376008EFD5F /* constant_fsh.glsl in Resources */,
+				8FEACEF02017E58D0082D18B /* equirect_to_cube_vsh.glsl in Resources */,
 				8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */,
 				8F0FE67B1CD3DFF800A4C297 /* image_vsh.glsl in Resources */,
 				8F0FE67A1CD3DFF800A4C297 /* image_fsh.glsl in Resources */,
@@ -3307,6 +3336,7 @@
 				A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */,
 				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
 				8FD2A54C1F813C4100E831A6 /* VROPerfTest.cpp in Sources */,
+				8FEACF0020181DDF0082D18B /* VROIBLTest.cpp in Sources */,
 				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
 				8F0E5E9C1F3BA9120007AD03 /* VROChoreographer.cpp in Sources */,
@@ -3372,6 +3402,7 @@
 				8FD2A5481F813C4100E831A6 /* VROARShadowTest.cpp in Sources */,
 				A51347401F3544A600FF3726 /* VROParticleUBO.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
+				8FEACEEC2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
 				8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */,
 				8AABB6FD1F1ECD4E00D48D5C /* VROWeakProxy.mm in Sources */,
@@ -3463,6 +3494,7 @@
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8F56AEB11DE7873E00DD65B6 /* VROTypefaceiOS.cpp in Sources */,
+				8FEACEF82018073D0082D18B /* VROIBLPreprocess.cpp in Sources */,
 				8F129F9B1ECCD70C00341D83 /* VROBoneUBO.cpp in Sources */,
 				8FD2A54D1F813C4100E831A6 /* VROARDraggableNodeTest.cpp in Sources */,
 				8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */,
