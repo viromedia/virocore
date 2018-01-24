@@ -603,6 +603,12 @@
 		8FEACEFD20180CB40082D18B /* VROShadowPreprocess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEFB20180CB40082D18B /* VROShadowPreprocess.h */; };
 		8FEACF0020181DDF0082D18B /* VROIBLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */; };
 		8FEACF0120181DDF0082D18B /* VROIBLTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEFF20181DDF0082D18B /* VROIBLTest.h */; };
+		8FEACF0420182CC80082D18B /* VROIrradianceRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF0220182CC70082D18B /* VROIrradianceRenderPass.h */; };
+		8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF0320182CC80082D18B /* VROIrradianceRenderPass.cpp */; };
+		8FEACF0820182D240082D18B /* irradiance_convolution_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF0620182D240082D18B /* irradiance_convolution_vsh.glsl */; };
+		8FEACF0920182D240082D18B /* irradiance_convolution_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF0720182D240082D18B /* irradiance_convolution_fsh.glsl */; };
+		8FEACF0C2018319C0082D18B /* VRORenderUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF0A2018319C0082D18B /* VRORenderUtil.cpp */; };
+		8FEACF0D2018319C0082D18B /* VRORenderUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF0B2018319C0082D18B /* VRORenderUtil.h */; };
 		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
 		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1366,6 +1372,12 @@
 		8FEACEFB20180CB40082D18B /* VROShadowPreprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShadowPreprocess.h; sourceTree = "<group>"; };
 		8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIBLTest.cpp; sourceTree = "<group>"; };
 		8FEACEFF20181DDF0082D18B /* VROIBLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROIBLTest.h; sourceTree = "<group>"; };
+		8FEACF0220182CC70082D18B /* VROIrradianceRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROIrradianceRenderPass.h; sourceTree = "<group>"; };
+		8FEACF0320182CC80082D18B /* VROIrradianceRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIrradianceRenderPass.cpp; sourceTree = "<group>"; };
+		8FEACF0620182D240082D18B /* irradiance_convolution_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = irradiance_convolution_vsh.glsl; sourceTree = "<group>"; };
+		8FEACF0720182D240082D18B /* irradiance_convolution_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = irradiance_convolution_fsh.glsl; sourceTree = "<group>"; };
+		8FEACF0A2018319C0082D18B /* VRORenderUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VRORenderUtil.cpp; sourceTree = "<group>"; };
+		8FEACF0B2018319C0082D18B /* VRORenderUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderUtil.h; sourceTree = "<group>"; };
 		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
@@ -1566,6 +1578,8 @@
 				8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */,
 				8FEACEEE2017E58C0082D18B /* equirect_to_cube_vsh.glsl */,
 				8FEACEEF2017E58C0082D18B /* equirect_to_cube_fsh.glsl */,
+				8FEACF0620182D240082D18B /* irradiance_convolution_vsh.glsl */,
+				8FEACF0720182D240082D18B /* irradiance_convolution_fsh.glsl */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -1681,6 +1695,8 @@
 				8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */,
 				8FEACEEB2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h */,
 				8FEACEEA2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp */,
+				8FEACF0220182CC70082D18B /* VROIrradianceRenderPass.h */,
+				8FEACF0320182CC80082D18B /* VROIrradianceRenderPass.cpp */,
 				8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */,
 				8FEACEF62018073D0082D18B /* VROIBLPreprocess.cpp */,
 			);
@@ -2027,6 +2043,8 @@
 				8F705DEE1E8D5337008BE8F8 /* VROThreadRestricted.cpp */,
 				8F2657451F0E808C0031DE17 /* VROCompress.h */,
 				8F2657441F0E808C0031DE17 /* VROCompress.cpp */,
+				8FEACF0B2018319C0082D18B /* VRORenderUtil.h */,
+				8FEACF0A2018319C0082D18B /* VRORenderUtil.cpp */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -2778,6 +2796,7 @@
 				8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
+				8FEACF0D2018319C0082D18B /* VRORenderUtil.h in Headers */,
 				8F3AF9931F95024D0087BA73 /* VROPolylineTest.h in Headers */,
 				8FF214111F314E0E005ACA96 /* VROTree.h in Headers */,
 				8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */,
@@ -2823,6 +2842,7 @@
 				8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */,
 				8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */,
 				8FCB100D1DD131C900FE425C /* VROPlatformUtil.h in Headers */,
+				8FEACF0420182CC80082D18B /* VROIrradianceRenderPass.h in Headers */,
 				8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
 				8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */,
@@ -3166,12 +3186,14 @@
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
 				8FEACEF12017E58D0082D18B /* equirect_to_cube_fsh.glsl in Resources */,
+				8FEACF0920182D240082D18B /* irradiance_convolution_fsh.glsl in Resources */,
 				8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */,
 				8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */,
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */,
 				8F705DED1E8C7376008BE8F8 /* surface_functions_fsh.glsl in Resources */,
+				8FEACF0820182D240082D18B /* irradiance_convolution_vsh.glsl in Resources */,
 				8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */,
 				8FC6E1D91CECB376008EFD5F /* constant_fsh.glsl in Resources */,
@@ -3462,6 +3484,8 @@
 				8FD2A5401F813C4100E831A6 /* VROShadowTest.cpp in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8FEACEFC20180CB40082D18B /* VROShadowPreprocess.cpp in Sources */,
+				8FEACF0C2018319C0082D18B /* VRORenderUtil.cpp in Sources */,
+				8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
 				A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */,
 				8F53D3A91DCBA06A001C91A8 /* VROImageiOS.cpp in Sources */,

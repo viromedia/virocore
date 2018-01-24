@@ -148,6 +148,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROGVRUtil.cpp
              ../../ViroRenderer/VROThreadRestricted.cpp
              ../../ViroRenderer/VROCompress.cpp
+             ../../ViroRenderer/VRORenderUtil.cpp
              ../../ViroRenderer/Nodes.pb.cc
 
              # Renderer
@@ -190,6 +191,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROGaussianBlurRenderPass.cpp
              ../../ViroRenderer/VROIBLPreprocess.cpp
              ../../ViroRenderer/VROEquirectangularToCubeRenderPass.cpp
+             ../../ViroRenderer/VROIrradianceRenderPass.cpp
 
              # AR
              ../../ViroRenderer/VROARSceneController.cpp

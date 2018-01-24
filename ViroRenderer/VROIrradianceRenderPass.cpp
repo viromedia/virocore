@@ -1,29 +1,30 @@
 //
-//  VROEquirectangularToCubeRenderPass.cpp
+//  VROIrradianceRenderPass.cpp
 //  ViroKit
 //
 //  Created by Raj Advani on 1/23/18.
 //  Copyright © 2018 Viro Media. All rights reserved.
 //
 
-#include "VROEquirectangularToCubeRenderPass.h"
+#include "VROIrradianceRenderPass.h"
 #include "VRODriver.h"
 #include "VROShaderProgram.h"
 #include "VRORenderContext.h"
 #include "VROOpenGL.h"
 #include "VRORenderTarget.h"
 #include "VROTexture.h"
+#include "VROTextureSubstrateOpenGL.h"
 #include "VRODriverOpenGL.h"
 #include "VRORenderUtil.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-VROEquirectangularToCubeRenderPass::VROEquirectangularToCubeRenderPass(std::shared_ptr<VROTexture> hdrTexture) :
-    _hdrTexture(hdrTexture) {
+VROIrradianceRenderPass::VROIrradianceRenderPass(std::shared_ptr<VROTexture> lightingEnvironment) :
+    _lightingEnvironment(lightingEnvironment) {
     
 }
 
-VROEquirectangularToCubeRenderPass::~VROEquirectangularToCubeRenderPass() {
+VROIrradianceRenderPass::~VROIrradianceRenderPass() {
     if (_cubeVBO != 0) {
         glDeleteBuffers(1, &_cubeVBO);
     }
@@ -32,36 +33,36 @@ VROEquirectangularToCubeRenderPass::~VROEquirectangularToCubeRenderPass() {
     }
 }
 
-std::shared_ptr<VROTexture> VROEquirectangularToCubeRenderPass::getCubeTexture() {
-    return _cubeRenderTarget->getTexture(0);
+std::shared_ptr<VROTexture> VROIrradianceRenderPass::getIrradianceMap() {
+    return _irradianceRenderTarget->getTexture(0);
 }
 
-void VROEquirectangularToCubeRenderPass::init(std::shared_ptr<VRODriver> driver) {
-    std::vector<std::string> samplers = { "equirectangular_map" };
+void VROIrradianceRenderPass::init(std::shared_ptr<VRODriver> driver) {
+    std::vector<std::string> samplers = { "environment_map" };
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     std::vector<VROGeometrySourceSemantic> attributes;
-    _shader = std::make_shared<VROShaderProgram>("equirect_to_cube_vsh", "equirect_to_cube_fsh", samplers, modifiers,
+    _shader = std::make_shared<VROShaderProgram>("irradiance_convolution_vsh", "irradiance_convolution_fsh", samplers, modifiers,
                                                  attributes,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     
-    _cubeRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false);
-    _cubeRenderTarget->setViewport( { 0, 0, 512, 512 });
+    _irradianceRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false);
+    _irradianceRenderTarget->setViewport( { 0, 0, 32, 32 });
 }
 
-VRORenderPassInputOutput VROEquirectangularToCubeRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                                    std::shared_ptr<VROScene> outgoingScene,
-                                                                    VRORenderPassInputOutput &inputs,
-                                                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+VRORenderPassInputOutput VROIrradianceRenderPass::render(std::shared_ptr<VROScene> scene,
+                                                         std::shared_ptr<VROScene> outgoingScene,
+                                                         VRORenderPassInputOutput &inputs,
+                                                         VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     if (!_shader) {
         init(driver);
     }
-    pglpush("EquirectToCube");
+    pglpush("Irradiance");
     
     // Bind the HDR texture to texture unit 0
-    VRORenderUtil::bindTexture(0, _hdrTexture, driver);
+    VRORenderUtil::bindTexture(0, _lightingEnvironment, driver);
     
     // Bind the destination render target
-    driver->bindRenderTarget(_cubeRenderTarget);
+    driver->bindRenderTarget(_irradianceRenderTarget);
     
     // Setup for rendering the cube
     driver->setDepthWritingEnabled(true);
@@ -88,7 +89,7 @@ VRORenderPassInputOutput VROEquirectangularToCubeRenderPass::render(std::shared_
     
     for (int i = 0; i < 6; ++i) {
         _shader->getUniform("view_matrix")->setMat4(captureViews[i]);
-        _cubeRenderTarget->setTextureCubeFace(i, 0, 0);
+        _irradianceRenderTarget->setTextureCubeFace(i, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         VRORenderUtil::renderUnitCube(&_cubeVAO, &_cubeVBO);
     }
@@ -98,4 +99,6 @@ VRORenderPassInputOutput VROEquirectangularToCubeRenderPass::render(std::shared_
     VRORenderPassInputOutput renderPassOutput;
     return renderPassOutput;
 }
+
+
 
