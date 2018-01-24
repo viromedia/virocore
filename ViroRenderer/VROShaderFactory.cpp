@@ -35,7 +35,7 @@ static std::shared_ptr<VROShaderModifier> sPhongLightingModifier;
 static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
-static std::shared_ptr<VROShaderModifier> sPBRFragmentModifier;
+static std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
@@ -172,7 +172,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
         modifiers.push_back(createPBRSurfaceModifier());
         modifiers.push_back(createPBRDirectLightingModifier());
-        modifiers.push_back(createPBRFragmentModifier());
+        modifiers.push_back(createPBRConstantAmbientFragmentModifier());
     }
     
     // All other lighting models
@@ -235,7 +235,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
                                               driver);
 }
 
-#pragma mark - Shader Modifiers
+#pragma mark - Texture Modifiers
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createDiffuseTextureModifier() {
     /*
@@ -324,6 +324,26 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createAOTextureModifier() {
     }
     return sAOTextureModifier;
 }
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createReflectiveTextureModifier() {
+    /*
+     Modifier that adds reflective color to the final light computation.
+     */
+    if (!sReflectiveTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform samplerCube reflect_texture;",
+            "lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);",
+            "_output_color.xyz += reflective_color.xyz;"
+        };
+        sReflectiveTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                         modifierCode);
+        sReflectiveTextureModifier->setName("reflect");
+    }
+    
+    return sReflectiveTextureModifier;
+}
+
+#pragma mark - Shadow Modifiers
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapGeometryModifier() {
     /*
@@ -430,23 +450,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapFragmentModi
     return sShadowMapFragmentModifier;
 }
 
-std::shared_ptr<VROShaderModifier> VROShaderFactory::createReflectiveTextureModifier() {
-    /*
-     Modifier that adds reflective color to the final light computation.
-     */
-    if (!sReflectiveTextureModifier) {
-        std::vector<std::string> modifierCode =  {
-            "uniform samplerCube reflect_texture;",
-            "lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);",
-            "_output_color.xyz += reflective_color.xyz;"
-        };
-        sReflectiveTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
-                                                                         modifierCode);
-        sReflectiveTextureModifier->setName("reflect");
-    }
-    
-    return sReflectiveTextureModifier;
-}
+#pragma mark - Lighting Model Modifiers
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createLambertLightingModifier() {
     /*
@@ -512,6 +516,8 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBlinnLightingModifier
     }
     return sBlinnLightingModifier;
 }
+
+#pragma mark - PBR Modifiers
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRSurfaceModifier() {
     /*
@@ -579,19 +585,21 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
     return sPBRDirectLightingModifier;
 }
 
-std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRFragmentModifier() {
-    if (!sPBRFragmentModifier) {
-        std::vector<std::string> modifierCode=  {
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFragmentModifier() {
+    if (!sPBRConstantAmbientFragmentModifier) {
+        std::vector<std::string> modifierCode = {
             "highp vec3 pbr_ambient = vec3(0.03) * albedo * _surface.ao;",
             "highp vec3 rgb_color = pbr_ambient + _diffuse;",
             "_output_color = vec4(rgb_color, _output_color.a);",
         };
-        sPBRFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+        sPBRConstantAmbientFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                          modifierCode);
-        sPBRFragmentModifier->setName("pbr_frag");
+        sPBRConstantAmbientFragmentModifier->setName("pbr_const_amb");
     }
-    return sPBRFragmentModifier;
+    return sPBRConstantAmbientFragmentModifier;
 }
+
+#pragma mark - Other Modifiers
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier(VROStereoMode currentStereoMode) {
     /*
