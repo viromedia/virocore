@@ -18,7 +18,7 @@ class VRODisplayOpenGL : public VRORenderTargetOpenGL {
 public:
     
     VRODisplayOpenGL(GLint framebuffer, std::shared_ptr<VRODriverOpenGL> driver) :
-        VRORenderTargetOpenGL(VRORenderTargetType::Display, 1, 1, driver) {
+        VRORenderTargetOpenGL(VRORenderTargetType::Display, 1, 1, false, driver) {
         _framebuffer = framebuffer;
     }
     virtual ~VRODisplayOpenGL() {}
@@ -30,7 +30,8 @@ public:
     void clearTextures() { pabort(); }
     bool attachNewTextures() { pabort(); return false; }
     void setTextureImageIndex(int index, int attachment) { pabort(); }
-    virtual void setTextureCubeFace(int face, int mipLevel, int attachmentIndex) { pabort(); }
+    void setTextureCubeFace(int face, int mipLevel, int attachmentIndex) { pabort(); }
+    void setMipLevel(int mipLevel, int attachmentIndex) { pabort(); }
     void attachTexture(std::shared_ptr<VROTexture> texture, int attachment) { pabort(); }
     const std::shared_ptr<VROTexture> getTexture(int attachment) const { pabort(); return nullptr; }
     void discardFramebuffers() { pabort(); }

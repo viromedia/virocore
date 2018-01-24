@@ -39,7 +39,7 @@ void VROEquirectangularToCubeRenderPass::init(std::shared_ptr<VRODriver> driver)
                                                  attributes,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     
-    _cubeRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6);
+    _cubeRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false);
     _cubeRenderTarget->setViewport( { 0, 0, 512, 512 });
 }
 

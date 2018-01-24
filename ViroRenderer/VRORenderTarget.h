@@ -163,6 +163,12 @@ public:
      to write can also be set here.
      */
     virtual void setTextureCubeFace(int face, int mipLevel, int attachmentIndex) = 0;
+    
+    /*
+     Set the miplevel to use for writing. This will resize the renderbuffers
+     to match the given miplevel.
+     */
+    virtual void setMipLevel(int mipLevel, int attachmentIndex) = 0;
 
     /*
      Attach the given texture to this render-target. The width and height of

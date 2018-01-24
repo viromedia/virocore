@@ -22,12 +22,13 @@
 #endif
 
 VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAttachments, int numImages,
-                                             std::shared_ptr<VRODriverOpenGL> driver) :
+                                             bool enableMipmaps, std::shared_ptr<VRODriverOpenGL> driver) :
     VRORenderTarget(type, numAttachments),
     _framebuffer(0),
     _depthStencilbuffer(0),
     _colorbuffer(0),
     _numImages(numImages),
+    _mipmapsEnabled(enableMipmaps),
     _driver(driver) {
 
     // Adreno330 or older does not support offscreen render targets
@@ -208,8 +209,21 @@ void VRORenderTargetOpenGL::setTextureCubeFace(int face, int mipLevel, int attac
              _type == VRORenderTargetType::CubeTextureHDR32);
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment,
-                           GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, name, mipLevel);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
+                           name, mipLevel);
+    if (_mipmapsEnabled) {
+        setMipLevel(mipLevel, attachmentIndex);
+    }
+}
+
+void VRORenderTargetOpenGL::setMipLevel(int mipLevel, int attachmentIndex) {
+    passert (_mipmapsEnabled);
+    
+    unsigned int mipWidth  = _viewport.getWidth()  * std::pow(0.5, mipLevel);
+    unsigned int mipHeight = _viewport.getHeight() * std::pow(0.5, mipLevel);
+    glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, mipWidth, mipHeight);
+    glViewport(0, 0, mipWidth, mipHeight);
 }
 
 bool VRORenderTargetOpenGL::attachNewTextures() {
@@ -255,11 +269,14 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             GLenum attachment = getTextureAttachmentType(i);
             
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(), 0, format, texType, nullptr);
-            
+            if (_mipmapsEnabled) {
+                // Allocates memory for the mipmaps
+                glGenerateMipmap(GL_TEXTURE_2D);
+            }
             glBindTexture(GL_TEXTURE_2D, 0);
             glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texNames[i], 0);
             
@@ -272,9 +289,10 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
          the framebuffer's depth attachment point.
          */
         if (_depthStencilbuffer == 0) {
+            _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
             glGenRenderbuffers(1, &_depthStencilbuffer);
             glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _viewport.getWidth(), _viewport.getHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight());
             
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
@@ -333,7 +351,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             GLenum attachment = getTextureAttachmentType(i);
             
             glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(target, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
             glTexParameterf(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameterf(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameterf(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -342,7 +360,10 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + s, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(),
                              0, format, texType, nullptr);
             }
-            
+            if (_mipmapsEnabled) {
+                // Allocates memory for the mipmaps
+                glGenerateMipmap(target);
+            }
             glBindTexture(target, 0);
             glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texNames[i], 0);
             
@@ -355,9 +376,10 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
          the framebuffer's depth attachment point.
          */
         if (_depthStencilbuffer == 0) {
+            _depthStencilRenderbufferStorage = GL_DEPTH_COMPONENT24;
             glGenRenderbuffers(1, &_depthStencilbuffer);
             glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight());
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
         }
         
@@ -562,9 +584,10 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
      Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to the
      framebuffer's depth attachment point.
      */
+    _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
     glGenRenderbuffers(1, &_depthStencilbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _viewport.getWidth(), _viewport.getHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight());
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);

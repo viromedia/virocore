@@ -65,10 +65,10 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     };
     std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
     _blitPostProcess = driver->newImagePostProcess(blitShader);
-    _blitTarget = driver->newRenderTarget(colorType, 1, 1);
+    _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
     
-    _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1);
-    _postProcessTarget = driver->newRenderTarget(colorType, 1, 1);
+    _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1, false);
+    _postProcessTarget = driver->newRenderTarget(colorType, 1, 1, false);
 
     if (_renderShadows) {
         _preprocesses.push_back(std::make_shared<VROShadowPreprocess>(driver));
@@ -83,9 +83,9 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
     
     if (_renderBloom) {
         // The HDR target includes an additional attachment to which we render bloom
-        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1);
-        _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
-        _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
+        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false);
+        _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+        _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
         _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
         
         std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
@@ -99,7 +99,7 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
         _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
     }
     else {
-        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
+        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
     }
     _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::HableLuminanceOnly,
                                                                   driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,

@@ -24,7 +24,7 @@ public:
      for array types.
      */
     VRORenderTargetOpenGL(VRORenderTargetType type, int numAttachments, int numImages,
-                          std::shared_ptr<VRODriverOpenGL> driver);
+                          bool enableMipmaps, std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VRORenderTargetOpenGL();
     
 #pragma mark - VRORenderTarget Implementation
@@ -46,6 +46,7 @@ public:
     virtual void attachTexture(std::shared_ptr<VROTexture> texture, int attachment);
     virtual void setTextureImageIndex(int index, int attachment);
     virtual void setTextureCubeFace(int face, int mipLevel, int attachmentIndex);
+    virtual void setMipLevel(int mipLevel, int attachmentIndex);
     virtual const std::shared_ptr<VROTexture> getTexture(int attachment) const;
     virtual void deleteFramebuffers();
     virtual bool restoreFramebuffers();
@@ -89,6 +90,18 @@ private:
      If this is an array type, indicates the number of images in the texture.
      */
     int _numImages;
+    
+    /*
+     If true, the color textures will have mipmap storage allocated so we can write to
+     specific miplevels. To set the active miplevel use either setMipLevel or
+     setTextureCubeFace.
+     */
+    bool _mipmapsEnabled;
+    
+    /*
+     The storage type used for the depth/stencil renderbuffer (e.g. GL_DEPTH24_STENCIL8).
+     */
+    GLenum _depthStencilRenderbufferStorage;
     
     /*
      Get the underlying OpenGL target and texture name for the currently attached
