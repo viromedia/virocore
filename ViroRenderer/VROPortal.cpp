@@ -91,17 +91,17 @@ void VROPortal::sortNodesBySortKeys() {
 
 #pragma mark - Rendering Contents
 
-void VROPortal::renderBackground(const VRORenderContext &renderContext,
+void VROPortal::renderBackground(const VRORenderContext &context,
                                  std::shared_ptr<VRODriver> &driver) {
     if (_background) {
         const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
-        material->bindShader(0, {}, driver);
+        material->bindShader(0, {}, context, driver);
         material->bindProperties(driver);
         
         VROMatrix4f transform;
         transform = _backgroundTransform.multiply(transform);
         
-        _background->render(0, material, transform, {}, 1.0, renderContext, driver);
+        _background->render(0, material, transform, {}, 1.0, context, driver);
     }
 }
 
@@ -137,7 +137,7 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
             // TODO Perhaps we can check if the shader changed, and if so bind
             //      properties? We could also meld these two methods into one, simplifying
             //      the API?
-            material->bindShader(key.lights, node->getComputedLights(), driver);
+            material->bindShader(key.lights, node->getComputedLights(), context, driver);
             material->bindProperties(driver);
 
             boundMaterialId = key.material;

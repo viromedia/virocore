@@ -110,6 +110,7 @@ public:
      */
     void bindShader(int lightsHash,
                     const std::vector<std::shared_ptr<VROLight>> &lights,
+                    const VRORenderContext &context,
                     std::shared_ptr<VRODriver> &driver);
     void bindProperties(std::shared_ptr<VRODriver> &driver);
 
@@ -280,6 +281,7 @@ public:
      lights are used in the render.
      */
     void updateSortKey(VROSortKey &key, const std::vector<std::shared_ptr<VROLight>> &lights,
+                       const VRORenderContext &context,
                        std::shared_ptr<VRODriver> &driver);
 
     /*

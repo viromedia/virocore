@@ -16,6 +16,7 @@
 #include "VROBoneUBO.h"
 #include "VROInstancedUBO.h"
 #include "VROShaderProgram.h"
+#include "VROTextureReference.h"
 #include <map>
 
 VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
@@ -276,9 +277,19 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
     substrate->bindGeometry(opacity, geometry);
 
     int activeTexture = 0;
-    const std::vector<std::shared_ptr<VROTexture>> &textures = substrate->getTextures();
-    for (int j = 0; j < textures.size(); ++j) {
-        const std::shared_ptr<VROTexture> &texture = textures[j];
+    const std::vector<VROTextureReference> &textureReferences = substrate->getTextures();
+    for (int j = 0; j < textureReferences.size(); ++j) {
+        const VROTextureReference &reference = textureReferences[j];
+        
+        // TODO Remove this hack, which eliminates shadows for materials that do not have receivesShadows
+        //      set. Instead, material.getReceivesShadows should factor into the capabilities key for the
+        //      shader.
+        if (reference.isGlobal() && reference.getGlobalType() == VROGlobalTextureType::ShadowMap && !material->getReceivesShadows()) {
+            ++activeTexture;
+            continue;
+        }
+        
+        const std::shared_ptr<VROTexture> &texture = reference.getTexture(context);
         
         for (int s = 0; s < texture->getNumSubstrates(); s++) {
             VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(s, driver, context.getFrameScheduler().get());
@@ -296,14 +307,6 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             
             ++activeTexture;
         }
-    }
-
-    if (material->getReceivesShadows() && context.getShadowMap()) {
-        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) context.getShadowMap()->getSubstrate(0, driver, nullptr);
-        std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
-        
-        glActiveTexture(GL_TEXTURE0 + activeTexture);
-        glBindTexture(targetAndTexture.first, targetAndTexture.second);
     }
 
     const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();

@@ -186,6 +186,9 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROShadowPreprocess.cpp
              ../../ViroRenderer/VROShadowMapRenderPass.cpp
              ../../ViroRenderer/VROShaderFactory.cpp
+             ../../ViroRenderer/VROShaderCapabilities.cpp
+             ../../ViroRenderer/VROTextureReference.cpp
+             ../../ViroRenderer/VROMaterialShaderBinding.cpp
              ../../ViroRenderer/VROPostProcessEffectFactory.cpp
              ../../ViroRenderer/VROToneMappingRenderPass.cpp
              ../../ViroRenderer/VROGaussianBlurRenderPass.cpp

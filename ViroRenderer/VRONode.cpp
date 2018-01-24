@@ -144,7 +144,7 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
             std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
-            material->bindShader(_computedLightsHash, _computedLights, driver);
+            material->bindShader(_computedLightsHash, _computedLights, context, driver);
             material->bindProperties(driver);
             
             if (!_computedLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
@@ -170,7 +170,7 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
                 for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
                     std::shared_ptr<VROTexture> texture = _geometry->getMaterialForElement(i)->getDiffuse().getTexture();
                     if (material->getDiffuse().swapTexture(texture)) {
-                        material->bindShader(0, {}, driver);
+                        material->bindShader(0, {}, context, driver);
                         material->bindProperties(driver);
                     }
                     _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);
@@ -298,7 +298,7 @@ void VRONode::updateSortKeys(uint32_t depth,
             furthestDistanceFromCamera = getBoundingBox().getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedLights, _computedOpacity,
-                                  distanceFromCamera, context.getZFar(), metadata, driver);
+                                  distanceFromCamera, context.getZFar(), metadata, context, driver);
         
         if (kDebugSortOrder) {
             pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",

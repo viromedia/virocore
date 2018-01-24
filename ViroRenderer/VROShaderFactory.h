@@ -31,22 +31,7 @@ struct VROShaderCapabilities;
  */
 class VROShaderFactory {
 public:
-    
-    /*
-     Derive a key that comprehensively identifies the *capabilities* that the shader
-     rendering these lights need. For example, a set of lights that require shadow
-     map support will differ from a set of lights that do not.
-     */
-    static VROLightingShaderCapabilities deriveLightingCapabilitiesKey(const std::vector<std::shared_ptr<VROLight>> &lights);
-    
-    /*
-     Derive a key that comprehensively identifies the *capabilities* that the shader
-     rendering this material would need. For example, a material that requires
-     stereo rendering, or a material that requires textures, will have a key that
-     differs from materials that do not.
-     */
-    static VROMaterialShaderCapabilities deriveMaterialCapabilitiesKey(const VROMaterial &material);
-    
+       
     VROShaderFactory();
     virtual ~VROShaderFactory();
     

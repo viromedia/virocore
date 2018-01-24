@@ -10,6 +10,14 @@
 #define VROShaderCapabilities_hpp
 
 #include <string>
+#include <vector>
+#include <memory>
+
+class VRORenderContext;
+class VROMaterial;
+class VROLight;
+enum class VROLightingModel;
+enum class VROStereoMode;
 
 enum class VRODiffuseTextureType {
     None,
@@ -18,6 +26,11 @@ enum class VRODiffuseTextureType {
     Cube
 };
 
+/*
+ Defines the capabilities a shader requires for rendering a given VROMaterial.
+ This is derived from a VROMaterial via
+ VROShaderCapabilities::deriveMaterialCapabilitiesKey(VROMaterial).
+ */
 struct VROMaterialShaderCapabilities {
     VROLightingModel lightingModel;
     VRODiffuseTextureType diffuseTexture;
@@ -43,6 +56,11 @@ struct VROMaterialShaderCapabilities {
     }
 };
 
+/*
+ Defines the capabilities a shader requires for rendering a given lighting
+ environment. This is derived from a VRORenderContext and set of Lights via
+ VROShaderCapabilities::deriveLightingCapabilitiesKey(VRORenderContext, Lights).
+ */
 struct VROLightingShaderCapabilities {
     bool shadows;
     
@@ -57,7 +75,15 @@ struct VROLightingShaderCapabilities {
     }
 };
 
-struct VROShaderCapabilities {
+/*
+ Defines the capabilities of a VROShaderProgram. These capabilities are a function
+ of the VROMaterial being rendered and its lighting environment. Each frame, before
+ rendering a VROMaterial, we derive the capabilities it and the current lighting
+ environment require in a shader. Once we have the VROShaderCapabilities, we use the
+ VROShaderFactory to find a capable VROShaderProgram.
+ */
+class VROShaderCapabilities {
+public:
     VROMaterialShaderCapabilities materialCapabilities;
     VROLightingShaderCapabilities lightingCapabilities;
     
@@ -65,6 +91,23 @@ struct VROShaderCapabilities {
         return std::tie(materialCapabilities, lightingCapabilities) <
         std::tie(r.materialCapabilities, r.lightingCapabilities);
     }
+    
+    /*
+     Derive a key that comprehensively identifies the *capabilities* that the shader
+     rendering these lights need. For example, a set of lights that require shadow
+     map support will differ from a set of lights that do not.
+     */
+    static VROLightingShaderCapabilities deriveLightingCapabilitiesKey(const std::vector<std::shared_ptr<VROLight>> &lights,
+                                                                       const VRORenderContext &context);
+    
+    /*
+     Derive a key that comprehensively identifies the *capabilities* that the shader
+     rendering this material would need. For example, a material that requires
+     stereo rendering, or a material that requires textures, will have a key that
+     differs from materials that do not.
+     */
+    static VROMaterialShaderCapabilities deriveMaterialCapabilitiesKey(const VROMaterial &material);
+    
 };
 
 #endif /* VROShaderCapabilities_hpp */

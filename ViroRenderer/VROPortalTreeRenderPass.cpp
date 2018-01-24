@@ -106,7 +106,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         // buffer).
         if (portalFrame) {
             pglpush("(+) Stencil");
-            _silhouetteMaterial->bindShader(0, {}, driver);
+            _silhouetteMaterial->bindShader(0, {}, context, driver);
             _silhouetteMaterial->bindProperties(driver);
             
             if (portalFrame->isTwoSided()) {
@@ -162,7 +162,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             // side-by-side portals (portals with same recursion level) work correctly;
             // otherwise objects in one portal can "bleed" into the other portal.
             pglpush("(-) Stencil");
-            _silhouetteMaterial->bindShader(0, {}, driver);
+            _silhouetteMaterial->bindShader(0, {}, context, driver);
             _silhouetteMaterial->bindProperties(driver);
             
             driver->setColorWritingEnabled(false);

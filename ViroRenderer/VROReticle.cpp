@@ -191,25 +191,25 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
     }
 }
 
-void VROReticle::renderNode(std::shared_ptr<VRONode> node, const VRORenderContext &renderContext,
+void VROReticle::renderNode(std::shared_ptr<VRONode> node, const VRORenderContext &context,
                             std::shared_ptr<VRODriver> &driver) {
-    node->updateVisibility(renderContext);
+    node->updateVisibility(context);
 
     VRORenderParameters renderParams;
     VROMatrix4f identity;
     std::shared_ptr<VRORenderMetadata> metadata = std::make_shared<VRORenderMetadata>();
     node->computeTransforms(identity, {});
-    node->applyConstraints(renderContext, identity, false);
-    node->updateSortKeys(0, renderParams, metadata, renderContext, driver);
+    node->applyConstraints(context, identity, false);
+    node->updateSortKeys(0, renderParams, metadata, context, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
     if (!geometry) {
         return;
     }
 
     std::shared_ptr<VROMaterial> material = geometry->getMaterials().front();
-    material->bindShader(0, {}, driver);
+    material->bindShader(0, {}, context, driver);
     material->bindProperties(driver);
-    node->render(0, material, renderContext, driver);
+    node->render(0, material, context, driver);
 };
 
 std::vector<VROVector3f> VROReticle::createArc(float radius, int numSegments) {

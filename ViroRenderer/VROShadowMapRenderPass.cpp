@@ -80,7 +80,7 @@ void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
     treeNodes.push_back(scene->getPortalTree());
     
     // Render static objects
-    _silhouetteStaticMaterial->bindShader(0, {}, driver);
+    _silhouetteStaticMaterial->bindShader(0, {}, *context, driver);
     _silhouetteStaticMaterial->bindProperties(driver);
     render(treeNodes, target, _silhouetteStaticMaterial, [this](const VRONode &node)->bool {
         return (_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) != 0 &&
@@ -88,7 +88,7 @@ void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
     }, *context, driver);
     
     // Render skeletal animation objects
-    _silhouetteSkeletalMaterial->bindShader(0, {}, driver);
+    _silhouetteSkeletalMaterial->bindShader(0, {}, *context, driver);
     _silhouetteSkeletalMaterial->bindProperties(driver);
     render(treeNodes, target, _silhouetteSkeletalMaterial, [this](const VRONode &node)->bool {
         return (_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) != 0 &&

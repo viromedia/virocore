@@ -609,6 +609,11 @@
 		8FEACF0920182D240082D18B /* irradiance_convolution_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF0720182D240082D18B /* irradiance_convolution_fsh.glsl */; };
 		8FEACF0C2018319C0082D18B /* VRORenderUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF0A2018319C0082D18B /* VRORenderUtil.cpp */; };
 		8FEACF0D2018319C0082D18B /* VRORenderUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF0B2018319C0082D18B /* VRORenderUtil.h */; };
+		8FEACF1020191F000082D18B /* VROMaterialShaderBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF0E20191F000082D18B /* VROMaterialShaderBinding.cpp */; };
+		8FEACF1120191F000082D18B /* VROMaterialShaderBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF0F20191F000082D18B /* VROMaterialShaderBinding.h */; };
+		8FEACF1420191F280082D18B /* VROTextureReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF1220191F280082D18B /* VROTextureReference.cpp */; };
+		8FEACF1520191F280082D18B /* VROTextureReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF1320191F280082D18B /* VROTextureReference.h */; };
+		8FEACF172019223C0082D18B /* VROShaderCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF162019223C0082D18B /* VROShaderCapabilities.cpp */; };
 		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
 		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1378,6 +1383,11 @@
 		8FEACF0720182D240082D18B /* irradiance_convolution_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = irradiance_convolution_fsh.glsl; sourceTree = "<group>"; };
 		8FEACF0A2018319C0082D18B /* VRORenderUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VRORenderUtil.cpp; sourceTree = "<group>"; };
 		8FEACF0B2018319C0082D18B /* VRORenderUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderUtil.h; sourceTree = "<group>"; };
+		8FEACF0E20191F000082D18B /* VROMaterialShaderBinding.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROMaterialShaderBinding.cpp; sourceTree = "<group>"; };
+		8FEACF0F20191F000082D18B /* VROMaterialShaderBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROMaterialShaderBinding.h; sourceTree = "<group>"; };
+		8FEACF1220191F280082D18B /* VROTextureReference.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTextureReference.cpp; sourceTree = "<group>"; };
+		8FEACF1320191F280082D18B /* VROTextureReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTextureReference.h; sourceTree = "<group>"; };
+		8FEACF162019223C0082D18B /* VROShaderCapabilities.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShaderCapabilities.cpp; sourceTree = "<group>"; };
 		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
@@ -2207,6 +2217,10 @@
 				8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */,
 				8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */,
 				8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */,
+				8FEACF0F20191F000082D18B /* VROMaterialShaderBinding.h */,
+				8FEACF0E20191F000082D18B /* VROMaterialShaderBinding.cpp */,
+				8FEACF1320191F280082D18B /* VROTextureReference.h */,
+				8FEACF1220191F280082D18B /* VROTextureReference.cpp */,
 				8FDDB4B11DB1316700DE0968 /* VROUniform.h */,
 				8FDDB4B51DB1389300DE0968 /* VROUniform.cpp */,
 				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
@@ -2216,6 +2230,7 @@
 				8FCE921E1F44E99900C699D5 /* VROShaderFactory.h */,
 				8FCE921D1F44E99900C699D5 /* VROShaderFactory.cpp */,
 				8FCE92221F453D5900C699D5 /* VROShaderCapabilities.h */,
+				8FEACF162019223C0082D18B /* VROShaderCapabilities.cpp */,
 				8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */,
 				8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */,
 				8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */,
@@ -2586,6 +2601,7 @@
 				8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */,
 				A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */,
 				8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */,
+				8FEACF1520191F280082D18B /* VROTextureReference.h in Headers */,
 				8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */,
 				8F828EFB1FAF83840068159E /* VROARImperativeSession.h in Headers */,
 				A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */,
@@ -2594,6 +2610,7 @@
 				A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */,
 				8FD2A55A1F817D4200E831A6 /* VROPhysicsTest.h in Headers */,
 				A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */,
+				8FEACF1120191F000082D18B /* VROMaterialShaderBinding.h in Headers */,
 				8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */,
 				8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */,
 				8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */,
@@ -3432,6 +3449,7 @@
 				8F83DEAA1C49B0540089C31A /* VROAllocationTracker.cpp in Sources */,
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,
 				8FD4DF111C18ED3C003DC425 /* VROLight.cpp in Sources */,
+				8FEACF1420191F280082D18B /* VROTextureReference.cpp in Sources */,
 				8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */,
 				8FDDB4AA1DAF2A4000DE0968 /* VROPolyline.cpp in Sources */,
 				8FD2A55B1F817D4200E831A6 /* VROPhysicsTest.cpp in Sources */,
@@ -3488,6 +3506,7 @@
 				8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
 				A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */,
+				8FEACF172019223C0082D18B /* VROShaderCapabilities.cpp in Sources */,
 				8F53D3A91DCBA06A001C91A8 /* VROImageiOS.cpp in Sources */,
 				8FD4DF181C18ED4C003DC425 /* VRODistortionRenderer.cpp in Sources */,
 				8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */,
@@ -3503,6 +3522,7 @@
 				8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */,
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
+				8FEACF1020191F000082D18B /* VROMaterialShaderBinding.cpp in Sources */,
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FD2A53C1F813C4100E831A6 /* VRONormalMapTest.cpp in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,

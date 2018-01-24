@@ -37,13 +37,13 @@ void VROPencil::render(const VRORenderContext &context, std::shared_ptr<VRODrive
     pencilMaterial->setLightingModel(VROLightingModel::Constant);
     pencilMaterial->setWritesToDepthBuffer(false);
     pencilMaterial->setReadsFromDepthBuffer(false);
-    pencilMaterial->bindShader(0, {}, driver);
+    pencilMaterial->bindShader(0, {}, context, driver);
     pencilMaterial->bindProperties(driver);
 
     std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
     line->setMaterials({ pencilMaterial });
 
-    pencilMaterial->bindShader(0, {}, driver);
+    pencilMaterial->bindShader(0, {}, context, driver);
     pencilMaterial->bindProperties(driver);
     line->render(0, pencilMaterial, VROMatrix4f::identity(), VROMatrix4f::identity(),
                  1.0, context, driver);

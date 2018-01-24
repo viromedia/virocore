@@ -65,7 +65,7 @@ bool VROAVRecorderAndroid::onRenderedFrameTexture(std::shared_ptr<VRORenderTarge
             _recorderDisplay = std::make_shared<VRORecorderEglSurfaceDisplay>(openGLDriver, shared_from_this());
         }
 
-        _recordingPostProcess->blit(input, 0, _recorderDisplay, {}, driver);
+        _recordingPostProcess->blit({ input->getTexture(0) }, _recorderDisplay, driver);
     }
 
     if (_scheduledScreenShot) {
