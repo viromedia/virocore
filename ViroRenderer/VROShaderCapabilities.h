@@ -33,10 +33,12 @@ struct VROMaterialShaderCapabilities {
     
     bool operator< (const VROMaterialShaderCapabilities& r) const {
         return std::tie(lightingModel, diffuseTexture, diffuseTextureStereoMode,
-                        diffuseEGLModifier, specularTexture, normalTexture, reflectiveTexture, bloom,
+                        diffuseEGLModifier, specularTexture, normalTexture, reflectiveTexture,
+                        roughnessMap, metalnessMap, aoMap, bloom,
                         receivesShadows, additionalModifierKeys) <
                 std::tie(r.lightingModel, r.diffuseTexture, r.diffuseTextureStereoMode,
-                         r.diffuseEGLModifier, r.specularTexture, r.normalTexture, r.reflectiveTexture, r.bloom,
+                         r.diffuseEGLModifier, r.specularTexture, r.normalTexture, r.reflectiveTexture,
+                         r.roughnessMap, r.metalnessMap, r.aoMap, r.bloom,
                          r.receivesShadows, r.additionalModifierKeys);
     }
 };
