@@ -28,6 +28,7 @@
 		8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
 		8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517301EE0A50A00B6E786 /* screenshot.png */; };
 		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
+		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
 		8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A5C05581EF6416900F94CB9 /* VROARNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A5CDD741F636C300093F43B /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A99E6C41EF1B7B300712D79 /* ARKit.framework */; };
@@ -868,6 +869,7 @@
 		8A3517351EE0B55400B6E786 /* VROImageTrackerOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageTrackerOutput.h; sourceTree = "<group>"; };
 		8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTrackingHelper.h; sourceTree = "<group>"; };
 		8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROTrackingHelper.mm; sourceTree = "<group>"; };
+		8A39B1A820181A36007E41E2 /* wikipedia_qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wikipedia_qr.png; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A5C05581EF6416900F94CB9 /* VROARNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNode.h; sourceTree = "<group>"; };
 		8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSceneController.h; sourceTree = "<group>"; };
@@ -2818,6 +2820,7 @@
 				8F5C41541BD82C1B006D7A77 /* boba.png */,
 				8A3517301EE0A50A00B6E786 /* screenshot.png */,
 				8A3517311EE0A50A00B6E786 /* ben.jpg */,
+				8A39B1A820181A36007E41E2 /* wikipedia_qr.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -3367,6 +3370,7 @@
 				8FA9A263207E96240022C55D /* object_bpanther_anim.vrx in Resources */,
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
 				8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */,
+				8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */,
 				8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */,
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
 				8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */,

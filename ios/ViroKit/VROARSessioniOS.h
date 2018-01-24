@@ -12,10 +12,13 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 #include "VROARSession.h"
 #include "VROViewport.h"
-#include "VROTrackingHelper.h"
 #include <ARKit/ARKit.h>
 #include <map>
 #include <vector>
+
+// image tracking inports
+#include "VROTrackingHelper.h"
+#include "VRORenderer.h"
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
@@ -64,8 +67,13 @@ public:
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
 
+    // -- Image tracking functions --
     void setTrackerOutputView(UIImageView *view);
-    
+    void setTrackerOutputText(UITextView *text);
+    void setRenderer(std::shared_ptr<VRORenderer> renderer) {
+        _renderer = renderer;
+    }
+
 private:
     
     /*
@@ -140,7 +148,30 @@ private:
      Update the VROARAnchor with the transforms in the given ARAnchor.
      */
     void updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor);
+    
+    // -- Image tracking-required stuff --
+    
+    /*
+     Image Tracking Helper.
+     */
+    VROTrackingHelper *_trackingHelper;
+    
+    /*
+     The UIImageView used to display the image tracking output.
+     */
+    UIImageView *_trackerOutputView;
+    
+    /*
+     The UITextView used to display tracking output text.
+     */
+    UITextView *_trackerOutputText;
+    
+    /*
+     The node will be moved according to the results of image tracking.
+     */
+    std::shared_ptr<VRONode> _imageTrackingResultNode;
 
+    std::shared_ptr<VRORenderer> _renderer; // this is bad... but temporary for now.
 };
 
 /*

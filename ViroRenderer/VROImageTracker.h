@@ -48,7 +48,9 @@ private:
     std::shared_ptr<VROImageTrackerOutput> findTargetInternal(cv::Mat inputImage);
     std::shared_ptr<VROImageTrackerOutput> findTargetBF(std::vector<cv::KeyPoint> inputKeypoints,
                                                         cv::Mat inputDescriptors,  cv::Mat inputImage);
-
+    
+    void testSolvePnP();
+    
     long getCurrentTimeMs();
     long _startTime;
 

@@ -142,6 +142,13 @@ void VROMatrix4f::rotate(float angleRad, const VROVector3f &origin, const VROVec
     memcpy(_mtx, result._mtx, sizeof(float) * 16);
 }
 
+void VROMatrix4f::rotate(const VROQuaternion &rotation) {
+    VROVector3f rotationVec = rotation.toEuler();
+    rotateX(rotationVec.x);
+    rotateY(rotationVec.y);
+    rotateZ(rotationVec.z);
+}
+
 void VROMatrix4f::translate(float x, float y, float z) {
     _mtx[12] += x;
     _mtx[13] += y;

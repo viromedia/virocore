@@ -52,7 +52,12 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
+
+// Image Tracking Output
+@property (readwrite, nonatomic) UITextView *trackerStatusText;
 @property (readwrite, nonatomic) UIImageView *trackerOutputView;
+@property (readwrite, nonatomic) UITextView *trackerOutputText;
+@property (readwrite, nonatomic) CGFloat trackerViewScale;
 
 @end
 
@@ -105,8 +110,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 
     if (_trackerOutputView) {
-        float width = self.frame.size.width / 3;
-        float height = self.frame.size.height / 3;
+        float width = self.frame.size.width * _trackerViewScale;
+        float height = self.frame.size.height * _trackerViewScale;
         _trackerOutputView.frame = CGRectMake(self.frame.size.width - width, self.frame.size.height - height, width, height);
     }
 }
@@ -190,17 +195,43 @@ static VROVector3f const kZeroVector = VROVector3f();
     _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
 
     if (NSClassFromString(@"ARSession") != nil) {
+        _trackerViewScale = .3333;
         // Create a new ImageView for displaying image tracking
-        float width = self.frame.size.width * self.contentScaleFactor / 3;
-        float height = self.frame.size.height * self.contentScaleFactor / 3;
+        float width = self.frame.size.width * _trackerViewScale;
+        float height = self.frame.size.height * _trackerViewScale;
         _trackerOutputView = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width - width, self.frame.size.height - height, width, height)];
         _trackerOutputView.contentMode = UIViewContentModeScaleToFill;
         _trackerOutputView.alpha = .65;
         
         std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(_arSession);
-        arSessioniOS->setTrackerOutputView(_trackerOutputView);
 
+        // Create a text view for printing out the status
+        _trackerStatusText = [[UITextView alloc] initWithFrame:CGRectMake(0, 25, self.frame.size.width, 50)];
+        _trackerStatusText.backgroundColor = UIColor.blueColor;
+        _trackerStatusText.textColor = UIColor.whiteColor;
+        _trackerStatusText.alpha = .6;
+        _trackerStatusText.textAlignment = NSTextAlignmentCenter;
+        _trackerStatusText.font = [UIFont systemFontOfSize:12];
+        
+        // Create a text view for printing out image tracking stuff
+        _trackerOutputText = [[UITextView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - 50, self.frame.size.width, 50)];
+        _trackerOutputText.backgroundColor = UIColor.blueColor;
+        _trackerOutputText.textColor = UIColor.whiteColor;
+        _trackerOutputText.alpha = .6;
+        _trackerOutputText.textAlignment = NSTextAlignmentCenter;
+        _trackerOutputText.font = [UIFont systemFontOfSize:12];
+
+        // Add the views to the view.
         [self addSubview:_trackerOutputView];
+        [self addSubview:_trackerOutputText];
+        [self addSubview:_trackerStatusText];
+
+        
+        arSessioniOS->setTrackerOutputView(_trackerOutputView);
+        arSessioniOS->setTrackerOutputText(_trackerOutputText);
+        
+        // also set the renderer for now...
+        arSessioniOS->setRenderer(_renderer);
     }
     
     /*

@@ -72,6 +72,7 @@
     if (!_tracker) {
         // fetch the target image to find
         UIImage *targetImage = [UIImage imageNamed:@"ben.jpg"];
+        //UIImage *targetImage = [UIImage imageNamed:@"wikipedia_qr.jpg"];
         
         cv::Mat targetMat = cv::Mat();
         UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.

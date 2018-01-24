@@ -9,6 +9,8 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include <iostream>
+
 
 #define ENABLE_DETECT_LOGGING 1
 
@@ -58,6 +60,8 @@ void VROImageTracker::updateTargetInfo() {
 void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
                                                     std::vector<cv::KeyPoint> &keypoints,
                                                     cv::Mat &descriptors) {
+    LOG_DETECT_TIME("start convert image to grayscale");
+
     // create empty mat for processing output
     cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_8UC1);
     
@@ -75,7 +79,6 @@ void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
             cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
             feature = cv::BRISK::create();
     }
-    _startTime = getCurrentTimeMs();
 
     LOG_DETECT_TIME("start detect keypoints");
     feature->detect(processedImage, keypoints);
@@ -86,6 +89,14 @@ void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
 
 std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
     _intrinsics = intrinsics;
+
+    // Set this to true, if we just want to test solvePnP
+    bool testSolvePnp = false;
+    if (testSolvePnp) {
+        testSolvePnP();
+        return VROImageTrackerOutput::createFalseOutput();
+    }
+
     return findTargetInternal(inputImage);
 }
 
@@ -95,6 +106,8 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat input
 }
 
 std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetInternal(cv::Mat inputImage) {
+
+    _startTime = getCurrentTimeMs();
 
     std::vector<cv::KeyPoint> inputKeyPoints;
     cv::Mat inputDescriptors;
@@ -220,19 +233,22 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     LOG_DETECT_TIME("start finding object pose");
 
+    // Get the Camera Intrinsic Matrix
     cv::Mat cameraMatrix;
     if (_intrinsics == NULL) {
-        // There aren't any intrinsics, so calculate them here...
+        // There aren't any intrinsics set, so calculate them here...
         double focalLength = inputImage.cols; // Approximate focal length.
         cv::Point2d center = cv::Point2d(inputImage.cols / 2, inputImage.rows / 2);
-        double cameraArr[3][3] = {{focalLength, 0, center.x},{0 , focalLength, center.y},{0,0,1}};
-        cameraMatrix = cv::Mat(3, 3, CV_32FC1, &cameraArr);
+        double cameraArr[9] = {focalLength, 0, center.y, 0, focalLength, center.x, 0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else {
-        // There are intrinsics, so don't calculate them!
-        cameraMatrix = cv::Mat(3, 3, CV_32FC1, &_intrinsics);
+        // There are intrinsics set, so don't calculate/estimate them!
+        cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
     }
     
-    cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assuming no lens distortion
+    std::cout << "[Viro] Camera Intrinsic Matrix: " << cameraMatrix << std::endl;
+    
+    cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
 
     // Output rotation and translation
     std::vector<cv::Point3d> targetCorners;
@@ -240,37 +256,168 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
     targetCorners.push_back(cvPoint3D32f(_targetImage.cols, 0, 0));
     targetCorners.push_back(cvPoint3D32f(_targetImage.cols, _targetImage.rows, 0));
     targetCorners.push_back(cvPoint3D32f(0, _targetImage.rows, 0));
+    
+    // TODO: if we've scaled the input, then inverse the scaling on the corner values before using solvePnP.
 
     // Solve for pose
     cv::Mat inputTranslation(3, 1, cv::DataType<double>::type);
     cv::Mat inputRotation(3, 1, cv::DataType<double>::type);
-    cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation);
+
+    //cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
+    
+    /*
+     bool useExtrinsicGuess = false, int iterationsCount = 100,
+     float reprojectionError = 8.0, double confidence = 0.99,
+     OutputArray inliers = noArray(), int flags = SOLVEPNP_ITERATIVE
+     */
+    cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, 100, 8, .99, cv::noArray(), cv::SOLVEPNP_EPNP);
 
     LOG_DETECT_TIME("finished detection & pose extraction");
 
-#if ENABLE_DETECT_LOGGING
-    for (int i = 0; i < inputCorners.size(); i++) {
-        pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
-    }
-    
     // This conversion rate is based on the fact that the target image (100 bill) is 505x1188 pixels
-    // vs its real world size of 2.61x6.14 inches
-    double pixPerMeter = 7617.58;
-    
-    pinfo("[Viro] pre-translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
+    // vs its real world size of 2.61x6.14 inches. TODO: take this as an argument.
+    double pixPerMeter = 7617.58; // ben.jpg
+    //double pixPerMeter = 16404.2; // wikipedia_qr.png (2.4 inches represents 1000 px)
     
     inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
     inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
     inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
     
+#if ENABLE_DETECT_LOGGING
+    for (int i = 0; i < inputCorners.size(); i++) {
+        pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
+    }
+    
     pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
     pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
 #endif
 
-    // TODO: the inputTranslation is in pixel units, a conversion is necessary to real-world units (based on the target image)
-    //       make sure to take into account the scale applied to the input image as that'll scale the translation by same amount
-
     return std::make_shared<VROImageTrackerOutput>(true, inputCorners, inputTranslation, inputRotation);
+}
+
+void VROImageTracker::testSolvePnP() {
+    
+    bool runFirstSample = true;
+    bool runSecondSample = false;
+    
+    cv::Mat cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
+
+    std::vector<cv::Point3f> targetCorners;
+    targetCorners.push_back(cv::Point3f(0,0,0));
+    targetCorners.push_back(cv::Point3f(_targetImage.cols, 0, 0));
+    targetCorners.push_back(cv::Point3f(_targetImage.cols, _targetImage.rows, 0));
+    targetCorners.push_back(cv::Point3f(0, _targetImage.rows, 0));
+    
+    cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assuming no lens distortion
+
+    cv::Mat inputTranslation(3, 1, cv::DataType<double>::type);
+    cv::Mat inputRotation(3, 1, cv::DataType<double>::type);
+    
+    double pixPerMeter = 7617.58;
+
+    // Updateable values
+    
+    std::vector<cv::Point2f> inputCorners(4);
+
+    if (runFirstSample) {
+        //cv::setIdentity(cameraMatrix);
+        
+        std::cout << "[Viro] Initial cameraMatrix: " << cameraMatrix << std::endl;
+
+        
+        pinfo("[Viro] Run #1 -------------------");
+        inputCorners[0] = cvPoint(199,719);
+        inputCorners[1] = cvPoint(506, 725);
+        inputCorners[2] = cvPoint(509, 860);
+        inputCorners[3] = cvPoint(190, 854);
+
+        cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
+
+        inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
+        inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
+        inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
+
+        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
+        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+
+
+
+        pinfo("[Viro] Run #2 -------------------");
+        inputCorners[0] = cvPoint(299,719);
+        inputCorners[1] = cvPoint(606, 725);
+        inputCorners[2] = cvPoint(609, 860);
+        inputCorners[3] = cvPoint(290, 854);
+
+        cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
+
+        inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
+        inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
+        inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
+
+        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
+        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+
+
+
+
+        pinfo("[Viro] Run #3 -------------------");
+        inputCorners[0] = cvPoint(299,919);
+        inputCorners[1] = cvPoint(606, 925);
+        inputCorners[2] = cvPoint(609, 1060);
+        inputCorners[3] = cvPoint(290, 1054);
+
+        cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
+
+        inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
+        inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
+        inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
+
+        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
+        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+    }
+    
+    if (runSecondSample) {
+        std::vector<cv::Point3f> points;
+        
+        float x,y,z;
+        x=.5;y=.5;z=-.5;
+        points.push_back(cv::Point3f(x,y,z));
+        x=.5;y=.5;z=.5;
+        points.push_back(cv::Point3f(x,y,z));
+        x=-.5;y=.5;z=.5;
+        points.push_back(cv::Point3f(x,y,z));
+        x=-.5;y=.5;z=-.5;
+        points.push_back(cv::Point3f(x,y,z));
+        x=.5;y=-.5;z=-.5;
+        points.push_back(cv::Point3f(x,y,z));
+        x=-.5;y=-.5;z=-.5;
+        points.push_back(cv::Point3f(x,y,z));
+        x=-.5;y=-.5;z=.5;
+        points.push_back(cv::Point3f(x,y,z));
+
+        std::vector<cv::Point2f> points2d;
+        x=382;y=274;
+        points2d.push_back(cv::Point2f(x,y));
+        x=497;y=227;
+        points2d.push_back(cv::Point2f(x,y));
+        x=677;y=271;
+        points2d.push_back(cv::Point2f(x,y));
+        x=562;y=318;
+        points2d.push_back(cv::Point2f(x,y));
+        x=370;y=479;
+        points2d.push_back(cv::Point2f(x,y));
+        x=550;y=523;
+        points2d.push_back(cv::Point2f(x,y));
+        x=666;y=475;
+        points2d.push_back(cv::Point2f(x,y));
+        
+        cv::setIdentity(cameraMatrix);
+
+        cv::solvePnP(points, points2d, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
+        
+        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
+        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+    }
 }
 
 long VROImageTracker::getCurrentTimeMs() {
