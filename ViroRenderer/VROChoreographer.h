@@ -25,12 +25,12 @@ class VRORenderTarget;
 class VRORenderContext;
 class VROImagePostProcess;
 class VROShaderProgram;
-class VROShadowMapRenderPass;
 class VROToneMappingRenderPass;
 class VROGaussianBlurRenderPass;
 class VROPostProcessEffectFactory;
 class VRORenderMetadata;
 class VRORenderToTextureDelegate;
+class VROPreprocess;
 enum class VROPostProcessEffect;
 enum class VROEyeType;
 
@@ -163,28 +163,6 @@ private:
      */
     bool _renderShadows;
     
-    /*
-     The max supported shadow map size for the current device.
-     */
-    int _maxSupportedShadowMapSize;
-    
-    /*
-     The render target for the shadow passes. This target uses a depth texture array
-     to capture shadow maps for all lights.
-     */
-    std::shared_ptr<VRORenderTarget> _shadowTarget;
-    
-    /*
-     The shadow passes for creating the depth maps for each light.
-     */
-    std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> _shadowPasses;
-    
-    /*
-     Render shadows to the shadow maps for each shadow casting light.
-     */
-    void renderShadowPasses(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                            std::shared_ptr<VRODriver> &driver);
-    
 #pragma mark - HDR
 
     /*
@@ -253,6 +231,11 @@ private:
      Intermediate target used for post-processing effects.
      */
     std::shared_ptr<VRORenderTarget> _postProcessTarget;
+    
+#pragma mark - Preprocessing
+    
+    std::vector<std::shared_ptr<VROPreprocess>> _preprocesses;
+    
 };
 
 #endif /* VROChoreographer_h */

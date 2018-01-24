@@ -5,7 +5,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 include_directories(../../ViroRenderer
-                    ../../ViroRenderer/glm
                     src/main/cpp
                     ../libs/gvr/include
                     ../libs/ovr/include
@@ -183,6 +182,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROImagePostProcessOpenGL.cpp
              ../../ViroRenderer/VROParticleEmitter.cpp
              ../../ViroRenderer/VROParticleUBO.cpp
+             ../../ViroRenderer/VROShadowPreprocess.cpp
              ../../ViroRenderer/VROShadowMapRenderPass.cpp
              ../../ViroRenderer/VROShaderFactory.cpp
              ../../ViroRenderer/VROPostProcessEffectFactory.cpp

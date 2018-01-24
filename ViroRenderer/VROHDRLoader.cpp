@@ -12,7 +12,7 @@
 #include "VROData.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "gtc/packing.hpp"
+#include "glm/gtc/packing.hpp"
 #include <fstream>
 #include <algorithm>
 #include <cstdio>

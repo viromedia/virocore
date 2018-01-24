@@ -15,15 +15,14 @@
 #include "VRORenderContext.h"
 #include "VROMatrix4f.h"
 #include "VROScene.h"
-#include "VROLightingUBO.h"
 #include "VROEye.h"
-#include "VROLight.h"
 #include "VROToneMappingRenderPass.h"
-#include "VROShadowMapRenderPass.h"
 #include "VROGaussianBlurRenderPass.h"
 #include "VROPostProcessEffectFactory.h"
 #include "VRORenderMetadata.h"
 #include "VRORenderToTextureDelegate.h"
+#include "VROPreprocess.h"
+#include "VROShadowPreprocess.h"
 #include <vector>
 
 #pragma mark - Initialization
@@ -33,7 +32,6 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _mrtEnabled(driver->getGPUType() != VROGPUType::Adreno330OrOlder),
     _renderToTexture(false),
     _renderShadows(driver->getGPUType() != VROGPUType::Adreno330OrOlder),
-    _maxSupportedShadowMapSize(2048),
     _blurScaling(0.25) {
 
     if (_mrtEnabled) {
@@ -72,12 +70,7 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     _postProcessTarget = driver->newRenderTarget(colorType, 1, 1);
 
     if (_renderShadows) {
-        if (kDebugShadowMaps) {
-            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxShadowMaps);
-        }
-        else {
-            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, 1, kMaxShadowMaps);
-        }
+        _preprocesses.push_back(std::make_shared<VROShadowPreprocess>(driver));
     }
 }
 
@@ -87,6 +80,7 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
     }
     
     if (_renderBloom) {
+        // The HDR target includes an additional attachment to which we render bloom
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1);
         _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
         _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
@@ -155,105 +149,12 @@ void VROChoreographer::render(VROEyeType eye,
                               VRORenderContext *context,
                               std::shared_ptr<VRODriver> &driver) {
     
-    if (!_renderShadows) {
-        renderScene(scene, outgoingScene, metadata, context, driver);
-    }
-    else {
-        if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
-            renderShadowPasses(scene, context, driver);
-        }
-        renderScene(scene, outgoingScene, metadata, context, driver);
-    }
-}
-
-void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                                          std::shared_ptr<VRODriver> &driver) {
-    
-    const std::vector<std::shared_ptr<VROLight>> &lights = scene->getLights();
-    
-    // Get the max requested shadow map size; use that for our render target
-    int maxSize = 0;
-    for (const std::shared_ptr<VROLight> &light : lights) {
-        if (!light->getCastsShadow()) {
-            continue;
-        }
-        maxSize = std::max(maxSize, light->getShadowMapSize());
-    }
-
-    if (maxSize == 0) {
-        // No lights are casting a shadow
-        return;
-    }
-    
-    // Use the smallest of our max supported shadow map size and our max requested size
-    int shadowMapSize = std::min(maxSize, _maxSupportedShadowMapSize);
-    int minRequiredShadowMapSize = 128;
-    
-    // Set the shadow target's viewport. If we fail to create a shadow render target of
-    // requested size, cut the size in half. If we continue to fail, then shadows map not
-    // be supported by this device; in this case, return without rendering them.
-    while (shadowMapSize >= minRequiredShadowMapSize) {
-        if (_shadowTarget->setViewport({ 0, 0, shadowMapSize, shadowMapSize })) {
-            break;
-        }
-        else {
-            shadowMapSize /= 2;
-            _maxSupportedShadowMapSize = shadowMapSize;
+    if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
+        for (std::shared_ptr<VROPreprocess> &preprocess : _preprocesses) {
+            preprocess->execute(scene, context, driver);
         }
     }
-    if (shadowMapSize < minRequiredShadowMapSize) {
-        return;
-    }
-    
-    std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> activeShadowPasses;
-    int i = 0;
-    for (const std::shared_ptr<VROLight> &light : lights) {
-        if (!light->getCastsShadow()) {
-            continue;
-        }
-        passert (light->getType() != VROLightType::Ambient && light->getType() != VROLightType::Omni);
-        
-        std::shared_ptr<VROShadowMapRenderPass> shadowPass;
-        
-        // Get the shadow pass for this light if we already have one from the last frame;
-        // otherwise, create a new one
-        auto it = _shadowPasses.find(light);
-        if (it == _shadowPasses.end()) {
-            shadowPass = std::make_shared<VROShadowMapRenderPass>(light, driver);
-        }
-        else {
-            shadowPass = it->second;
-        }
-        activeShadowPasses[light] = shadowPass;
-        
-        pglpush("Shadow Pass");
-        if (!kDebugShadowMaps) {
-            _shadowTarget->setTextureImageIndex(i, 0);
-        }
-        light->setShadowMapIndex(i);
-        
-        VRORenderPassInputOutput inputs;
-        inputs[kRenderTargetSingleOutput] = _shadowTarget;
-        shadowPass->render(scene, nullptr, inputs, context, driver);
-        
-        driver->unbindShader();
-        pglpop();
-        
-        ++i;
-    }
-    
-    // If any shadow was rendered, set the shadow map in the context; otherwise
-    // make it null
-    if (i > 0) {
-        context->setShadowMap(_shadowTarget->getTexture(0));
-    }
-    else {
-        context->setShadowMap(nullptr);
-    }
-    
-    // Shadow passes that weren't used this frame (e.g. are not in activeShadowPasses),
-    // are removed
-    _shadowPasses = activeShadowPasses;
+    renderScene(scene, outgoingScene, metadata, context, driver);
 }
 
 void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
