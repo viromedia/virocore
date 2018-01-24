@@ -52,4 +52,5 @@ Check out our [blog](https://blog.viromedia.com/) for news, updates and tutorial
 <a href="https://github.com/viromedia/virocore/blob/master/ARRetail/app/src/main/java/com/example/virosample/ProductARActivityComplete.java">
 <img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARRetail/ARRetailActivity.gif">
 </a>
+
 [Link to Retail tutorial](https://blog.viromedia.com/tutorial-how-to-build-amazons-ar-view-for-arcore-android-using-virocore-and-java-ba1cc3ff2d87)
