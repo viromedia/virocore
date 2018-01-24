@@ -100,13 +100,13 @@ VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROSc
     _gaussianBlur->begin(driver);
     for (int i = 0; i < _numBlurIterations; i++) {
         if (i == 0) {
-            _gaussianBlur->blitOpt(input, 1, bufferA, {}, driver);
+            _gaussianBlur->blitOpt({ input->getTexture(1) }, bufferA, driver);
         }
         else if (i % 2 == 1) {
-            _gaussianBlur->blitOpt(bufferA, 0, bufferB, {}, driver);
+            _gaussianBlur->blitOpt({ bufferA->getTexture(0) }, bufferB, driver);
         }
         else {
-            _gaussianBlur->blitOpt(bufferB, 0, bufferA, {}, driver);
+            _gaussianBlur->blitOpt({ bufferB->getTexture(0) }, bufferA, driver);
         }
         _horizontal = !_horizontal;
     }

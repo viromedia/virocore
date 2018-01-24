@@ -28,24 +28,13 @@ public:
     virtual void setVerticalFlip(bool flip) = 0;
     
     /*
-     Bind the given texture to the given unit. It is assumed the shader used with
-     this post-process has a sampler set for the unit. Returns false is the texture
-     has no substrate and could not be bound.
-     */
-    virtual bool bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
-                             std::shared_ptr<VRODriver> &driver) = 0;
-    
-    /*
-     Blit the given attachment of the source render target to the destination
-     render target, using the the post process shader. This assumes the source
-     render target is a render-to-texture target.
+     Bind the given textures and blit to the destination render target, using the
+     post-process shader.
      
-     The provided textures will be bound to samplers (texture units) 1 to N.
-     Texture unit 0 (sampler 0) will receive the source render target's texture.
+     The provided textures will be bound to samplers (texture units) 0 to N.
      */
-    virtual void blit(std::shared_ptr<VRORenderTarget> source, int attachment,
+    virtual void blit(std::vector<std::shared_ptr<VROTexture>> textures,
                       std::shared_ptr<VRORenderTarget> destination,
-                      std::vector<std::shared_ptr<VROTexture>> textures,
                       std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
@@ -57,9 +46,8 @@ public:
      Used in conjunction with blitOpt() and end().
      */
     virtual void begin(std::shared_ptr<VRODriver> &driver) = 0;
-    virtual void blitOpt(std::shared_ptr<VRORenderTarget> source, int attachment,
+    virtual void blitOpt(std::vector<std::shared_ptr<VROTexture>> textures,
                          std::shared_ptr<VRORenderTarget> destination,
-                         std::vector<std::shared_ptr<VROTexture>> textures,
                          std::shared_ptr<VRODriver> &driver) = 0;
     virtual void end(std::shared_ptr<VRODriver> &driver) = 0;
     

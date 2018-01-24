@@ -14,6 +14,7 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryUtil.h"
 #include "VROTexture.h"
+#include "VRORenderUtil.h"
 #include "VROLog.h"
 #include "VROShaderModifier.h"
 #include "VROTextureSubstrateOpenGL.h"
@@ -46,26 +47,12 @@ void VROImagePostProcessOpenGL::setVerticalFlip(bool flip) {
     buildQuadFSVAR(flip);
 }
 
-bool VROImagePostProcessOpenGL::bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
-                                            std::shared_ptr<VRODriver> &driver) {
-    VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(0, driver, nullptr);
-    if (!substrate) {
-        return false;
-    }
-    std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
-    
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(targetAndTexture.first, targetAndTexture.second);
-    return true;
-}
-
-void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source, int attachment,
+void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRORenderTarget> destination,
-                                     std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRODriver> &driver) {
     
     // Bind the source textures and destination render target
-    if (!bind(source, attachment, destination, textures, driver)) {
+    if (!bind(textures, destination, driver)) {
         return;
     }
     
@@ -100,13 +87,12 @@ void VROImagePostProcessOpenGL::begin(std::shared_ptr<VRODriver> &driver) {
     bindScreenSpaceVAR();
 }
 
-void VROImagePostProcessOpenGL::blitOpt(std::shared_ptr<VRORenderTarget> source, int attachment,
+void VROImagePostProcessOpenGL::blitOpt(std::vector<std::shared_ptr<VROTexture>> textures,
                                         std::shared_ptr<VRORenderTarget> destination,
-                                        std::vector<std::shared_ptr<VROTexture>> textures,
                                         std::shared_ptr<VRODriver> &driver) {
     
     // Bind the source textures and destination render target
-    if (!bind(source, attachment, destination, textures, driver)) {
+    if (!bind(textures, destination, driver)) {
         return;
     }
     for (VROUniform *uniform : _shaderModifierUniforms) {
@@ -119,23 +105,15 @@ void VROImagePostProcessOpenGL::end(std::shared_ptr<VRODriver> &driver) {
     driver->unbindShader();
 }
 
-bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source, int attachment,
+bool VROImagePostProcessOpenGL::bind(std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRORenderTarget> destination,
-                                     std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRODriver> &driver) {
     
-    // Bind the source target to texture unit 0
-    const std::shared_ptr<VROTexture> &texture = source->getTexture(attachment);
-    passert_msg(texture != nullptr, "Render target had no texture: was a viewport set?");
-    
-    if (!bindTexture(0, texture, driver)) {
-        return false;
-    }
-    
-    // Bind remaining textures to their units
-    int unit = 1;
+    // Bind textures to their units
+    int unit = 0;
     for (std::shared_ptr<VROTexture> &texture : textures) {
-        bindTexture(unit, texture, driver);
+        VRORenderUtil::bindTexture(unit, texture, driver);
+        ++unit;
     }
     
     // Bind the destination render target

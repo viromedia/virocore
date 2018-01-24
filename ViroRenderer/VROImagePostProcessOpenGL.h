@@ -22,19 +22,14 @@ public:
     virtual ~VROImagePostProcessOpenGL();
     
     void setVerticalFlip(bool flip);
-    
-    bool bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
-                     std::shared_ptr<VRODriver> &driver);
 
-    void blit(std::shared_ptr<VRORenderTarget> source, int attachment,
+    void blit(std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRORenderTarget> destination,
-              std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRODriver> &driver);
     
     void begin(std::shared_ptr<VRODriver> &driver);
-    void blitOpt(std::shared_ptr<VRORenderTarget> source, int attachment,
+    void blitOpt(std::vector<std::shared_ptr<VROTexture>> textures,
                  std::shared_ptr<VRORenderTarget> destination,
-                 std::vector<std::shared_ptr<VROTexture>> textures,
                  std::shared_ptr<VRODriver> &driver);
     void end(std::shared_ptr<VRODriver> &driver);
     
@@ -63,9 +58,8 @@ private:
      Perform common operations before running the post process. Returns true
      if the bind was successful.
      */
-    bool bind(std::shared_ptr<VRORenderTarget> source, int attachment,
+    bool bind(std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRORenderTarget> destination,
-              std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRODriver> &driver);
     
     /*

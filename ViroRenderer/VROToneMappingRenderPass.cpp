@@ -155,7 +155,7 @@ VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROSce
     std::shared_ptr<VRORenderTarget> target = inputs[kToneMappingOutput];
     
     pglpush("Tone Mapping");
-    _postProcess->blit(hdrInput, 0, target, {}, driver);
+    _postProcess->blit({ hdrInput->getTexture(0) }, target, driver);
     pglpop();
     
     VRORenderPassInputOutput output;

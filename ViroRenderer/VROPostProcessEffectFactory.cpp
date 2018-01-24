@@ -7,6 +7,7 @@
 
 #include "VROPostProcessEffectFactory.h"
 #include "VROImagePostProcess.h"
+#include "VRORenderTarget.h"
 #include "VROImageShaderProgram.h"
 #include "VRODriver.h"
 
@@ -113,10 +114,10 @@ void VROPostProcessEffectFactory::renderEffects(std::shared_ptr<VRORenderTarget>
     bool ping = true;
     for (int i = 0; i < _cachedPrograms.size(); i ++){
         if (ping){
-            _cachedPrograms[i].second->blit(input, 0, output, {}, driver);
+            _cachedPrograms[i].second->blit({ input->getTexture(0) }, output, driver);
             ping = false;
         } else {
-            _cachedPrograms[i].second->blit(output, 0, input, {}, driver);
+            _cachedPrograms[i].second->blit({ output->getTexture(0) }, input,  driver);
             ping = true;
         }
     }
@@ -125,7 +126,7 @@ void VROPostProcessEffectFactory::renderEffects(std::shared_ptr<VRORenderTarget>
     // Note: Consider expanding the renderEffects signature if the cost of performing a final blit
     // here is too great.
     if (ping){
-        sEmptyEffect->blit(input, 0, output, {}, driver);
+        sEmptyEffect->blit({ input->getTexture(0) }, output, driver);
     }
 }
 

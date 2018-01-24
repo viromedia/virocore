@@ -177,7 +177,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Additively blend the bloom back into the image, store in _postProcessTarget
-            _additiveBlendPostProcess->blit(_hdrTarget, 0, _postProcessTarget, { _blurTargetB->getTexture(0) }, driver);
+            _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), _blurTargetB->getTexture(0) }, _postProcessTarget, driver);
             
             // Run additional post-processing on the normal HDR image
             bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_postProcessTarget, _hdrTarget, driver);
@@ -261,7 +261,7 @@ void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget
     // Blit direct to the display. We can't use the blitColor method here
     // because the display is multisampled (blitting to a multisampled buffer
     // is not supported).
-    _blitPostProcess->blit(input, 0, driver->getDisplay(), {}, driver);
+    _blitPostProcess->blit({ input->getTexture(0) }, driver->getDisplay(), driver);
     if (_renderToTextureCallback) {
         _renderToTextureCallback();
     }
