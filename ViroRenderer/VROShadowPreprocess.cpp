@@ -92,7 +92,7 @@ void VROShadowPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderCont
         light->setShadowMapIndex(i);
         
         VRORenderPassInputOutput inputs;
-        inputs[kRenderTargetSingleOutput] = _shadowTarget;
+        inputs.outputTarget = _shadowTarget;
         shadowPass->render(scene, nullptr, inputs, context, driver);
         
         driver->unbindShader();

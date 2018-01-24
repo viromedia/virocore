@@ -31,12 +31,12 @@ VROPortalTreeRenderPass::~VROPortalTreeRenderPass() {
     
 }
 
-VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                         std::shared_ptr<VROScene> outgoingScene,
-                                                         VRORenderPassInputOutput &inputs,
-                                                         VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+void VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene,
+                                     std::shared_ptr<VROScene> outgoingScene,
+                                     VRORenderPassInputOutput &inputs,
+                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
 
-    std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
+    std::shared_ptr<VRORenderTarget> target = inputs.outputTarget;
     passert (target);
     driver->bindRenderTarget(target);
 
@@ -70,10 +70,6 @@ VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScen
 
     // Render the pencil
     context->getPencil()->render(*context, driver);
-
-    VRORenderPassInputOutput output;
-    output[kRenderTargetSingleOutput] = target;
-    return output;
 }
 
 // The key to this algorithm is we render depth-first. That is, we funnel down

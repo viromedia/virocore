@@ -18,8 +18,7 @@ class VROImagePostProcess;
  Keys for the gaussian render pass.
  */
 const std::string kGaussianInput = "G_Input";
-const std::string kGaussianPingPongA = "G_PPA";
-const std::string kGaussianPingPongB = "G_PPB";
+const std::string kGaussianPingPong = "G_PP";
 
 /*
  Implements Gaussian blur for Bloom. Ping-pongs the blur between
@@ -31,10 +30,10 @@ public:
     VROGaussianBlurRenderPass();
     virtual ~VROGaussianBlurRenderPass();
     
-    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
-                                    std::shared_ptr<VROScene> outgoingScene,
-                                    VRORenderPassInputOutput &inputs,
-                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
+    void render(std::shared_ptr<VROScene> scene,
+                std::shared_ptr<VROScene> outgoingScene,
+                VRORenderPassInputOutput &inputs,
+                VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
 
     /*
      The more iterations, the more blur. Must be an even number.

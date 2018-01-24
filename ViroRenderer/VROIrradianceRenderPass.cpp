@@ -19,8 +19,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-VROIrradianceRenderPass::VROIrradianceRenderPass(std::shared_ptr<VROTexture> lightingEnvironment) :
-    _lightingEnvironment(lightingEnvironment) {
+VROIrradianceRenderPass::VROIrradianceRenderPass() {
     
 }
 
@@ -31,10 +30,6 @@ VROIrradianceRenderPass::~VROIrradianceRenderPass() {
     if (_cubeVAO != 0) {
         glDeleteVertexArrays(1, &_cubeVAO);
     }
-}
-
-std::shared_ptr<VROTexture> VROIrradianceRenderPass::getIrradianceMap() {
-    return _irradianceRenderTarget->getTexture(0);
 }
 
 void VROIrradianceRenderPass::init(std::shared_ptr<VRODriver> driver) {
@@ -49,17 +44,17 @@ void VROIrradianceRenderPass::init(std::shared_ptr<VRODriver> driver) {
     _irradianceRenderTarget->setViewport( { 0, 0, 32, 32 });
 }
 
-VRORenderPassInputOutput VROIrradianceRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                         std::shared_ptr<VROScene> outgoingScene,
-                                                         VRORenderPassInputOutput &inputs,
-                                                         VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+void VROIrradianceRenderPass::render(std::shared_ptr<VROScene> scene,
+                                     std::shared_ptr<VROScene> outgoingScene,
+                                     VRORenderPassInputOutput &inputs,
+                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     if (!_shader) {
         init(driver);
     }
     pglpush("Irradiance");
     
     // Bind the HDR texture to texture unit 0
-    VRORenderUtil::bindTexture(0, _lightingEnvironment, driver);
+    VRORenderUtil::bindTexture(0, inputs.textures[kIrradianceLightingEnvironmentInput], driver);
     
     // Bind the destination render target
     driver->bindRenderTarget(_irradianceRenderTarget);
@@ -95,9 +90,7 @@ VRORenderPassInputOutput VROIrradianceRenderPass::render(std::shared_ptr<VROScen
     }
     driver->unbindShader();
     pglpop();
-    
-    VRORenderPassInputOutput renderPassOutput;
-    return renderPassOutput;
+    inputs.outputTarget = _irradianceRenderTarget;
 }
 
 

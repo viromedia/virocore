@@ -80,18 +80,18 @@ void VROGaussianBlurRenderPass::setNumBlurIterations(int numIterations) {
     }
 }
 
-VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                           std::shared_ptr<VROScene> outgoingScene,
-                                                           VRORenderPassInputOutput &inputs,
-                                                           VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+void VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
+                                       std::shared_ptr<VROScene> outgoingScene,
+                                       VRORenderPassInputOutput &inputs,
+                                       VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
     if (!_gaussianBlur) {
         initPostProcess(driver);
     }
     
-    std::shared_ptr<VRORenderTarget> input  =  inputs[kGaussianInput];
-    std::shared_ptr<VRORenderTarget> bufferA = inputs[kGaussianPingPongA];
-    std::shared_ptr<VRORenderTarget> bufferB = inputs[kGaussianPingPongB];
+    std::shared_ptr<VRORenderTarget> input  =  inputs.targets[kGaussianInput];
+    std::shared_ptr<VRORenderTarget> bufferA = inputs.targets[kGaussianPingPong];
+    std::shared_ptr<VRORenderTarget> bufferB = inputs.outputTarget;
     
     _horizontal = true;
     passert (_numBlurIterations % 2 == 0);
@@ -112,8 +112,4 @@ VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROSc
     }
     _gaussianBlur->end(driver);
     pglpop();
-    
-    VRORenderPassInputOutput renderPassOutput;
-    renderPassOutput[kRenderTargetSingleOutput] = bufferB;
-    return renderPassOutput;
 }

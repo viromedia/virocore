@@ -18,8 +18,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-VROEquirectangularToCubeRenderPass::VROEquirectangularToCubeRenderPass(std::shared_ptr<VROTexture> hdrTexture) :
-    _hdrTexture(hdrTexture) {
+VROEquirectangularToCubeRenderPass::VROEquirectangularToCubeRenderPass() {
     
 }
 
@@ -30,10 +29,6 @@ VROEquirectangularToCubeRenderPass::~VROEquirectangularToCubeRenderPass() {
     if (_cubeVAO != 0) {
         glDeleteVertexArrays(1, &_cubeVAO);
     }
-}
-
-std::shared_ptr<VROTexture> VROEquirectangularToCubeRenderPass::getCubeTexture() {
-    return _cubeRenderTarget->getTexture(0);
 }
 
 void VROEquirectangularToCubeRenderPass::init(std::shared_ptr<VRODriver> driver) {
@@ -48,17 +43,17 @@ void VROEquirectangularToCubeRenderPass::init(std::shared_ptr<VRODriver> driver)
     _cubeRenderTarget->setViewport( { 0, 0, 512, 512 });
 }
 
-VRORenderPassInputOutput VROEquirectangularToCubeRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                                    std::shared_ptr<VROScene> outgoingScene,
-                                                                    VRORenderPassInputOutput &inputs,
-                                                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+void VROEquirectangularToCubeRenderPass::render(std::shared_ptr<VROScene> scene,
+                                                std::shared_ptr<VROScene> outgoingScene,
+                                                VRORenderPassInputOutput &inputs,
+                                                VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     if (!_shader) {
         init(driver);
     }
     pglpush("EquirectToCube");
     
     // Bind the HDR texture to texture unit 0
-    VRORenderUtil::bindTexture(0, _hdrTexture, driver);
+    VRORenderUtil::bindTexture(0, inputs.textures[kEquirectangularToCubeHDRTextureInput], driver);
     
     // Bind the destination render target
     driver->bindRenderTarget(_cubeRenderTarget);
@@ -94,8 +89,6 @@ VRORenderPassInputOutput VROEquirectangularToCubeRenderPass::render(std::shared_
     }
     driver->unbindShader();
     pglpop();
-    
-    VRORenderPassInputOutput renderPassOutput;
-    return renderPassOutput;
+    inputs.outputTarget = _cubeRenderTarget;
 }
 

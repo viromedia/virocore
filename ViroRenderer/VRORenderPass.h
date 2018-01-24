@@ -18,22 +18,25 @@
 class VROScene;
 class VRODriver;
 class VRODisplay;
+class VROTexture;
 class VRORenderContext;
 class VRORenderTarget;
 
 /*
- Keys to use for render passes that take a single render target as input
- and ond output a single render target.
+ The inputs to a render pass are textures and (optionally) intermediate render
+ targets. These are typically backed by depth, stencil, and/or color textures.
+ The output of a render pass is a render target and (optionally) modified
+ intermediate render targets.
+ 
+ Textures and intermediate render targets are each keyed by names unique to the
+ render pass.
  */
-const std::string kRenderTargetSingleInput = "RT_Input";
-const std::string kRenderTargetSingleOutput = "RT_Output";
-
-/*
- The output of a render pass is a map of render targets. These are typically backed
- by depth, stencil, and or color textures. Each target is keyed by a unique name.
- Inputs to render passes are similarly identified.
- */
-typedef std::map<std::string, std::shared_ptr<VRORenderTarget>> VRORenderPassInputOutput;
+class VRORenderPassInputOutput {
+public:
+    std::map<std::string, std::shared_ptr<VROTexture>> textures;
+    std::map<std::string, std::shared_ptr<VRORenderTarget>> targets;
+    std::shared_ptr<VRORenderTarget> outputTarget;
+};
 
 /*
  Render passes represent a rendering of the scene to produce one or more render targets.
@@ -59,10 +62,10 @@ public:
      It is common and expected for render passes to re-use the same output render targets
      each frame.
      */
-    virtual VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
-                                            std::shared_ptr<VROScene> outgoingScene,
-                                            VRORenderPassInputOutput &inputs,
-                                            VRORenderContext *context, std::shared_ptr<VRODriver> &driver) = 0;
+    virtual void render(std::shared_ptr<VROScene> scene,
+                        std::shared_ptr<VROScene> outgoingScene,
+                        VRORenderPassInputOutput &inputs,
+                        VRORenderContext *context, std::shared_ptr<VRODriver> &driver) = 0;
     
 };
 

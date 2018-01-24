@@ -57,11 +57,11 @@ VROShadowMapRenderPass::~VROShadowMapRenderPass() {
     
 }
 
-VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                        std::shared_ptr<VROScene> outgoingScene,
-                                                        VRORenderPassInputOutput &inputs,
-                                                        VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
-    std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
+void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
+                                    std::shared_ptr<VROScene> outgoingScene,
+                                    VRORenderPassInputOutput &inputs,
+                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+    std::shared_ptr<VRORenderTarget> target = inputs.outputTarget;
     VROMatrix4f previousProjection = context->getProjectionMatrix();
     VROMatrix4f previousView = context->getViewMatrix();
     
@@ -107,11 +107,6 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     driver->setColorWritingEnabled(true);
     context->setProjectionMatrix(previousProjection);
     context->setViewMatrix(previousView);
-    
-    VRORenderPassInputOutput output;
-    output[kRenderTargetSingleOutput] = target;
-    
-    return output;
 }
 
 void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,

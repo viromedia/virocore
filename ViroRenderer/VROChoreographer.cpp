@@ -167,13 +167,13 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
     if (_renderHDR) {
         if (_renderBloom && metadata->requiresBloomPass()) {
             // Render the scene + bloom to the floating point HDR MRT target
-            inputs[kRenderTargetSingleOutput] = _hdrTarget;
+            inputs.outputTarget = _hdrTarget;
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Blur the image. The finished result will reside in _blurTargetB.
-            inputs[kGaussianInput] = _hdrTarget;
-            inputs[kGaussianPingPongA] = _blurTargetA;
-            inputs[kGaussianPingPongB] = _blurTargetB;
+            inputs.targets[kGaussianInput] = _hdrTarget;
+            inputs.targets[kGaussianPingPong] = _blurTargetA;
+            inputs.outputTarget = _blurTargetB;
             _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Additively blend the bloom back into the image, store in _postProcessTarget
@@ -184,24 +184,24 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             
             // Blend, tone map, and gamma correct
             if (postProcessed) {
-                inputs[kToneMappingHDRInput] = _hdrTarget;
+                inputs.textures[kToneMappingHDRInput] = _hdrTarget->getTexture(0);
             }
             else {
-                inputs[kToneMappingHDRInput] = _postProcessTarget;
+                inputs.textures[kToneMappingHDRInput] = _postProcessTarget->getTexture(0);
             }
             if (_renderToTexture) {
-                inputs[kToneMappingOutput] = _blitTarget;
+                inputs.outputTarget = _blitTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_blitTarget, driver);
             }
             else {
-                inputs[kToneMappingOutput] = driver->getDisplay();
+                inputs.outputTarget = driver->getDisplay();
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
             }
         }
         else {
             // Render the scene to the floating point HDR target
-            inputs[kRenderTargetSingleOutput] = _hdrTarget;
+            inputs.outputTarget = _hdrTarget;
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Run additional post-processing on the HDR image
@@ -209,30 +209,30 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             
             // Perform tone-mapping with gamma correction
             if (postProcessed) {
-                inputs[kToneMappingHDRInput] = _postProcessTarget;
+                inputs.textures[kToneMappingHDRInput] = _postProcessTarget->getTexture(0);
             }
             else {
-                inputs[kToneMappingHDRInput] = _hdrTarget;
+                inputs.textures[kToneMappingHDRInput] = _hdrTarget->getTexture(0);
             }
             if (_renderToTexture) {
-                inputs[kToneMappingOutput] = _blitTarget;
+                inputs.outputTarget = _blitTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_blitTarget, driver);
             }
             else {
-                inputs[kToneMappingOutput] = driver->getDisplay();
+                inputs.outputTarget = driver->getDisplay();
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
             }
         }
     }
     else if (_mrtEnabled && _renderToTexture) {
-        inputs[kRenderTargetSingleOutput] = _blitTarget;
+        inputs.outputTarget = _blitTarget;
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
         renderToTextureAndDisplay(_blitTarget, driver);
     }
     else {
         // Render to the display directly
-        inputs[kRenderTargetSingleOutput] = driver->getDisplay();
+        inputs.outputTarget = driver->getDisplay();
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
     }
 }

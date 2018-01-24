@@ -10,6 +10,7 @@
 #include "VROPortal.h"
 #include "VROScene.h"
 #include "VRORenderContext.h"
+#include "VRORenderTarget.h"
 #include "VROEquirectangularToCubeRenderPass.h"
 #include "VROIrradianceRenderPass.h"
 
@@ -34,16 +35,17 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
     
     if (portal->getLightingEnvironment() != nullptr && portal->getLightingEnvironment() != _currentLightingEnvironment) {
         _currentLightingEnvironment = portal->getLightingEnvironment();
+        
         VRORenderPassInputOutput inputs;
-        
-        VROEquirectangularToCubeRenderPass equiToCube(_currentLightingEnvironment);
+        inputs.textures[kEquirectangularToCubeHDRTextureInput] = _currentLightingEnvironment;
+        VROEquirectangularToCubeRenderPass equiToCube;
         equiToCube.render(scene, nullptr, inputs, context, driver);
-        std::shared_ptr<VROTexture> cube = equiToCube.getCubeTexture();
         
-        VROIrradianceRenderPass irradiancePass(cube);
+        inputs.textures[kIrradianceLightingEnvironmentInput] = inputs.outputTarget->getTexture(0);
+        VROIrradianceRenderPass irradiancePass;
         irradiancePass.render(scene, nullptr, inputs, context, driver);
-        std::shared_ptr<VROTexture> irradianceMap = irradiancePass.getIrradianceMap();
         
+        std::shared_ptr<VROTexture> irradianceMap = inputs.outputTarget->getTexture(0);
         scene->getRootNode()->setBackgroundCube(irradianceMap);
     }
     

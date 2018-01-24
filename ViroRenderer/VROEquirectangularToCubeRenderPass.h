@@ -16,21 +16,21 @@ class VROTexture;
 class VROShaderProgram;
 class VROImagePostProcess;
 
+const std::string kEquirectangularToCubeHDRTextureInput = "EC_Input";
+
 /*
  Pass that renders an equirectangular HDR image to a cube-map.
  */
 class VROEquirectangularToCubeRenderPass : public VRORenderPass, public std::enable_shared_from_this<VROEquirectangularToCubeRenderPass> {
 public:
     
-    VROEquirectangularToCubeRenderPass(std::shared_ptr<VROTexture> hdrTexture);
+    VROEquirectangularToCubeRenderPass();
     virtual ~VROEquirectangularToCubeRenderPass();
     
-    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
-                                    std::shared_ptr<VROScene> outgoingScene,
-                                    VRORenderPassInputOutput &inputs,
-                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
-    
-    std::shared_ptr<VROTexture> getCubeTexture();
+    void render(std::shared_ptr<VROScene> scene,
+                std::shared_ptr<VROScene> outgoingScene,
+                VRORenderPassInputOutput &inputs,
+                VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 private:
    
@@ -38,7 +38,6 @@ private:
     unsigned int _cubeVBO = 0;
     std::shared_ptr<VROShaderProgram> _shader;
     std::shared_ptr<VRORenderTarget> _cubeRenderTarget;
-    std::shared_ptr<VROTexture> _hdrTexture;
     
     void init(std::shared_ptr<VRODriver> driver);
     

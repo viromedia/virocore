@@ -142,26 +142,21 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     return driver->newImagePostProcess(shader);
 }
 
-VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene,
-                                                          std::shared_ptr<VROScene> outgoingScene,
-                                                          VRORenderPassInputOutput &inputs,
-                                                          VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+void VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene,
+                                      std::shared_ptr<VROScene> outgoingScene,
+                                      VRORenderPassInputOutput &inputs,
+                                      VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
     if (!_postProcess) {
         _postProcess = createPostProcess(driver);
     }
     
-    std::shared_ptr<VRORenderTarget> hdrInput = inputs[kToneMappingHDRInput];
-    std::shared_ptr<VRORenderTarget> target = inputs[kToneMappingOutput];
+    std::shared_ptr<VROTexture> hdrInput = inputs.textures[kToneMappingHDRInput];
+    std::shared_ptr<VRORenderTarget> target = inputs.outputTarget;
     
     pglpush("Tone Mapping");
-    _postProcess->blit({ hdrInput->getTexture(0) }, target, driver);
+    _postProcess->blit({ hdrInput }, target, driver);
     pglpop();
-    
-    VRORenderPassInputOutput output;
-    output[kToneMappingOutput] = target;
-    
-    return output;
 }
 
 void VROToneMappingRenderPass::setMethod(VROToneMappingMethod method) {

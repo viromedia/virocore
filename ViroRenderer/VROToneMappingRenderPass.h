@@ -16,7 +16,6 @@ class VRODriver;
 class VROImagePostProcess;
 
 const std::string kToneMappingHDRInput = "TM_Input";
-const std::string kToneMappingOutput = "TM_Output";
 
 enum class VROToneMappingMethod {
     Disabled,
@@ -39,10 +38,10 @@ public:
                              std::shared_ptr<VRODriver> driver);
     virtual ~VROToneMappingRenderPass();
     
-    VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene,
-                                    std::shared_ptr<VROScene> outgoingScene,
-                                    VRORenderPassInputOutput &inputs,
-                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
+    void render(std::shared_ptr<VROScene> scene,
+                std::shared_ptr<VROScene> outgoingScene,
+                VRORenderPassInputOutput &inputs,
+                VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
     /*
      Set the tone mapping method to use. This will regenerate the post-process
