@@ -15,7 +15,9 @@
 #include "VROIrradianceRenderPass.h"
 
 VROIBLPreprocess::VROIBLPreprocess() {
-    
+    _phase = VROIBLPhase::Idle;
+    _equirectangularToCubePass = std::make_shared<VROEquirectangularToCubeRenderPass>();
+    _irradiancePass = std::make_shared<VROIrradianceRenderPass>();
 }
 
 VROIBLPreprocess::~VROIBLPreprocess() {
@@ -25,28 +27,55 @@ VROIBLPreprocess::~VROIBLPreprocess() {
 void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                                std::shared_ptr<VRODriver> driver) {
  
-    // TODO This is a test method to see if converting equirectangular to cube
-    //      maps work. Will be replaced by convolution in future IBL commits.
-    
-    // In this test method we take the environment lighting set in the active
-    // portal and make it the background of the portal
-    
-    std::shared_ptr<VROPortal> portal = scene->getActivePortal();
-    
-    if (portal->getLightingEnvironment() != nullptr && portal->getLightingEnvironment() != _currentLightingEnvironment) {
-        _currentLightingEnvironment = portal->getLightingEnvironment();
+    if (_phase == VROIBLPhase::Idle) {
+        std::shared_ptr<VROPortal> portal = scene->getActivePortal();
+
+        // If idling, check if the lighting environment has changed
+        if (portal->getLightingEnvironment() != nullptr && portal->getLightingEnvironment() != _currentLightingEnvironment) {
+            pinfo("Lighting environment changed");
+
+            _currentLightingEnvironment = portal->getLightingEnvironment();
+            _phase = VROIBLPhase::CubeConvert;
+        }
         
-        VRORenderPassInputOutput inputs;
-        inputs.textures[kEquirectangularToCubeHDRTextureInput] = _currentLightingEnvironment;
-        VROEquirectangularToCubeRenderPass equiToCube;
-        equiToCube.render(scene, nullptr, inputs, context, driver);
-        
-        inputs.textures[kIrradianceLightingEnvironmentInput] = inputs.outputTarget->getTexture(0);
-        VROIrradianceRenderPass irradiancePass;
-        irradiancePass.render(scene, nullptr, inputs, context, driver);
-        
-        std::shared_ptr<VROTexture> irradianceMap = inputs.outputTarget->getTexture(0);
-        scene->getRootNode()->setBackgroundCube(irradianceMap);
+        // If an environment map has been removed
+        if (portal->getLightingEnvironment() == nullptr && _currentLightingEnvironment != nullptr) {
+            pinfo("Lighting environment removed");
+            context->setIrradianceMap(nullptr);
+        }
     }
     
+    else if (_phase == VROIBLPhase::CubeConvert) {
+        doCubeConversionPhase(scene, context, driver);
+        _phase = VROIBLPhase::IrradianceConvolution;
+    }
+    
+    else if (_phase == VROIBLPhase::IrradianceConvolution) {
+        doIrradianceConvolutionPhase(scene, context, driver);
+        context->setIrradianceMap(_irradianceMap);
+        _phase = VROIBLPhase::Idle;
+        
+        // For testing intermediate results
+        // scene->getRootNode()->setBackgroundCube(_irradianceMap);
+    }
+}
+
+void VROIBLPreprocess::doCubeConversionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                             std::shared_ptr<VRODriver> driver) {
+    pinfo("   Converting equirectangular texture to cubemap");
+    
+    VRORenderPassInputOutput inputs;
+    inputs.textures[kEquirectangularToCubeHDRTextureInput] = _currentLightingEnvironment;
+    _equirectangularToCubePass->render(scene, nullptr, inputs, context, driver);
+    _cubeLightingEnvironment = inputs.outputTarget->getTexture(0);
+}
+
+void VROIBLPreprocess::doIrradianceConvolutionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                                    std::shared_ptr<VRODriver> driver) {
+    pinfo("   Convoluting texture to create irradiance map");
+    
+    VRORenderPassInputOutput inputs;
+    inputs.textures[kIrradianceLightingEnvironmentInput] = _cubeLightingEnvironment;
+    _irradiancePass->render(scene, nullptr, inputs, context, driver);
+    _irradianceMap = inputs.outputTarget->getTexture(0);
 }

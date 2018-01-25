@@ -12,6 +12,14 @@
 #include "VROPreprocess.h"
 
 class VROTexture;
+class VROEquirectangularToCubeRenderPass;
+class VROIrradianceRenderPass;
+
+enum class VROIBLPhase {
+    Idle,
+    CubeConvert,
+    IrradianceConvolution,
+};
 
 class VROIBLPreprocess : public VROPreprocess {
 public:
@@ -24,7 +32,18 @@ public:
     
 private:
     
+    VROIBLPhase _phase;
+    std::shared_ptr<VROEquirectangularToCubeRenderPass> _equirectangularToCubePass;
+    std::shared_ptr<VROIrradianceRenderPass> _irradiancePass;
     std::shared_ptr<VROTexture> _currentLightingEnvironment;
+    std::shared_ptr<VROTexture> _cubeLightingEnvironment;
+    std::shared_ptr<VROTexture> _irradianceMap;
+    
+    void doCubeConversionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                               std::shared_ptr<VRODriver> driver);
+    void doIrradianceConvolutionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                      std::shared_ptr<VRODriver> driver);
+    
 };
 
 #endif /* VROIBLPreprocess_h */

@@ -36,6 +36,7 @@ static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
+static std::shared_ptr<VROShaderModifier> sPBRImageBasedAmbientFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
@@ -172,7 +173,14 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
         modifiers.push_back(createPBRSurfaceModifier());
         modifiers.push_back(createPBRDirectLightingModifier());
-        modifiers.push_back(createPBRConstantAmbientFragmentModifier());
+        
+        if (lightingCapabilities.IBL) {
+            samplers.push_back("irradiance_map");
+            modifiers.push_back(createPBRImageBasedAmbientFragmentModifier());
+        }
+        else {
+            modifiers.push_back(createPBRConstantAmbientFragmentModifier());
+        }
     }
     
     // All other lighting models
@@ -593,10 +601,31 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFra
             "_output_color = vec4(rgb_color, _output_color.a);",
         };
         sPBRConstantAmbientFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
-                                                                         modifierCode);
+                                                                                  modifierCode);
         sPBRConstantAmbientFragmentModifier->setName("pbr_const_amb");
     }
     return sPBRConstantAmbientFragmentModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRImageBasedAmbientFragmentModifier() {
+    if (!sPBRImageBasedAmbientFragmentModifier) {
+        std::vector<std::string> modifierCode = {
+            "uniform samplerCube irradiance_map;",
+            "highp vec3 ambient_kS = fresnel_schlick_roughness(max(dot(N, V), 0.0), F0, _surface.roughness);",
+            "highp vec3 ambient_kD = 1.0 - ambient_kS;",
+            
+            "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
+            "highp vec3 ambient_diffuse = irradiance * albedo;",
+            
+            "highp vec3 pbr_ambient = (ambient_kD * ambient_diffuse) * _surface.ao;",
+            "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+            "_output_color = vec4(rgb_color, _output_color.a);",
+        };
+        sPBRImageBasedAmbientFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                                    modifierCode);
+        sPBRImageBasedAmbientFragmentModifier->setName("pbr_ibl");
+    }
+    return sPBRImageBasedAmbientFragmentModifier;
 }
 
 #pragma mark - Other Modifiers

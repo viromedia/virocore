@@ -10,6 +10,10 @@ highp vec3 fresnel_schlick(highp float cosTheta, highp vec3 F0) {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
+highp vec3 fresnel_schlick_roughness(highp float cosTheta, highp vec3 F0, highp float roughness) {
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
 /*
  Trowbridge-Reitz GGX normal distribution function: approximates the amount the surface's
  microfacets are aligned to the halfway vector influenced by the roughness of the surface.

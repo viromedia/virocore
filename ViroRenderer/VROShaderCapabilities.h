@@ -63,15 +63,16 @@ struct VROMaterialShaderCapabilities {
  */
 struct VROLightingShaderCapabilities {
     bool shadows;
+    bool IBL;
     
-    bool operator< (const VROLightingShaderCapabilities& r) const {
-        return std::tie(shadows) < std::tie(r.shadows);
+    bool operator< (const VROLightingShaderCapabilities &r) const {
+        return std::tie(shadows, IBL) < std::tie(r.shadows, r.IBL);
     }
     bool operator== (const VROLightingShaderCapabilities& r) const {
-        return shadows == r.shadows;
+        return shadows == r.shadows && IBL == r.IBL;
     }
     bool operator!= (const VROLightingShaderCapabilities& r) const {
-        return shadows != r.shadows;
+        return shadows != r.shadows || IBL != r.IBL;
     }
 };
 

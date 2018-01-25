@@ -301,7 +301,6 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             }
             
             std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
-            
             glActiveTexture(GL_TEXTURE0 + activeTexture);
             glBindTexture(targetAndTexture.first, targetAndTexture.second);
             
