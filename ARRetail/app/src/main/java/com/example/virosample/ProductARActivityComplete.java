@@ -114,9 +114,9 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
         arScene.getRootNode().addLight(mMainLight);
 
         // Setup our 3D and HUD controls
-        initARHud();
         initARCrossHair(arScene);
         init3DModelProduct(arScene);
+        initARHud();
 
         // Start our tracking UI when the scene is ready to be tracked
         arScene.setListener(new ARSceneListener());
@@ -126,10 +126,11 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
     }
 
     private void initARHud(){
+        // TextView instructions
         mHUDInstructions = (TextView) mViroView.findViewById(R.id.ar_hud_instructions);
-
         mViroView.findViewById(R.id.bottom_frame_controls).setVisibility(View.VISIBLE);
 
+        // Bind the back button on the top left of the layout
         ImageView view = (ImageView) findViewById(R.id.ar_back_button);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +139,7 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
             }
         });
 
+        // Bind the detail buttons on the top right of the layout.
         ImageView productDetails = (ImageView) findViewById(R.id.ar_details_page);
         productDetails.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,9 +150,8 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
             }
         });
 
-
+        // Bind the camera button on the bottom, for taking images.
         mCameraButton  = (ImageView) mViroView.findViewById(R.id.ar_photo_button);
-
         final File photoFile = new File(getFilesDir(), "screenShot");
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +211,9 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
     }
 
     private void init3DModelProduct(ARScene scene){
+        // Create our group node containing the light, shadow plane, and 3D models
+        mProductModelGroup = new Node();
+
         // Create a light to be shined on the model.
         Spotlight spotLight = new Spotlight();
         spotLight.setInfluenceBitMask(1);
@@ -220,53 +224,23 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
         spotLight.setDirection(new Vector(0,-1,0));
         spotLight.setIntensity(6000);
         spotLight.setShadowOpacity(0.35f);
-
-        mProductModelGroup = new Node();
         mProductModelGroup.addLight(spotLight);
 
+        // Create a mock shadow plane in AR
         Node shadowNode = new Node();
         Surface shadowSurface = new Surface(20,20);
-
         Material material = new Material();
         material.setShadowMode(Material.ShadowMode.TRANSPARENT);
         material.setLightingModel(Material.LightingModel.LAMBERT);
         shadowSurface.setMaterials(Arrays.asList(material));
-
         shadowNode.setGeometry(shadowSurface);
         shadowNode.setLightReceivingBitMask(1);
         shadowNode.setPosition(new Vector(0,-0.01,0));
         shadowNode.setRotation(new Vector(-1.5708,0,0));
         mProductModelGroup.addChildNode(shadowNode);
-        mProductModelGroup.setDragType(Node.DragType.FIXED_TO_WORLD);
-        mProductModelGroup.setDragListener(new DragListener() {
-            @Override
-            public void onDrag(int i, Node node, Vector vector, Vector vector1) {
-                // No-op
-            }
-        });
 
+        // Load the model from the given mSelected Product
         final Object3D productModel = new Object3D();
-        productModel.setClickListener(new ClickListener() {
-            @Override
-            public void onClick(int i, Node node, Vector vector) {
-                // No-op
-            }
-
-            @Override
-            public void onClickState(int i, Node node, ClickState clickState, Vector vector) {
-                onModelClick(clickState);
-            }
-        });
-
-        productModel.setGestureRotateListener(new GestureRotateListener() {
-            @Override
-            public void onRotate(int source, Node node, float radians, RotateState rotateState) {
-                Vector rotateTo = new Vector(mLastProductRotation.x, mLastProductRotation.y + radians, mLastProductRotation.z);
-                productModel.setRotation(rotateTo);
-                mSavedRotateToRotation = rotateTo;
-            }
-        });
-
         productModel.loadModel(Uri.parse(mSelectedProduct.m3DModelUri), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(Object3D object3D, Object3D.Type type) {
@@ -281,9 +255,41 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
                 Log.e("Viro"," Model load failed : " + error);
             }
         });
+
+        // Make this 3D Product object draggable.
+        mProductModelGroup.setDragType(Node.DragType.FIXED_TO_WORLD);
+        mProductModelGroup.setDragListener(new DragListener() {
+            @Override
+            public void onDrag(int i, Node node, Vector vector, Vector vector1) {
+                // No-op
+            }
+        });
+
+        // Set click listeners on this 3D product
+        productModel.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int i, Node node, Vector vector) {
+                // No-op
+            }
+
+            @Override
+            public void onClickState(int i, Node node, ClickState clickState, Vector vector) {
+                onModelClick(clickState);
+            }
+        });
+
+        // Set gesture listeners such that the user can rotate this model.
+        productModel.setGestureRotateListener(new GestureRotateListener() {
+            @Override
+            public void onRotate(int source, Node node, float radians, RotateState rotateState) {
+                Vector rotateTo = new Vector(mLastProductRotation.x, mLastProductRotation.y + radians, mLastProductRotation.z);
+                productModel.setRotation(rotateTo);
+                mSavedRotateToRotation = rotateTo;
+            }
+        });
+
         mProductModelGroup.setOpacity(0);
         mProductModelGroup.addChildNode(productModel);
-
         scene.getRootNode().addChildNode(mProductModelGroup);
     }
 
@@ -459,4 +465,5 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
             // no-op
         }
     }
+
 }
