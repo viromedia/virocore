@@ -23,7 +23,7 @@ VROSample::~VROSample() {
 void VROSample::loadTestHarness(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                 std::shared_ptr<VRODriver> driver) {
     _harness = std::make_shared<VRORendererTestHarness>(frameSynchronizer, driver);
-    _harness->loadTest(VRORendererTestType::PBRTextured);
+    _harness->loadTest(VRORendererTestType::DiffuseIrradiance);
 }
 
 std::shared_ptr<VROSceneController> VROSample::getSceneController() {

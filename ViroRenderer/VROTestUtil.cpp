@@ -138,7 +138,7 @@ std::shared_ptr<VROTexture> VROTestUtil::loadRadianceHDRTexture(std::string text
                                                         ofType:@"hdr"];
     path = std::string([fbxPath UTF8String]);
 #else
-    path = "file:///android_asset/" + texture + ".hdr";
+    path = VROPlatformCopyAssetToFile(texture + ".hdr");
 #endif
     return VROHDRLoader::loadRadianceHDRTexture(path);
 }

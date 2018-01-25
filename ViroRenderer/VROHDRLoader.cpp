@@ -23,7 +23,7 @@
 std::shared_ptr<VROTexture> VROHDRLoader::loadRadianceHDRTexture(std::string hdrPath) {
     int width, height, n;
 
-    pinfo("Loading Radiance HDR file...");
+    pinfo("Loading Radiance HDR file [%s]...", hdrPath.c_str());
     float *data = stbi_loadf(hdrPath.c_str(), &width, &height, &n, 0);
     if (data == nullptr) {
         pinfo("Error loading Radiance HDR file");
