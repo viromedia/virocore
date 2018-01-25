@@ -133,7 +133,7 @@ VROLightingShaderCapabilities VROShaderCapabilities::deriveLightingCapabilitiesK
                                                                                    const VRORenderContext &context) {
     VROLightingShaderCapabilities cap;
     cap.shadows = false;
-    cap.IBL = false;
+    cap.diffuseIrradiance = false;
     
     for (const std::shared_ptr<VROLight> &light : lights) {
         if (light->getCastsShadow()) {
@@ -141,7 +141,7 @@ VROLightingShaderCapabilities VROShaderCapabilities::deriveLightingCapabilitiesK
         }
     }
     if (context.getIrradianceMap() != nullptr) {
-        cap.IBL = true;
+        cap.diffuseIrradiance = true;
     }
     return cap;
 }

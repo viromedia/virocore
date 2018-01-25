@@ -601,8 +601,7 @@
 		8FEACEF92018073D0082D18B /* VROIBLPreprocess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */; };
 		8FEACEFC20180CB40082D18B /* VROShadowPreprocess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEFA20180CB40082D18B /* VROShadowPreprocess.cpp */; };
 		8FEACEFD20180CB40082D18B /* VROShadowPreprocess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEFB20180CB40082D18B /* VROShadowPreprocess.h */; };
-		8FEACF0020181DDF0082D18B /* VROIBLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */; };
-		8FEACF0120181DDF0082D18B /* VROIBLTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEFF20181DDF0082D18B /* VROIBLTest.h */; };
+		8FEACF0020181DDF0082D18B /* VRODiffuseIrradianceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEFE20181DDF0082D18B /* VRODiffuseIrradianceTest.cpp */; };
 		8FEACF0420182CC80082D18B /* VROIrradianceRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF0220182CC70082D18B /* VROIrradianceRenderPass.h */; };
 		8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF0320182CC80082D18B /* VROIrradianceRenderPass.cpp */; };
 		8FEACF0820182D240082D18B /* irradiance_convolution_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF0620182D240082D18B /* irradiance_convolution_vsh.glsl */; };
@@ -809,6 +808,7 @@
 		8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialAnimation.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_vsh.glsl; sourceTree = "<group>"; };
+		8F04371B201959A900D98D26 /* VRODiffuseIrradianceTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODiffuseIrradianceTest.h; sourceTree = "<group>"; };
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
 		8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
@@ -1378,8 +1378,7 @@
 		8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROIBLPreprocess.h; sourceTree = "<group>"; };
 		8FEACEFA20180CB40082D18B /* VROShadowPreprocess.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShadowPreprocess.cpp; sourceTree = "<group>"; };
 		8FEACEFB20180CB40082D18B /* VROShadowPreprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShadowPreprocess.h; sourceTree = "<group>"; };
-		8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIBLTest.cpp; sourceTree = "<group>"; };
-		8FEACEFF20181DDF0082D18B /* VROIBLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROIBLTest.h; sourceTree = "<group>"; };
+		8FEACEFE20181DDF0082D18B /* VRODiffuseIrradianceTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODiffuseIrradianceTest.cpp; sourceTree = "<group>"; };
 		8FEACF0220182CC70082D18B /* VROIrradianceRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROIrradianceRenderPass.h; sourceTree = "<group>"; };
 		8FEACF0320182CC80082D18B /* VROIrradianceRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIrradianceRenderPass.cpp; sourceTree = "<group>"; };
 		8FEACF0620182D240082D18B /* irradiance_convolution_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = irradiance_convolution_vsh.glsl; sourceTree = "<group>"; };
@@ -2341,8 +2340,8 @@
 				8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */,
 				8FEACEDE201260B70082D18B /* VROPBRTexturedTest.h */,
 				8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */,
-				8FEACEFF20181DDF0082D18B /* VROIBLTest.h */,
-				8FEACEFE20181DDF0082D18B /* VROIBLTest.cpp */,
+				8F04371B201959A900D98D26 /* VRODiffuseIrradianceTest.h */,
+				8FEACEFE20181DDF0082D18B /* VRODiffuseIrradianceTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2792,7 +2791,6 @@
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */,
-				8FEACF0120181DDF0082D18B /* VROIBLTest.h in Headers */,
 				8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
@@ -3387,7 +3385,7 @@
 				A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */,
 				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
 				8FD2A54C1F813C4100E831A6 /* VROPerfTest.cpp in Sources */,
-				8FEACF0020181DDF0082D18B /* VROIBLTest.cpp in Sources */,
+				8FEACF0020181DDF0082D18B /* VRODiffuseIrradianceTest.cpp in Sources */,
 				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
 				8F0E5E9C1F3BA9120007AD03 /* VROChoreographer.cpp in Sources */,

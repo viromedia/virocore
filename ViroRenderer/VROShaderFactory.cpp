@@ -36,7 +36,7 @@ static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
-static std::shared_ptr<VROShaderModifier> sPBRImageBasedAmbientFragmentModifier;
+static std::shared_ptr<VROShaderModifier> sPBRDiffuseIrradianceFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
@@ -174,9 +174,9 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         modifiers.push_back(createPBRSurfaceModifier());
         modifiers.push_back(createPBRDirectLightingModifier());
         
-        if (lightingCapabilities.IBL) {
+        if (lightingCapabilities.diffuseIrradiance) {
             samplers.push_back("irradiance_map");
-            modifiers.push_back(createPBRImageBasedAmbientFragmentModifier());
+            modifiers.push_back(createPBRDiffuseIrradianceFragmentModifier());
         }
         else {
             modifiers.push_back(createPBRConstantAmbientFragmentModifier());
@@ -607,8 +607,8 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFra
     return sPBRConstantAmbientFragmentModifier;
 }
 
-std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRImageBasedAmbientFragmentModifier() {
-    if (!sPBRImageBasedAmbientFragmentModifier) {
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseIrradianceFragmentModifier() {
+    if (!sPBRDiffuseIrradianceFragmentModifier) {
         std::vector<std::string> modifierCode = {
             "uniform samplerCube irradiance_map;",
             "highp vec3 ambient_kS = fresnel_schlick_roughness(max(dot(N, V), 0.0), F0, _surface.roughness);",
@@ -621,11 +621,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRImageBasedAmbientF
             "highp vec3 rgb_color = pbr_ambient + _diffuse;",
             "_output_color = vec4(rgb_color, _output_color.a);",
         };
-        sPBRImageBasedAmbientFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+        sPBRDiffuseIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                                     modifierCode);
-        sPBRImageBasedAmbientFragmentModifier->setName("pbr_ibl");
+        sPBRDiffuseIrradianceFragmentModifier->setName("pbr_ibl");
     }
-    return sPBRImageBasedAmbientFragmentModifier;
+    return sPBRDiffuseIrradianceFragmentModifier;
 }
 
 #pragma mark - Other Modifiers
