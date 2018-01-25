@@ -25,6 +25,7 @@
 #include "VROARImageAnchor.h"
 #include "VROPortal.h"
 #include "VROBox.h"
+#include "VROProjector.h"
 
 #include "VROARCameraiOS.h"
 #include "VROImageTrackerOutput.h"
@@ -80,15 +81,15 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     _trackingHelper = [[VROTrackingHelper alloc] init];
         
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
-    std::shared_ptr<VROBox> box = VROBox::createBox(.15, .15, .15);
+    std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, .075, 0});
+    boxNode->setPosition({0, 0, 0});
 
     _imageTrackingResultNode = std::make_shared<VRONode>();
     _imageTrackingResultNode->addChildNode(boxNode);
-    _imageTrackingResultNode->setPosition({0,0,-1});
-    //_imageTrackingResultNode->setHidden(true);
-
+        
+    _imageResultsContainer = std::make_shared<VRONode>();
+    _imageResultsContainer->addChildNode(_imageTrackingResultNode);
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -154,7 +155,7 @@ bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
 void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
     VROARSession::setScene(scene);
     // when we add a scene, make sure that we add this node to it.
-    scene->getRootNode()->addChildNode(_imageTrackingResultNode);
+    scene->getRootNode()->addChildNode(_imageResultsContainer);
 }
 
 void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate) {
@@ -274,12 +275,9 @@ std::shared_ptr<VROTexture> VROARSessioniOS::getCameraBackgroundTexture() {
     return _background;
 }
 
-void VROARSessioniOS::setTrackerOutputView(UIImageView *view) {
-    _trackerOutputView = view;
-}
-
-void VROARSessioniOS::setTrackerOutputText(UITextView *text) {
-    _trackerOutputText = text;
+void VROARSessioniOS::outputTextTapped() {
+    BOOL tracking = [_trackingHelper toggleTracking];
+    _trackerOutputText.text = tracking ? @"Started Tracking!" : @"Not Tracking!";
 }
 
 std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
@@ -300,9 +298,8 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
         float* intrinsics = arCameraiOS->getIntrinsics();
         [_trackingHelper setIntrinsics:intrinsics];
 
-        // fetch camera position/rotation
-        VROVector3f camPos = _renderer->getCamera().getPosition();
-        VROQuaternion camRot = _renderer->getCamera().getRotation();
+        // fetch camera pointer
+        VROCamera camera = _renderer->getCamera();
         
         [_trackingHelper processPixelBufferRef:frameiOS->getImage()
                                       forceRun:false
@@ -315,8 +312,8 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                 std::shared_ptr<VROImageTrackerOutput> trackerOutput = [output getImageTrackerOutput];
                 if (trackerOutput != nullptr && trackerOutput->found) {
                     VROMatrix4f camMatrix = VROMatrix4f();
-                    camMatrix.translate(camPos);
-                    camMatrix.rotate(camRot);
+                    camMatrix.translate(camera.getPosition());
+                    camMatrix.rotate(camera.getRotation());
                     
                     // Compute the matrix from the camera to the image, we need to negate the Y and Z axis because
                     // the OpenCV coordinate system: http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/OWENS/LECT9/node2.html
@@ -329,11 +326,17 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                     fromCamMatrix.rotateY(- trackerOutput->rotation.at<double>(1,0));
                     fromCamMatrix.rotateZ(- trackerOutput->rotation.at<double>(2,0));
 
-                    VROMatrix4f endTransformation = fromCamMatrix.multiply(camMatrix);
+                    VROMatrix4f endTransformation = camMatrix.multiply(fromCamMatrix);//fromCamMatrix.multiply(camMatrix);
                     
                     _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
                     _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
 
+//                    _imageTrackingResultNode->setPosition(fromCamMatrix.extractTranslation());
+//                    _imageTrackingResultNode->setRotation(fromCamMatrix.extractRotation({1,1,1}));
+//
+//                    _imageResultsContainer->setPosition(camMatrix.extractTranslation());
+//                    _imageResultsContainer->setRotation(camMatrix.extractRotation({1,1,1}));
+                    
                     VROVector3f pos = endTransformation.extractTranslation();
                     VROVector3f rot = endTransformation.extractRotation({1,1,1}).toEuler();
                     
@@ -341,15 +344,30 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                     pinfo("[Viro] the world rotation was: %f, %f, %f", toDegrees(rot.x), toDegrees(rot.y), toDegrees(rot.z));
                     
                     if (_trackerOutputText != nil) {
-                        NSString *outputText = [NSString stringWithFormat:@"Position: [%.03f, %.03f, %.03f]\nRotation: [%.03f, %.03f, %.03f]",
+                        VROVector3f camPos = camMatrix.extractTranslation();
+                        NSString *outputText = [NSString stringWithFormat:@"Camera Pos: [%.03f, %.03f, %.03f]\nImage Pos: [%.03f, %.03f, %.03f]\nWorld Pos: [%.03f, %.03f, %.03f]",
+                                                camPos.x, camPos.y, camPos.z,
                                                 trackerOutput->translation.at<double>(0,0),
-                                                - trackerOutput->translation.at<double>(1,0),
+                                                - trackerOutput->translation.at<double>(1,0), // because Y and Z axis are flipped in OpenCV.
                                                 - trackerOutput->translation.at<double>(2,0),
-                                                toDegrees(trackerOutput->rotation.at<double>(0,0)),
-                                                - toDegrees(trackerOutput->rotation.at<double>(1,0)),
-                                                - toDegrees(trackerOutput->rotation.at<double>(2,0))];
+                                                pos.x, pos.y, pos.z];
                         _trackerOutputText.text = outputText;
                     }
+                    
+                    // TODO: fix the below, i'm getting negative x and y values... or just remove it since it's only for debugging.
+                    int viewportArr[4] = {0, 0, (int)_screenWidth, (int)_screenHeight};
+
+                    // create the mvp (in this case, the model mat is identity).
+                    VROMatrix4f projectionMat = camera.getProjection();
+                    VROMatrix4f viewMat = camera.getLookAtMatrix();
+                    VROMatrix4f vpMat = projectionMat.multiply(viewMat);
+                    
+                    // get the 2D point
+                    VROVector3f point;
+                    VROProjector::project(fromCamMatrix.extractTranslation(), vpMat.getArray(), viewportArr, &point);
+
+                    pinfo("[Viro] projected point is %f, %f", point.x, point.y);
+                    [_trackerStatusText setFrame:CGRectMake(point.x - 2, point.y - 2, 5, 5)];
                 }
             });
         }];

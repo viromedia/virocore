@@ -10,6 +10,7 @@
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
+#include "VROMath.h"
 
 
 #define ENABLE_DETECT_LOGGING 1
@@ -233,17 +234,32 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     LOG_DETECT_TIME("start finding object pose");
 
-    // Get the Camera Intrinsic Matrix
+    /* Get the Camera Intrinsic Matrix
+     
+     The intrinsic matrix looks like the following:
+     [ f_x  0  x_0
+        0  f_y y_0
+        0   0   1 ]
+     
+     Where f_x and f_y are the focal length whereas x_0 and y_0 is the pixel from the top left representing the "center" of the camera.
+     see http://ksimek.github.io/2013/08/13/intrinsic/
+     */
     cv::Mat cameraMatrix;
     if (_intrinsics == NULL) {
         // There aren't any intrinsics set, so calculate them here...
         double focalLength = inputImage.cols; // Approximate focal length.
         cv::Point2d center = cv::Point2d(inputImage.cols / 2, inputImage.rows / 2);
-        double cameraArr[9] = {focalLength, 0, center.y, 0, focalLength, center.x, 0, 0, 1};
+        double cameraArr[9] = {focalLength, 0, center.x, 0, focalLength, center.y, 0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else {
         // There are intrinsics set, so don't calculate/estimate them!
+        // actually, the intrinsics assume the texture/coordinates are in landscape, so we'll need to flip mat[0][2] and mat[1][2] for portrait.
+        // TODO: dynamically handle screen rotation.
         cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
+        cameraMatrix = cameraMatrix.t(); // we need to transpose the matrix
+        float temp = cameraMatrix.at<float>(0, 2);
+        cameraMatrix.at<float>(0, 2) = cameraMatrix.at<float>(1, 2);
+        cameraMatrix.at<float>(1, 2) = temp;
     }
     
     std::cout << "[Viro] Camera Intrinsic Matrix: " << cameraMatrix << std::endl;
@@ -252,25 +268,26 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     // Output rotation and translation
     std::vector<cv::Point3d> targetCorners;
-    targetCorners.push_back(cvPoint3D32f(0, 0, 0));
-    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, 0, 0));
-    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, _targetImage.rows, 0));
-    targetCorners.push_back(cvPoint3D32f(0, _targetImage.rows, 0));
+
+    // use the below corners to find the "top left" corner
+//    targetCorners.push_back(cvPoint3D32f(0, 0, 0));
+//    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, 0, 0));
+//    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, _targetImage.rows, 0));
+//    targetCorners.push_back(cvPoint3D32f(0, _targetImage.rows, 0));
+
+    // use the below corners to find the "center" of the image.
+    targetCorners.push_back(cvPoint3D32f(- _targetImage.cols / 2, - _targetImage.rows / 2, 0));
+    targetCorners.push_back(cvPoint3D32f(_targetImage.cols / 2, - _targetImage.rows / 2, 0));
+    targetCorners.push_back(cvPoint3D32f(_targetImage.cols / 2, _targetImage.rows / 2, 0));
+    targetCorners.push_back(cvPoint3D32f(- _targetImage.cols / 2, _targetImage.rows / 2, 0));
     
     // TODO: if we've scaled the input, then inverse the scaling on the corner values before using solvePnP.
 
     // Solve for pose
-    cv::Mat inputTranslation(3, 1, cv::DataType<double>::type);
-    cv::Mat inputRotation(3, 1, cv::DataType<double>::type);
-
-    //cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
+    bool useExtrinsicGuess = true;
     
-    /*
-     bool useExtrinsicGuess = false, int iterationsCount = 100,
-     float reprojectionError = 8.0, double confidence = 0.99,
-     OutputArray inliers = noArray(), int flags = SOLVEPNP_ITERATIVE
-     */
-    cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, 100, 8, .99, cv::noArray(), cv::SOLVEPNP_EPNP);
+    //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
+    cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
 
     LOG_DETECT_TIME("finished detection & pose extraction");
 
@@ -278,27 +295,29 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
     // vs its real world size of 2.61x6.14 inches. TODO: take this as an argument.
     double pixPerMeter = 7617.58; // ben.jpg
     //double pixPerMeter = 16404.2; // wikipedia_qr.png (2.4 inches represents 1000 px)
-    
-    inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
-    inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
-    inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
+
+    cv::Mat scaledTranslation(3, 1, cv::DataType<double>::type);
+    scaledTranslation.at<double>(0,0) = _translation.at<double>(0,0) / pixPerMeter;
+    scaledTranslation.at<double>(1,0) = _translation.at<double>(1,0) / pixPerMeter;
+    scaledTranslation.at<double>(2,0) = _translation.at<double>(2,0) / pixPerMeter;
     
 #if ENABLE_DETECT_LOGGING
     for (int i = 0; i < inputCorners.size(); i++) {
         pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
     }
     
-    pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
-    pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+    pinfo("[Viro] translation: %f, %f, %f", scaledTranslation.at<double>(0,0), scaledTranslation.at<double>(1,0), scaledTranslation.at<double>(2,0));
+    pinfo("[Viro] rotation: %f, %f, %f", toDegrees(_rotation.at<double>(0,0)), toDegrees(_rotation.at<double>(1,0)), toDegrees(_rotation.at<double>(2,0)));
 #endif
 
-    return std::make_shared<VROImageTrackerOutput>(true, inputCorners, inputTranslation, inputRotation);
+    return std::make_shared<VROImageTrackerOutput>(true, inputCorners, scaledTranslation, _rotation);
 }
 
 void VROImageTracker::testSolvePnP() {
     
-    bool runFirstSample = true;
+    bool runFirstSample = false;
     bool runSecondSample = false;
+    bool runThirdSample = true;
     
     cv::Mat cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
 
@@ -417,6 +436,58 @@ void VROImageTracker::testSolvePnP() {
         
         pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
         pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+    }
+    
+    if (runThirdSample) {
+        std::vector<cv::Point2f> points1, points2;
+        
+        //First point's set
+        points1.push_back(cv::Point2f(384.3331f,  162.23618f));
+        points1.push_back(cv::Point2f(385.27521f, 135.21503f));
+        points1.push_back(cv::Point2f(409.36746f, 139.30315f));
+        points1.push_back(cv::Point2f(407.43854f, 165.64435f));
+        
+        //Second point's set
+        points2.push_back(cv::Point2f(427.64938f, 158.77661f));
+        points2.push_back(cv::Point2f(428.79471f, 131.60953f));
+        points2.push_back(cv::Point2f(454.04532f, 134.97353f));
+        points2.push_back(cv::Point2f(452.23096f, 162.13156f));
+        
+        //Real object point's set
+        std::vector<cv::Point3f> object;
+        object.push_back(cv::Point3f(-88.0f,88.0f,0));
+        object.push_back(cv::Point3f(-88.0f,-88.0f,0));
+        object.push_back(cv::Point3f(88.0f,-88.0f,0));
+        object.push_back(cv::Point3f(88.0f,88.0f,0));
+        
+        //Camera matrix
+        cv::Mat cam_matrix = cv::Mat(3,3,CV_32FC1,cv::Scalar::all(0));
+        cam_matrix.at<float>(0,0) = 519.0f;
+        cam_matrix.at<float>(0,2) = 320.0f;
+        cam_matrix.at<float>(1,1) = 522.0f;
+        cam_matrix.at<float>(1,2) = 240.0f;
+        cam_matrix.at<float>(2,2) = 1.0f;
+        
+        //PnP
+        cv::Mat rvec1i,rvec2i,tvec1i,tvec2i;
+        cv::Mat rvec1p,rvec2p,tvec1p,tvec2p;
+        solvePnP(cv::Mat(object),cv::Mat(points1),cam_matrix,cv::Mat(),rvec1i,tvec1i,false,CV_ITERATIVE);
+        solvePnP(cv::Mat(object),cv::Mat(points2),cam_matrix,cv::Mat(),rvec2i,tvec2i,false,CV_ITERATIVE);
+        solvePnP(cv::Mat(object),cv::Mat(points1),cam_matrix,cv::Mat(),rvec1p,tvec1p,false,CV_P3P);
+        solvePnP(cv::Mat(object),cv::Mat(points2),cam_matrix,cv::Mat(),rvec2p,tvec2p,false,CV_P3P);
+        
+        //Print result
+        std::cout<<"Iterative: "<<std::endl;
+        std::cout<<" rvec1 "<<std::endl<<" "<<rvec1i<<std::endl<<std::endl;
+        std::cout<<" rvec2 "<<std::endl<<" "<<rvec2i<<std::endl<<std::endl;
+        std::cout<<" tvec1 "<<std::endl<<" "<<tvec1i<<std::endl<<std::endl;
+        std::cout<<" tvec1 "<<std::endl<<" "<<tvec2i<<std::endl<<std::endl;
+        
+        std::cout<<"P3P: "<<std::endl;
+        std::cout<<" rvec1 "<<std::endl<<" "<<rvec1p<<std::endl<<std::endl;
+        std::cout<<" rvec2 "<<std::endl<<" "<<rvec2p<<std::endl<<std::endl;
+        std::cout<<" tvec1 "<<std::endl<<" "<<tvec1p<<std::endl<<std::endl;
+        std::cout<<" tvec1 "<<std::endl<<" "<<tvec2p<<std::endl<<std::endl;
     }
 }
 

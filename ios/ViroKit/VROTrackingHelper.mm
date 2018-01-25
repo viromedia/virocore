@@ -47,6 +47,7 @@
 @property (nonatomic, assign) BOOL ready;
 @property (nonatomic, assign) NSInteger count;
 @property (nonatomic, assign) float *intrinsics;
+@property (nonatomic, assign) BOOL shouldTrack;
 
 @end
 
@@ -58,8 +59,20 @@
         _ready = YES;
         _count = 0;
         _intrinsics = NULL;
+        _shouldTrack = YES;
     }
     return self;
+}
+
+- (void)toggleTracking:(BOOL)tracking {
+    NSLog(@"[Viro] setting tracking %@", tracking ? @"on" : @"off");
+    _shouldTrack = tracking;
+}
+
+- (BOOL)toggleTracking {
+    _shouldTrack = !_shouldTrack;
+    NSLog(@"[Viro] setting tracking %@", _shouldTrack ? @"on" : @"off");
+    return _shouldTrack;
 }
 
 - (void)setIntrinsics:(float *)intrinsics {
@@ -137,6 +150,10 @@
 
 // this function is called by forceRun = true if the input is from camera, or false if from AR.
 - (void)processPixelBufferRef:(CVPixelBufferRef)pixelBuffer forceRun:(BOOL)forceRun completion:(void (^)(VROTrackingHelperOutput *output))completionHandler {
+    if (!_shouldTrack) {
+        return;
+    }
+
     if (!forceRun) {
         @synchronized(self) {
             if (!_ready) {
@@ -172,10 +189,10 @@
     }
     
     // anything higher than "low" priority and we start skipping frames (probably because
-    // the low level camera notification API's notify on the background thread).
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    // the low level camera notification API's notify on the background thread). - actually it seems to be okay on "high"
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         std::shared_ptr<VROImageTrackerOutput> output = [self runTracking:rgbImage];
-        if (completionHandler) {
+        if (_shouldTrack && completionHandler) {
             completionHandler([[VROTrackingHelperOutput alloc] initWithTrackerOutput:output withImage:MatToUIImage(output->outputImage)]);
         }
     });

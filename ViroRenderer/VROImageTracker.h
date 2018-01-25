@@ -59,6 +59,9 @@ private:
     int _matcherType;
     std::vector<cv::KeyPoint> _targetKeyPoints;
     cv::Mat _targetDescriptors;
+    
+    cv::Mat _translation;
+    cv::Mat _rotation;
 
     float *_intrinsics;
 };

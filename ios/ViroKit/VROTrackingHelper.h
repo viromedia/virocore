@@ -40,4 +40,15 @@
 
 - (cv::Mat)matFromYCbCrBuffer:(CVImageBufferRef)buffer;
 
+/*
+ Sets tracking on/off depending on the given bool.
+ */
+- (void)toggleTracking:(BOOL)tracking;
+
+/*
+ Toggles tracking on/off depending on existing state.
+ */
+- (BOOL)toggleTracking;
+
+
 @end
