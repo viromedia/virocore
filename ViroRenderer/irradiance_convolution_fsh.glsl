@@ -14,8 +14,11 @@ void main() {
     highp vec3 right = cross(up, N);
     up               = cross(N, right);
     
-    highp float sample_delta = 0.025;
+    // This value controls how much we sample the cubemap for convolution.
+    // Using 0.025 is too low, causes GPU hang errors on iOS
+    highp float sample_delta = 0.05;
     highp float sample_count = 0.0f;
+    
     for (highp float phi = 0.0; phi < 2.0 * PI; phi += sample_delta) {
         for (highp float theta = 0.0; theta < 0.5 * PI; theta += sample_delta) {
             highp vec3 tangent_sample = vec3(sin(theta) * cos(phi),  sin(theta) * sin(phi), cos(theta));
@@ -25,6 +28,7 @@ void main() {
             sample_count++;
         }
     }
-    irradiance = PI * irradiance * (1.0 / float(sample_count));
+    
+    irradiance = PI * irradiance * (1.0 / sample_count);
     frag_color = vec4(irradiance, 1.0);
 }
