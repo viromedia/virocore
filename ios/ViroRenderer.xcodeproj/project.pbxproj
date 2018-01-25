@@ -61,6 +61,10 @@
 		8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
 		8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */; };
+		8F043720201A43B800D98D26 /* ibl_mans_outside.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371C201A43B700D98D26 /* ibl_mans_outside.hdr */; };
+		8F043721201A43B800D98D26 /* ibl_ridgecrest_road.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371D201A43B800D98D26 /* ibl_ridgecrest_road.hdr */; };
+		8F043722201A43B800D98D26 /* ibl_newport_loft.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371E201A43B800D98D26 /* ibl_newport_loft.hdr */; };
+		8F043723201A43B800D98D26 /* ibl_wooden_door.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371F201A43B800D98D26 /* ibl_wooden_door.hdr */; };
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */; };
@@ -591,7 +595,6 @@
 		8FEACEE1201262EE0082D18B /* VROPBRTexturedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */; };
 		8FEACEE620169EA90082D18B /* VROHDRLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEE420169EA90082D18B /* VROHDRLoader.cpp */; };
 		8FEACEE720169EA90082D18B /* VROHDRLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEE520169EA90082D18B /* VROHDRLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FEACEE92016B1270082D18B /* newport_loft.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACEE82016B1260082D18B /* newport_loft.hdr */; };
 		8FEACEEC2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACEEA2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp */; };
 		8FEACEED2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACEEB2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h */; };
 		8FEACEF02017E58D0082D18B /* equirect_to_cube_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACEEE2017E58C0082D18B /* equirect_to_cube_vsh.glsl */; };
@@ -613,9 +616,6 @@
 		8FEACF1420191F280082D18B /* VROTextureReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF1220191F280082D18B /* VROTextureReference.cpp */; };
 		8FEACF1520191F280082D18B /* VROTextureReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEACF1320191F280082D18B /* VROTextureReference.h */; };
 		8FEACF172019223C0082D18B /* VROShaderCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF162019223C0082D18B /* VROShaderCapabilities.cpp */; };
-		8FEACF1E20193EB00082D18B /* Mans_Outside_2k.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF1820193EA80082D18B /* Mans_Outside_2k.hdr */; };
-		8FEACF1F20193EB30082D18B /* Ridgecrest_Road_Ref.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF1920193EA90082D18B /* Ridgecrest_Road_Ref.hdr */; };
-		8FEACF2020193EB70082D18B /* WoodenDoor_Ref.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACF1A20193EA90082D18B /* WoodenDoor_Ref.hdr */; };
 		8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */; };
 		8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */; };
 		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -809,6 +809,10 @@
 		8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_vsh.glsl; sourceTree = "<group>"; };
 		8F04371B201959A900D98D26 /* VRODiffuseIrradianceTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODiffuseIrradianceTest.h; sourceTree = "<group>"; };
+		8F04371C201A43B700D98D26 /* ibl_mans_outside.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_mans_outside.hdr; path = ViroSample/ibl_mans_outside.hdr; sourceTree = "<group>"; };
+		8F04371D201A43B800D98D26 /* ibl_ridgecrest_road.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_ridgecrest_road.hdr; path = ViroSample/ibl_ridgecrest_road.hdr; sourceTree = "<group>"; };
+		8F04371E201A43B800D98D26 /* ibl_newport_loft.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_newport_loft.hdr; path = ViroSample/ibl_newport_loft.hdr; sourceTree = "<group>"; };
+		8F04371F201A43B800D98D26 /* ibl_wooden_door.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_wooden_door.hdr; path = ViroSample/ibl_wooden_door.hdr; sourceTree = "<group>"; };
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
 		8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
@@ -1368,7 +1372,6 @@
 		8FEACEE2201697810082D18B /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		8FEACEE420169EA90082D18B /* VROHDRLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROHDRLoader.cpp; sourceTree = "<group>"; };
 		8FEACEE520169EA90082D18B /* VROHDRLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROHDRLoader.h; sourceTree = "<group>"; };
-		8FEACEE82016B1260082D18B /* newport_loft.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = newport_loft.hdr; path = ViroSample/newport_loft.hdr; sourceTree = "<group>"; };
 		8FEACEEA2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROEquirectangularToCubeRenderPass.cpp; sourceTree = "<group>"; };
 		8FEACEEB2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROEquirectangularToCubeRenderPass.h; sourceTree = "<group>"; };
 		8FEACEEE2017E58C0082D18B /* equirect_to_cube_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equirect_to_cube_vsh.glsl; sourceTree = "<group>"; };
@@ -1390,9 +1393,6 @@
 		8FEACF1220191F280082D18B /* VROTextureReference.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTextureReference.cpp; sourceTree = "<group>"; };
 		8FEACF1320191F280082D18B /* VROTextureReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTextureReference.h; sourceTree = "<group>"; };
 		8FEACF162019223C0082D18B /* VROShaderCapabilities.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShaderCapabilities.cpp; sourceTree = "<group>"; };
-		8FEACF1820193EA80082D18B /* Mans_Outside_2k.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = Mans_Outside_2k.hdr; path = ViroSample/Mans_Outside_2k.hdr; sourceTree = "<group>"; };
-		8FEACF1920193EA90082D18B /* Ridgecrest_Road_Ref.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = Ridgecrest_Road_Ref.hdr; path = ViroSample/Ridgecrest_Road_Ref.hdr; sourceTree = "<group>"; };
-		8FEACF1A20193EA90082D18B /* WoodenDoor_Ref.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = WoodenDoor_Ref.hdr; path = ViroSample/WoodenDoor_Ref.hdr; sourceTree = "<group>"; };
 		8FEF371D1FCF775D00FE7D56 /* VRODisplayOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FEF371F1FCF77A800FE7D56 /* VRODriverOpenGLiOSGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODriverOpenGLiOSGVR.h; sourceTree = "<group>"; };
 		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
@@ -2391,10 +2391,10 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8FEACF1820193EA80082D18B /* Mans_Outside_2k.hdr */,
-				8FEACF1920193EA90082D18B /* Ridgecrest_Road_Ref.hdr */,
-				8FEACF1A20193EA90082D18B /* WoodenDoor_Ref.hdr */,
-				8FEACEE82016B1260082D18B /* newport_loft.hdr */,
+				8F04371C201A43B700D98D26 /* ibl_mans_outside.hdr */,
+				8F04371E201A43B800D98D26 /* ibl_newport_loft.hdr */,
+				8F04371D201A43B800D98D26 /* ibl_ridgecrest_road.hdr */,
+				8F04371F201A43B800D98D26 /* ibl_wooden_door.hdr */,
 				8FEACED52012605F0082D18B /* pbr_sample_albedo.png */,
 				8FEACED42012605F0082D18B /* pbr_sample_ao.png */,
 				8FEACED72012605F0082D18B /* pbr_sample_metallic.png */,
@@ -3044,7 +3044,6 @@
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
-				8FEACF2020193EB70082D18B /* WoodenDoor_Ref.hdr in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
@@ -3058,7 +3057,6 @@
 				8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
-				8FEACEE92016B1270082D18B /* newport_loft.hdr in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
@@ -3093,10 +3091,10 @@
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
-				8FEACF1F20193EB30082D18B /* Ridgecrest_Road_Ref.hdr in Resources */,
 				8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */,
 				8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */,
 				8F1B4A131F64B61E00156809 /* portal_ship.vrx in Resources */,
+				8F043723201A43B800D98D26 /* ibl_wooden_door.hdr in Resources */,
 				8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */,
@@ -3134,13 +3132,14 @@
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
 				8FCED0801EBBD35200C19BCA /* Sven_Hair_Normal.png in Resources */,
 				8FEACED82012605F0082D18B /* pbr_sample_roughness.png in Resources */,
+				8F043720201A43B800D98D26 /* ibl_mans_outside.hdr in Resources */,
 				8FCED07B1EBBD35200C19BCA /* Sven_Eye_Color.png in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
+				8F043722201A43B800D98D26 /* ibl_newport_loft.hdr in Resources */,
 				8F1B4A1A1F64B61E00156809 /* portal_window_frame.vrx in Resources */,
 				8FCED07E1EBBD35200C19BCA /* Sven_Face_Specular.png in Resources */,
 				8FCED0741EBBD35200C19BCA /* Jetpack_Glow.png in Resources */,
-				8FEACF1E20193EB00082D18B /* Mans_Outside_2k.hdr in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8FD2A4FE1F809AD800E831A6 /* object_star_specular.png in Resources */,
@@ -3168,6 +3167,7 @@
 				8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */,
 				A540C5C71F3E73FA007986E6 /* particles_fsh.glsl in Resources */,
 				8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */,
+				8F043721201A43B800D98D26 /* ibl_ridgecrest_road.hdr in Resources */,
 				8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */,
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
