@@ -461,7 +461,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             ao.setIntensity(ao_pb.intensity());
             
             if (!ao_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(ao_pb.texture(), base, type, false, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(ao_pb.texture(), base, type, true, resourceMap, textureCache);
                 if (texture) {
                     ao.setTexture(texture);
                     setTextureProperties(ao_pb, texture);

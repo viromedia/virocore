@@ -157,6 +157,12 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         modifiers.push_back(createEGLImageModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
     
+    // Normal Map (note this must be placed before the PBR surface modifier, which uses the normal)
+    if (materialCapabilities.normalTexture) {
+        samplers.push_back("normal_texture");
+        modifiers.push_back(createNormalMapTextureModifier());
+    }
+    
     // PBR lighting model
     if (materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased) {
         if (materialCapabilities.roughnessMap) {
@@ -201,12 +207,6 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         else if (materialCapabilities.lightingModel == VROLightingModel::Phong) {
             modifiers.push_back(createPhongLightingModifier());
         }
-    }
-    
-    // Normal Map
-    if (materialCapabilities.normalTexture) {
-        samplers.push_back("normal_texture");
-        modifiers.push_back(createNormalMapTextureModifier());
     }
     
     // Reflective Map
@@ -284,8 +284,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createNormalMapTextureModif
      */
     if (!sNormalMapTextureModifier) {
         std::vector<std::string> modifierCode =  {
+            // Note that both normalize() calls are necessary: we normalize the sample, then normalize the
+            // result after multiplyign by TBN. If we remove one, the 'glinting' effect in PBR disappears as
+            // we lose unit length
             "uniform sampler2D normal_texture;",
-            "_surface.normal = v_tbn * normalize( texture(normal_texture, _surface.diffuse_texcoord).xyz * 2.0 - 1.0 );"
+            "_surface.normal = normalize(v_tbn * normalize( texture(normal_texture, _surface.diffuse_texcoord).xyz * 2.0 - 1.0 ));"
         };
         sNormalMapTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                         modifierCode);
