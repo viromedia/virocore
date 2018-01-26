@@ -20,6 +20,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name="com.example.virosample.ProductARActivityComplete"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:label="Product Details"
             android:name="com.example.virosample.ProductDetailActivity"/>
 

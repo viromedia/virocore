@@ -101,7 +101,7 @@ public class ProductSelectionActivity extends Activity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Product selectedProduct = (Product) mProductAdapter.getItem(position);
-                Intent intent = new Intent(ProductSelectionActivity.this, ProductARActivity.class);
+                Intent intent = new Intent(ProductSelectionActivity.this, ProductARActivityComplete.class);
                 intent.putExtra(INTENT_PRODUCT_KEY, selectedProduct.mName);
                 startActivity(intent);
             }
