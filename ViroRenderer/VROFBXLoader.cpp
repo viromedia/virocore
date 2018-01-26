@@ -72,6 +72,8 @@ VROLightingModel convert(viro::Node_Geometry_Material_LightingModel lightingMode
             return VROLightingModel::Blinn;
         case viro::Node_Geometry_Material_LightingModel_Phong:
             return VROLightingModel::Phong;
+        case viro::Node_Geometry_Material_LightingModel_PhysicallyBased:
+            return VROLightingModel::PhysicallyBased;
         default:
             pabort();
     }
@@ -386,7 +388,6 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
         if (material_pb.has_specular()) {
             const viro::Node::Geometry::Material::Visual &specular_pb = material_pb.specular();
             VROMaterialVisual &specular = material->getSpecular();
-            
             specular.setIntensity(specular_pb.intensity());
             
             if (!specular_pb.texture().empty()) {
@@ -403,7 +404,6 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
         if (material_pb.has_normal()) {
             const viro::Node::Geometry::Material::Visual &normal_pb = material_pb.normal();
             VROMaterialVisual &normal = material->getNormal();
-            
             normal.setIntensity(normal_pb.intensity());
             
             if (!normal_pb.texture().empty()) {
@@ -414,6 +414,60 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
                 }
                 else {
                     pinfo("FBX failed to load normal texture [%s]", normal_pb.texture().c_str());
+                }
+            }
+        }
+        if (material_pb.has_roughness()) {
+            const viro::Node::Geometry::Material::Visual &roughness_pb = material_pb.roughness();
+            VROMaterialVisual &roughness = material->getRoughness();
+            roughness.setIntensity(roughness_pb.intensity());
+            
+            if (!roughness_pb.texture().empty()) {
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(roughness_pb.texture(), base, type, false, resourceMap, textureCache);
+                if (texture) {
+                    roughness.setTexture(texture);
+                    setTextureProperties(roughness_pb, texture);
+                }
+                else {
+                    pinfo("FBX failed to load roughness texture [%s]", roughness_pb.texture().c_str());
+                }
+            }
+            else {
+                roughness.setColor({ roughness_pb.color(0), 0, 0, 0 });
+            }
+        }
+        if (material_pb.has_metalness()) {
+            const viro::Node::Geometry::Material::Visual &metalness_pb = material_pb.metalness();
+            VROMaterialVisual &metalness = material->getMetalness();
+            metalness.setIntensity(metalness_pb.intensity());
+            
+            if (!metalness_pb.texture().empty()) {
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(metalness_pb.texture(), base, type, false, resourceMap, textureCache);
+                if (texture) {
+                    metalness.setTexture(texture);
+                    setTextureProperties(metalness_pb, texture);
+                }
+                else {
+                    pinfo("FBX failed to load metalness texture [%s]", metalness_pb.texture().c_str());
+                }
+            }
+            else {
+                metalness.setColor({ metalness_pb.color(0), 0, 0, 0 });
+            }
+        }
+        if (material_pb.has_ao()) {
+            const viro::Node::Geometry::Material::Visual &ao_pb = material_pb.ao();
+            VROMaterialVisual &ao = material->getAmbientOcclusion();
+            ao.setIntensity(ao_pb.intensity());
+            
+            if (!ao_pb.texture().empty()) {
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(ao_pb.texture(), base, type, false, resourceMap, textureCache);
+                if (texture) {
+                    ao.setTexture(texture);
+                    setTextureProperties(ao_pb, texture);
+                }
+                else {
+                    pinfo("FBX failed to load AO texture [%s]", ao_pb.texture().c_str());
                 }
             }
         }

@@ -102,6 +102,12 @@ void TableStruct::InitDefaultsImpl() {
       ::viro::Node_Geometry_Material_Visual::internal_default_instance());
   _Node_Geometry_Material_default_instance_.get_mutable()->multiply_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
       ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->roughness_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->metalness_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->ao_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
   _Node_Geometry_Skin_default_instance_.get_mutable()->geometry_bind_transform_ = const_cast< ::viro::Node_Matrix*>(
       ::viro::Node_Matrix::internal_default_instance());
   _Node_Geometry_Skin_default_instance_.get_mutable()->bone_indices_ = const_cast< ::viro::Node_Geometry_Source*>(
@@ -240,6 +246,7 @@ bool Node_Geometry_Material_LightingModel_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -251,6 +258,7 @@ const Node_Geometry_Material_LightingModel Node_Geometry_Material::Constant;
 const Node_Geometry_Material_LightingModel Node_Geometry_Material::Lambert;
 const Node_Geometry_Material_LightingModel Node_Geometry_Material::Blinn;
 const Node_Geometry_Material_LightingModel Node_Geometry_Material::Phong;
+const Node_Geometry_Material_LightingModel Node_Geometry_Material::PhysicallyBased;
 const Node_Geometry_Material_LightingModel Node_Geometry_Material::LightingModel_MIN;
 const Node_Geometry_Material_LightingModel Node_Geometry_Material::LightingModel_MAX;
 const int Node_Geometry_Material::LightingModel_ARRAYSIZE;
@@ -2133,6 +2141,9 @@ const int Node_Geometry_Material::kNormalFieldNumber;
 const int Node_Geometry_Material::kReflectiveFieldNumber;
 const int Node_Geometry_Material::kEmissionFieldNumber;
 const int Node_Geometry_Material::kMultiplyFieldNumber;
+const int Node_Geometry_Material::kRoughnessFieldNumber;
+const int Node_Geometry_Material::kMetalnessFieldNumber;
+const int Node_Geometry_Material::kAoFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Node_Geometry_Material::Node_Geometry_Material()
@@ -2182,6 +2193,21 @@ Node_Geometry_Material::Node_Geometry_Material(const Node_Geometry_Material& fro
   } else {
     multiply_ = NULL;
   }
+  if (from.has_roughness()) {
+    roughness_ = new ::viro::Node_Geometry_Material_Visual(*from.roughness_);
+  } else {
+    roughness_ = NULL;
+  }
+  if (from.has_metalness()) {
+    metalness_ = new ::viro::Node_Geometry_Material_Visual(*from.metalness_);
+  } else {
+    metalness_ = NULL;
+  }
+  if (from.has_ao()) {
+    ao_ = new ::viro::Node_Geometry_Material_Visual(*from.ao_);
+  } else {
+    ao_ = NULL;
+  }
   ::memcpy(&shininess_, &from.shininess_,
     reinterpret_cast<char*>(&writes_to_depth_buffer_) -
     reinterpret_cast<char*>(&shininess_) + sizeof(writes_to_depth_buffer_));
@@ -2219,6 +2245,15 @@ void Node_Geometry_Material::SharedDtor() {
   }
   if (this != internal_default_instance()) {
     delete multiply_;
+  }
+  if (this != internal_default_instance()) {
+    delete roughness_;
+  }
+  if (this != internal_default_instance()) {
+    delete metalness_;
+  }
+  if (this != internal_default_instance()) {
+    delete ao_;
   }
 }
 
@@ -2267,6 +2302,18 @@ void Node_Geometry_Material::Clear() {
     delete multiply_;
   }
   multiply_ = NULL;
+  if (GetArenaNoVirtual() == NULL && roughness_ != NULL) {
+    delete roughness_;
+  }
+  roughness_ = NULL;
+  if (GetArenaNoVirtual() == NULL && metalness_ != NULL) {
+    delete metalness_;
+  }
+  metalness_ = NULL;
+  if (GetArenaNoVirtual() == NULL && ao_ != NULL) {
+    delete ao_;
+  }
+  ao_ = NULL;
   ::memset(&shininess_, 0, reinterpret_cast<char*>(&writes_to_depth_buffer_) -
     reinterpret_cast<char*>(&shininess_) + sizeof(writes_to_depth_buffer_));
 }
@@ -2482,6 +2529,39 @@ bool Node_Geometry_Material::MergePartialFromCodedStream(
         break;
       }
 
+      // .viro.Node.Geometry.Material.Visual roughness = 17;
+      case 17: {
+        if (tag == 138u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_roughness()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual metalness = 18;
+      case 18: {
+        if (tag == 146u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_metalness()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual ao = 19;
+      case 19: {
+        if (tag == 154u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_ao()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -2600,6 +2680,24 @@ void Node_Geometry_Material::SerializeWithCachedSizes(
       16, *this->multiply_, output);
   }
 
+  // .viro.Node.Geometry.Material.Visual roughness = 17;
+  if (this->has_roughness()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      17, *this->roughness_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual metalness = 18;
+  if (this->has_metalness()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      18, *this->metalness_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual ao = 19;
+  if (this->has_ao()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      19, *this->ao_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:viro.Node.Geometry.Material)
 }
 
@@ -2654,6 +2752,27 @@ size_t Node_Geometry_Material::ByteSizeLong() const {
     total_size += 2 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->multiply_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual roughness = 17;
+  if (this->has_roughness()) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->roughness_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual metalness = 18;
+  if (this->has_metalness()) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->metalness_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual ao = 19;
+  if (this->has_ao()) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->ao_);
   }
 
   // float shininess = 2;
@@ -2742,6 +2861,15 @@ void Node_Geometry_Material::MergeFrom(const Node_Geometry_Material& from) {
   if (from.has_multiply()) {
     mutable_multiply()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.multiply());
   }
+  if (from.has_roughness()) {
+    mutable_roughness()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.roughness());
+  }
+  if (from.has_metalness()) {
+    mutable_metalness()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.metalness());
+  }
+  if (from.has_ao()) {
+    mutable_ao()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.ao());
+  }
   if (from.shininess() != 0) {
     set_shininess(from.shininess());
   }
@@ -2794,6 +2922,9 @@ void Node_Geometry_Material::InternalSwap(Node_Geometry_Material* other) {
   std::swap(reflective_, other->reflective_);
   std::swap(emission_, other->emission_);
   std::swap(multiply_, other->multiply_);
+  std::swap(roughness_, other->roughness_);
+  std::swap(metalness_, other->metalness_);
+  std::swap(ao_, other->ao_);
   std::swap(shininess_, other->shininess_);
   std::swap(fresnel_exponent_, other->fresnel_exponent_);
   std::swap(transparency_, other->transparency_);
@@ -3223,6 +3354,123 @@ void Node_Geometry_Material::set_allocated_multiply(::viro::Node_Geometry_Materi
     
   }
   // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.multiply)
+}
+
+// .viro.Node.Geometry.Material.Visual roughness = 17;
+bool Node_Geometry_Material::has_roughness() const {
+  return this != internal_default_instance() && roughness_ != NULL;
+}
+void Node_Geometry_Material::clear_roughness() {
+  if (GetArenaNoVirtual() == NULL && roughness_ != NULL) delete roughness_;
+  roughness_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::roughness() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.roughness)
+  return roughness_ != NULL ? *roughness_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_roughness() {
+  
+  if (roughness_ == NULL) {
+    roughness_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.roughness)
+  return roughness_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_roughness() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.roughness)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = roughness_;
+  roughness_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_roughness(::viro::Node_Geometry_Material_Visual* roughness) {
+  delete roughness_;
+  roughness_ = roughness;
+  if (roughness) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.roughness)
+}
+
+// .viro.Node.Geometry.Material.Visual metalness = 18;
+bool Node_Geometry_Material::has_metalness() const {
+  return this != internal_default_instance() && metalness_ != NULL;
+}
+void Node_Geometry_Material::clear_metalness() {
+  if (GetArenaNoVirtual() == NULL && metalness_ != NULL) delete metalness_;
+  metalness_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::metalness() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.metalness)
+  return metalness_ != NULL ? *metalness_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_metalness() {
+  
+  if (metalness_ == NULL) {
+    metalness_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.metalness)
+  return metalness_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_metalness() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.metalness)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = metalness_;
+  metalness_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_metalness(::viro::Node_Geometry_Material_Visual* metalness) {
+  delete metalness_;
+  metalness_ = metalness;
+  if (metalness) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.metalness)
+}
+
+// .viro.Node.Geometry.Material.Visual ao = 19;
+bool Node_Geometry_Material::has_ao() const {
+  return this != internal_default_instance() && ao_ != NULL;
+}
+void Node_Geometry_Material::clear_ao() {
+  if (GetArenaNoVirtual() == NULL && ao_ != NULL) delete ao_;
+  ao_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::ao() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.ao)
+  return ao_ != NULL ? *ao_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_ao() {
+  
+  if (ao_ == NULL) {
+    ao_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.ao)
+  return ao_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_ao() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.ao)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = ao_;
+  ao_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_ao(::viro::Node_Geometry_Material_Visual* ao) {
+  delete ao_;
+  ao_ = ao;
+  if (ao) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.ao)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -30,6 +30,7 @@ private:
 
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
+    float _angle;
     
 };
 

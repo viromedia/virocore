@@ -65,6 +65,12 @@
 		8F043721201A43B800D98D26 /* ibl_ridgecrest_road.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371D201A43B800D98D26 /* ibl_ridgecrest_road.hdr */; };
 		8F043722201A43B800D98D26 /* ibl_newport_loft.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371E201A43B800D98D26 /* ibl_newport_loft.hdr */; };
 		8F043723201A43B800D98D26 /* ibl_wooden_door.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F04371F201A43B800D98D26 /* ibl_wooden_door.hdr */; };
+		8F043729201AA72900D98D26 /* blinn2_Normal_DirectX.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F043724201AA72700D98D26 /* blinn2_Normal_DirectX.png */; };
+		8F04372A201AA72900D98D26 /* blinn2_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F043725201AA72800D98D26 /* blinn2_Roughness.png */; };
+		8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F043726201AA72800D98D26 /* blinn2_Base_Color.png */; };
+		8F04372C201AA72900D98D26 /* blinn2_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F043727201AA72800D98D26 /* blinn2_Metallic.png */; };
+		8F04372D201AA72900D98D26 /* blinn2_Mixed_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F043728201AA72800D98D26 /* blinn2_Mixed_AO.png */; };
+		8F04372F201AA74000D98D26 /* cylinder_pbr.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F04372E201AA74000D98D26 /* cylinder_pbr.vrx */; };
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */; };
@@ -813,6 +819,12 @@
 		8F04371D201A43B800D98D26 /* ibl_ridgecrest_road.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_ridgecrest_road.hdr; path = ViroSample/ibl_ridgecrest_road.hdr; sourceTree = "<group>"; };
 		8F04371E201A43B800D98D26 /* ibl_newport_loft.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_newport_loft.hdr; path = ViroSample/ibl_newport_loft.hdr; sourceTree = "<group>"; };
 		8F04371F201A43B800D98D26 /* ibl_wooden_door.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = ibl_wooden_door.hdr; path = ViroSample/ibl_wooden_door.hdr; sourceTree = "<group>"; };
+		8F043724201AA72700D98D26 /* blinn2_Normal_DirectX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blinn2_Normal_DirectX.png; path = ViroSample/blinn2_Normal_DirectX.png; sourceTree = "<group>"; };
+		8F043725201AA72800D98D26 /* blinn2_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blinn2_Roughness.png; path = ViroSample/blinn2_Roughness.png; sourceTree = "<group>"; };
+		8F043726201AA72800D98D26 /* blinn2_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blinn2_Base_Color.png; path = ViroSample/blinn2_Base_Color.png; sourceTree = "<group>"; };
+		8F043727201AA72800D98D26 /* blinn2_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blinn2_Metallic.png; path = ViroSample/blinn2_Metallic.png; sourceTree = "<group>"; };
+		8F043728201AA72800D98D26 /* blinn2_Mixed_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blinn2_Mixed_AO.png; path = ViroSample/blinn2_Mixed_AO.png; sourceTree = "<group>"; };
+		8F04372E201AA74000D98D26 /* cylinder_pbr.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = cylinder_pbr.vrx; path = ViroSample/cylinder_pbr.vrx; sourceTree = "<group>"; };
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
 		8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
@@ -2391,6 +2403,12 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F04372E201AA74000D98D26 /* cylinder_pbr.vrx */,
+				8F043726201AA72800D98D26 /* blinn2_Base_Color.png */,
+				8F043727201AA72800D98D26 /* blinn2_Metallic.png */,
+				8F043728201AA72800D98D26 /* blinn2_Mixed_AO.png */,
+				8F043724201AA72700D98D26 /* blinn2_Normal_DirectX.png */,
+				8F043725201AA72800D98D26 /* blinn2_Roughness.png */,
 				8F04371C201A43B700D98D26 /* ibl_mans_outside.hdr */,
 				8F04371E201A43B800D98D26 /* ibl_newport_loft.hdr */,
 				8F04371D201A43B800D98D26 /* ibl_ridgecrest_road.hdr */,
@@ -3057,6 +3075,7 @@
 				8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
+				8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
@@ -3113,6 +3132,7 @@
 				8F660AB41E931C6F006D063F /* 4096_normal.jpg in Resources */,
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
 				8F660AB21E931C6F006D063F /* 4096_earth.jpg in Resources */,
+				8F04372D201AA72900D98D26 /* blinn2_Mixed_AO.png in Resources */,
 				8FCED0831EBBD35200C19BCA /* SvenArmor_Glow.png in Resources */,
 				8F660AB51E931C6F006D063F /* earth.mtl in Resources */,
 				A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */,
@@ -3172,15 +3192,18 @@
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
 				8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */,
+				8F04372C201AA72900D98D26 /* blinn2_Metallic.png in Resources */,
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
+				8F043729201AA72900D98D26 /* blinn2_Normal_DirectX.png in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
 				8F1B4A2A1F64B6E000156809 /* emoji_smile.vrx in Resources */,
 				8A1462D11F327D1500643EF4 /* dark_circle_shadow.png in Resources */,
 				8F1B4A151F64B61E00156809 /* portal_wood_frame.vrx in Resources */,
+				8F04372F201AA74000D98D26 /* cylinder_pbr.vrx in Resources */,
 				8F1B4A191F64B61E00156809 /* portal_archway_diffuse.png in Resources */,
 				8FD2A5681F848E2900E831A6 /* interior_viro.jpg in Resources */,
 				8FCED05B1EBBCFCF00C19BCA /* MinionSuitA_Spec.png in Resources */,
@@ -3189,6 +3212,7 @@
 				8FCED0811EBBD35200C19BCA /* Sven_Hair_Specular.png in Resources */,
 				8F129FBD1ED603BE00341D83 /* minion.vrx in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
+				8F04372A201AA72900D98D26 /* blinn2_Roughness.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
