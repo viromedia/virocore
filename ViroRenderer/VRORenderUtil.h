@@ -26,7 +26,14 @@ public:
      they will be generated.
      */
     static void renderUnitCube(unsigned int *vao, unsigned int *vbo);
-    
+
+    /*
+     Renders a unit quad. The quad will be rendered using the given VAO
+     on top of the given VBO. If the VAO/VBO do not yet exist (are 0),
+     they will be generated.
+     */
+    static void renderQuad(unsigned int *vao, unsigned int *vbo);
+
     /*
      Bind the given texture to the given texture unit. Returns true on
      success.

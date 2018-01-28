@@ -16,7 +16,9 @@ class VRORenderContext;
 
 enum VROGlobalTextureType {
     ShadowMap,
-    IrradianceMap
+    IrradianceMap,
+    PrefilteredMap,
+    BrdfMap
 };
 
 /*

@@ -86,7 +86,8 @@ private:
     std::shared_ptr<VROShaderModifier> createPBRDirectLightingModifier();
     std::shared_ptr<VROShaderModifier> createPBRConstantAmbientFragmentModifier();
     std::shared_ptr<VROShaderModifier> createPBRDiffuseIrradianceFragmentModifier();
-    
+    std::shared_ptr<VROShaderModifier> createPBRDiffuseAndSpecularIrradianceFragmentModifier();
+
     std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier(bool linearizeColor);
     std::shared_ptr<VROShaderModifier> createEGLImageModifier(bool linearizeColor);
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);

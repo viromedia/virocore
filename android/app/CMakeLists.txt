@@ -195,6 +195,8 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROIBLPreprocess.cpp
              ../../ViroRenderer/VROEquirectangularToCubeRenderPass.cpp
              ../../ViroRenderer/VROIrradianceRenderPass.cpp
+             ../../ViroRenderer/VROPrefilterRenderPass.cpp
+             ../../ViroRenderer/VROBRDFRenderPass.cpp
 
              # AR
              ../../ViroRenderer/VROARSceneController.cpp

@@ -134,14 +134,21 @@ VROLightingShaderCapabilities VROShaderCapabilities::deriveLightingCapabilitiesK
     VROLightingShaderCapabilities cap;
     cap.shadows = false;
     cap.diffuseIrradiance = false;
+    cap.specularIrradiance = false;
     
     for (const std::shared_ptr<VROLight> &light : lights) {
         if (light->getCastsShadow()) {
             cap.shadows = true;
         }
     }
+
     if (context.getIrradianceMap() != nullptr) {
         cap.diffuseIrradiance = true;
     }
+
+    if (context.getBRDFMap() != nullptr && context.getPreFilteredMap() != nullptr){
+        cap.specularIrradiance = true;
+    }
+
     return cap;
 }

@@ -653,6 +653,10 @@
 		A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C31F3E7190007986E6 /* particles_vsh.glsl */; };
 		A540C5C71F3E73FA007986E6 /* particles_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */; };
 		A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */; };
+		A547DB6A2022EC8900C8FE67 /* brdf_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB682022EC8900C8FE67 /* brdf_vsh.glsl */; };
+		A547DB6B2022EC8900C8FE67 /* brdf_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */; };
+		A547DB6C2022ED0700C8FE67 /* brdf_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */; };
+		A547DB6D2022ED0700C8FE67 /* brdf_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB682022EC8900C8FE67 /* brdf_vsh.glsl */; };
 		A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -664,6 +668,15 @@
 		A586978A1E308B4500191090 /* VROInputControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A586977F1E30843000191090 /* VROInputControllerBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A586977E1E30843000191090 /* VROInputControllerBase.cpp */; };
 		A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697801E30843000191090 /* VROInputPresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A597F8E3201AB412007EE387 /* prefilter_convolution_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A597F8E1201AB411007EE387 /* prefilter_convolution_fsh.glsl */; };
+		A597F8E4201AB412007EE387 /* prefilter_convolution_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A597F8E2201AB412007EE387 /* prefilter_convolution_vsh.glsl */; };
+		A597F8E6201AB48D007EE387 /* VROPrefilterRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = A597F8DF201AB3E4007EE387 /* VROPrefilterRenderPass.h */; };
+		A597F8E7201AB5B8007EE387 /* VROPrefilterRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A597F8DE201AB3E4007EE387 /* VROPrefilterRenderPass.cpp */; };
+		A597F8E8201AB9EE007EE387 /* prefilter_convolution_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A597F8E1201AB411007EE387 /* prefilter_convolution_fsh.glsl */; };
+		A597F8E9201AB9EE007EE387 /* prefilter_convolution_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A597F8E2201AB412007EE387 /* prefilter_convolution_vsh.glsl */; };
+		A597F8F0201ADD17007EE387 /* VROBRDFRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A597F8EF201ADD17007EE387 /* VROBRDFRenderPass.cpp */; };
+		A597F8F1201ADD43007EE387 /* VROBRDFRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A597F8EF201ADD17007EE387 /* VROBRDFRenderPass.cpp */; };
+		A597F8F2201ADD49007EE387 /* VROBRDFRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = A597F8EE201ADD16007EE387 /* VROBRDFRenderPass.h */; };
 		A59E113B1F5396BF00EB2CEB /* VROPostProcessEffectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59E11381F53951700EB2CEB /* VROPostProcessEffectFactory.cpp */; };
 		A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E11391F53951700EB2CEB /* VROPostProcessEffectFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1B91E93300700E07EBC /* chillroots.mp4 */; };
@@ -1451,6 +1464,8 @@
 		A540C5C21F3D8711007986E6 /* VROInstancedUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInstancedUBO.h; sourceTree = "<group>"; };
 		A540C5C31F3E7190007986E6 /* particles_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = particles_vsh.glsl; sourceTree = "<group>"; };
 		A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = particles_fsh.glsl; sourceTree = "<group>"; };
+		A547DB682022EC8900C8FE67 /* brdf_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = brdf_vsh.glsl; sourceTree = "<group>"; };
+		A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = brdf_fsh.glsl; sourceTree = "<group>"; };
 		A56529A41EFD8051008097D7 /* VROTransformDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegate.h; sourceTree = "<group>"; };
 		A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegate.h; sourceTree = "<group>"; };
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
@@ -1463,6 +1478,12 @@
 		A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerCardboardiOS.h; sourceTree = "<group>"; };
 		A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterCardboardiOS.h; sourceTree = "<group>"; };
 		A58697881E30887500191090 /* VROInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputType.h; sourceTree = "<group>"; };
+		A597F8DE201AB3E4007EE387 /* VROPrefilterRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPrefilterRenderPass.cpp; sourceTree = "<group>"; };
+		A597F8DF201AB3E4007EE387 /* VROPrefilterRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPrefilterRenderPass.h; sourceTree = "<group>"; };
+		A597F8E1201AB411007EE387 /* prefilter_convolution_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = prefilter_convolution_fsh.glsl; sourceTree = "<group>"; };
+		A597F8E2201AB412007EE387 /* prefilter_convolution_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = prefilter_convolution_vsh.glsl; sourceTree = "<group>"; };
+		A597F8EE201ADD16007EE387 /* VROBRDFRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBRDFRenderPass.h; sourceTree = "<group>"; };
+		A597F8EF201ADD17007EE387 /* VROBRDFRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBRDFRenderPass.cpp; sourceTree = "<group>"; };
 		A59E11381F53951700EB2CEB /* VROPostProcessEffectFactory.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPostProcessEffectFactory.cpp; sourceTree = "<group>"; };
 		A59E11391F53951700EB2CEB /* VROPostProcessEffectFactory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = VROPostProcessEffectFactory.h; sourceTree = "<group>"; };
 		A5ABB1B91E93300700E07EBC /* chillroots.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = chillroots.mp4; path = ViroSample/chillroots.mp4; sourceTree = "<group>"; };
@@ -1617,6 +1638,8 @@
 				8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */,
 				A540C5C31F3E7190007986E6 /* particles_vsh.glsl */,
 				A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */,
+				A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */,
+				A547DB682022EC8900C8FE67 /* brdf_vsh.glsl */,
 				8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */,
 				8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */,
 				8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */,
@@ -1626,6 +1649,8 @@
 				8FEACEEF2017E58C0082D18B /* equirect_to_cube_fsh.glsl */,
 				8FEACF0620182D240082D18B /* irradiance_convolution_vsh.glsl */,
 				8FEACF0720182D240082D18B /* irradiance_convolution_fsh.glsl */,
+				A597F8E1201AB411007EE387 /* prefilter_convolution_fsh.glsl */,
+				A597F8E2201AB412007EE387 /* prefilter_convolution_vsh.glsl */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -1745,6 +1770,10 @@
 				8FEACF0320182CC80082D18B /* VROIrradianceRenderPass.cpp */,
 				8FEACEF72018073D0082D18B /* VROIBLPreprocess.h */,
 				8FEACEF62018073D0082D18B /* VROIBLPreprocess.cpp */,
+				A597F8DE201AB3E4007EE387 /* VROPrefilterRenderPass.cpp */,
+				A597F8DF201AB3E4007EE387 /* VROPrefilterRenderPass.h */,
+				A597F8EF201ADD17007EE387 /* VROBRDFRenderPass.cpp */,
+				A597F8EE201ADD16007EE387 /* VROBRDFRenderPass.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -2822,6 +2851,8 @@
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8F129F961ECB41EE00341D83 /* VROSkeletalAnimation.h in Headers */,
+				A597F8F2201ADD49007EE387 /* VROBRDFRenderPass.h in Headers */,
+				A597F8E6201AB48D007EE387 /* VROPrefilterRenderPass.h in Headers */,
 				8A2DA3B01F8B2D35001FC3BA /* VROInputPresenterAR.h in Headers */,
 				8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */,
 				8ADC38D51F0AFAF2006DD653 /* VROARDeclarativeNodeDelegate.h in Headers */,
@@ -3097,6 +3128,7 @@
 				8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */,
 				8FB9EA501F6B55DF0068FCA7 /* pug_body_specular.ktx in Resources */,
 				8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */,
+				A547DB6A2022EC8900C8FE67 /* brdf_vsh.glsl in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */,
@@ -3107,6 +3139,7 @@
 				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
 				8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */,
 				8F1B4A1E1F64B61E00156809 /* portal_window_frame_specular.png in Resources */,
+				A597F8E3201AB412007EE387 /* prefilter_convolution_fsh.glsl in Resources */,
 				8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */,
 				8F660AB31E931C6F006D063F /* 4096_night_lights.jpg in Resources */,
 				8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */,
@@ -3123,6 +3156,7 @@
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				A517D2CC1F41A16400A22219 /* cloud.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
+				A597F8E4201AB412007EE387 /* prefilter_convolution_vsh.glsl in Resources */,
 				8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
@@ -3167,6 +3201,7 @@
 				8FD2A5941F868B1200E831A6 /* sunrise.vhd in Resources */,
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
+				A547DB6B2022EC8900C8FE67 /* brdf_fsh.glsl in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
@@ -3258,6 +3293,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A547DB6C2022ED0700C8FE67 /* brdf_fsh.glsl in Resources */,
+				A547DB6D2022ED0700C8FE67 /* brdf_vsh.glsl in Resources */,
+				A597F8E8201AB9EE007EE387 /* prefilter_convolution_fsh.glsl in Resources */,
+				A597F8E9201AB9EE007EE387 /* prefilter_convolution_vsh.glsl in Resources */,
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
 				8FEACEF12017E58D0082D18B /* equirect_to_cube_fsh.glsl in Resources */,
@@ -3365,7 +3404,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3387,7 +3430,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3401,6 +3448,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A597F8F0201ADD17007EE387 /* VROBRDFRenderPass.cpp in Sources */,
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */,
 				8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */,
@@ -3429,6 +3477,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A597F8F1201ADD43007EE387 /* VROBRDFRenderPass.cpp in Sources */,
+				A597F8E7201AB5B8007EE387 /* VROPrefilterRenderPass.cpp in Sources */,
 				A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */,
 				8F31CCB21F2FA8CA003EFB4B /* VROPortal.cpp in Sources */,
 				A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */,

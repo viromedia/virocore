@@ -64,15 +64,21 @@ struct VROMaterialShaderCapabilities {
 struct VROLightingShaderCapabilities {
     bool shadows;
     bool diffuseIrradiance;
+    bool specularIrradiance;
     
     bool operator< (const VROLightingShaderCapabilities &r) const {
-        return std::tie(shadows, diffuseIrradiance) < std::tie(r.shadows, r.diffuseIrradiance);
+        return std::tie(shadows, diffuseIrradiance, specularIrradiance)
+               < std::tie(r.shadows, r.diffuseIrradiance, r.specularIrradiance);
     }
     bool operator== (const VROLightingShaderCapabilities& r) const {
-        return shadows == r.shadows && diffuseIrradiance == r.diffuseIrradiance;
+        return shadows == r.shadows
+                && diffuseIrradiance == r.diffuseIrradiance
+                && specularIrradiance == r.specularIrradiance;
     }
     bool operator!= (const VROLightingShaderCapabilities& r) const {
-        return shadows != r.shadows || diffuseIrradiance != r.diffuseIrradiance;
+        return shadows != r.shadows
+               || diffuseIrradiance != r.diffuseIrradiance
+               || specularIrradiance != r.specularIrradiance;
     }
 };
 

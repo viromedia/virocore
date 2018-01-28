@@ -37,6 +37,7 @@ static std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDiffuseIrradianceFragmentModifier;
+static std::shared_ptr<VROShaderModifier> sPBRDiffuseAndSpecularIrradianceFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
@@ -180,9 +181,15 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         modifiers.push_back(createPBRSurfaceModifier());
         modifiers.push_back(createPBRDirectLightingModifier());
         
-        if (lightingCapabilities.diffuseIrradiance) {
+        if (lightingCapabilities.diffuseIrradiance && !lightingCapabilities.specularIrradiance) {
             samplers.push_back("irradiance_map");
             modifiers.push_back(createPBRDiffuseIrradianceFragmentModifier());
+        }
+        else if (lightingCapabilities.diffuseIrradiance && lightingCapabilities.specularIrradiance) {
+            samplers.push_back("irradiance_map");
+            samplers.push_back("prefiltered_map");
+            samplers.push_back("brdf_map");
+            modifiers.push_back(createPBRDiffuseAndSpecularIrradianceFragmentModifier());
         }
         else {
             modifiers.push_back(createPBRConstantAmbientFragmentModifier());
@@ -239,7 +246,8 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         VROGeometrySourceSemantic::Tangent,
         VROGeometrySourceSemantic::BoneIndices,
         VROGeometrySourceSemantic::BoneWeights};
-    return std::make_shared<VROShaderProgram>(vertexShader, fragmentShader, samplers, modifiers, attributes,
+    return std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
+                                              samplers, modifiers, attributes,
                                               driver);
 }
 
@@ -550,7 +558,6 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRSurfaceModifier() 
             "F0 = mix(F0, albedo, _surface.metalness);",
             "highp vec3 V = _surface.view;",
             "highp vec3 N = _surface.normal;",
-            
         };
         sPBRSurfaceModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                   modifierCode);
@@ -631,22 +638,61 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFra
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseIrradianceFragmentModifier() {
     if (!sPBRDiffuseIrradianceFragmentModifier) {
         std::vector<std::string> modifierCode = {
-            "uniform samplerCube irradiance_map;",
-            "highp vec3 ambient_kS = fresnel_schlick_roughness(max(dot(N, V), 0.0), F0, _surface.roughness);",
-            "highp vec3 ambient_kD = 1.0 - ambient_kS;",
-            
-            "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
-            "highp vec3 ambient_diffuse = irradiance * albedo;",
-            
-            "highp vec3 pbr_ambient = (_ambient + ambient_kD * ambient_diffuse) * _surface.ao;",
-            "highp vec3 rgb_color = pbr_ambient + _diffuse;",
-            "_output_color = vec4(rgb_color, _output_color.a);",
+                "uniform samplerCube irradiance_map;",
+                "highp vec3 ambient_kS = fresnel_schlick_roughness(max(dot(N, V), 0.0), F0, _surface.roughness);",
+                "highp vec3 ambient_kD = 1.0 - ambient_kS;",
+
+                "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
+                "highp vec3 ambient_diffuse = irradiance * albedo;",
+
+                "highp vec3 pbr_ambient = (_ambient + ambient_kD * ambient_diffuse) * _surface.ao;",
+                "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+                "_output_color = vec4(rgb_color, _output_color.a);",
         };
         sPBRDiffuseIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                                     modifierCode);
         sPBRDiffuseIrradianceFragmentModifier->setName("pbr_ibl");
     }
     return sPBRDiffuseIrradianceFragmentModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseAndSpecularIrradianceFragmentModifier() {
+    if (!sPBRDiffuseAndSpecularIrradianceFragmentModifier) {
+        std::vector<std::string> modifierCode = {
+                // Initialize our input uniforms to sample from
+                "const highp float MAX_REFLECTION_LOD = 4.0;",
+                "uniform samplerCube irradiance_map;",
+                "uniform samplerCube prefiltered_map;",
+                "uniform sampler2D brdf_map;",
+                "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
+
+                // Calculate both specular and diffuse ratios
+                "highp vec3 ambient_kS = fresnel_schlick_roughness(max(dot(N, V), 0.0), F0, _surface.roughness);",
+                "highp vec3 ambient_kD = 1.0 - ambient_kS;",
+                "ambient_kD *= 1.0 - _surface.metalness;",
+
+                // Compute ambient specular lighting.
+                // Note the flipped Z axis for N and V to account for the cube map's flipped front facing Z.
+                "highp vec3 n_cube = vec3(N.x, N.y, -N.z);",
+                "highp vec3 v_cube = vec3(vec3(V.x, V.y, -V.z));",
+                "highp vec3 R = reflect(-v_cube, n_cube); ",
+                "highp vec3 prefilteredColor = textureLod(prefiltered_map, R, _surface.roughness * MAX_REFLECTION_LOD).rgb;",
+                "highp vec2 brdf = texture(brdf_map, vec2(max(dot(N, V), 0.0), _surface.roughness)).xy;",
+                "highp vec3 ambient_specular = prefilteredColor * (ambient_kS * brdf.x + brdf.y);",
+
+                // Compute ambient diffuse lighting.
+                "highp vec3 ambient_diffuse = irradiance * albedo;",
+
+                // Combine both specular and diffuse computations into _output_color
+                "highp vec3 pbr_ambient = (ambient_kD * ambient_diffuse + _ambient + ambient_specular) * _surface.ao;",
+                "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+                "_output_color = vec4(rgb_color, _output_color.a);",
+        };
+        sPBRDiffuseAndSpecularIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                                    modifierCode);
+        sPBRDiffuseAndSpecularIrradianceFragmentModifier->setName("pbr_ibl");
+    }
+    return sPBRDiffuseAndSpecularIrradianceFragmentModifier;
 }
 
 #pragma mark - Other Modifiers

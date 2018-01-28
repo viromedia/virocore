@@ -32,6 +32,7 @@ enum class VROFace;
 enum class VRORenderTargetType {
     Display,            // The actual backbuffer
     Renderbuffer,       // Uses depth and color renderbuffers
+    ColorTextureRG16,   // Uses a color texture and converts to RG space on write
     ColorTexture,       // Uses a color texture and a depth renderbuffer
     ColorTextureSRGB,   // Uses a color texture and converts to sRGB space on write
     ColorTextureHDR16,  // Uses a Float16 color texture and a depth renderbuffer

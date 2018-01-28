@@ -13,11 +13,15 @@
 #include "VRORenderTarget.h"
 #include "VROEquirectangularToCubeRenderPass.h"
 #include "VROIrradianceRenderPass.h"
+#include "VROPrefilterRenderPass.h"
+#include "VROBRDFRenderPass.h"
 
 VROIBLPreprocess::VROIBLPreprocess() {
     _phase = VROIBLPhase::Idle;
     _equirectangularToCubePass = std::make_shared<VROEquirectangularToCubeRenderPass>();
     _irradiancePass = std::make_shared<VROIrradianceRenderPass>();
+    _prefilterPass = std::make_shared<VROPrefilterRenderPass>();
+    _brdfPass = std::make_shared<VROBRDFRenderPass>();
 }
 
 VROIBLPreprocess::~VROIBLPreprocess() {
@@ -42,6 +46,8 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
         if (portal->getLightingEnvironment() == nullptr && _currentLightingEnvironment != nullptr) {
             pinfo("Lighting environment removed");
             context->setIrradianceMap(nullptr);
+            context->setBRDFMap(nullptr);
+            context->setPreFilteredMap(nullptr);
         }
     }
     
@@ -53,10 +59,19 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
     else if (_phase == VROIBLPhase::IrradianceConvolution) {
         doIrradianceConvolutionPhase(scene, context, driver);
         context->setIrradianceMap(_irradianceMap);
+        _phase = VROIBLPhase::PrefilterConvolution;
+    }
+
+    else if (_phase == VROIBLPhase::PrefilterConvolution) {
+        doPrefilterConvolutionPhase(scene, context, driver);
+        context->setPreFilteredMap(_prefilterMap);
+        _phase = VROIBLPhase::BRDFConvolution;
+    }
+
+    else if (_phase == VROIBLPhase::BRDFConvolution) {
+        doBRDFComputationPhase(scene, context, driver);
+        context->setBRDFMap(_brdfMap);
         _phase = VROIBLPhase::Idle;
-        
-        // For testing intermediate results
-        // scene->getRootNode()->setBackgroundCube(_irradianceMap);
     }
 }
 
@@ -78,4 +93,23 @@ void VROIBLPreprocess::doIrradianceConvolutionPhase(std::shared_ptr<VROScene> sc
     inputs.textures[kIrradianceLightingEnvironmentInput] = _cubeLightingEnvironment;
     _irradiancePass->render(scene, nullptr, inputs, context, driver);
     _irradianceMap = inputs.outputTarget->getTexture(0);
+}
+
+void VROIBLPreprocess::doPrefilterConvolutionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                                    std::shared_ptr<VRODriver> driver) {
+    pinfo("   Convoluting texture to create Prefiltered map");
+
+    VRORenderPassInputOutput inputs;
+    inputs.textures[kPrefilterLightingEnvironmentInput] = _cubeLightingEnvironment;
+    _prefilterPass->render(scene, nullptr, inputs, context, driver);
+    _prefilterMap = inputs.outputTarget->getTexture(0);
+}
+
+void VROIBLPreprocess::doBRDFComputationPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                              std::shared_ptr<VRODriver> driver) {
+    pinfo("   Convoluting texture to create BRDF map");
+
+    VRORenderPassInputOutput inputs;
+    _brdfPass->render(scene, nullptr, inputs, context, driver);
+    _brdfMap = inputs.outputTarget->getTexture(0);
 }

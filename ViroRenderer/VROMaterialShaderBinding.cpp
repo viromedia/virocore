@@ -107,6 +107,12 @@ void VROMaterialShaderBinding::loadTextures() {
         else if (sampler == "irradiance_map") {
             _textures.emplace_back(VROGlobalTextureType::IrradianceMap);
         }
+        else if (sampler == "prefiltered_map") {
+            _textures.emplace_back(VROGlobalTextureType::PrefilteredMap);
+        }
+        else if (sampler == "brdf_map") {
+            _textures.emplace_back(VROGlobalTextureType::BrdfMap);
+        }
     }
 }
 

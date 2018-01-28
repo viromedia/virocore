@@ -118,6 +118,20 @@ public:
     void setIrradianceMap(std::shared_ptr<VROTexture> irradianceMap) {
         _irradianceMap = irradianceMap;
     }
+
+    std::shared_ptr<VROTexture> getPreFilteredMap() const {
+        return _prefilteredMap;
+    }
+    void setPreFilteredMap(std::shared_ptr<VROTexture> map) {
+        _prefilteredMap = map;
+    }
+
+    std::shared_ptr<VROTexture> getBRDFMap() const {
+        return _brdfMap;
+    }
+    void setBRDFMap(std::shared_ptr<VROTexture> map) {
+        _brdfMap = map;
+    }
     
     const VROCamera &getCamera() const {
         return _camera;
@@ -224,6 +238,16 @@ private:
      Diffuse irradiance map used for PBR image-based lighting.
      */
     std::shared_ptr<VROTexture> _irradianceMap;
+
+    /*
+     Prefiltered irradiance map used for PBR image-based specular lighting.
+     */
+    std::shared_ptr<VROTexture> _prefilteredMap;
+
+    /*
+     BRDF irradiance map used for PBR image-based specular lighting.
+     */
+    std::shared_ptr<VROTexture> _brdfMap;
 
     /*
      VROPencil is used for drawing a list of VROPolylines in a separate render pass,

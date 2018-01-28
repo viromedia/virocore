@@ -66,6 +66,7 @@ void VRORenderTargetOpenGL::bind() {
 
 void VRORenderTargetOpenGL::unbind() {
     switch (_type) {
+        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
@@ -172,6 +173,7 @@ void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture, i
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
     if (_type == VRORenderTargetType::ColorTexture ||
+        _type == VRORenderTargetType::ColorTextureRG16 ||
         _type == VRORenderTargetType::ColorTextureHDR16 ||
         _type == VRORenderTargetType::ColorTextureHDR32 ||
         _type == VRORenderTargetType::DepthTexture) {
@@ -239,6 +241,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
     }
     
     if (_type == VRORenderTargetType::ColorTexture ||
+        _type == VRORenderTargetType::ColorTextureRG16 ||
         _type == VRORenderTargetType::ColorTextureSRGB ||
         _type == VRORenderTargetType::ColorTextureHDR16 ||
         _type == VRORenderTargetType::ColorTextureHDR32) {
@@ -247,8 +250,13 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GLint internalFormat = GL_RGBA;
         GLint format = GL_RGBA;
         GLenum texType = GL_UNSIGNED_BYTE;
-        
-        if (_type == VRORenderTargetType::ColorTextureSRGB) {
+
+        if (_type == VRORenderTargetType::ColorTextureRG16){
+            internalFormat = GL_RG16F;
+            format = GL_RG;
+            texType = GL_FLOAT;
+        }
+        else if (_type == VRORenderTargetType::ColorTextureSRGB) {
             internalFormat = GL_SRGB8_ALPHA8;
         }
         else if (_type == VRORenderTargetType::ColorTextureHDR16) {
@@ -267,7 +275,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         for (int i = 0 ; i < _numAttachments; i++) {
             glBindTexture(GL_TEXTURE_2D, texNames[i]);
             GLenum attachment = getTextureAttachmentType(i);
-            
+
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -496,6 +504,7 @@ GLint VRORenderTargetOpenGL::getTextureName(int attachment) const {
 
 GLenum VRORenderTargetOpenGL::getTextureAttachmentType(int attachment) const {
     switch (_type) {
+        case VRORenderTargetType ::ColorTextureRG16:
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
@@ -519,7 +528,7 @@ bool VRORenderTargetOpenGL::restoreFramebuffers() {
         case VRORenderTargetType::Renderbuffer:
             createColorDepthRenderbuffers();
             return true;
-            
+        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
