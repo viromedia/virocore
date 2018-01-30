@@ -11,6 +11,7 @@
 #include "VROLog.h"
 #include "VROImageTrackerOutput.h"
 #include "opencv2/core/core.hpp"
+#include "opencv2/features2d/features2d.hpp"
 #include <memory>
 
 enum class VROImageTrackerType {
@@ -56,6 +57,7 @@ private:
 
     cv::Mat _targetImage;
     VROImageTrackerType _type;
+    cv::Ptr<cv::Feature2D> _feature;
     int _matcherType;
     std::vector<cv::KeyPoint> _targetKeyPoints;
     cv::Mat _targetDescriptors;

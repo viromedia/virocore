@@ -108,16 +108,6 @@ private:
 #endif
 
     /*
-     Image Tracking Helper.
-     */
-    VROTrackingHelper *_trackingHelper;
-
-    /*
-     The UIImageView used to display the image tracking output.
-     */
-    UIImageView *_trackerOutputView;
-    
-    /*
      Whether or not the session has been paused.
      */
     bool _sessionPaused;

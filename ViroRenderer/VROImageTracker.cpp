@@ -6,7 +6,6 @@
 //
 #include "VROImageTracker.h"
 #include <sys/time.h>
-#include "opencv2/features2d/features2d.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
@@ -24,7 +23,7 @@
 #endif
 
 std::shared_ptr<VROImageTracker> VROImageTracker::createImageTracker(cv::Mat image) {
-    return std::shared_ptr<VROImageTracker>(new VROImageTracker(image, VROImageTrackerType::BRISK));
+    return std::shared_ptr<VROImageTracker>(new VROImageTracker(image, VROImageTrackerType::ORB4));
 }
 
 VROImageTracker::VROImageTracker(cv::Mat targetImage, VROImageTrackerType type) :
@@ -42,9 +41,27 @@ void VROImageTracker::setType(VROImageTrackerType type) {
 }
 
 void VROImageTracker::updateTargetInfo() {
+    
+    switch(_type) {
+        case VROImageTrackerType::ORB3:
+            //int nfeatures=500, float scaleFactor=1.2f, int nlevels=8, int edgeThreshold=31, int firstLevel=0, int WTA_K=2, int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20);
+            _feature = cv::ORB::create(500, 1.3f, 8, 31, 0, 3, cv::ORB::FAST_SCORE, 31);
+            break;
+        case VROImageTrackerType::ORB4:
+            _feature = cv::ORB::create(500, 1.3f, 8, 31, 0, 4);
+            break;
+        case VROImageTrackerType::ORB:
+            _feature = cv::ORB::create();
+            break;
+        case VROImageTrackerType::BRISK:
+        default:
+            _feature = cv::BRISK::create();
+    }
+    
+    // automatically run keypoint and descriptor extraction on the target image.
     // TODO: we can scale the target image lower to speed up processing, but that'll throw off the translation matrix (by the same factor)
     detectKeypointsAndDescriptors(_targetImage, _targetKeyPoints, _targetDescriptors);
-
+    
     switch(_type) {
         case VROImageTrackerType::ORB3:
         case VROImageTrackerType::ORB4:
@@ -65,26 +82,26 @@ void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
 
     // create empty mat for processing output
     cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_8UC1);
-    
-    cv::Ptr<cv::Feature2D> feature;
 
     switch(_type) {
         case VROImageTrackerType::ORB:
             // convert the image to gray scale
             cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
-            feature = cv::ORB::create();
             break;
         case VROImageTrackerType::BRISK:
         default:
             // convert the image to gray scale
             cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
-            feature = cv::BRISK::create();
     }
 
     LOG_DETECT_TIME("start detect keypoints");
-    feature->detect(processedImage, keypoints);
+    _feature->detect(processedImage, keypoints);
     LOG_DETECT_TIME("start compute descriptors");
-    feature->compute(processedImage, keypoints, descriptors);
+    _feature->compute(processedImage, keypoints, descriptors);
+
+    // Compute keypoints and descriptors all together.
+//    LOG_DETECT_TIME("start detect and compute descriptors")
+//    _feature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
     LOG_DETECT_TIME("finish detect keypoints & descriptors");
 }
 
@@ -118,14 +135,14 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetInternal(cv::M
     float xScale = 1; float yScale = 1;
     
     _startTime = getCurrentTimeMs();
-    cv::Size quarterSize(inputImage.cols * xScale, inputImage.rows * yScale);
+    cv::Size newSize(inputImage.cols * xScale, inputImage.rows * yScale);
     cv::Mat resizedInput;
-    cv::resize(inputImage, resizedInput, quarterSize);
+    cv::resize(inputImage, resizedInput, newSize);
     
     pinfo("[Viro] resized image size is %d x %d", resizedInput.rows, resizedInput.cols);
 
     detectKeypointsAndDescriptors(resizedInput, inputKeyPoints, inputDescriptors);
-
+    
     std::shared_ptr<VROImageTrackerOutput> output = findTarget(inputKeyPoints, inputDescriptors, inputImage);
     
     // Since we scaled the input image, we need to revert that scale when we return the corners!
@@ -156,35 +173,51 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(std::vector<c
 std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
 
     LOG_DETECT_TIME("start matching keypoints");
-    cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(_matcherType, false);
-    std::vector<cv::DMatch> matches;
-    matcher->match(_targetDescriptors, inputDescriptors, matches);
-
-    LOG_DETECT_TIME("start filtering good matches");
     
-    int minGoodMatches = 5; // we need at least 5 good matches before we continue.
-    double maxDist = 0;
-    double minDist = 100;
-    
-    for (int i = 0; i < matches.size(); i++) {
-        float dist = matches[i].distance;
-        if (dist < minDist) {
-            minDist = dist;
-        }
-        if (dist > maxDist) {
-            maxDist = dist;
-        }
-    }
-
-    double goodMatchThreshold = 3 * minDist; // TODO: make sure this is a legitimate value.
+    int minGoodMatches = 15; // we need at least 15 good matches before we continue.
     std::vector<cv::DMatch> goodMatches;
 
-    for (int i = 0; i < matches.size(); i++) {
-        if (matches[i].distance < goodMatchThreshold) {
-            goodMatches.push_back(matches[i]);
+    bool useBfKnnMatcher = _type != VROImageTrackerType::BRISK;
+    if (!useBfKnnMatcher) {
+        cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(_matcherType, true);
+        std::vector<cv::DMatch> matches;
+        matcher->match(_targetDescriptors, inputDescriptors, matches);
+        LOG_DETECT_TIME("start filtering good matches");
+        
+        double maxDist = 0;
+        double minDist = 100;
+        
+        for (int i = 0; i < matches.size(); i++) {
+            float dist = matches[i].distance;
+            if (dist < minDist) {
+                minDist = dist;
+            }
+            if (dist > maxDist) {
+                maxDist = dist;
+            }
+        }
+
+        double goodMatchThreshold = 3 * minDist; // TODO: make sure this is a legitimate value.
+
+        for (int i = 0; i < matches.size(); i++) {
+            if (matches[i].distance < goodMatchThreshold) {
+                goodMatches.push_back(matches[i]);
+            }
+        }
+
+    } else {
+        cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create();
+        std::vector<std::vector<cv::DMatch>> matches;
+        matcher->knnMatch(_targetDescriptors, inputDescriptors, matches, 2);
+        LOG_DETECT_TIME("start filtering good matches");
+        
+        for (int i = 0; i < matches.size(); i++) {
+            if (matches[i][0].distance < (.75 * matches[i][1].distance)) {
+                goodMatches.push_back(matches[i][0]);
+            }
         }
     }
-    
+
     if (goodMatches.size() < minGoodMatches) {
         pinfo("[Viro] Could not find enough good matching points.");
         return VROImageTrackerOutput::createFalseOutput();
