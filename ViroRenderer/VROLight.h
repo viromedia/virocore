@@ -66,6 +66,14 @@ public:
         return _intensity;
     }
     
+    void setTemperature(float temperature);
+    float getTemperature() const {
+        return _temperature;
+    }
+    VROVector3f getColorFromTemperature() const {
+        return _colorFromTemperature;
+    }
+    
     void setName(std::string name) {
         this->_name = name;
     }
@@ -229,6 +237,19 @@ private:
      */
     float _intensity;
     
+    /*
+     The temperature of the light, in Kelvin. Viro will derive a hue from this temperature
+     and multiply it by _color. To model a physical light, you can leave _color set to
+     (1.0, 1.0, 1.0) and set the temperature only. The default value is 6500K, which
+     represents pure white light.
+     */
+    float _temperature;
+    
+    /*
+     The color as derived from _temperature.
+     */
+    VROVector3f _colorFromTemperature;
+    
     std::string _name;
     bool _updatedFragmentData;
     bool _updatedVertexData;
@@ -341,6 +362,11 @@ private:
      */
     VROMatrix4f _shadowViewMatrix;
     VROMatrix4f _shadowProjectionMatrix;
+    
+    /*
+     Derive the RGB color (hue) from the given temperature in Kelvin.
+     */
+    VROVector3f deriveRGBFromTemperature(float temperature);
     
 };
 

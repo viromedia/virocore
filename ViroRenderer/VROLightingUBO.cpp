@@ -67,6 +67,8 @@ void VROLightingUBO::updateLightsFragment() {
     data.num_lights = 0;
     
     for (const std::shared_ptr<VROLight> &light : _lights) {
+        VROVector3f color = light->getColor() * light->getColorFromTemperature();
+        
         // Ambient lights have no diffuse color; instead they are added
         // to the aggregate ambient light color, which is passed as a single
         // value into the shader
@@ -82,7 +84,7 @@ void VROLightingUBO::updateLightsFragment() {
             data.lights[index].shadow_opacity = light->getShadowOpacity();
             light->getTransformedPosition().toArray(data.lights[index].position);
             light->getDirection().toArray(data.lights[index].direction);
-            light->getColor().scale(light->getIntensity() / 1000.0).toArray(data.lights[index].color);
+            color.toArray(data.lights[index].color);
             data.lights[index].attenuation_start_distance = light->getAttenuationStartDistance();
             data.lights[index].attenuation_end_distance = light->getAttenuationEndDistance();
             data.lights[index].attenuation_falloff_exp = light->getAttenuationFalloffExponent();

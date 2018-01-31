@@ -19,12 +19,14 @@ VROLight::VROLight(VROLightType type) :
     _type(type),
     _color({ 1.0, 1.0, 1.0 }),
     _intensity(1000.0),
+    _temperature(6500),
+    _colorFromTemperature({ 1.0, 1.0, 1.0 }),
     _updatedFragmentData(true),
     _updatedVertexData(true),
     _attenuationStartDistance(2.0),
     _attenuationEndDistance(10),
     _attenuationFalloffExponent(2.0),
-    _direction( { 0, 0, -1.0} ),
+    _direction( {0, 0, -1.0} ),
     _spotInnerAngle(0),
     _spotOuterAngle(45),
     _castsShadow(false),
@@ -59,6 +61,15 @@ void VROLight::setIntensity(float intensity) {
         ((VROLight *)animatable)->_intensity = i;
         ((VROLight *)animatable)->_updatedFragmentData = true;
     }, _intensity, intensity));
+}
+
+void VROLight::setTemperature(float temperature) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float t) {
+        VROLight *light = (VROLight *)animatable;
+        light->_temperature = t;
+        light->_colorFromTemperature = light->deriveRGBFromTemperature(t);
+        light->_updatedFragmentData = true;
+    }, _temperature, temperature));
 }
 
 void VROLight::setPosition(VROVector3f position) {
@@ -217,3 +228,34 @@ void VROLight::drawLightFrustum(std::shared_ptr<VROPencil> pencil) {
     pencil->draw(nBR, nBL);
     pencil->draw(nBL, nTL);
 }
+
+VROVector3f VROLight::deriveRGBFromTemperature(float temperature) {
+    float temp = temperature / 100.0f;
+    float red, green, blue = 0;
+    if (temp <= 66) {
+        red = 255;
+        green = temp;
+        green = 99.4708025861 * log(green) - 161.1195681661;
+        
+        if (temp <= 19) {
+            blue = 0;
+        }
+        else {
+            blue = temp - 10;
+            blue = 138.5177312231 * log(blue) - 305.0447927307;
+        }
+    }
+    else {
+        red = temp - 60;
+        red = 329.698727446 * pow(red, -0.1332047592);
+        
+        green = temp - 60;
+        green = 288.1221695283 * pow(green, -0.0755148492);
+        blue = 255;
+    }
+    
+    return { (float) (VROMathClamp(red,   0, 255.0) / 255.0),
+             (float) (VROMathClamp(green, 0, 255.0) / 255.0),
+             (float) (VROMathClamp(blue,  0, 255.0) / 255.0) };
+}
+
