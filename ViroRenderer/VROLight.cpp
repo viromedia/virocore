@@ -79,6 +79,13 @@ void VROLight::setPosition(VROVector3f position) {
                                                    }, _position, position));
 }
 
+void VROLight::setTransformedPosition(VROVector3f position) {
+    if (!_transformedPosition.isEqual(position)) {
+        _updatedFragmentData = true;
+    }
+    _transformedPosition = position;
+}
+
 void VROLight::setDirection(VROVector3f direction) {
     direction = direction.normalize();
     

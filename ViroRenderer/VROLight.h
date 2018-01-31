@@ -184,9 +184,7 @@ public:
     void propagateFragmentUpdates();
     void propagateVertexUpdates();
     
-    void setTransformedPosition(VROVector3f position) {
-        _transformedPosition = position;
-    }
+    void setTransformedPosition(VROVector3f position);
     VROVector3f getTransformedPosition() const {
         return _transformedPosition;
     }
