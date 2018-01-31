@@ -617,7 +617,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFragmentModifier() {
     if (!sPBRConstantAmbientFragmentModifier) {
         std::vector<std::string> modifierCode = {
-            "highp vec3 pbr_ambient = vec3(0.03) * albedo * _surface.ao;",
+            "highp vec3 pbr_ambient = _ambient * albedo * _surface.ao;",
             "highp vec3 rgb_color = pbr_ambient + _diffuse;",
             "_output_color = vec4(rgb_color, _output_color.a);",
         };
@@ -638,7 +638,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseIrradianceF
             "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
             "highp vec3 ambient_diffuse = irradiance * albedo;",
             
-            "highp vec3 pbr_ambient = (ambient_kD * ambient_diffuse) * _surface.ao;",
+            "highp vec3 pbr_ambient = (_ambient + ambient_kD * ambient_diffuse) * _surface.ao;",
             "highp vec3 rgb_color = pbr_ambient + _diffuse;",
             "_output_color = vec4(rgb_color, _output_color.a);",
         };

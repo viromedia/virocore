@@ -36,7 +36,7 @@ void VROFBXTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(600);
+    ambient->setIntensity(30);
     
     std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
     //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");
@@ -45,8 +45,8 @@ void VROFBXTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
-    //rootNode->addLight(ambient);
-    rootNode->setLightingEnvironment(environment);
+    rootNode->addLight(ambient);
+    //rootNode->setLightingEnvironment(environment);
     rootNode->setBackgroundSphere(environment);
     
     std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");

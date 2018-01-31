@@ -71,7 +71,8 @@ void VROLightingUBO::updateLightsFragment() {
         
         // Ambient lights have no diffuse color; instead they are added
         // to the aggregate ambient light color, which is passed as a single
-        // value into the shader
+        // value into the shader. They are *always* scaled by intensity / 1000.0,
+        // even when running PBR (since they have no physical counterpart)
         if (light->getType() == VROLightType::Ambient) {
             ambientLight += color.scale(light->getIntensity() / 1000.0);
         }
