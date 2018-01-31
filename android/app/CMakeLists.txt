@@ -290,6 +290,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPBRDirectTest.cpp
              ../../ViroRenderer/VROPBRTexturedTest.cpp
              ../../ViroRenderer/VRODiffuseIrradianceTest.cpp
+             ../../ViroRenderer/VROPhotometricLightTest.cpp
              )
 
 # Add pre-built libraries
