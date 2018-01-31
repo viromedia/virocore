@@ -23,16 +23,16 @@ void VROFBXTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 1.0, 1.0 });
-    light->setPosition( { 0, 3, 3 });
+    light->setPosition( { 0, 10, 10 });
     light->setDirection( { 0, -1.0, -1.0 });
-    light->setAttenuationStartDistance(50);
-    light->setAttenuationEndDistance(75);
-    light->setSpotInnerAngle(70);
-    light->setSpotOuterAngle(120);
+    light->setAttenuationStartDistance(25);
+    light->setAttenuationEndDistance(50);
+    light->setSpotInnerAngle(35);
+    light->setSpotOuterAngle(60);
     light->setCastsShadow(true);
-    light->setIntensity(4000);
+    light->setIntensity(1000);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
@@ -45,7 +45,7 @@ void VROFBXTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
-    rootNode->addLight(ambient);
+    //rootNode->addLight(ambient);
     rootNode->setLightingEnvironment(environment);
     rootNode->setBackgroundSphere(environment);
     

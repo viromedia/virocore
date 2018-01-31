@@ -82,8 +82,9 @@ highp float compute_attenuation_pbr(const VROLightUniforms light, highp vec3 sur
     if (light.type == 1) {
         L = -normalize(light.direction.xyz);
         
-        // For directional light luminous intensity we use a simple equation as for spotlights
-        highp float luminous_intensity = light.intensity / PI;
+        // For directional light luminous intensity is simply a scalar (as if we're
+        // using Lambert)
+        highp float luminous_intensity = light.intensity / (1000.0);
         attenuation = luminous_intensity;
     }
     
