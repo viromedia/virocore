@@ -36,8 +36,8 @@ void VROShadowTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronize
     spotRed->setDirection( { -.25, -1.0, 0 });
     spotRed->setAttenuationStartDistance(20);
     spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(15);
-    spotRed->setSpotOuterAngle(10);
+    spotRed->setSpotInnerAngle(30);
+    spotRed->setSpotOuterAngle(50);
     spotRed->setShadowNearZ(1);
     spotRed->setShadowFarZ(10);
     spotRed->setCastsShadow(true);
@@ -51,8 +51,8 @@ void VROShadowTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronize
     
     spotBlue->setAttenuationStartDistance(20);
     spotBlue->setAttenuationEndDistance(30);
-    spotBlue->setSpotInnerAngle(30);
-    spotBlue->setSpotOuterAngle(15);
+    spotBlue->setSpotInnerAngle(60);
+    spotBlue->setSpotOuterAngle(90);
     spotBlue->setCastsShadow(true);
     
     rootNode->addLight(ambient);

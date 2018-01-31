@@ -38,6 +38,7 @@ enum class VRORendererTestType {
     PBRDirect,
     PBRTextured,
     DiffuseIrradiance,
+    PhotometricLight,
     NumTests,
 };
 

@@ -15,7 +15,7 @@ enum class VROTestSceneType {
 
 // Set to NO to test using an AR view
 static const VROTestSceneType kTestType = VROTestSceneType::VR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::DiffuseIrradiance;
+static const VRORendererTestType kRendererTest = VRORendererTestType::PhotometricLight;
 
 @interface VROTestViewController ()
 

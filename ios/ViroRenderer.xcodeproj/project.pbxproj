@@ -592,6 +592,9 @@
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */; };
+		8FE39F80201FB2D70088A175 /* VROPhotometricLightTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */; };
+		8FE39F81201FB2DB0088A175 /* VROPhotometricLightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */; };
 		8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */; };
 		8FEACED82012605F0082D18B /* pbr_sample_roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED32012605E0082D18B /* pbr_sample_roughness.png */; };
 		8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED42012605F0082D18B /* pbr_sample_ao.png */; };
@@ -1385,6 +1388,8 @@
 		8FDFA8A51BDEA7F800883EC0 /* Vector3d.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Vector3d.mm; sourceTree = "<group>"; };
 		8FDFA8AA1BDEC32700883EC0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhotometricLightTest.cpp; sourceTree = "<group>"; };
+		8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhotometricLightTest.h; sourceTree = "<group>"; };
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
 		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
@@ -2369,6 +2374,8 @@
 				8FEACEDD201260B60082D18B /* VROPBRTexturedTest.cpp */,
 				8F04371B201959A900D98D26 /* VRODiffuseIrradianceTest.h */,
 				8FEACEFE20181DDF0082D18B /* VRODiffuseIrradianceTest.cpp */,
+				8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */,
+				8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2794,6 +2801,7 @@
 				8A130D761E3A93820050D83B /* VROSound.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,
 				8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */,
+				8FE39F80201FB2D70088A175 /* VROPhotometricLightTest.h in Headers */,
 				8F53C9031E01B5CB008314B4 /* VROOBJLoader.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */,
@@ -3395,6 +3403,7 @@
 			files = (
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */,
+				8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 			);
@@ -3525,6 +3534,7 @@
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */,
+				8FE39F81201FB2DB0088A175 /* VROPhotometricLightTest.cpp in Sources */,
 				8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8F17D53D1FCE128600141042 /* VROSceneRendererGVR.cpp in Sources */,

@@ -143,8 +143,7 @@ VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
         return VROMathComputeOrthographicProjection(left, right, bottom, top, near, far);
     }
     else if (_light->getType() == VROLightType::Spot) {
-        return VROMathComputePerspectiveProjection((_light->getSpotOuterAngle() + _light->getSpotInnerAngle()) * 2.0,
-                                                   1, near, far);
+        return VROMathComputePerspectiveProjection(_light->getSpotOuterAngle(), 1, near, far);
     }
     else {
         pabort("Light of type %d may not cast shadows", (int)_light->getType());

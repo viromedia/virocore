@@ -73,7 +73,7 @@ void VROLightingUBO::updateLightsFragment() {
         // to the aggregate ambient light color, which is passed as a single
         // value into the shader
         if (light->getType() == VROLightType::Ambient) {
-            ambientLight += light->getColor().scale(light->getIntensity() / 1000.0);
+            ambientLight += color.scale(light->getIntensity() / 1000.0);
         }
         else {
             int index = data.num_lights;
@@ -85,11 +85,12 @@ void VROLightingUBO::updateLightsFragment() {
             light->getTransformedPosition().toArray(data.lights[index].position);
             light->getDirection().toArray(data.lights[index].direction);
             color.toArray(data.lights[index].color);
+            data.lights[index].intensity = light->getIntensity();
             data.lights[index].attenuation_start_distance = light->getAttenuationStartDistance();
             data.lights[index].attenuation_end_distance = light->getAttenuationEndDistance();
             data.lights[index].attenuation_falloff_exp = light->getAttenuationFalloffExponent();
-            data.lights[index].spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
-            data.lights[index].spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
+            data.lights[index].spot_inner_angle = cos(degrees_to_radians(light->getSpotInnerAngle() * 0.5));
+            data.lights[index].spot_outer_angle = cos(degrees_to_radians(light->getSpotOuterAngle() * 0.5));
             
             data.num_lights++;
         }

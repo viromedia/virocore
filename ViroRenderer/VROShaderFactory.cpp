@@ -469,8 +469,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createLambertLightingModifi
      */
     if (!sLambertLightingModifier) {
         std::vector<std::string> modifierCode = {
-            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, _light.surface_to_light));",
-            "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
+            "highp vec3 L;",
+            "highp float attenuation = compute_attenuation(_light, _surface.position, L);",
+            "highp vec3 luminance = _light.color * _light.intensity / 1000.0;",
+            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, L));",
+            "_lightingContribution.diffuse += (attenuation * diffuse_coeff * luminance);",
         };
         
         sLambertLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
@@ -486,15 +489,18 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPhongLightingModifier
      */
     if (!sPhongLightingModifier) {
         std::vector<std::string> modifierCode = {
-            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, _light.surface_to_light));",
-            "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
+            "highp vec3 L;",
+            "highp float attenuation = compute_attenuation(_light, _surface.position, L);",
+            "highp vec3 luminance = _light.color * _light.intensity / 1000.0;",
+            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, L));",
+            "_lightingContribution.diffuse += (attenuation * diffuse_coeff * luminance);",
             "lowp float specular_coeff = 0.0;",
             "if (diffuse_coeff > 0.0) {",
             "    specular_coeff = pow(max(0.0, dot(_surface.view,",
-            "                                      reflect(-_light.surface_to_light, _surface.normal))),",
+            "                                      reflect(-L, _surface.normal))),",
             "                         _surface.shininess);",
             "}",
-            "_lightingContribution.specular += (_light.attenuation * specular_coeff * _light.color);",
+            "_lightingContribution.specular += (attenuation * specular_coeff * luminance);",
         };
         
         sPhongLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
@@ -510,15 +516,18 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBlinnLightingModifier
      */
     if (!sBlinnLightingModifier) {
         std::vector<std::string> modifierCode = {
-            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, _light.surface_to_light));",
-            "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
+            "highp vec3 L;",
+            "highp float attenuation = compute_attenuation(_light, _surface.position, L);",
+            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, L));",
+            "highp vec3 luminance = _light.color * _light.intensity / 1000.0;",
+            "_lightingContribution.diffuse += (attenuation * diffuse_coeff * luminance);",
             "lowp float specular_coeff = 0.0;",
             "if (diffuse_coeff > 0.0) {",
-            "    specular_coeff = pow(max(0.0, dot(normalize(_surface.view + _light.surface_to_light),",
+            "    specular_coeff = pow(max(0.0, dot(normalize(_surface.view + L),",
             "                                      _surface.normal)),",
             "                         _surface.shininess);",
             "}",
-            "_lightingContribution.specular += (_light.attenuation * specular_coeff * _light.color);",
+            "_lightingContribution.specular += (attenuation * specular_coeff * luminance);",
         };
         
         sBlinnLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
@@ -556,37 +565,46 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
      */
     if (!sPBRDirectLightingModifier) {
         std::vector<std::string> modifierCode = {
-            // Per-light radiance
-            "highp vec3 L = _light.surface_to_light;",
+            // Compute the attenuation (which factors in the luminous flux to intensity conversion)
+            "highp vec3 L;",
+            "highp float attenuation = compute_attenuation_pbr(_light, _surface.position, L);",
             "highp vec3 H = normalize(V + L);",
+            "highp float NdotL = max(dot(N, L), 0.0);",
             
-            // Compute inverse-square falloff (temporary, we should use the light's parameterized falloff)
-            "highp float distance = length(_light.position - _surface.position);",
-            "_light.attenuation = 1.0 / (distance * distance);"
-            
-            // Compute the radiance
-            "highp vec3 radiance = _light.color * _light.attenuation;",
+            // Compute the luminance of the light (the intensity per unit area is baked into the
+            // attenuation)
+            "highp vec3 luminance = _light.color * attenuation;",
             
             // Cook-Torrance BRDF
+            
+            // Specular component (NDF: normal distribution function, G: geometry function, F: reflectance function)
+            // Note the divide by PI here is in the distribution_GGX function
             "highp float NDF = distribution_ggx(N, H, _surface.roughness);",
             "highp float G   = geometry_smith(N, V, L, _surface.roughness);",
             "highp vec3  F   = fresnel_schlick(clamp(dot(H, V), 0.0, 1.0), F0);",
-            
             "highp vec3  nominator = NDF * G * F;",
-            "highp float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;",
-            "highp vec3  specular = nominator / denominator;",
+            "highp float denominator = 4.0 * max(dot(N, V), 0.0) * NdotL + 0.001;",
+            "highp vec3  specular_brdf = nominator / denominator;",
             
-            // kS (specular component) is equal to fresnel
+            // Diffuse (Lambertian) component
+            "highp vec3  diffuse_brdf = albedo / PI;",
+            
+            // Compute the ratios of refracted (diffuse, kD) to reflected (specular, kS) light
+            // The specular component is equal to fresnel, and the diffuse component is derived
+            // from energy conservation
             "highp vec3 kS = F;",
-            // kD (diffuse component) is derived from energy conservation
             "highp vec3 kD = vec3(1.0) - kS;",
             // Only non-metals have diffuse lighting
             "kD *= (1.0 - _surface.metalness);",
             
-            // Apply the incidence of the light
-            "highp float NdotL = max(dot(N, L), 0.0);",
-            // Add the outgoing radiance to the diffuse lighting contribution term
-            "_lightingContribution.diffuse += (kD * albedo / PI + specular) * radiance * NdotL;",
+            // Add the outgoing radiance to the diffuse lighting contribution term. Note that
+            // kS is assumed to be 1.0 here, since we already multiplied by F in the specular BRDF
+            // (that's confusing)
+            "highp vec3 illumination = (kD * diffuse_brdf + specular_brdf) * luminance * NdotL;",
+            
+            // Finally, for punctual lights we multiply by PI (effectively this cancels out the PI
+            // in diffuse_brdf and specular_brdf)
+            "_lightingContribution.diffuse += (illumination * PI);",
         };
         
         sPBRDirectLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,

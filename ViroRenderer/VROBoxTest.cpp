@@ -42,8 +42,8 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     spotRed->setDirection( { 1.0, 0, -1.0 });
     spotRed->setAttenuationStartDistance(20);
     spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(2.5);
-    spotRed->setSpotOuterAngle(5.0);
+    spotRed->setSpotInnerAngle(5);
+    spotRed->setSpotOuterAngle(15);
     
     std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
     spotBlue->setColor({ 0.0, 0.0, 1.0 });
@@ -51,8 +51,8 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     spotBlue->setDirection( { -1.0, 0, -1.0 });
     spotBlue->setAttenuationStartDistance(20);
     spotBlue->setAttenuationEndDistance(30);
-    spotBlue->setSpotInnerAngle(2.5);
-    spotBlue->setSpotOuterAngle(5.0);
+    spotBlue->setSpotInnerAngle(5);
+    spotBlue->setSpotOuterAngle(15);
     
     rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
