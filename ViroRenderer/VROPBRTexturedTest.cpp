@@ -30,8 +30,9 @@ void VROPBRTexturedTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchr
     VROVector3f lightPositions[] = {
         VROVector3f(0, 0, 10),
     };
+    float intensity = 150;
     VROVector3f lightColors[] = {
-        VROVector3f(150, 150, 150),
+        VROVector3f(1, 1, 1),
     };
     
     int rows = 7;
@@ -78,6 +79,7 @@ void VROPBRTexturedTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchr
         light->setPosition(lightPositions[i]);
         light->setAttenuationStartDistance(20);
         light->setAttenuationEndDistance(30);
+        light->setIntensity(intensity);
         rootNode->addLight(light);
     }
     

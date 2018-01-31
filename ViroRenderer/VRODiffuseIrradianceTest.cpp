@@ -35,11 +35,12 @@ void VRODiffuseIrradianceTest::build(std::shared_ptr<VROFrameSynchronizer> frame
         VROVector3f(-10, -10, 10),
         VROVector3f( 10, -10, 10),
     };
+    float intensity = 300;
     VROVector3f lightColors[] = {
-        VROVector3f(300.0f, 300.0f, 300.0f),
-        VROVector3f(300.0f, 300.0f, 300.0f),
-        VROVector3f(300.0f, 300.0f, 300.0f),
-        VROVector3f(300.0f, 300.0f, 300.0f),
+        VROVector3f(1, 1, 1),
+        VROVector3f(1, 1, 1),
+        VROVector3f(1, 1, 1),
+        VROVector3f(1, 1, 1),
     };
     
     int rows = 7;
@@ -88,6 +89,7 @@ void VRODiffuseIrradianceTest::build(std::shared_ptr<VROFrameSynchronizer> frame
         light->setPosition(lightPositions[i]);
         light->setAttenuationStartDistance(20);
         light->setAttenuationEndDistance(30);
+        light->setIntensity(intensity);
         rootNode->addLight(light);
     }
     
