@@ -49,6 +49,14 @@ void VROARSessionInertial::setAnchorDetection(std::set<VROAnchorDetection> types
     // Unsupported
 }
 
+void VROARSessionInertial::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // Unsupported
+}
+
+void VROARSessionInertial::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // Unsupported
+}
+
 void VROARSessionInertial::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
     // Unsupported
 }

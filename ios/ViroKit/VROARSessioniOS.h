@@ -37,6 +37,8 @@ public:
     void setScene(std::shared_ptr<VROScene> scene);
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
     void setAnchorDetection(std::set<VROAnchorDetection> types);
+    void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
+    void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     
@@ -66,6 +68,7 @@ private:
     ARSession *_session;
     ARConfiguration *_sessionConfiguration;
     VROARKitSessionDelegate *_delegateAR;
+    NSMutableSet<ARReferenceImage *> *_arKitImageDetectionSet;
 
     /*
      Image Tracking Helper.
@@ -92,6 +95,12 @@ private:
      Vector of all anchors that have been added to this session.
      */
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
+    
+    /*
+     Map of ARReferenceImage ObjC objects to astd::shared_ptr<VROARImageTarget>
+     that was used to create the ARReferenceImage.
+     */
+    std::map<ARReferenceImage *, std::shared_ptr<VROARImageTarget>> _arKitReferenceImageMap;
     
     /*
      Map of ARKit anchors ("native" anchors) to their Viro representation. 

@@ -1,23 +1,23 @@
 //
-//  VROARPlaneTest.h
-//  ViroKit
+//  VROARImageTrackingTest.h
+//  ViroSample
 //
-//  Created by Raj Advani on 10/1/17.
-//  Copyright © 2017 Viro Media. All rights reserved.
+//  Created by Andy Chu on 2/1/18.
+//  Copyright © 2018 Viro Media. All rights reserved.
 //
 
-#ifndef VROARPlaneTest_h
-#define VROARPlaneTest_h
+#ifndef VROARImageTrackingTest_h
+#define VROARImageTrackingTest_h
 
 #include "VRORendererTest.h"
 #include "VROARDeclarativeNode.h"
 
-class VROARPlaneTest : public VRORendererTest, public VROARDeclarativeNodeDelegate,
-                       public std::enable_shared_from_this<VROARPlaneTest> {
+class VROARImageTrackingTest : public VRORendererTest, public VROARDeclarativeNodeDelegate,
+public std::enable_shared_from_this<VROARImageTrackingTest> {
 public:
     
-    VROARPlaneTest();
-    virtual ~VROARPlaneTest();
+    VROARImageTrackingTest();
+    virtual ~VROARImageTrackingTest();
     
     void build(std::shared_ptr<VRORenderer> renderer,
                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
@@ -34,10 +34,10 @@ public:
     void onARAnchorRemoved();
     
 private:
-
+    
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
     
 };
 
-#endif /* VROARPlaneTest_h */
+#endif /* VROARImageTrackingTest_h */

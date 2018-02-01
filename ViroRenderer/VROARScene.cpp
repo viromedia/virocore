@@ -27,6 +27,10 @@ void VROARScene::initDeclarativeSession() {
     passert (_imperativeSession == nullptr);
     _declarativeSession = std::make_shared<VROARDeclarativeSession>();
     _declarativeSession->init();
+    std::shared_ptr<VROARSession> session = _arSession.lock();
+    if (session) {
+        _declarativeSession->setARSession(session);
+    }
 }
 
 void VROARScene::initImperativeSession() {
@@ -56,6 +60,10 @@ void VROARScene::setARSession(std::shared_ptr<VROARSession> arSession) {
     // to run through the creation/addition logic now that the session is set.
     if (!_pointCloudEmitter) {
         displayPointCloud(_displayPointCloud);
+    }
+
+    if (_declarativeSession) {
+        _declarativeSession->setARSession(arSession);
     }
 }
 

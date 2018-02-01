@@ -21,6 +21,8 @@
 #include "VROLog.h"
 #include <algorithm>
 #include "VROPlatformUtil.h"
+#include "VROARImageTargetiOS.h"
+#include "VROARImageAnchor.h"
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment worldAlignment, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, worldAlignment),
@@ -54,6 +56,12 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
             default:
                 config.worldAlignment = ARWorldAlignmentGravity;
                 break;
+        }
+        
+        
+        if (@available(iOS 11.3, *)) {
+            _arKitImageDetectionSet = [[NSMutableSet alloc] init];
+            config.detectionImages = _arKitImageDetectionSet;
         }
         
         _sessionConfiguration = config;
@@ -125,6 +133,69 @@ void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate
     }
 }
 
+void VROARSessioniOS::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // we'll get a warning for anything but: if(@available(...))
+    if (@available(iOS 11.3, *)) {
+        // we only support ARKit for now!
+        std::shared_ptr<VROARImageTargetiOS> targetiOS = std::dynamic_pointer_cast<VROARImageTargetiOS>(target);
+        if (targetiOS && getImageTrackingImpl() == VROImageTrackingImpl::ARKit && getTrackingType() == VROTrackingType::DOF6) {
+            // init the VROARImageTarget so it creates an ARReferenceImage
+            targetiOS->initWithTrackingImpl(VROImageTrackingImpl::ARKit);
+            ARReferenceImage *refImage = targetiOS->getARReferenceImage();
+            
+            // add the ARReferenceImage and the VROARImageTarget in a map
+            _arKitReferenceImageMap[refImage] = target;
+            
+            // Add the ARReferenceImage to the set of images for detection, update the config and "run" session.
+            // Note, we still need to set the config for the ARSession to start detecting the new target (not
+            // just modifying the set). Calling runConfiguration doesn't seem to be necessary in the ARKit 1.5/iOS 11.3
+            // preview, but it doesn't hurt and the "examples" that they have do call it, so let's be safe.
+            [_arKitImageDetectionSet addObject:refImage];
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).detectionImages = _arKitImageDetectionSet;
+            [_session runWithConfiguration:_sessionConfiguration];
+        }
+    } else {
+        pwarn("[Viro] attempting to use ARKit 1.5 features while not on iOS 11.3+");
+        return;
+    }
+}
+
+void VROARSessioniOS::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // we'll get a warning for anything but: if (@available(...))
+    if (@available(iOS 11.3, *)) {
+        std::shared_ptr<VROARImageTargetiOS> targetiOS = std::dynamic_pointer_cast<VROARImageTargetiOS>(target);
+        if (targetiOS && getImageTrackingImpl() == VROImageTrackingImpl::ARKit && getTrackingType() == VROTrackingType::DOF6) {
+            ARReferenceImage *refImage = targetiOS->getARReferenceImage();
+            if (refImage) {
+                
+                // call remove anchor (ARKit should do this IMHO).
+                std::shared_ptr<VROARAnchor> anchor = target->getAnchor();
+                if (anchor) {
+                    removeAnchor(anchor);
+                }
+                
+                // delete the VROARImageTarget from _arKitReferenceImageMap
+                for (auto it = _arKitReferenceImageMap.begin(); it != _arKitReferenceImageMap.end();) {
+                    if (it->second == target) {
+                        it = _arKitReferenceImageMap.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+                
+                // delete the ARReferenceImage from the set of images to detect
+                [_arKitImageDetectionSet removeObject:refImage];
+
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).detectionImages = _arKitImageDetectionSet;
+                [_session runWithConfiguration:_sessionConfiguration];
+            }
+        }
+    } else {
+        pwarn("[Viro] attempting to use ARKit 1.5 features while not on iOS 11.3+");
+        return;
+    }
+}
+
 void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
     std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (!delegate) {
@@ -141,18 +212,8 @@ void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
                                      return candidate == anchor;
                                  }), _anchors.end());
     
-    for (auto it = _nativeAnchorMap.begin(); it != _nativeAnchorMap.end();) {
-        if (it->second == anchor) {
-            // TODO We should remove the anchor from the ARKit session, but unclear
-            //      how to do this given just the identifier. Do we create a dummy
-            //      ARAnchor and set its identifier?
-            //[_session removeAnchor:it->first];
-            it = _nativeAnchorMap.erase(it);
-        }
-        else {
-            ++it;
-        }
-    }
+    auto it = _nativeAnchorMap.find(anchor->getId());
+    _nativeAnchorMap.erase(it);
     
     std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (delegate) {
@@ -236,12 +297,21 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
     if (!delegate) {
         return;
     }
-    
+
     std::shared_ptr<VROARAnchor> vAnchor;
     if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
         vAnchor = std::make_shared<VROARPlaneAnchor>();
-    }
-    else {
+    
+    // ignore the warning. The curious thing is that we don't even need the @available() check...
+    } else if (@available(iOS 11.3, *) && [anchor isKindOfClass:[ARImageAnchor class]]) {
+        ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
+        auto it = _arKitReferenceImageMap.find(imageAnchor.referenceImage);
+        if (it != _arKitReferenceImageMap.end()) {
+            std::shared_ptr<VROARImageTarget> target = it->second;
+            vAnchor = std::make_shared<VROARImageAnchor>(target);
+            target->setAnchor(vAnchor);
+        }
+    } else {
         vAnchor = std::make_shared<VROARAnchor>();
     }
     vAnchor->setId(std::string([anchor.identifier.UUIDString UTF8String]));
@@ -258,8 +328,7 @@ void VROARSessioniOS::updateAnchor(ARAnchor *anchor) {
         std::shared_ptr<VROARAnchor> vAnchor = it->second;
         updateAnchorFromNative(vAnchor, anchor);
         updateAnchor(it->second);
-    }
-    else {
+    } else {
         pinfo("Anchor %@ not found!", anchor.identifier);
     }
 }

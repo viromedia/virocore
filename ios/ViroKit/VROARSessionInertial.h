@@ -26,6 +26,8 @@ public:
     void resetSession(bool resetTracking, bool removeAnchors);
     
     void setAnchorDetection(std::set<VROAnchorDetection> types);
+    void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
+    void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     void updateAnchor(std::shared_ptr<VROARAnchor> anchor);

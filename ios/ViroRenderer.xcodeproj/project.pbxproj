@@ -51,6 +51,13 @@
 		8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ADF360B1F14237B002BF73D /* VROARSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AE44C952021087800CE8394 /* glm in Copy GLM Files to Framework */ = {isa = PBXBuildFile; fileRef = 8AE44C942021087700CE8394 /* glm */; };
+		8AE44C982021317A00CE8394 /* VROARImageAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AE44C972021317A00CE8394 /* VROARImageAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AE44C9A2021363C00CE8394 /* VROARDeclarativeImageNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AE44C992021363C00CE8394 /* VROARDeclarativeImageNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AE44C9C20214DAD00CE8394 /* VROARImageTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AE44C9B20214DAD00CE8394 /* VROARImageTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AE44CA02021542000CE8394 /* VROARImageTargetiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AE44C9F2021542000CE8394 /* VROARImageTargetiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AE44CA22021551600CE8394 /* VROARImageTargetiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AE44CA12021551600CE8394 /* VROARImageTargetiOS.cpp */; };
+		8AE44CA62023AFC400CE8394 /* VROARImageTrackingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AE44CA32023AE4E00CE8394 /* VROARImageTrackingTest.cpp */; };
+		8AE44CA72023B19700CE8394 /* VROARImageTrackingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AE44CA42023AE4E00CE8394 /* VROARImageTrackingTest.h */; };
 		8AF0E0831FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */; };
 		8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF0E0891FA928480083CBAE /* point_cloud.png */; };
@@ -835,6 +842,13 @@
 		8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegateiOS.h; sourceTree = "<group>"; };
 		8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARSceneDelegateiOS.h; sourceTree = "<group>"; };
 		8AE44C942021087700CE8394 /* glm */ = {isa = PBXFileReference; lastKnownFileType = folder; path = glm; sourceTree = "<group>"; };
+		8AE44C972021317A00CE8394 /* VROARImageAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARImageAnchor.h; sourceTree = "<group>"; };
+		8AE44C992021363C00CE8394 /* VROARDeclarativeImageNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARDeclarativeImageNode.h; sourceTree = "<group>"; };
+		8AE44C9B20214DAD00CE8394 /* VROARImageTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARImageTarget.h; sourceTree = "<group>"; };
+		8AE44C9F2021542000CE8394 /* VROARImageTargetiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARImageTargetiOS.h; sourceTree = "<group>"; };
+		8AE44CA12021551600CE8394 /* VROARImageTargetiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARImageTargetiOS.cpp; sourceTree = "<group>"; };
+		8AE44CA32023AE4E00CE8394 /* VROARImageTrackingTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARImageTrackingTest.cpp; sourceTree = "<group>"; };
+		8AE44CA42023AE4E00CE8394 /* VROARImageTrackingTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARImageTrackingTest.h; sourceTree = "<group>"; };
 		8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPointCloudEmitter.cpp; sourceTree = "<group>"; };
 		8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPointCloudEmitter.h; sourceTree = "<group>"; };
 		8AF0E0891FA928480083CBAE /* point_cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = point_cloud.png; sourceTree = "<group>"; };
@@ -1840,7 +1854,9 @@
 				8F1F065D1EF06FBB006FC8C2 /* VROARSession.h */,
 				8F1F065A1EF06FBB006FC8C2 /* VROARFrame.h */,
 				8F1F06591EF06FBB006FC8C2 /* VROARCamera.h */,
+				8AE44C9B20214DAD00CE8394 /* VROARImageTarget.h */,
 				8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */,
+				8AE44C972021317A00CE8394 /* VROARImageAnchor.h */,
 				8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */,
 				8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */,
 				8A5C05581EF6416900F94CB9 /* VROARNode.h */,
@@ -2153,6 +2169,7 @@
 			children = (
 				8F828EF01FACB3FF0068159E /* VROARDeclarativeNode.h */,
 				8A11C8F41EF5A8E30003E829 /* VROARDeclarativePlane.h */,
+				8AE44C992021363C00CE8394 /* VROARDeclarativeImageNode.h */,
 				8A11C8F71EF5B2270003E829 /* VROARConstraintMatcher.h */,
 				8A11C8F61EF5B2270003E829 /* VROARConstraintMatcher.cpp */,
 				8F828EF41FAD07660068159E /* VROARDeclarativeSession.h */,
@@ -2211,6 +2228,8 @@
 				8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */,
 				8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */,
 				8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */,
+				8AE44C9F2021542000CE8394 /* VROARImageTargetiOS.h */,
+				8AE44CA12021551600CE8394 /* VROARImageTargetiOS.cpp */,
 			);
 			name = ARKit;
 			sourceTree = "<group>";
@@ -2370,6 +2389,8 @@
 				8FD2A5591F817D4100E831A6 /* VROPhysicsTest.cpp */,
 				8FD2A51B1F813C3C00E831A6 /* VROARDraggableNodeTest.h */,
 				8FD2A52D1F813C3F00E831A6 /* VROARDraggableNodeTest.cpp */,
+				8AE44CA42023AE4E00CE8394 /* VROARImageTrackingTest.h */,
+				8AE44CA32023AE4E00CE8394 /* VROARImageTrackingTest.cpp */,
 				8FD2A5261F813C3E00E831A6 /* VROARPlaneTest.h */,
 				8FD2A5191F813C3C00E831A6 /* VROARPlaneTest.cpp */,
 				8FD2A5251F813C3D00E831A6 /* VROARShadowTest.h */,
@@ -2709,6 +2730,7 @@
 				A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */,
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
 				8F828EF61FAD07660068159E /* VROARDeclarativeSession.h in Headers */,
+				8AE44C9A2021363C00CE8394 /* VROARDeclarativeImageNode.h in Headers */,
 				8A99E6C31EF1B76F00712D79 /* VROARSceneController.h in Headers */,
 				A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */,
 				A51347411F3544A800FF3726 /* VROParticleUBO.h in Headers */,
@@ -2727,6 +2749,7 @@
 				A586978A1E308B4500191090 /* VROInputControllerBase.h in Headers */,
 				A58697861E3084A400191090 /* VROInputControllerCardboardiOS.h in Headers */,
 				A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */,
+				8AE44CA02021542000CE8394 /* VROARImageTargetiOS.h in Headers */,
 				8FE382101EF06FED005038CB /* VROARSession.h in Headers */,
 				8F37D9F01F4B21A80029D23E /* VROToneMappingRenderPass.h in Headers */,
 				8FEACEF92018073D0082D18B /* VROIBLPreprocess.h in Headers */,
@@ -2756,6 +2779,7 @@
 				8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */,
 				8F705DF11E8D5337008BE8F8 /* VROThreadRestricted.h in Headers */,
 				8F83DEA21C4826F80089C31A /* VROTimingFunctionLinear.h in Headers */,
+				8AE44CA72023B19700CE8394 /* VROARImageTrackingTest.h in Headers */,
 				8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */,
 				8FCE92241F453D5900C699D5 /* VROShaderCapabilities.h in Headers */,
 				8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */,
@@ -2780,6 +2804,7 @@
 				8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */,
 				8AABB6FC1F1ECD4E00D48D5C /* VROWeakProxy.h in Headers */,
 				8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */,
+				8AE44C982021317A00CE8394 /* VROARImageAnchor.h in Headers */,
 				8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */,
 				8A130D751E3A937D0050D83B /* VROSoundDelegateInternal.h in Headers */,
 				8F2D1BB41EC3785C00E7BF44 /* VROBone.h in Headers */,
@@ -2874,6 +2899,7 @@
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */,
 				8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */,
+				8AE44C9C20214DAD00CE8394 /* VROARImageTarget.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
 				8FCB10021DD0060E00FE425C /* VRORenderDelegateiOS.h in Headers */,
@@ -3606,6 +3632,7 @@
 				A5EC659E1EBD34C000FE220E /* VROPhysicsWorld.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
+				8AE44CA62023AFC400CE8394 /* VROARImageTrackingTest.cpp in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
 				8A130DA31E4018550050D83B /* VROSoundDataGVR.cpp in Sources */,
 				8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */,
@@ -3645,6 +3672,7 @@
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
 				8FEACF1020191F000082D18B /* VROMaterialShaderBinding.cpp in Sources */,
+				8AE44CA22021551600CE8394 /* VROARImageTargetiOS.cpp in Sources */,
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FD2A53C1F813C4100E831A6 /* VRONormalMapTest.cpp in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,

@@ -116,6 +116,14 @@ void VROARSessionARCore::setDelegate(std::shared_ptr<VROARSessionDelegate> deleg
     }
 }
 
+void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // no-op
+}
+
+void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // no-op
+}
+
 void VROARSessionARCore::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
     std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (delegate) {

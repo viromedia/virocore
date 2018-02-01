@@ -8,6 +8,7 @@
 
 #include "VROARDeclarativeSession.h"
 #include "VROARDeclarativeNode.h"
+#include "VROARDeclarativeImageNode.h"
 #include "VROARScene.h"
 
 VROARDeclarativeSession::VROARDeclarativeSession() {
@@ -26,6 +27,39 @@ void VROARDeclarativeSession::setDelegate(std::shared_ptr<VROARDeclarativeSessio
     _delegate = delegate;
 }
 
+void VROARDeclarativeSession::setARSession(std::shared_ptr<VROARSession> session) {
+    _arSession = session;
+    for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
+        session->addARImageTarget(*it);
+    }
+}
+
+void VROARDeclarativeSession::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    if (target) {
+        _imageTargets.push_back(target);
+        std::shared_ptr<VROARSession> arSession = _arSession.lock();
+        if (arSession) {
+            arSession->addARImageTarget(target);
+        }
+    }
+}
+
+void VROARDeclarativeSession::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+
+    if (target) {
+        _imageTargets.erase(
+                            std::remove_if(_imageTargets.begin(), _imageTargets.end(),
+                                           [target](std::shared_ptr<VROARImageTarget> candidate) {
+                                               return candidate == target;
+                                           }), _imageTargets.end());
+        
+        std::shared_ptr<VROARSession> arSession = _arSession.lock();
+        if (arSession) {
+            arSession->removeARImageTarget(target);
+        }
+    }
+}
+
 void VROARDeclarativeSession::addARNode(std::shared_ptr<VROARDeclarativeNode> node) {
     // TODO: figure out a way to make ARNode simply not be visible at start.
     // call this once, because when it planes are first added they should not be visible.
@@ -41,11 +75,13 @@ void VROARDeclarativeSession::removeARNode(std::shared_ptr<VROARDeclarativeNode>
     if (_constraintMatcher) {
         _constraintMatcher->removeARNode(node);
     }
+    
     _nodes.erase(
                  std::remove_if(_nodes.begin(), _nodes.end(),
                                 [node](std::shared_ptr<VROARDeclarativeNode> candidate) {
                                     return candidate == node;
                                 }), _nodes.end());
+
 }
 
 void VROARDeclarativeSession::updateARNode(std::shared_ptr<VROARDeclarativeNode> node) {
@@ -58,10 +94,24 @@ void VROARDeclarativeSession::sceneWillAppear() {
     for (auto it = _nodes.begin(); it < _nodes.end(); it++) {
         _constraintMatcher->addARNode(*it);
     }
+
+    std::shared_ptr<VROARSession> arSession = _arSession.lock();
+    if (arSession) {
+        for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
+            arSession->addARImageTarget(*it);
+        }
+    }
 }
 
 void VROARDeclarativeSession::sceneWillDisappear() {
     _constraintMatcher->detachAllNodes(_nodes);
+    
+    std::shared_ptr<VROARSession> arSession = _arSession.lock();
+    if (arSession) {
+        for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
+            arSession->removeARImageTarget(*it);
+        }
+    }
 }
 
 #pragma mark - VROARSessionDelegate Implementation
@@ -109,6 +159,6 @@ void VROARDeclarativeSession::anchorWasAttached(std::shared_ptr<VROARAnchor> anc
 void VROARDeclarativeSession::anchorWasDetached(std::shared_ptr<VROARAnchor> anchor) {
     std::shared_ptr<VROARDeclarativeSessionDelegate> delegate = _delegate.lock();
     if (delegate) {
-        delegate->anchorDidUpdate(anchor);
+        delegate->anchorWasRemoved(anchor);
     }
 }
