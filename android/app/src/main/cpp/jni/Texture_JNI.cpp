@@ -9,12 +9,13 @@
 #include <VROTextureUtil.h>
 #include "VROData.h"
 #include <VROPlatformUtil.h>
-
+#include "VROHDRLoader.h"
 #include "Image_JNI.h"
 #include "VROPlatformUtil.h"
 #include "Texture_JNI.h"
 #include "VROCompress.h"
 #include "VROLog.h"
+#include "VROModelIOUtil.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -86,6 +87,20 @@ namespace Texture {
 }
 
 extern "C" {
+
+JNI_METHOD(jlong, nativeCreateRadianceHDRTexture)(JNIEnv *env, jclass cls,
+                                                  jstring uri_j) {
+
+    std::string uri = VROPlatformGetString(uri_j, env);
+    bool isTemp;
+    std::string path = VROModelIOUtil::processResource(uri, VROResourceType::URL, &isTemp);
+    std::shared_ptr<VROTexture> texture = VROHDRLoader::loadRadianceHDRTexture(path);
+    if (isTemp) {
+        VROPlatformDeleteFile(path);
+    }
+
+    return Texture::jptr(texture);
+}
 
 JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
                                             jlong px, jlong nx,

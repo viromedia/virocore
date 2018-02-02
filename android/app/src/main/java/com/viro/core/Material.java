@@ -86,7 +86,47 @@ public class Material {
          * where H is the vector halfway between the light vector L and the eye vector E, and
          * shininess is the value of the material's shininess property.
          */
-        BLINN("Blinn");
+        BLINN("Blinn"),
+
+        /**
+         * Physically-based shading, or PBR, is a set of algorithms that more accurately render
+         * environments while simplifying the modeling process for artists. Use this LightingModel
+         * to render with PBR. PBR should be combined with HDR rendering for best results: you can
+         * enable HDR via {@link ViroView#setHDREnabled(boolean)}. In addition, PBR must itself be
+         * enabled via {@link ViroView#setPBREnabled(boolean)}.
+         * <p>
+         * PBR relies on the following properties when rendering:
+         * <p>
+         * <ul><li> The diffuse or <i>albedo</i> texture defines the base color of the material.
+         * This can be set by {@link #setDiffuseTexture(Texture)}</li> <li>The metalness value or
+         * texture defines how "metallic" the surface is, which influences the degree to which light
+         * refracts and reflects off the surface, the sharpness of the reflections, and more. This
+         * can be set by {@link #setMetalnessMap(Texture)}, or, if a uniform value is preferred,
+         * {@link #setMetalness(float)}.</li> <li>The roughness value or texture defines the
+         * roughness of the microfacets on the surface. The rougher a surface is, the more light
+         * will scatter along completely different directions, resulting in larger and more muted
+         * specular reflections. Smoother surfaces, meanwhile, exhibit a sharper specular reflection
+         * as light rays are more likely to reflect in a uniform direction. Roughness can be set by
+         * {@link #setRoughnessMap(Texture)}, or, if a uniform value is preferred, {@link
+         * #setRoughness(float)} </li> <li>The ambient occlusion value or texture approximates how
+         * exposed the surface is to ambient lighting. This has no effect on direct lights (it does
+         * not result in clear shadows) but it darkens enclosed and sheltered areas. These textures
+         * are typically authored using modeling tools along with roughness and metalness. Ambient
+         * occlusion can be set by {@link #setAmbientOcclusionMap(Texture)}.</li> <li>The lighting
+         * environment is a {@link Texture} (typically an HDR equirectangular image) that acts as a
+         * global light source, illuminating surfaces with diffuse and specular ambient light. We
+         * treat each pixel in the lighting environment as a light emitter, thereby capturing the
+         * environment's global lighting and general feel. This gives objects a sense of belonging
+         * to their environment. For this reason it is common to use the scene's background texture
+         * as the lighting environment, but this is not necessary. To set the lighting environment
+         * use {@link Scene#setLightingEnvironment(Texture)}. </li> </ul>
+         * <p>
+         * PBR rendering also takes into account normal maps to add more surface detail. However,
+         * PBR will <i>ignore</i> some properties used by the basic lighting models. Specifically,
+         * the specular texture ({@link #setSpecularTexture(Texture)} and the shininess property
+         * ({@link #setShininess(float)} are ignored when rendering physically-based surfaces.
+         */
+        PHYSICALLY_BASED("PBR");
 
         private String mStringValue;
         private LightingModel(String value) {
@@ -336,6 +376,11 @@ public class Material {
     private float mShininess = 2.0f;
     private float mFresnelExponent = 1.0f;
     private Texture mNormalMap;
+    private Texture mMetalnessMap;
+    private Texture mRoughnessMap;
+    private float mRoughness = 0.484529f;
+    private float mMetalness = 0.0f;
+    private Texture mAmbientOcclusionMap;
     private CullMode mCullMode = CullMode.BACK;
     private TransparencyMode mTransparencyMode = TransparencyMode.A_ONE;
     private BlendMode mBlendMode = BlendMode.ALPHA;
@@ -548,6 +593,8 @@ public class Material {
      * bright, shiny highlight. Specular effects are point of view dependent, and only have an
      * effect when using the Blinn or Phong lighting models. See {@link LightingModel} for more
      * details on how the specular highlights are computed.
+     * <p>
+     * This property is ignored if the Material is using {@link LightingModel#PHYSICALLY_BASED}.
      *
      * @param texture The specular Texture to use for this Material.
      */
@@ -575,7 +622,7 @@ public class Material {
      * For each pixel of the normal map, the RGB colors are interpreted by the renderer as XYZ
      * components of a surface normal vector.
      *
-     * @param normalMap
+     * @param normalMap The normal map to use for this Material.
      */
     public void setNormalMap(Texture normalMap) {
         mNormalMap = normalMap;
@@ -593,10 +640,169 @@ public class Material {
     }
 
     /**
+     * Set the metalness {@link Texture} to use for this Material. The metalness map defines how
+     * "metallic" the surface is at each texel, which influences the degree to which light
+     * reflects off the surface, the sharpness of the reflections, and more.
+     *<p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting.
+     *
+     * @param metalnessMap The metalness map to use for this Material.
+     */
+    public void setMetalnessMap(Texture metalnessMap) {
+        mMetalnessMap = metalnessMap;
+        nativeSetTexture(mNativeRef, metalnessMap.mNativeRef, "metalnessTexture");
+    }
+
+    /**
+     * Get the metalness {@link Texture} used by this Material. The metalness map defines how
+     * "metallic" the surface is at each texel, which influences the degree to which light
+     * reflects off the surface, the sharpness of the reflections, and more.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting.
+     *
+     * @return The metalness map used by this Material. Null if no metalness map is installed.
+     */
+    public Texture getMetalnessMap() {
+        return mMetalnessMap;
+    }
+
+    /**
+     * Set a uniform metalness value to use for this Material. Metalness defines how
+     * "metallic" the surface is at each pixel, which influences the degree to which light
+     * reflects off the surface, the sharpness of the reflections, and more.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting. If a
+     * metalness map is set (by {@link #setMetalnessMap(Texture)}, then this value is ignored, and
+     * the values derived from the metalness map are used instead.
+     *
+     * @param metalness The uniform metalness value to use for this Material.
+     */
+    public void setMetalness(float metalness) {
+        mMetalness = metalness;
+        nativeSetFloat(mNativeRef, metalness, "metalness");
+    }
+
+    /**
+     * Set a uniform metalness value to use for this Material. Metalness defines how
+     * "metallic" the surface is at each pixel, which influences the degree to which light
+     * reflects off the surface, the sharpness of the reflections, and more.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting. If a
+     * metalness map is set (by {@link #setMetalnessMap(Texture)}, then this value is ignored, and
+     * the values derived from the metalness map are used instead.
+     *
+     * @return metalness The uniform metalness value used by this Material.
+     */
+    public float getMetalness() {
+        return mMetalness;
+    }
+
+    /**
+     * Set the roughness {@link Texture} to use for this Material. The roughness map defines the
+     * roughness of the surface's microfacets at each texel. The rougher a surface is (roughness
+     * approaching 1.0), the more light sill scatter along completely different directions,
+     * resulting in larger and more muted specular reflections. Smoother surfaces (roughness
+     * approaching 0.0), meanwhile, exhibit a sharper specular reflection as light rays are more
+     * likely to reflect in a uniform direction.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting.
+     *
+     * @param roughnessMap The roughness map to use for this Material.
+     */
+    public void setRoughnessMap(Texture roughnessMap) {
+        mRoughnessMap = roughnessMap;
+        nativeSetTexture(mNativeRef, roughnessMap.mNativeRef, "roughnessTexture");
+    }
+
+    /**
+     * Set the roughness {@link Texture} to use for this Material. The roughness map defines the
+     * roughness of the surface's microfacets at each texel. The rougher a surface is (roughness
+     * approaching 1.0), the more light sill scatter along completely different directions,
+     * resulting in larger and more muted specular reflections. Smoother surfaces (roughness
+     * approaching 0.0), meanwhile, exhibit a sharper specular reflection as light rays are more
+     * likely to reflect in a uniform direction.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting.
+     *
+     * @return The roughness map used by this Material. Null if no roughness map is used.
+     */
+    public Texture getRoughnessMap() {
+        return mRoughnessMap;
+    }
+
+    /**
+     * Set a uniform roughness value to use for this Material. Roughness defines the roughness of
+     * the surface's microfacets, at each pixel. The rougher a surface is (roughness approaching
+     * 1.0), the more light sill scatter along completely different directions, resulting in larger
+     * and more muted specular reflections. Smoother surfaces (roughness approaching 0.0),
+     * meanwhile, exhibit a sharper specular reflection as light rays are more likely to reflect in
+     * a uniform direction.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting. If a
+     * roughness map is set (by {@link #setRoughnessMap(Texture)}, then this value is ignored, and
+     * the values derived from the roughness map are used instead.
+     *
+     * @param roughness The uniform roughness value to use for this Material.
+     */
+    public void setRoughness(float roughness) {
+        mRoughness = roughness;
+        nativeSetFloat(mNativeRef, roughness, "roughness");
+    }
+
+    /**
+     * Set a uniform roughness value to use for this Material. Roughness defines the roughness of
+     * the surface's microfacets, at each pixel. The rougher a surface is (roughness approaching
+     * 1.0), the more light sill scatter along completely different directions, resulting in larger
+     * and more muted specular reflections. Smoother surfaces (roughness approaching 0.0),
+     * meanwhile, exhibit a sharper specular reflection as light rays are more likely to reflect in
+     * a uniform direction.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting. If a
+     * roughness map is set (by {@link #setRoughnessMap(Texture)}, then this value is ignored, and
+     * the values derived from the roughness map are used instead.
+     *
+     * @return The uniform roughness value used by this Material.
+     */
+    public float getRoughness() {
+        return mRoughness;
+    }
+
+    /**
+     * Set the ambient occlusion {@link Texture} to use for this Material. The ambient occlusion map
+     * approximates how exposed the surface is to ambient lighting, at each texel. This has no
+     * effect on direct lights (it does not result in clear shadows) but it darkens enclosed and
+     * sheltered areas. These textures are typically authored using modeling tools along with
+     * roughness and metalness.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting.
+     *
+     * @param ambientOcclusionMap The ambient occlusion map to use for this Material.
+     */
+    public void setAmbientOcclusionMap(Texture ambientOcclusionMap) {
+        mAmbientOcclusionMap = ambientOcclusionMap;
+        nativeSetTexture(mNativeRef, ambientOcclusionMap.mNativeRef, "ambientOcclusionTexture");
+    }
+
+    /**
+     * Get the ambient occlusion {@link Texture} used by this Material. The ambient occlusion map
+     * approximates how exposed the surface is to ambient lighting, at each texel.
+     * <p>
+     * This property is only used under {@link LightingModel#PHYSICALLY_BASED} lighting.
+     *
+     * @return ambientOcclusionMap The ambient occlusion map used by this Material. Null if no
+     * ambient occlusion map is installed.
+     */
+    public Texture getAmbientOcclusionMap() {
+        return mAmbientOcclusionMap;
+    }
+
+    /**
      * Set the sharpness of specular highlights. This only applies if this Material has a specular
      * texture. See {@link LightingModel} for the specifics of how the shininess value is applied.
      * <p>
      * Defaults to 2.0.
+     * <p>
+     * This property is ignored if the Material is using {@link LightingModel#PHYSICALLY_BASED}.
      *
      * @param shininess The shininess value.
      */
@@ -782,6 +988,7 @@ public class Material {
     private native void nativeSetReadsFromDepthBuffer(long nativeRef, boolean readsFromDepthBuffer);
     private native void nativeSetTexture(long nativeRef, long textureRef, String materialPropertyName);
     private native void nativeSetColor(long nativeRef, long color, String materialPropertyName);
+    private native void nativeSetFloat(long nativeRef, float value, String materialPropertyName);
     private native void nativeSetShininess(long nativeRef, double shininess);
     private native void nativeSetFresnelExponent(long nativeRef, double fresnelExponent);
     private native void nativeSetLightingModel(long nativeRef, String lightingModelName);
@@ -880,6 +1087,56 @@ public class Material {
          */
         public MaterialBuilder normalMap(Texture normalMap) {
             material.setNormalMap(normalMap);
+            return this;
+        }
+
+        /**
+         * Refer to {@link #setMetalnessMap(Texture)}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder metalnessMap(Texture metalnessMap) {
+            material.setMetalnessMap(metalnessMap);
+            return this;
+        }
+
+        /**
+         * Refer to {@link #setMetalness(float)}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder metalness(float metalness) {
+            material.setMetalness(metalness);
+            return this;
+        }
+
+        /**
+         * Refer to {@link #setRoughnessMap(Texture)}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder roughnessMap(Texture roughnessMap) {
+            material.setRoughnessMap(roughnessMap);
+            return this;
+        }
+
+        /**
+         * Refer to {@link #setRoughness(float)}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder roughness(float roughness) {
+            material.setRoughness(roughness);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setAmbientOcclusionMap(Texture)}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder ambientOcclusionMap(Texture ambientOcclusionMap) {
+            material.setAmbientOcclusionMap(ambientOcclusionMap);
             return this;
         }
 

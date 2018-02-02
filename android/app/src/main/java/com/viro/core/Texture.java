@@ -5,6 +5,7 @@
 package com.viro.core;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.viro.core.internal.Image;
 
@@ -250,6 +251,22 @@ public class Texture {
     private FilterMode mMinificationFilter = FilterMode.LINEAR;
     private FilterMode mMagnificationFilter = FilterMode.LINEAR;
     private FilterMode mMipFilter = FilterMode.LINEAR;
+
+    /**
+     * Loads the Radiance HDR (.hdr) texture at the given URI. These textures are commonly used for
+     * lighting environments.
+     *
+     * @param uri         The URI of the texture. To load the texture from an Android asset, use URI's
+     *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
+     * @return The loaded HDR {@link Texture}.
+     */
+    static Texture loadRadianceHDRTexture(Uri uri) {
+        Texture texture = new Texture();
+        texture.mNativeRef = nativeCreateRadianceHDRTexture(uri.toString());
+        texture.mWidth = texture.nativeGetTextureWidth(texture.mNativeRef);
+        texture.mHeight = texture.nativeGetTextureHeight(texture.mNativeRef);
+        return texture;
+    }
 
     /**
      * Subclass constructor, creates its own mNativeRef.
@@ -586,6 +603,7 @@ public class Texture {
         return mMipFilter;
     }
 
+    private static native long nativeCreateRadianceHDRTexture(String uri);
     private native long nativeCreateCubeTexture(long px, long nx, long py,
                                                 long ny, long pz, long nz,
                                                 String format);

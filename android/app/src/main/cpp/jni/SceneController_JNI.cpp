@@ -136,6 +136,23 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
+                                               jclass clazz,
+                                               jlong scene_j,
+                                               jlong texture_j) {
+    std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
+    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
+
+    VROPlatformDispatchAsyncRenderer([scene_w, texture_w] {
+        std::shared_ptr<VROSceneController> scene = scene_w.lock();
+        std::shared_ptr<VROTexture> texture = texture_w.lock();
+
+        if (scene && texture) {
+            scene->getScene()->getRootNode()->setLightingEnvironment(texture);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong context_j,
                                      jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
                                      jstring ceilingMaterial, jstring floorMaterial) {

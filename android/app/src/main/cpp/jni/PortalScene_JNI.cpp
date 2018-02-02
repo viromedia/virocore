@@ -160,4 +160,21 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
+                                               jclass clazz,
+                                               jlong portal_j,
+                                               jlong texture_j) {
+    std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
+    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
+
+    VROPlatformDispatchAsyncRenderer([portal_w, texture_w] {
+        std::shared_ptr<VROPortal> portal = portal_w.lock();
+        std::shared_ptr<VROTexture> texture = texture_w.lock();
+
+        if (portal && texture) {
+            portal->setLightingEnvironment(texture);
+        }
+    });
+}
+
 }

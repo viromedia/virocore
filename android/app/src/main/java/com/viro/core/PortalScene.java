@@ -5,6 +5,7 @@
 package com.viro.core;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 /**
  * PortalScene is the root of the subgraph of {@link Node}s that is displayed through a {@link
@@ -42,6 +43,7 @@ public class PortalScene extends Node {
     private EntryListener mEntryListener = null;
     private boolean mPassable = false;
     private Portal mPortal;
+    private Texture mLightingEnvironment;
 
     /**
      * Construct a new PortalScene. To be displayed, a {@link Portal} entrance has to be set for
@@ -202,6 +204,36 @@ public class PortalScene extends Node {
         nativeSetBackgroundCubeWithColor(mNativeRef, color);
     }
 
+    /**
+     * Set the lighting environment to use for the PortalScene. The lighting environment is a {@link
+     * Texture} that acts as a global light source, illuminating surfaces with diffuse and specular
+     * ambient light. Each pixel in the lighting environment is treated as a light emitter, thereby
+     * capturing the environment's global lighting and general feel. This gives objects a sense of
+     * belonging to their environment. For this reason it is common to use the scene's background
+     * texture as the lighting environment, but this is not necessary.
+     * <p>
+     * This method expects an equirectangular texture. Radiance HDR textures (*.hdr) work best,
+     * and can be loaded with {@link Texture#loadRadianceHDRTexture(Uri)}.
+     *
+     * @param lightingEnvironment The equirectangular {@link Texture} to use as the lighting
+     *                            environment.
+     */
+    public void setLightingEnvironment(Texture lightingEnvironment) {
+        mLightingEnvironment = lightingEnvironment;
+        nativeSetLightingEnvironment(mNativeRef, lightingEnvironment.mNativeRef);
+    }
+
+    /**
+     * Get the lighting environment used by this Scene. The lighting environment is a {@link
+     * Texture} that acts as a global light source, illuminating surfaces with diffuse and specular
+     * ambient light.
+     *
+     * @return The equirectangular {@link Texture} being used as the lighting environment.
+     */
+    public Texture getLightingEnvironment() {
+        return mLightingEnvironment;
+    }
+
     private native long nativeCreatePortalScene();
     private native long nativeCreatePortalDelegate();
     private native long nativeDestroyPortalScene(long nativeRef);
@@ -211,6 +243,7 @@ public class PortalScene extends Node {
     private native void nativeSetBackgroundCubeWithColor(long nativeRef, long color);
     private native void nativeSetBackgroundRotation(long nativeRef, float radiansX, float radiansY,
                                                     float radiansZ);
+    private native void nativeSetLightingEnvironment(long sceneRef, long textureRef);
     private native long nativeAttachDelegate(long nativeRef, long delegateRef);
     private native void nativeSetPassable(long nativeRef, boolean passable);
     private native void nativeSetPortalEntrance(long nativeRef, long portalNativeRef);

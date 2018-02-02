@@ -13,6 +13,7 @@
 package com.viro.core;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +159,7 @@ public class Scene {
     protected long mNativeDelegateRef;
     private Node mRootNode;
     private PhysicsWorld mPhysicsWorld;
+    private Texture mLightingEnvironment;
     private VisibilityListener mListener = null;
 
     /**
@@ -284,6 +286,36 @@ public class Scene {
     }
 
     /**
+     * Set the lighting environment to use for the Scene. The lighting environment is a {@link
+     * Texture} that acts as a global light source, illuminating surfaces with diffuse and specular
+     * ambient light. Each pixel in the lighting environment is treated as a light emitter, thereby
+     * capturing the environment's global lighting and general feel. This gives objects a sense of
+     * belonging to their environment. For this reason it is common to use the scene's background
+     * texture as the lighting environment, but this is not necessary.
+     * <p>
+     * This method expects an equirectangular texture. Radiance HDR textures (*.hdr) work best,
+     * and can be loaded with {@link Texture#loadRadianceHDRTexture(Uri)}.
+     *
+     * @param lightingEnvironment The equirectangular {@link Texture} to use as the lighting
+     *                            environment.
+     */
+    public void setLightingEnvironment(Texture lightingEnvironment) {
+        mLightingEnvironment = lightingEnvironment;
+        nativeSetLightingEnvironment(mNativeRef, lightingEnvironment.mNativeRef);
+    }
+
+    /**
+     * Get the lighting environment used by this Scene. The lighting environment is a {@link
+     * Texture} that acts as a global light source, illuminating surfaces with diffuse and specular
+     * ambient light.
+     *
+     * @return The equirectangular {@link Texture} being used as the lighting environment.
+     */
+    public Texture getLightingEnvironment() {
+        return mLightingEnvironment;
+    }
+
+    /**
      * Set the sound room, which enables reverb effects for all {@link SpatialSound} in the Scene.
      * The sound room is defined by three {@link AudioMaterial}s, each of which has unique
      * absorption properties which differ with frequency. The room is also give a size in meters,
@@ -324,6 +356,7 @@ public class Scene {
     private native void nativeSetBackgroundCubeWithColor(long sceneRef, long color);
     private native void nativeSetBackgroundRotation(long sceneRef, float radiansX, float radiansY,
                                                     float radiansZ);
+    private native void nativeSetLightingEnvironment(long sceneRef, long textureRef);
     private native void nativeSetSoundRoom(long sceneRef, long renderContextRef, float sizeX,
                                            float sizeY, float sizeZ, String wallMaterial,
                                            String ceilingMaterial, String floorMaterial);

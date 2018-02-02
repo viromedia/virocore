@@ -15,8 +15,6 @@
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Material_##method_name
 
-extern "C" {
-
 VROVector4f parseColor(jlong color) {
     float a = ((color >> 24) & 0xFF) / 255.0;
     float r = ((color >> 16) & 0xFF) / 255.0;
@@ -24,6 +22,8 @@ VROVector4f parseColor(jlong color) {
     float b = (color & 0xFF) / 255.0;
     return {r, g, b, a};
 }
+
+extern "C" {
 
 VROLightingModel parseLightingModel(std::string strName) {
     if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
@@ -34,6 +34,9 @@ VROLightingModel parseLightingModel(std::string strName) {
     }
     else if (VROStringUtil::strcmpinsensitive(strName, "Phong")) {
         return VROLightingModel::Phong;
+    }
+    else if (VROStringUtil::strcmpinsensitive(strName, "PBR")) {
+        return VROLightingModel::PhysicallyBased;
     }
     else {
         // Default lightingModel is Constant, so no use checking.
@@ -194,6 +197,25 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
                 material->getAmbientOcclusion().setColor(vecColor);
             } else if (VROStringUtil::strcmpinsensitive(strName, "selfIlluminationColor")) {
                 material->getSelfIllumination().setColor(vecColor);
+            }
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetFloat)(JNIEnv *env, jobject obj,
+                                 jlong material_j,
+                                 jfloat value,
+                                 jstring name_j) {
+    std::string name_s = VROPlatformGetString(name_j, env);
+
+    std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
+    VROPlatformDispatchAsyncRenderer([value, material_w, name_s] {
+        std::shared_ptr<VROMaterial> material = material_w.lock();
+        if (material) {
+            if (VROStringUtil::strcmpinsensitive(name_s, "metalness")) {
+                material->getMetalness().setColor({ value, value, value, 1.0 });
+            } else if (VROStringUtil::strcmpinsensitive(name_s, "roughness")) {
+                material->getRoughness().setColor({ value, value, value, 1.0 });
             }
         }
     });
