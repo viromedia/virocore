@@ -332,6 +332,7 @@
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA81D5B2023773700B04790 /* VRORendererSettingsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */; };
 		8FA81D5C2023773C00B04790 /* VRORendererSettingsTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA81D582023771900B04790 /* VRORendererSettingsTest.h */; };
+		8FA81D602023EE7100B04790 /* VRORendererConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
@@ -1199,6 +1200,7 @@
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FA81D582023771900B04790 /* VRORendererSettingsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORendererSettingsTest.h; sourceTree = "<group>"; };
 		8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORendererSettingsTest.cpp; sourceTree = "<group>"; };
+		8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORendererConfiguration.h; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
 		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
 		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
@@ -1729,6 +1731,7 @@
 				8F65F78B1C90D83600415115 /* VROTransformConstraint.cpp */,
 				8FCF396A1CB4242000A86CA3 /* VRORenderer.h */,
 				8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */,
+				8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */,
 				8FCB10001DD0055400FE425C /* VRORenderDelegateInternal.h */,
 				8FA9D0A21CC947DD00B00B93 /* VRODriver.h */,
 				8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */,
@@ -2884,6 +2887,7 @@
 				8FD2A5451F813C4100E831A6 /* VROARShadowTest.h in Headers */,
 				8FCB102B1DD5489E00FE425C /* VROVideoDelegateiOS.h in Headers */,
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
+				8FA81D602023EE7100B04790 /* VRORendererConfiguration.h in Headers */,
 				8F0E5EA11F3BA9340007AD03 /* VRORenderPass.h in Headers */,
 				8FD2A5121F81323500E831A6 /* VROBoxTest.h in Headers */,
 				8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */,

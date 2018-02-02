@@ -66,8 +66,8 @@ void VRORenderTargetOpenGL::bind() {
 
 void VRORenderTargetOpenGL::unbind() {
     switch (_type) {
-        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTexture:
+        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
@@ -504,8 +504,8 @@ GLint VRORenderTargetOpenGL::getTextureName(int attachment) const {
 
 GLenum VRORenderTargetOpenGL::getTextureAttachmentType(int attachment) const {
     switch (_type) {
-        case VRORenderTargetType ::ColorTextureRG16:
         case VRORenderTargetType::ColorTexture:
+        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
@@ -528,8 +528,8 @@ bool VRORenderTargetOpenGL::restoreFramebuffers() {
         case VRORenderTargetType::Renderbuffer:
             createColorDepthRenderbuffers();
             return true;
-        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTexture:
+        case VRORenderTargetType::ColorTextureRG16:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:

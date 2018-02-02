@@ -8,12 +8,16 @@
 
 #import "VROViewControllerGVR.h"
 #import "VROViewGVR.h"
+#import "VRORendererConfiguration.h"
 
-@implementation VROViewControllerGVR
+@implementation VROViewControllerGVR {
+    VRORendererConfiguration _rendererConfig;
+}
 
-- (id)init {
+- (id)initWithConfig:(VRORendererConfiguration)config {
     self = [super init];
     if (self) {
+        _rendererConfig = config;
         _forceLandscape = YES;
     }
     return self;
@@ -28,7 +32,8 @@
 }
 
 - (void)loadView {
-    self.view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds
+                                           config:_rendererConfig];
 }
 
 - (BOOL)shouldAutorotate {

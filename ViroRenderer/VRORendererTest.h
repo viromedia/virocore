@@ -35,8 +35,9 @@
 #include "VROOBJLoader.h"
 #include "VROFBXLoader.h"
 #include "VROText.h"
-#include "VRORenderer.h"
 #include "VROTextureUtil.h"
+
+class VRORenderer;
 
 class VRORendererTest {
 public:

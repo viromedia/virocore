@@ -20,6 +20,7 @@
 #include "VROFrameSynchronizer.h"
 #include "VROInputControllerBase.h"
 #include "VROPostProcessEffectFactory.h"
+#include "VRORendererConfiguration.h"
 
 class VROEye;
 class VRONode;
@@ -50,14 +51,6 @@ static const float kZFarMultiplier = 1.15;
 
 // Number of samples to collect when computing FPS
 static const int kFPSMaxSamples = 100;
-
-class VRORendererConfiguration {
-public:
-    bool enableShadows = true;
-    bool enableBloom = true;
-    bool enableHDR = true;
-    bool enablePBR = true;
-};
 
 class VRORenderer {
 public:

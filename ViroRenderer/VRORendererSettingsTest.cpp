@@ -9,6 +9,7 @@
 #include "VRORendererSettingsTest.h"
 #include "VROTestUtil.h"
 #include "VROChoreographer.h"
+#include "VRORenderer.h"
 
 VRORendererSettingsTest::VRORendererSettingsTest() :
     VRORendererTest(VRORendererTestType::Bloom) {
