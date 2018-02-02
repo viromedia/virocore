@@ -18,7 +18,8 @@ VROShadowTest::~VROShadowTest() {
     
 }
 
-void VROShadowTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+void VROShadowTest::build(std::shared_ptr<VRORenderer> renderer,
+                          std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                           std::shared_ptr<VRODriver> driver) {
     
     _sceneController = std::make_shared<VROSceneController>();

@@ -20,7 +20,8 @@ VROARPlaneTest::~VROARPlaneTest() {
     
 }
 
-void VROARPlaneTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+void VROARPlaneTest::build(std::shared_ptr<VRORenderer> renderer,
+                           std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                            std::shared_ptr<VRODriver> driver) {
     
     std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();

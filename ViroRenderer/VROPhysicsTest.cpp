@@ -18,8 +18,9 @@ VROPhysicsTest::~VROPhysicsTest() {
     
 }
 
-void VROPhysicsTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                   std::shared_ptr<VRODriver> driver) {
+void VROPhysicsTest::build(std::shared_ptr<VRORenderer> renderer,
+                           std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                           std::shared_ptr<VRODriver> driver) {
 
     _eventDelegate = std::make_shared<VROPhysicsEventDelegate>(this);
     

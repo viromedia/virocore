@@ -141,7 +141,8 @@ JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
         sample = std::make_shared<VROSample>();
         sceneRenderer->setRenderDelegate(sample);
 
-        sample->loadTestHarness(sceneRenderer->getFrameSynchronizer(), sceneRenderer->getDriver());
+        sample->loadTestHarness(sceneRenderer->getRenderer(), sceneRenderer->getFrameSynchronizer(),
+                                sceneRenderer->getDriver());
         sceneRenderer->setSceneController(sample->getSceneController());
         if (sample->getPointOfView()) {
             sceneRenderer->getRenderer()->setPointOfView(sample->getPointOfView());

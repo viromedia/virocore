@@ -334,6 +334,10 @@
     return _renderer->getFrameSynchronizer();
 }
 
+- (std::shared_ptr<VRORenderer>)renderer {
+    return _renderer;
+}
+
 - (NSString *)getPlatform {
     return @"gvr";
 }

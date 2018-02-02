@@ -23,13 +23,15 @@ VROPhotometricLightTest::~VROPhotometricLightTest() {
     
 }
 
-void VROPhotometricLightTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, std::shared_ptr<VRODriver> driver) {
+void VROPhotometricLightTest::build(std::shared_ptr<VRORenderer> renderer,
+                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                    std::shared_ptr<VRODriver> driver) {
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     
-    std::shared_ptr<VROSurface> plane = VROSurface::createSurface(10, 10);
+    std::shared_ptr<VROSurface> plane = VROSurface::createSurface(50, 50);
     std::shared_ptr<VROMaterial> material = plane->getMaterials()[0];
     material->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
     material->setLightingModel(VROLightingModel::PhysicallyBased);
@@ -55,6 +57,7 @@ void VROPhotometricLightTest::build(std::shared_ptr<VROFrameSynchronizer> frameS
     light->setAttenuationEndDistance(100);
     light->setSpotInnerAngle(45);
     light->setSpotOuterAngle(90);
+    //light->setCastsShadow(true);
     //light->setColor({1.0, 0.0, 0.0});
     light->setDirection({0, 0, -1});
     lightNode->setPosition({0, 0, 5});

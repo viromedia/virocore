@@ -13,6 +13,7 @@
 #include <memory>
 
 class VRODriver;
+class VRORenderer;
 class VROFrameSynchronizer;
 
 enum class VRORendererTestType {
@@ -47,7 +48,8 @@ class VRORendererTest;
 class VRORendererTestHarness {
 public:
     
-    VRORendererTestHarness(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+    VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
+                           std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                            std::shared_ptr<VRODriver> driver);
     virtual ~VRORendererTestHarness();
     
@@ -60,8 +62,9 @@ private:
     std::shared_ptr<VRORendererTest> _currentTest;
     std::shared_ptr<VRORendererTest> createTest(VRORendererTestType type);
     
-    std::shared_ptr<VRODriver> _driver;
+    std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
+    std::shared_ptr<VRODriver> _driver;
     
 };
 

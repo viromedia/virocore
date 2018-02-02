@@ -19,7 +19,8 @@ VROOBJTest::~VROOBJTest() {
     
 }
 
-void VROOBJTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+void VROOBJTest::build(std::shared_ptr<VRORenderer> renderer,
+                       std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                        std::shared_ptr<VRODriver> driver) {
    
     _objAngle = 0;

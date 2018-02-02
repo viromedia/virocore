@@ -27,7 +27,9 @@ public:
     VROBoxTest();
     virtual ~VROBoxTest();
     
-    void build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, std::shared_ptr<VRODriver> driver);
+    void build(std::shared_ptr<VRORenderer> renderer,
+               std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+               std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VRONode> getPointOfView() {
         return _pointOfView;
     }

@@ -476,10 +476,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     _cameraBackground.reset();
 }
 
-#pragma mark - Frame Listeners
+#pragma mark - Getters
 
 - (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer {
     return _renderer->getFrameSynchronizer();
+}
+
+- (std::shared_ptr<VRORenderer>)renderer {
+    return _renderer;
 }
 
 #pragma mark - Rendering

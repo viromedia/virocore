@@ -13,6 +13,7 @@
 #include <VROFrameSynchronizer.h>
 #include "VRORenderDelegate.h"
 
+class VRORenderer;
 class VROSceneController;
 class VRORendererTestHarness;
 
@@ -23,7 +24,8 @@ public:
     VROSample();
     virtual ~VROSample();
 
-    void loadTestHarness(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+    void loadTestHarness(std::shared_ptr<VRORenderer> renderer,
+                         std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                          std::shared_ptr<VRODriver> driver);
 
     std::shared_ptr<VROSceneController> getSceneController();

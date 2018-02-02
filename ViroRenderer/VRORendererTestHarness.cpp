@@ -32,8 +32,10 @@
 #include "VROPhotometricLightTest.h"
 #include "VROVideoSphereTest.h"
 
-VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
+                                               std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                std::shared_ptr<VRODriver> driver) :
+    _renderer(renderer),
     _frameSynchronizer(frameSynchronizer),
     _driver(driver) {
     
@@ -57,7 +59,7 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::loadNextTest() {
 
 std::shared_ptr<VRORendererTest> VRORendererTestHarness::loadTest(VRORendererTestType type) {
     _currentTest = createTest(type);
-    _currentTest->build(_frameSynchronizer, _driver);
+    _currentTest->build(_renderer, _frameSynchronizer, _driver);
     return _currentTest;
 }
 

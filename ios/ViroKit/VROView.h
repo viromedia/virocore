@@ -28,6 +28,7 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
 @required
 
 @property (nonatomic, weak) IBOutlet id <VRORenderDelegate> renderDelegate;
+@property (readonly, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneController> sceneController;
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController;
