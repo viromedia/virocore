@@ -107,7 +107,7 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
             _sortKeys.push_back(key);
         }
         
-        if (material->isBloomEnabled()) {
+        if (material->isBloomSupported()) {
             metadata->setRequiresBloomPass(true);
         }
     }

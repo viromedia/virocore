@@ -21,7 +21,7 @@ public:
         return VROColorRenderingMode::NonLinear;
     }
 
-    virtual bool isBloomEnabled() {
+    virtual bool isBloomSupported() {
         // TODO VIRO-2278: restore this to true after bottleneck is found
         return false;
     }

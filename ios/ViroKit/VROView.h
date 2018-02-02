@@ -48,6 +48,11 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
       saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler;
 
+- (BOOL)setShadowsEnabled:(BOOL)enabled;
+- (BOOL)setHDREnabled:(BOOL)enabled;
+- (BOOL)setPBREnabled:(BOOL)enabled;
+- (BOOL)setBloomEnabled:(BOOL)enabled;
+
 - (NSString *)getPlatform;
 - (NSString *)getHeadset;
 - (NSString *)getController;

@@ -23,6 +23,8 @@
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
 
+class VRORendererConfiguration;
+
 class VROSceneRendererGVR : public VROSceneRenderer, public std::enable_shared_from_this<VROSceneRendererGVR> {
 
 public:
@@ -33,8 +35,9 @@ public:
     @param gvr_api The (non-owned) gvr_context.
      @param gvr_audio_api The (owned) gvr::AudioApi context.
      */
-    VROSceneRendererGVR(gvr_context* gvr_context,
-                              std::shared_ptr<gvr::AudioApi> gvrAudio);
+    VROSceneRendererGVR(VRORendererConfiguration config,
+                        gvr_context* gvr_context,
+                        std::shared_ptr<gvr::AudioApi> gvrAudio);
     virtual ~VROSceneRendererGVR();
 
     /*

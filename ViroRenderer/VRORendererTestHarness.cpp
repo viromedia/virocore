@@ -31,6 +31,7 @@
 #include "VRODiffuseIrradianceTest.h"
 #include "VROPhotometricLightTest.h"
 #include "VROVideoSphereTest.h"
+#include "VRORendererSettingsTest.h"
 
 VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
                                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
@@ -115,6 +116,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VRODiffuseIrradianceTest>();
         case VRORendererTestType::PhotometricLight:
             return std::make_shared<VROPhotometricLightTest>();
+        case VRORendererTestType::RendererSettings:
+            return std::make_shared<VRORendererSettingsTest>();
         default:
             pabort();
             return nullptr;

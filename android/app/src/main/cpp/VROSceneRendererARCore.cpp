@@ -39,7 +39,8 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 #pragma mark - Setup
 
-VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gvrAudio,
+VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
+                                               std::shared_ptr<gvr::AudioApi> gvrAudio,
                                                jni::Object<arcore::Session> sessionJNI,
                                                jni::Object<arcore::ViroViewARCore> viroViewJNI) :
     _rendererSuspended(true),
@@ -53,7 +54,7 @@ VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gv
     // instantiate the input controller w/ viewport size (0,0) and update it later.
     std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0,0);
 
-    _renderer = std::make_shared<VRORenderer>(controller);
+    _renderer = std::make_shared<VRORenderer>(config, controller);
     controller->setSession(_session);
 
     _pointOfView = std::make_shared<VRONode>();

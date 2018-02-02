@@ -27,6 +27,7 @@ import com.viro.core.ARAnchor;
 import com.viro.core.ARPointCloud;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
+import com.viro.core.RendererConfiguration;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
 import com.viro.core.ARHitTestListener;
@@ -107,6 +108,13 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+
+        RendererConfiguration config = new RendererConfiguration();
+        config.setShadowsEnabled(true);
+        config.setBloomEnabled(true);
+        config.setHDREnabled(true);
+        config.setPBREnabled(true);
+
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
             mViroView = new ViroViewGVR(this, this, new Runnable(){
                 @Override
@@ -117,7 +125,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             mViroView = new ViroViewOVR(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-            mViroView = new ViroViewARCore(this, this);
+            mViroView = new ViroViewARCore(this, this, config);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
             mViroView = new ViroViewScene(this, this);
         }
@@ -249,8 +257,6 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
         //testBackgroundImage(scene);
 
-        //nodes.addAll(testARDrag());
-        //nodes.addAll(testARPlane(scene));
         nodes.addAll(testImperativePlane(scene));
 
         for (final Node node : nodes) {
@@ -266,49 +272,33 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             @Override
             public void run() {
                 final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestListener() {
-                    @Override
-                    public void onHitTestFinished(final ARHitTestResult[] results) {
-                        Log.w("Viro", "Hit test complete");
-                        for (final ARHitTestResult result : results) {
-                            Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
-                        }
-                    }
-                });
+                view.setShadowsEnabled(false);
             }
-        }, 2000);
+        }, 10000);
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestListener() {
-                    @Override
-                    public void onHitTestFinished(final ARHitTestResult[] results) {
-                        Log.w("Viro", "Hit test complete");
-                        for (final ARHitTestResult result : results) {
-                            Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
-                        }
-                    }
-                });
+                view.setPBREnabled(false);
             }
-        }, 4000);
+        }, 12000);
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestListener() {
-                    @Override
-                    public void onHitTestFinished(final ARHitTestResult[] results) {
-                        Log.w("Viro", "Hit test complete");
-                        for (final ARHitTestResult result : results) {
-                            Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
-                        }
-                    }
-                });
+                view.setHDREnabled(false);
             }
-        }, 6000);
+        }, 14000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final ViroViewARCore view = (ViroViewARCore) mViroView;
+                view.setBloomEnabled(false);
+            }
+        }, 16000);
     }
 
     private void testEdgeDetect() {

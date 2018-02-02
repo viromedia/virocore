@@ -34,7 +34,9 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 #pragma mark - Setup
 
-VROSceneRendererSceneView::VROSceneRendererSceneView(std::shared_ptr<gvr::AudioApi> gvrAudio, jobject viroViewJNI) :
+VROSceneRendererSceneView::VROSceneRendererSceneView(VRORendererConfiguration config,
+                                                     std::shared_ptr<gvr::AudioApi> gvrAudio,
+                                                     jobject viroViewJNI) :
         _rendererSuspended(true),
         _suspendedNotificationTime(VROTimeCurrentSeconds()) {
 
@@ -42,7 +44,7 @@ VROSceneRendererSceneView::VROSceneRendererSceneView(std::shared_ptr<gvr::AudioA
 
     // instantiate the input controller w/ viewport size (0,0) and update it later.
     std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0, 0);
-    _renderer = std::make_shared<VRORenderer>(controller);
+    _renderer = std::make_shared<VRORenderer>(config, controller);
 }
 
 VROSceneRendererSceneView::~VROSceneRendererSceneView() {

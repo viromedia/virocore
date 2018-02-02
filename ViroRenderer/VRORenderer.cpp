@@ -42,10 +42,11 @@ static const double kFovMonoHorizontal = 90;
 
 #pragma mark - Initialization
 
-VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController) :
+VRORenderer::VRORenderer(VRORendererConfiguration config, std::shared_ptr<VROInputControllerBase> inputController) :
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _inputController(inputController),
+    _initialRendererConfig(config),
     _fpsTickIndex(0),
     _fpsTickSum(0) {
     _hasIncomingSceneTransition = false;
@@ -73,7 +74,7 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     }
     _debugHUD->initRenderer(driver);
     
-    _choreographer = std::make_shared<VROChoreographer>(driver);
+    _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
     _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
 }
 
@@ -270,6 +271,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
      */
     _context->setOrthographicMatrix(viewport.getOrthographicProjection(0, kZFar));
     _context->getPencil()->clear();
+    _context->setShadowMap(nullptr);
     
     _renderMetadata = std::make_shared<VRORenderMetadata>();
 

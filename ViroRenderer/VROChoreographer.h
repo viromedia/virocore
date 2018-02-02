@@ -13,12 +13,13 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include "optional.hpp"
 #include "VROVector4f.h"
+#include "VROViewport.h"
 
 class VROScene;
 class VRODriver;
 class VROLight;
-class VROViewport;
 class VROTexture;
 class VRORenderPass;
 class VRORenderTarget;
@@ -31,13 +32,14 @@ class VROPostProcessEffectFactory;
 class VRORenderMetadata;
 class VRORenderToTextureDelegate;
 class VROPreprocess;
+class VRORendererConfiguration;
 enum class VROPostProcessEffect;
 enum class VROEyeType;
 
 class VROChoreographer {
 public:
     
-    VROChoreographer(std::shared_ptr<VRODriver> driver);
+    VROChoreographer(VRORendererConfiguration config, std::shared_ptr<VRODriver> driver);
     virtual ~VROChoreographer();
     
     virtual void render(VROEyeType eye,
@@ -50,6 +52,39 @@ public:
     void setBaseRenderPass(std::shared_ptr<VRORenderPass> pass) {
         _baseRenderPass = pass;
     }
+    
+    /*
+     Enable or disable HDR rendering. If HDR is disabled, then features like
+     Bloom and PBR will not work, and tone-mapping will be disabled. HDR is not
+     supported on all devices. If HDR is not supported, this will return false.
+     Defaults to true if supported by the device.
+     */
+    bool setHDREnabled(bool enableHDR);
+    
+    /*
+     Enable or disable PBR rendering. If PBR is disabled, then objects using
+     VROLightingModelPhysicallyBased will degrade to VROLightingModelBlinn.
+     
+     PBR is not supported on all devices. If PBR is not supported, this will
+     return false. This will also return false if HDR is not enabled.
+     Defaults to true if supported by the device.
+     */
+    bool setPBREnabled(bool enablePBR);
+    
+    /*
+     Enable or disable rendering shadows. If shadows are disabled here, shadow
+     casting lights will simply not cast a shadow.
+     
+     If shadows are not supported, this will return false. Defaults to true if
+     supported by the device.
+     */
+    bool setShadowsEnabled(bool enableShadows);
+    
+    /*
+     Enable or disable rendering bloom. If bloom is not supported, this will
+     return false. Defaults to true if supported by the device.
+     */
+    bool setBloomEnabled(bool enableBloom);
     
     /*
      Enable or disable RTT. When RTT is enabled, the scene is rendered first
@@ -96,12 +131,41 @@ public:
     void setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver);
 
 private:
+    
     std::weak_ptr<VRODriver> _driver;
+    std::experimental::optional<VROViewport> _viewport;
 
     /*
      True if the GPU supports multiple render targets.
      */
-    bool _mrtEnabled;
+    bool _mrtSupported;
+    
+    /*
+     True if HDR rendering is supported/enabled. When HDR rendering is
+     enabled, the scene is rendered to a floating point texture, then a
+     tone-mapping algorithm is applied to preserve details in both bright
+     and dark regions of the scene.
+     */
+    bool _hdrSupported, _hdrEnabled;
+    
+    /*
+     True if PBR rendering is supported/enabled. When PBR is enabled,
+     PhysicallyBased materials are rendered using the PBR shaders and
+     image-based lighting is activated (if available).
+     */
+    bool _pbrSupported, _pbrEnabled;
+    
+    /*
+     True if Bloom is supported/enabled. When Bloom is enabled, an additional
+     color buffer is bound that receives bright colors via a special bloom shader
+     modifier. This buffer is blurred and added back to the scene.
+     */
+    bool _bloomSupported, _bloomEnabled;
+    
+    /*
+     True if for the next frame render targets need to be recreated.
+     */
+    bool _renderTargetsChanged;
     
 #pragma mark - Render Scene
     
@@ -122,9 +186,10 @@ private:
     std::shared_ptr<VRORenderTarget> _blitTarget;
     
     /*
-     Initialize the various render targets.
+     Created the required render targets given the current settings (e.g. _hdrEnabled,
+     _pbrEnabled, etc.).
      */
-    void initTargets(std::shared_ptr<VRODriver> driver);
+    void createRenderTargets();
     
     /*
      Render the 3D scene (and an optional outgoing scene), and perform post-processing.
@@ -161,17 +226,9 @@ private:
     /*
      True if shadow maps are enabled.
      */
-    bool _renderShadows;
+    bool _shadowsEnabled;
     
 #pragma mark - HDR
-
-    /*
-     True if HDR rendering is enabled. When HDR rendering is enabled, the scene
-     is rendered to a floating point texture, then a tone-mapping algorithm is
-     applied to preserve details in both bright and dark regions of the
-     scene.
-     */
-    bool _renderHDR;
     
     /*
      Floating point target for initially rendering the scene.
@@ -183,19 +240,7 @@ private:
      */
     std::shared_ptr<VROToneMappingRenderPass> _toneMappingPass;
     
-    /*
-     Initialize the render pass and targets for HDR rendering.
-     */
-    void initHDR(std::shared_ptr<VRODriver> driver);
-    
 #pragma mark - Bloom
-    
-    /*
-     Enable or disable bloom rendering. When Bloom is enabled, an additional
-     color buffer is bound that receives bright colors via a special bloom shader
-     modifier. This buffer is blurred and added back to the scene.
-     */
-    bool _renderBloom;
     
     /*
      Render targets for ping-ponging the blur operation.

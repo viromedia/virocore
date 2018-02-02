@@ -7,6 +7,7 @@
 //
 
 #import "VROTestViewController.h"
+#import "VRORenderer.h"
 
 enum class VROTestSceneType {
     VR,
@@ -15,7 +16,7 @@ enum class VROTestSceneType {
 
 // Set to NO to test using an AR view
 static const VROTestSceneType kTestType = VROTestSceneType::VR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::PhotometricLight;
+static const VRORendererTestType kRendererTest = VRORendererTestType::RendererSettings;
 
 @interface VROTestViewController ()
 
@@ -24,8 +25,11 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::Photometri
 @implementation VROTestViewController
 
 - (void)loadView {
+    VRORendererConfiguration config;
+    
     if (kTestType == VROTestSceneType::VR) {
-        VROViewGVR *view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        VROViewGVR *view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds
+                                                      config:config];
         view.testingMode = YES;
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;
@@ -36,6 +40,7 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::Photometri
     }
     else {
         VROViewAR *view = [[VROViewAR alloc] initWithFrame:[UIScreen mainScreen].bounds
+                                                    config:config
                                                    context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]
                                             worldAlignment:VROWorldAlignment::Gravity];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

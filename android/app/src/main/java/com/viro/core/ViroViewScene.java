@@ -109,14 +109,29 @@ public class ViroViewScene extends ViroView {
     private ViroTouchGestureListener mViroTouchGestureListener;
 
     /**
-     * Create a new ViroViewScene.
+     * Create a new ViroViewScene with the default {@link RendererConfiguration}.
      *
      * @param context               The activity context.
      * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
      *                              Optional, may be null.
      */
     public ViroViewScene(Context context, RendererStartListener rendererStartListener) {
-        super(context);
+        super(context, null);
+        init(context, rendererStartListener);
+    }
+
+    /**
+     * Create a new ViroViewScene with the given {@link RendererConfiguration}, which determines
+     * the rendering techniques and rendering fidelity to use for this View.
+     *
+     * @param context               The activity context.
+     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
+     *                              Optional, may be null.
+     * @param config                The {@link RendererConfiguration} to use.
+     */
+    public ViroViewScene(Context context, RendererStartListener rendererStartListener,
+                         RendererConfiguration config) {
+        super(context, config);
         init(context, rendererStartListener);
     }
 
@@ -173,7 +188,7 @@ public class ViroViewScene extends ViroView {
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(), this,
-                mAssetManager, mPlatformUtil);
+                mAssetManager, mPlatformUtil, mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
         mViroTouchGestureListener = new ViroTouchGestureListener(activity, mNativeRenderer);

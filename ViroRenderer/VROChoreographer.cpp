@@ -24,28 +24,29 @@
 #include "VROPreprocess.h"
 #include "VROShadowPreprocess.h"
 #include "VROIBLPreprocess.h"
+#include "VRORenderer.h"
 #include <vector>
 
 #pragma mark - Initialization
 
-VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
+VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_ptr<VRODriver> driver) :
     _driver(driver),
-    _mrtEnabled(driver->getGPUType() != VROGPUType::Adreno330OrOlder),
+    _renderTargetsChanged(false),
     _renderToTexture(false),
-    _renderShadows(driver->getGPUType() != VROGPUType::Adreno330OrOlder),
     _blurScaling(0.25) {
 
-    if (_mrtEnabled) {
-        initTargets(driver);
-        // We use HDR only if linear rendering is enabled
-        _renderHDR = driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
-        _renderBloom = driver->isBloomEnabled();
-        initHDR(driver);
-    }
-    else {
-        _renderHDR = false;
-        _renderBloom = false;
-    }
+    // Derive supported features on this GPU
+    _mrtSupported = driver->getGPUType() != VROGPUType::Adreno330OrOlder;
+    _hdrSupported = _mrtSupported && driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
+    _pbrSupported = _hdrSupported;
+    _bloomSupported = _mrtSupported && _hdrSupported && driver->isBloomSupported();
+        
+    // Enable defaults based on input flags and and support
+    _shadowsEnabled = _mrtSupported && config.enableShadows;
+    _hdrEnabled = _hdrSupported && config.enableHDR;
+    _pbrEnabled = _hdrSupported && config.enablePBR;
+    _bloomEnabled = _bloomSupported && config.enableBloom;
+    createRenderTargets();
 
     _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
     _renderToTextureDelegate = nullptr;
@@ -55,58 +56,93 @@ VROChoreographer::~VROChoreographer() {
     
 }
 
-void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
-    VRORenderTargetType colorType = _renderHDR ? VRORenderTargetType::ColorTextureHDR16 : VRORenderTargetType::ColorTexture;
-    
-    std::vector<std::string> blitSamplers = { "source_texture" };
-    std::vector<std::string> blitCode = {
-        "uniform sampler2D source_texture;",
-        "frag_color = texture(source_texture, v_texcoord);"
-    };
-    std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
-    _blitPostProcess = driver->newImagePostProcess(blitShader);
-    _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
-    
-    _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1, false);
-    _postProcessTarget = driver->newRenderTarget(colorType, 1, 1, false);
-
-    if (_renderShadows) {
-        _preprocesses.push_back(std::make_shared<VROShadowPreprocess>(driver));
-    }
-    _preprocesses.push_back(std::make_shared<VROIBLPreprocess>());
-}
-
-void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
-    if (!_renderHDR) {
+void VROChoreographer::createRenderTargets() {
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (!driver) {
         return;
     }
     
-    if (_renderBloom) {
-        // The HDR target includes an additional attachment to which we render bloom
-        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false);
-        _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
-        _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
-        _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
-        
-        std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
-        std::vector<std::string> code = {
-            "uniform sampler2D hdr_texture;",
-            "uniform sampler2D bloom_texture;",
-            "highp vec4 hdr_rgba = texture(hdr_texture, v_texcoord).rgba;",
-            "highp vec4 bloom_rbga = texture(bloom_texture, v_texcoord).rgba;",
-            "frag_color = vec4(hdr_rgba + bloom_rbga);",
+    pinfo("Creating render targets with configuration:");
+    pinfo("[MRT supported:   %d]", _mrtSupported);
+    pinfo("[Shadows enabled: %d]", _shadowsEnabled);
+    pinfo("[HDR supported:   %d, HDR enabled:   %d]", _hdrSupported, _hdrEnabled);
+    pinfo("[PBR supported:   %d, PBR enabled:   %d]", _pbrSupported, _pbrEnabled);
+    pinfo("[Bloom supported: %d, Bloom enabled: %d]", _bloomSupported, _bloomEnabled);
+    
+    _blitPostProcess.reset();
+    _blitTarget.reset();
+    _renderToTextureTarget.reset();
+    _postProcessTarget.reset();
+    _hdrTarget.reset();
+    _blurTargetA.reset();
+    _blurTargetB.reset();
+    _gaussianBlurPass.reset();
+    _additiveBlendPostProcess.reset();
+    _toneMappingPass.reset();
+    _preprocesses.clear();
+
+    VRORenderTargetType colorType = _hdrEnabled ? VRORenderTargetType::ColorTextureHDR16 : VRORenderTargetType::ColorTexture;
+    
+    if (_mrtSupported) {
+        std::vector<std::string> blitSamplers = { "source_texture" };
+        std::vector<std::string> blitCode = {
+            "uniform sampler2D source_texture;",
+            "frag_color = texture(source_texture, v_texcoord);"
         };
-        _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
+        std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
+        _blitPostProcess = driver->newImagePostProcess(blitShader);
+        _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
+        
+        _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1, false);
+        _postProcessTarget = driver->newRenderTarget(colorType, 1, 1, false);
+        
+        _preprocesses.clear();
+        if (_shadowsEnabled) {
+            _preprocesses.push_back(std::make_shared<VROShadowPreprocess>(driver));
+        }
+        
+        if (_pbrEnabled) {
+            _preprocesses.push_back(std::make_shared<VROIBLPreprocess>());
+        }
     }
-    else {
-        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+    
+    if (_hdrEnabled) {
+        if (_bloomEnabled) {
+            // The HDR target includes an additional attachment to which we render bloom
+            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false);
+            _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+            _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+            _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
+            
+            std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
+            std::vector<std::string> code = {
+                "uniform sampler2D hdr_texture;",
+                "uniform sampler2D bloom_texture;",
+                "highp vec4 hdr_rgba = texture(hdr_texture, v_texcoord).rgba;",
+                "highp vec4 bloom_rbga = texture(bloom_texture, v_texcoord).rgba;",
+                "frag_color = vec4(hdr_rgba + bloom_rbga);",
+            };
+            _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
+        }
+        else {
+            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+        }
+        _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::HableLuminanceOnly,
+                                                                      driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,
+                                                                      driver);
     }
-    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::HableLuminanceOnly,
-                                                                  driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,
-                                                                  driver);
+    
+    /*
+     If a viewport has been set, set it on all render targets.
+     */
+    if (_viewport) {
+        setViewport(*_viewport, driver);
+    }
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
+    _viewport = viewport;
+    
     /*
      The display needs the full viewport, in case it's rendering to a translated
      half of a larger screen (e.g. as in VR).
@@ -150,8 +186,13 @@ void VROChoreographer::render(VROEyeType eye,
                               const std::shared_ptr<VRORenderMetadata> &metadata,
                               VRORenderContext *context,
                               std::shared_ptr<VRODriver> &driver) {
+    if (_renderTargetsChanged) {
+        createRenderTargets();
+        _renderTargetsChanged = false;
+    }
     
     if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
+        context->setPBREnabled(_hdrEnabled && _pbrEnabled);
         for (std::shared_ptr<VROPreprocess> &preprocess : _preprocesses) {
             preprocess->execute(scene, context, driver);
         }
@@ -164,8 +205,8 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
                                    const std::shared_ptr<VRORenderMetadata> &metadata,
                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     VRORenderPassInputOutput inputs;
-    if (_renderHDR) {
-        if (_renderBloom && metadata->requiresBloomPass()) {
+    if (_hdrEnabled) {
+        if (_bloomEnabled && metadata->requiresBloomPass()) {
             // Render the scene + bloom to the floating point HDR MRT target
             inputs.outputTarget = _hdrTarget;
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
@@ -225,7 +266,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             }
         }
     }
-    else if (_mrtEnabled && _renderToTexture) {
+    else if (_mrtSupported && _renderToTexture) {
         inputs.outputTarget = _blitTarget;
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
         renderToTextureAndDisplay(_blitTarget, driver);
@@ -289,4 +330,86 @@ std::shared_ptr<VROPostProcessEffectFactory> VROChoreographer::getPostProcessEff
 
 void VROChoreographer::setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate) {
     _renderToTextureDelegate = delegate;
+}
+
+#pragma mark - Renderer Settings
+
+bool VROChoreographer::setHDREnabled(bool enableHDR) {
+    if (!enableHDR) {
+        if (_hdrEnabled) {
+            _hdrEnabled = false;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+    else { // enableHDR
+        if (!_hdrSupported) {
+            return false;
+        }
+        else if (!_hdrEnabled) {
+            _hdrEnabled = true;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+}
+
+bool VROChoreographer::setPBREnabled(bool enablePBR) {
+    if (!enablePBR) {
+        if (_pbrEnabled) {
+            _pbrEnabled = false;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+    else { // enablePBR
+        if (!_pbrSupported) {
+            return false;
+        }
+        else if (!_pbrEnabled) {
+            _pbrEnabled = true;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+}
+
+bool VROChoreographer::setShadowsEnabled(bool enableShadows) {
+    if (!enableShadows) {
+        if (_shadowsEnabled) {
+            _shadowsEnabled = false;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+    else { // enableShadows
+        if (!_mrtSupported) {
+            return false;
+        }
+        else if (!_shadowsEnabled) {
+            _shadowsEnabled = true;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+}
+
+bool VROChoreographer::setBloomEnabled(bool enableBloom) {
+    if (!enableBloom) {
+        if (_bloomEnabled) {
+            _bloomEnabled = false;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+    else { // enableBloom
+        if (!_bloomSupported) {
+            return false;
+        }
+        else if (!_bloomEnabled) {
+            _bloomEnabled = true;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
 }

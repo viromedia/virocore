@@ -23,6 +23,7 @@ class VROSurface;
 class VROARCamera;
 class VROARFrame;
 class VROARSessionARCore;
+class VRORendererConfiguration;
 
 class VROSceneRendererSceneView : public VROSceneRenderer, public std::enable_shared_from_this<VROSceneRendererSceneView> {
 
@@ -33,8 +34,9 @@ public:
 
      @param gvr_audio_api The (owned) gvr::AudioApi context.
      */
-    VROSceneRendererSceneView(std::shared_ptr<gvr::AudioApi> gvrAudio,
-                           jobject viroViewJNI);
+    VROSceneRendererSceneView(VRORendererConfiguration config,
+                              std::shared_ptr<gvr::AudioApi> gvrAudio,
+                              jobject viroViewJNI);
     virtual ~VROSceneRendererSceneView();
 
     /*

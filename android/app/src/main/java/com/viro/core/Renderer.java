@@ -29,15 +29,18 @@ public class Renderer {
     /* ----------     Scene view only methods    ---------- */
 
     public Renderer(ClassLoader appClassLoader, Context context, ViroViewScene view, AssetManager assets,
-                    PlatformUtil platformUtil) {
-        mNativeRef = nativeCreateRendererSceneView(appClassLoader, context, view, assets, platformUtil);
+                    PlatformUtil platformUtil, RendererConfiguration config) {
+        mNativeRef = nativeCreateRendererSceneView(appClassLoader, context, view, assets, platformUtil,
+                config.isShadowsEnabled(), config.isHDREnabled(), config.isPBREnabled(), config.isBloomEnabled());
     }
 
     /* ----------     GVR only methods    ---------- */
 
     public Renderer(ClassLoader appClassLoader, Context context,
-                    AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext) {
-        mNativeRef = nativeCreateRendererGVR(appClassLoader, context, assets, platformUtil, nativeGvrContext);
+                    AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext,
+                    RendererConfiguration config) {
+        mNativeRef = nativeCreateRendererGVR(appClassLoader, context, assets, platformUtil, nativeGvrContext,
+                config.isShadowsEnabled(), config.isHDREnabled(), config.isPBREnabled(), config.isBloomEnabled());
     }
 
     public void drawFrame() {
@@ -47,8 +50,10 @@ public class Renderer {
 
     /* ----------     OVR only methods    ---------- */
     public Renderer(ClassLoader appClassLoader, Context context,
-                    ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
-        mNativeRef = nativeCreateRendererOVR(appClassLoader, context, view, activity, assets, platformUtil);
+                    ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil,
+                    RendererConfiguration config) {
+        mNativeRef = nativeCreateRendererOVR(appClassLoader, context, view, activity, assets, platformUtil,
+                config.isShadowsEnabled(), config.isHDREnabled(), config.isPBREnabled(), config.isBloomEnabled());
     }
 
     public void onSurfaceDestroyed(Surface surface) { nativeOnSurfaceDestroyed(mNativeRef); }
@@ -58,8 +63,10 @@ public class Renderer {
     /* ----------     ARCore only methods    ---------- */
 
     public Renderer(ClassLoader appClassLoader, Context context,
-                    ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil) {
-        mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
+                    ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil,
+                    RendererConfiguration config) {
+        mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil,
+                config.isShadowsEnabled(), config.isHDREnabled(), config.isPBREnabled(), config.isBloomEnabled());
     }
 
     public int getCameraTextureId() {
@@ -146,6 +153,7 @@ public class Renderer {
             nativeSetPointOfView(mNativeRef, 0);
         }
     }
+
     public void setClearColor(int color) {
         nativeSetClearColor(mNativeRef, color);
     }
@@ -196,16 +204,25 @@ public class Renderer {
         mCameraListener.onTransformUpdate(vPos, vRotEuler, vForward);
     }
 
+    void setShadowsEnabled(boolean enabled) { nativeSetShadowsEnabled(mNativeRef, enabled); }
+    void setHDREnabled(boolean enabled) { nativeSetHDREnabled(mNativeRef, enabled); }
+    void setPBREnabled(boolean enabled) { nativeSetPBREnabled(mNativeRef, enabled); }
+    void setBloomEnabled(boolean enabled) { nativeSetBloomEnabled(mNativeRef, enabled); }
+
     /* ----------     Native methods    ---------- */
 
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
-                                                AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext);
+                                                AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext,
+                                                boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
-                                                ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
+                                                ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil,
+                                                boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
-                                                   ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil);
+                                                   ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil,
+                                                   boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native long nativeCreateRendererSceneView(ClassLoader appClassLoader, Context context,
-                                                       ViroViewScene view, AssetManager assets, PlatformUtil platformUtil);
+                                                      ViroViewScene view, AssetManager assets, PlatformUtil platformUtil,
+                                                      boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
@@ -234,7 +251,10 @@ public class Renderer {
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
     private native void nativeSetClearColor(long sceneRef, int color);
-
+    private native void nativeSetShadowsEnabled(long nativeRef, boolean enabled);
+    private native void nativeSetHDREnabled(long nativeRef, boolean enabled);
+    private native void nativeSetPBREnabled(long nativeRef, boolean enabled);
+    private native void nativeSetBloomEnabled(long nativeRef, boolean enabled);
     private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
     private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);
     private native float[] nativeGetCameraPositionRealtime(long nativeRenderer);

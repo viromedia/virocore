@@ -125,7 +125,7 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
     cap.receivesShadows = material.getReceivesShadows();
     
     // Bloom
-    cap.bloom = material.isBloomEnabled();
+    cap.bloom = material.isBloomSupported();
     return cap;
 }
 
@@ -133,12 +133,15 @@ VROLightingShaderCapabilities VROShaderCapabilities::deriveLightingCapabilitiesK
                                                                                    const VRORenderContext &context) {
     VROLightingShaderCapabilities cap;
     cap.shadows = false;
+    cap.pbr = context.isPBREnabled();
     cap.diffuseIrradiance = false;
     cap.specularIrradiance = false;
     
-    for (const std::shared_ptr<VROLight> &light : lights) {
-        if (light->getCastsShadow()) {
-            cap.shadows = true;
+    if (context.getShadowMap() != nullptr) {
+        for (const std::shared_ptr<VROLight> &light : lights) {
+            if (light->getCastsShadow()) {
+                cap.shadows = true;
+            }
         }
     }
 

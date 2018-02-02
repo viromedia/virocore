@@ -244,7 +244,7 @@ public:
         _boundRenderTarget.reset();
     }
     
-    virtual bool isBloomEnabled() {
+    virtual bool isBloomSupported() {
         return true;
     }
 

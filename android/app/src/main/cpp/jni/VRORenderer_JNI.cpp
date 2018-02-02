@@ -32,7 +32,8 @@
 #include "object.hpp"
 #include "ARUtils_JNI.h"
 #include "Camera_JNI.h"
-
+#include "VRORenderer.h"
+#include "VROChoreographer.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -51,16 +52,26 @@ JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
                                            jobject android_context,
                                            jobject asset_mgr,
                                            jobject platform_util,
-                                           jlong native_gvr_api) {
+                                           jlong native_gvr_api,
+                                           jboolean enableShadows,
+                                           jboolean enableHDR,
+                                           jboolean enablePBR,
+                                           jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidGVR);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
+    VRORendererConfiguration config;
+    config.enableShadows = enableShadows;
+    config.enableHDR = enableHDR;
+    config.enablePBR = enablePBR;
+    config.enableBloom = enableBloom;
+
     gvr_context *gvrContext = reinterpret_cast<gvr_context *>(native_gvr_api);
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererGVR>(gvrContext, gvrAudio);
+            = std::make_shared<VROSceneRendererGVR>(config, gvrContext, gvrAudio);
     return Renderer::jptr(renderer);
 }
 
@@ -70,15 +81,25 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
                                            jobject view,
                                            jobject activity,
                                            jobject asset_mgr,
-                                           jobject platform_util) {
+                                           jobject platform_util,
+                                           jboolean enableShadows,
+                                           jboolean enableHDR,
+                                           jboolean enablePBR,
+                                           jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidOVR);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
+    VRORendererConfiguration config;
+    config.enableShadows = enableShadows;
+    config.enableHDR = enableHDR;
+    config.enablePBR = enablePBR;
+    config.enableBloom = enableBloom;
+
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererOVR>(gvrAudio, view, activity, env);
+            = std::make_shared<VROSceneRendererOVR>(config, gvrAudio, view, activity, env);
     return Renderer::jptr(renderer);
 }
 
@@ -88,15 +109,25 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
                                               jni::Object<arcore::ViroViewARCore> view,
                                               jni::Object<arcore::Session> session,
                                               jobject asset_mgr,
-                                              jobject platform_util) {
+                                              jobject platform_util,
+                                              jboolean enableShadows,
+                                              jboolean enableHDR,
+                                              jboolean enablePBR,
+                                              jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidARCore);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
+    VRORendererConfiguration config;
+    config.enableShadows = enableShadows;
+    config.enableHDR = enableHDR;
+    config.enablePBR = enablePBR;
+    config.enableBloom = enableBloom;
+
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererARCore>(gvrAudio, session, view);
+            = std::make_shared<VROSceneRendererARCore>(config, gvrAudio, session, view);
     return Renderer::jptr(renderer);
 }
 
@@ -106,15 +137,25 @@ JNI_METHOD(jlong, nativeCreateRendererSceneView)(JNIEnv *env, jclass clazz,
                                                  jobject android_context,
                                                  jobject view,
                                                  jobject asset_mgr,
-                                                 jobject platform_util) {
+                                                 jobject platform_util,
+                                                 jboolean enableShadows,
+                                                 jboolean enableHDR,
+                                                 jboolean enablePBR,
+                                                 jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidSceneView);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
+    VRORendererConfiguration config;
+    config.enableShadows = enableShadows;
+    config.enableHDR = enableHDR;
+    config.enablePBR = enablePBR;
+    config.enableBloom = enableBloom;
+
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererSceneView>(gvrAudio, view);
+            = std::make_shared<VROSceneRendererSceneView>(config, gvrAudio, view);
     return Renderer::jptr(renderer);
 }
 
@@ -610,6 +651,66 @@ JNI_METHOD(void, nativeSetCameraListener)(JNIEnv *env,
     } else {
         renderer->getRenderer()->setCameraDelegate(nullptr);
     }
+}
+
+JNI_METHOD(void, nativeSetShadowsEnabled)(JNIEnv *env,
+                                          jobject obj,
+                                          jlong native_renderer,
+                                          jboolean enabled) {
+    std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
+
+    VROPlatformDispatchAsyncRenderer([sceneRenderer_w, enabled] {
+        std::shared_ptr<VROSceneRenderer> sceneRenderer = sceneRenderer_w.lock();
+        if (!sceneRenderer) {
+            return;
+        }
+        sceneRenderer->getRenderer()->getChoreographer()->setShadowsEnabled(enabled);
+    });
+}
+
+JNI_METHOD(void, nativeSetHDREnabled)(JNIEnv *env,
+                                      jobject obj,
+                                      jlong native_renderer,
+                                      jboolean enabled) {
+    std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
+
+    VROPlatformDispatchAsyncRenderer([sceneRenderer_w, enabled] {
+        std::shared_ptr<VROSceneRenderer> sceneRenderer = sceneRenderer_w.lock();
+        if (!sceneRenderer) {
+            return;
+        }
+        sceneRenderer->getRenderer()->getChoreographer()->setHDREnabled(enabled);
+    });
+}
+
+JNI_METHOD(void, nativeSetPBREnabled)(JNIEnv *env,
+                                      jobject obj,
+                                      jlong native_renderer,
+                                      jboolean enabled) {
+    std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
+
+    VROPlatformDispatchAsyncRenderer([sceneRenderer_w, enabled] {
+        std::shared_ptr<VROSceneRenderer> sceneRenderer = sceneRenderer_w.lock();
+        if (!sceneRenderer) {
+            return;
+        }
+        sceneRenderer->getRenderer()->getChoreographer()->setPBREnabled(enabled);
+    });
+}
+
+JNI_METHOD(void, nativeSetBloomEnabled)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong native_renderer,
+                                        jboolean enabled) {
+    std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
+
+    VROPlatformDispatchAsyncRenderer([sceneRenderer_w, enabled] {
+        std::shared_ptr<VROSceneRenderer> sceneRenderer = sceneRenderer_w.lock();
+        if (!sceneRenderer) {
+            return;
+        }
+        sceneRenderer->getRenderer()->getChoreographer()->setBloomEnabled(enabled);
+    });
 }
 
 }  // extern "C"

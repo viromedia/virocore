@@ -36,7 +36,7 @@ public:
         }
     }
 
-    virtual bool isBloomEnabled() {
+    virtual bool isBloomSupported() {
         switch (getGPUType()) {
             case VROGPUType::Adreno330OrOlder:
                 return false;

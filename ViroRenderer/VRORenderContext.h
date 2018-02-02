@@ -41,7 +41,8 @@ public:
                      std::shared_ptr<VROFrameScheduler> scheduler) :
         _frame(0),
         _frameSynchronizer(synchronizer),
-        _frameScheduler(scheduler) {
+        _frameScheduler(scheduler),
+        _pbrEnabled(true) {
         
     }
     
@@ -174,12 +175,20 @@ public:
     std::shared_ptr<VROInputControllerBase> getInputController() const {
         return _inputController;
     }
+    
+    void setPBREnabled(bool enabled) {
+        _pbrEnabled = enabled;
+    }
+    bool isPBREnabled() const {
+        return _pbrEnabled;
+    }
 
 private:
     
     int _frame;
     VROEyeType _eye;
     double _fps;
+    bool _pbrEnabled;
     
     /*
      The target to which we are currently rendering.

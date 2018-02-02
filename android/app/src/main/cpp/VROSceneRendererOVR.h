@@ -13,6 +13,7 @@
 
 struct ovrAppThread;
 struct ovrFramebuffer;
+class VRORendererConfiguration;
 
 /*
  Externally invoked by VRODisplayOpenGLOVR to bind OVR framebuffers.
@@ -23,7 +24,8 @@ class VROSceneRendererOVR : public VROSceneRenderer {
 
 public:
 
-    VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
+    VROSceneRendererOVR(VRORendererConfiguration config,
+                        std::shared_ptr<gvr::AudioApi> gvrAudio,
                         jobject view, jobject activity, JNIEnv *env);
     virtual ~VROSceneRendererOVR();
 

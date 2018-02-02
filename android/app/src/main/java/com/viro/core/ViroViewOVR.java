@@ -72,14 +72,29 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
     private PlatformUtil mPlatformUtil;
 
     /**
-     * Create a new ViroViewOVR.
+     * Create a new ViroViewOVR with the default {@link RendererConfiguration}.
      *
      * @param activity              The activity containing the view.
      * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
      *                              Optional, may be null.
      */
     public ViroViewOVR(final Activity activity, final RendererStartListener rendererStartListener) {
-        super(activity);
+        super(activity, null);
+        init(rendererStartListener);
+    }
+
+    /**
+     * Create a new ViroViewOVR with the given {@link RendererConfiguration}, which determines
+     * the rendering techniques and rendering fidelity to use for this View.
+     *
+     * @param activity              The activity containing the view.
+     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
+     *                              Optional, may be null.
+     * @param config                The {@link RendererConfiguration} to use.
+     */
+    public ViroViewOVR(final Activity activity, final RendererStartListener rendererStartListener,
+                       RendererConfiguration config) {
+        super(activity, config);
         init(rendererStartListener);
     }
 
@@ -137,7 +152,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
-                this, activity, mAssetManager, mPlatformUtil);
+                this, activity, mAssetManager, mPlatformUtil, mRendererConfig);
 
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;

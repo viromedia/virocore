@@ -30,8 +30,9 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 #pragma mark - Setup
 
-VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
-                                                     std::shared_ptr<gvr::AudioApi> gvrAudio) :
+VROSceneRendererGVR::VROSceneRendererGVR(VRORendererConfiguration config,
+                                         gvr_context* gvr_context,
+                                         std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _sceneViewport(_gvr->CreateBufferViewport()),
     _rendererSuspended(true),
@@ -52,7 +53,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
     }
 
     // Create renderer and attach the controller to it.
-    _renderer = std::make_shared<VRORenderer>(controller);
+    _renderer = std::make_shared<VRORenderer>(config, controller);
     _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
 }
 

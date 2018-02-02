@@ -181,14 +181,29 @@ public class ViroViewARCore extends ViroView {
     private OrientationEventListener mOrientationListener;
 
     /**
-     * Create a new ViroViewARCore.
+     * Create a new ViroViewARCore with the default {@link RendererConfiguration}.
      *
      * @param context               The activity context.
      * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
      *                              Optional, may be null.
      */
     public ViroViewARCore(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener) {
-        super(context);
+        super(context, null);
+        init(context, rendererStartListener);
+    }
+
+    /**
+     * Create a new ViroViewARCore with the given {@link RendererConfiguration}, which determines
+     * the rendering techniques and rendering fidelity to use for this View.
+     *
+     * @param context               The activity context.
+     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
+     *                              Optional, may be null.
+     * @param config The {@link RendererConfiguration} to use.
+     */
+    public ViroViewARCore(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener,
+                          @Nullable RendererConfiguration config) {
+        super(context, config);
         init(context, rendererStartListener);
     }
 
@@ -259,7 +274,7 @@ public class ViroViewARCore extends ViroView {
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(), this, mSession,
-                mAssetManager, mPlatformUtil);
+                mAssetManager, mPlatformUtil, mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
         mRenderStartListener = rendererStartListener;

@@ -51,10 +51,18 @@ static const float kZFarMultiplier = 1.15;
 // Number of samples to collect when computing FPS
 static const int kFPSMaxSamples = 100;
 
+class VRORendererConfiguration {
+public:
+    bool enableShadows = true;
+    bool enableBloom = true;
+    bool enableHDR = true;
+    bool enablePBR = true;
+};
+
 class VRORenderer {
 public:
 
-    VRORenderer(std::shared_ptr<VROInputControllerBase> inputController);
+    VRORenderer(VRORendererConfiguration config, std::shared_ptr<VROInputControllerBase> inputController);
     virtual ~VRORenderer();
 
     /*
@@ -257,6 +265,12 @@ private:
      HUD for displaying debug information.
      */
     std::unique_ptr<VRODebugHUD> _debugHUD;
+    
+    /*
+     The initial configuration to use for the renderer. These settings can be
+     changed directly in the VROChoreographer after the renderer is initialized.
+     */
+    VRORendererConfiguration _initialRendererConfig;
 
     /*
      Invoked on the rendering thread to perform thread-specific initialization.

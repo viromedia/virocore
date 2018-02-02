@@ -330,6 +330,8 @@
 		8FA2E1601C45DD270070DB26 /* VROReticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E15E1C45DD270070DB26 /* VROReticle.cpp */; };
 		8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1611C460C600070DB26 /* VROAction.cpp */; };
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FA81D5B2023773700B04790 /* VRORendererSettingsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */; };
+		8FA81D5C2023773C00B04790 /* VRORendererSettingsTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA81D582023771900B04790 /* VRORendererSettingsTest.h */; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
@@ -1195,6 +1197,8 @@
 		8FA2E15E1C45DD270070DB26 /* VROReticle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROReticle.cpp; sourceTree = "<group>"; };
 		8FA2E1611C460C600070DB26 /* VROAction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAction.cpp; sourceTree = "<group>"; };
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
+		8FA81D582023771900B04790 /* VRORendererSettingsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORendererSettingsTest.h; sourceTree = "<group>"; };
+		8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORendererSettingsTest.cpp; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
 		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
 		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
@@ -2405,6 +2409,8 @@
 				8FEACEFE20181DDF0082D18B /* VRODiffuseIrradianceTest.cpp */,
 				8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */,
 				8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */,
+				8FA81D582023771900B04790 /* VRORendererSettingsTest.h */,
+				8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2729,6 +2735,7 @@
 				8F65F78E1C90D83600415115 /* VROTransformConstraint.h in Headers */,
 				8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */,
 				8F0E5E991F3B52480007AD03 /* VRORenderTargetOpenGL.h in Headers */,
+				8FA81D5C2023773C00B04790 /* VRORendererSettingsTest.h in Headers */,
 				8F57664E1D14429A0051AB0A /* VROMetalShader.h in Headers */,
 				8FD2A53E1F813C4100E831A6 /* VROOBJTest.h in Headers */,
 				8FA2E15F1C45DD270070DB26 /* VROReticle.h in Headers */,
@@ -3524,6 +3531,7 @@
 				8F828EFA1FAF83840068159E /* VROARImperativeSession.cpp in Sources */,
 				8F17D5421FCF1E7500141042 /* VROGVRUtil.cpp in Sources */,
 				8F705DF01E8D5337008BE8F8 /* VROThreadRestricted.cpp in Sources */,
+				8FA81D5B2023773700B04790 /* VRORendererSettingsTest.cpp in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
 				8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */,
 				8FB535271EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp in Sources */,

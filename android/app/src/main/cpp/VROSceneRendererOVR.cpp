@@ -1454,9 +1454,10 @@ Activity lifecycle
 ================================================================================
 */
 
-VROSceneRendererOVR::VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
+VROSceneRendererOVR::VROSceneRendererOVR(VRORendererConfiguration config,
+                                         std::shared_ptr<gvr::AudioApi> gvrAudio,
                                          jobject view, jobject activity, JNIEnv *env) {
-    _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerOVR>());
+    _renderer = std::make_shared<VRORenderer>(config, std::make_shared<VROInputControllerOVR>());
     _driver = std::make_shared<VRODriverOpenGLAndroidOVR>(gvrAudio);
 
     ALOGV( "    GLES3JNILib::onCreate()" );

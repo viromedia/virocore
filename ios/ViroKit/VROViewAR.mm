@@ -70,17 +70,22 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (self) {
         _suspended = YES;
         _worldAlignment = VROWorldAlignment::Gravity;
-        [self initRenderer];
+        
+        VRORendererConfiguration config;
+        [self initRenderer:config];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context worldAlignment:(VROWorldAlignment)worldAlignment {
+- (instancetype)initWithFrame:(CGRect)frame
+                       config:(VRORendererConfiguration)config
+                      context:(EAGLContext *)context
+               worldAlignment:(VROWorldAlignment)worldAlignment {
     self = [super initWithFrame:frame context:context];
     if (self) {
         _suspended = YES;
         _worldAlignment = worldAlignment;
-        [self initRenderer];
+        [self initRenderer:config];
     }
     return self;
 }
@@ -102,7 +107,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 }
 
-- (void)initRenderer {
+- (void)initRenderer:(VRORendererConfiguration)config {
     VROPlatformSetType(VROPlatformType::iOSARKit);
     if (!self.context) {
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
@@ -156,8 +161,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     _suspendedNotificationTime = VROTimeCurrentSeconds();
 
     _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
-                                                                 self.frame.size.height * self.contentScaleFactor);
-    _renderer = std::make_shared<VRORenderer>(_inputController);
+                                                              self.frame.size.height * self.contentScaleFactor);
+    
+    _renderer = std::make_shared<VRORenderer>(config, _inputController);
     _hasTrackingInitialized = false;
     
     /*
@@ -302,6 +308,22 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (void)setPaused:(BOOL)paused {
     [_displayLink setPaused:paused];
+}
+
+- (BOOL)setShadowsEnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setShadowsEnabled(enabled);
+}
+
+- (BOOL)setHDREnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setHDREnabled(enabled);
+}
+
+- (BOOL)setPBREnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setPBREnabled(enabled);
+}
+
+- (BOOL)setBloomEnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setBloomEnabled(enabled);
 }
 
 #pragma mark - Recording and Screenshots

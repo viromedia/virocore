@@ -21,6 +21,7 @@
 #import "VROInputControllerCardboardiOS.h"
 #import "VRODriverOpenGLiOSGVR.h"
 #import "VROSceneRendererGVR.h"
+#import "VROChoreographer.h"
 #import "GVROverlayView.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 
@@ -58,15 +59,16 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        [self initRenderer];
+        VRORendererConfiguration config;
+        [self initRenderer:config];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame config:(VRORendererConfiguration)config {
     self = [super initWithFrame:frame];
     if (self) {
-        [self initRenderer];
+        [self initRenderer:config];
     }
     return self;
 }
@@ -83,7 +85,7 @@
     }
 }
 
-- (void)initRenderer {
+- (void)initRenderer:(VRORendererConfiguration)config {
     VROPlatformSetType(VROPlatformType::iOSCardboard);
     if (!self.context) {
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
@@ -136,7 +138,7 @@
     _gvrAudio = std::make_shared<gvr::AudioApi>();
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOSGVR>(self, self.context, _gvrAudio);
-    _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
+    _renderer = std::make_shared<VRORenderer>(config, std::make_shared<VROInputControllerCardboardiOS>());
     _sceneRenderer = std::make_shared<VROSceneRendererGVR>(_gvrAudio,
                                                            self.bounds.size.width * self.contentScaleFactor,
                                                            self.bounds.size.height * self.contentScaleFactor,
@@ -180,6 +182,22 @@
         _sceneRenderer->resume();
     }
     _displayLink.paused = (self.superview == nil || _paused);
+}
+
+- (BOOL)setShadowsEnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setShadowsEnabled(enabled);
+}
+
+- (BOOL)setHDREnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setHDREnabled(enabled);
+}
+
+- (BOOL)setPBREnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setPBREnabled(enabled);
+}
+
+- (BOOL)setBloomEnabled:(BOOL)enabled {
+    return _renderer->getChoreographer()->setBloomEnabled(enabled);
 }
 
 - (void)didMoveToSuperview {

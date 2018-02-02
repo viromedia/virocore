@@ -158,7 +158,7 @@ public class ViroViewGVR extends ViroView {
     }
 
     /**
-     * Create a new ViroViewGVR.
+     * Create a new ViroViewGVR with the default {@link RendererConfiguration}.
      *
      * @param context               The activity context.
      * @param rendererStartListener Callback invoked when the renderer has finished initializing.
@@ -167,7 +167,24 @@ public class ViroViewGVR extends ViroView {
      *                              tapping on GVR's close button. Optional, may be null.
      */
     public ViroViewGVR(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener, @Nullable final Runnable vrExitListener) {
-        super(context);
+        super(context, null);
+        init(context, rendererStartListener, vrExitListener);
+    }
+
+    /**
+     * Create a new ViroViewGVR with the given {@link RendererConfiguration}, which determines
+     * the rendering techniques and rendering fidelity to use for this View.
+     *
+     * @param context               The activity context.
+     * @param rendererStartListener Callback invoked when the renderer has finished initializing.
+     *                              Optional, may be null.
+     * @param vrExitListener        Runnable to invoke when the user manually exits VR mode by
+     *                              tapping on GVR's close button. Optional, may be null.
+     * @param config                The {@link RendererConfiguration} to use.
+     */
+    public ViroViewGVR(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener,
+                       @Nullable final Runnable vrExitListener, @Nullable RendererConfiguration config) {
+        super(context, config);
         init(context, rendererStartListener, vrExitListener);
     }
 
@@ -235,7 +252,7 @@ public class ViroViewGVR extends ViroView {
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil,
-                mGVRLayout.getGvrApi().getNativeGvrContext());
+                mGVRLayout.getGvrApi().getNativeGvrContext(), mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
 

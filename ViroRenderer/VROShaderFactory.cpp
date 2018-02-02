@@ -165,7 +165,8 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     // PBR lighting model
-    if (materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased) {
+    if (materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased &&
+        lightingCapabilities.pbr) {
         if (materialCapabilities.roughnessMap) {
             samplers.push_back("roughness_map");
             modifiers.push_back(createRoughnessTextureModifier());
@@ -208,7 +209,9 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         if (materialCapabilities.lightingModel == VROLightingModel::Lambert) {
             modifiers.push_back(createLambertLightingModifier());
         }
-        else if (materialCapabilities.lightingModel == VROLightingModel::Blinn) {
+        // Blinn is used also as a fallback if PBR is disabled
+        else if (materialCapabilities.lightingModel == VROLightingModel::Blinn ||
+                 materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased) {
             modifiers.push_back(createBlinnLightingModifier());
         }
         else if (materialCapabilities.lightingModel == VROLightingModel::Phong) {
@@ -233,7 +236,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     // Bloom
-    if (materialCapabilities.bloom && driver->isBloomEnabled()) {
+    if (materialCapabilities.bloom && driver->isBloomSupported()) {
         modifiers.push_back(createBloomModifier());
     }
     
