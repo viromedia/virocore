@@ -90,9 +90,9 @@ void VROAnimationChain::pause() {
     }
 }
 
-void VROAnimationChain::terminate() {
+void VROAnimationChain::terminate(bool jumpToEnd) {
     for (std::shared_ptr<VROExecutableAnimation> animation : _animations) {
-        animation->terminate();
+        animation->terminate(jumpToEnd);
     }
 }
 

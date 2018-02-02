@@ -151,14 +151,18 @@ void VROTransaction::cancel(std::shared_ptr<VROTransaction> transaction) {
     committedTransactions.erase(transactionToCancel);
 }
 
-void VROTransaction::terminate(std::shared_ptr<VROTransaction> transaction){
+void VROTransaction::terminate(std::shared_ptr<VROTransaction> transaction, bool jumpToEnd){
     std::vector<std::shared_ptr<VROTransaction>>::iterator transactionToTerminate =  std::find(committedTransactions.begin(), committedTransactions.end(), transaction);
     if (transactionToTerminate == committedTransactions.end()){
         pinfo("WARN: Can't terminate terminated transaction!");
         return;
     }
 
-    transaction->onTermination();
+    // If jumpToEnd is true then invoke onTermination to move to the end of anim. Otherwise we terminate animation at current point.
+    if (jumpToEnd == true) {
+        transaction->onTermination();
+    }
+
     committedTransactions.erase(transactionToTerminate);
 }
 
@@ -234,6 +238,7 @@ void VROTransaction::onTermination() {
     for (std::shared_ptr<VROAnimation> animation : _animations) {
         animation->onTermination();
     }
+
     if (_finishCallback) {
         _finishCallback(true);
     }

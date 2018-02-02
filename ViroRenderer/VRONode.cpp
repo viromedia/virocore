@@ -887,7 +887,7 @@ void VRONode::removeAnimation(std::string key) {
     }
     
     for (std::shared_ptr<VROExecutableAnimation> &animation : kv->second) {
-        animation->terminate();
+        animation->terminate(false);
     }
     kv->second.clear();
 }
@@ -937,7 +937,7 @@ void VRONode::removeAllAnimations() {
     passert_thread();
     for (auto kv : _animations) {
         for (std::shared_ptr<VROExecutableAnimation> &animation : kv.second) {
-            animation->terminate();
+            animation->terminate(true);
         }
         kv.second.clear();
     }

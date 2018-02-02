@@ -86,7 +86,7 @@ public:
     void execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished);
     void pause();
     void resume();
-    void terminate();
+    void terminate(bool jumpToEnd);
     
     std::string toString() const;
     

@@ -112,9 +112,9 @@ void VROKeyframeAnimation::resume() {
     }
 }
 
-void VROKeyframeAnimation::terminate() {
+void VROKeyframeAnimation::terminate(bool jumpToEnd) {
     if (_transaction) {
-        VROTransaction::terminate(_transaction);
+        VROTransaction::terminate(_transaction, jumpToEnd);
         _transaction.reset();
     }
 }

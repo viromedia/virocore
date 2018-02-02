@@ -161,6 +161,7 @@ public class Animation {
      * State#STOPPED}, then it will first wait <tt>delay</tt> milliseconds before starting.
      */
     public void play() {
+
         if (mState == State.PAUSED) {
             mExecutableAnimation.resume();
             mState = State.RUNNING;
@@ -205,7 +206,7 @@ public class Animation {
         }
         else if (mState == State.RUNNING || mState == State.PAUSED) {
             if (mExecutableAnimation != null) {
-                mExecutableAnimation.terminate();
+                mExecutableAnimation.terminate(true);
             }
         }
         mState = State.STOPPED;

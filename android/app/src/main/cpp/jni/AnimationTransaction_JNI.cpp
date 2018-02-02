@@ -108,7 +108,7 @@ JNI_METHOD(void, nativeTerminate)(JNIEnv *env, jobject obj, jlong transaction_j)
         if (!transaction) {
             return;
         }
-        VROTransaction::terminate(transaction);
+        VROTransaction::terminate(transaction, true);
     });
 }
 

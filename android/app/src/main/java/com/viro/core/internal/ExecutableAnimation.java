@@ -49,8 +49,8 @@ public class ExecutableAnimation {
     public void resume() {
         nativeResumeAnimation(mNativeRef);
     }
-    public void terminate() {
-        nativeTerminateAnimation(mNativeRef);
+    public void terminate(boolean jumpToEnd) {
+        nativeTerminateAnimation(mNativeRef, jumpToEnd);
     }
 
     public void destroy() { nativeDestroyAnimation(mNativeRef); }
@@ -74,6 +74,6 @@ public class ExecutableAnimation {
     private native void nativeExecuteAnimation(long nativeRef, long nodeRef);
     private native void nativePauseAnimation(long nativeRef);
     private native void nativeResumeAnimation(long nativeRef);
-    private native void nativeTerminateAnimation(long nativeRef);
+    private native void nativeTerminateAnimation(long nativeRef, boolean allowInterruptable);
     private native void nativeDestroyAnimation(long nativeRef);
 }

@@ -51,8 +51,8 @@ public:
     void resume() {
         _executableAnimation->resume();
     }
-    void terminate() {
-        _executableAnimation->terminate();
+    void terminate(bool jumpToEnd) {
+        _executableAnimation->terminate(jumpToEnd);
     }
     
     std::string toString() const {

@@ -111,14 +111,14 @@ JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRe
     });
 }
 
-JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jboolean jumpToEnd) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([animation_w] {
+    VROPlatformDispatchAsyncRenderer([animation_w, jumpToEnd] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
             return;
         }
-        animation->terminate();
+        animation->terminate(jumpToEnd);
     });
 }
 

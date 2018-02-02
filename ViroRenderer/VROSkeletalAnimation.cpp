@@ -86,9 +86,9 @@ void VROSkeletalAnimation::resume() {
     }
 }
 
-void VROSkeletalAnimation::terminate() {
+void VROSkeletalAnimation::terminate(bool jumpToEnd) {
     if (_transaction) {
-        VROTransaction::terminate(_transaction);
+        VROTransaction::terminate(_transaction, jumpToEnd);
         _transaction.reset();
     }
 }

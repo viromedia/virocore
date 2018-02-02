@@ -103,9 +103,9 @@ void VROAnimationGroup::pause() {
     }
 }
 
-void VROAnimationGroup::terminate() {
+void VROAnimationGroup::terminate(bool jumpToEnd) {
     if (_transaction) {
-        VROTransaction::terminate(_transaction);
+        VROTransaction::terminate(_transaction, jumpToEnd);
         _transaction.reset();
     }
 }
