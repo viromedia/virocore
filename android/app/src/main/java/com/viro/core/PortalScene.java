@@ -355,5 +355,15 @@ public class PortalScene extends Node {
             portalScene.setBackgroundCubeWithColor(color);
             return (B) this;
         }
+
+        /**
+         * Refer to {@link PortalScene#setLightingEnvironment(Texture)}.
+         *
+         * @return This builder.
+         */
+        public PortalSceneBuilder lightingEnvironment(Texture lightingEnvironment) {
+            portalScene.setLightingEnvironment(lightingEnvironment);
+            return (B) this;
+        }
     }
 }

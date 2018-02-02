@@ -260,7 +260,7 @@ public class Texture {
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
      * @return The loaded HDR {@link Texture}.
      */
-    static Texture loadRadianceHDRTexture(Uri uri) {
+    public static Texture loadRadianceHDRTexture(Uri uri) {
         Texture texture = new Texture();
         texture.mNativeRef = nativeCreateRadianceHDRTexture(uri.toString());
         texture.mWidth = texture.nativeGetTextureWidth(texture.mNativeRef);

@@ -566,6 +566,16 @@ public class Scene {
         }
 
         /**
+         * Refer to {@link Scene#setLightingEnvironment(Texture)}.
+         *
+         * @return This builder.
+         */
+        public SceneBuilder lightingEnvironment(Texture lightingEnvironment) {
+            this.scene.setLightingEnvironment(lightingEnvironment);;
+            return (B) this;
+        }
+
+        /**
          * Refer to {@link Scene#setSoundRoom(ViroContext, Vector, AudioMaterial, AudioMaterial, AudioMaterial)}.
          *
          * @return This builder.
