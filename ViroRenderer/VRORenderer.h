@@ -84,31 +84,43 @@ public:
 #pragma mark - Viewport and FOV
 
     /*
-     Get the field of view to use for a viewport of the given size. This function
-     is generally only used in mono-rendering VR (e.g. not stereo VR). In
-     stereo VR, the FOV is typically determined by the platform. In MonoVR,
-     however, we have more control and need to support a wider array of viewport 
-     sizes. We use a default horizontal FOV for this method to determine the 
-     vertical FOV.
-     */
-    static VROFieldOfView computeMonoFOV(int viewportWidth, int viewportHeight);
-
-    /*
      Get the field of view (vertical and horizontal) to use to render a viewport
-     of the given size, given a horizontal FOV of the given degrees. This function
-     is generally only used in AR, where we are given a camera horizontal FOV and
-     need to create a rendering horizontal and vertical FOV to match said camera.
-     
-     Note the given horizontalFOVDegrees is the degrees from edge to edge of the 
-     frustum.
+     of the given size, given the FOV on the major or minor axis of the given degrees.
+     The major axis is the axis with the larger screen width (e.g. X in landscape mode,
+     Y in portrait mode). This enables users to simply specify the FOV for (e.g.) the major axis,
+     and have that FOV maintain even after the device is reoriented and the major/minor
+     axes switch.
+
+     Note the given FOV values are degrees from edge to edge of the frustum.
      */
-    static VROFieldOfView computeFOV(float horizontalFOVDegrees, int viewportWidth,
-                                     int viewportHeight);
+    static VROFieldOfView computeFOVFromMinorAxis(float minorAxisFOVDegrees, int viewportWidth,
+                                                  int viewportHeight);
+    static VROFieldOfView computeFOVFromMajorAxis(float majorAxisFOVDegrees, int viewportWidth,
+                                                  int viewportHeight);
 
     /*
      Get the far clipping plane, as computed during the last prepareFrame().
      */
     float getFarClippingPlane() const;
+
+    /*
+     Compute the user-set field of view from the active VRONodeCamera and the viewport. If no
+     field of view is set by the user, then returns the default monocular field of view.
+     */
+    VROFieldOfView computeUserFieldOfView(float viewportWidth, float viewportHeight) const;
+
+    /*
+     Get the field of view that was used to render the last frame. On AR and VR platforms this
+     is typically set by the device. On other platforms it can be set by the user through the
+     VRONodeCamera. This returns the FOV across the major (larger) axis.
+     */
+    float getActiveFieldOfView() const;
+
+    /*
+     Returns the axis across which the field of view applies. This is the major axis (the axis
+     with the larger dimension).
+     */
+    VROFieldOfViewAxis getActiveFieldOfViewAxis() const;
 
     /*
      Get the camera look-at matrix, which is computed each frame after prepareFrame
@@ -156,7 +168,7 @@ public:
      interpupillary distance for the given eye.
      */
     void renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eyeProjection,
-                    VROViewport viewport, std::shared_ptr<VRODriver> driver);
+                   VROViewport viewport, std::shared_ptr<VRODriver> driver);
 
     /*
      Render the HUD for the eye. The HUD follows the view, but is not 2D in that HUD elements

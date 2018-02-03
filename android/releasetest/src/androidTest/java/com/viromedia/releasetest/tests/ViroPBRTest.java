@@ -37,6 +37,7 @@ import java.util.List;
 public class ViroPBRTest extends ViroBaseTest {
 
     private Node mSphereContainerNode;
+    private Camera mCamera;
 
     @Override
     void configureTestScene() {
@@ -100,10 +101,12 @@ public class ViroPBRTest extends ViroBaseTest {
             rootNode.addLight(light);
         }
 
-        Camera camera = new Camera();
+        mCamera = new Camera();
+        mCamera.setFieldOfView(90);
+
         Node cameraNode = new Node();
         cameraNode.setPosition(new Vector(0, 0, 9));
-        cameraNode.setCamera(camera);
+        cameraNode.setCamera(mCamera);
         rootNode.addChildNode(cameraNode);
 
         mViroView.setPointOfView(cameraNode);
@@ -112,9 +115,9 @@ public class ViroPBRTest extends ViroBaseTest {
     @Test
     public void testPBR() {
         testNewportLoftEnvironment();
-        //testMansOutsideEnvironment();
-        //testRidgecrestRoadEnvironment();
-        //testWoodenDoorEnvironment();
+        testMansOutsideEnvironment();
+        testRidgecrestRoadEnvironment();
+        testWoodenDoorEnvironment();
         testTextured();
     }
 

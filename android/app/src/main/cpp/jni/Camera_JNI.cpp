@@ -105,4 +105,16 @@ JNI_METHOD(void, nativeSetOrbitFocalPoint)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetFieldOfView)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong camera_j, jfloat fov) {
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(camera_j);
+    VROPlatformDispatchAsyncRenderer([camera_w, fov] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        if (camera) {
+            camera->setFieldOfViewY(fov);
+        }
+    });
+}
+
 } // extern "C"

@@ -188,6 +188,8 @@ public class Renderer {
         return new Vector(nativeGetCameraForwardRealtime(mNativeRef));
     }
 
+    public float getFieldOfView() { return nativeGetFieldOfView(mNativeRef); }
+
     public void setCameraListener(CameraListener listener) {
         nativeSetCameraListener(mNativeRef, listener != null);
         mCameraListener = listener;
@@ -261,4 +263,5 @@ public class Renderer {
     private native float[] nativeGetCameraRotationRealtime(long nativeRenderer);
     private native float[] nativeGetCameraForwardRealtime(long nativeRenderer);
     private native void nativeSetCameraListener(long nativeRenderer, boolean enabled);
+    private native float nativeGetFieldOfView(long nativeRef);
 }

@@ -225,6 +225,28 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         getRenderer().setPointOfView(node);
     }
 
+    /**
+     * Get the field of view for this camera, along the major (larger) axis. Field of view is an
+     * angle that determines how wide or narrow the camera lens is when rendering the scene.
+     * <p>
+     * The major axis is the axis with the larger dimension: the X axis in landscape mode, or the Y
+     * axis in portrait mode. By specifying the field of view in terms of the major axis, Viro can
+     * keep the field of view consistent upon orientation changes, when the major/minor axes swap.
+     * <p>
+     * You can set the field of view when using a {@link ViroViewScene} by creating a {@link
+     * Camera}, setting the camera's field of view with {@link Camera#setFieldOfView(float)}, and
+     * making that Camera's Node the point of view through {@link #setPointOfView(Node)}. The
+     * default field of view for {@link ViroViewScene} is 60 degrees.
+     * <p>
+     * The field of view cannot be set for {@link ViroViewARCore} or {@link ViroViewGVR}: on those
+     * platforms, field of view is fixed by the VR headset or AR camera.
+     * <p>
+     *
+     * @return The field of view across the major axis, in degrees.
+     */
+    public float getFieldOfView() {
+        return getRenderer().getFieldOfView();
+    }
 
     /**
      * Get the real-time <i>world</i> position from the current point of view (Camera). The

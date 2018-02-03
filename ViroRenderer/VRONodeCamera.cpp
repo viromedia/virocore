@@ -7,12 +7,14 @@
 //
 
 #include "VRONodeCamera.h"
+#include "VROAnimationFloat.h"
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
 #include "VROCamera.h"
 
 VRONodeCamera::VRONodeCamera() :
-    _rotationType(VROCameraRotationType::Standard) {
+    _rotationType(VROCameraRotationType::Standard),
+    _fov(0) {
     
 }
 
@@ -41,3 +43,10 @@ void VRONodeCamera::setOrbitFocalPoint(VROVector3f focalPt) {
         ((VRONodeCamera *)animatable)->_orbitFocalPt = o;
     }, _orbitFocalPt, focalPt));
 }
+
+void VRONodeCamera::setFieldOfViewY(float fovY) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float f) {
+        ((VRONodeCamera *)animatable)->_fov = f;
+    }, _fov, fovY));
+}
+

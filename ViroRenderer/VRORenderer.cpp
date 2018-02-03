@@ -34,11 +34,11 @@
 // but for now all of our platforms target 60.
 static const double kFPSTarget = 60;
 
-// The FOV we use for the smaller dimension of the viewport, when in
+// The FOV we use for the larger dimension of the viewport, when in
 // mono-rendering mode. This is similar to Hor+ scaling, in that one
 // dimension is fixed, and other is dependent on the viewport. Note
 // this value is degrees from edge to edge of the frustum.
-static const double kFovMonoHorizontal = 90;
+static const double kFovMonoMajor = 60;
 
 #pragma mark - Initialization
 
@@ -111,21 +111,32 @@ double VRORenderer::getFPS() const {
 
 #pragma mark - Viewport and FOV
 
-VROFieldOfView VRORenderer::computeMonoFOV(int viewportWidth, int viewportHeight) {
-    return VRORenderer::computeFOV(kFovMonoHorizontal, viewportWidth, viewportHeight);
-}
-
-VROFieldOfView VRORenderer::computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight) {
+VROFieldOfView VRORenderer::computeFOVFromMinorAxis(float minorAxisFOV, int viewportWidth, int viewportHeight) {
     if (viewportWidth < viewportHeight) {
-        float fovX = horizontalFOVDegrees;
+        float fovX = minorAxisFOV;
         float fovY = toDegrees(2 * atan(tan(toRadians(fovX / 2.0)) * viewportHeight / viewportWidth));
         
         return { fovX / 2.0f, fovX / 2.0f, fovY / 2.0f, fovY / 2.0f };
     }
     else {
-        float fovY = horizontalFOVDegrees;
+        float fovY = minorAxisFOV;
         float fovX = toDegrees(2 * atan(tan(toRadians(fovY / 2.0)) * viewportWidth / viewportHeight));
         
+        return { fovX / 2.0f, fovX / 2.0f, fovY / 2.0f, fovY / 2.0f };
+    }
+}
+
+VROFieldOfView VRORenderer::computeFOVFromMajorAxis(float majorAxisFOV, int viewportWidth, int viewportHeight) {
+    if (viewportWidth > viewportHeight) {
+        float fovX = majorAxisFOV;
+        float fovY = toDegrees(2 * atan(tan(toRadians(fovX / 2.0)) * viewportHeight / viewportWidth));
+
+        return { fovX / 2.0f, fovX / 2.0f, fovY / 2.0f, fovY / 2.0f };
+    }
+    else {
+        float fovY = majorAxisFOV;
+        float fovX = toDegrees(2 * atan(tan(toRadians(fovY / 2.0)) * viewportWidth / viewportHeight));
+
         return { fovX / 2.0f, fovX / 2.0f, fovY / 2.0f, fovY / 2.0f };
     }
 }
@@ -136,6 +147,38 @@ float VRORenderer::getFarClippingPlane() const {
     }
     else {
         return kZFar;
+    }
+}
+
+VROFieldOfView VRORenderer::computeUserFieldOfView(float viewportWidth, float viewportHeight) const {
+    if (!_pointOfView || !_pointOfView->getCamera()) {
+        return computeFOVFromMajorAxis(kFovMonoMajor, viewportWidth, viewportHeight);
+    }
+
+    float fovY = _pointOfView->getCamera()->getFieldOfView();
+    if (fovY == 0) {
+        return computeFOVFromMajorAxis(kFovMonoMajor, viewportWidth, viewportHeight);
+    }
+    return computeFOVFromMajorAxis(fovY, viewportWidth, viewportHeight);
+}
+
+float VRORenderer::getActiveFieldOfView() const {
+    const VROCamera &camera = getCamera();
+    if (camera.getViewport().getWidth() > camera.getViewport().getHeight()) {
+        return camera.getFieldOfView().getLeft() + camera.getFieldOfView().getRight();
+    }
+    else {
+        return camera.getFieldOfView().getBottom() + camera.getFieldOfView().getTop();
+    }
+}
+
+VROFieldOfViewAxis VRORenderer::getActiveFieldOfViewAxis() const {
+    const VROCamera &camera = getCamera();
+    if (camera.getViewport().getWidth() > camera.getViewport().getHeight()) {
+        return VROFieldOfViewAxis::X;
+    }
+    else {
+        return VROFieldOfViewAxis::Y;
     }
 }
 

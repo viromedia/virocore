@@ -67,6 +67,7 @@ public class Camera {
     private Quaternion mRotation = new Quaternion();
     private Vector mOrbitFocalPoint = new Vector();
     private RotationType mRotationType = RotationType.STANDARD;
+    private float mFieldOfView = 0;
 
     /**
      * Construct a new Camera.
@@ -189,6 +190,40 @@ public class Camera {
         return mOrbitFocalPoint;
     }
 
+    /**
+     * Set the field of view for this camera, along the major (larger) axis. Field of view is an
+     * angle that determines how wide or narrow the camera lens is when rendering the scene.
+     * <p>
+     * This value sets the field of view, in degrees, for the major axis. The major axis is the axis
+     * with the larger dimension: the X axis in landscape mode, or the Y axis in portrait mode. By
+     * specifying the field of view in terms of the major axis, Viro can keep the field of view
+     * consistent upon orientation changes, when the major/minor axes swap. The minor axis field of
+     * view is automatically computed from the major axis field of view and the viewport.
+     * <p>
+     * If this is set to 0, then Viro will use the default field of view: 60 degrees.
+     * <p>
+     * This value is
+     * ignored on VR and AR platforms, where the FOV is fixed by the VR headset or the AR camera.
+     * <p>
+     *
+     * @param fov The field of view for the major axis, in degrees.
+     */
+    public void setFieldOfView(float fov) {
+        mFieldOfView = fov;
+        nativeSetFieldOfView(mNativeRef, fov);
+    }
+
+    /**
+     * Return the field of view used by this Camera along its major (larger) axis, in degrees.
+     * Field of view is an angle that determines how wide or narrow the camera lens is when rendering
+     * the scene.
+     *
+     * @return The field of view across the major axis, in degrees.
+     */
+    public float getFieldOfView() {
+        return mFieldOfView;
+    }
+
     private native long nativeCreateCamera();
     private native void nativeDestroyCamera(long nativeRef);
     private native void nativeSetPosition(long nativeRef, float x, float y, float z);
@@ -196,4 +231,5 @@ public class Camera {
     private native void nativeSetRotationQuaternion(long nativeRef, float x, float y, float z, float w);
     private native void nativeSetRotationType(long nativeRef, String rotationType);
     private native void nativeSetOrbitFocalPoint(long nativeRef, float x, float y, float z);
+    private native void nativeSetFieldOfView(long nativeRef, float fov);
 }

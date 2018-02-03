@@ -640,6 +640,11 @@ JNI_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(JNIEnv *env,
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
 }
 
+JNI_METHOD(jfloat, nativeGetFieldOfView)(JNIEnv *env, jobject obj, jlong native_ref) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_ref);
+    return renderer->getRenderer()->getActiveFieldOfView();
+}
+
 JNI_METHOD(void, nativeSetCameraListener)(JNIEnv *env,
                                             jobject obj,
                                             jlong native_renderer,

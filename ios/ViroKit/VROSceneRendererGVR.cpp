@@ -219,7 +219,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
 
-    VROFieldOfView fov = VRORenderer::computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+    VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     VROMatrix4f eyeFromHeadMatrix; // Identity
 

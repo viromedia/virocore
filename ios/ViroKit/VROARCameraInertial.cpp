@@ -53,7 +53,7 @@ VROVector3f VROARCameraInertial::getPosition() const {
 }
 
 VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
-    *outFOV = VRORenderer::computeFOV(_cameraTexture->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+    *outFOV = VRORenderer::computeFOVFromMinorAxis(_cameraTexture->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
     
     VROVector3f cameraImageSize = getImageSize();
     float fx = fabs((float)cameraImageSize.x / (2 * tan(toRadians(outFOV->getLeft() + outFOV->getRight()) / 2.0)));
