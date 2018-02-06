@@ -563,6 +563,18 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
+     * Converts the given 2D point on the view into its corresponding 3D ray intersecting the
+     * 3D environment. This can be used for advanced hit-testing against real-world or virtual
+     * objects.
+     *
+     * @param point Get the 3D ray corresponding to this Point in the 2D view's coordinate system.
+     * @return The 3D ray in world coordinates.
+     */
+    public Vector getHitRay(Point point) {
+        return mNativeRenderer.getHitRay(point.x, point.y);
+    }
+
+    /**
      * Performs a hit-test from the camera's position in the direction of the given ray. The
      * hit-test returns all <i>real-world</i> features that are intersected by the ray.
      *

@@ -17,6 +17,7 @@
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
+#include "VROProjector.h"
 #include "VROSceneRendererGVR.h"
 #include "VROSceneRendererOVR.h"
 #include "VROSceneRendererARCore.h"
@@ -438,6 +439,26 @@ JNI_METHOD(jint, nativeGetCameraTextureId)(JNIEnv *env,
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
     return arRenderer->getCameraTextureId();
+}
+
+JNI_METHOD(jfloatArray , nativeGetHitRay)(JNIEnv *env, jobject object, jlong renderer_j, jfloat x, jfloat y) {
+    std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
+    const VROCamera &camera = renderer->getCamera();
+
+    int viewportWidth = camera.getViewport().getWidth();
+    int viewportHeight = camera.getViewport().getHeight();
+    int viewportArr[4] = {0, 0, (int) viewportWidth, (int) viewportHeight};
+    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
+
+    // unproject the touchPos vector at z = 0 and z = 1
+    VROVector3f resultNear;
+    VROVector3f resultFar;
+
+    VROProjector::unproject(VROVector3f(x, y, 0), mvp.getArray(), viewportArr, &resultNear);
+    VROProjector::unproject(VROVector3f(x, y, 1), mvp.getArray(), viewportArr, &resultFar);
+
+    VROVector3f ray = (resultFar - resultNear).normalize();
+    return ARUtilsCreateFloatArrayFromVector3f(ray);
 }
 
 void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {

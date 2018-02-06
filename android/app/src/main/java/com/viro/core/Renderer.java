@@ -85,6 +85,16 @@ public class Renderer {
         nativePerformARHitTestWithPoint(mNativeRef, x, y, callback);
     }
 
+    public Vector getHitRay(float x, float y) {
+        float[] ray = nativeGetHitRay(mNativeRef, x, y);
+        if (ray != null) {
+            return new Vector(ray);
+        }
+        else {
+            return null;
+        }
+    }
+
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() {
@@ -263,5 +273,6 @@ public class Renderer {
     private native float[] nativeGetCameraRotationRealtime(long nativeRenderer);
     private native float[] nativeGetCameraForwardRealtime(long nativeRenderer);
     private native void nativeSetCameraListener(long nativeRenderer, boolean enabled);
+    private native float[] nativeGetHitRay(long nativeRenderer, float x, float y);
     private native float nativeGetFieldOfView(long nativeRef);
 }
