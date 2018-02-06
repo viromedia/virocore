@@ -251,7 +251,15 @@ public class ViroViewARCore extends ViroView {
         final Activity activity = (Activity) getContext();
 
         // Initialize ARCore
-        mSession = new Session(activity);
+        try {
+
+            mSession = new Session(activity);
+        } catch (UnsatisfiedLinkError error){
+            Toast.makeText(activity, "Installed version of Android does not support AR" +
+                    " (Currently supported on Android N, API 24 or later.", Toast.LENGTH_LONG).show();
+            activity.finish();
+            return;
+        }
 
         // ARCore may crash unless we set some initial non-zero display geometry
         // (this will be resized by the the surface on the GL thread)
@@ -682,5 +690,31 @@ public class ViroViewARCore extends ViroView {
         }
 
         mCurrentScene.getRootNode().setARHitTestListener(hitTestListener);
+    }
+
+    /**
+     * Checks if AR is supported on the target device and if the ARCore apk/sdk is present on the
+     * device. If this method returns false, attempts to create {@link ViroViewARCore} will throw
+     * an exception
+     * @param context The {@link Context} of your app
+     */
+    public static boolean isSupported(Context context) {
+        Session session;
+        Config config;
+        try {
+            // Create a session with the given context
+            session = new Session(context);
+            // Create a default config
+            config = new Config(session);
+        } catch (UnsatisfiedLinkError error) {
+            /**
+             * TODO Need to catch this error due to
+             * https://github.com/google-ar/arcore-android-sdk/issues/111
+             * Remove this once Google fixes the above issue. As of 02/05/2018, the issue is being
+             * marked as "fixed in an upcoming release.
+             */
+            return false;
+        }
+        return session.isSupported(config);
     }
 }
