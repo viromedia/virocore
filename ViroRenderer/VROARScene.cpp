@@ -49,6 +49,14 @@ std::shared_ptr<VROARSessionDelegate> VROARScene::getSessionDelegate() {
     }
 }
 
+void VROARScene::setAnchorDetectionTypes(std::set<VROAnchorDetection> detectionTypes) {
+    _detectionTypes = detectionTypes;
+    std::shared_ptr<VROARSession> arSession = _arSession.lock();
+    if (arSession) {
+        arSession->setAnchorDetection(_detectionTypes);
+    }
+}
+
 void VROARScene::addNode(std::shared_ptr<VRONode> node) {
     getRootNode()->addChildNode(node);
 }
@@ -65,6 +73,8 @@ void VROARScene::setARSession(std::shared_ptr<VROARSession> arSession) {
     if (_declarativeSession) {
         _declarativeSession->setARSession(arSession);
     }
+
+    arSession->setAnchorDetection(_detectionTypes);
 }
 
 void VROARScene::setDriver(std::shared_ptr<VRODriver> driver) {

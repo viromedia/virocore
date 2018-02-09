@@ -43,7 +43,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     }
     else { // DOF6
         ARWorldTrackingConfiguration *config = [[ARWorldTrackingConfiguration alloc] init];
-        config.planeDetection = NO;
+        config.planeDetection = ARPlaneDetectionNone;
         config.lightEstimationEnabled = YES;
         switch(getWorldAlignment()) {
             case VROWorldAlignment::Camera:
@@ -102,14 +102,21 @@ void VROARSessioniOS::resetSession(bool resetTracking, bool removeAnchors) {
 }
 
 void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
-    if (types.find(VROAnchorDetection::PlanesHorizontal) != types.end()) {
+    if (types.find(VROAnchorDetection::None) != types.end() || types.size() == 0){
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-            ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = YES;
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = ARPlaneDetectionNone;
         }
-    }
-    else {
+    } else {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-            ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = NO;
+            NSUInteger detectionTypes = ARPlaneDetectionNone; //default
+
+            if (types.find(VROAnchorDetection::PlanesHorizontal) != types.end()) {
+                detectionTypes = detectionTypes | ARPlaneDetectionHorizontal;
+            } else if (@available(iOS 11.3, *) && types.find(VROAnchorDetection::PlanesVertical) != types.end()) {
+                detectionTypes = detectionTypes | ARPlaneDetectionVertical;
+            }
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = detectionTypes;
+
         }
     }
 
@@ -285,9 +292,14 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
         ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
         
         std::shared_ptr<VROARPlaneAnchor> pAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(vAnchor);
-        pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
         pAnchor->setCenter(VROConvert::toVector3f(planeAnchor.center));
         pAnchor->setExtent(VROConvert::toVector3f(planeAnchor.extent));
+
+        if (planeAnchor.alignment == ARPlaneAnchorAlignmentHorizontal) {
+            pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
+        } else if (@available(iOS 11.3, *) && planeAnchor.alignment == ARPlaneAnchorAlignmentVertical) {
+            pAnchor->setAlignment(VROARPlaneAlignment::Vertical);
+        }
     }
     vAnchor->setTransform(VROConvert::toMatrix4f(anchor.transform));
 }

@@ -28,9 +28,12 @@ void VROARPlaneTest::build(std::shared_ptr<VRORenderer> renderer,
     _sceneController = sceneController;
 
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+    std::set<VROAnchorDetection> types;
+    types.insert(VROAnchorDetection::PlanesHorizontal);
+    arScene->setAnchorDetectionTypes(types);
     arScene->initDeclarativeSession();
     std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
-    std::shared_ptr<VROARDeclarativePlane> arPlane = std::make_shared<VROARDeclarativePlane>(0, 0);
+    std::shared_ptr<VROARDeclarativePlane> arPlane = std::make_shared<VROARDeclarativePlane>(0, 0, VROARPlaneAlignment::Horizontal);
     arPlane->setARNodeDelegate(shared_from_this());
 
     std::string url = VROTestUtil::getURLForResource("coffee_mug", "obj");
@@ -56,15 +59,18 @@ void VROARPlaneTest::build(std::shared_ptr<VRORenderer> renderer,
     arScene->addNode(sceneNode);
 
 #if VRO_PLATFORM_IOS
-    // After a few seconds, remove the node and then a few seconds later, reattach it!
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        // note, that removing a node doesn't cause onARAnchorRemoved to be called because the user removed
-        // the node, but the underlying anchor (real world feature) still exists!
-        arScene->getDeclarativeSession()->removeARNode(arPlane);
+    bool testRemoval = false;
+        if (testRemoval) {
+        // After a few seconds, remove the node and then a few seconds later, reattach it!
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            arScene->getDeclarativeSession()->addARNode(arPlane);
+            // note, that removing a node doesn't cause onARAnchorRemoved to be called because the user removed
+            // the node, but the underlying anchor (real world feature) still exists!
+            arScene->getDeclarativeSession()->removeARNode(arPlane);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                arScene->getDeclarativeSession()->addARNode(arPlane);
+            });
         });
-    });
+    }
 #endif
 }
 

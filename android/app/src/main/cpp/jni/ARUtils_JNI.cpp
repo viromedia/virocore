@@ -85,10 +85,10 @@ jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     if (alignment == VROARPlaneAlignment::Horizontal) {
         strArr = "Horizontal";
     }
-    else if (alignment == VROARPlaneAlignment::HorizontalUpwards) {
+    else if (alignment == VROARPlaneAlignment::HorizontalUpward) {
         strArr = "HorizontalUpward";
     }
-    else if (alignment == VROARPlaneAlignment::HorizontalDownwards) {
+    else if (alignment == VROARPlaneAlignment::HorizontalDownward) {
         strArr = "HorizontalDownward";
     }
     else {

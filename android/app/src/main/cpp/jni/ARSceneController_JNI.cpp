@@ -141,6 +141,32 @@ JNI_METHOD(void, nativeSetPointCloudMaxPoints) (JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetAnchorDetectionTypes) (JNIEnv *env, jlong sceneRef, jobjectArray typeStrArray) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(sceneRef)->getScene());
+    std::set<VROAnchorDetection> types;
+
+    int stringCount = env->GetArrayLength(typeStrArray);
+    for (int i=0; i<stringCount; i++) {
+        std::string typeString = VROPlatformGetString((jstring) env->GetObjectArrayElement(typeStrArray, i), env);
+        if (VROStringUtil::strcmpinsensitive(typeString, "None")) {
+            types.insert(VROAnchorDetection::None);
+        } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {
+            types.insert(VROAnchorDetection::PlanesHorizontal);
+        } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesVertical")) {
+            types.insert(VROAnchorDetection::PlanesVertical);
+        }
+    }
+
+    VROPlatformDispatchAsyncRenderer([arScene_w, types] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        if (arScene) {
+            arScene->setAnchorDetectionTypes(types);
+        }
+    });
+
+}
+
 JNI_METHOD(void, nativeAddARNode) (JNIEnv *env,
                                    jobject object,
                                    jlong scene_j,

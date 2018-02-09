@@ -67,12 +67,12 @@ public class ViroViewARCore extends ViroView {
          * Anchor detection will be entirely disabled. This setting results in optimal performance
          * and should be used in applications where anchors are not required.
          */
-        NONE("none"),
+        NONE("None"),
 
         /**
          * Horizontal planes will be detected by the AR tracking system.
          */
-        PLANES_HORIZONTAL("planes_horizontal");
+        PLANES_HORIZONTAL("PlanesHorizontal");
 
         private String mStringValue;
         private AnchorDetectionType(String value) {

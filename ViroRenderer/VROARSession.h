@@ -39,7 +39,8 @@ enum class VROTrackingType {
  */
 enum class VROAnchorDetection {
     None,
-    PlanesHorizontal
+    PlanesHorizontal,
+    PlanesVertical
 };
 
 /*

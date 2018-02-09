@@ -6,6 +6,8 @@ package com.viro.core;
 
 import com.viro.core.internal.ARDeclarativeNode;
 
+import java.util.EnumSet;
+
 /**
  * ARScene blends virtual 3D content with the device camera's view of the real world. Similar to a
  * normal {@link Scene}, an ARScene contains a hierarchy of {@link Node} objects representing the
@@ -209,6 +211,19 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
+    public void setAnchorDetectionTypes(EnumSet<ViroViewARCore.AnchorDetectionType> enumTypes) {
+        String[] types = new String[enumTypes.size()];
+        int i = 0;
+        for (ViroViewARCore.AnchorDetectionType type : enumTypes) {
+            types[i] = type.getStringValue();
+            i++;
+        }
+        nativeSetAnchorDetectionTypes(mNativeRef, types);
+    }
+
+    /**
+     * @hide
+     */
     public void addARDeclarativeNode(ARDeclarativeNode node) {
         nativeAddARNode(mNativeRef, node.mNativeRef);
     }
@@ -230,6 +245,7 @@ public class ARScene extends Scene {
     private native long nativeCreateARSceneControllerDeclarative();
     private native long nativeCreateARSceneDelegate(long sceneControllerRef);
     private native void nativeDestroyARSceneDelegate(long delegateRef);
+    private native void nativeSetAnchorDetectionTypes(long sceneControllerRef, String[] types);
     private native void nativeAddARNode(long sceneControllerRef, long arPlaneRef);
     private native void nativeUpdateARNode(long sceneControllerRef, long arPlaneRef);
     private native void nativeRemoveARNode(long sceneControllerRef, long arPlaneRef);

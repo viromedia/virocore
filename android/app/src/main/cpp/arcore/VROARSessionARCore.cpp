@@ -92,6 +92,11 @@ void VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
                 break;
         }
     }
+
+    if (types.size() == 0) {
+        _planeFindingMode = arcore::config::PlaneFindingMode::Disabled;
+    }
+
     updateARCoreConfig();
 }
 
@@ -309,10 +314,10 @@ void VROARSessionARCore::updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> pl
 
     switch (arcore::plane::getType(planeJni)) {
         case arcore::PlaneType::HorizontalUpward :
-            plane->setAlignment(VROARPlaneAlignment::HorizontalUpwards);
+            plane->setAlignment(VROARPlaneAlignment::HorizontalUpward);
             break;
         case arcore::PlaneType::HorizontalDownward :
-            plane->setAlignment(VROARPlaneAlignment::HorizontalDownwards);
+            plane->setAlignment(VROARPlaneAlignment::HorizontalDownward);
             break;
         default:
             plane->setAlignment(VROARPlaneAlignment::NonHorizontal);

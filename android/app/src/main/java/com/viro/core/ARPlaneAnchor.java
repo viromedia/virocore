@@ -19,6 +19,10 @@ public class ARPlaneAnchor extends ARAnchor {
      */
     public enum Alignment {
         /**
+         * The {@link ARPlaneAnchor} is horizontal.
+         */
+        HORIZONTAL("Horizontal"),
+        /**
          * The {@link ARPlaneAnchor} is horizontal, facing upward (e.g. a tabletop).
          */
         HORIZONTAL_UPWARD("HorizontalUpward"),
