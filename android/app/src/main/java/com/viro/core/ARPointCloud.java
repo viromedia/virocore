@@ -9,7 +9,6 @@ package com.viro.core;
  * ARPointCloud contains a collection of points that the AR subsystem has detected in the
  * user's real world.
  *
- * @hide
  */
 public class ARPointCloud {
     private float[] mPoints;
@@ -39,6 +38,26 @@ public class ARPointCloud {
      */
     public int size() {
         return mPoints.length / 4;
+    }
+
+    /**
+     * Helper method that when given an index i, returns a 4 element float array representing a cloud point.
+     *
+     * @param i Index of the point to return. Can't be greater than total points returned by {@link #size()}.
+     * @return 4 element float array consisting of x,y,z cloud point position and confidence level.
+     */
+    public float[] getPoint(int i) {
+
+        if(i > size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        float []point = new float[4];
+        point[0] = mPoints[i*4+0];
+        point[1] = mPoints[i*4+1];
+        point[2] = mPoints[i*4+2];
+        point[3] = mPoints[i*4+3];
+        return point;
     }
 }
 

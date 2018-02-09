@@ -3,14 +3,17 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
+import android.util.Log;
 
 import com.viro.core.ARAnchor;
 import com.viro.core.ARNode;
+import com.viro.core.ARPointCloud;
 import com.viro.core.ARScene;
 import com.viro.core.AmbientLight;
 import com.viro.core.Box;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.PointCloudUpdateListener;
 import com.viro.core.Surface;
 import com.viro.core.Text;
 import com.viro.core.Texture;
@@ -97,11 +100,13 @@ public class ViroARSceneTest extends ViroBaseTest {
     public void testARScene() {
             testARInitialized();
             testARAmbientLightValues();
+            testPointCloudUpdateCallback();
             testDisplayPointCloudOn();
             testPointCloudScale();
             testPointCloudSurface();
             setPointCloudMaxPoints();
             testDisplayPointCloudOff();
+
     }
 
     private void testARInitialized() {
@@ -128,6 +133,40 @@ public class ViroARSceneTest extends ViroBaseTest {
     private void testDisplayPointCloudOn() {
         mARScene.displayPointCloud(true);
         assertPass("Display point cloud ");
+    }
+
+    private void testPointCloudUpdateCallback() {
+
+        final Text pointCloudText = new Text(mViroView.getViroContext(),
+                "Waiting for cloud updates.", "Roboto", 12, Color.WHITE, 4f, 4f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
+
+        final Node textNode = new Node();
+        textNode.setPosition(new Vector(0, 1f, -4f));
+        textNode.setGeometry(pointCloudText);
+        mScene.getRootNode().addChildNode(textNode);
+        mARScene.setPointCloudUpdateListener(new PointCloudUpdateListener() {
+            @Override
+            public void onUpdate(ARPointCloud pointCloud) {
+                Log.i("ViroARSceneTest", "Point cloud values: " + pointCloud.size());
+                float []pointCloudArray = pointCloud.getPoints();
+                String pointCloudStr = "Point clouds: ";
+                for(int i =0; i< pointCloud.size(); i++) {
+                    float x= pointCloudArray[i*4+0];
+                    float y = pointCloudArray[i*4 + 1];
+                    float z = pointCloudArray[i*4 + 2];
+                    pointCloudStr += "(" + x + "," + y + "," + z  + "), ";
+                    Log.i("ViroARSceneTest", "point i" + i + "(x,y,z)->" + "(" + x + "," + y + "," + z  + ")");
+                }
+
+                pointCloudText.setText(pointCloudStr);
+            }
+        });
+
+        assertPass("Point cloud callback should update with new values", () -> {
+            mARScene.setPointCloudUpdateListener(null);
+            textNode.removeFromParentNode();
+        });
     }
 
     private void testPointCloudSurface() {

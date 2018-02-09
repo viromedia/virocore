@@ -208,6 +208,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private GesturePinchListener mGesturePinchListener;
     private GestureRotateListener mGestureRotateListener;
     private ARHitTestListener mHitTestListener;
+    private PointCloudUpdateListener mPointCloudUpdateListener;
 
     /**
      * Construct a new Node centered at the origin, with no geometry.
@@ -1225,6 +1226,22 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Set the {@link PointCloudUpdateListener} to use for receiving point cloud updates. The provided listener will
+     * receive an updated {@link ARPointCloud} as the point cloud updates.
+     *
+     * @param listener The {@link PointCloudUpdateListener} to use to receive point cloud updates.
+     * @hide
+     */
+    protected void setPointCloudUpdateListener(PointCloudUpdateListener listener) {
+        mPointCloudUpdateListener = listener;
+        if(listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_AR_POINT_CLOUD_UPDATE, true);
+        } else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_AR_POINT_CLOUD_UPDATE, false);
+        }
+    }
+
+    /**
      * Set the {@link ARHitTestListener} to respond to AR hit test events that are fired from the
      * the camera into the scene as the user looks around within his AR environment.
      *
@@ -1283,8 +1300,11 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     @Override
     public void onARPointCloudUpdate(ARPointCloud pointCloud) {
-
+        if(mPointCloudUpdateListener != null) {
+            mPointCloudUpdateListener.onUpdate(pointCloud);
+        }
     }
+
     /**
      * @hide
      */
@@ -1297,6 +1317,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
             }
         }
     }
+
     /**
      * @hide
      */
@@ -1343,6 +1364,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
             mTouchpadSwipeListener.onSwipe(source, node, swipeState);
         }
     }
+
     /**
      * @hide
      */
