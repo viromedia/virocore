@@ -17,6 +17,7 @@
 namespace Texture {
 
     VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat);
+    jobject createJTexture(std::shared_ptr<VROTexture> texture);
 
     inline jlong jptr(std::shared_ptr<VROTexture> ptr) {
         PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(ptr);

@@ -278,6 +278,15 @@ public class Texture {
     }
 
     /**
+     * Construct a new Texture with a passed in mNativeRef.
+     *
+     * @hide
+     */
+    Texture(long ref){
+        mNativeRef = ref;
+    }
+
+    /**
      * @hide
      */
     public Texture(Image px, Image nx, Image py,

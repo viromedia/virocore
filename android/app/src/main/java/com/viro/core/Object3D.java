@@ -14,7 +14,7 @@
 package com.viro.core;
 
 import android.net.Uri;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,6 +36,7 @@ public class Object3D extends Node {
 
     private AsyncObject3DListener mAsyncListener = null;
     private AtomicLong mActiveRequestID;
+    private List<Material> mMaterialList;
 
     /**
      * Supported model formats for loading into an {@link Object3D}.
@@ -134,7 +135,7 @@ public class Object3D extends Node {
      * @param isFBX True if the model loaded is FBX, false if OBJ.
      * @hide
      */
-    void nodeDidFinishCreation(boolean isFBX, long geometryRef) {
+    void nodeDidFinishCreation(Material[] materials, boolean isFBX, long geometryRef) {
         if (mDestroyed) {
             return;
         }
@@ -147,9 +148,20 @@ public class Object3D extends Node {
             setGeometry(new Geometry(geometryRef));
         }
 
+        mMaterialList = Arrays.asList(materials);
+
         if (mAsyncListener != null) {
             mAsyncListener.onObject3DLoaded(this, isFBX ? Type.FBX : Type.OBJ);
         }
+    }
+
+    /**
+     * Get a list of unique {@link Material} objects used by this 3D Model.
+     *
+     * @return A list containing each {@link Material} used by this 3D Model.
+     */
+    public List<Material> getMaterials() {
+        return mMaterialList;
     }
 
     /**

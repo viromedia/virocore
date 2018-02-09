@@ -12,7 +12,7 @@
 #include <PersistentRef.h>
 
 class VRONode;
-
+class VROMaterial;
 class OBJLoaderDelegate {
 public:
     OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env);
@@ -20,10 +20,14 @@ public:
 
     void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId);
     void objFailed(std::string error);
-
 private:
     jobject _javaObject;
 
+    /*
+     Creates a map of unique jMaterials for a given VRONode, recursively.
+     */
+    static void generateJMaterials(std::map<std::string, jobject> &mats,
+                                   std::shared_ptr<VRONode> node);
 };
 
 

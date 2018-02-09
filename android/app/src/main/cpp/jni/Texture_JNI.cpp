@@ -16,6 +16,7 @@
 #include "VROCompress.h"
 #include "VROLog.h"
 #include "VROModelIOUtil.h"
+#include "VROPlatformUtil.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -83,6 +84,66 @@ namespace Texture {
         else {
             return VROStereoMode::None;
         }
+    }
+
+    void setWrapMode(JNIEnv *env, jclass cls, jobject jTex, const char *jMatFieldName,
+                     VROWrapMode mode) {
+        std::string enumClassPathName = "com/viro/core/Texture$WrapMode";
+        std::string enumValueStr;
+        switch(mode) {
+            case VROWrapMode::Clamp: enumValueStr = "CLAMP"; break;
+            case VROWrapMode::Repeat: enumValueStr = "REPEAT"; break;
+            case VROWrapMode::Mirror: enumValueStr = "MIRROR"; break;
+            default:
+                enumValueStr = "CLAMP";
+        }
+
+        VROPlatformSetEnumValue(env, cls, jTex, jMatFieldName, enumClassPathName, enumValueStr);
+    }
+
+    void setFilterMode(JNIEnv *env, jclass cls, jobject jTex, const char *jMatFieldName,
+                       VROFilterMode mode) {
+        std::string enumClassPathName = "com/viro/core/Texture$FilterMode";
+        std::string enumValueStr;
+        switch(mode) {
+            case VROFilterMode::Nearest: enumValueStr = "NEAREST"; break;
+            case VROFilterMode::Linear: enumValueStr = "LINEAR"; break;
+            default:
+                enumValueStr = "LINEAR";
+        }
+
+        VROPlatformSetEnumValue(env, cls, jTex, jMatFieldName, enumClassPathName, enumValueStr);
+    }
+
+    jobject createJTexture(std::shared_ptr<VROTexture> texture) {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        if (env == nullptr) {
+            perror("Required JNIEnv to create a jTexture is null!");
+            return NULL;
+        }
+
+        // Create a persistent native reference that would represent the jTexture object.
+        PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(texture);
+        jlong matRef = reinterpret_cast<intptr_t>(persistentRef);
+        jclass cls = env->FindClass("com/viro/core/Texture");
+        if (cls == nullptr) {
+            perror("Required Texture.java to create a jTexture is not defined!");
+            return NULL;
+        }
+
+        // Create our Texture.java object with the native reference.
+        jmethodID jmethod = env->GetMethodID(cls, "<init>", "(J)V");
+        jobject jTexture = env->NewObject(cls, jmethod, matRef);
+
+        // Set visual properties of this Texture.java object and return it
+        VROPlatformSetInt(env, cls, jTexture, "mWidth", texture->getWidth());
+        VROPlatformSetInt(env, cls, jTexture, "mHeight", texture->getWidth());
+        setWrapMode(env, cls, jTexture, "mWrapS", texture->getWrapS());
+        setWrapMode(env, cls, jTexture, "mWrapT", texture->getWrapT());
+        setFilterMode(env, cls, jTexture, "mMinificationFilter", texture->getMinificationFilter());
+        setFilterMode(env, cls, jTexture, "mMagnificationFilter", texture->getMagnificationFilter());
+        setFilterMode(env, cls, jTexture, "mMipFilter", texture->getMipFilter());
+        return jTexture;
     }
 }
 

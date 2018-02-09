@@ -752,6 +752,64 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     return result;
 }
 
+void VROPlatformSetBool(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jboolean value) {
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "Z");
+    if (fieldId == NULL) {
+        pwarn("Attempted to set undefined field: %s", fieldName);
+        return;
+    }
+
+    env->SetBooleanField(jObj, fieldId, value);
+}
+
+void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jint value) {
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "I");
+    if (fieldId == NULL) {
+        pwarn("Attempted to set undefined field: %s", fieldName);
+        return;
+    }
+
+    env->SetIntField(jObj, fieldId, value);
+}
+
+void VROPlatformSetFloat(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jfloat value) {
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "F");
+    if (fieldId == NULL){
+        pwarn("Attempted to set undefined field: %s", fieldName);
+        return;
+    }
+
+    env->SetFloatField(jObj, fieldId, value);
+}
+
+void VROPlatformSetString(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, std::string value) {
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "Ljava/lang/String;");
+    if (fieldId == NULL){
+        pwarn("Attempted to set undefined field: %s", fieldName);
+        return;
+    }
+
+    jstring jValue = env->NewStringUTF(value.c_str());
+    env->SetObjectField(jObj, fieldId, jValue);
+}
+
+void VROPlatformSetEnumValue(JNIEnv *env, jclass jObjClass, jobject jObj, const char *fieldName,
+                             std::string enumClassPathName, std::string enumValueStr){
+
+    // Assume an enumClassPathName example of the form: com/viro/Material
+    // Assume an enumClasspathType example of the form: Lcom/viro/Material;
+    std::string enumClassPathType = ("L" + enumClassPathName) + ";";
+
+    // Grab the jEnumValue for the given C++ Enum string and Enum class.
+    jclass enumClass = env->FindClass(enumClassPathName.c_str());
+    jfieldID enumValueField = env->GetStaticFieldID(enumClass , enumValueStr.c_str(), enumClassPathType.c_str());
+    jobject jEnumValue = env->GetStaticObjectField(enumClass, enumValueField);
+
+    // Get the corresponding enum field in jObjClass.java to be set on and set it.
+    jfieldID jEnumField = env->GetFieldID(jObjClass, fieldName, enumClassPathType.c_str());
+    env->SetObjectField(jObj, jEnumField, jEnumValue);
+}
+
 std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){
     if (env == NULL){
         env = VROPlatformGetJNIEnv();

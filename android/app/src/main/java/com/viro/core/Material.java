@@ -385,6 +385,7 @@ public class Material {
     private TransparencyMode mTransparencyMode = TransparencyMode.A_ONE;
     private BlendMode mBlendMode = BlendMode.ALPHA;
     private float mBloomThreshold = -1.0f;
+    private String mName ="";
 
     /**
      * Construct a new Material. The material defaults to a flat white color with a constant
@@ -392,6 +393,15 @@ public class Material {
      */
     public Material() {
         mNativeRef = nativeCreateMaterial();
+    }
+
+    /**
+     * Construct a new Material with a passed in ref.
+     *
+     * @hide
+     */
+    Material(long ref){
+        mNativeRef = ref;
     }
 
     /**
@@ -979,6 +989,23 @@ public class Material {
         return mShadowMode;
     }
 
+    /**
+     * Sets a non-unique name to represent this Material object.
+     */
+    public void setName(String name){
+        mName = name;
+        nativeSetName(mNativeRef, mName);
+    }
+
+    /**
+     * Gets a non-unique name that represents this Material.
+     *
+     * @return name The string value representing the name used by this Material.
+     */
+    public String getName(){
+        return mName;
+    }
+
     private native long nativeCreateMaterial();
     private native long nativeCreateImmutableMaterial(String lightingModel, long diffuseColor, long diffuseTexture, float diffuseIntensity, long specularTexture,
                                                       float shininess, float fresnelExponent, long normalMap, String cullMode,
@@ -999,6 +1026,7 @@ public class Material {
     private native void nativeDestroyMaterial(long nativeRef);
     private native void nativeSetBloomThreshold(long nativeRef, float bloomThreshold);
     private native void nativeSetShadowMode(long nativeRef, String shadowMode);
+    private native void nativeSetName(long nativeRef, String name);
 
     /**
      * Builder for creating {@link Material} objects.
@@ -1217,6 +1245,16 @@ public class Material {
          */
         public MaterialBuilder shadowMode(ShadowMode shadowMode) {
             material.setShadowMode(shadowMode);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setName(String)}}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder setName(String name) {
+            material.setName(name);
             return this;
         }
 

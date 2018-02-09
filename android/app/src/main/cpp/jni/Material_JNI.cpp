@@ -356,4 +356,18 @@ JNI_METHOD(void, nativeSetShadowMode(JNIEnv *env, jobject obj,
     });
 }
 
+JNI_METHOD(void, nativeSetName(JNIEnv *env, jobject obj, jlong jMaterial, jstring jName)) {
+    std::string strName = VROPlatformGetString(jName, env);
+    std::weak_ptr<VROMaterial> material_w = Material::native(jMaterial);
+
+    VROPlatformDispatchAsyncRenderer([material_w, strName] {
+        std::shared_ptr<VROMaterial> material = material_w.lock();
+        if (!material) {
+            return;
+        }
+
+        material->setName(strName);
+    });
+}
+
 }  // extern "C"

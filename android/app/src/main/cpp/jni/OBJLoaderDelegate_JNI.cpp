@@ -12,6 +12,9 @@
 #include "OBJLoaderDelegate_JNI.h"
 #include "Node_JNI.h"
 #include "Geometry_JNI.h"
+#include "VROGeometry.h"
+#include "VROMaterial.h"
+#include "Material_JNI.h"
 
 OBJLoaderDelegate::OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env) {
     _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(nodeJavaObject));
@@ -36,7 +39,6 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
 
     VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             env->DeleteWeakGlobalRef(weakObj);
@@ -50,10 +52,63 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
             geometryRef = Geometry::jptr(node->getGeometry());
         }
 
-        VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "(ZJ)V", isFBX, geometryRef);
+        // Generate a map of unique jMaterials representing this 3D model.
+        std::map<std::string, jobject> mats;
+        generateJMaterials(mats, node);
+
+        // Generate a jObjectArray containing a unique list of jMaterials
+        jobjectArray materialArray = env->NewObjectArray(mats.size(),
+                                                         env->FindClass("com/viro/core/Material"),
+                                                         NULL);
+        if (mats.size() > 0) {
+            int i = 0;
+            for(std::map<std::string, jobject>::iterator it = mats.begin(); it != mats.end(); ++it) {
+                env->SetObjectArrayElement(materialArray, i, it->second);
+                i++;
+            }
+        }
+
+        // Call the nodeDidFinishCreation callback.
+        jlong jGeometryRef = geometryRef;
+        VROPlatformCallJavaFunction(localObj,
+                                    "nodeDidFinishCreation",
+                                    "([Lcom/viro/core/Material;ZJ)V",
+                                    materialArray, isFBX, jGeometryRef);
+
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(weakObj);
     });
+}
+
+void OBJLoaderDelegate::generateJMaterials(std::map<std::string, jobject> &matOut,
+                                           std::shared_ptr<VRONode> node) {
+
+    std::shared_ptr<VROGeometry> geom = node->getGeometry();
+    if (geom != nullptr){
+        for (std::shared_ptr<VROMaterial> mat : geom->getMaterials()) {
+
+            // Skip, if we have already tracked this material.
+            std::string materialId = VROStringUtil::toString(mat->getMaterialId());
+            if (matOut.find(materialId) != matOut.end()){
+                continue;
+            }
+
+            // Grab the material name devs to reference by. If no name is provided,
+            // generate one from with a combination of geometryName + material ID.
+            if (mat->getName().empty()) {
+                std::string id = VROStringUtil::toString(mat->getMaterialId());
+                std::string geomName = geom->getName();
+                std::string matName = geomName + id;
+                mat->setName(matName);
+            }
+
+            matOut[materialId] = Material::createJMaterial(mat);
+        }
+    }
+
+    for (std::shared_ptr<VRONode> childNode : node->getChildNodes()) {
+        generateJMaterials(matOut, childNode);
+    }
 }
 
 void OBJLoaderDelegate::objFailed(std::string error) {
