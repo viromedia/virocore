@@ -275,7 +275,6 @@ void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
     if (@available(iOS 11.3, *)) {
         if (_session) {
             VROVector3f pos = relativeTransform.extractTranslation();
-            pinfo("kirby VROARSessioniOS setWorldOrigin %f %f %f", pos.x, pos.y, pos.z);
             [_session setWorldOrigin:VROConvert::toMatrixFloat4x4(relativeTransform)];
         }
     }
