@@ -383,7 +383,7 @@ void VROInputControllerAR::processGazeEvent(int source) {
     std::shared_ptr<VROHitTestResult> result = _hitResult;
 
     _hitResult = std::make_shared<VROHitTestResult>(
-            hitTest(_latestCamera, _latestCamera.getPosition(), _latestCamera.getForward(), false));
+            hitTest(_latestCamera, _latestCamera.getPosition(), _latestCamera.getForward(), true));
 
     VROInputControllerBase::processGazeEvent(ViroCardBoard::InputSource::Controller);
 
