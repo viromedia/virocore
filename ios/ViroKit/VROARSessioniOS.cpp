@@ -274,7 +274,6 @@ void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
 void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
     if (@available(iOS 11.3, *)) {
         if (_session) {
-            VROVector3f pos = relativeTransform.extractTranslation();
             [_session setWorldOrigin:VROConvert::toMatrixFloat4x4(relativeTransform)];
         }
     }
