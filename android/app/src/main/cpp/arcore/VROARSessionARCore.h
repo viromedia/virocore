@@ -49,6 +49,7 @@ public:
     
     void setViewport(VROViewport viewport);
     void setOrientation(VROCameraOrientation orientation);
+    void setWorldOrigin(VROMatrix4f relativeTransform);
 
     GLuint getCameraTextureId() const;
     

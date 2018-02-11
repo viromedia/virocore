@@ -49,6 +49,8 @@ public:
     void setViewport(VROViewport viewport);
     void setOrientation(VROCameraOrientation orientation);
     
+    void setWorldOrigin(VROMatrix4f relativeTransform);
+    
     /*
      Internal methods.
      */
@@ -124,7 +126,7 @@ private:
      Update the VROARAnchor with the transforms in the given ARAnchor.
      */
     void updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor);
-    
+
 };
 
 /*

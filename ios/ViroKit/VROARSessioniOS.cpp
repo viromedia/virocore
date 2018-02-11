@@ -271,6 +271,16 @@ void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
     _orientation = orientation;
 }
 
+void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
+    if (@available(iOS 11.3, *)) {
+        if (_session) {
+            VROVector3f pos = relativeTransform.extractTranslation();
+            pinfo("kirby VROARSessioniOS setWorldOrigin %f %f %f", pos.x, pos.y, pos.z);
+            [_session setWorldOrigin:VROConvert::toMatrixFloat4x4(relativeTransform)];
+        }
+    }
+}
+
 #pragma mark - Internal Methods
 
 std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *anchor) {

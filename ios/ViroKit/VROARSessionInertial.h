@@ -41,6 +41,9 @@ public:
 
     void addAnchorNode(std::shared_ptr<VRONode> node);
 
+    void setWorldOrigin(VROMatrix4f relativeTransform) {
+        // no-op
+    };
     
 private:
     

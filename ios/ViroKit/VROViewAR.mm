@@ -466,31 +466,27 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController {
-    _sceneController = std::dynamic_pointer_cast<VROARSceneController>(sceneController);
-    passert_msg (_sceneController != nullptr, "AR View requires an AR Scene Controller!");
-    
-    _renderer->setSceneController(sceneController, _driver);
-    if (_hasTrackingInitialized) {
-        std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
-        passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-
-        arScene->trackingHasInitialized();
-    }
-
-    // Reset the camera background for the new scene
-    _cameraBackground.reset();
+    [self setSceneController:sceneController duration:0 timingFunction:VROTimingFunctionType::EaseIn];
 }
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
                   duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     _sceneController = std::dynamic_pointer_cast<VROARSceneController>(sceneController);
+    passert_msg (_sceneController != nullptr, "AR View requires an AR Scene Controller!");
+
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
+
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+    passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+    
+    _arSession->setScene(arScene);
+    _arSession->setDelegate(arScene->getSessionDelegate());
+    arScene->setARSession(_arSession);
+    arScene->addNode(_pointOfView);
+    arScene->setDriver(_driver);
     
     if (_hasTrackingInitialized) {
-        std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
-        passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-
         arScene->trackingHasInitialized();
     }
 
@@ -640,19 +636,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
     
-    _arSession->setScene(scene);
     _arSession->setViewport(viewport);
     _arSession->setAnchorDetection({ VROAnchorDetection::PlanesHorizontal });
     _arSession->run();
-    
-    // TODO: change the scene to VROARScene in this this class?
-    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
-    passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-    
-    _arSession->setDelegate(arScene->getSessionDelegate());
-    arScene->setARSession(_arSession);
-    arScene->addNode(_pointOfView);
-    arScene->setDriver(_driver);
 }
 
 - (void)recenterTracking {

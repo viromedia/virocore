@@ -12,6 +12,7 @@
 #include <memory>
 #include <set>
 #include "VROLog.h"
+#include "VROMatrix4f.h"
 
 class VROARAnchor;
 class VROARFrame;
@@ -188,6 +189,11 @@ public:
      necessary adjustments.
      */
     virtual void setOrientation(VROCameraOrientation orientation) = 0;
+
+    /*
+     Sets AR world origin to the given transform.
+     */
+    virtual void setWorldOrigin(VROMatrix4f relativeTransform) = 0;
     
 private:
     

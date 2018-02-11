@@ -199,6 +199,10 @@ void VROARSessionARCore::setOrientation(VROCameraOrientation orientation) {
     _orientation = orientation;
 }
 
+void VROARSessionARCore::setWorldOrigin(VROMatrix4f relativeTransform) {
+    // no-op on Android
+}
+
 #pragma mark - Internal Methods
 
 std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(jni::Object<arcore::Anchor> anchor) {
