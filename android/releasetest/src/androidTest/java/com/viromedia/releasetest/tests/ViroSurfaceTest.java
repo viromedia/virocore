@@ -9,17 +9,22 @@
 
 package com.viromedia.releasetest.tests;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Surface;
+import com.viro.core.Texture;
 import com.viro.core.Vector;
 
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by vadvani on 10/30/17.
@@ -27,6 +32,7 @@ import java.util.Arrays;
 
 public class ViroSurfaceTest extends ViroBaseTest {
     private Surface mSurface;
+    private Node mNode;
 
     @Override
     void configureTestScene() {
@@ -40,18 +46,19 @@ public class ViroSurfaceTest extends ViroBaseTest {
         material.setLightingModel(Material.LightingModel.BLINN);
 
         mSurface = new Surface(1, 1);
-        final Node node = new Node();
-        node.setGeometry(mSurface);
+        mNode = new Node();
+        mNode.setGeometry(mSurface);
         final float[] position = {0, 0, -10};
-        node.setPosition(new Vector(position));
+        mNode.setPosition(new Vector(position));
         mSurface.setMaterials(Arrays.asList(material));
-        mScene.getRootNode().addChildNode(node);
+        mScene.getRootNode().addChildNode(mNode);
     }
 
     @Test
     public void surfaceTest() {
         surfaceWidth();
         surfaceHeight();
+        surfaceUVs();
     }
 
     public void surfaceWidth() {
@@ -70,5 +77,26 @@ public class ViroSurfaceTest extends ViroBaseTest {
             }
         };
         assertPass("Surface height increased in size.");
+    }
+
+    public void surfaceUVs() {
+        Bitmap specBitmap = this.getBitmapFromAssets(mActivity, "earth_normal.jpg");
+        Texture specTexture = new Texture(specBitmap, Texture.Format.RGBA8, true, true);
+        specTexture.setWrapS(Texture.WrapMode.REPEAT);
+        specTexture.setWrapT(Texture.WrapMode.REPEAT);
+        final Material material = new Material();
+        material.setDiffuseTexture(specTexture);
+        material.setLightingModel(Material.LightingModel.BLINN);
+        final List<Float> tilesList = Arrays.asList(2f, 4f, 8f);
+
+        final Iterator<Float> itr = Iterables.cycle(tilesList).iterator();
+
+        mMutableTestMethod = () -> {
+            Float numTilesUV = itr.next();
+            mSurface = new Surface(5, 5, 0, 0, numTilesUV , numTilesUV);
+            mSurface.setMaterials(Arrays.asList(material));
+            mNode.setGeometry(mSurface);
+        };
+        assertPass("Surface tiles material 2, 4 and 8 times with UV coordinates.");
     }
 }
