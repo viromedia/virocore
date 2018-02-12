@@ -284,14 +284,14 @@ public class DirectionalLight extends Light {
     /**
      * Builder for building {@link DirectionalLightBuilder} objects.
      */
-    public static DirectionalLightBuilder<? extends Light, ? extends DirectionalLightBuilder> builder() {
+    public static DirectionalLightBuilder<? extends Light, ? extends LightBuilder> builder() {
         return new DirectionalLightBuilder<>();
     }
 
     /**
      * Builder for creating {@link DirectionalLightBuilder} objects.
      */
-    public static class DirectionalLightBuilder<R extends Light, B extends DirectionalLightBuilder<R, B>> {
+    public static class DirectionalLightBuilder<R extends Light, B extends LightBuilder<R, B>> {
         private DirectionalLight light;
 
         /**
@@ -308,7 +308,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder direction(Vector direction) {
             light.setDirection(direction);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -318,7 +318,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder castsShadow(boolean castsShadow) {
             light.setCastsShadow(castsShadow);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -328,7 +328,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowOrthographicSize(float orthographicSize) {
             light.setShadowOrthographicSize(orthographicSize);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -338,7 +338,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowOrthographicPosition(Vector position) {
             light.setShadowOrthographicPosition(position);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -348,7 +348,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowMapSize(int shadowMapSize) {
             light.setShadowMapSize(shadowMapSize);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -358,7 +358,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowBias(float shadowBias) {
             light.setShadowBias(shadowBias);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -368,7 +368,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowNearZ(float shadowNearZ) {
             light.setShadowNearZ(shadowNearZ);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -378,7 +378,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowFarZ(float shadowFarZ) {
             light.setShadowFarZ(shadowFarZ);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -388,7 +388,7 @@ public class DirectionalLight extends Light {
          */
         public DirectionalLightBuilder shadowOpacity(float opacity) {
             light.setShadowOpacity(opacity);
-            return (B) this;
+            return this;
         }
     }
 }

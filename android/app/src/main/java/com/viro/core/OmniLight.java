@@ -130,14 +130,14 @@ public class OmniLight extends Light {
     /**
      * Builder for creating {@link OmniLight} objects.
      */
-    public static OmniLightBuilder<? extends Light, ? extends OmniLightBuilder> builder() {
+    public static OmniLightBuilder<? extends Light, ? extends LightBuilder> builder() {
         return new OmniLightBuilder<>();
     }
 
     /**
      * Builder for creating {@link OmniLight} objects.
      */
-    public static class OmniLightBuilder<R extends Light, B extends OmniLightBuilder<R, B>> {
+    public static class OmniLightBuilder<R extends Light, B extends LightBuilder<R, B>> {
         private OmniLight light;
 
         /**
@@ -152,7 +152,7 @@ public class OmniLight extends Light {
          */
         public OmniLightBuilder position(Vector position) {
             light.setPosition(position);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -162,7 +162,7 @@ public class OmniLight extends Light {
          */
         public OmniLightBuilder attenuationStartDistance(float attenuationStartDistance) {
             light.setAttenuationStartDistance(attenuationStartDistance);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -172,7 +172,7 @@ public class OmniLight extends Light {
          */
         public OmniLightBuilder attenuationEndDistance(float attenuationEndDistance) {
             light.setAttenuationEndDistance(attenuationEndDistance);
-            return (B) this;
+            return this;
         }
 
     }

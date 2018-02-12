@@ -42,14 +42,14 @@ public class AmbientLight extends Light {
     /**
      * Builder for creating {@link AmbientLight} objects.
      */
-    public static AmbientLightBuilder<? extends Light, ? extends AmbientLightBuilder> builder() {
+    public static AmbientLightBuilder<? extends Light, ? extends LightBuilder> builder() {
         return new AmbientLightBuilder<>();
     }
 
     /**
      * Builder for creating {@link AmbientLight} objects.
      */
-    public static class AmbientLightBuilder<R extends Light, B extends AmbientLightBuilder<R, B>> {
+    public static class AmbientLightBuilder<R extends Light, B extends LightBuilder<R, B>> {
         private AmbientLight light;
 
         /**

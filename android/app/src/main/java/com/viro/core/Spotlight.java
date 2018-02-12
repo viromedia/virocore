@@ -380,14 +380,14 @@ public class Spotlight extends Light {
     /**
      * Builder for building {@link Spotlight} objects.
      */
-    public static SpotlightBuilder<? extends Light, ? extends SpotlightBuilder> builder() {
+    public static SpotlightBuilder<? extends Light, ? extends LightBuilder> builder() {
         return new SpotlightBuilder<>();
     }
 
     /**
      * Builder for creating {@link Spotlight} objects.
      */
-    public static class SpotlightBuilder<R extends Light, B extends SpotlightBuilder<R, B>> {
+    public static class SpotlightBuilder<R extends Light, B extends LightBuilder<R, B>> {
         private Spotlight light;
 
         /**
@@ -404,7 +404,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder position(Vector position) {
             light.setPosition(position);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -414,7 +414,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder attenuationStartDistance(float attenuationStartDistance) {
             light.setAttenuationStartDistance(attenuationStartDistance);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -424,7 +424,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder attenuationEndDistance(float attenuationEndDistance) {
             light.setAttenuationEndDistance(attenuationEndDistance);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -434,7 +434,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder innerAngle(float innerAngle) {
             light.setInnerAngle(innerAngle);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -444,7 +444,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder outerAngle(float outerAngle) {
             light.setOuterAngle(outerAngle);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -454,7 +454,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder direction(Vector direction) {
             light.setDirection(direction);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -464,7 +464,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder castsShadow(boolean castsShadow) {
             light.setCastsShadow(castsShadow);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -474,7 +474,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder shadowMapSize(int shadowMapSize) {
             light.setShadowMapSize(shadowMapSize);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -484,7 +484,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder shadowBias(float shadowBias) {
             light.setShadowBias(shadowBias);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -494,7 +494,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder shadowNearZ(float shadowNearZ) {
             light.setShadowNearZ(shadowNearZ);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -504,7 +504,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder shadowFarZ(float shadowFarZ) {
             light.setShadowFarZ(shadowFarZ);
-            return (B) this;
+            return this;
         }
 
         /**
@@ -514,7 +514,7 @@ public class Spotlight extends Light {
          */
         public SpotlightBuilder shadowOpacity(float opacity) {
             light.setShadowOpacity(opacity);
-            return (B) this;
+            return this;
         }
     }
 }
