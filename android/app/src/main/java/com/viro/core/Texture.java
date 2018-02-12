@@ -6,6 +6,7 @@ package com.viro.core;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import com.viro.core.internal.Image;
 
@@ -258,11 +259,16 @@ public class Texture {
      *
      * @param uri         The URI of the texture. To load the texture from an Android asset, use URI's
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-     * @return The loaded HDR {@link Texture}.
+     * @return The loaded HDR {@link Texture}, null if the .hdr texture fails to load.
      */
     public static Texture loadRadianceHDRTexture(Uri uri) {
         Texture texture = new Texture();
-        texture.mNativeRef = nativeCreateRadianceHDRTexture(uri.toString());
+        long ref = nativeCreateRadianceHDRTexture(uri.toString());
+        if (ref == -1L){
+            return null;
+        }
+
+        texture.mNativeRef = ref;
         texture.mWidth = texture.nativeGetTextureWidth(texture.mNativeRef);
         texture.mHeight = texture.nativeGetTextureHeight(texture.mNativeRef);
         return texture;

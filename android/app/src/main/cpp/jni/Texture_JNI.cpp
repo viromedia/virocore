@@ -151,7 +151,6 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateRadianceHDRTexture)(JNIEnv *env, jclass cls,
                                                   jstring uri_j) {
-
     std::string uri = VROPlatformGetString(uri_j, env);
     bool isTemp;
     std::string path = VROModelIOUtil::processResource(uri, VROResourceType::URL, &isTemp);
@@ -160,7 +159,13 @@ JNI_METHOD(jlong, nativeCreateRadianceHDRTexture)(JNIEnv *env, jclass cls,
         VROPlatformDeleteFile(path);
     }
 
-    return Texture::jptr(texture);
+    jlong textureRef = -1;
+    if (texture == nullptr){
+        return textureRef;
+    }
+
+    textureRef = Texture::jptr(texture);
+    return textureRef;
 }
 
 JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,

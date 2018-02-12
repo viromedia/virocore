@@ -44,6 +44,7 @@ public class PortalScene extends Node {
     private boolean mPassable = false;
     private Portal mPortal;
     private Texture mLightingEnvironment;
+    private static final long INVALID_REF = -1;
 
     /**
      * Construct a new PortalScene. To be displayed, a {@link Portal} entrance has to be set for
@@ -220,7 +221,8 @@ public class PortalScene extends Node {
      */
     public void setLightingEnvironment(Texture lightingEnvironment) {
         mLightingEnvironment = lightingEnvironment;
-        nativeSetLightingEnvironment(mNativeRef, lightingEnvironment.mNativeRef);
+        long ref = lightingEnvironment == null ? INVALID_REF : lightingEnvironment.mNativeRef;
+        nativeSetLightingEnvironment(mNativeRef, ref);
     }
 
     /**
