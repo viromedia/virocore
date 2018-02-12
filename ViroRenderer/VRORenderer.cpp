@@ -15,6 +15,7 @@
 #include "VROLog.h"
 #include "VRONodeCamera.h"
 #include "VROTransaction.h"
+#include "VROProjector.h"
 #include "VROReticle.h"
 #include "VRORenderDelegateInternal.h"
 #include "VROFrameSynchronizerInternal.h"
@@ -180,6 +181,55 @@ VROFieldOfViewAxis VRORenderer::getActiveFieldOfViewAxis() const {
     else {
         return VROFieldOfViewAxis::Y;
     }
+}
+
+VROVector3f VRORenderer::projectPoint(VROVector3f point) {
+    const VROCamera &camera = getCamera();
+    int viewport[4] = {0, 0, camera.getViewport().getWidth(), camera.getViewport().getHeight()};
+    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
+    
+    VROVector3f result;
+    VROProjector::project(point, mvp.getArray(), viewport, &result);
+    
+    // Linearize the depth
+    float ncp = camera.getNCP();
+    float fcp = camera.getFCP();
+    result.z = result.z * 2.0 - 1.0; // Back to NDC
+    result.z =  (2.0 * ncp * fcp) / (fcp + ncp - result.z * (fcp - ncp)); // Linearize
+    result.z = (result.z - ncp) / fcp; // Find interpolated value
+    
+    return result;
+}
+
+VROVector3f VRORenderer::unprojectPoint(VROVector3f point) {
+    const VROCamera &camera = getCamera();
+    
+    int viewport[4] = {0, 0, camera.getViewport().getWidth(), camera.getViewport().getHeight()};
+    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
+    
+    /*
+     Compute the camera ray by unprojecting the point at the near clipping plane
+     and the far clipping plane.
+     */
+    VROVector3f ncpScreen(point.x, point.y, 0.0);
+    VROVector3f ncpWorld;
+    if (!VROProjector::unproject(ncpScreen, mvp.getArray(), viewport, &ncpWorld)) {
+        return {};
+    }
+    
+    VROVector3f fcpScreen(point.x, point.y, 1.0);
+    VROVector3f fcpWorld;
+    if (!VROProjector::unproject(fcpScreen, mvp.getArray(), viewport, &fcpWorld)) {
+        return {};
+    }
+    
+    VROVector3f ray = fcpWorld.subtract(ncpWorld).normalize();
+    
+    /*
+     Given the camera ray, find the unprojected point in world coordinates
+     by casting the ray out from the NCP by the given depth (point.z).
+     */
+    return ncpWorld + ray.scale(VROMathInterpolate(point.z, 0, 1, camera.getNCP(), camera.getFCP()));
 }
 
 #pragma mark - Camera and Visibility

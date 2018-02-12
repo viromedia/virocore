@@ -85,16 +85,6 @@ public class Renderer {
         nativePerformARHitTestWithPoint(mNativeRef, x, y, callback);
     }
 
-    public Vector getHitRay(float x, float y) {
-        float[] ray = nativeGetHitRay(mNativeRef, x, y);
-        if (ray != null) {
-            return new Vector(ray);
-        }
-        else {
-            return null;
-        }
-    }
-
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() {
@@ -161,6 +151,26 @@ public class Renderer {
         }
         else {
             nativeSetPointOfView(mNativeRef, 0);
+        }
+    }
+
+    public Vector projectPoint(float x, float y, float z) {
+        float[] pt = nativeProjectPoint(mNativeRef, x, y, z);
+        if (pt != null) {
+            return new Vector(pt);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Vector unprojectPoint(float x, float y, float z) {
+        float[] pt = nativeUnprojectPoint(mNativeRef, x, y, z);
+        if (pt != null) {
+            return new Vector(pt);
+        }
+        else {
+            return null;
         }
     }
 
@@ -273,6 +283,7 @@ public class Renderer {
     private native float[] nativeGetCameraRotationRealtime(long nativeRenderer);
     private native float[] nativeGetCameraForwardRealtime(long nativeRenderer);
     private native void nativeSetCameraListener(long nativeRenderer, boolean enabled);
-    private native float[] nativeGetHitRay(long nativeRenderer, float x, float y);
+    private native float[] nativeProjectPoint(long nativeRenderer, float x, float y, float z);
+    private native float[] nativeUnprojectPoint(long nativeRenderer, float x, float y, float z);
     private native float nativeGetFieldOfView(long nativeRef);
 }

@@ -458,6 +458,40 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
+     * Converts the given 3D point in the world into its corresponding 2D point on the screen.
+     * Note that each 2D point on the view corresponds to a continuous segment of 3D points in the world, each at
+     * a different depth between the near and far clipping planes. The Z coordinate in the returned
+     * {@link Vector} identifies the depth of the projected point, where 0.0 coincides with the
+     * near clipping plane, 1.0 coincides with the far clipping plane, and all other values are
+     * linear interpolations between the two.
+     *
+     * @param point Get the 2D point corresponding to this 3D world coordinate.
+     * @return The 2D point in the view's coordinate system. The Z coordinate represents the depth
+     * from 0.0 to 1.0.
+     */
+    public Vector projectPoint(Vector point) {
+        return mNativeRenderer.projectPoint(point.x, point.y, point.z);
+    }
+
+    /**
+     * Converts the given 2D point on the view into its corresponding 3D point in world coordinates.
+     * Note that each 2D point on the view corresponds to a continuous segment of 3D points in the
+     * world, each at a different depth between the near and far clipping planes. The Z coordinate
+     * in the given {@link Vector} identifies the depth to return, where 0.0 coincides with the near
+     * clipping plane, 1.0 coincides with the far clipping plane, and all other values are linear
+     * interpolations between the two.
+     * <p>
+     * This method can be used for advanced hit-testing against real-world or virtual objects.
+     *
+     * @param point Get the 3D ray corresponding to this point in the 2D view's coordinate system.
+     *              The Z coordinate represents the depth from 0.0 to 1.0.
+     * @return The 3D point in world coordinates.
+     */
+    public Vector unprojectPoint(Vector point) {
+        return mNativeRenderer.unprojectPoint(point.x, point.y, point.z);
+    }
+
+    /**
      * @hide
      */
     public abstract String getPlatform();

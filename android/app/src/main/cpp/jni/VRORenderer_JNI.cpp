@@ -441,24 +441,16 @@ JNI_METHOD(jint, nativeGetCameraTextureId)(JNIEnv *env,
     return arRenderer->getCameraTextureId();
 }
 
-JNI_METHOD(jfloatArray , nativeGetHitRay)(JNIEnv *env, jobject object, jlong renderer_j, jfloat x, jfloat y) {
+JNI_METHOD(jfloatArray, nativeProjectPoint)(JNIEnv *env, jobject object, jlong renderer_j,
+                                            jfloat x, jfloat y, jfloat z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
-    const VROCamera &camera = renderer->getCamera();
+    return ARUtilsCreateFloatArrayFromVector3f(renderer->projectPoint({ x, y, z }));
+}
 
-    int viewportWidth = camera.getViewport().getWidth();
-    int viewportHeight = camera.getViewport().getHeight();
-    int viewportArr[4] = {0, 0, (int) viewportWidth, (int) viewportHeight};
-    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
-
-    // unproject the touchPos vector at z = 0 and z = 1
-    VROVector3f resultNear;
-    VROVector3f resultFar;
-
-    VROProjector::unproject(VROVector3f(x, y, 0), mvp.getArray(), viewportArr, &resultNear);
-    VROProjector::unproject(VROVector3f(x, y, 1), mvp.getArray(), viewportArr, &resultFar);
-
-    VROVector3f ray = (resultFar - resultNear).normalize();
-    return ARUtilsCreateFloatArrayFromVector3f(ray);
+JNI_METHOD(jfloatArray, nativeUnprojectPoint)(JNIEnv *env, jobject object, jlong renderer_j,
+                                              jfloat x, jfloat y, jfloat z) {
+    std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
+    return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
 }
 
 void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {

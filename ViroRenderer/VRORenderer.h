@@ -128,6 +128,26 @@ public:
      the specified pointOfView.
      */
     VROMatrix4f getLookAtMatrix() const;
+    
+    /*
+     Convert the given 3D point in the world into its corresponding 2D point on the screen.
+     Note that each 2D point on the view corresponds to a continuous segment of points in
+     the world, each at a different depth between the near and far clipping planes. The Z
+     coordinate in the returned point identifies the depth of the projected point, where 0.0
+     coincides with the near clipping plane, 1.0 coincides with the far clipping plane, and
+     all other values are linearly interpolated between the two.
+     */
+    VROVector3f projectPoint(VROVector3f point);
+    
+    /*
+     Convert the given 3D point in the world into its corresponding 2D point on the screen.
+     Note that each 2D point on the view corresponds to a continuous segment of 3D points in
+     the world, each at a different depth between the near and far clipping planes. The Z
+     coordinate in the returned point identifies the depth of the projected point, where 0.0
+     coincides with the near clipping plane, 1.0 coincides with the far clipping plane, and
+     all other values are linear interpolations between the two.
+     */
+    VROVector3f unprojectPoint(VROVector3f point);
 
 #pragma mark - Scene Controllers
 

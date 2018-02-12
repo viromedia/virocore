@@ -58,6 +58,11 @@ void VROCamera::setFOV(VROFieldOfView fov) {
 
 void VROCamera::setProjection(VROMatrix4f projection) {
     _projection = projection;
+    
+    float c = projection[10];
+    float d = projection[14];
+    _ncp = d / (c - 1.0);
+    _fcp = d / (c + 1.0);
 }
 
 float VROCamera::getWorldPerScreen(float distance) const {
