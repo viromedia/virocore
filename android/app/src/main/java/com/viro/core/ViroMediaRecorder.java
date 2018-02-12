@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.opengl.GLES20;
@@ -101,25 +102,42 @@ public class ViroMediaRecorder {
     }
 
     /**
-     * Listener for responding to recording success and failure.
+     * Listener for responding to screenshot capture success and errors.
      */
-    public interface FinishListener {
-
+    public interface ScreenshotFinishListener {
         /**
-         * Callback that is triggered as a result of a recording or screen capturing operation
-         * completing successfully.
+         * Callback that is triggered when screenshot capture is successful.
          *
+         * @param bitmap The bitmap containing the captured screenshot.
          * @param filePath The absolute file path of the recorded / saved file.
          */
-        void onTaskSucceeded(String filePath);
+        void onSuccess(Bitmap bitmap, String filePath);
 
         /**
-         * Callback that is triggered as a result of a recording or screen capturing
-         * operation failing in the ViroMediaRecorder.
+         * Callback that is triggered when screenshot capture encounters an error.
          *
          * @param errorCode Error code.
          */
-        void onTaskFailed(Error errorCode);
+        void onError(Error errorCode);
+    }
+
+    /**
+     * Listener for responding to video recording success and errors.
+     */
+    public interface VideoRecordingFinishListener {
+        /**
+         * Callback that is triggered when video recording is successful.
+         *
+         * @param filePath The absolute file path of the recorded / saved file.
+         */
+        void onSuccess(String filePath);
+
+        /**
+         * Callback that is triggered when video recording encounters an error.
+         *
+         * @param errorCode Error code.
+         */
+        void onError(Error errorCode);
     }
 
     /*
@@ -244,9 +262,9 @@ public class ViroMediaRecorder {
 
     /**
      * Schedules a screen recording to start on the next rendered frame. The recording will continue
-     * until {@link #stopRecordingAsync(FinishListener)} is invoked. When finished, the recording
-     * will be saved to the given file. The file will be stored in the device's photos if
-     * <tt>saveToCameraRoll</tt> is true; otherwise it is stored in {@link Context#getFilesDir()}.
+     * until {@link #stopRecordingAsync(VideoRecordingFinishListener)} is invoked. When finished,
+     * the recording will be saved to the given file. The file will be stored in the device's photos
+     * if <tt>saveToCameraRoll</tt> is true; otherwise it is stored in {@link Context#getFilesDir()}.
      *
      * @param fileName         The name of the file that will store the finished recording.
      * @param saveToCameraRoll True to save the recording to the camera roll. False to save the file
@@ -309,16 +327,21 @@ public class ViroMediaRecorder {
         };
     }
 
-    private FinishListener getEmptyFinishListener() {
-        return new FinishListener() {
+    private VideoRecordingFinishListener getEmptyVideoRecordingFinishListener() {
+        return new VideoRecordingFinishListener() {
             @Override
-            public void onTaskFailed(Error errorCode) {
-
-            }
+            public void onSuccess(String filePath) { /* no-op */ }
             @Override
-            public void onTaskSucceeded(String filePath) {
+            public void onError(Error errorCode) { /* no-op */ }
+        };
+    }
 
-            }
+    private ScreenshotFinishListener getEmptyScreenshotFinishListener() {
+        return new ScreenshotFinishListener() {
+            @Override
+            public void onSuccess(Bitmap bitmap, String filePath) { /* no-op */ }
+            @Override
+            public void onError(Error errorCode) { /* no-op */ }
         };
     }
 
@@ -470,12 +493,12 @@ public class ViroMediaRecorder {
         nativeEnableFrameRecording(mNativeRecorderRef, false);
     }
 
-    private synchronized void stopVideoRecordingAsync(final FinishListener completionCallback) {
+    private synchronized void stopVideoRecordingAsync(final VideoRecordingFinishListener completionCallback) {
         if (completionCallback == null) {
             return;
         }
         if (!mIsRecording || mPendingStopRecording.get()) {
-            completionCallback.onTaskFailed(Error.ALREADY_STOPPED);
+            completionCallback.onError(Error.ALREADY_STOPPED);
             return;
         }
 
@@ -489,9 +512,9 @@ public class ViroMediaRecorder {
 
                 boolean cleanupSucceded = cleanup();
                 if (cleanupSucceded) {
-                    completionCallback.onTaskSucceeded(mVideoRecordingFilename);
+                    completionCallback.onSuccess(mVideoRecordingFilename);
                 } else {
-                    completionCallback.onTaskFailed(Error.UNKNOWN);
+                    completionCallback.onError(Error.UNKNOWN);
                 }
 
                 mVideoRecordingErrorDelegate = null;
@@ -503,18 +526,19 @@ public class ViroMediaRecorder {
 
     /**
      * Schedules the conclusion of the current video recording, if any. The success or
-     * failure of this request are notified through the provided {@link FinishListener}.
+     * failure of this request are notified through the provided
+     * {@link VideoRecordingFinishListener}.
      *
      * @param finishListener Callback interface that is invoked on success or failure.
      */
-    public void stopRecordingAsync(FinishListener finishListener) {
+    public void stopRecordingAsync(VideoRecordingFinishListener finishListener) {
         // Create an empty callback so we don't have to nullcheck everywhere.
         if (finishListener == null) {
-            finishListener = getEmptyFinishListener();
+            finishListener = getEmptyVideoRecordingFinishListener();
         }
 
         if (!hasAudioAndRecordingPermissions(mAppContext)) {
-            finishListener.onTaskFailed(Error.NO_PERMISSIONS);
+            finishListener.onError(Error.NO_PERMISSIONS);
             return;
         }
         stopVideoRecordingAsync(finishListener);
@@ -531,15 +555,15 @@ public class ViroMediaRecorder {
      * @param finishListener   Callback interface that is invoked on success or failure.
      */
     public void takeScreenShotAsync(String fileName, boolean saveToCameraRoll,
-                                    FinishListener finishListener) {
+                                    ScreenshotFinishListener finishListener) {
         // Create an empty callback so we don't have to nullcheck everywhere.
         if (finishListener == null) {
-            finishListener = getEmptyFinishListener();
+            finishListener = getEmptyScreenshotFinishListener();
         }
 
         // First, determine if we have the appropriate permissions and fail fast if not.
         if (!hasRecordingPermissions(mAppContext)) {
-            finishListener.onTaskFailed(Error.NO_PERMISSIONS);
+            finishListener.onError(Error.NO_PERMISSIONS);
             return;
         }
 
@@ -550,7 +574,7 @@ public class ViroMediaRecorder {
                         mViewportHeight, fileName, saveToCameraRoll, finishListener));
             }
         } catch (Exception e) {
-            finishListener.onTaskFailed(Error.INITIALIZATION);
+            finishListener.onError(Error.INITIALIZATION);
             return;
         }
 
@@ -569,14 +593,14 @@ public class ViroMediaRecorder {
         final Context mContext;
         final boolean mSaveToCameraRoll;
         boolean mRunnableSuccess;
-        final FinishListener mCompletionCallback;
+        final ScreenshotFinishListener mCompletionCallback;
 
         public ScreenShotRunnable(Context context,
                                   int width,
                                   int height,
                                   String name,
                                   boolean saveToCameraRoll,
-                                  FinishListener completionCallback) {
+                                  ScreenshotFinishListener completionCallback) {
             mWidth = width;
             mHeight = height;
             mFileName = name;
@@ -606,19 +630,19 @@ public class ViroMediaRecorder {
         protected void persistImageData() {
             // If we've failed to render the screen capture, return.
             if (!mRunnableSuccess) {
-                mCompletionCallback.onTaskFailed(Error.UNKNOWN);
+                mCompletionCallback.onError(Error.UNKNOWN);
                 return;
             }
 
             final String appDirPath = getMediaStorageDirectory(mContext, mSaveToCameraRoll);
             if (appDirPath == null) {
-                mCompletionCallback.onTaskFailed(Error.WRITE_TO_FILE);
+                mCompletionCallback.onError(Error.WRITE_TO_FILE);
                 return;
             }
 
             File appDir = new File(appDirPath);
             if (!appDir.exists() && !appDir.mkdir()) {
-                mCompletionCallback.onTaskFailed(Error.WRITE_TO_FILE);
+                mCompletionCallback.onError(Error.WRITE_TO_FILE);
                 return;
             }
 
@@ -634,22 +658,22 @@ public class ViroMediaRecorder {
                 bmp.recycle();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                mCompletionCallback.onTaskFailed(Error.WRITE_TO_FILE);
+                mCompletionCallback.onError(Error.WRITE_TO_FILE);
                 return;
             } catch(OutOfMemoryError e) {
                 e.printStackTrace();
-                mCompletionCallback.onTaskFailed(Error.WRITE_TO_FILE);
+                mCompletionCallback.onError(Error.WRITE_TO_FILE);
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
-                mCompletionCallback.onTaskFailed(Error.UNKNOWN);
+                mCompletionCallback.onError(Error.UNKNOWN);
                 return;
             } finally {
                 if (bos != null) try {
                     bos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    mCompletionCallback.onTaskFailed(Error.WRITE_TO_FILE);
+                    mCompletionCallback.onError(Error.WRITE_TO_FILE);
                     return;
                 }
             }
@@ -663,7 +687,11 @@ public class ViroMediaRecorder {
                 mContext.sendBroadcast(mediaScanIntent);
             }
 
-            mCompletionCallback.onTaskSucceeded(output.getAbsolutePath());
+            byte[] imageBytes= new byte[mPixelBuf.remaining()];
+            mPixelBuf.get(imageBytes);
+            final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
+
+            mCompletionCallback.onSuccess(bitmap, output.getAbsolutePath());
         }
 
         private void reverseBuf(ByteBuffer buf, int width, int height) {
