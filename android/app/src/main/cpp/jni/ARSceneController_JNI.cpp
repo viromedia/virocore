@@ -235,6 +235,7 @@ void ARDeclarativeSceneDelegate::onTrackingInitialized() {
 
         VROPlatformCallJavaFunction(localObj, "onTrackingInitialized", "()V");
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -251,6 +252,7 @@ void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensit
         VROPlatformCallJavaFunction(localObj, "onAmbientLightUpdate", "(FF)V",
                                     ambientLightIntensity, colorTemperature);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -270,6 +272,7 @@ void ARDeclarativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> 
                                     "(Lcom/viro/core/ARAnchor;J)V",
                                     janchor, nodeNativeRef);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -292,6 +295,7 @@ void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> an
                                     "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, 0);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -310,6 +314,7 @@ void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> a
                                     "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, 0);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -329,6 +334,7 @@ void ARImperativeSceneDelegate::onTrackingInitialized() {
 
         VROPlatformCallJavaFunction(localObj, "onTrackingInitialized", "()V");
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -346,6 +352,7 @@ void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity
         VROPlatformCallJavaFunction(localObj, "onAmbientLightUpdate", "(FF)V",
                                     ambientLightIntensity, colorTemperature);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -365,6 +372,7 @@ void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> a
                                     "(Lcom/viro/core/ARAnchor;J)V",
                                     janchor, node_j);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -387,6 +395,7 @@ void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anc
                                     "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, node->getUniqueID());
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }
 
@@ -397,6 +406,7 @@ void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> an
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -405,5 +415,6 @@ void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> an
                                     "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, node->getUniqueID());
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(jObjWeak);
     });
 }

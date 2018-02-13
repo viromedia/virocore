@@ -33,5 +33,6 @@ void TextDelegate::textCreated(jlong nativeTextRef) {
 
         VROPlatformCallJavaFunction(localObj, "textDidFinishCreation", "(J)V", nativeTextRef);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
