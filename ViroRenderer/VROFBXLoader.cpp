@@ -209,6 +209,10 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
 
     pinfo("Loading FBX from file %s", file.c_str());
     std::string data_pb_gzip = VROPlatformLoadFileAsString(file);
+    if(data_pb_gzip.empty()) {
+        return {};
+    }
+
     std::string data_pb = VROCompress::decompress(data_pb_gzip);
     
     viro::Node node_pb;

@@ -34,7 +34,8 @@ std::string VROPlatformLoadFileAsString(std::string path) {
         
         return(contents);
     }
-    pabort();
+    // return an empty string which indicates the file did not load.
+    return {};
 }
 
 #if VRO_PLATFORM_IOS

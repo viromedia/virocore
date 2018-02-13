@@ -43,6 +43,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         stage2_testFBXAnimPause();
         stage3_testFBXAnimStop();
         stage4_testLoadModelOBJ();
+        stage5_testLoadModelFBXError();
         stage5_testLoadModelError();
         stage6_testLoadModelOBJMaterials();
     }
@@ -111,6 +112,34 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
 
         assertPass("Tom Cruise lookalike model loads and displays.");
+    }
+
+    public void stage5_testLoadModelFBXError() {
+        Node node = new Node();
+        final Text text = new Text(mViroView.getViroContext(), "Awaiting fbx load.....",
+                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+
+        final float[] classNamePosition = {0, -.5f, -3.3f};
+        node.setPosition(new Vector(classNamePosition));
+        node.setGeometry(text);
+        mScene.getRootNode().addChildNode(node);
+
+        mObject3D.loadModel((Uri.parse("file:///android_asset/momentslogo.fbx")), Object3D.Type.FBX,  new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+                text.setText("FBX failed to load as it should!");
+
+            }
+        });
+        assertPass("Text should display saying FBX failed to load.",()->{
+            node.removeFromParentNode();
+        });
     }
 
     public void stage5_testLoadModelError() {
