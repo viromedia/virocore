@@ -106,7 +106,9 @@ public class ViroMediaRecorder {
      */
     public interface ScreenshotFinishListener {
         /**
-         * Callback that is triggered when screenshot capture is successful.
+         * Callback that is triggered when screenshot capture is successful. The
+         * developer is responsible for managing the bitmap (ie. calling
+         * {@link Bitmap#recycle()} when necessary)
          *
          * @param bitmap The bitmap containing the captured screenshot.
          * @param filePath The absolute file path of the recorded / saved file.
@@ -648,14 +650,14 @@ public class ViroMediaRecorder {
 
             BufferedOutputStream bos = null;
             File output = new File(appDir + "/" + mFileName+".png");
+            Bitmap bitmap;
             try {
                 bos = new BufferedOutputStream(new FileOutputStream(output.getAbsolutePath()));
-                Bitmap bmp = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+                bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
                 mPixelBuf.rewind();
                 reverseBuf(mPixelBuf, mWidth, mHeight);
-                bmp.copyPixelsFromBuffer(mPixelBuf);
-                bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
-                bmp.recycle();
+                bitmap.copyPixelsFromBuffer(mPixelBuf);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 mCompletionCallback.onError(Error.WRITE_TO_FILE);
@@ -686,10 +688,6 @@ public class ViroMediaRecorder {
                 mediaScanIntent.setData(contentUri);
                 mContext.sendBroadcast(mediaScanIntent);
             }
-
-            byte[] imageBytes= new byte[mPixelBuf.remaining()];
-            mPixelBuf.get(imageBytes);
-            final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
 
             mCompletionCallback.onSuccess(bitmap, output.getAbsolutePath());
         }
