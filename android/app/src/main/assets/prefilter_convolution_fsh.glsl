@@ -70,7 +70,7 @@ void main() {
     highp vec3 R = N;
     highp vec3 V = R;
 
-    const uint SAMPLE_COUNT = 1024u;
+    const uint SAMPLE_COUNT = 256u;
     highp vec3 prefilteredColor = vec3(0.0);
     highp float totalWeight = 0.0;
 
