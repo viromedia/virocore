@@ -293,19 +293,19 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
             }
         }
         
-        for (int i = 0; i < node_pb.keyframe_animation_size(); i++) {
-            const viro::Node::KeyframeAnimation &animation_pb = node_pb.keyframe_animation(i);
-            std::shared_ptr<VROKeyframeAnimation> animation = loadFBXKeyframeAnimation(animation_pb);
-            
-            if (animation->getName().empty()) {
-                animation->setName("fbx_kf_animation_" + VROStringUtil::toString(i));
-            }
-            
-            node->addAnimation(animation->getName(), animation);
-            pinfo("   Added keyframe animation [%s]", animation->getName().c_str());
+        node->setGeometry(geo);
+    }
+    
+    for (int i = 0; i < node_pb.keyframe_animation_size(); i++) {
+        const viro::Node::KeyframeAnimation &animation_pb = node_pb.keyframe_animation(i);
+        std::shared_ptr<VROKeyframeAnimation> animation = loadFBXKeyframeAnimation(animation_pb);
+        
+        if (animation->getName().empty()) {
+            animation->setName("fbx_kf_animation_" + VROStringUtil::toString(i));
         }
         
-        node->setGeometry(geo);
+        node->addAnimation(animation->getName(), animation);
+        pinfo("   Added keyframe animation [%s]", animation->getName().c_str());
     }
     
     for (int i = 0; i < node_pb.subnode_size(); i++) {
