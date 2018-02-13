@@ -24,7 +24,7 @@
         <activity android:name=".MemoryLeakTest"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:enableVrMode="false"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             >
             <intent-filter>
                 <category android:name="com.google.intent.category.CARDBOARD" />
