@@ -286,6 +286,16 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 
                 node->addAnimation(animation->getName(), animation);
                 pinfo("   Added skeletal animation [%s]", animation->getName().c_str());
+                
+                // Set the skinner to use the first frame's transform of the first animation; this is
+                // so that we get a natural pose before any animation is run (otherwise the bone transforms
+                // default to identity, which can give odd results).
+                if (i == 0 && !animation->getFrames().empty()) {
+                    const std::unique_ptr<VROSkeletalAnimationFrame> &frame = animation->getFrames().front();
+                    for (int f = 0; f < frame->boneIndices.size(); f++) {
+                        skeleton->getBone(frame->boneIndices[f])->setTransform(frame->boneTransforms[f]);
+                    }
+                }
             }
             
             if (hasScaling) {

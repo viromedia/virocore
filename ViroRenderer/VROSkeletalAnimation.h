@@ -67,6 +67,10 @@ public:
         return _name;
     }
     
+    const std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &getFrames() const {
+        return _frames;
+    }
+    
 #pragma mark - Executable Animation API
     
     /*
