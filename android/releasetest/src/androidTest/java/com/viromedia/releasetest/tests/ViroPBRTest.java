@@ -44,10 +44,10 @@ public class ViroPBRTest extends ViroBaseTest {
         Node rootNode = mScene.getRootNode();
 
         List<Vector> lightPositions = new ArrayList<Vector>();
-        lightPositions.add(new Vector(-10,  10, 10));
-        lightPositions.add(new Vector(10,  10, 10));
-        lightPositions.add(new Vector(-10, -10, 10));
-        lightPositions.add(new Vector( 10, -10, 10));
+        lightPositions.add(new Vector(-10,  10, 1));
+        lightPositions.add(new Vector(10,  10, 1));
+        lightPositions.add(new Vector(-10, -10, 1));
+        lightPositions.add(new Vector( 10, -10, 1));
 
         float intensity = 300;
         List<Integer> lightColors = new ArrayList<Integer>();
@@ -83,7 +83,7 @@ public class ViroPBRTest extends ViroBaseTest {
                 Node sphereNode = new Node();
                 sphereNode.setPosition(new Vector((float)(col - (columns / 2)) * spacing,
                                                   (float)(row - (rows    / 2)) * spacing,
-                                                  0.0f));
+                                                  -9.0f));
                 sphereNode.setGeometry(sphere);
                 mSphereContainerNode.addChildNode(sphereNode);
             }
@@ -105,11 +105,11 @@ public class ViroPBRTest extends ViroBaseTest {
         mCamera.setFieldOfView(90);
 
         Node cameraNode = new Node();
-        cameraNode.setPosition(new Vector(0, 0, 9));
+        cameraNode.setPosition(new Vector(0, 0, 0));
         cameraNode.setCamera(mCamera);
         rootNode.addChildNode(cameraNode);
 
-        mViroView.setPointOfView(cameraNode);
+        //mViroView.setPointOfView(cameraNode);
     }
 
     @Test
