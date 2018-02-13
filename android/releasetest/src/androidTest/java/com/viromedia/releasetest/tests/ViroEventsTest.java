@@ -146,16 +146,21 @@ public class ViroEventsTest extends ViroBaseTest {
 
     private void testEventsHoverListener() {
         boxNode.setHoverListener((source, node, isHovering, location) -> {
-            eventText.setText("Hovered over box.");
-
+            if (isHovering){
+                eventText.setText("Hovered over box.");
+            }
         });
 
         objectNode.setHoverListener((source, node, isHovering, location) -> {
-            eventText.setText("Hovered over 3d object.");
+            if (isHovering) {
+                eventText.setText("Hovered over 3d object.");
+            }
         });
 
         sphereNode.setHoverListener((source, node, isHovering, location) -> {
-            eventText.setText("Hovered over sphere.");
+            if (isHovering) {
+                eventText.setText("Hovered over sphere.");
+            }
         });
 
         assertPass("All events hover.", ()->{
