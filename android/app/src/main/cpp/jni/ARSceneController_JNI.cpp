@@ -230,6 +230,7 @@ void ARDeclarativeSceneDelegate::onTrackingInitialized() {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -246,6 +247,7 @@ void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensit
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -263,6 +265,7 @@ void ARDeclarativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> 
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -287,6 +290,7 @@ void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> an
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -306,6 +310,7 @@ void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> a
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -329,6 +334,7 @@ void ARImperativeSceneDelegate::onTrackingInitialized() {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -346,6 +352,7 @@ void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -363,6 +370,7 @@ void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> a
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 
@@ -387,6 +395,7 @@ void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anc
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObjWeak);
             return;
         }
 

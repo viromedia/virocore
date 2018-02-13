@@ -43,6 +43,7 @@ void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> 
         jobject localObj = env->NewLocalRef(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
         if (localObj == NULL || !anchor_s) {
+            env->DeleteWeakGlobalRef(jObject_w);
             return;
         }
 
@@ -62,6 +63,7 @@ void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> a
         jobject localObj = env->NewLocalRef(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
         if (localObj == NULL || !anchor_s) {
+            env->DeleteWeakGlobalRef(jObject_w);
             return;
         }
 
@@ -79,6 +81,7 @@ void ARDeclarativeNodeDelegate::onARAnchorRemoved() {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObject_w);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(jObject_w);
             return;
         }
 
