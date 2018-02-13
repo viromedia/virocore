@@ -258,6 +258,13 @@
 		8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */; };
 		8F5EEE9C20325C310059C9E7 /* object_pumpkin_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */; };
 		8F5EEE9D20325C310059C9E7 /* object_pumpkin_inside_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */; };
+		8F5EEEA520329C9B0059C9E7 /* cupCake_vanilla_02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9E20329C9A0059C9E7 /* cupCake_vanilla_02.jpg */; };
+		8F5EEEA620329C9B0059C9E7 /* cupcake_vanilla_1001_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9F20329C9A0059C9E7 /* cupcake_vanilla_1001_Normal.png */; };
+		8F5EEEA720329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */; };
+		8F5EEEA820329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA120329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png */; };
+		8F5EEEA920329C9B0059C9E7 /* cupcake.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA220329C9B0059C9E7 /* cupcake.obj */; };
+		8F5EEEAA20329C9C0059C9E7 /* cupcake.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA320329C9B0059C9E7 /* cupcake.mtl */; };
+		8F5EEEAB20329C9C0059C9E7 /* cupcake_vanilla_1001_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */; };
 		8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */; };
 		8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
 		8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F7841C90CD0B00415115 /* VROConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1133,6 +1140,13 @@
 		8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_inside_normal.png; path = ViroSample/object_pumpkin_inside_normal.png; sourceTree = "<group>"; };
 		8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_normal.png; path = ViroSample/object_pumpkin_normal.png; sourceTree = "<group>"; };
 		8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_inside_diffuse.png; path = ViroSample/object_pumpkin_inside_diffuse.png; sourceTree = "<group>"; };
+		8F5EEE9E20329C9A0059C9E7 /* cupCake_vanilla_02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cupCake_vanilla_02.jpg; path = ViroSample/cupCake_vanilla_02.jpg; sourceTree = "<group>"; };
+		8F5EEE9F20329C9A0059C9E7 /* cupcake_vanilla_1001_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_Normal.png; path = ViroSample/cupcake_vanilla_1001_Normal.png; sourceTree = "<group>"; };
+		8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_BaseColor.png; path = ViroSample/cupcake_vanilla_1001_BaseColor.png; sourceTree = "<group>"; };
+		8F5EEEA120329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_Roughness.png; path = ViroSample/cupcake_vanilla_1001_Roughness.png; sourceTree = "<group>"; };
+		8F5EEEA220329C9B0059C9E7 /* cupcake.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cupcake.obj; path = ViroSample/cupcake.obj; sourceTree = "<group>"; };
+		8F5EEEA320329C9B0059C9E7 /* cupcake.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cupcake.mtl; path = ViroSample/cupcake.mtl; sourceTree = "<group>"; };
+		8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_AO.png; path = ViroSample/cupcake_vanilla_1001_AO.png; sourceTree = "<group>"; };
 		8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_Diffuse.jpg; path = ViroSample/Heart_Diffuse.jpg; sourceTree = "<group>"; };
 		8F618E301EB935A40020B33B /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Libraries/protobuf/libprotobuf.a; sourceTree = "<group>"; };
 		8F6248311BDAB44B000755E5 /* VRODevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODevice.h; sourceTree = "<group>"; };
@@ -2502,6 +2516,13 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F5EEE9E20329C9A0059C9E7 /* cupCake_vanilla_02.jpg */,
+				8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */,
+				8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */,
+				8F5EEE9F20329C9A0059C9E7 /* cupcake_vanilla_1001_Normal.png */,
+				8F5EEEA120329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png */,
+				8F5EEEA320329C9B0059C9E7 /* cupcake.mtl */,
+				8F5EEEA220329C9B0059C9E7 /* cupcake.obj */,
 				8F5EEE9320325C310059C9E7 /* object_pumpkin_diffuse.png */,
 				8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */,
 				8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */,
@@ -3177,6 +3198,7 @@
 			files = (
 				8F1B4A1B1F64B61E00156809 /* portal_ship_diffuse.png in Resources */,
 				8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */,
+				8F5EEEAA20329C9C0059C9E7 /* cupcake.mtl in Resources */,
 				8F1B4A221F64B61E00156809 /* portal_archway.vrx in Resources */,
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8F5EEE9820325C310059C9E7 /* object_pumpkin_specular.png in Resources */,
@@ -3184,6 +3206,7 @@
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F5EEE9A20325C310059C9E7 /* pumpkin.vrx in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
+				8F5EEEA820329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
@@ -3246,8 +3269,10 @@
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
+				8F5EEEA720329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png in Resources */,
 				8F1B4A161F64B61E00156809 /* portal_entry.png in Resources */,
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
+				8F5EEEA620329C9B0059C9E7 /* cupcake_vanilla_1001_Normal.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
 				8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */,
@@ -3258,6 +3283,7 @@
 				8FCED0821EBBD35200C19BCA /* SvenArmor_Color.png in Resources */,
 				8F9278031C66BD4500FF892A /* pz1.jpg in Resources */,
 				8F660AB41E931C6F006D063F /* 4096_normal.jpg in Resources */,
+				8F5EEEAB20329C9C0059C9E7 /* cupcake_vanilla_1001_AO.png in Resources */,
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
 				8F660AB21E931C6F006D063F /* 4096_earth.jpg in Resources */,
 				8F04372D201AA72900D98D26 /* blinn2_Mixed_AO.png in Resources */,
@@ -3277,6 +3303,7 @@
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
+				8F5EEEA520329C9B0059C9E7 /* cupCake_vanilla_02.jpg in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
@@ -3300,6 +3327,7 @@
 				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
 				8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */,
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
+				8F5EEEA920329C9B0059C9E7 /* cupcake.obj in Resources */,
 				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,

@@ -222,7 +222,30 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
                 pinfo("Failed to load normal map texture [%s] for OBJ", m.bump_texname.c_str());
             }
         }
-        
+
+        // PBR values
+        material->getRoughness().setColor({ m.roughness, m.roughness, m.roughness, 1.0 });
+        if (m.roughness_texname.length() > 0) {
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.roughness_texname, base, type, false, resourceMap, textures);
+            if (texture) {
+                material->getRoughness().setTexture(texture);
+            }
+            else {
+                pinfo("Failed to load roughness texture [%s] for OBJ", m.roughness_texname.c_str());
+            }
+        }
+
+        material->getMetalness().setColor({ m.metallic, m.metallic, m.metallic, 1.0 });
+        if (m.metallic_texname.length() > 0) {
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.metallic_texname, base, type, false, resourceMap, textures);
+            if (texture) {
+                material->getMetalness().setTexture(texture);
+            }
+            else {
+                pinfo("Failed to load metalness texture [%s] for OBJ", m.metallic_texname.c_str());
+            }
+        }
+
         materialsIndexed.push_back(material);
     }
     
