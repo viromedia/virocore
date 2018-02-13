@@ -301,6 +301,13 @@ public:
                 _gpuType = VROGPUType::Adreno330OrOlder;
             }
         }
+
+        if (VROStringUtil::strcmpinsensitive(vendor, "ARM")) {
+            if (renderer.find("Mali-T720") != std::string::npos) {
+                pinfo("   Detected antiquated Mali-T720 GPU, rendering will be limited");
+                _gpuType = VROGPUType::Adreno330OrOlder;
+            }
+        }
     }
 
     VROGPUType getGPUType() {
