@@ -373,6 +373,11 @@
 		8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B5961E1445EE00EDB629 /* VROAnimationChain.cpp */; };
 		8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FB3286B2033696A0026375A /* constant_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB328672033694D0026375A /* constant_fsh_adreno.glsl */; };
+		8FB3286C2033696F0026375A /* constant_functions_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB328652033694C0026375A /* constant_functions_fsh_adreno.glsl */; };
+		8FB3286D203369740026375A /* constant_q_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB328662033694D0026375A /* constant_q_fsh_adreno.glsl */; };
+		8FB32873203369D00026375A /* standard_vsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB3286F203369BC0026375A /* standard_vsh_adreno.glsl */; };
+		8FB32874203369D60026375A /* surface_functions_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB32870203369BC0026375A /* surface_functions_fsh_adreno.glsl */; };
 		8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */; };
 		8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -1261,6 +1266,11 @@
 		8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationGroup.h; sourceTree = "<group>"; };
 		8FB2B5961E1445EE00EDB629 /* VROAnimationChain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAnimationChain.cpp; sourceTree = "<group>"; };
 		8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationChain.h; sourceTree = "<group>"; };
+		8FB328652033694C0026375A /* constant_functions_fsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_functions_fsh_adreno.glsl; sourceTree = "<group>"; };
+		8FB328662033694D0026375A /* constant_q_fsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_q_fsh_adreno.glsl; sourceTree = "<group>"; };
+		8FB328672033694D0026375A /* constant_fsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_fsh_adreno.glsl; sourceTree = "<group>"; };
+		8FB3286F203369BC0026375A /* standard_vsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_vsh_adreno.glsl; sourceTree = "<group>"; };
+		8FB32870203369BC0026375A /* surface_functions_fsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = surface_functions_fsh_adreno.glsl; sourceTree = "<group>"; };
 		8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFBXLoader.cpp; sourceTree = "<group>"; };
 		8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFBXLoader.h; sourceTree = "<group>"; };
 		8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Nodes.pb.cc; sourceTree = "<group>"; };
@@ -1682,6 +1692,7 @@
 		8F0FE6771CD3DFC800A4C297 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				8FB3286E203369A60026375A /* Legacy */,
 				8FC6E1CE1CECB350008EFD5F /* Constant */,
 				8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */,
 				8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */,
@@ -2297,6 +2308,18 @@
 				8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */,
 			);
 			name = "Execution API";
+			sourceTree = "<group>";
+		};
+		8FB3286E203369A60026375A /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				8FB3286F203369BC0026375A /* standard_vsh_adreno.glsl */,
+				8FB32870203369BC0026375A /* surface_functions_fsh_adreno.glsl */,
+				8FB328672033694D0026375A /* constant_fsh_adreno.glsl */,
+				8FB328652033694C0026375A /* constant_functions_fsh_adreno.glsl */,
+				8FB328662033694D0026375A /* constant_q_fsh_adreno.glsl */,
+			);
+			name = Legacy;
 			sourceTree = "<group>";
 		};
 		8FB5351B1EB85A7100E8E1A6 /* Protobuf */ = {
@@ -3394,24 +3417,29 @@
 				A547DB6D2022ED0700C8FE67 /* brdf_vsh.glsl in Resources */,
 				A597F8E8201AB9EE007EE387 /* prefilter_convolution_fsh.glsl in Resources */,
 				A597F8E9201AB9EE007EE387 /* prefilter_convolution_vsh.glsl in Resources */,
+				8FB32873203369D00026375A /* standard_vsh_adreno.glsl in Resources */,
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
 				8FEACEF12017E58D0082D18B /* equirect_to_cube_fsh.glsl in Resources */,
 				8FEACF0920182D240082D18B /* irradiance_convolution_fsh.glsl in Resources */,
 				8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */,
 				8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */,
+				8FB3286B2033696A0026375A /* constant_fsh_adreno.glsl in Resources */,
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */,
+				8FB3286C2033696F0026375A /* constant_functions_fsh_adreno.glsl in Resources */,
 				8F705DED1E8C7376008BE8F8 /* surface_functions_fsh.glsl in Resources */,
 				8FEACF0820182D240082D18B /* irradiance_convolution_vsh.glsl in Resources */,
 				8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */,
 				8FC6E1D91CECB376008EFD5F /* constant_fsh.glsl in Resources */,
 				8FEACEF02017E58D0082D18B /* equirect_to_cube_vsh.glsl in Resources */,
+				8FB32874203369D60026375A /* surface_functions_fsh_adreno.glsl in Resources */,
 				8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */,
 				8F0FE67B1CD3DFF800A4C297 /* image_vsh.glsl in Resources */,
 				8F0FE67A1CD3DFF800A4C297 /* image_fsh.glsl in Resources */,
+				8FB3286D203369740026375A /* constant_q_fsh_adreno.glsl in Resources */,
 				8FC6E1DB1CECB376008EFD5F /* constant_q_fsh.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

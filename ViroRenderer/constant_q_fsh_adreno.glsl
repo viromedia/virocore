@@ -1,19 +1,19 @@
 #version 300 es
-#include constant_functions_fsh_adreno
+#include constant_functions_fsh
 
-uniform highp vec4 material_diffuse_surface_color;
-uniform highp float material_diffuse_intensity;
+uniform lowp vec4 material_diffuse_surface_color;
+uniform lowp float material_diffuse_intensity;
 uniform lowp float material_alpha;
 
-#pragma surface_modifier_uniforms
-#pragma fragment_modifier_uniforms
+uniform samplerCube diffuse_texture;
 
-flat in int v_instance_id;
+#pragma surface_modifier_uniforms
+
 in lowp mat3 v_tbn;
 in highp vec2 v_texcoord;
 in highp vec3 v_surface_position;
 
-layout (location = 0) out highp vec4 frag_color;
+out highp vec4 frag_color;
 
 void main() {
     _surface_diffuse_color = material_diffuse_surface_color;
@@ -25,7 +25,7 @@ void main() {
 
 #pragma surface_modifier_body
 
-    highp vec4 _output_color = vec4(_surface_diffuse_color.xyz * _surface_diffuse_intensity, _surface_alpha * _surface_diffuse_color.a);
-    
-    frag_color = _output_color;
+    highp vec3 texcoord = vec3(_surface_position.x, _surface_position.y, -_surface_position.z);
+    frag_color = _surface_diffuse_color * texture(diffuse_texture, texcoord) *
+                 _surface_diffuse_intensity * vec4(1.0, 1.0, 1.0, _surface_alpha);
 }

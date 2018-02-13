@@ -101,10 +101,19 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     VROMaterialShaderCapabilities &materialCapabilities = capabilities.materialCapabilities;
     VROLightingShaderCapabilities &lightingCapabilities = capabilities.lightingCapabilities;
     
+    // Degrade capabilities if using an antiquated device
+    VROLightingModel lightingModel = materialCapabilities.lightingModel;
+    bool shadows = lightingCapabilities.shadows;
+    
+    if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
+        lightingModel = VROLightingModel::Constant;
+        shadows = false;
+    }
+    
     // Derive the base shader from the required capabilities
     std::string vertexShader = "standard_vsh";
     std::string fragmentShader;
-    if (materialCapabilities.lightingModel == VROLightingModel::Constant) {
+    if (lightingModel == VROLightingModel::Constant) {
         if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Cube) {
             fragmentShader = "constant_q_fsh";
         }
@@ -113,14 +122,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
     }
     else {
-        // Adreno 330 and older do not support our standard lighting setup, because they do not support
-        // the OpenGL 3.0 spec correctly (specifically, the use of structs cause it to fail)
-        if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
-            fragmentShader = "constant_fsh";
-        }
-        else {
-            fragmentShader = "standard_fsh";
-        }
+        fragmentShader = "standard_fsh";
     }
     if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
         vertexShader   += "_adreno";
@@ -165,7 +167,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     // PBR lighting model
-    if (materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased &&
+    if (lightingModel == VROLightingModel::PhysicallyBased &&
         lightingCapabilities.pbr) {
         if (materialCapabilities.roughnessMap) {
             samplers.push_back("roughness_map");
@@ -206,15 +208,15 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
         
         // Lighting Model modifiers
-        if (materialCapabilities.lightingModel == VROLightingModel::Lambert) {
+        if (lightingModel == VROLightingModel::Lambert) {
             modifiers.push_back(createLambertLightingModifier());
         }
         // Blinn is used also as a fallback if PBR is disabled
-        else if (materialCapabilities.lightingModel == VROLightingModel::Blinn ||
-                 materialCapabilities.lightingModel == VROLightingModel::PhysicallyBased) {
+        else if (lightingModel == VROLightingModel::Blinn ||
+                 lightingModel == VROLightingModel::PhysicallyBased) {
             modifiers.push_back(createBlinnLightingModifier());
         }
-        else if (materialCapabilities.lightingModel == VROLightingModel::Phong) {
+        else if (lightingModel == VROLightingModel::Phong) {
             modifiers.push_back(createPhongLightingModifier());
         }
     }
@@ -226,7 +228,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     // Shadow modifiers
-    if (lightingCapabilities.shadows && materialCapabilities.receivesShadows) {
+    if (shadows && materialCapabilities.receivesShadows) {
         modifiers.push_back(createShadowMapGeometryModifier());
         modifiers.push_back(createShadowMapLightModifier());
         if (kDebugShadowMaps) {
