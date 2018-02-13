@@ -97,7 +97,7 @@ void VROIBLPreprocess::doIrradianceConvolutionPhase(std::shared_ptr<VROScene> sc
 
 void VROIBLPreprocess::doPrefilterConvolutionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                                                     std::shared_ptr<VRODriver> driver) {
-    pinfo("   Convoluting texture to create Prefiltered map");
+    pinfo("   Convoluting texture to create prefiltered map");
 
     VRORenderPassInputOutput inputs;
     inputs.textures[kPrefilterLightingEnvironmentInput] = _cubeLightingEnvironment;

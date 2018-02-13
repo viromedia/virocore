@@ -644,6 +644,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseIrradianceF
                 "uniform samplerCube irradiance_map;",
                 "highp vec3 ambient_kS = fresnel_schlick_roughness(max(dot(N, V), 0.0), F0, _surface.roughness);",
                 "highp vec3 ambient_kD = 1.0 - ambient_kS;",
+                "ambient_kD *= 1.0 - _surface.metalness;",
 
                 "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
                 "highp vec3 ambient_diffuse = irradiance * albedo;",
