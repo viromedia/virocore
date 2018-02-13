@@ -54,8 +54,7 @@ void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
-    _sessionJNI.release();
-    _viroViewJNI.release();
+
 }
 
 #pragma mark - VROARSession implementation

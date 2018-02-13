@@ -4,7 +4,7 @@
 #include <jni/functions.hpp>
 #include <jni/tagging.hpp>
 #include <jni/pointer_to_value.hpp>
-
+#include "VROPlatformUtil.h"
 #include <cstddef>
 
 namespace jni
@@ -164,19 +164,18 @@ namespace jni
     class ObjectDeleter
        {
         private:
-            JNIEnv* env = nullptr;
 
         public:
             using pointer = PointerToValue< Object<TagType> >;
 
             ObjectDeleter() = default;
-            ObjectDeleter(JNIEnv& e) : env(&e) {}
+            ObjectDeleter(JNIEnv& e) {}
 
             void operator()(pointer p) const
                {
                 if (p)
                    {
-                    assert(env);
+                    JNIEnv *env = VROPlatformGetJNIEnv();
                     env->DeleteGlobalRef(Unwrap(p->Get()));
                    }
                }
@@ -192,19 +191,17 @@ namespace jni
     class WeakObjectRefDeleter
        {
         private:
-            JNIEnv* env = nullptr;
-
         public:
             using pointer = PointerToValue< Object<TagType> >;
 
             WeakObjectRefDeleter() = default;
-            WeakObjectRefDeleter(JNIEnv& e) : env(&e) {}
+            WeakObjectRefDeleter(JNIEnv& e)  {}
 
             void operator()(pointer p) const
                {
                 if (p)
                    {
-                    assert(env);
+                    JNIEnv *env = VROPlatformGetJNIEnv();
                     env->DeleteWeakGlobalRef(Unwrap(p->Get()));
                    }
                }
@@ -220,19 +217,18 @@ namespace jni
     class LocalObjectRefDeleter
        {
         private:
-            JNIEnv* env = nullptr;
 
         public:
             using pointer = PointerToValue< Object<TagType> >;
 
             LocalObjectRefDeleter() = default;
-            LocalObjectRefDeleter(JNIEnv& e) : env(&e) {}
+            LocalObjectRefDeleter(JNIEnv& e) {}
 
             void operator()(pointer p) const
                {
                 if (p)
                    {
-                    assert(env);
+                    JNIEnv *env = VROPlatformGetJNIEnv();
                     env->DeleteLocalRef(Unwrap(p->Get()));
                    }
                }

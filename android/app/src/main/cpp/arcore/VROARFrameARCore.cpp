@@ -24,7 +24,7 @@ VROARFrameARCore::VROARFrameARCore(jni::Object<arcore::Frame> frameJNI,
 }
 
 VROARFrameARCore::~VROARFrameARCore() {
-    _frameJNI.release();
+
 }
 
 double VROARFrameARCore::getTimestamp() const {

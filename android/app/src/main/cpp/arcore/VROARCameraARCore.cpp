@@ -50,7 +50,7 @@ VROARCameraARCore::VROARCameraARCore(jni::Object<arcore::Frame> frame) {
 }
 
 VROARCameraARCore::~VROARCameraARCore() {
-    _frame.reset();
+
 }
 
 VROARTrackingState VROARCameraARCore::getTrackingState() const {
