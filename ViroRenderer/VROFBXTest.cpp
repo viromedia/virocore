@@ -21,6 +21,14 @@ VROFBXTest::~VROFBXTest() {
 void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                        std::shared_ptr<VRODriver> driver) {
+    
+    VROFBXModel cylinder("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
+    VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
+    VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
+    _models.push_back(cylinder);
+    _models.push_back(dragon);
+    _models.push_back(pumpkin);
+    
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
@@ -50,9 +58,12 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     //rootNode->setLightingEnvironment(environment);
     rootNode->setBackgroundSphere(environment);
     
-    std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
-    rootNode->addChildNode(fbxNode);
+    _fbxContainerNode = std::make_shared<VRONode>();
+    rootNode->addChildNode(_fbxContainerNode);
 
+    _fbxIndex = 0;
+    rotateFBX();
+    
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this] (VRONode *const node, float seconds) {
         _angle += .0015;
         node->setRotation({ 0, _angle, _angle });
@@ -84,4 +95,24 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->addChildNode(cameraNode);
     
     _pointOfView = cameraNode;
+    
+    _eventDelegate = std::make_shared<VROFBXEventDelegate>(this);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    rootNode->setEventDelegate(_eventDelegate);
+}
+
+void VROFBXTest::rotateFBX() {
+    VROFBXModel model = _models[_fbxIndex];
+    std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel(model.name, model.position, model.scale, model.lightMask, model.animation);
+    _fbxContainerNode->removeAllChildren();
+    _fbxContainerNode->addChildNode(fbxNode);
+    
+    _fbxIndex = (_fbxIndex + 1) % _models.size();
+}
+
+void VROFBXEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
+                                  std::vector<float> position) {
+    if (clickState == ClickState::Clicked) {
+        _test->rotateFBX();
+    }
 }

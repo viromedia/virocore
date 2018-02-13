@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 
 // Set to NO to test using an AR view
 static const VROTestSceneType kTestType = VROTestSceneType::VR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::RendererSettings;
+static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 @interface VROTestViewController ()
 

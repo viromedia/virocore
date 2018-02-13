@@ -250,6 +250,14 @@
 		8F5CAA191F1FAD5800FEEC7E /* VROKeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */; };
 		8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1A1F202AE100FEEC7E /* bball.vrx */; };
 		8F5CAA261F20532B00FEEC7E /* VROExecutableNodeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */; };
+		8F5EEE8F20323E790059C9E7 /* dragon.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE8E20323E790059C9E7 /* dragon.vrx */; };
+		8F5EEE9120323E9F0059C9E7 /* dragao_map.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9020323E9F0059C9E7 /* dragao_map.jpg */; };
+		8F5EEE9820325C310059C9E7 /* object_pumpkin_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9220325C300059C9E7 /* object_pumpkin_specular.png */; };
+		8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9320325C310059C9E7 /* object_pumpkin_diffuse.png */; };
+		8F5EEE9A20325C310059C9E7 /* pumpkin.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9420325C310059C9E7 /* pumpkin.vrx */; };
+		8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */; };
+		8F5EEE9C20325C310059C9E7 /* object_pumpkin_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */; };
+		8F5EEE9D20325C310059C9E7 /* object_pumpkin_inside_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */; };
 		8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */; };
 		8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
 		8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F7841C90CD0B00415115 /* VROConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -322,6 +330,7 @@
 		8F9278031C66BD4500FF892A /* pz1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FD1C66BD4500FF892A /* pz1.jpg */; };
 		8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278041C670B0300FF892A /* VROTriangle.cpp */; };
 		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F93B54E2030B5F800B358C5 /* tesla.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F93B54D2030B5F800B358C5 /* tesla.obj */; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -1116,6 +1125,14 @@
 		8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROKeyframeAnimation.h; sourceTree = "<group>"; };
 		8F5CAA1A1F202AE100FEEC7E /* bball.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = bball.vrx; path = ViroSample/bball.vrx; sourceTree = "<group>"; };
 		8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROExecutableNodeAnimation.h; sourceTree = "<group>"; };
+		8F5EEE8E20323E790059C9E7 /* dragon.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = dragon.vrx; path = ViroSample/dragon.vrx; sourceTree = "<group>"; };
+		8F5EEE9020323E9F0059C9E7 /* dragao_map.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = dragao_map.jpg; path = ViroSample/dragao_map.jpg; sourceTree = "<group>"; };
+		8F5EEE9220325C300059C9E7 /* object_pumpkin_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_specular.png; path = ViroSample/object_pumpkin_specular.png; sourceTree = "<group>"; };
+		8F5EEE9320325C310059C9E7 /* object_pumpkin_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_diffuse.png; path = ViroSample/object_pumpkin_diffuse.png; sourceTree = "<group>"; };
+		8F5EEE9420325C310059C9E7 /* pumpkin.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pumpkin.vrx; path = ViroSample/pumpkin.vrx; sourceTree = "<group>"; };
+		8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_inside_normal.png; path = ViroSample/object_pumpkin_inside_normal.png; sourceTree = "<group>"; };
+		8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_normal.png; path = ViroSample/object_pumpkin_normal.png; sourceTree = "<group>"; };
+		8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_inside_diffuse.png; path = ViroSample/object_pumpkin_inside_diffuse.png; sourceTree = "<group>"; };
 		8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_Diffuse.jpg; path = ViroSample/Heart_Diffuse.jpg; sourceTree = "<group>"; };
 		8F618E301EB935A40020B33B /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Libraries/protobuf/libprotobuf.a; sourceTree = "<group>"; };
 		8F6248311BDAB44B000755E5 /* VRODevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODevice.h; sourceTree = "<group>"; };
@@ -1197,6 +1214,7 @@
 		8F9277FD1C66BD4500FF892A /* pz1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pz1.jpg; path = ViroSample/pz1.jpg; sourceTree = "<group>"; };
 		8F9278041C670B0300FF892A /* VROTriangle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTriangle.cpp; sourceTree = "<group>"; };
 		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
+		8F93B54D2030B5F800B358C5 /* tesla.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tesla.obj; path = ViroSample/tesla.obj; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -2484,6 +2502,15 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F5EEE9320325C310059C9E7 /* object_pumpkin_diffuse.png */,
+				8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */,
+				8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */,
+				8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */,
+				8F5EEE9220325C300059C9E7 /* object_pumpkin_specular.png */,
+				8F5EEE9420325C310059C9E7 /* pumpkin.vrx */,
+				8F5EEE9020323E9F0059C9E7 /* dragao_map.jpg */,
+				8F5EEE8E20323E790059C9E7 /* dragon.vrx */,
+				8F93B54D2030B5F800B358C5 /* tesla.obj */,
 				8F04372E201AA74000D98D26 /* cylinder_pbr.vrx */,
 				8F043726201AA72800D98D26 /* blinn2_Base_Color.png */,
 				8F043727201AA72800D98D26 /* blinn2_Metallic.png */,
@@ -3152,8 +3179,10 @@
 				8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */,
 				8F1B4A221F64B61E00156809 /* portal_archway.vrx in Resources */,
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
+				8F5EEE9820325C310059C9E7 /* object_pumpkin_specular.png in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
+				8F5EEE9A20325C310059C9E7 /* pumpkin.vrx in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
@@ -3170,8 +3199,10 @@
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
+				8F5EEE9D20325C310059C9E7 /* object_pumpkin_inside_diffuse.png in Resources */,
 				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
+				8F5EEE8F20323E790059C9E7 /* dragon.vrx in Resources */,
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
 				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
 				8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */,
@@ -3187,9 +3218,11 @@
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
 				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
 				8FEACEDB2012605F0082D18B /* pbr_sample_normal.png in Resources */,
+				8F5EEE9120323E9F0059C9E7 /* dragao_map.jpg in Resources */,
 				8FEACEDA2012605F0082D18B /* pbr_sample_albedo.png in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */,
+				8F5EEE9C20325C310059C9E7 /* object_pumpkin_normal.png in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				A517D2CC1F41A16400A22219 /* cloud.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
@@ -3241,6 +3274,7 @@
 				A547DB6B2022EC8900C8FE67 /* brdf_fsh.glsl in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
+				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
@@ -3291,9 +3325,11 @@
 				8F04372C201AA72900D98D26 /* blinn2_Metallic.png in Resources */,
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
+				8F93B54E2030B5F800B358C5 /* tesla.obj in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
+				8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */,
 				8F043729201AA72900D98D26 /* blinn2_Normal_DirectX.png in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
 				8F1B4A2A1F64B6E000156809 /* emoji_smile.vrx in Resources */,

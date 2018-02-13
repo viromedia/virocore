@@ -11,6 +11,31 @@
 
 #include "VRORendererTest.h"
 
+class VROFBXTest;
+
+class VROFBXEventDelegate : public VROEventDelegate {
+public:
+    VROFBXEventDelegate(VROFBXTest *test) : _test(test) {};
+    virtual ~VROFBXEventDelegate() {};
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
+    
+private:
+    VROFBXTest *_test;
+};
+
+class VROFBXModel {
+public:
+    std::string name;
+    VROVector3f position;
+    VROVector3f scale;
+    int lightMask;
+    std::string animation;
+    
+    VROFBXModel(std::string name, VROVector3f position, VROVector3f scale, int lightMask, std::string animation) :
+        name(name), position(position), scale(scale), lightMask(lightMask), animation(animation) {}
+    ~VROFBXModel() {}
+};
+
 class VROFBXTest : public VRORendererTest {
 public:
     
@@ -27,11 +52,17 @@ public:
         return _sceneController;
     }
     
+    void rotateFBX();
+    
 private:
 
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VRONode> _fbxContainerNode;
+    std::shared_ptr<VROEventDelegate> _eventDelegate;
+    int _fbxIndex;
     float _angle;
+    std::vector<VROFBXModel> _models;
     
 };
 
