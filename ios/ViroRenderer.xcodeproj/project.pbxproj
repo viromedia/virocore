@@ -258,7 +258,6 @@
 		8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */; };
 		8F5EEE9C20325C310059C9E7 /* object_pumpkin_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */; };
 		8F5EEE9D20325C310059C9E7 /* object_pumpkin_inside_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */; };
-		8F5EEEA520329C9B0059C9E7 /* cupCake_vanilla_02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9E20329C9A0059C9E7 /* cupCake_vanilla_02.jpg */; };
 		8F5EEEA620329C9B0059C9E7 /* cupcake_vanilla_1001_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEE9F20329C9A0059C9E7 /* cupcake_vanilla_1001_Normal.png */; };
 		8F5EEEA720329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */; };
 		8F5EEEA820329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5EEEA120329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png */; };
@@ -1140,7 +1139,6 @@
 		8F5EEE9520325C310059C9E7 /* object_pumpkin_inside_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_inside_normal.png; path = ViroSample/object_pumpkin_inside_normal.png; sourceTree = "<group>"; };
 		8F5EEE9620325C310059C9E7 /* object_pumpkin_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_normal.png; path = ViroSample/object_pumpkin_normal.png; sourceTree = "<group>"; };
 		8F5EEE9720325C310059C9E7 /* object_pumpkin_inside_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_pumpkin_inside_diffuse.png; path = ViroSample/object_pumpkin_inside_diffuse.png; sourceTree = "<group>"; };
-		8F5EEE9E20329C9A0059C9E7 /* cupCake_vanilla_02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cupCake_vanilla_02.jpg; path = ViroSample/cupCake_vanilla_02.jpg; sourceTree = "<group>"; };
 		8F5EEE9F20329C9A0059C9E7 /* cupcake_vanilla_1001_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_Normal.png; path = ViroSample/cupcake_vanilla_1001_Normal.png; sourceTree = "<group>"; };
 		8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_BaseColor.png; path = ViroSample/cupcake_vanilla_1001_BaseColor.png; sourceTree = "<group>"; };
 		8F5EEEA120329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_Roughness.png; path = ViroSample/cupcake_vanilla_1001_Roughness.png; sourceTree = "<group>"; };
@@ -2516,7 +2514,6 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8F5EEE9E20329C9A0059C9E7 /* cupCake_vanilla_02.jpg */,
 				8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */,
 				8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */,
 				8F5EEE9F20329C9A0059C9E7 /* cupcake_vanilla_1001_Normal.png */,
@@ -3303,7 +3300,6 @@
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
-				8F5EEEA520329C9B0059C9E7 /* cupCake_vanilla_02.jpg in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
