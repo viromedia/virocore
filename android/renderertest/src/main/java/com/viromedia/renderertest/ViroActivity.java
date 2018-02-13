@@ -726,7 +726,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private List<Node> testARPlane(final ARScene arScene) {
-        final ARDeclarativePlane arPlane = new ARDeclarativePlane(0, 0);
+        final ARDeclarativePlane arPlane = new ARDeclarativePlane(0, 0, ARPlaneAnchor.Alignment.HORIZONTAL);
         final Node node = new Node();
         final Surface surface = new Surface(.5f, .5f, 0, 0, 1, 1);
 
