@@ -74,8 +74,11 @@ public abstract class Light {
     }
 
     /**
-     * Set the intensity of this Light. Set to 1000 for normal intensity. Lower intensities (below
-     * 1000) will decrease the brightness of the light, and higher intensities (above 1000) will
+     * Set the intensity of this Light. Set to 1000 for normal intensity. When using
+     * physically-based rendering, this value is specified in Lumens. When using non-physical
+     * rendering, the intensity is simply divided by 1000 and multiplied by the Light's color.
+     * <p>
+     * Lower intensities will decrease the brightness of the light, and higher intensities will
      * increase the brightness of the light.
      *
      * @param intensity The intensity of the Light.
