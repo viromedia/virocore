@@ -872,8 +872,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/Spotlight.html#getInnerAngle()">getInnerAngle</a>()
       </code>
       
-        <p>Get the inner angle, which is the angle from the cone axis to the edge of full illumination
- section of the cone.
+        <p>Get the inner angle, which is the angle from edge to edge of the 'full strength' light cone.
         
     
 </p>
@@ -900,8 +899,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/Spotlight.html#getOuterAngle()">getOuterAngle</a>()
       </code>
       
-        <p>Get the outer angle, which is the angle from the full illumination (hard edge) of the cone
- to the no illumination (soft edge) of the cone.
+        <p>Get the outer angle, which is the angle from edge to edge of the 'attenuated' light cone.
         
     
 </p>
@@ -1200,8 +1198,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/Spotlight.html#setInnerAngle(float)">setInnerAngle</a>(float innerAngle)
       </code>
       
-        <p>Set the inner angle, which is the angle from the axis of the light cone to the edge of the 'full
- illumination' section of the light cone.
+        <p>Set the inner angle, which is the angle from edge to edge of the 'full strength' light cone.
         
     
 </p>
@@ -1228,8 +1225,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/Spotlight.html#setOuterAngle(float)">setOuterAngle</a>(float outerAngle)
       </code>
       
-        <p>Set the outer angle, which is the angle from the full illumination (hard edge) of the cone to
- the no illumination (soft edge) of the cone.
+        <p>Set the outer angle, which is the angle from edge to edge of the 'attenuated' light cone.
         
     
 </p>
@@ -1631,8 +1627,7 @@ float getInnerAngle ()</pre>
     
 
     
-  <p>Get the inner angle, which is the angle from the cone axis to the edge of full illumination
- section of the cone.</p></p>
+  <p>Get the inner angle, which is the angle from edge to edge of the 'full strength' light cone.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
@@ -1661,8 +1656,7 @@ float getOuterAngle ()</pre>
     
 
     
-  <p>Get the outer angle, which is the angle from the full illumination (hard edge) of the cone
- to the no illumination (soft edge) of the cone.</p></p>
+  <p>Get the outer angle, which is the angle from edge to edge of the 'attenuated' light cone.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
@@ -2005,8 +1999,9 @@ void setInnerAngle (float innerAngle)</pre>
     
 
     
-  <p>Set the inner angle, which is the angle from the axis of the light cone to the edge of the 'full
- illumination' section of the light cone.
+  <p>Set the inner angle, which is the angle from edge to edge of the 'full strength' light cone.
+ The lighting is at maximum intensity within this cone, and begins to attenuate outside of
+ it.
  <p>
  The default is set to 0, which means only objects hitting the center of the spotlight will
  receive the light's full illumination. The illumination declines from innerAngle until
@@ -2040,9 +2035,9 @@ void setOuterAngle (float outerAngle)</pre>
     
 
     
-  <p>Set the outer angle, which is the angle from the full illumination (hard edge) of the cone to
- the no illumination (soft edge) of the cone. If the outer angle is zero, then the entirety of
- the cone will have full illumination.
+  <p>Set the outer angle, which is the angle from edge to edge of the 'attenuated' light cone. The
+ lighting declines in strength between the inner angle and outer angle. Outside of the outer
+ angle the light attenuates to zero, resulting in no light.
  <p>
  The default is set to PI / 4 radians (45 degrees).</p></p>
     <table class="responsive">

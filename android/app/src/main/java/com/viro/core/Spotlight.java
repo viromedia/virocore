@@ -120,8 +120,9 @@ public class Spotlight extends Light {
     }
 
     /**
-     * Set the inner angle, which is the angle from the axis of the light cone to the edge of the 'full
-     * illumination' section of the light cone.
+     * Set the inner angle, which is the angle from edge to edge of the 'full strength' light cone.
+     * The lighting is at maximum intensity within this cone, and begins to attenuate outside of
+     * it.
      * <p>
      * The default is set to 0, which means only objects hitting the center of the spotlight will
      * receive the light's full illumination. The illumination declines from innerAngle until
@@ -135,8 +136,7 @@ public class Spotlight extends Light {
     }
 
     /**
-     * Get the inner angle, which is the angle from the cone axis to the edge of full illumination
-     * section of the cone.
+     * Get the inner angle, which is the angle from edge to edge of the 'full strength' light cone.
      *
      * @return The inner angle in radians.
      */
@@ -145,9 +145,9 @@ public class Spotlight extends Light {
     }
 
     /**
-     * Set the outer angle, which is the angle from the full illumination (hard edge) of the cone to
-     * the no illumination (soft edge) of the cone. If the outer angle is zero, then the entirety of
-     * the cone will have full illumination.
+     * Set the outer angle, which is the angle from edge to edge of the 'attenuated' light cone. The
+     * lighting declines in strength between the inner angle and outer angle. Outside of the outer
+     * angle the light attenuates to zero, resulting in no light.
      * <p>
      * The default is set to PI / 4 radians (45 degrees).
      *
@@ -159,8 +159,7 @@ public class Spotlight extends Light {
     }
 
     /**
-     * Get the outer angle, which is the angle from the full illumination (hard edge) of the cone
-     * to the no illumination (soft edge) of the cone.
+     * Get the outer angle, which is the angle from edge to edge of the 'attenuated' light cone.
      *
      * @return The outer angle in radians.
      */
