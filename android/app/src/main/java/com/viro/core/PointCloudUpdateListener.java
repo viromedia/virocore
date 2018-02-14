@@ -12,7 +12,7 @@ public interface PointCloudUpdateListener {
     /**
      * Invoked when the renderer has new point cloud data available.
      *
-     * @param pointCloud a collection of points, see {@link ARPointCloud}.
+     * @param pointCloud The collection of points, see {@link ARPointCloud}.
      */
     public void onUpdate(ARPointCloud pointCloud);
 }

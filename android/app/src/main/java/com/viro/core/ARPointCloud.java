@@ -8,7 +8,6 @@ package com.viro.core;
 /**
  * ARPointCloud contains a collection of points that the AR subsystem has detected in the
  * user's real world.
- *
  */
 public class ARPointCloud {
     private float[] mPoints;
@@ -22,8 +21,8 @@ public class ARPointCloud {
 
     /**
      * Returns a float array containing the (x,y,z) position of each point in the point cloud
-     * plus a confidence value (from 0 to 1). Each point therefore takes up 4 floats in the array
-     * and are arranged in no particular order.
+     * plus a confidence value (from 0 to 1). Each point therefore takes up 4 floats in the array.
+     * The points are arranged in no particular order.
      *
      * @return A single float array containing the position and confidence of each point.
      */
@@ -41,14 +40,17 @@ public class ARPointCloud {
     }
 
     /**
-     * Helper method that when given an index i, returns a 4 element float array representing a cloud point.
+     * Helper method that when given an index i, returns the 4-element float array representing the
+     * point.
      *
-     * @param i Index of the point to return. Can't be greater than total points returned by {@link #size()}.
-     * @return 4 element float array consisting of x,y,z cloud point position and confidence level.
+     * @param i Index of the point to return. May not be greater than total points returned by
+     *          {@link #size()}.
+     * @return 4-element float array consisting of the x,y,z cloud point position, and confidence
+     * level.
      */
     public float[] getPoint(int i) {
 
-        if(i > size()) {
+        if (i > size()) {
             throw new IndexOutOfBoundsException();
         }
 

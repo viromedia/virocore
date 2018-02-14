@@ -71,12 +71,12 @@ public class RendererConfiguration {
 
     /**
      * Enable or disable physically-based rendering. Physically based rendering, or PBR, produces
-     * more realistic lighting results for your scenes, and provides a more intuitive workflow
-     * for artists. To use PBR, this property must be enabled, and {@link Material}s must use
-     * the {@link com.viro.core.Material.LightingModel#PHYSICALLY_BASED} lighting model. PBR is
-     * controlled by a variety of properties:
+     * more realistic lighting results for your scenes, and provides a more intuitive workflow for
+     * artists. To use PBR, this property must be enabled, and {@link Material}s must use the {@link
+     * com.viro.core.Material.LightingModel#PHYSICALLY_BASED} lighting model. PBR is controlled by a
+     * variety of properties, see {@link com.viro.core.Material.LightingModel#PHYSICALLY_BASED} for
+     * details.
      *
-     * 1. TODO Viro-2760 Document These
      * @param enabled True to enable PBR for this configuration.
      */
     public void setPBREnabled(boolean enabled) {

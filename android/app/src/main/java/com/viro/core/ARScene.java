@@ -189,8 +189,8 @@ public class ARScene extends Scene {
     }
 
     /**
-     * Set the {@link PointCloudUpdateListener} to use for receiving point cloud updates. The provided listener will
-     * receive an updated {@link ARPointCloud} as the point cloud updates.
+     * Set the {@link PointCloudUpdateListener} to use for receiving point cloud updates. The
+     * provided listener will receive an updated {@link ARPointCloud} as the point cloud updates.
      *
      * @param listener The {@link PointCloudUpdateListener} to use to receive point cloud updates.
      */
@@ -199,6 +199,7 @@ public class ARScene extends Scene {
             getRootNode().setPointCloudUpdateListener(listener);
         }
     }
+
     /**
      * Set the maximum number of points to render when drawing the AR point cloud.
      *

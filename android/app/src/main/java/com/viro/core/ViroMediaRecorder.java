@@ -107,7 +107,7 @@ public class ViroMediaRecorder {
     public interface ScreenshotFinishListener {
         /**
          * Callback that is triggered when screenshot capture is successful. The
-         * developer is responsible for managing the bitmap (ie. calling
+         * developer is responsible for managing the {@link Bitmap} (ie. calling
          * {@link Bitmap#recycle()} when necessary)
          *
          * @param bitmap The bitmap containing the captured screenshot.

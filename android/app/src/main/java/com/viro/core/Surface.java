@@ -31,28 +31,29 @@ public class Surface extends Geometry {
 
 
     /**
-     * Construct a new Surface with custom texture coordinates. Texture coordinates
-     * specify how to tile a {@link Texture} across the Surface geometry.
+     * Construct a new Surface with custom texture coordinates. Texture coordinates specify how to
+     * tile a {@link Texture} across the Surface's geometry.
      * <p>
-     * Texture coordinates are represented by a 2D UV axes (analogous to an x,y axis).
-     * Texture coordinates are specified like percentages. The left edge of a texture is U = 0.0 and
-     * the right edge of the texture is U = 1.0. Similarly, the bottom edge of a texture is V=0.0 and
-     * the top edge of the texture is V=1.0.
+     * Texture coordinates are represented on 2D U and V axes (essentially the X and Y axes of the
+     * image). The left edge of a texture is U = 0.0 and the right edge of the texture is U = 1.0.
+     * Similarly, the top edge of a texture is V=0.0 and the bottom edge of the texture is V=1.0.
      * <p>
-     * Specifying greater than 1 on the U or V axis will cause the tile to repeat if the Surface {@link Material materials} {@link Texture texture}
-     * {@link Texture#setWrapS(Texture.WrapMode)} and/or {@link Texture#setWrapT(Texture.WrapMode)}
-     * is set to Texture.WrapMode.REPEAT. Specifying less than 1 on the U or V axis will render that texture partially over the entire surface.
+     * Specifying greater than 1.0 on either the U or V axis will cause the tile to repeat itself or
+     * clamp, depending on the Texture's {@link Texture#setWrapS(Texture.WrapMode)}. Specifying less
+     * than 1.0 on the U or V axis will render that texture partially over the entire surface.
      * <p>
-     * For example, specifying u0,v0 as (0,0) and (u1,v2) as (2,2) will tile the Texture twice over the width and height of the surface, effectively
-     * displaying 4 textures on the surface. Doing the opposite, setting (u1,v1) as (0.5, 0.5) will display a quarter of the texture
-     * over the entire surface.
+     * For example, specifying u0,v0 as (0,0) and (u1,v2) as (2,2) will tile the Texture twice over
+     * the width and height of the Surface, effectively displaying 4 textures on the Surface.
+     * Alternatively, setting (u1,v1) as (0.5, 0.5) will display a quarter of the texture over the
+     * entire surface.
      * <p>
-     * @param width The extent of the Surface along its horizontal axis (X).
+     *
+     * @param width  The extent of the Surface along its horizontal axis (X).
      * @param height The extent of the Surface along its vertical axis (Y).
-     * @param u0 The texture coordinate that specifies the start {@link Texture} left edge.
-     * @param v0 The texture coordinate that specifies the start {@link Texture} top edge.
-     * @param u1 The texture coordinate that specifies the end {@link Texture} left edge.
-     * @param v1 The texture coordinate that specifies the end {@link Texture} top edge.
+     * @param u0     The texture coordinate that specifies the start {@link Texture} left edge.
+     * @param v0     The texture coordinate that specifies the start {@link Texture} top edge.
+     * @param u1     The texture coordinate that specifies the end {@link Texture} left edge.
+     * @param v1     The texture coordinate that specifies the end {@link Texture} top edge.
      */
     public Surface(float width, float height, float u0, float v0, float u1, float v1) {
         mWidth = width;

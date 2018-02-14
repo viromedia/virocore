@@ -156,9 +156,14 @@ public class Object3D extends Node {
     }
 
     /**
-     * Get a list of unique {@link Material} objects used by this 3D Model.
+     * Get a list of unique {@link Material} objects used by this 3D model. These may be modified
+     * at runtime to change the textures and/or other material properties of the model. Materials
+     * can often be identified by their name, which is set by the 3D model loader.<p>
+     * <p>
+     * Note that if a model file (OBJ or FBX) contains multiple geometries, this list will contain
+     * <i>all</i> the materials across all geometries.
      *
-     * @return A list containing each {@link Material} used by this 3D Model.
+     * @return A list containing each {@link Material} used by this 3D model.
      */
     public List<Material> getMaterials() {
         return mMaterialList;

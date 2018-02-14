@@ -990,7 +990,8 @@ public class Material {
     }
 
     /**
-     * Sets a non-unique name to represent this Material object.
+     * Sets a (non-unique) name to represent this Material object. Names may be automatically set
+     * when loaded from OBJ or FBX files.
      */
     public void setName(String name){
         mName = name;
@@ -998,7 +999,9 @@ public class Material {
     }
 
     /**
-     * Gets a non-unique name that represents this Material.
+     * Get the (non-unique) name that can be optionally used to represent this Material. Material
+     * names are either set by {@link #setName(String)}, or they are automatically set when
+     * loading OBJ or FBX files. Null if no name is set.
      *
      * @return name The string value representing the name used by this Material.
      */
