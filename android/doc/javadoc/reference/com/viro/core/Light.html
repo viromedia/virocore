@@ -866,6 +866,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Light.html#getTemperature()">getTemperature</a>()
+      </code>
+      
+        <p>Get the temperature of the light, in Kelvin.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         void</code>
     </td>
   
@@ -929,6 +956,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Set the intensity of this Light.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Light.html#setTemperature(float)">setTemperature</a>(float temperature)
+      </code>
+      
+        <p>Set the temperature of the light, in Kelvin.
         
     
 </p>
@@ -1085,6 +1139,35 @@ float getIntensity ()</pre>
 </div>
 
 
+<A NAME="getTemperature()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getTemperature</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getTemperature ()</pre>
+    
+    
+
+    
+  <p>Get the temperature of the light, in Kelvin.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The temperature in Kelvin.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setColor(long)"></A>
 
 <div class="api apilevel-">
@@ -1182,6 +1265,41 @@ void setIntensity (float intensity)</pre>
         <td><code>intensity</code></td>
         <td width="100%">
           <code>float</code>: The intensity of the Light.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setTemperature(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setTemperature</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setTemperature (float temperature)</pre>
+    
+    
+
+    
+  <p>Set the temperature of the light, in Kelvin. Viro will derive a hue from this temperature and
+ multiply it by the light's color (which can also be set, via <code><a href="../../../../reference/com/viro/core/Light.html#setColor(long)">setColor(long)</a></code>). To
+ model a physical light with a known temperature, you can leave color of this Light set to
+ (1.0, 1.0, 1.0) and set its temperature only.
+ <p>
+ The default value for temperature is 6500K, which represents pure white light.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>temperature</code></td>
+        <td width="100%">
+          <code>float</code>: The temperature in Kelvin.
 </p></td>
       </tr>
     </table>

@@ -12,8 +12,10 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.animation.Animation;
 
 import com.viro.core.AmbientLight;
+import com.viro.core.AnimationTransaction;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Sphere;
@@ -94,7 +96,6 @@ public class ViroSpotLightTest extends ViroBaseTest {
 
     @Test
     public void testSpotlight() {
-
         testSetColor();
         testSetIntensity();
         testSetCastsShadow();
@@ -103,6 +104,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
         testSetDirection();
         testSetInnerAngle();
         testSetOuterAngle();
+        testTemperature();
     }
 
     /**
@@ -180,11 +182,19 @@ public class ViroSpotLightTest extends ViroBaseTest {
     }
 
     private void testSetInnerAngle() {
-        final List<Float> innerAnglesList = Arrays.asList((float)Math.toRadians(20), (float)Math.toRadians(45), (float)Math.toRadians(90));
+        final List<Float> innerAnglesList = Arrays.asList((float)Math.toRadians(20), (float)Math.toRadians(35), (float)Math.toRadians(55));
         final Iterator<Float> itr = Iterables.cycle(innerAnglesList).iterator();
         mMutableTestMethod = () -> {
             if (mSpotLight != null) {
-                mSpotLight.setInnerAngle(itr.next());
+                mSpotLight.setPosition(new Vector(0, 0, 0));
+                mSpotLight.setDirection(new Vector(0, 0, -1));
+
+                AnimationTransaction.begin();
+                AnimationTransaction.setAnimationDuration(500);
+                Float next = itr.next();
+                mSpotLight.setInnerAngle(next);
+                mSpotLight.setOuterAngle(next);
+                AnimationTransaction.commit();
             }
         };
         assertPass("running testSetInnerAngle()");
@@ -192,14 +202,36 @@ public class ViroSpotLightTest extends ViroBaseTest {
     }
 
     private void testSetOuterAngle() {
-        final List<Float> outerAnglesList = Arrays.asList((float)Math.toRadians(20), (float)Math.toRadians(45), (float)Math.toRadians(90));
+        final List<Float> outerAnglesList = Arrays.asList((float)Math.toRadians(20), (float)Math.toRadians(35), (float)Math.toRadians(55));
         final Iterator<Float> itr = Iterables.cycle(outerAnglesList).iterator();
         mMutableTestMethod = () -> {
             if (mSpotLight != null) {
+                mSpotLight.setPosition(new Vector(0, 0, 0));
+                mSpotLight.setDirection(new Vector(0, 0, -1));
+
+                AnimationTransaction.begin();
+                AnimationTransaction.setAnimationDuration(500);
+                mSpotLight.setInnerAngle((float) Math.toRadians(20));
                 mSpotLight.setOuterAngle(itr.next());
+                AnimationTransaction.commit();
             }
         };
         assertPass("running testSetOuterAngle()");
+    }
+
+    private void testTemperature() {
+        final List<Float> temperatureList = Arrays.asList(1000f, 2000f, 3000f, 4000f, 5000f, 6000f, 7000f, 10000f, 15000f, 20000f);
+        final Iterator<Float> itr = Iterables.cycle(temperatureList).iterator();
+        mMutableTestMethod = () -> {
+            if (mSpotLight != null) {
+                AnimationTransaction.begin();
+                AnimationTransaction.setAnimationDuration(500);
+                mSpotLight.setColor(Color.WHITE);
+                mSpotLight.setTemperature(itr.next());
+                AnimationTransaction.commit();
+            }
+        };
+        assertPass("running testTemperature()");
     }
 
 }

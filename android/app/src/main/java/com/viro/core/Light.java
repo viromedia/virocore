@@ -26,6 +26,7 @@ public abstract class Light {
     protected long mColor = Color.WHITE;
     protected float mIntensity = 1000;
     private int mInfluenceBitMask = 1;
+    private float mTemperature = 6500;
 
     /**
      * @hide
@@ -94,6 +95,30 @@ public abstract class Light {
     }
 
     /**
+     * Set the temperature of the light, in Kelvin. Viro will derive a hue from this temperature and
+     * multiply it by the light's color (which can also be set, via {@link #setColor(long)}). To
+     * model a physical light with a known temperature, you can leave color of this Light set to
+     * (1.0, 1.0, 1.0) and set its temperature only.
+     * <p>
+     * The default value for temperature is 6500K, which represents pure white light.
+     *
+     * @param temperature The temperature in Kelvin.
+     */
+    public void setTemperature(float temperature) {
+        mTemperature = temperature;
+        nativeSetTemperature(mNativeRef, temperature);
+    }
+
+    /**
+     * Get the temperature of the light, in Kelvin.
+     *
+     * @return The temperature in Kelvin.
+     */
+    public float getTemperature() {
+        return mTemperature;
+    }
+
+    /**
      * This property is used to make Lights apply to specific Nodes. Lights and Nodes in the {@link
      * Scene} can be assigned bit-masks to determine how each {@link Light} influences each {@link
      * Node}.
@@ -131,6 +156,7 @@ public abstract class Light {
     private native void nativeSetColor(long lightRef, long color);
     private native void nativeSetIntensity(long lightRef, float intensity);
     private native void nativeSetInfluenceBitMask(long lightRef, int bitMask);
+    private native void nativeSetTemperature(long lightRef, float temperature);
 
 // +---------------------------------------------------------------------------+
 // | LightBuilder abstract class for Light
@@ -156,6 +182,16 @@ public abstract class Light {
          */
         public LightBuilder intensity(float intensity) {
             light.setIntensity(intensity);
+            return (B) this;
+        }
+
+        /**
+         * Refer to Light{@link #setTemperature(float)}.
+         *
+         * @return This builder.
+         */
+        public LightBuilder temperature(float temperature) {
+            light.setTemperature(temperature);
             return (B) this;
         }
 

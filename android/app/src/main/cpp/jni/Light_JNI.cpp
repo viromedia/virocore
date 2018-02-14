@@ -47,6 +47,16 @@ JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetTemperature)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong native_light_ref,
+                                       jfloat temperature) {
+    std::shared_ptr<VROLight> light = Light::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light, temperature] {
+        light->setTemperature(temperature);
+    });
+}
+
 JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
                                             jclass clazz,
                                             jlong native_light_ref,
