@@ -17,6 +17,7 @@
 package com.example.virosample;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -156,9 +157,9 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViroView.getRecorder().takeScreenShotAsync("screenShot", true, new ViroMediaRecorder.FinishListener() {
+                mViroView.getRecorder().takeScreenShotAsync("screenShot", true, new ViroMediaRecorder.ScreenshotFinishListener() {
                     @Override
-                    public void onTaskSucceeded(String s) {
+                    public void onSuccess(Bitmap bitmap, String s) {
                         final Intent shareIntent = new Intent(Intent.ACTION_SEND);
                         shareIntent.setType("image/png");
                         shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(s));
@@ -166,7 +167,7 @@ public class ProductARActivityComplete extends ViroActivity implements RendererS
                     }
 
                     @Override
-                    public void onTaskFailed(ViroMediaRecorder.Error error) {
+                    public void onError(ViroMediaRecorder.Error error) {
                         Log.e("Viro","onTaskFailed " + error.toString());
                     }
                 });
