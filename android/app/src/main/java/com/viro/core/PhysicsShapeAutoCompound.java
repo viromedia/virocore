@@ -24,7 +24,7 @@ public class PhysicsShapeAutoCompound implements PhysicsShape {
      */
     @Override
     public String getType() {
-        return "compound";
+        return "Compound";
     }
 
     /**

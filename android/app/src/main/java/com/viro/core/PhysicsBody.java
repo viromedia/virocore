@@ -26,7 +26,7 @@ public class PhysicsBody {
          * Dynamic rigid bodies are fully simulated physics objects. They are affected by forces and
          * collisions, and are the most performance-intensive physics body.
          */
-        DYNAMIC("dynamic"),
+        DYNAMIC("Dynamic"),
 
         /**
          * Kinematic rigid bodies are not themselves affected by forces and collisions (they are
@@ -34,14 +34,14 @@ public class PhysicsBody {
          * example, use a Kinematic body to simulate a user pushing objects with her finger, or to
          * simulate projectiles like bullets.
          */
-        KINEMATIC("kinematic"),
+        KINEMATIC("Kinematic"),
 
         /**
          * Static rigid bodies do not move; other objects can collide with them but they do not
          * otherwise participate in the physics simulation. Examples include walls, floor, and other
          * other fixtures in your scene.
          */
-        STATIC("static");
+        STATIC("Static");
 
         private String mStringValue;
         private RigidBodyType(String value) {

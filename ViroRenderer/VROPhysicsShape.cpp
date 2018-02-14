@@ -11,9 +11,9 @@
 #include "VROLog.h"
 #include "VRONode.h"
 #include <btBulletDynamicsCommon.h>
-const std::string VROPhysicsShape::kSphereTag = "sphere";
-const std::string VROPhysicsShape::kBoxTag = "box";
-const std::string VROPhysicsShape::kAutoCompoundTag = "compound";
+const std::string VROPhysicsShape::kSphereTag = "Sphere";
+const std::string VROPhysicsShape::kBoxTag = "Box";
+const std::string VROPhysicsShape::kAutoCompoundTag = "Compound";
 
 VROPhysicsShape::VROPhysicsShape(VROShapeType type, std::vector<float> params) {
     if (type != VROShapeType::Sphere || VROShapeType::Box){

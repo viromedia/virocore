@@ -14,9 +14,9 @@
 #include "VROStringUtil.h"
 #include <btBulletDynamicsCommon.h>
 
-const std::string VROPhysicsBody::kDynamicTag = "dynamic";
-const std::string VROPhysicsBody::kKinematicTag = "kinematic";
-const std::string VROPhysicsBody::kStaticTag = "static";
+const std::string VROPhysicsBody::kDynamicTag = "Dynamic";
+const std::string VROPhysicsBody::kKinematicTag = "Kinematic";
+const std::string VROPhysicsBody::kStaticTag = "Static";
 
 VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VROPhysicsBodyType type,
                                float mass, std::shared_ptr<VROPhysicsShape> shape) {

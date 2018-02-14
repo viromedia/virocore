@@ -34,7 +34,7 @@ public class PhysicsShapeSphere implements PhysicsShape {
      */
     @Override
     public String getType() {
-        return "sphere";
+        return "Sphere";
     }
 
     /**

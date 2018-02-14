@@ -196,25 +196,25 @@ public class Texture {
          * Render the left half of the image to the left eye and the right half of the image to the
          * right eye.
          */
-        LEFT_RIGHT("leftRight"),
+        LEFT_RIGHT("LeftRight"),
 
         /**
          * Render the right half of the image to the left eye, and the left half of the image to the
          * right eye.
          */
-        RIGHT_LEFT("rightLeft"),
+        RIGHT_LEFT("RightLeft"),
 
         /**
          * Render the top half of the image to the left eye, and the bottom half of the image to the
          * right eye.
          */
-        TOP_BOTTOM("topBottom"),
+        TOP_BOTTOM("TopBottom"),
 
         /**
          * Render the bottom half of the image to the left eye, and the top half of the image to the
          * right eye.
          */
-        BOTTOM_TOP("bottomTop");
+        BOTTOM_TOP("BottomTop");
 
         private String mStringValue;
         private StereoMode(String value) {

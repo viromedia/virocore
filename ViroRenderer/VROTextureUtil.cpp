@@ -172,13 +172,13 @@ std::shared_ptr<VROData> VROTextureUtil::readVHDHeader(const std::string &data, 
 }
 
 VROStereoMode VROTextureUtil::getStereoModeForString(std::string stereoModeTag){
-    if (VROStringUtil::strcmpinsensitive(stereoModeTag, "leftRight")){
+    if (VROStringUtil::strcmpinsensitive(stereoModeTag, "LeftRight")){
         return VROStereoMode::LeftRight;
-    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "rightLeft")){
+    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "RightLeft")){
         return VROStereoMode::RightLeft;
-    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "topBottom")){
+    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "TopBottom")){
         return VROStereoMode::TopBottom;
-    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "bottomTop")){
+    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "BottomTop")){
         return VROStereoMode::BottomTop;
     }
 

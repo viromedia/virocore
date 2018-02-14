@@ -57,7 +57,7 @@ public class PhysicsShapeBox implements PhysicsShape {
      */
     @Override
     public String getType() {
-        return "box";
+        return "Box";
     }
 
     /**
