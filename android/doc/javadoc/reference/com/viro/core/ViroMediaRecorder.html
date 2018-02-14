@@ -219,6 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -230,8 +231,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
           
@@ -245,6 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -283,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -637,8 +641,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         interface</code></td>
       <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></code>
-        <p>Listener for responding to recording success and failure.&nbsp;
+        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></code>
+        <p>Listener for responding to errors when starting a recording, and for responding to errors
+ during a recording.&nbsp;
         
     
 </p>
@@ -654,9 +659,25 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         interface</code></td>
       <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></code>
-        <p>Listener for responding to errors when starting a recording, and for responding to errors
- during a recording.&nbsp;
+        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></code>
+        <p>Listener for responding to screenshot capture success and errors.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        interface</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></code>
+        <p>Listener for responding to video recording success and errors.&nbsp;
         
     
 </p>
@@ -739,7 +760,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorder.FinishListener)">stopRecordingAsync</a>(<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorder.VideoRecordingFinishListener)">stopRecordingAsync</a>(<a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a> finishListener)
       </code>
       
         <p>Schedules the conclusion of the current video recording, if any.
@@ -766,7 +787,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.FinishListener)">takeScreenShotAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.ScreenshotFinishListener)">takeScreenShotAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a> finishListener)
       </code>
       
         <p>Schedules a screenshot to be taken and saved on the next rendered frame.
@@ -835,9 +856,9 @@ void startRecordingAsync (<a href="http://d.android.com/reference/java/lang/Stri
 
     
   <p>Schedules a screen recording to start on the next rendered frame. The recording will continue
- until <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorder.FinishListener)">stopRecordingAsync(FinishListener)</a></code> is invoked. When finished, the recording
- will be saved to the given file. The file will be stored in the device's photos if
- <tt>saveToCameraRoll</tt> is true; otherwise it is stored in <code><a href="http://d.android.com/reference/android/content/Context.html#getFilesDir()">getFilesDir()</a></code>.</p></p>
+ until <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorder.VideoRecordingFinishListener)">stopRecordingAsync(VideoRecordingFinishListener)</a></code> is invoked. When finished,
+ the recording will be saved to the given file. The file will be stored in the device's photos
+ if <tt>saveToCameraRoll</tt> is true; otherwise it is stored in <code><a href="http://d.android.com/reference/android/content/Context.html#getFilesDir()">getFilesDir()</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
@@ -863,7 +884,7 @@ void startRecordingAsync (<a href="http://d.android.com/reference/java/lang/Stri
 </div>
 
 
-<A NAME="stopRecordingAsync(com.viro.core.ViroMediaRecorder.FinishListener)"></A>
+<A NAME="stopRecordingAsync(com.viro.core.ViroMediaRecorder.VideoRecordingFinishListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">stopRecordingAsync</h3>
@@ -874,19 +895,20 @@ void startRecordingAsync (<a href="http://d.android.com/reference/java/lang/Stri
 
     </div>
 <pre class="api-signature no-pretty-print">
-void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)</pre>
+void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a> finishListener)</pre>
     
     
 
     
   <p>Schedules the conclusion of the current video recording, if any. The success or
- failure of this request are notified through the provided <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></code>.</p></p>
+ failure of this request are notified through the provided
+ <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>finishListener</code></td>
         <td width="100%">
-          <code>ViroMediaRecorder.FinishListener</code>: Callback interface that is invoked on success or failure.
+          <code>ViroMediaRecorder.VideoRecordingFinishListener</code>: Callback interface that is invoked on success or failure.
 </p></td>
       </tr>
     </table>
@@ -894,7 +916,7 @@ void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaR
 </div>
 
 
-<A NAME="takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.FinishListener)"></A>
+<A NAME="takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.ScreenshotFinishListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">takeScreenShotAsync</h3>
@@ -907,7 +929,7 @@ void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaR
 <pre class="api-signature no-pretty-print">
 void takeScreenShotAsync (<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, 
                 boolean saveToCameraRoll, 
-                <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)</pre>
+                <a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a> finishListener)</pre>
     
     
 
@@ -931,7 +953,7 @@ void takeScreenShotAsync (<a href="http://d.android.com/reference/java/lang/Stri
       <tr>
         <td><code>finishListener</code></td>
         <td width="100%">
-          <code>ViroMediaRecorder.FinishListener</code>: Callback interface that is invoked on success or failure.
+          <code>ViroMediaRecorder.ScreenshotFinishListener</code>: Callback interface that is invoked on success or failure.
 </p></td>
       </tr>
     </table>

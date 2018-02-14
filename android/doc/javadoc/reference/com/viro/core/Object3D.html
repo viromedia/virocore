@@ -219,6 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -230,8 +231,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
           
@@ -245,6 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -283,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -753,6 +757,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        <a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt;</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Object3D.html#getMaterials()">getMaterials</a>()
+      </code>
+      
+        <p>Get a list of unique <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects used by this 3D model.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         void</code>
     </td>
   
@@ -911,6 +942,40 @@ void dispose ()</pre>
     
   <p>Release native resources associated with this Object3D.
 </p></p>
+
+</div>
+
+
+<A NAME="getMaterials()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getMaterials</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; getMaterials ()</pre>
+    
+    
+
+    
+  <p>Get a list of unique <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects used by this 3D model. These may be modified
+ at runtime to change the textures and/or other material properties of the model. Materials
+ can often be identified by their name, which is set by the 3D model loader.<p>
+ <p>
+ Note that if a model file (OBJ or FBX) contains multiple geometries, this list will contain
+ <i>all</i> the materials across all geometries.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt;</code></td>
+        <td width="100%">A list containing each <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> used by this 3D model.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 

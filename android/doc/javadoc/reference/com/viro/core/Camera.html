@@ -219,6 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -230,8 +231,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
           
@@ -245,6 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -283,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -743,6 +747,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Camera.html#getFieldOfView()">getFieldOfView</a>()
+      </code>
+      
+        <p>Return the field of view used by this Camera along its major (larger) axis, in degrees.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
     </td>
   
@@ -834,6 +865,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Get the <code><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></code> used by the Camera.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Camera.html#setFieldOfView(float)">setFieldOfView</a>(float fov)
+      </code>
+      
+        <p>Set the field of view for this camera, along the major (larger) axis.
         
     
 </p>
@@ -1067,6 +1125,37 @@ void dispose ()</pre>
 </div>
 
 
+<A NAME="getFieldOfView()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getFieldOfView</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getFieldOfView ()</pre>
+    
+    
+
+    
+  <p>Return the field of view used by this Camera along its major (larger) axis, in degrees.
+ Field of view is an angle that determines how wide or narrow the camera lens is when rendering
+ the scene.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The field of view across the major axis, in degrees.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getOrbitFocalPoint()"></A>
 
 <div class="api apilevel-">
@@ -1177,6 +1266,49 @@ void dispose ()</pre>
       <tr>
         <td><code><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></code></td>
         <td width="100%">The <code><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></code>.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setFieldOfView(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setFieldOfView</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setFieldOfView (float fov)</pre>
+    
+    
+
+    
+  <p>Set the field of view for this camera, along the major (larger) axis. Field of view is an
+ angle that determines how wide or narrow the camera lens is when rendering the scene.
+ <p>
+ This value sets the field of view, in degrees, for the major axis. The major axis is the axis
+ with the larger dimension: the X axis in landscape mode, or the Y axis in portrait mode. By
+ specifying the field of view in terms of the major axis, Viro can keep the field of view
+ consistent upon orientation changes, when the major/minor axes swap. The minor axis field of
+ view is automatically computed from the major axis field of view and the viewport.
+ <p>
+ If this is set to 0, then Viro will use the default field of view: 60 degrees.
+ <p>
+ This value is
+ ignored on VR and AR platforms, where the FOV is fixed by the VR headset or the AR camera.
+ <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>fov</code></td>
+        <td width="100%">
+          <code>float</code>: The field of view for the major axis, in degrees.
 </p></td>
       </tr>
     </table>

@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARPointCloud | Android Developers
+  <title>ViroMediaRecorder.ScreenshotFinishListener | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -232,7 +232,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
@@ -247,7 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -540,26 +540,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARPointCloud</h1>
+<h1 class="api-title">ViroMediaRecorder.ScreenshotFinishListener</h1>
 <p>
 <code class="api-signature">
   public
+  static
   
   
-  
-  class
-  ARPointCloud
+  interface
+  ViroMediaRecorder.ScreenshotFinishListener
 </code>
 <br>
 
-
-<code class="api-signature">
-  
-    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
-  
-  
-  
-</code>
 
 <code class="api-signature">
   
@@ -572,16 +564,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARPointCloud
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ViroMediaRecorder.ScreenshotFinishListener
     </td>
   </tr>
   
@@ -594,8 +577,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARPointCloud contains a collection of points that the AR subsystem has detected in the
- user's real world.
+  <p>Listener for responding to screenshot capture success and errors.
 </p>
 
 
@@ -645,21 +627,20 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        abstract
         
         
         
         
-        
-        float[]</code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoint(int)">getPoint</a>(int i)
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html#onError(com.viro.core.ViroMediaRecorder.Error)">onError</a>(<a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a> errorCode)
       </code>
       
-        <p>Helper method that when given an index i, returns the 4-element float array representing the
- point.
+        <p>Callback that is triggered when screenshot capture encounters an error.
         
     
 </p>
@@ -673,48 +654,20 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        abstract
         
         
         
         
-        
-        float[]</code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoints()">getPoints</a>()
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html#onSuccess(android.graphics.Bitmap, java.lang.String)">onSuccess</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> bitmap, <a href="http://d.android.com/reference/java/lang/String.html">String</a> filePath)
       </code>
       
-        <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
- plus a confidence value (from 0 to 1).
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        int</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size</a>()
-      </code>
-      
-        <p>Returns the number of points in the ARPointCloud.
+        <p>Callback that is triggered when screenshot capture is successful.
         
     
 </p>
@@ -761,10 +714,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="getPoint(int)"></A>
+<A NAME="onError(com.viro.core.ViroMediaRecorder.Error)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getPoint</h3>
+    <h3 class="api-name">onError</h3>
     <div class="api-level">
       <div></div>
       
@@ -772,28 +725,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-float[] getPoint (int i)</pre>
+void onError (<a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a> errorCode)</pre>
     
     
 
     
-  <p>Helper method that when given an index i, returns the 4-element float array representing the
- point.</p></p>
+  <p>Callback that is triggered when screenshot capture encounters an error.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>i</code></td>
+        <td><code>errorCode</code></td>
         <td width="100%">
-          <code>int</code>: Index of the point to return. May not be greater than total points returned by
-          <code><a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size()</a></code>.</p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float[]</code></td>
-        <td width="100%">4-element float array consisting of the x,y,z cloud point position, and confidence
- level.
+          <code>ViroMediaRecorder.Error</code>: Error code.
 </p></td>
       </tr>
     </table>
@@ -801,10 +744,10 @@ float[] getPoint (int i)</pre>
 </div>
 
 
-<A NAME="getPoints()"></A>
+<A NAME="onSuccess(android.graphics.Bitmap, java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getPoints</h3>
+    <h3 class="api-name">onSuccess</h3>
     <div class="api-level">
       <div></div>
       
@@ -812,48 +755,26 @@ float[] getPoint (int i)</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-float[] getPoints ()</pre>
+void onSuccess (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> bitmap, 
+                <a href="http://d.android.com/reference/java/lang/String.html">String</a> filePath)</pre>
     
     
 
     
-  <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
- plus a confidence value (from 0 to 1). Each point therefore takes up 4 floats in the array.
- The points are arranged in no particular order.</p></p>
+  <p>Callback that is triggered when screenshot capture is successful. The
+ developer is responsible for managing the <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> (ie. calling
+ <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html#recycle()">recycle()</a></code> when necessary)</p></p>
     <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
+    <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>float[]</code></td>
-        <td width="100%">A single float array containing the position and confidence of each point.
-</p></td>
+        <td><code>bitmap</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The bitmap containing the captured screenshot.</p></td>
       </tr>
-    </table>
-
-</div>
-
-
-<A NAME="size()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">size</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-int size ()</pre>
-    
-    
-
-    
-  <p>Returns the number of points in the ARPointCloud.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>int</code></td>
-        <td width="100%">the number of points in the ARPointCloud.
+        <td><code>filePath</code></td>
+        <td width="100%">
+          <code>String</code>: The absolute file path of the recorded / saved file.
 </p></td>
       </tr>
     </table>

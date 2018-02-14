@@ -219,6 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -230,8 +231,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
           
@@ -245,6 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -283,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -852,6 +856,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        <a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getAmbientOcclusionMap()">getAmbientOcclusionMap</a>()
+      </code>
+      
+        <p>Get the ambient occlusion <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> used by this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>
     </td>
   
@@ -1014,6 +1045,87 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getMetalness()">getMetalness</a>()
+      </code>
+      
+        <p>Set a uniform metalness value to use for this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getMetalnessMap()">getMetalnessMap</a>()
+      </code>
+      
+        <p>Get the metalness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> used by this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="http://d.android.com/reference/java/lang/String.html">String</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getName()">getName</a>()
+      </code>
+      
+        <p>Get the (non-unique) name that can be optionally used to represent this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>
     </td>
   
@@ -1050,6 +1162,60 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Return true if this Material reads from the depth buffer.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getRoughness()">getRoughness</a>()
+      </code>
+      
+        <p>Set a uniform roughness value to use for this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getRoughnessMap()">getRoughnessMap</a>()
+      </code>
+      
+        <p>Set the roughness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material.
         
     
 </p>
@@ -1186,6 +1352,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Return true if this Material writes to the depth buffer.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setAmbientOcclusionMap(com.viro.core.Texture)">setAmbientOcclusionMap</a>(<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> ambientOcclusionMap)
+      </code>
+      
+        <p>Set the ambient occlusion <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material.
         
     
 </p>
@@ -1371,6 +1564,87 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setMetalness(float)">setMetalness</a>(float metalness)
+      </code>
+      
+        <p>Set a uniform metalness value to use for this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setMetalnessMap(com.viro.core.Texture)">setMetalnessMap</a>(<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> metalnessMap)
+      </code>
+      
+        <p>Set the metalness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setName(java.lang.String)">setName</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
+      </code>
+      
+        <p>Sets a (non-unique) name to represent this Material object.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Material.html#setNormalMap(com.viro.core.Texture)">setNormalMap</a>(<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> normalMap)
       </code>
       
@@ -1402,6 +1676,60 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Set whether this Material reads from the depth buffer.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setRoughness(float)">setRoughness</a>(float roughness)
+      </code>
+      
+        <p>Set a uniform roughness value to use for this Material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setRoughnessMap(com.viro.core.Texture)">setRoughnessMap</a>(<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> roughnessMap)
+      </code>
+      
+        <p>Set the roughness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material.
         
     
 </p>
@@ -1665,6 +1993,39 @@ void dispose ()</pre>
 </div>
 
 
+<A NAME="getAmbientOcclusionMap()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getAmbientOcclusionMap</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> getAmbientOcclusionMap ()</pre>
+    
+    
+
+    
+  <p>Get the ambient occlusion <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> used by this Material. The ambient occlusion map
+ approximates how exposed the surface is to ambient lighting, at each texel.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code></td>
+        <td width="100%">ambientOcclusionMap The ambient occlusion map used by this Material. Null if no
+ ambient occlusion map is installed.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getBlendMode()"></A>
 
 <div class="api apilevel-">
@@ -1841,6 +2202,105 @@ int getDiffuseColor ()</pre>
 </div>
 
 
+<A NAME="getMetalness()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getMetalness</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getMetalness ()</pre>
+    
+    
+
+    
+  <p>Set a uniform metalness value to use for this Material. Metalness defines how
+ "metallic" the surface is at each pixel, which influences the degree to which light
+ reflects off the surface, the sharpness of the reflections, and more.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting. If a
+ metalness map is set (by <code><a href="../../../../reference/com/viro/core/Material.html#setMetalnessMap(com.viro.core.Texture)">setMetalnessMap(Texture)</a></code>, then this value is ignored, and
+ the values derived from the metalness map are used instead.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">metalness The uniform metalness value used by this Material.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getMetalnessMap()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getMetalnessMap</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> getMetalnessMap ()</pre>
+    
+    
+
+    
+  <p>Get the metalness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> used by this Material. The metalness map defines how
+ "metallic" the surface is at each texel, which influences the degree to which light
+ reflects off the surface, the sharpness of the reflections, and more.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code></td>
+        <td width="100%">The metalness map used by this Material. Null if no metalness map is installed.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getName()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getName</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/lang/String.html">String</a> getName ()</pre>
+    
+    
+
+    
+  <p>Get the (non-unique) name that can be optionally used to represent this Material. Material
+ names are either set by <code><a href="../../../../reference/com/viro/core/Material.html#setName(java.lang.String)">setName(String)</a></code>, or they are automatically set when
+ loading OBJ or FBX files. Null if no name is set.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
+        <td width="100%">name The string value representing the name used by this Material.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getNormalMap()"></A>
 
 <div class="api apilevel-">
@@ -1893,6 +2353,80 @@ boolean getReadsFromDepthBuffer ()</pre>
       <tr>
         <td><code>boolean</code></td>
         <td width="100%">True if reading is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getRoughness()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getRoughness</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getRoughness ()</pre>
+    
+    
+
+    
+  <p>Set a uniform roughness value to use for this Material. Roughness defines the roughness of
+ the surface's microfacets, at each pixel. The rougher a surface is (roughness approaching
+ 1.0), the more light sill scatter along completely different directions, resulting in larger
+ and more muted specular reflections. Smoother surfaces (roughness approaching 0.0),
+ meanwhile, exhibit a sharper specular reflection as light rays are more likely to reflect in
+ a uniform direction.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting. If a
+ roughness map is set (by <code><a href="../../../../reference/com/viro/core/Material.html#setRoughnessMap(com.viro.core.Texture)">setRoughnessMap(Texture)</a></code>, then this value is ignored, and
+ the values derived from the roughness map are used instead.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The uniform roughness value used by this Material.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getRoughnessMap()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getRoughnessMap</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> getRoughnessMap ()</pre>
+    
+    
+
+    
+  <p>Set the roughness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material. The roughness map defines the
+ roughness of the surface's microfacets at each texel. The rougher a surface is (roughness
+ approaching 1.0), the more light sill scatter along completely different directions,
+ resulting in larger and more muted specular reflections. Smoother surfaces (roughness
+ approaching 0.0), meanwhile, exhibit a sharper specular reflection as light rays are more
+ likely to reflect in a uniform direction.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code></td>
+        <td width="100%">The roughness map used by this Material. Null if no roughness map is used.
 </p></td>
       </tr>
     </table>
@@ -2041,6 +2575,42 @@ boolean getWritesToDepthBuffer ()</pre>
       <tr>
         <td><code>boolean</code></td>
         <td width="100%">True if writing is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setAmbientOcclusionMap(com.viro.core.Texture)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setAmbientOcclusionMap</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setAmbientOcclusionMap (<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> ambientOcclusionMap)</pre>
+    
+    
+
+    
+  <p>Set the ambient occlusion <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material. The ambient occlusion map
+ approximates how exposed the surface is to ambient lighting, at each texel. This has no
+ effect on direct lights (it does not result in clear shadows) but it darkens enclosed and
+ sheltered areas. These textures are typically authored using modeling tools along with
+ roughness and metalness.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>ambientOcclusionMap</code></td>
+        <td width="100%">
+          <code>Texture</code>: The ambient occlusion map to use for this Material.
 </p></td>
       </tr>
     </table>
@@ -2263,6 +2833,107 @@ void setLightingModel (<a href="../../../../reference/com/viro/core/Material.Lig
 </div>
 
 
+<A NAME="setMetalness(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setMetalness</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setMetalness (float metalness)</pre>
+    
+    
+
+    
+  <p>Set a uniform metalness value to use for this Material. Metalness defines how
+ "metallic" the surface is at each pixel, which influences the degree to which light
+ reflects off the surface, the sharpness of the reflections, and more.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting. If a
+ metalness map is set (by <code><a href="../../../../reference/com/viro/core/Material.html#setMetalnessMap(com.viro.core.Texture)">setMetalnessMap(Texture)</a></code>, then this value is ignored, and
+ the values derived from the metalness map are used instead.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>metalness</code></td>
+        <td width="100%">
+          <code>float</code>: The uniform metalness value to use for this Material.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setMetalnessMap(com.viro.core.Texture)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setMetalnessMap</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setMetalnessMap (<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> metalnessMap)</pre>
+    
+    
+
+    
+  <p>Set the metalness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material. The metalness map defines how
+ "metallic" the surface is at each texel, which influences the degree to which light
+ reflects off the surface, the sharpness of the reflections, and more.
+<p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>metalnessMap</code></td>
+        <td width="100%">
+          <code>Texture</code>: The metalness map to use for this Material.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setName(java.lang.String)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setName</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setName (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
+    
+    
+
+    
+  <p>Sets a (non-unique) name to represent this Material object. Names may be automatically set
+ when loaded from OBJ or FBX files.
+</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>name</code></td>
+        <td width="100%">
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setNormalMap(com.viro.core.Texture)"></A>
 
 <div class="api apilevel-">
@@ -2285,6 +2956,15 @@ void setNormalMap (<a href="../../../../reference/com/viro/core/Texture.html">Te
  <p>
  For each pixel of the normal map, the RGB colors are interpreted by the renderer as XYZ
  components of a surface normal vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>normalMap</code></td>
+        <td width="100%">
+          <code>Texture</code>: The normal map to use for this Material.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 
@@ -2319,6 +2999,82 @@ void setReadsFromDepthBuffer (boolean readsFromDepthBuffer)</pre>
         <td><code>readsFromDepthBuffer</code></td>
         <td width="100%">
           <code>boolean</code>: True to read from the depth buffer.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setRoughness(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setRoughness</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setRoughness (float roughness)</pre>
+    
+    
+
+    
+  <p>Set a uniform roughness value to use for this Material. Roughness defines the roughness of
+ the surface's microfacets, at each pixel. The rougher a surface is (roughness approaching
+ 1.0), the more light sill scatter along completely different directions, resulting in larger
+ and more muted specular reflections. Smoother surfaces (roughness approaching 0.0),
+ meanwhile, exhibit a sharper specular reflection as light rays are more likely to reflect in
+ a uniform direction.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting. If a
+ roughness map is set (by <code><a href="../../../../reference/com/viro/core/Material.html#setRoughnessMap(com.viro.core.Texture)">setRoughnessMap(Texture)</a></code>, then this value is ignored, and
+ the values derived from the roughness map are used instead.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>roughness</code></td>
+        <td width="100%">
+          <code>float</code>: The uniform roughness value to use for this Material.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setRoughnessMap(com.viro.core.Texture)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setRoughnessMap</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setRoughnessMap (<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> roughnessMap)</pre>
+    
+    
+
+    
+  <p>Set the roughness <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> to use for this Material. The roughness map defines the
+ roughness of the surface's microfacets at each texel. The rougher a surface is (roughness
+ approaching 1.0), the more light sill scatter along completely different directions,
+ resulting in larger and more muted specular reflections. Smoother surfaces (roughness
+ approaching 0.0), meanwhile, exhibit a sharper specular reflection as light rays are more
+ likely to reflect in a uniform direction.
+ <p>
+ This property is only used under <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>roughnessMap</code></td>
+        <td width="100%">
+          <code>Texture</code>: The roughness map to use for this Material.
 </p></td>
       </tr>
     </table>
@@ -2377,7 +3133,9 @@ void setShininess (float shininess)</pre>
   <p>Set the sharpness of specular highlights. This only applies if this Material has a specular
  texture. See <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></code> for the specifics of how the shininess value is applied.
  <p>
- Defaults to 2.0.</p></p>
+ Defaults to 2.0.
+ <p>
+ This property is ignored if the Material is using <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
@@ -2411,7 +3169,9 @@ void setSpecularTexture (<a href="../../../../reference/com/viro/core/Texture.ht
  the amount of light that is reflected by the Material toward the user, resulting in a
  bright, shiny highlight. Specular effects are point of view dependent, and only have an
  effect when using the Blinn or Phong lighting models. See <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></code> for more
- details on how the specular highlights are computed.</p></p>
+ details on how the specular highlights are computed.
+ <p>
+ This property is ignored if the Material is using <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>

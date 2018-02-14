@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARPointCloud | Android Developers
+  <title>PointCloudUpdateListener | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -219,7 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -247,7 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -540,26 +540,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARPointCloud</h1>
+<h1 class="api-title">PointCloudUpdateListener</h1>
 <p>
 <code class="api-signature">
   public
   
   
   
-  class
-  ARPointCloud
+  interface
+  PointCloudUpdateListener
 </code>
 <br>
 
-
-<code class="api-signature">
-  
-    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
-  
-  
-  
-</code>
 
 <code class="api-signature">
   
@@ -572,16 +564,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARPointCloud
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.PointCloudUpdateListener
     </td>
   </tr>
   
@@ -594,8 +577,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARPointCloud contains a collection of points that the AR subsystem has detected in the
- user's real world.
+  <p>Interface for receiving point cloud updates.
 </p>
 
 
@@ -645,76 +627,20 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        abstract
         
         
         
         
-        
-        float[]</code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoint(int)">getPoint</a>(int i)
+      <a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html#onUpdate(com.viro.core.ARPointCloud)">onUpdate</a>(<a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a> pointCloud)
       </code>
       
-        <p>Helper method that when given an index i, returns the 4-element float array representing the
- point.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float[]</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoints()">getPoints</a>()
-      </code>
-      
-        <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
- plus a confidence value (from 0 to 1).
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        int</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size</a>()
-      </code>
-      
-        <p>Returns the number of points in the ARPointCloud.
+        <p>Invoked when the renderer has new point cloud data available.
         
     
 </p>
@@ -761,10 +687,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="getPoint(int)"></A>
+<A NAME="onUpdate(com.viro.core.ARPointCloud)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getPoint</h3>
+    <h3 class="api-name">onUpdate</h3>
     <div class="api-level">
       <div></div>
       
@@ -772,88 +698,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-float[] getPoint (int i)</pre>
+void onUpdate (<a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a> pointCloud)</pre>
     
     
 
     
-  <p>Helper method that when given an index i, returns the 4-element float array representing the
- point.</p></p>
+  <p>Invoked when the renderer has new point cloud data available.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>i</code></td>
+        <td><code>pointCloud</code></td>
         <td width="100%">
-          <code>int</code>: Index of the point to return. May not be greater than total points returned by
-          <code><a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size()</a></code>.</p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float[]</code></td>
-        <td width="100%">4-element float array consisting of the x,y,z cloud point position, and confidence
- level.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getPoints()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getPoints</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float[] getPoints ()</pre>
-    
-    
-
-    
-  <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
- plus a confidence value (from 0 to 1). Each point therefore takes up 4 floats in the array.
- The points are arranged in no particular order.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float[]</code></td>
-        <td width="100%">A single float array containing the position and confidence of each point.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="size()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">size</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-int size ()</pre>
-    
-    
-
-    
-  <p>Returns the number of points in the ARPointCloud.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>int</code></td>
-        <td width="100%">the number of points in the ARPointCloud.
+          <code>ARPointCloud</code>: The collection of points, see <code><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></code>.
 </p></td>
       </tr>
     </table>

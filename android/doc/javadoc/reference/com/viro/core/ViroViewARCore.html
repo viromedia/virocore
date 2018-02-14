@@ -219,6 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -230,8 +231,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
           
@@ -245,6 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -283,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -754,7 +758,26 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/ViroViewARCore.html#ViroViewARCore(android.content.Context, com.viro.core.RendererStartListener)">ViroViewARCore</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, <a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> rendererStartListener)
       </code>
       
-        <p>Create a new ViroViewARCore.
+        <p>Create a new ViroViewARCore with the default <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.html#ViroViewARCore(android.content.Context, com.viro.core.RendererStartListener, com.viro.core.RendererConfiguration)">ViroViewARCore</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, <a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> rendererStartListener, <a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a> config)
+      </code>
+      
+        <p>Create a new ViroViewARCore with the given <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>, which determines
+ the rendering techniques and rendering fidelity to use for this View.
         
     
 </p>
@@ -851,6 +874,34 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Returns a <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html">ViroMediaRecorder</a></code>, which can be used to take screenshots of the <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> or record video.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.html#isSupported(android.content.Context)">isSupported</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context)
+      </code>
+      
+        <p>Checks if AR is supported on the target device and if the ARCore apk/sdk is present on the
+ device.
         
     
 </p>
@@ -1146,7 +1197,7 @@ ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.
     
 
     
-  <p>Create a new ViroViewARCore.</p></p>
+  <p>Create a new ViroViewARCore with the default <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
@@ -1159,6 +1210,50 @@ ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.
         <td width="100%">
           <code>RendererStartListener</code>: Runnable to invoke when the renderer has finished initializing.
                               Optional, may be null.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="ViroViewARCore(android.content.Context, com.viro.core.RendererStartListener, com.viro.core.RendererConfiguration)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ViroViewARCore</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, 
+                <a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> rendererStartListener, 
+                <a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a> config)</pre>
+    
+    
+
+    
+  <p>Create a new ViroViewARCore with the given <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>, which determines
+ the rendering techniques and rendering fidelity to use for this View.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>context</code></td>
+        <td width="100%">
+          <code>Context</code>: The activity context.</p></td>
+      </tr>
+      <tr>
+        <td><code>rendererStartListener</code></td>
+        <td width="100%">
+          <code>RendererStartListener</code>: Runnable to invoke when the renderer has finished initializing.
+                              Optional, may be null.</p></td>
+      </tr>
+      <tr>
+        <td><code>config</code></td>
+        <td width="100%">
+          <code>RendererConfiguration</code>: The <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code> to use.
 </p></td>
       </tr>
     </table>
@@ -1260,6 +1355,45 @@ int getCameraTextureName ()</pre>
         <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html">ViroMediaRecorder</a></code></td>
         <td width="100%">The <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html">ViroMediaRecorder</a></code>, or null if not supported by the platform.
 </p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isSupported(android.content.Context)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isSupported</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isSupported (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context)</pre>
+    
+    
+
+    
+  <p>Checks if AR is supported on the target device and if the ARCore apk/sdk is present on the
+ device. If this method returns false, attempts to create <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> will throw
+ an exception</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>context</code></td>
+        <td width="100%">
+          <code>Context</code>: The <code><a href="http://d.android.com/reference/android/content/Context.html">Context</a></code> of your app
+</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 

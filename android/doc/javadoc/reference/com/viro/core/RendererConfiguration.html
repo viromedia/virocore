@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARPointCloud | Android Developers
+  <title>RendererConfiguration | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -247,7 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -286,7 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -540,7 +540,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARPointCloud</h1>
+<h1 class="api-title">RendererConfiguration</h1>
 <p>
 <code class="api-signature">
   public
@@ -548,7 +548,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  ARPointCloud
+  RendererConfiguration
 </code>
 <br>
 
@@ -581,7 +581,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARPointCloud
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.RendererConfiguration
     </td>
   </tr>
   
@@ -594,8 +594,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARPointCloud contains a collection of points that the AR subsystem has detected in the
- user's real world.
+  <p>RendererConfiguration allows you to set which rendering properties and algorithms will be
+ enabled at launch. These properties may also be dynamically turned on or off via the
+ <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code>.
 </p>
 
 
@@ -630,6 +631,34 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="responsive constructors">
+<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
+
+
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#RendererConfiguration()">RendererConfiguration</a>()
+      </code>
+      
+        <p>Create a new default RendererConfiguration.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+
+</table>
+
+
 
 
 
@@ -650,16 +679,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        float[]</code>
+        boolean</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoint(int)">getPoint</a>(int i)
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#isBloomEnabled()">isBloomEnabled</a>()
       </code>
       
-        <p>Helper method that when given an index i, returns the 4-element float array representing the
- point.
+        <p>Returns true if bloom is enabled for this configuration.
         
     
 </p>
@@ -678,16 +706,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        float[]</code>
+        boolean</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#getPoints()">getPoints</a>()
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#isHDREnabled()">isHDREnabled</a>()
       </code>
       
-        <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
- plus a confidence value (from 0 to 1).
+        <p>Returns true if HDR rendering is enabled for this configuration.
         
     
 </p>
@@ -706,15 +733,152 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        int</code>
+        boolean</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size</a>()
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#isPBREnabled()">isPBREnabled</a>()
       </code>
       
-        <p>Returns the number of points in the ARPointCloud.
+        <p>Returns true if physically-based rendering is enabled for this configuration.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#isShadowsEnabled()">isShadowsEnabled</a>()
+      </code>
+      
+        <p>Returns true if dynamic shadows are enabled for this configuration.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#setBloomEnabled(boolean)">setBloomEnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable or disable bloom.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#setHDREnabled(boolean)">setHDREnabled</a>(boolean enabled)
+      </code>
+      
+        <p>When HDR rendering is enabled, Viro uses a deeper color space and renders to a floating point
+ texture, where a tone-mapping algorithm is applied to preserve fine details in both bright
+ and dark regions of the scene.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#setPBREnabled(boolean)">setPBREnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable or disable physically-based rendering.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#setShadowsEnabled(boolean)">setShadowsEnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable or disable rendering dynamic shadows.
         
     
 </p>
@@ -748,6 +912,37 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2 class="api-section">Public constructors</h2>
+
+
+
+<A NAME="RendererConfiguration()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">RendererConfiguration</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+RendererConfiguration ()</pre>
+    
+    
+
+    
+  <p>Create a new default RendererConfiguration. The default RendererConfiguration enables
+ the highest fidelity rendering supported by the current device: shadows, HDR, PBR, and
+ bloom.
+</p></p>
+
+</div>
+
+
+
+
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -761,10 +956,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="getPoint(int)"></A>
+<A NAME="isBloomEnabled()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getPoint</h3>
+    <h3 class="api-name">isBloomEnabled</h3>
     <div class="api-level">
       <div></div>
       
@@ -772,28 +967,136 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-float[] getPoint (int i)</pre>
+boolean isBloomEnabled ()</pre>
     
     
 
     
-  <p>Helper method that when given an index i, returns the 4-element float array representing the
- point.</p></p>
+  <p>Returns true if bloom is enabled for this configuration.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if bloom is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isHDREnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isHDREnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isHDREnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if HDR rendering is enabled for this configuration.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if HDR is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isPBREnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isPBREnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isPBREnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if physically-based rendering is enabled for this configuration.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if PBR is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isShadowsEnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isShadowsEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isShadowsEnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if dynamic shadows are enabled for this configuration.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if shadows are enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setBloomEnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setBloomEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setBloomEnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Enable or disable bloom. Bloom adds a soft glow to bright areas in scene, simulating the way
+ bright highlights appear to the human eye. To make an object bloom, this property must be
+ enabled, and the objects's threshold for bloom must be set via <code><a href="../../../../reference/com/viro/core/Material.html#setBloomThreshold(float)">setBloomThreshold(float)</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>i</code></td>
+        <td><code>enabled</code></td>
         <td width="100%">
-          <code>int</code>: Index of the point to return. May not be greater than total points returned by
-          <code><a href="../../../../reference/com/viro/core/ARPointCloud.html#size()">size()</a></code>.</p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float[]</code></td>
-        <td width="100%">4-element float array consisting of the x,y,z cloud point position, and confidence
- level.
+          <code>boolean</code>: True to enable bloom for this configuration.
 </p></td>
       </tr>
     </table>
@@ -801,10 +1104,10 @@ float[] getPoint (int i)</pre>
 </div>
 
 
-<A NAME="getPoints()"></A>
+<A NAME="setHDREnabled(boolean)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getPoints</h3>
+    <h3 class="api-name">setHDREnabled</h3>
     <div class="api-level">
       <div></div>
       
@@ -812,19 +1115,23 @@ float[] getPoint (int i)</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-float[] getPoints ()</pre>
+void setHDREnabled (boolean enabled)</pre>
     
     
 
     
-  <p>Returns a float array containing the (x,y,z) position of each point in the point cloud
- plus a confidence value (from 0 to 1). Each point therefore takes up 4 floats in the array.
- The points are arranged in no particular order.</p></p>
+  <p>When HDR rendering is enabled, Viro uses a deeper color space and renders to a floating point
+ texture, where a tone-mapping algorithm is applied to preserve fine details in both bright
+ and dark regions of the scene. If HDR is disabled, then features like Bloom and PBR will not
+ work, and tone-mapping will be disabled.
+ <p>
+ HDR is not supported on all devices.</p></p>
     <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
+    <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>float[]</code></td>
-        <td width="100%">A single float array containing the position and confidence of each point.
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable HDR for this configuration.
 </p></td>
       </tr>
     </table>
@@ -832,10 +1139,10 @@ float[] getPoints ()</pre>
 </div>
 
 
-<A NAME="size()"></A>
+<A NAME="setPBREnabled(boolean)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">size</h3>
+    <h3 class="api-name">setPBREnabled</h3>
     <div class="api-level">
       <div></div>
       
@@ -843,17 +1150,55 @@ float[] getPoints ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-int size ()</pre>
+void setPBREnabled (boolean enabled)</pre>
     
     
 
     
-  <p>Returns the number of points in the ARPointCloud.</p></p>
+  <p>Enable or disable physically-based rendering. Physically based rendering, or PBR, produces
+ more realistic lighting results for your scenes, and provides a more intuitive workflow for
+ artists. To use PBR, this property must be enabled, and <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>s must use the <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting model. PBR is controlled by a
+ variety of properties, see <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> for
+ details.</p></p>
     <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
+    <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>int</code></td>
-        <td width="100%">the number of points in the ARPointCloud.
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable PBR for this configuration.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setShadowsEnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setShadowsEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setShadowsEnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Enable or disable rendering dynamic shadows. If shadows are disabled here, shadow
+ casting <code><a href="../../../../reference/com/viro/core/Light.html">Light</a></code>s will simply not cast a shadow.
+ <p>
+ Shadows are not supported on all devices.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable dynamic shadows for this configuration.
 </p></td>
       </tr>
     </table>

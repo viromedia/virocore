@@ -219,6 +219,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.CollisionListener.html">PhysicsBody.CollisionListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
@@ -230,8 +231,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
       </ul>
     </li>
           
@@ -245,6 +247,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -283,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -760,40 +764,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- =========== ENUM CONSTANT SUMMARY =========== -->
-<table id="constants" class="responsive constants">
-<tr><th colspan="2"><h3>Constants</h3></th></tr>
-
-
-    
-    <tr class="api apilevel-" >
-        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
-        <td width="100%">
-          <code><a href="../../../../reference/com/viro/core/ViroView.html#FLAVOR_VIRO_CORE">FLAVOR_VIRO_CORE</a></code>
-          <p>
-          
-    
-</p>
-        </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
-        <td width="100%">
-          <code><a href="../../../../reference/com/viro/core/ViroView.html#FLAVOR_VIRO_REACT">FLAVOR_VIRO_REACT</a></code>
-          <p>
-          
-    
-</p>
-        </td>
-    </tr>
-    
-    
-
-</table>
-
-
 
 
 
@@ -860,6 +830,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Retrieve the <code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code> for this view.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#getFieldOfView()">getFieldOfView</a>()
+      </code>
+      
+        <p>Get the field of view for this camera, along the major (larger) axis.
         
     
 </p>
@@ -1009,6 +1006,141 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#isBloomEnabled()">isBloomEnabled</a>()
+      </code>
+      
+        <p>Returns true if bloom is enabled for this ViroView.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#isHDREnabled()">isHDREnabled</a>()
+      </code>
+      
+        <p>Returns true if HDR rendering is enabled for this ViroView.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#isPBREnabled()">isPBREnabled</a>()
+      </code>
+      
+        <p>Returns true if physically-based rendering is enabled for this ViroView.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#isShadowsEnabled()">isShadowsEnabled</a>()
+      </code>
+      
+        <p>Returns true if dynamic shadows are enabled for this ViroView.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#projectPoint(com.viro.core.Vector)">projectPoint</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> point)
+      </code>
+      
+        <p>Converts the given 3D point in the world into its corresponding 2D point on the screen.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
         abstract
         
         
@@ -1046,11 +1178,94 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#setBloomEnabled(boolean)">setBloomEnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable or disable bloom.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/ViroView.html#setCameraListener(com.viro.core.CameraListener)">setCameraListener</a>(<a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a> listener)
       </code>
       
         <p>Set a <code><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></code> to receive updates whenever the camera's position or orientation
  changes.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#setHDREnabled(boolean)">setHDREnabled</a>(boolean enabled)
+      </code>
+      
+        <p>When HDR rendering is enabled, Viro uses a deeper color space and renders to a floating point
+ texture, where a tone-mapping algorithm is applied to preserve fine details in both bright
+ and dark regions of the scene.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#setPBREnabled(boolean)">setPBREnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable or disable physically-based rendering.
         
     
 </p>
@@ -1145,6 +1360,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#setShadowsEnabled(boolean)">setShadowsEnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable or disable rendering dynamic shadows.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
         abstract
         
         
@@ -1159,6 +1401,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>For VR applications, set this to true to render in stereo mode.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#unprojectPoint(com.viro.core.Vector)">unprojectPoint</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> point)
+      </code>
+      
+        <p>Converts the given 2D point on the view into its corresponding 3D point in world coordinates.
         
     
 </p>
@@ -1184,69 +1453,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Constants -->
-
-
-<!-- ========= ENUM CONSTANTS DETAIL ======== -->
-<h2 class="api-section">Constants</h2>
-
-
-
-
-<A NAME="FLAVOR_VIRO_CORE"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">FLAVOR_VIRO_CORE</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="http://d.android.com/reference/java/lang/String.html">String</a> FLAVOR_VIRO_CORE</pre>
-    
-    
-
-    
-  <p></p></p>
-
-    
-      <p>Constant Value:
-      
-          "viro_core"
-      
-    
-</div>
-
-
-
-<A NAME="FLAVOR_VIRO_REACT"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">FLAVOR_VIRO_REACT</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="http://d.android.com/reference/java/lang/String.html">String</a> FLAVOR_VIRO_REACT</pre>
-    
-    
-
-    
-  <p></p></p>
-
-    
-      <p>Constant Value:
-      
-          "viro_react"
-      
-    
-</div>
-
-
 
 
 <!-- Fields -->
@@ -1316,6 +1522,48 @@ void dispose ()</pre>
       <tr>
         <td><code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code></td>
         <td width="100%">The <code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code> for this ViroView.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getFieldOfView()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getFieldOfView</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getFieldOfView ()</pre>
+    
+    
+
+    
+  <p>Get the field of view for this camera, along the major (larger) axis. Field of view is an
+ angle that determines how wide or narrow the camera lens is when rendering the scene.
+ <p>
+ The major axis is the axis with the larger dimension: the X axis in landscape mode, or the Y
+ axis in portrait mode. By specifying the field of view in terms of the major axis, Viro can
+ keep the field of view consistent upon orientation changes, when the major/minor axes swap.
+ <p>
+ You can set the field of view when using a <code><a href="../../../../reference/com/viro/core/ViroViewScene.html">ViroViewScene</a></code> by creating a <code><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></code>, setting the camera's field of view with <code><a href="../../../../reference/com/viro/core/Camera.html#setFieldOfView(float)">setFieldOfView(float)</a></code>, and
+ making that Camera's Node the point of view through <code><a href="../../../../reference/com/viro/core/ViroView.html#setPointOfView(com.viro.core.Node)">setPointOfView(Node)</a></code>. The
+ default field of view for <code><a href="../../../../reference/com/viro/core/ViroViewScene.html">ViroViewScene</a></code> is 60 degrees.
+ <p>
+ The field of view cannot be set for <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> or <code><a href="../../../../reference/com/viro/core/ViroViewGVR.html">ViroViewGVR</a></code>: on those
+ platforms, field of view is fixed by the VR headset or AR camera.
+ <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The field of view across the major axis, in degrees.
 </p></td>
       </tr>
     </table>
@@ -1477,6 +1725,165 @@ void dispose ()</pre>
 </div>
 
 
+<A NAME="isBloomEnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isBloomEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isBloomEnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if bloom is enabled for this ViroView.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if bloom is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isHDREnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isHDREnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isHDREnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if HDR rendering is enabled for this ViroView.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if HDR is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isPBREnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isPBREnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isPBREnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if physically-based rendering is enabled for this ViroView.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if PBR is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="isShadowsEnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isShadowsEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isShadowsEnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if dynamic shadows are enabled for this ViroView.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if shadows are enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="projectPoint(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">projectPoint</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> projectPoint (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> point)</pre>
+    
+    
+
+    
+  <p>Converts the given 3D point in the world into its corresponding 2D point on the screen.
+ Note that each 2D point on the view corresponds to a continuous segment of 3D points in the world, each at
+ a different depth between the near and far clipping planes. The Z coordinate in the returned
+ <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> identifies the depth of the projected point, where 0.0 coincides with the
+ near clipping plane, 1.0 coincides with the far clipping plane, and all other values are
+ linear interpolations between the two.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>point</code></td>
+        <td width="100%">
+          <code>Vector</code>: Get the 2D point corresponding to this 3D world coordinate.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The 2D point in the view's coordinate system. The Z coordinate represents the depth
+ from 0.0 to 1.0.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="recenterTracking()"></A>
 
 <div class="api apilevel-">
@@ -1496,6 +1903,38 @@ void recenterTracking ()</pre>
   <p>For VR applications, re-centers the head orientation. This resets the yaw to zero, but leaves
  pitch and roll unmodified.
 </p></p>
+
+</div>
+
+
+<A NAME="setBloomEnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setBloomEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setBloomEnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Enable or disable bloom. Bloom adds a soft glow to bright areas in scene, simulating the way
+ bright highlights appear to the human eye. To make an object bloom, this property must be
+ enabled, and the objects's threshold for bloom must be set via <code><a href="../../../../reference/com/viro/core/Material.html#setBloomThreshold(float)">setBloomThreshold(float)</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable bloom for this ViroView.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 
@@ -1524,6 +1963,75 @@ void setCameraListener (<a href="../../../../reference/com/viro/core/CameraListe
         <td><code>listener</code></td>
         <td width="100%">
           <code>CameraListener</code>: The <code><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></code> to receive updates.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setHDREnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setHDREnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setHDREnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>When HDR rendering is enabled, Viro uses a deeper color space and renders to a floating point
+ texture, where a tone-mapping algorithm is applied to preserve fine details in both bright
+ and dark regions of the scene. If HDR is disabled, then features like Bloom and PBR will not
+ work, and tone-mapping will be disabled.
+ <p>
+ HDR is not supported on all devices.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable HDR for this ViroView.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setPBREnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setPBREnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setPBREnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Enable or disable physically-based rendering. Physically based rendering, or PBR, produces
+ more realistic lighting results for your scenes, and provides a more intuitive workflow for
+ artists. To use PBR, this property must be enabled, and <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>s must use the <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> lighting model. PBR is controlled by a
+ variety of properties, see <code><a href="../../../../reference/com/viro/core/Material.LightingModel.html#PHYSICALLY_BASED">PHYSICALLY_BASED</a></code> for
+ details.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable PBR for this ViroView.
 </p></td>
       </tr>
     </table>
@@ -1626,6 +2134,39 @@ void setScene (<a href="../../../../reference/com/viro/core/Scene.html">Scene</a
 </div>
 
 
+<A NAME="setShadowsEnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setShadowsEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setShadowsEnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Enable or disable rendering dynamic shadows. If shadows are disabled here, shadow
+ casting <code><a href="../../../../reference/com/viro/core/Light.html">Light</a></code>s will simply not cast a shadow.
+ <p>
+ Shadows are not supported on all devices.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable dynamic shadows for this ViroView.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setVRModeEnabled(boolean)"></A>
 
 <div class="api apilevel-">
@@ -1654,6 +2195,51 @@ void setVRModeEnabled (boolean vrModeEnabled)</pre>
         <td><code>vrModeEnabled</code></td>
         <td width="100%">
           <code>boolean</code>: True to enable VR mode.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="unprojectPoint(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">unprojectPoint</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> unprojectPoint (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> point)</pre>
+    
+    
+
+    
+  <p>Converts the given 2D point on the view into its corresponding 3D point in world coordinates.
+ Note that each 2D point on the view corresponds to a continuous segment of 3D points in the
+ world, each at a different depth between the near and far clipping planes. The Z coordinate
+ in the given <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> identifies the depth to return, where 0.0 coincides with the near
+ clipping plane, 1.0 coincides with the far clipping plane, and all other values are linear
+ interpolations between the two.
+ <p>
+ This method can be used for advanced hit-testing against real-world or virtual objects.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>point</code></td>
+        <td width="100%">
+          <code>Vector</code>: Get the 3D ray corresponding to this point in the 2D view's coordinate system.
+              The Z coordinate represents the depth from 0.0 to 1.0.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The 3D point in world coordinates.
 </p></td>
       </tr>
     </table>
