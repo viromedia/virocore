@@ -58,11 +58,13 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
                 break;
         }
         
-        
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
         if (@available(iOS 11.3, *)) {
             _arKitImageDetectionSet = [[NSMutableSet alloc] init];
             config.detectionImages = _arKitImageDetectionSet;
         }
+#endif
         
         _sessionConfiguration = config;
     }
@@ -112,9 +114,12 @@ void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
 
             if (types.find(VROAnchorDetection::PlanesHorizontal) != types.end()) {
                 detectionTypes = detectionTypes | ARPlaneDetectionHorizontal;
-            } else if (@available(iOS 11.3, *) && types.find(VROAnchorDetection::PlanesVertical) != types.end()) {
+            }
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+            else if (@available(iOS 11.3, *) && types.find(VROAnchorDetection::PlanesVertical) != types.end()) {
                 detectionTypes = detectionTypes | ARPlaneDetectionVertical;
             }
+#endif
             ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = detectionTypes;
 
         }
@@ -141,6 +146,7 @@ void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate
 }
 
 void VROARSessioniOS::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     // we'll get a warning for anything but: if(@available(...))
     if (@available(iOS 11.3, *)) {
         // we only support ARKit for now!
@@ -165,9 +171,11 @@ void VROARSessioniOS::addARImageTarget(std::shared_ptr<VROARImageTarget> target)
         pwarn("[Viro] attempting to use ARKit 1.5 features while not on iOS 11.3+");
         return;
     }
+#endif
 }
 
 void VROARSessioniOS::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     // we'll get a warning for anything but: if (@available(...))
     if (@available(iOS 11.3, *)) {
         std::shared_ptr<VROARImageTargetiOS> targetiOS = std::dynamic_pointer_cast<VROARImageTargetiOS>(target);
@@ -201,6 +209,7 @@ void VROARSessioniOS::removeARImageTarget(std::shared_ptr<VROARImageTarget> targ
         pwarn("[Viro] attempting to use ARKit 1.5 features while not on iOS 11.3+");
         return;
     }
+#endif
 }
 
 void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
@@ -272,23 +281,28 @@ void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
 }
 
 void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     if (@available(iOS 11.3, *)) {
         if (_session) {
             [_session setWorldOrigin:VROConvert::toMatrixFloat4x4(relativeTransform)];
         }
     }
+#endif
 }
 
 void VROARSessioniOS::setAutofocus(bool enabled) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     if (@available(iOS 11.3, *)) {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
             ((ARWorldTrackingConfiguration *) _sessionConfiguration).autoFocusEnabled = enabled;
             [_session runWithConfiguration:_sessionConfiguration];
         }
     }
+#endif
 }
 
 void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     if (@available(iOS 11.3, *)) {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
             NSArray<ARVideoFormat *> *videoFormats = ARWorldTrackingConfiguration.supportedVideoFormats;
@@ -316,6 +330,7 @@ void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
         }
         [_session runWithConfiguration:_sessionConfiguration];
     }
+#endif
 }
 
 #pragma mark - Internal Methods
@@ -344,9 +359,12 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
 
         if (planeAnchor.alignment == ARPlaneAnchorAlignmentHorizontal) {
             pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
-        } else if (@available(iOS 11.3, *) && planeAnchor.alignment == ARPlaneAnchorAlignmentVertical) {
+        }
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+        else if (@available(iOS 11.3, *) && planeAnchor.alignment == ARPlaneAnchorAlignmentVertical) {
             pAnchor->setAlignment(VROARPlaneAlignment::Vertical);
         }
+#endif
     }
     vAnchor->setTransform(VROConvert::toMatrix4f(anchor.transform));
 }
@@ -360,9 +378,10 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
     std::shared_ptr<VROARAnchor> vAnchor;
     if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
         vAnchor = std::make_shared<VROARPlaneAnchor>();
-    
+    }
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     // ignore the warning. The curious thing is that we don't even need the @available() check...
-    } else if (@available(iOS 11.3, *) && [anchor isKindOfClass:[ARImageAnchor class]]) {
+    else if (@available(iOS 11.3, *) && [anchor isKindOfClass:[ARImageAnchor class]]) {
         ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
         auto it = _arKitReferenceImageMap.find(imageAnchor.referenceImage);
         if (it != _arKitReferenceImageMap.end()) {
@@ -370,7 +389,9 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
             vAnchor = std::make_shared<VROARImageAnchor>(target);
             target->setAnchor(vAnchor);
         }
-    } else {
+    }
+#endif
+    else {
         vAnchor = std::make_shared<VROARAnchor>();
     }
     vAnchor->setId(std::string([anchor.identifier.UUIDString UTF8String]));

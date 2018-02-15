@@ -22,6 +22,7 @@ VROARImageTargetiOS::~VROARImageTargetiOS() {
 
 void VROARImageTargetiOS::initWithTrackingImpl(VROImageTrackingImpl impl) {
     _currentImpl = impl;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     if (@available(iOS 11.3, *)) {
         if (_currentImpl == VROImageTrackingImpl::ARKit) {
             CGImagePropertyOrientation cgOrientation;
@@ -45,8 +46,11 @@ void VROARImageTargetiOS::initWithTrackingImpl(VROImageTrackingImpl impl) {
                                                           physicalWidth:_physicalWidth];
         }
     }
+#endif
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
 ARReferenceImage *VROARImageTargetiOS::getARReferenceImage() {
     return _referenceImage;
 }
+#endif

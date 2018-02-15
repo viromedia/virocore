@@ -72,7 +72,10 @@ private:
     ARSession *_session;
     ARConfiguration *_sessionConfiguration;
     VROARKitSessionDelegate *_delegateAR;
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     NSMutableSet<ARReferenceImage *> *_arKitImageDetectionSet;
+#endif
 
     /*
      Image Tracking Helper.
@@ -100,11 +103,13 @@ private:
      */
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
     
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     /*
      Map of ARReferenceImage ObjC objects to astd::shared_ptr<VROARImageTarget>
      that was used to create the ARReferenceImage.
      */
     std::map<ARReferenceImage *, std::shared_ptr<VROARImageTarget>> _arKitReferenceImageMap;
+#endif
     
     /*
      Map of ARKit anchors ("native" anchors) to their Viro representation. 
