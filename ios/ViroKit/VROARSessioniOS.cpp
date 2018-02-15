@@ -279,6 +279,45 @@ void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
     }
 }
 
+void VROARSessioniOS::setAutofocus(bool enabled) {
+    if (@available(iOS 11.3, *)) {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).autoFocusEnabled = enabled;
+            [_session runWithConfiguration:_sessionConfiguration];
+        }
+    }
+}
+
+void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
+    if (@available(iOS 11.3, *)) {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            NSArray<ARVideoFormat *> *videoFormats = ARWorldTrackingConfiguration.supportedVideoFormats;
+            if (quality == VROVideoQuality::High) {
+                ARVideoFormat *highestFormat;
+                float high = 0;
+                for (ARVideoFormat *format in videoFormats) {
+                    if (format.imageResolution.height > high) {
+                        high = format.imageResolution.height;
+                        highestFormat = format;
+                    }
+                }
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = highestFormat;
+            } else {
+                ARVideoFormat *lowestFormat;
+                float low = CGFLOAT_MAX;
+                for (ARVideoFormat *format in videoFormats) {
+                    if (format.imageResolution.height < low) {
+                        low = format.imageResolution.height;
+                        lowestFormat = format;
+                    }
+                }
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = lowestFormat;
+            }
+        }
+        [_session runWithConfiguration:_sessionConfiguration];
+    }
+}
+
 #pragma mark - Internal Methods
 
 std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *anchor) {

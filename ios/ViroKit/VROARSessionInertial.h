@@ -45,6 +45,14 @@ public:
         // no-op
     };
     
+    void setAutofocus(bool enabled) {
+        // no-op
+    };
+    
+    void setVideoQuality(VROVideoQuality quality) {
+        // no-op
+    };
+    
 private:
     
     std::unique_ptr<VROARFrame> _currentFrame;

@@ -51,6 +51,14 @@ public:
     void setOrientation(VROCameraOrientation orientation);
     void setWorldOrigin(VROMatrix4f relativeTransform);
 
+    void setAutofocus(bool enabled) {
+        // no-op on Android
+    };
+
+    void setVideoQuality(VROVideoQuality quality) {
+        // no-op on Android
+    };
+
     GLuint getCameraTextureId() const;
     
     /*
