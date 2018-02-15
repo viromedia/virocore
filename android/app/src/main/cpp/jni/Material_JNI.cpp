@@ -137,7 +137,11 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
                                    jlong textureRef,
                                    jstring materialPropertyName) {
     std::string strName = VROPlatformGetString(materialPropertyName, env);
-    std::shared_ptr<VROTexture> texture = Texture::native(textureRef);
+
+    std::shared_ptr<VROTexture> texture;
+    if (textureRef != -1) {
+        texture = Texture::native(textureRef);
+    }
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
 
     VROPlatformDispatchAsyncRenderer([texture, material_w, strName] {

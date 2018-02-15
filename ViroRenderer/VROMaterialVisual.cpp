@@ -54,7 +54,7 @@ void VROMaterialVisual::setColor(VROVector4f color) {
 }
 
 void VROMaterialVisual::setTexture(std::shared_ptr<VROTexture> texture) {
-    if ((_permissibleContentsMask & (int) texture->getType()) == 0) {
+    if (texture && (_permissibleContentsMask & (int) texture->getType()) == 0) {
         pabort("Material visual does not support texture of type %d", texture->getType());
         return;
     }
