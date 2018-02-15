@@ -123,8 +123,8 @@ public class Material {
          * <p>
          * PBR rendering also takes into account normal maps to add more surface detail. However,
          * PBR will <i>ignore</i> some properties used by the basic lighting models. Specifically,
-         * the specular texture ({@link #setSpecularTexture(Texture)} and the shininess property
-         * ({@link #setShininess(float)} are ignored when rendering physically-based surfaces.
+         * the specular texture ({@link #setSpecularTexture(Texture)}) and the shininess property
+         * ({@link #setShininess(float)}) are ignored when rendering physically-based surfaces.
          */
         PHYSICALLY_BASED("PBR");
 

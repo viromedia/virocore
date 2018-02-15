@@ -944,7 +944,7 @@ void VRONode::removeAllAnimations() {
     _animations.clear();
 }
 
-void VRONode::onAnimationFinished(){
+void VRONode::onAnimationFinished() {
     notifyTransformUpdate(true);
 
     std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
