@@ -179,7 +179,25 @@ public class Material {
          * The source and destination pixel colors are added together. This is useful for creating
          * a 'glow' effect.
          */
-        ADD("Add");
+        ADD("Add"),
+
+        /**
+         * The source color is subtracted from the destination color.
+         */
+        SUBTRACT("Subtract"),
+
+        /**
+         * The source color is multiplied by the destination color. This results in colors that are
+         * at the same brightness or darker than either the source or destination color.
+         */
+        MULTIPLY("Multiply"),
+
+        /**
+         * Blend by multiplying the inverse of the source color with the inverse of the destination
+         * color. This results in colors that are the same brightness or lighter than either the
+         * source or destination color.
+         */
+        SCREEN("Screen");
 
         private String mStringValue;
         private BlendMode(String value) {

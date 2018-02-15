@@ -45,15 +45,26 @@ VROLightingModel parseLightingModel(std::string strName) {
 }
 
 VROBlendMode parseBlendMode(std::string blendMode) {
-    if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
-        return VROBlendMode::Alpha;
-    }
-    else if (VROStringUtil::strcmpinsensitive(blendMode, "None")) {
+    if (VROStringUtil::strcmpinsensitive(blendMode, "None")) {
         return VROBlendMode::None;
     }
-    else {
-        // Default transparencyMode is AOne, so no use checking.
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
+        return VROBlendMode::Alpha;
+    }
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "Add")) {
         return VROBlendMode::Add;
+    }
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "Subtract")) {
+        return VROBlendMode::Subtract;
+    }
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "Multiply")) {
+        return VROBlendMode::Multiply;
+    }
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "Screen")) {
+        return VROBlendMode::Screen;
+    }
+    else {
+        return VROBlendMode::None;
     }
 }
 

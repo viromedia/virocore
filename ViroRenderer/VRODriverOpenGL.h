@@ -70,6 +70,7 @@ public:
         
         _blendMode = VROBlendMode::Alpha;
         glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     
@@ -161,13 +162,24 @@ public:
             }
             
             if (mode == VROBlendMode::Alpha) {
+                glBlendEquation(GL_FUNC_ADD);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             }
             else if (mode == VROBlendMode::Add) {
+                glBlendEquation(GL_FUNC_ADD);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             }
-            else if (mode == VROBlendMode::Multiply){
-                glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+            else if (mode == VROBlendMode::Multiply) {
+                glBlendEquation(GL_FUNC_ADD);
+                glBlendFunc(GL_DST_COLOR, GL_ZERO);
+            }
+            else if (mode == VROBlendMode::Subtract) {
+                glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            }
+            else if (mode == VROBlendMode::Screen) {
+                glBlendEquation(GL_FUNC_ADD);
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
             }
             else {
                 pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");

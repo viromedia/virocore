@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.viro.core.Box;
+import com.viro.core.Camera;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
@@ -31,10 +32,12 @@ public class ViroMaterialTest extends ViroBaseTest {
 
     private Material mMaterial;
     private Sphere mSphere;
+    private Node mSphereNode;
     private Box mBox;
     private Node mNodeBox;
     private DirectionalLight mDirectionalLight;
     private ArrayList<Material> mMaterialBoxList;
+    private Texture mBobaTexture;
 
     @Override
     void configureTestScene() {
@@ -43,21 +46,21 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.getRootNode().addLight(mDirectionalLight);
 
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
-        Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
+        mBobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
 
         mMaterial = new Material();
-        mMaterial.setDiffuseTexture(bobaTexture);
+        mMaterial.setDiffuseTexture(mBobaTexture);
         mMaterial.setDiffuseColor(Color.RED);
         mMaterial.setLightingModel(Material.LightingModel.BLINN);
 
         mSphere = new Sphere(5);
         mSphere.setMaterials(Arrays.asList(mMaterial));
 
-        Node node = new Node();
-        node.setGeometry(mSphere);
+        mSphereNode = new Node();
+        mSphereNode.setGeometry(mSphere);
         float[] spherePosition = {0, 0, -12};
-        node.setPosition(new Vector(spherePosition));
-        mScene.getRootNode().addChildNode(node);
+        mSphereNode.setPosition(new Vector(spherePosition));
+        mScene.getRootNode().addChildNode(mSphereNode);
 
         mBox = new Box(2,2,2);
         mNodeBox = new Node();
@@ -75,6 +78,11 @@ public class ViroMaterialTest extends ViroBaseTest {
         }
         mBox.setMaterials(mMaterialBoxList);
         mNodeBox.setGeometry(mBox);
+
+        Camera camera = new Camera();
+        camera.setFieldOfView(90);
+        mScene.getRootNode().setCamera(camera);
+        mViroView.setPointOfView(mScene.getRootNode());
     }
 
     @Test
@@ -91,6 +99,9 @@ public class ViroMaterialTest extends ViroBaseTest {
         testMaterialBlendNone();
         testMaterialBlendAlpha();
         testMaterialBlendAdd();
+        testMaterialBlendSubtract();
+        testMaterialBlendMultiply();
+        testMaterialBlendScreen();
 
         testMaterialTransparencyModeAOne();
         testMaterialTransparencyModeRGBZero();
@@ -149,23 +160,56 @@ public class ViroMaterialTest extends ViroBaseTest {
     }
 
     private void testMaterialBlendNone() {
+        mScene.setBackgroundCubeWithColor(Color.WHITE);
+        mSphereNode.setOpacity(0.5f);
+        mMaterial.setDiffuseTexture(null);
         mMaterial.setBlendMode(Material.BlendMode.NONE);
-        assertPass("Blend mode is NONE");
+        assertPass("Blend mode is NONE: red sphere over white background");
     }
 
     private void testMaterialBlendAlpha() {
+        mScene.setBackgroundCubeWithColor(Color.WHITE);
+        mSphereNode.setOpacity(0.5f);
+        mMaterial.setDiffuseTexture(null);
         mMaterial.setBlendMode(Material.BlendMode.ALPHA);
-        mSphere.setMaterials(Arrays.asList(mMaterial));
-        assertPass("Blend mode is Alpha");
+        assertPass("Blend mode is Alpha: faded red sphere over white background");
     }
 
     private void testMaterialBlendAdd() {
+        mScene.setBackgroundCubeWithColor(Color.GREEN);
+        mSphereNode.setOpacity(0.5f);
+        mMaterial.setDiffuseTexture(null);
         mMaterial.setBlendMode(Material.BlendMode.ADD);
-        mSphere.setMaterials(Arrays.asList(mMaterial));
-        assertPass("Blend mode is ADD");
+        assertPass("Blend mode is ADD: yellow sphere over green background");
+    }
+
+    private void testMaterialBlendSubtract() {
+        mScene.setBackgroundCubeWithColor(Color.YELLOW);
+        mMaterial.setDiffuseTexture(null);
+        mMaterial.setBlendMode(Material.BlendMode.SUBTRACT);
+        assertPass("Blend mode is SUBTRACT: green sphere over yellow background");
+    }
+
+    private void testMaterialBlendMultiply() {
+        mScene.setBackgroundCubeWithColor(Color.GRAY);
+        mMaterial.setDiffuseTexture(null);
+        mMaterial.setDiffuseColor(Color.GRAY);
+        mMaterial.setBlendMode(Material.BlendMode.MULTIPLY);
+        assertPass("Blend mode is MULTIPLY: sphere is darker gray than background");
+    }
+
+    private void testMaterialBlendScreen() {
+        mScene.setBackgroundCubeWithColor(Color.GRAY);
+        mMaterial.setDiffuseTexture(null);
+        mMaterial.setDiffuseColor(Color.GRAY);
+        mMaterial.setBlendMode(Material.BlendMode.SCREEN);
+        assertPass("Blend mode is SCREEN: sphere is lighter gray than background");
     }
 
     private void testMaterialTransparencyModeAOne() {
+        mScene.setBackgroundCubeWithColor(Color.BLUE);
+        mMaterial.setDiffuseColor(Color.RED);
+        mMaterial.setDiffuseTexture(mBobaTexture);
         mMaterial.setTransparencyMode(Material.TransparencyMode.A_ONE);
         mSphere.setMaterials(Arrays.asList(mMaterial));
         assertPass("TransparencyMode set to A_ONE");
@@ -173,6 +217,9 @@ public class ViroMaterialTest extends ViroBaseTest {
 
 
     private void testMaterialTransparencyModeRGBZero() {
+        mScene.setBackgroundCubeWithColor(Color.BLUE);
+        mMaterial.setDiffuseColor(Color.RED);
+        mMaterial.setDiffuseTexture(mBobaTexture);
         mMaterial.setTransparencyMode(Material.TransparencyMode.RGB_ZERO);
         mSphere.setMaterials(Arrays.asList(mMaterial));
         assertPass("TransparencyMode set to RGB_ZERO");
