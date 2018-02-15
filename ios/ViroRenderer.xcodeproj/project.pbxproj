@@ -62,7 +62,6 @@
 		8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF0E0891FA928480083CBAE /* point_cloud.png */; };
 		8AF0E08E1FABA4C50083CBAE /* VROARPointCloud.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E08C1FABA4C40083CBAE /* VROARPointCloud.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8AFCC4B82005627300AD8B8D /* ViroKit.podspec in Copy Framework to Bridge Project */ = {isa = PBXBuildFile; fileRef = 8AFCC4B72005627300AD8B8D /* ViroKit.podspec */; };
 		8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B2F2A481F6B9D0A000C9924 /* VROPortalDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -204,7 +203,6 @@
 		8F40541A1F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */; };
 		8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */; };
 		8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8C1F2B994C00B1B2DC /* portal_ring.png */; };
-		8F4AD9001D42BD710044B3F0 /* ViroKit.framework in Copy Framework to Bridge Project */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */; };
 		8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */; };
 		8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F62483D1BDAC069000755E5 /* VROViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -787,18 +785,6 @@
 				8F129FA71ECF323300341D83 /* ViroKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F4AD8FF1D42BD220044B3F0 /* Copy Framework to Bridge Project */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../../react-viro/ios/ViroRenderer";
-			dstSubfolderSpec = 0;
-			files = (
-				8AFCC4B82005627300AD8B8D /* ViroKit.podspec in Copy Framework to Bridge Project */,
-				8F4AD9001D42BD710044B3F0 /* ViroKit.framework in Copy Framework to Bridge Project */,
-			);
-			name = "Copy Framework to Bridge Project";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -3127,8 +3113,8 @@
 				8FD4DECA1C18ECD4003DC425 /* Headers */,
 				8FD4DECB1C18ECD4003DC425 /* Resources */,
 				8AE44C932021084A00CE8394 /* Copy GLM Files to Framework */,
-				8F4AD8FF1D42BD220044B3F0 /* Copy Framework to Bridge Project */,
 				C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */,
+				8A8B69DD2036344C00D98723 /* Copy Framework to Bridge */,
 			);
 			buildRules = (
 			);
@@ -3513,6 +3499,20 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		8A8B69DD2036344C00D98723 /* Copy Framework to Bridge */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Framework to Bridge";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo $SDK_VERSION_ACTUAL\nif [ \"$SDK_VERSION_ACTUAL\" -eq 110300 ]; then\n  echo \"On Xcode Beta w/ Base iOS Version 11.3, framework copied to react-viro/ios/dist/beta/\"\n  # CODESIGNING_FOLDER_PATH for ViroKit points to ViroKit.framework which is what we want.\n  cp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/beta/ViroRenderer\n  cp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/beta/ViroRenderer\nelse\n  echo \"Not on Base SDK == iOS 11.3, copying framework to react-viro/ios/dist/\"\n  cp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n  cp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\nfi";
 		};
 		C3BEDF58C43550CB45447D67 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
