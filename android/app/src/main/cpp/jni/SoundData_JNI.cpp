@@ -16,14 +16,13 @@ extern "C" {
 
     JNI_METHOD(jlong, nativeCreateSoundData)(JNIEnv *env,
                                              jclass clazz,
-                                             jstring filepath,
-                                             jboolean local) {
+                                             jstring filepath) {
         std::string path = VROPlatformGetString(filepath, env);
 
         // Set the platform env because the renderer could've not been initialized yet (and set
         // the env)
         VROPlatformSetEnv(env);
-        std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(path, local);
+        std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(path, VROResourceType::URL);
         return SoundData::jptr(data);
     }
 

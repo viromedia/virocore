@@ -112,16 +112,8 @@ public class SpatialSound implements BaseSound {
      *                    playback events. May be null.
      */
     public SpatialSound(ViroContext viroContext, Uri uri, PlaybackListener listener) {
-        mNativeRef = nativeCreateSpatialSound(uri.toString(), false, viroContext.mNativeRef);
+        mNativeRef = nativeCreateSpatialSound(uri.toString(), viroContext.mNativeRef);
         mListener = listener;
-    }
-
-    /**
-     * @hide
-     */
-    public SpatialSound(String path, ViroContext viroContext, PlaybackListener delegate, boolean local) {
-        mNativeRef = nativeCreateSpatialSound(path, local, viroContext.mNativeRef);
-        mListener = delegate;
     }
 
     /**
@@ -352,7 +344,7 @@ public class SpatialSound implements BaseSound {
         }
     }
 
-    private native long nativeCreateSpatialSound(String filename, boolean local, long renderContextRef);
+    private native long nativeCreateSpatialSound(String uri, long renderContextRef);
     private native long nativeCreateSpatialSoundWithData(long nativeRef, long dataRef);
     private native void nativeDestroySpatialSound(long nativeRef);
     private native void nativePlaySpatialSound(long nativeRef);

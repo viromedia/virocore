@@ -22,6 +22,7 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
     auto it = cache.find(name);
     if (it == cache.end()) {
         bool isTempTextureFile = false;
+        bool success = false;
         std::string textureFile;
 
         if (resourceMap == nullptr) {
@@ -29,10 +30,10 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
         } else {
             textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
         }
-        textureFile = processResource(textureFile, type, &isTempTextureFile);
+        textureFile = processResource(textureFile, type, &isTempTextureFile, &success);
 
         // Abort (return empty texture) if the file wasn't found
-        if (textureFile.length() == 0) {
+        if (!success || textureFile.length() == 0) {
             return texture;
         }
 
@@ -74,19 +75,20 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
     return texture;
 }
 
-std::string VROModelIOUtil::processResource(std::string resource, VROResourceType type, bool *isTemp) {
+std::string VROModelIOUtil::processResource(std::string resource, VROResourceType type, bool *isTemp, bool *success) {
     std::string path;
     *isTemp = false;
 
     if (type == VROResourceType::BundledResource) {
-        path = VROPlatformCopyResourceToFile(resource);
+        path = VROPlatformCopyResourceToFile(resource, isTemp);
+        *success = true;
     }
     else if (type == VROResourceType::URL) {
-        bool success;
-        path = VROPlatformDownloadURLToFile(resource, isTemp, &success);
+        path = VROPlatformDownloadURLToFile(resource, isTemp, success);
     }
     else {
         path = resource;
+        *success = true;
     }
     return path;
 }
@@ -102,7 +104,8 @@ std::map<std::string, std::string> VROModelIOUtil::processResourceMap(const std:
     else {
         std::map<std::string, std::string> resources;
         for (auto &kv : resourceMap) {
-            resources[kv.first] = VROPlatformCopyResourceToFile(kv.second);
+            bool isTemp;
+            resources[kv.first] = VROPlatformCopyResourceToFile(kv.second, &isTemp);
         }
         return resources;
     }

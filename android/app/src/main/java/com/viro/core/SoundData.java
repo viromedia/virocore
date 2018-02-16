@@ -10,14 +10,14 @@ package com.viro.core;
 public class SoundData {
     protected final long mNativeRef;
 
-    public SoundData(String path, boolean local) {
-        mNativeRef = nativeCreateSoundData(path, local);
+    public SoundData(String path) {
+        mNativeRef = nativeCreateSoundData(path);
     }
 
     public void destroy() {
         nativeDestroySoundData(mNativeRef);
     }
 
-    private native long nativeCreateSoundData(String path, boolean local);
+    private native long nativeCreateSoundData(String path);
     private native void nativeDestroySoundData(long nativeRef);
 }

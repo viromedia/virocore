@@ -120,8 +120,8 @@ void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType typ
                                        bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
         VROPlatformDispatchAsyncBackground([resource, type, node, onFinish] {
-            bool isTemp;
-            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            bool isTemp, success;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
             std::string base = resource.substr(0, resource.find_last_of('/'));
 
             std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
@@ -134,8 +134,8 @@ void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType typ
         });
     }
     else {
-        bool isTemp;
-        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        bool isTemp, success;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
         std::string base = resource.substr(0, resource.find_last_of('/'));
 
         std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
@@ -152,8 +152,8 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
                                         bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
         VROPlatformDispatchAsyncBackground([resource, type, resourceMap, node, onFinish] {
-            bool isTemp;
-            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            bool isTemp, success;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
             std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
             // Note: since we're loading from resources, that meant that we copied the resources over to
@@ -168,8 +168,8 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
         });
     }
     else {
-        bool isTemp;
-        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        bool isTemp, success;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
         std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
         // Note: since we're loading from resources, that meant that we copied the resources over to

@@ -12,11 +12,11 @@
 #include "VROLog.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 
-std::shared_ptr<VROSoundGVR> VROSoundGVR::create(std::string path,
+std::shared_ptr<VROSoundGVR> VROSoundGVR::create(std::string resource, VROResourceType resourceType,
                                                  std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                                 VROSoundType type,
-                                                 bool isLocalFile) {
-    std::shared_ptr<VROSoundGVR> sound = std::make_shared<VROSoundGVR>(path, gvrAudio, type, isLocalFile);
+                                                 VROSoundType type) {
+    std::shared_ptr<VROSoundGVR> sound = std::make_shared<VROSoundGVR>(resource, resourceType, gvrAudio,
+                                                                       type);
     sound->setup();
     return sound;
 }
@@ -30,13 +30,12 @@ std::shared_ptr<VROSoundGVR> VROSoundGVR::create(std::shared_ptr<VROSoundData> d
 }
 
 
-VROSoundGVR::VROSoundGVR(std::string path,
-                                 std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                 VROSoundType type,
-                                 bool isLocalFile) :
+VROSoundGVR::VROSoundGVR(std::string resource, VROResourceType resourceType,
+                         std::shared_ptr<gvr::AudioApi> gvrAudio,
+                         VROSoundType type) :
     _gvrAudio(gvrAudio) {
     _type = type;
-    std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(path, isLocalFile);
+    std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(resource, resourceType);
     _data = std::dynamic_pointer_cast<VROSoundData>(data);
     _gvrRolloffType = GVR_AUDIO_ROLLOFF_NONE;
 }
@@ -71,15 +70,12 @@ void VROSoundGVR::play() {
 
     _gvrAudio->Resume();
 
-    // iOS does not support gvrAudio->IsSourceIdValid() yet
-#if VRO_PLATFORM_ANDROID
     // Check if a loaded sound has become invalid; if so, we need
     // to stop it (to destroy it), and reload it
     if (_audioId != -1 && !_gvrAudio->IsSourceIdValid(_audioId)) {
         _gvrAudio->StopSound(_audioId);
         _audioId = -1;
     }
-#endif
 
     // create the sound if it hasn't been created yet.
     if (_audioId == -1) {

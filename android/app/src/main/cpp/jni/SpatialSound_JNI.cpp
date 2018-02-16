@@ -21,12 +21,11 @@
 extern "C" {
 JNI_METHOD(jlong, nativeCreateSpatialSound)(JNIEnv *env,
                                             jobject object,
-                                            jstring filename,
-                                            jboolean local,
+                                            jstring uri_j,
                                             jlong context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-    std::string file = VROPlatformGetString(filename, env);
-    std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROSoundType::Spatial, local);
+    std::string uri = VROPlatformGetString(uri_j, env);
+    std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(uri, VROResourceType::URL, VROSoundType::Spatial);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
     return SpatialSound::jptr(soundGvr);

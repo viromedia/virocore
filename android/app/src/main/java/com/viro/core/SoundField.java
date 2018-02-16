@@ -56,16 +56,8 @@ public class SoundField implements BaseSound {
      *                    playback events. May be null.
      */
     public SoundField(ViroContext viroContext, Uri uri, PlaybackListener listener) {
-        mNativeRef = nativeCreateSoundField(uri.toString(), false, viroContext.mNativeRef);
+        mNativeRef = nativeCreateSoundField(uri.toString(), viroContext.mNativeRef);
         mListener = listener;
-    }
-
-    /**
-     * @hide
-     */
-    public SoundField(String path, ViroContext viroContext, PlaybackListener delegate, boolean local) {
-        mNativeRef = nativeCreateSoundField(path, local, viroContext.mNativeRef);
-        mListener = delegate;
     }
 
     /**
@@ -274,7 +266,7 @@ public class SoundField implements BaseSound {
         }
     }
 
-    private native long nativeCreateSoundField(String url, boolean local, long renderContextRef);
+    private native long nativeCreateSoundField(String url, long renderContextRef);
     private native long nativeCreateSoundFieldWithData(long dataRef, long renderContextRef);
     private native void nativeDestroySoundField(long mNativeRef);
     private native void nativePlaySoundField(long nativeRef);

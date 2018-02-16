@@ -152,8 +152,8 @@ extern "C" {
 JNI_METHOD(jlong, nativeCreateRadianceHDRTexture)(JNIEnv *env, jclass cls,
                                                   jstring uri_j) {
     std::string uri = VROPlatformGetString(uri_j, env);
-    bool isTemp;
-    std::string path = VROModelIOUtil::processResource(uri, VROResourceType::URL, &isTemp);
+    bool isTemp, success;
+    std::string path = VROModelIOUtil::processResource(uri, VROResourceType::URL, &isTemp, &success);
     std::shared_ptr<VROTexture> texture = VROHDRLoader::loadRadianceHDRTexture(path);
     if (isTemp) {
         VROPlatformDeleteFile(path);

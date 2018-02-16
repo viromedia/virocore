@@ -133,9 +133,11 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
     }
 }
 
-std::string VROPlatformCopyResourceToFile(std::string asset) {
-    // TODO: VIRO-767
-    return "";
+std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
+    // On iOS, bundled resources have file paths, so we can return the path directly
+    // without copying
+    *isTemp = false;
+    return asset;
 }
 
 void VROPlatformDeleteFile(std::string filename) {
@@ -323,7 +325,7 @@ void VROPlatformDeleteFile(std::string filename) {
     env->DeleteLocalRef(cls);
 }
 
-std::string VROPlatformCopyResourceToFile(std::string asset) {
+std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jasset = env->NewStringUTF(asset.c_str());
 
@@ -339,6 +341,7 @@ std::string VROPlatformCopyResourceToFile(std::string asset) {
     env->DeleteLocalRef(jasset);
     env->DeleteLocalRef(cls);
 
+    *isTemp = true;
     return spath;
 }
 

@@ -69,8 +69,8 @@ public:
         return VROSoundGVR::create(data, _gvrAudio, type);
     }
 
-    std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) {
-        return VROSoundGVR::create(path, _gvrAudio, type, local);
+    std::shared_ptr<VROSound> newSound(std::string resource, VROResourceType resourceType, VROSoundType type) {
+        return VROSoundGVR::create(resource, resourceType, _gvrAudio, type);
     }
 
     std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::shared_ptr<VROSoundData> data) {

@@ -16,6 +16,8 @@
 #include "VROTypefaceiOS.h"
 #include "VRODisplayOpenGLiOS.h"
 #include "VROPlatformUtil.h"
+#include "VROGVRUtil.h"
+#include "vr/gvr/capi/include/gvr_audio.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
     
@@ -52,7 +54,8 @@ public:
     }
     
     void willRenderFrame(const VRORenderContext &context) {
-        // Set the head position into _gvrAudio when spatial sound is supported by iOS
+        _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
+        _gvrAudio->Update();
         VRODriverOpenGL::willRenderFrame(context);
     }
 
@@ -61,8 +64,8 @@ public:
         return std::make_shared<VROVideoTextureCacheOpenGL>(_eaglContext, driver);
     }
 
-    std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) {
-        std::shared_ptr<VROSound> sound = VROSoundGVR::create(path, _gvrAudio, type, local);
+    std::shared_ptr<VROSound> newSound(std::string resource, VROResourceType resourceType, VROSoundType type) {
+        std::shared_ptr<VROSound> sound = VROSoundGVR::create(resource, resourceType, _gvrAudio, type);
         return sound;
     }
 

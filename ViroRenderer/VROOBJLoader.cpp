@@ -26,8 +26,8 @@ void VROOBJLoader::loadOBJFromResource(std::string resource, VROResourceType typ
                                        bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
         VROPlatformDispatchAsyncBackground([resource, type, node, onFinish] {
-            bool isTemp;
-            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            bool isTemp, success;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
             std::string base = resource.substr(0, resource.find_last_of('/'));
 
             std::shared_ptr<VROGeometry> geometry = loadOBJ(path, base, type);
@@ -40,8 +40,8 @@ void VROOBJLoader::loadOBJFromResource(std::string resource, VROResourceType typ
         });
     }
     else {
-        bool isTemp;
-        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        bool isTemp, success;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
         std::string base = resource.substr(0, resource.find_last_of('/'));
 
         std::shared_ptr<VROGeometry> geometry = loadOBJ(resource, base, type);
@@ -58,8 +58,8 @@ void VROOBJLoader::loadOBJFromResources(std::string resource, VROResourceType ty
                                         bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
         VROPlatformDispatchAsyncBackground([resource, type, resourceMap, node, onFinish] {
-            bool isTemp;
-            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            bool isTemp, success;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
             std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
             std::shared_ptr<VROGeometry> geometry = loadOBJ(path, fileMap);
@@ -72,8 +72,8 @@ void VROOBJLoader::loadOBJFromResources(std::string resource, VROResourceType ty
         });
     }
     else {
-        bool isTemp;
-        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        bool isTemp, success;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp, &success);
         std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
         std::shared_ptr<VROGeometry> geometry = loadOBJ(path, fileMap);
