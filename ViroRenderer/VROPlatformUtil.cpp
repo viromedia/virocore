@@ -809,6 +809,7 @@ void VROPlatformSetEnumValue(JNIEnv *env, jclass jObjClass, jobject jObj, const 
     // Get the corresponding enum field in jObjClass.java to be set on and set it.
     jfieldID jEnumField = env->GetFieldID(jObjClass, fieldName, enumClassPathType.c_str());
     env->SetObjectField(jObj, jEnumField, jEnumValue);
+    env->DeleteLocalRef(enumClass);
 }
 
 std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){

@@ -73,6 +73,8 @@ public:
         setTexture(env, cls, jMat, "mMetalnessMap", mat->getMetalness().getTexture());
         setTexture(env, cls, jMat, "mRoughnessMap", mat->getRoughness().getTexture());
         setTexture(env, cls, jMat, "mAmbientOcclusionMap", mat->getAmbientOcclusion().getTexture());
+
+        env->DeleteLocalRef(cls);
         return jMat;
     }
 
