@@ -334,7 +334,6 @@
 		8F9278031C66BD4500FF892A /* pz1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FD1C66BD4500FF892A /* pz1.jpg */; };
 		8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278041C670B0300FF892A /* VROTriangle.cpp */; };
 		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F93B54E2030B5F800B358C5 /* tesla.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F93B54D2030B5F800B358C5 /* tesla.obj */; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -1217,7 +1216,6 @@
 		8F9277FD1C66BD4500FF892A /* pz1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pz1.jpg; path = ViroSample/pz1.jpg; sourceTree = "<group>"; };
 		8F9278041C670B0300FF892A /* VROTriangle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTriangle.cpp; sourceTree = "<group>"; };
 		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
-		8F93B54D2030B5F800B358C5 /* tesla.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tesla.obj; path = ViroSample/tesla.obj; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -2537,7 +2535,6 @@
 				8F5EEE9420325C310059C9E7 /* pumpkin.vrx */,
 				8F5EEE9020323E9F0059C9E7 /* dragao_map.jpg */,
 				8F5EEE8E20323E790059C9E7 /* dragon.vrx */,
-				8F93B54D2030B5F800B358C5 /* tesla.obj */,
 				8F04372E201AA74000D98D26 /* cylinder_pbr.vrx */,
 				8F043726201AA72800D98D26 /* blinn2_Base_Color.png */,
 				8F043727201AA72800D98D26 /* blinn2_Metallic.png */,
@@ -3358,7 +3355,6 @@
 				8F04372C201AA72900D98D26 /* blinn2_Metallic.png in Resources */,
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
-				8F93B54E2030B5F800B358C5 /* tesla.obj in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
