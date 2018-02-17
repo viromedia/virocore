@@ -76,9 +76,7 @@ namespace Texture {
 
     VROStereoMode getStereoMode(JNIEnv *env, jstring stereoMode) {
         if (stereoMode != NULL) {
-            const char *cStrStereoMode = env->GetStringUTFChars(stereoMode, NULL);
-            std::string strStereoMode(cStrStereoMode);
-            env->ReleaseStringUTFChars(stereoMode, cStrStereoMode);
+            std::string strStereoMode = VROPlatformGetString(stereoMode, env);
             return VROTextureUtil::getStereoModeForString(strStereoMode);
         }
         else {
@@ -143,6 +141,8 @@ namespace Texture {
         setFilterMode(env, cls, jTexture, "mMinificationFilter", texture->getMinificationFilter());
         setFilterMode(env, cls, jTexture, "mMagnificationFilter", texture->getMagnificationFilter());
         setFilterMode(env, cls, jTexture, "mMipFilter", texture->getMipFilter());
+
+        env->DeleteLocalRef(cls);
         return jTexture;
     }
 }

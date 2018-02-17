@@ -53,7 +53,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
         }
 
         // Generate a map of unique jMaterials representing this 3D model.
-        std::map<std::string, jobject> mats;
+        std::map<std::string, std::shared_ptr<VROMaterial>> mats;
         generateJMaterials(mats, node);
 
         // Generate a jObjectArray containing a unique list of jMaterials
@@ -62,8 +62,14 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
                                                          NULL);
         if (mats.size() > 0) {
             int i = 0;
-            for(std::map<std::string, jobject>::iterator it = mats.begin(); it != mats.end(); ++it) {
-                env->SetObjectArrayElement(materialArray, i, it->second);
+            for(std::map<std::string, std::shared_ptr<VROMaterial>>::iterator
+                        it = mats.begin(); it != mats.end(); ++it) {
+                // Create the Material.java and added it to the array
+                jobject jMat = Material::createJMaterial(it->second);
+                env->SetObjectArrayElement(materialArray, i, jMat);
+
+                // Clean up our local reference to jMaterial after.
+                env->DeleteLocalRef(jMat);
                 i++;
             }
         }
@@ -80,7 +86,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
     });
 }
 
-void OBJLoaderDelegate::generateJMaterials(std::map<std::string, jobject> &matOut,
+void OBJLoaderDelegate::generateJMaterials(std::map<std::string, std::shared_ptr<VROMaterial>> &matOut,
                                            std::shared_ptr<VRONode> node) {
 
     std::shared_ptr<VROGeometry> geom = node->getGeometry();
@@ -102,7 +108,7 @@ void OBJLoaderDelegate::generateJMaterials(std::map<std::string, jobject> &matOu
                 mat->setName(matName);
             }
 
-            matOut[materialId] = Material::createJMaterial(mat);
+            matOut[materialId] = mat;
         }
     }
 

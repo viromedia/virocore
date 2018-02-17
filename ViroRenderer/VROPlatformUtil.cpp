@@ -813,6 +813,7 @@ void VROPlatformSetEnumValue(JNIEnv *env, jclass jObjClass, jobject jObj, const 
     jfieldID jEnumField = env->GetFieldID(jObjClass, fieldName, enumClassPathType.c_str());
     env->SetObjectField(jObj, jEnumField, jEnumValue);
     env->DeleteLocalRef(enumClass);
+    env->DeleteLocalRef(jEnumValue);
 }
 
 std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){

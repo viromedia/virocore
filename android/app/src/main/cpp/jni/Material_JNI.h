@@ -161,6 +161,7 @@ private:
         }
 
         env->SetObjectField(jObj, fieldId, jTexture);
+        env->DeleteLocalRef(jTexture);
     }
 
     static int parseColor(VROVector4f parseColor) {

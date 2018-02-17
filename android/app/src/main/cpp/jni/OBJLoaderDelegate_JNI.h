@@ -26,7 +26,7 @@ private:
     /*
      Creates a map of unique jMaterials for a given VRONode, recursively.
      */
-    static void generateJMaterials(std::map<std::string, jobject> &mats,
+    static void generateJMaterials(std::map<std::string, std::shared_ptr<VROMaterial>> &mats,
                                    std::shared_ptr<VRONode> node);
 };
 
