@@ -28,11 +28,7 @@ class VROSceneRendererGVR : public std::enable_shared_from_this<VROSceneRenderer
 
 public:
 
-    /*
-     Create a VROSceneRendererGVR using a given |gvr_context|.
-     */
-    VROSceneRendererGVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
-                        int width, int height, UIInterfaceOrientation orientation,
+    VROSceneRendererGVR(int width, int height, UIInterfaceOrientation orientation,
                         float contentScaleFactor,
                         std::shared_ptr<VRORenderer> renderer,
                         std::shared_ptr<VRODriver> driver);

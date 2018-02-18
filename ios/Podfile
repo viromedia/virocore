@@ -10,6 +10,7 @@ target 'ViroKit' do
     use_frameworks!
 end
 
-pod 'GVRKit', '1.100.0'
-pod 'GVRAudioSDK', '1.100.0'
+pod 'GVRSDK', '1.120.0'
+pod 'GVRAudioSDK', '1.120.0'
 pod 'AWSDynamoDB', '2.6.7'
+

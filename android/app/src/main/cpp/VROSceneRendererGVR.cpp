@@ -266,7 +266,7 @@ void VROSceneRendererGVR::onPause() {
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onPause();
         shared->_gvr->PauseTracking();
-        shared->_driver->onPause();
+        shared->_driver->pause();
     });
 }
 
@@ -277,7 +277,7 @@ void VROSceneRendererGVR::onResume() {
         shared->_renderer->getInputController()->onResume();
         shared->_gvr->RefreshViewerProfile();
         shared->_gvr->ResumeTracking();
-        shared->_driver->onResume();
+        shared->_driver->resume();
     });
 }
 

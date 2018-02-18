@@ -80,7 +80,7 @@
         return;
     }
     
-    // we MUST first check if a recording session is ongoing BEFORE we override state variables.
+    // We MUST first check if a recording session is ongoing BEFORE we override state variables.
     _errorBlock = errorBlock;
     _saveToCameraRoll = saveToCamera;
     
@@ -112,7 +112,7 @@
             return;
     }
     
-    // if we're saving this file to camera roll, then also check for that permission before we start
+    // If we're saving this file to camera roll, then also check for that permission before we start
     if (saveToCamera) {
         switch ([PHPhotoLibrary authorizationStatus]) {
             case PHAuthorizationStatusAuthorized:

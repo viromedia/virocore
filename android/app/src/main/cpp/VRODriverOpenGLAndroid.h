@@ -52,11 +52,11 @@ public:
         VRODriverOpenGL::willRenderFrame(context);
     }
 
-    void onPause() {
+    void pause() {
         _gvrAudio->Pause();
     }
 
-    void onResume() {
+    void resume() {
         _gvrAudio->Resume();
     }
 

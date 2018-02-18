@@ -28,13 +28,40 @@ public:
      display render target with it; otherwise, the display render target will
      be derived from the active framebuffer ID.
      */
-    VRODriverOpenGLiOS(GLKView *viewGL, EAGLContext *eaglContext, std::shared_ptr<gvr::AudioApi> gvrAudio) :
+    VRODriverOpenGLiOS(GLKView *viewGL, EAGLContext *eaglContext) :
         _viewGL(viewGL),
-        _eaglContext(eaglContext),
-        _gvrAudio(gvrAudio) {
+        _eaglContext(eaglContext) {
     }
     
     virtual ~VRODriverOpenGLiOS() { }
+    
+    std::shared_ptr<gvr::AudioApi> activateGVRAudio() {
+        if (!_gvrAudio) {
+            _gvrAudio = std::make_shared<gvr::AudioApi>();
+            _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
+        }
+        return _gvrAudio;
+    }
+    
+    void willRenderFrame(const VRORenderContext &context) {
+        if (_gvrAudio) {
+            _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
+            _gvrAudio->Update();
+        }
+        VRODriverOpenGL::willRenderFrame(context);
+    }
+    
+    void pause() {
+        if (_gvrAudio) {
+            _gvrAudio->Pause();
+        }
+    }
+    
+    void resume() {
+        if (_gvrAudio) {
+            _gvrAudio->Resume();
+        }
+    }
     
     virtual VROColorRenderingMode getColorRenderingMode() {
         return VROColorRenderingMode::Linear;
@@ -52,12 +79,6 @@ public:
         }
         return _display;
     }
-    
-    void willRenderFrame(const VRORenderContext &context) {
-        _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
-        _gvrAudio->Update();
-        VRODriverOpenGL::willRenderFrame(context);
-    }
 
     std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
@@ -65,12 +86,14 @@ public:
     }
 
     std::shared_ptr<VROSound> newSound(std::string resource, VROResourceType resourceType, VROSoundType type) {
-        std::shared_ptr<VROSound> sound = VROSoundGVR::create(resource, resourceType, _gvrAudio, type);
+        std::shared_ptr<gvr::AudioApi> gvrAudio = activateGVRAudio();
+        std::shared_ptr<VROSound> sound = VROSoundGVR::create(resource, resourceType, gvrAudio, type);
         return sound;
     }
 
     std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) {
-        std::shared_ptr<VROSound> sound = VROSoundGVR::create(data, _gvrAudio, type);
+        std::shared_ptr<gvr::AudioApi> gvrAudio = activateGVRAudio();
+        std::shared_ptr<VROSound> sound = VROSoundGVR::create(data, gvrAudio, type);
         return sound;
     }
 

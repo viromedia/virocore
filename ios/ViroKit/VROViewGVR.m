@@ -35,7 +35,6 @@
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
-    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     CADisplayLink *_displayLink;
     GVROverlayView *_overlayView;
 }
@@ -135,12 +134,9 @@
     /*
      Create Viro renderer objects.
      */
-    _gvrAudio = std::make_shared<gvr::AudioApi>();
-    _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-    _driver = std::make_shared<VRODriverOpenGLiOSGVR>(self, self.context, _gvrAudio);
+    _driver = std::make_shared<VRODriverOpenGLiOSGVR>(self, self.context);
     _renderer = std::make_shared<VRORenderer>(config, std::make_shared<VROInputControllerCardboardiOS>());
-    _sceneRenderer = std::make_shared<VROSceneRendererGVR>(_gvrAudio,
-                                                           self.bounds.size.width * self.contentScaleFactor,
+    _sceneRenderer = std::make_shared<VROSceneRendererGVR>(self.bounds.size.width * self.contentScaleFactor,
                                                            self.bounds.size.height * self.contentScaleFactor,
                                                            [[UIApplication sharedApplication] statusBarOrientation],
                                                            self.contentScaleFactor, _renderer, _driver);
@@ -173,12 +169,12 @@
     _paused = paused;
     if (_paused) {
         _renderer->getInputController()->onPause();
-        _gvrAudio->Pause();
+        _driver->pause();
         _sceneRenderer->pause();
     }
     else {
         _renderer->getInputController()->onResume();
-        _gvrAudio->Resume();
+        _driver->resume();
         _sceneRenderer->resume();
     }
     _displayLink.paused = (self.superview == nil || _paused);

@@ -39,7 +39,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     std::shared_ptr<VROARSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
-    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::shared_ptr<VROSurface> _cameraBackground;
     std::shared_ptr<VROARSession> _arSession;
     std::shared_ptr<VRONode> _pointOfView;
@@ -153,9 +152,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     /*
      Create Viro renderer objects.
      */
-    _gvrAudio = std::make_shared<gvr::AudioApi>();
-    _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-    _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context, _gvrAudio);
+    _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context);
     _frame = 0;
     _suspendedNotificationTime = VROTimeCurrentSeconds();
 
@@ -167,8 +164,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     /*
      Set up the Audio Session properly for recording and playing back audio. We need
-     to do this *AFTER* we init _gvrAudio, because it resets some setting, else audio
-     recording won't work.
+     to do this *AFTER* we init _gvrAudio (in driver construction), because it resets
+     some setting, else audio recording won't work.
      */
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setCategory:AVAudioSessionCategoryPlayAndRecord

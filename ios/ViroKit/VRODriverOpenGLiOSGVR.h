@@ -15,8 +15,8 @@
 class VRODriverOpenGLiOSGVR : public VRODriverOpenGLiOS {
 public:
     
-    VRODriverOpenGLiOSGVR(GLKView *viewGL, EAGLContext *eaglContext, std::shared_ptr<gvr::AudioApi> gvrAudio) :
-        VRODriverOpenGLiOS(viewGL, eaglContext, gvrAudio) {
+    VRODriverOpenGLiOSGVR(GLKView *viewGL, EAGLContext *eaglContext) :
+        VRODriverOpenGLiOS(viewGL, eaglContext) {
     }
     virtual ~VRODriverOpenGLiOSGVR() { }
     

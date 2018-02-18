@@ -11,13 +11,15 @@
 
 void VRODriverOpenGLiOS::setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
                                       std::string ceilingMaterial, std::string floorMaterial) {
+    std::shared_ptr<gvr::AudioApi> gvrAudio = activateGVRAudio();
+
     if (sizeX == 0 && sizeY == 0 && sizeZ == 0) {
-        _gvrAudio->EnableRoom(false);
+        gvrAudio->EnableRoom(false);
     } else {
-        _gvrAudio->EnableRoom(true);
-        _gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
-                                     (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(wallMaterial),
-                                     (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(ceilingMaterial),
-                                     (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(floorMaterial));
+        gvrAudio->EnableRoom(true);
+        gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
+                                    (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(wallMaterial),
+                                    (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(ceilingMaterial),
+                                    (gvr_audio_material_type) VROPlatformParseGVRAudioMaterial(floorMaterial));
     }
 }

@@ -286,7 +286,7 @@ void VROSceneRendererARCore::onPause() {
     std::shared_ptr<VROSceneRendererARCore> shared = shared_from_this();
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onPause();
-        shared->_driver->onPause();
+        shared->_driver->pause();
     });
 }
 
@@ -295,7 +295,7 @@ void VROSceneRendererARCore::onResume() {
 
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onResume();
-        shared->_driver->onResume();
+        shared->_driver->resume();
     });
 
     // Place this here instead of onPause(), just in case a stray render occurs

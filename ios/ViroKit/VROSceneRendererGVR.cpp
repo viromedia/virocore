@@ -25,8 +25,7 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 #pragma mark - Setup
 
-VROSceneRendererGVR::VROSceneRendererGVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                         int width, int height, UIInterfaceOrientation orientation,
+VROSceneRendererGVR::VROSceneRendererGVR(int width, int height, UIInterfaceOrientation orientation,
                                          float contentScaleFactor,
                                          std::shared_ptr<VRORenderer> renderer,
                                          std::shared_ptr<VRODriver> driver) :

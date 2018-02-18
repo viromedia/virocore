@@ -139,7 +139,7 @@ void VROSceneRendererSceneView::onPause() {
     std::shared_ptr<VROSceneRendererSceneView> shared = shared_from_this();
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onPause();
-        shared->_driver->onPause();
+        shared->_driver->pause();
     });
 }
 
@@ -148,7 +148,7 @@ void VROSceneRendererSceneView::onResume() {
 
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onResume();
-        shared->_driver->onResume();
+        shared->_driver->resume();
     });
 }
 
