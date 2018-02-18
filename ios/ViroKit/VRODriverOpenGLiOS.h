@@ -35,6 +35,9 @@ public:
     
     virtual ~VRODriverOpenGLiOS() { }
     
+    /*
+     We lazily initialize GVR audio until VIRO-2944 is resolved.
+     */
     std::shared_ptr<gvr::AudioApi> activateGVRAudio() {
         if (!_gvrAudio) {
             _gvrAudio = std::make_shared<gvr::AudioApi>();
