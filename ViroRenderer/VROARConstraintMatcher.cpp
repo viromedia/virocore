@@ -30,10 +30,9 @@ void VROARConstraintMatcher::updateARNode(std::shared_ptr<VROARDeclarativeNode> 
         } else if (node->hasRequirementsFulfilled(anchor)) {
             return;
         }
-        // notify the node of detachment, detach anchor & node, notify anchor updated.
+        // notify the node of detachment, detach anchor & node
         node->onARAnchorRemoved();
         anchor->setARNode(nullptr);
-        notifyAnchorWasDetached(anchor);
 
         processDetachedAnchor(anchor);
     }
@@ -44,9 +43,8 @@ void VROARConstraintMatcher::updateARNode(std::shared_ptr<VROARDeclarativeNode> 
 void VROARConstraintMatcher::removeARNode(std::shared_ptr<VROARDeclarativeNode> node) {
     std::shared_ptr<VROARAnchor> anchor = node->getAnchor();
     if (anchor) {
-        // detach the node from anchor and notify anchor updated
+        // detach the node from anchor
         anchor->setARNode(nullptr);
-        notifyAnchorWasDetached(anchor);
 
         processDetachedAnchor(anchor);
     } else {
@@ -242,6 +240,9 @@ void VROARConstraintMatcher::notifyAnchorWasAttached(std::shared_ptr<VROARAnchor
     }
 }
 
+/*
+ Call this function IFF the anchor was removed from the AR subsystem!
+ */
 void VROARConstraintMatcher::notifyAnchorWasDetached(std::shared_ptr<VROARAnchor> anchor) {
     std::shared_ptr<VROARConstraintMatcherDelegate> delegate = _delegate.lock();
     if (delegate) {
