@@ -321,7 +321,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         mRenderQueue.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mNativeRenderer.initalizeGl();
+                mNativeRenderer.initializeGL(true);
             }
         });
         if (mRenderStartListener != null && !mDestroyed) {

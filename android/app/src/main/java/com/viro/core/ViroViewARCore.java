@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -40,7 +42,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -122,8 +128,26 @@ public class ViroViewARCore extends ViroView {
                 return;
             }
 
+            final int EGL_GL_COLORSPACE_KHR = 0x309D;
+            final int EGL_GL_COLORSPACE_SRGB_KHR = 0x3089;
+
+            EGL10 egl = (EGL10) EGLContext.getEGL();
+            EGLDisplay display = egl.eglGetCurrentDisplay();
+            EGLSurface surface = egl.eglGetCurrentSurface(EGL14.EGL_DRAW);
+
+            int[] value = new int[1];
+            boolean sRGBFramebuffer = false;
+            egl.eglQuerySurface(display, surface, EGL_GL_COLORSPACE_KHR, value);
+            if (value[0] == EGL_GL_COLORSPACE_SRGB_KHR) {
+                Log.i(TAG, "Acquired sRGB framebuffer");
+                sRGBFramebuffer = true;
+            }
+            else {
+                Log.i(TAG, "Did not acquire sRGB framebuffer [colorspace " + value[0] + "]");
+            }
+
             view.mNativeRenderer.onSurfaceCreated(view.mSurfaceView.getHolder().getSurface());
-            view.mNativeRenderer.initalizeGl();
+            view.mNativeRenderer.initializeGL(sRGBFramebuffer);
             if (view.mRenderStartListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override

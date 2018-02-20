@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
@@ -29,7 +31,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -47,10 +53,10 @@ public class ViroViewScene extends ViroView {
     }
 
 
-    private static class ViroARRenderer implements GLTextureView.Renderer {
+    private static class ViroSceneRenderer implements GLTextureView.Renderer {
         private WeakReference<ViroViewScene> mView;
 
-        public ViroARRenderer(ViroViewScene view) {
+        public ViroSceneRenderer(ViroViewScene view) {
             mView = new WeakReference<ViroViewScene>(view);
         }
 
@@ -60,8 +66,26 @@ public class ViroViewScene extends ViroView {
                 return;
             }
 
+            final int EGL_GL_COLORSPACE_KHR = 0x309D;
+            final int EGL_GL_COLORSPACE_SRGB_KHR = 0x3089;
+
+            EGL10 egl = (EGL10) EGLContext.getEGL();
+            EGLDisplay display = egl.eglGetCurrentDisplay();
+            EGLSurface surface = egl.eglGetCurrentSurface(EGL14.EGL_DRAW);
+
+            int[] value = new int[1];
+            boolean sRGBFramebuffer = false;
+            egl.eglQuerySurface(display, surface, EGL_GL_COLORSPACE_KHR, value);
+            if (value[0] == EGL_GL_COLORSPACE_SRGB_KHR) {
+                Log.i(TAG, "Acquired sRGB framebuffer");
+                sRGBFramebuffer = true;
+            }
+            else {
+                Log.i(TAG, "Did not acquire sRGB framebuffer [colorspace " + value[0] + "]");
+            }
+
             view.mNativeRenderer.onSurfaceCreated(null);
-            view.mNativeRenderer.initalizeGl();
+            view.mNativeRenderer.initializeGL(sRGBFramebuffer);
             if (view.mRenderStartListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override
@@ -208,7 +232,7 @@ public class ViroViewScene extends ViroView {
         mSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
         mSurfaceView.setPreserveEGLContextOnPause(true);
         mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLTextureWindowSurfaceFactory());
-        mSurfaceView.setRenderer(new ViroARRenderer(this));
+        mSurfaceView.setRenderer(new ViroSceneRenderer(this));
         mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 

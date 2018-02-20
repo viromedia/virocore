@@ -94,7 +94,7 @@ public class Renderer {
         mNativeRef = 0;
     }
 
-    public void initalizeGl() { nativeInitializeGl(mNativeRef); }
+    public void initializeGL(boolean framebufferSRGB) { nativeInitializeGL(mNativeRef, framebufferSRGB); }
 
     public void onStart() {
         if (mNativeRef != 0) {
@@ -246,7 +246,7 @@ public class Renderer {
                                                       ViroViewScene view, AssetManager assets, PlatformUtil platformUtil,
                                                       boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native void nativeDestroyRenderer(long nativeRenderer);
-    private native void nativeInitializeGl(long nativeRenderer);
+    private native void nativeInitializeGL(long nativeRenderer, boolean sRGBFramebuffer);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
     private native long nativeDrawFrame(long nativeRenderer);
     private native void nativeOnStart(long nativeRenderer);

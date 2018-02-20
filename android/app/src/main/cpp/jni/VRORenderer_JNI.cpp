@@ -172,12 +172,16 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
     VROPlatformReleaseEnv();
 }
 
-JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
+JNI_METHOD(void, nativeInitializeGL)(JNIEnv *env,
                                      jobject obj,
-                                     jlong native_renderer) {
+                                     jlong native_renderer,
+                                     jboolean sRGBFramebuffer) {
 
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
+
+    std::shared_ptr<VRODriverOpenGLAndroid> driver = std::dynamic_pointer_cast<VRODriverOpenGLAndroid>(sceneRenderer->getDriver());
+    driver->setSRGBFramebuffer(sRGBFramebuffer);
 
     if (kRunRendererTest) {
         sample = std::make_shared<VROSample>();

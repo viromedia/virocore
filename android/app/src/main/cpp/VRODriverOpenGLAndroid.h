@@ -32,7 +32,8 @@ public:
             case VROGPUType::Adreno330OrOlder:
                 return VROColorRenderingMode::NonLinear;
             default:
-                return VROColorRenderingMode::Linear;
+                // If the GPU doesn't support sRGB framebuffers then disable HDR entirely
+                return _sRGBFramebuffer ? VROColorRenderingMode::Linear : VROColorRenderingMode::NonLinear;
         }
     }
 
@@ -102,8 +103,13 @@ public:
         }
     }
 
+    void setSRGBFramebuffer(bool sRGBFramebuffer) {
+        _sRGBFramebuffer = sRGBFramebuffer;
+    }
+
 private:
 
+    bool _sRGBFramebuffer;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
 };
 

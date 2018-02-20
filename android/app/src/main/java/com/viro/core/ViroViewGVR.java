@@ -80,7 +80,8 @@ public class ViroViewGVR extends ViroView {
             }
 
             view.mNativeRenderer.onSurfaceCreated(surface.getHolder().getSurface());
-            view.mNativeRenderer.initalizeGl();
+            // TODO VIRO-2278 Make this dynamically check for sRGB framebuffer support in Daydream
+            view.mNativeRenderer.initializeGL(false);
             if (view.mRenderStartListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override
