@@ -83,11 +83,19 @@ public:
     }
 
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
-        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size, driver);
-        typeface->loadFace();
+        std::string key = typefaceName + "_" + VROStringUtil::toString(size);
+        auto it = _typefaces.find(key);
+        if (it == _typefaces.end()) {
+            std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+            std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size, driver);
+            typeface->loadFace();
 
-        return typeface;
+            _typefaces[key] = typeface;
+            return typeface;
+        }
+        else {
+            return it->second;
+        }
     }
 
     void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
@@ -111,6 +119,7 @@ private:
 
     bool _sRGBFramebuffer;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
+    std::map<std::string, std::shared_ptr<VROTypeface>> _typefaces;
 };
 
 #endif //ANDROID_VRODRIVEROPENGLANDROID_H
