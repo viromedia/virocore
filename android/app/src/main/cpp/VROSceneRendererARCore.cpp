@@ -371,16 +371,10 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVect
         return std::vector<VROARHitTestResult>();
     }
 
-    int viewportArr[4] = {0, 0, _surfaceSize.width, _surfaceSize.height};
-
-    // create the mvp (in this case, the model mat is identity).
-    VROMatrix4f projectionMat = getRenderer()->getCamera().getProjection();
-    VROMatrix4f viewMat = getRenderer()->getCamera().getLookAtMatrix();
-    VROMatrix4f vpMat = projectionMat.multiply(viewMat);
-
-    VROVector3f point;
-    VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
-    return performARHitTest(point.x, point.y);
+    float fcp = getRenderer()->getCamera().getFCP();
+    VROVector3f worldPoint = getRenderer()->getCamera().getPosition() + ray.normalize();
+    VROVector3f screenPoint = _renderer->projectPoint(worldPoint);
+    return performARHitTest(screenPoint.x, screenPoint.y);
 }
 
 void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int height) {
