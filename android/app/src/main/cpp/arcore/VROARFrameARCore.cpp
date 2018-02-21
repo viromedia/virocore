@@ -123,10 +123,11 @@ const std::vector<std::shared_ptr<VROARAnchor>> &VROARFrameARCore::getAnchors() 
 float VROARFrameARCore::getAmbientLightIntensity() const {
     jni::Object<arcore::LightEstimate> lightEstimate = arcore::frame::getLightEstimate(*_frameJNI.get());
     if (lightEstimate && arcore::light_estimate::isValid(lightEstimate)) {
-        return arcore::light_estimate::getPixelIntensity(lightEstimate);
+        // multiply by 1000 because pixel intensity ranges from 0 to 1
+        return arcore::light_estimate::getPixelIntensity(lightEstimate) * 1000;
     }
     else {
-        return 1.0;
+        return 1000;
     }
 }
 
