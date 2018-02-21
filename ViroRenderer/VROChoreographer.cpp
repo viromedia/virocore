@@ -92,10 +92,8 @@ void VROChoreographer::createRenderTargets() {
         std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
         _blitPostProcess = driver->newImagePostProcess(blitShader);
         _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
-        
         _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1, false);
-        _postProcessTarget = driver->newRenderTarget(colorType, 1, 1, false);
-        
+
         _preprocesses.clear();
         if (_shadowsEnabled) {
             _preprocesses.push_back(std::make_shared<VROShadowPreprocess>(driver));
@@ -107,6 +105,8 @@ void VROChoreographer::createRenderTargets() {
     }
     
     if (_hdrEnabled) {
+        _postProcessTarget = driver->newRenderTarget(colorType, 1, 1, false);
+
         if (_bloomEnabled) {
             // The HDR target includes an additional attachment to which we render bloom
             _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false);
@@ -281,11 +281,21 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
 void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver) {
     // Set the default clear color for the following targets
     driver->getDisplay()->setClearColor(color);
-    _blitTarget->setClearColor(color);
-    _hdrTarget->setClearColor(color);
-    _blurTargetA->setClearColor(color);
-    _blurTargetB->setClearColor(color);
-    _postProcessTarget->setClearColor(color);
+    if (_blitTarget) {
+        _blitTarget->setClearColor(color);
+    }
+    if (_hdrTarget) {
+        _hdrTarget->setClearColor(color);
+    }
+    if (_blurTargetA) {
+        _blurTargetA->setClearColor(color);
+    }
+    if (_blurTargetB) {
+        _blurTargetB->setClearColor(color);
+    }
+    if (_postProcessTarget) {
+        _postProcessTarget->setClearColor(color);
+    }
 }
 
 #pragma mark - Render to Texture
