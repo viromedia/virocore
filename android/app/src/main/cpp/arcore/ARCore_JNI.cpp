@@ -25,7 +25,7 @@ namespace arcore {
 
     struct Pose { static constexpr auto Name() { return "com/google/ar/core/Pose"; } };
     struct Anchor { static constexpr auto Name() { return "com/google/ar/core/Anchor"; } };
-    struct TrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/Trackable$TrackingState"; } };
+    struct TrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/TrackingState"; } };
     struct Trackable { static constexpr auto Name() { return "com/google/ar/core/Trackable"; } };
     struct Point { static constexpr auto Name() { return "com/google/ar/core/Point"; } };
     struct PlaneTypeEnum { static constexpr auto Name() { return "com/google/ar/core/Plane$Type"; } };
