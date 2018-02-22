@@ -41,15 +41,14 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
                                                std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                               jni::Object<arcore::Session> sessionJNI,
-                                               jni::Object<arcore::ViroViewARCore> viroViewJNI) :
+                                               void *context) :
     _rendererSuspended(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
     _hasTrackingInitialized(false),
     _hasTrackingResumed(false) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
-    _session = std::make_shared<VROARSessionARCore>(sessionJNI, viroViewJNI, _driver);
+    _session = std::make_shared<VROARSessionARCore>(context, _driver);
 
     // instantiate the input controller w/ viewport size (0,0) and update it later.
     std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0,0);
@@ -283,6 +282,8 @@ void VROSceneRendererARCore::onRotateEvent(int rotateState, float rotateRadians,
 }
 
 void VROSceneRendererARCore::onPause() {
+    _session->pause();
+
     std::shared_ptr<VROSceneRendererARCore> shared = shared_from_this();
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onPause();
@@ -291,6 +292,7 @@ void VROSceneRendererARCore::onPause() {
 }
 
 void VROSceneRendererARCore::onResume() {
+    _session->run();
     std::shared_ptr<VROSceneRendererARCore> shared = shared_from_this();
 
     VROPlatformDispatchAsyncRenderer([shared] {
@@ -379,6 +381,19 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVect
     VROVector3f point;
     VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
     return performARHitTest(point.x, point.y);
+}
+
+void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int height) {
+    _session->setDisplayGeometry(rotation, width, height);
+}
+
+void VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
+    if (enabled) {
+        _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
+    }
+    else {
+        _session->setAnchorDetection({VROAnchorDetection::None});
+    }
 }
 
 

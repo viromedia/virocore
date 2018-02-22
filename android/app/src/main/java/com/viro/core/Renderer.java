@@ -15,8 +15,9 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.view.Surface;
 
-import com.google.ar.core.Session;
 import com.viro.core.internal.PlatformUtil;
+
+import java.util.EnumSet;
 
 /**
  * @hide
@@ -63,14 +64,31 @@ public class Renderer {
     /* ----------     ARCore only methods    ---------- */
 
     public Renderer(ClassLoader appClassLoader, Context context,
-                    ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil,
+                    AssetManager assets, PlatformUtil platformUtil,
                     RendererConfiguration config) {
-        mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil,
+        mNativeRef = nativeCreateRendererARCore(appClassLoader, context, assets, platformUtil,
                 config.isShadowsEnabled(), config.isHDREnabled(), config.isPBREnabled(), config.isBloomEnabled());
     }
 
     public int getCameraTextureId() {
         return nativeGetCameraTextureId(mNativeRef);
+    }
+
+    public void setARDisplayGeometry(int rotation, int width, int height) {
+        nativeSetARDisplayGeometry(mNativeRef, rotation, width, height);
+    }
+
+    public void setAnchorDetectionTypes(EnumSet<ViroViewARCore.AnchorDetectionType> types) {
+        if (types.size() == 0) {
+            nativeSetPlaneFindingMode(mNativeRef, false);
+        }
+        for (ViroViewARCore.AnchorDetectionType type : types) {
+            if (type == ViroViewARCore.AnchorDetectionType.NONE) {
+                nativeSetPlaneFindingMode(mNativeRef, false);
+            } else if (type == ViroViewARCore.AnchorDetectionType.PLANES_HORIZONTAL) {
+                nativeSetPlaneFindingMode(mNativeRef, true);
+            }
+        }
     }
 
     public void performARHitTestWithRay(float[] ray, ARHitTestListener callback) {
@@ -240,7 +258,7 @@ public class Renderer {
                                                 ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil,
                                                 boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
-                                                   ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil,
+                                                   AssetManager assets, PlatformUtil platformUtil,
                                                    boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native long nativeCreateRendererSceneView(ClassLoader appClassLoader, Context context,
                                                       ViroViewScene view, AssetManager assets, PlatformUtil platformUtil,
@@ -286,4 +304,6 @@ public class Renderer {
     private native float[] nativeProjectPoint(long nativeRenderer, float x, float y, float z);
     private native float[] nativeUnprojectPoint(long nativeRenderer, float x, float y, float z);
     private native float nativeGetFieldOfView(long nativeRef);
+    private native void nativeSetARDisplayGeometry(long nativeRef, int rotation, int width, int height);
+    private native void nativeSetPlaneFindingMode(long nativeRef, boolean enabled);
 }

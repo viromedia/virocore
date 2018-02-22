@@ -13,7 +13,7 @@
 #include <VROARHitTestResult.h>
 #include <VROFrameListener.h>
 
-#include "arcore/ARCore_JNI.h"
+#include "arcore/ARCore_Native.h"
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
@@ -107,8 +107,6 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
 JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
                                               jobject class_loader,
                                               jobject android_context,
-                                              jni::Object<arcore::ViroViewARCore> view,
-                                              jni::Object<arcore::Session> session,
                                               jobject asset_mgr,
                                               jobject platform_util,
                                               jboolean enableShadows,
@@ -128,7 +126,7 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
     config.enableBloom = enableBloom;
 
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererARCore>(config, gvrAudio, session, view);
+            = std::make_shared<VROSceneRendererARCore>(config, gvrAudio, android_context);
     return Renderer::jptr(renderer);
 }
 
@@ -455,6 +453,20 @@ JNI_METHOD(jfloatArray, nativeUnprojectPoint)(JNIEnv *env, jobject object, jlong
                                               jfloat x, jfloat y, jfloat z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
+}
+
+JNI_METHOD(void, nativeSetARDisplayGeometry)(JNIEnv *env, jobject object, jlong renderer_j,
+                                             jint rotation, jint width, jint height) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    arRenderer->setDisplayGeometry(rotation, width, height);
+}
+
+JNI_METHOD(void, nativeSetPlaneFindingMode)(JNIEnv *env, jobject object, jlong renderer_j,
+                                            jboolean enabled) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    arRenderer->setPlaneFindingMode(enabled);
 }
 
 void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {

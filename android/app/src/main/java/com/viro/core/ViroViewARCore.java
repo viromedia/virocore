@@ -25,8 +25,6 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.widget.Toast;
 
-import com.google.ar.core.Config;
-import com.google.ar.core.Session;
 import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.ViroTouchGestureListener;
 import com.viro.core.internal.CameraPermissionHelper;
@@ -174,7 +172,7 @@ public class ViroViewARCore extends ViroView {
             // the video background can be properly adjusted.
             view.mWidth = width;
             view.mHeight = height;
-            view.mSession.setDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
+            view.mNativeRenderer.setARDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
         }
 
         @Override
@@ -198,8 +196,6 @@ public class ViroViewARCore extends ViroView {
     private List<FrameListener> mFrameListeners = new ArrayList();
     private PlatformUtil mPlatformUtil;
     private boolean mActivityPaused = true;
-    private Config mConfig;
-    private Session mSession;
     private ViroTouchGestureListener mViroTouchGestureListener;
     private ViroMediaRecorder mMediaRecorder;
     private OrientationEventListener mOrientationListener;
@@ -275,6 +271,8 @@ public class ViroViewARCore extends ViroView {
         final Activity activity = (Activity) getContext();
 
         // Initialize ARCore
+        // TODO VIRO-2906 Perform a static check if ARCore supported (call isSupported down below?)
+        /*
         try {
 
             mSession = new Session(activity);
@@ -284,15 +282,13 @@ public class ViroViewARCore extends ViroView {
             activity.finish();
             return;
         }
+        */
 
-        // ARCore may crash unless we set some initial non-zero display geometry
-        // (this will be resized by the the surface on the GL thread)
         final Display display = activity.getWindowManager().getDefaultDisplay();
         final Point size = new Point();
         display.getSize(size);
         mWidth = size.x;
         mHeight = size.y;
-        mSession.setDisplayGeometry(mRotation, mWidth, mHeight);
 
         // Initialize the native renderer.
         initSurfaceView();
@@ -305,7 +301,7 @@ public class ViroViewARCore extends ViroView {
                 mAssetManager);
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
-                activityContext.getApplicationContext(), this, mSession,
+                activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil, mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
@@ -314,6 +310,8 @@ public class ViroViewARCore extends ViroView {
         setOnTouchListener(mViroTouchGestureListener);
 
         // Create default config, check is supported, create session from that config.
+        // TODO VIRO-2906 Ensure we have all support checks
+        /*
         mConfig = new Config(mSession);
         if (!mSession.isSupported(mConfig)) {
             Toast.makeText(activity, "This device does not support AR", Toast.LENGTH_LONG).show();
@@ -321,6 +319,7 @@ public class ViroViewARCore extends ViroView {
             return;
         }
         mSession.configure(mConfig);
+        */
 
         if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
             validateAPIKeyFromManifest();
@@ -438,13 +437,12 @@ public class ViroViewARCore extends ViroView {
         }
 
         mActivityPaused = true;
-        mNativeRenderer.onPause();
 
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
         // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
         // still call mSession.update() and get a SessionPausedException.
         mSurfaceView.onPause();
-        mSession.pause();
+        mNativeRenderer.onPause();
     }
 
     /**
@@ -464,7 +462,6 @@ public class ViroViewARCore extends ViroView {
         // permission on Android M and above, now is a good time to ask the user for it.
         if (CameraPermissionHelper.hasCameraPermission(activity)) {
             // Note that order matters - see the note in onPause(), the reverse applies here.
-            mSession.resume();
             mSurfaceView.onResume();
         } else {
             CameraPermissionHelper.requestCameraPermission(activity);
@@ -478,19 +475,12 @@ public class ViroViewARCore extends ViroView {
     public void onActivityDestroyed(Activity activity) {
         this.dispose();
         ARNode.nodeARMap.clear();
-        /*
-          TODO VIRO-2280: Fix Tango Memory leak that holds onto ViroViewARCore.
-          As a temporary patch, we null out our viro components here to free up
-          most of our 3D controls in memory.
-         */
         mViroTouchGestureListener = null;
         mPlatformUtil = null;
         mAssetManager = null;
         mSurfaceView = null;
-        mSession = null;
         mFrameListeners.clear();
         mFrameListeners = null;
-        // End TODO VIRO-2280
     }
 
     @Override
@@ -569,28 +559,8 @@ public class ViroViewARCore extends ViroView {
      * @param types The set of anchor types that should be tracked.
      */
     public void setAnchorDetectionTypes(EnumSet<AnchorDetectionType> types) {
-        if (types.size() == 0) {
-            mConfig.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
-        }
-        for (AnchorDetectionType type : types) {
-            if (type == AnchorDetectionType.NONE) {
-                mConfig.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
-            } else if (type == AnchorDetectionType.PLANES_HORIZONTAL) {
-                mConfig.setPlaneFindingMode(Config.PlaneFindingMode.HORIZONTAL);
-            }
-        }
-    }
-
-    /**
-     * Invoked by native.
-     * @hide
-     * @param config
-     */
-    public void setConfig(Config config) {
-        if (mSession.isSupported(config) && !mActivityPaused) {
-            mConfig = config;
-            mSession.configure(config);
-            mSession.resume();
+        if (!mDestroyed) {
+            mNativeRenderer.setAnchorDetectionTypes(types);
         }
     }
 
@@ -682,7 +652,7 @@ public class ViroViewARCore extends ViroView {
      */
     public void setCameraRotation(int rotation) {
         mRotation = rotation;
-        mSession.setDisplayGeometry(mRotation, mWidth, mHeight);
+        mNativeRenderer.setARDisplayGeometry(mRotation, mWidth, mHeight);
     }
 
     /**
@@ -722,7 +692,11 @@ public class ViroViewARCore extends ViroView {
      * an exception
      * @param context The {@link Context} of your app
      */
+
+    // TODO VIRO-2906 Restore this check
     public static boolean isSupported(Context context) {
+        return true;
+        /*
         Session session;
         Config config;
         try {
@@ -737,8 +711,8 @@ public class ViroViewARCore extends ViroView {
              * Remove this once Google fixes the above issue. As of 02/05/2018, the issue is being
              * marked as "fixed in an upcoming release.
              */
-            return false;
-        }
-        return session.isSupported(config);
+         //   return false;
+       // }
+        //return session.isSupported(config);
     }
 }

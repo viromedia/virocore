@@ -20,16 +20,15 @@
 #include <VROStringUtil.h>
 #include "VROARHitTestResult.h"
 
-VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
-                                       jni::Object<arcore::ViroViewARCore> viroViewJNI,
-                                       std::shared_ptr<VRODriverOpenGL> driver) :
+VROARSessionARCore::VROARSessionARCore(void *context, std::shared_ptr<VRODriverOpenGL> driver) :
     VROARSession(VROTrackingType::DOF6, VROWorldAlignment::Gravity),
     _lightingMode(arcore::config::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),
     _updateMode(arcore::config::UpdateMode::Blocking),
     _cameraTextureId(0) {
-    _sessionJNI = sessionJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
-    _viroViewJNI = viroViewJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
+
+    _session = arcore::session::create(context);
+    _frame = arcore::frame::create(_session);
 }
 
 GLuint VROARSessionARCore::getCameraTextureId() const {
@@ -50,23 +49,22 @@ void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
             new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _cameraTextureId, driver, true));
     _background = std::make_shared<VROTexture>(VROTextureType::TextureEGLImage, std::move(substrate));
 
-    arcore::session::setCameraTextureName( *_sessionJNI.get(), _cameraTextureId);
+    arcore::session::setCameraTextureName(_session, _cameraTextureId);
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
-
+    arcore::frame::destroy(_frame);
+    arcore::session::destroy(_session);
 }
 
 #pragma mark - VROARSession implementation
 
 void VROARSessionARCore::run() {
-    // TODO We can make this resume(), but on Android this is controlled externally
-    //      by way of the activity lifecycle (we invoke pause and resume upon receiving
-    //      lifecycle callbacks
+    arcore::session::resume(_session);
 }
 
 void VROARSessionARCore::pause() {
-    arcore::session::pause(*_sessionJNI.get());
+    arcore::session::pause(_session);
 }
 
 bool VROARSessionARCore::isReady() const {
@@ -99,11 +97,15 @@ void VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
     updateARCoreConfig();
 }
 
+void VROARSessionARCore::setDisplayGeometry(int rotation, int width, int height) {
+    arcore::session::setDisplayGeometry(_session, rotation, width, height);
+}
+
 void VROARSessionARCore::updateARCoreConfig() {
-    jni::Object<arcore::ViroViewARCore> view = *_viroViewJNI.get();
-    if (view) {
-        arcore::viroview::setConfig(view, arcore::config::getConfig(*_sessionJNI.get(), _lightingMode, _planeFindingMode, _updateMode));
-    }
+    ArConfig *config = arcore::config::create(_lightingMode, _planeFindingMode, _updateMode, _session);
+    arcore::session::configure(_session, config);
+    arcore::session::resume(_session);
+    arcore::config::destroy(config);
 }
 
 void VROARSessionARCore::setScene(std::shared_ptr<VROScene> scene) {
@@ -178,8 +180,8 @@ std::shared_ptr<VROTexture> VROARSessionARCore::getCameraBackgroundTexture() {
 }
 
 std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
-    jni::Object<arcore::Frame> frameJNI = arcore::session::update(*_sessionJNI.get());
-    _currentFrame = std::make_unique<VROARFrameARCore>(frameJNI, _viewport, shared_from_this());
+    arcore::session::update(_session, _frame);
+    _currentFrame = std::make_unique<VROARFrameARCore>(_frame, _viewport, shared_from_this());
 
     VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
     processUpdatedAnchors(arFrame);
@@ -204,7 +206,7 @@ void VROARSessionARCore::setWorldOrigin(VROMatrix4f relativeTransform) {
 
 #pragma mark - Internal Methods
 
-std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(jni::Object<arcore::Anchor> anchor) {
+std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(ArAnchor *anchor) {
     std::string key = VROStringUtil::toString(arcore::anchor::getHashCode(anchor));
     auto it = _nativeAnchorMap.find(key);
     if (it != _nativeAnchorMap.end()) {
@@ -214,52 +216,54 @@ std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(jni::Object<
     }
 }
 
-void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
-    jni::Object<arcore::Frame> frameJni = frame->getFrameJNI();
+void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
+    ArFrame *frame = frameAR->getFrameInternal();
 
-    jni::Object<arcore::Collection> anchorCollection = arcore::frame::getUpdatedAnchors(frameJni);
-    std::vector<jni::UniqueObject<arcore::Anchor>> anchorsJni = arcore::collection::toAnchorArray(anchorCollection);
+    ArAnchorList *anchorList = arcore::anchorlist::create(_session);
+    arcore::frame::getUpdatedAnchors(frame, _session, anchorList);
+    int anchorsSize = arcore::anchorlist::size(anchorList, _session);
 
-    jni::Object<arcore::Collection> planeCollection = arcore::frame::getUpdatedPlanes(frameJni);
-    std::vector<jni::UniqueObject<arcore::Plane>> planesJni = arcore::collection::toPlaneArray(planeCollection);
+    ArTrackableList *planesList = arcore::trackablelist::create(_session);
+    arcore::frame::getUpdatedPlanes(frame, _session, planesList);
+    int planesSize = arcore::trackablelist::size(planesList, _session);
 
     // Find all new and updated anchors, update/create new ones and notify this class.
     // Note: this should be 0 until we allow users to add their own anchors to the system.
-    if (anchorsJni.size() > 0) {
-
-        for (int i = 0; i < anchorsJni.size(); i++) {
-            jni::Object<arcore::Anchor> anchorJni = *anchorsJni[i].get();
-
+    if (anchorsSize > 0) {
+        for (int i = 0; i < anchorsSize; i++) {
+            ArAnchor *anchor = arcore::anchorlist::acquireItem(anchorList, i, _session);
             std::shared_ptr<VROARAnchor> vAnchor;
-            std::string key = arcore::anchor::getId(anchorJni);
+            std::string key = arcore::anchor::getId(anchor);
 
             auto it = _nativeAnchorMap.find(key);
             if (it != _nativeAnchorMap.end()) {
                 vAnchor = it->second;
-                updateAnchorFromJni(vAnchor, anchorJni);
+                updateAnchorFromARCore(vAnchor, anchor);
                 updateAnchor(vAnchor);
             } else {
                 vAnchor = std::make_shared<VROARAnchor>();
                 _nativeAnchorMap[key] = vAnchor;
-                updateAnchorFromJni(vAnchor, anchorJni);
+                updateAnchorFromARCore(vAnchor, anchor);
                 vAnchor->setId(key);
                 addAnchor(vAnchor);
             }
+
+            arcore::anchor::release(anchor);
         }
     }
 
     // Find all new and updated planes, update/create new ones and notify this class
-    if (planesJni.size() > 0) {
+    if (planesSize > 0) {
+        for (int i = 0; i < planesSize; i++) {
+            ArTrackable *trackable = arcore::trackablelist::acquireItem(planesList, i, _session);
+            ArPlane *plane = ArAsPlane(trackable);
 
-        for (int i = 0; i < planesJni.size(); i++) {
-            jni::Object<arcore::Plane> planeJni = *planesJni[i].get();
-
-            jni::Object<arcore::Plane> newPlane = arcore::plane::getSubsumedBy(planeJni);
+            ArPlane *newPlane = arcore::plane::acquireSubsumedBy(plane, _session);
 
             std::shared_ptr<VROARPlaneAnchor> vAnchor;
             // ARCore doesn't use ID for planes, but rather they simply return the same object, so
-            // the hashcodes (from Java) should be reliable.
-            std::string key = VROStringUtil::toString(arcore::plane::getHashCode(planeJni));
+            // the hashcodes should be reliable.
+            std::string key = VROStringUtil::toString(arcore::plane::getHashCode(plane));
 
             // If the plane wasn't subsumed by a new plane, then don't remove it.
             if (newPlane == NULL) {
@@ -267,7 +271,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
                 if (it != _nativeAnchorMap.end()) {
                     vAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(it->second);
                     if (vAnchor) {
-                        updatePlaneFromJni(vAnchor, planeJni);
+                        updatePlaneFromARCore(vAnchor, plane);
                         updateAnchor(vAnchor);
                     } else {
                         pwarn("[Viro] expected to find a Plane.");
@@ -275,11 +279,12 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
                 } else {
                     vAnchor = std::make_shared<VROARPlaneAnchor>();
                     _nativeAnchorMap[key] = vAnchor;
-                    updatePlaneFromJni(vAnchor, planeJni);
+                    updatePlaneFromARCore(vAnchor, plane);
                     vAnchor->setId(key);
                     addAnchor(vAnchor);
                 }
             } else {
+                // Subsumed, so remove the plane
                 auto it = _nativeAnchorMap.find(key);
                 if (it != _nativeAnchorMap.end()) {
                     vAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(it->second);
@@ -287,17 +292,29 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
                         removeAnchor(vAnchor);
                     }
                 }
+                arcore::trackable::release(ArAsTrackable(newPlane));
             }
+
+            arcore::trackable::release(trackable);
         }
     }
+
+    arcore::anchorlist::destroy(anchorList);
+    arcore::trackablelist::destroy(planesList);
 }
 
-void VROARSessionARCore::updateAnchorFromJni(std::shared_ptr<VROARAnchor> anchor, jni::Object<arcore::Anchor> anchorJni) {
-    anchor->setTransform(arcore::pose::toMatrix(arcore::anchor::getPose(anchorJni)));
+void VROARSessionARCore::updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, ArAnchor *anchorAR) {
+    ArPose *pose = arcore::pose::create(_session);
+    arcore::anchor::getPose(anchorAR, _session, pose);
+    anchor->setTransform(arcore::pose::toMatrix(pose, _session));
+    arcore::pose::destroy(pose);
 }
 
-void VROARSessionARCore::updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> plane, jni::Object<arcore::Plane> planeJni) {
-    VROMatrix4f newTransform = arcore::pose::toMatrix(arcore::plane::getCenterPose(planeJni));
+void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, ArPlane *planeAR) {
+    ArPose *pose = arcore::pose::create(_session);
+    arcore::plane::getCenterPose(planeAR, _session, pose);
+
+    VROMatrix4f newTransform = arcore::pose::toMatrix(pose, _session);
     VROVector3f newTranslation = newTransform.extractTranslation();
 
     VROMatrix4f oldTransform = plane->getTransform();
@@ -315,7 +332,7 @@ void VROARSessionARCore::updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> pl
 
     plane->setTransform(newTransform);
 
-    switch (arcore::plane::getType(planeJni)) {
+    switch (arcore::plane::getType(planeAR, _session)) {
         case arcore::PlaneType::HorizontalUpward :
             plane->setAlignment(VROARPlaneAlignment::HorizontalUpward);
             break;
@@ -330,7 +347,9 @@ void VROARSessionARCore::updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> pl
     // ARKit's (initial) position & center.
     plane->setCenter(VROVector3f());
 
-    float extentX = arcore::plane::getExtentX(planeJni);
-    float extentZ = arcore::plane::getExtentZ(planeJni);
+    float extentX = arcore::plane::getExtentX(planeAR, _session);
+    float extentZ = arcore::plane::getExtentZ(planeAR, _session);
     plane->setExtent(VROVector3f(extentX, 0, extentZ));
+
+    arcore::pose::destroy(pose);
 }

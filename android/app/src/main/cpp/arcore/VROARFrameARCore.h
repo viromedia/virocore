@@ -11,14 +11,14 @@
 
 #include "VROARFrame.h"
 #include "VROViewport.h"
-#include "arcore/ARCore_JNI.h"
+#include "arcore/ARCore_Native.h"
 
 class VROARSessionARCore;
 
 class VROARFrameARCore : public VROARFrame {
 public:
     
-    VROARFrameARCore(jni::Object<arcore::Frame> frameJNI, VROViewport viewport, std::shared_ptr<VROARSessionARCore> session);
+    VROARFrameARCore(ArFrame *_frame, VROViewport viewport, std::shared_ptr<VROARSessionARCore> session);
     virtual ~VROARFrameARCore();
     
     double getTimestamp() const;
@@ -34,15 +34,15 @@ public:
     bool hasDisplayGeometryChanged();
     void getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR);
 
-    jni::Object<arcore::Frame> getFrameJNI() {
-        return *_frameJNI.get();
+    ArFrame *getFrameInternal() {
+        return _frame;
     }
 
     std::shared_ptr<VROARPointCloud> getPointCloud();
 
 private:
 
-    jni::UniqueWeakObject <arcore::Frame> _frameJNI;
+    ArFrame *_frame;
     std::weak_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROARCamera> _camera;
     VROViewport _viewport;

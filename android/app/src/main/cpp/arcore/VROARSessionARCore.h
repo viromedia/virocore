@@ -13,7 +13,7 @@
 #include "VROARFrameARCore.h"
 #include "VROViewport.h"
 #include "VROOpenGL.h"
-#include "arcore/ARCore_JNI.h"
+#include "arcore/ARCore_Native.h"
 #include <map>
 #include <vector>
 #include <VROCameraTexture.h>
@@ -24,9 +24,7 @@ class VRODriverOpenGL;
 class VROARSessionARCore : public VROARSession, public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
-    VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
-                       jni::Object<arcore::ViroViewARCore> viroViewJNI,
-                       std::shared_ptr<VRODriverOpenGL> driver);
+    VROARSessionARCore(void *context, std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROARSessionARCore();
 
     void run();
@@ -65,18 +63,25 @@ public:
      Internal methods.
      */
     void initGL(std::shared_ptr<VRODriverOpenGL> driver);
-    std::shared_ptr<VROARAnchor> getAnchorForNative(jni::Object<arcore::Anchor> anchor);
+    std::shared_ptr<VROARAnchor> getAnchorForNative(ArAnchor *anchor);
+
+    ArSession *getSessionInternal() {
+        return _session;
+    }
+
+    void setDisplayGeometry(int rotation, int width, int height);
 
 private:
+
     /*
      The ARCore session.
      */
-    jni::UniqueWeakObject<arcore::Session> _sessionJNI;
+    ArSession *_session;
 
     /*
-     The ViroViewARCore object.
+     Reusable ARCore frame object.
      */
-    jni::UniqueWeakObject<arcore::ViroViewARCore> _viroViewJNI;
+    ArFrame *_frame;
 
     /*
      The last computed ARFrame.
@@ -117,8 +122,8 @@ private:
 
     void updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);
-    void updateAnchorFromJni(std::shared_ptr<VROARAnchor> anchor, jni::Object<arcore::Anchor> anchorJni);
-    void updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> plane, jni::Object<arcore::Plane> planeJni);
+    void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, ArAnchor *anchorAR);
+    void updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, ArPlane *planeAR);
 };
 
 #endif /* VROARSessionARCore_h */

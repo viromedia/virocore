@@ -11,7 +11,8 @@ include_directories(../../ViroRenderer
                     ../libs/freetype/include
                     ../libs/protobuf/include
                     ../libs/bullet/include
-                    ../libs/opencv/include)
+                    ../libs/opencv/include
+                    ../libs/arcore/include)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -56,6 +57,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/arcore/VROARFrameARCore.cpp
              src/main/cpp/arcore/VROARCameraARCore.cpp
              src/main/cpp/arcore/ARCore_JNI.cpp
+             src/main/cpp/arcore/ARCore_Native.cpp
 
              # Android JNI
              src/main/cpp/jni/VRORenderer_JNI.cpp
@@ -297,6 +299,13 @@ add_library( # Sets the name of the library.
              )
 
 # Add pre-built libraries
+add_library( lib-arcore
+             SHARED
+             IMPORTED )
+set_target_properties( lib-arcore
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libarcore_sdk.so )
+
 add_library( lib-gvr
              SHARED
              IMPORTED )
@@ -575,6 +584,7 @@ target_link_libraries( # Specifies the target library.
                        ${lib-GLESv3}
                        ${lib-z}
                        atomic
+                       lib-arcore
                        lib-gvr
                        lib-gvr-audio
                        lib-ovr

@@ -13,14 +13,14 @@
 #include "VROPlatformUtil.h"
 #include "VROVector4f.h"
 
-VROARFrameARCore::VROARFrameARCore(jni::Object<arcore::Frame> frameJNI,
+VROARFrameARCore::VROARFrameARCore(ArFrame *frame,
                                    VROViewport viewport,
                                    std::shared_ptr<VROARSessionARCore> session) :
     _session(session),
     _viewport(viewport) {
 
-    _frameJNI = frameJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
-    _camera = std::make_shared<VROARCameraARCore>(frameJNI);
+    _frame = frame;
+    _camera = std::make_shared<VROARCameraARCore>(frame, session);
 }
 
 VROARFrameARCore::~VROARFrameARCore() {
@@ -28,7 +28,11 @@ VROARFrameARCore::~VROARFrameARCore() {
 }
 
 double VROARFrameARCore::getTimestamp() const {
-    return (double) arcore::frame::getTimestampNs(*_frameJNI.get());
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return 0;
+    }
+    return (double) arcore::frame::getTimestampNs(_frame, session->getSessionInternal());
 }
 
 const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
@@ -37,30 +41,36 @@ const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
 
 // TODO: VIRO-1940 filter results based on types. Right now, devs can't set this, so don't use filtering.
 std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
-    jni::Object<arcore::List> hitResultsJni = arcore::frame::hitTest(*_frameJNI.get(), x, y);
+    std::shared_ptr<VROARSessionARCore> session_s = _session.lock();
+    if (!session_s) {
+        return {};
+    }
+    ArSession *session = session_s->getSessionInternal();
 
-    int listSize = arcore::list::size(hitResultsJni);
+    ArHitResultList *hitResultList = arcore::hitresultlist::create(session);
+    arcore::frame::hitTest(_frame, x, y, session, hitResultList);
+
+    int listSize = arcore::hitresultlist::size(hitResultList, session);
     std::vector<VROARHitTestResult> toReturn;
 
-    jni::JNIEnv &env = *VROPlatformGetJNIEnv();
-    static auto PlaneClass = *jni::Class<arcore::Plane>::Find(env).NewGlobalRef(env).release();
-
     for (int i = 0; i < listSize; i++) {
-        jni::Object<arcore::HitResult> hitResult = (jni::Object<arcore::HitResult>) arcore::list::get(hitResultsJni, i);
-        jni::Object<arcore::Trackable> trackable = arcore::hitresult::getTrackable(hitResult);
-        jni::Object<arcore::Pose> pose = arcore::hitresult::getPose(hitResult);
+        ArHitResult *hitResult = arcore::hitresult::create(session);
+        arcore::hitresultlist::getItem(hitResultList, i, session, hitResult);
+        ArTrackable *trackable = arcore::hitresult::acquireTrackable(hitResult, session);
 
-        // Determine if the Trackable is a Plane.
-        bool isPlane = trackable.IsInstanceOf(env, PlaneClass);
+        ArPose *pose = arcore::pose::create(session);
+        arcore::hitresult::getPose(hitResult, session, pose);
+
+        // Determine if the Trackable is a Plane
+        bool isPlane = arcore::trackable::getType(trackable, session) == arcore::TrackableType::Plane;
 
         // Create the anchor only if the Trackable is a Plane
-        std::shared_ptr<VROARSessionARCore> session = _session.lock();
         std::shared_ptr<VROARAnchor> vAnchor = nullptr;
         VROARHitTestResultType type;
-        if (session && isPlane) {
-            jni::Object<arcore::Plane> plane = (jni::Object<arcore::Plane>) trackable;
-            bool inExtent = arcore::plane::isPoseInExtents(plane, pose);
-            bool inPolygon = arcore::plane::isPoseInPolygon(plane, pose);
+        if (isPlane) {
+            ArPlane *plane = ArAsPlane(trackable);
+            bool inExtent = arcore::plane::isPoseInExtents(plane, pose, session);
+            bool inPolygon = arcore::plane::isPoseInPolygon(plane, pose, session);
 
             if (inExtent || inPolygon) {
                 type = VROARHitTestResultType::ExistingPlaneUsingExtent;
@@ -68,18 +78,19 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
                 type = VROARHitTestResultType::EstimatedHorizontalPlane;
             }
 
-            jni::Object<arcore::Anchor> anchor = arcore::trackable::createAnchor(trackable, pose);
-            vAnchor = session->getAnchorForNative(anchor);
-            arcore::anchor::detach(anchor);
+            ArAnchor *anchor = arcore::trackable::acquireAnchor(trackable, pose, session);
+            vAnchor = session_s->getAnchorForNative(anchor);
+            arcore::anchor::detach(anchor, session);
+            arcore::anchor::release(anchor);
         } else {
             type = VROARHitTestResultType::FeaturePoint;
         }
 
         // Get the distance from the camera to the HitResult.
-        float distance = arcore::hitresult::getDistance(hitResult);
+        float distance = arcore::hitresult::getDistance(hitResult, session);
 
         // Get the transform to the HitResult.
-        VROMatrix4f worldTransform = arcore::pose::toMatrix(pose);
+        VROMatrix4f worldTransform = arcore::pose::toMatrix(pose, session);
 
         // Calculate the local transform, relative to the anchor (if anchor available).
         // TODO: VIRO-1895 confirm this is correct. T(local) = T(world) x T(anchor)^-1
@@ -91,8 +102,12 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
 
         VROARHitTestResult vResult(type, vAnchor, distance, worldTransform, localTransform);
         toReturn.push_back(vResult);
+
+        arcore::hitresult::destroy(hitResult);
+        arcore::trackable::release(trackable);
     }
-    
+
+    arcore::hitresultlist::destroy(hitResultList);
     return toReturn;
 }
 
@@ -101,11 +116,19 @@ VROMatrix4f VROARFrameARCore::getViewportToCameraImageTransform() {
 }
 
 bool VROARFrameARCore::hasDisplayGeometryChanged() {
-    return arcore::frame::hasDisplayGeometryChanged(*_frameJNI.get());
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return false;
+    }
+    return arcore::frame::hasDisplayGeometryChanged(_frame, session->getSessionInternal());
 }
 
 void VROARFrameARCore::getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR) {
-    std::vector<float> texcoords = arcore::frame::getBackgroundTexcoords(*_frameJNI.get());
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return;
+    }
+    std::vector<float> texcoords = arcore::frame::getBackgroundTexcoords(_frame, session->getSessionInternal());
     BL->x = texcoords[0];
     BL->y = texcoords[1];
     TL->x = texcoords[2];
@@ -121,14 +144,25 @@ const std::vector<std::shared_ptr<VROARAnchor>> &VROARFrameARCore::getAnchors() 
 }
 
 float VROARFrameARCore::getAmbientLightIntensity() const {
-    jni::Object<arcore::LightEstimate> lightEstimate = arcore::frame::getLightEstimate(*_frameJNI.get());
-    if (lightEstimate && arcore::light_estimate::isValid(lightEstimate)) {
-        // multiply by 1000 because pixel intensity ranges from 0 to 1
-        return arcore::light_estimate::getPixelIntensity(lightEstimate) * 1000;
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return 1.0;
+    }
+
+    float intensity = 0;
+    ArLightEstimate *estimate = arcore::light_estimate::create(session->getSessionInternal());
+
+    arcore::frame::getLightEstimate(_frame, session->getSessionInternal(), estimate);
+    if (arcore::light_estimate::isValid(estimate, session->getSessionInternal())) {
+        intensity = arcore::light_estimate::getPixelIntensity(estimate, session->getSessionInternal());
     }
     else {
-        return 1000;
+        intensity = 1.0;
     }
+    arcore::light_estimate::destroy(estimate);
+
+    // multiply by 1000 because pixel intensity ranges from 0 to 1
+    return intensity * 1000;
 }
 
 float VROARFrameARCore::getAmbientLightColorTemperature() const {
@@ -139,22 +173,28 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
     if (_pointCloud) {
         return _pointCloud;
     }
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return _pointCloud;
+    }
 
     JNIEnv* env = VROPlatformGetJNIEnv();
 
     std::vector<VROVector4f> points;
     std::vector<uint64_t> identifiers; // Android doesn't have any identifiers with their point cloud!
 
-    jni::Object<arcore::PointCloud> pointCloud = arcore::frame::getPointCloud(*_frameJNI.get());
+    ArPointCloud *pointCloud = arcore::frame::acquirePointCloud(_frame, session->getSessionInternal());
     if (pointCloud != NULL) {
-        std::vector<float> pointsVector = arcore::floatbuffer::toVector(arcore::pointcloud::getPoints(pointCloud));
-        for (int i = 0; i < pointsVector.size(); i += 4) {
+        const float *pointsArray = arcore::pointcloud::getPoints(pointCloud, session->getSessionInternal());
+        int numPoints = arcore::pointcloud::getNumPoints(pointCloud, session->getSessionInternal());
+
+        for (int i = 0; i < numPoints; i++) {
             // Only use points with > 0.0001. Average confidence when measured was around 0.001, so this
             // is lower than that. This is just meant to make the display of the points look good (if low
             // confidence points are used, we may end up with points very close to the camera).
-            if (pointsVector[i + 3] > .0001) {
-                VROVector4f point = VROVector4f(pointsVector[i + 0], pointsVector[i + 1],
-                                                pointsVector[i + 2], pointsVector[i + 3]);
+            if (pointsArray[i * 4 + 3] > .0001) {
+                VROVector4f point = VROVector4f(pointsArray[i * 4 + 0], pointsArray[i * 4 + 1],
+                                                pointsArray[i * 4 + 2], pointsArray[i * 4+ 3]);
                 points.push_back(point);
             }
         }

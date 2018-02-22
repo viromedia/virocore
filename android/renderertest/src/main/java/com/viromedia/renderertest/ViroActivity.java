@@ -267,38 +267,6 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         // Updating the scene.
         mViroView.setScene(scene);
         scene.displayPointCloud(true);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.setShadowsEnabled(false);
-            }
-        }, 10000);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.setPBREnabled(false);
-            }
-        }, 12000);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.setHDREnabled(false);
-            }
-        }, 14000);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.setBloomEnabled(false);
-            }
-        }, 16000);
     }
 
     private void testEdgeDetect() {

@@ -67,8 +67,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':arcore_client')
-    implementation project(':app')
+    implementation project(':libs:arcore')
     implementation project(':libs:gvr')
     implementation project(':app')
     implementation 'com.android.support:appcompat-v7:25.0.0'

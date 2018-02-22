@@ -40,8 +40,7 @@ public:
      */
     VROSceneRendererARCore(VRORendererConfiguration config,
                            std::shared_ptr<gvr::AudioApi> gvrAudio,
-                           jni::Object<arcore::Session> sessionJNI,
-                           jni::Object<arcore::ViroViewARCore> viroViewJNI);
+                           void *context);
     virtual ~VROSceneRendererARCore();
 
     /*
@@ -95,6 +94,12 @@ public:
      AR hit test using a ray from camera's position into the 3D scene.
      */
     std::vector<VROARHitTestResult> performARHitTest(VROVector3f ray);
+
+    /*
+     ARCore methods.
+     */
+    void setDisplayGeometry(int rotation, int width, int height);
+    void setPlaneFindingMode(bool enabled);
 
 private:
 

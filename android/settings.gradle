@@ -1,1 +1,1 @@
-include ':app', ':libs:gvr', ':renderertest', ':memoryleaktest', ':arcore_client', ":releasetest"
+include ':app', ':libs:gvr', ':libs:arcore', ':renderertest', ':memoryleaktest', ":releasetest"

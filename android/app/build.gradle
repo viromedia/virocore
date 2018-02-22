@@ -64,10 +64,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':arcore_client')
     implementation 'com.android.support:appcompat-v7:25.0.0'
     implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
     implementation project(':libs:gvr')
+    implementation project(':libs:arcore')
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'

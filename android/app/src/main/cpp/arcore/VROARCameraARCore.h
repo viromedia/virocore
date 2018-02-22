@@ -10,15 +10,20 @@
 #define VROARCameraARCore_h
 
 #include "VROARCamera.h"
-#include "ARCore_JNI.h"
+#include "ARCore_Native.h"
+#include "VROVector3f.h"
+#include "VROMatrix4f.h"
+#include <memory>
 
 class VROARSessionARCore;
+class VROARFrameARCore;
 enum class VROCameraOrientation;
 
 class VROARCameraARCore : public VROARCamera {
 public:
     
-    VROARCameraARCore(jni::Object<arcore::Frame> frame);
+    VROARCameraARCore(ArFrame *frame,
+                      std::shared_ptr<VROARSessionARCore> session);
     virtual ~VROARCameraARCore();
     
     VROARTrackingState getTrackingState() const;
@@ -31,8 +36,9 @@ public:
     VROVector3f getImageSize() const;
     
 private:
-    
-    jni::UniqueWeakObject <arcore::Frame> _frame;
+
+    ArFrame *_frame;
+    std::weak_ptr<VROARSessionARCore> _session;
 
     VROVector3f _position;
     VROMatrix4f _rotation;

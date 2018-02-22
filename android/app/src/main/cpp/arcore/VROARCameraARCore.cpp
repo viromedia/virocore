@@ -17,10 +17,13 @@
 #include "VROMatrix4f.h"
 #include "VROARSessionARCore.h"
 
-VROARCameraARCore::VROARCameraARCore(jni::Object<arcore::Frame> frame) {
-    _frame = frame.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
+VROARCameraARCore::VROARCameraARCore(ArFrame *frame,
+                                     std::shared_ptr<VROARSessionARCore> session) :
+    _frame(frame),
+    _session(session) {
 
-    VROMatrix4f viewMatrix = arcore::frame::getViewMatrix(frame);
+    VROMatrix4f viewMatrix = arcore::frame::getViewMatrix(frame,
+                                                          session->getSessionInternal());
     VROMatrix4f cameraMatrix = viewMatrix.invert();
 
     _position = { cameraMatrix[12], cameraMatrix[13], cameraMatrix[14] };
@@ -54,7 +57,12 @@ VROARCameraARCore::~VROARCameraARCore() {
 }
 
 VROARTrackingState VROARCameraARCore::getTrackingState() const {
-    arcore::TrackingState trackingState = arcore::frame::getTrackingState(*_frame.get());
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return VROARTrackingState::Unavailable;
+    }
+
+    arcore::TrackingState trackingState = arcore::frame::getTrackingState(_frame, session->getSessionInternal());
     switch (trackingState) {
         case arcore::TrackingState::NotTracking:
             return VROARTrackingState::Unavailable;
@@ -76,7 +84,13 @@ VROVector3f VROARCameraARCore::getPosition() const {
 }
 
 VROMatrix4f VROARCameraARCore::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
-    VROMatrix4f projection = arcore::frame::getProjectionMatrix(*_frame.get(), near, far);
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return {};
+    }
+
+    VROMatrix4f projection = arcore::frame::getProjectionMatrix(_frame, near, far,
+                                                                session->getSessionInternal());
     float fovX = toDegrees(atan(1.0f / projection[0]) * 2.0);
     float fovY = toDegrees(atan(1.0f / projection[5]) * 2.0);
     *outFOV = VROFieldOfView(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
