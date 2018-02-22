@@ -336,9 +336,11 @@ public class PhysicsBody {
      * @param mass
      * @return
      */
+    //#IFDEF 'viro_react'
     public static String checkIsValidBodyType(String bodyType, float mass) {
         return nativeIsValidBodyType(bodyType, mass);
     }
+    //#ENDIF
 
     /**
      * @hide
@@ -346,9 +348,11 @@ public class PhysicsBody {
      * @param params
      * @return
      */
+    //#IFDEF 'viro_react'
     public static String checkIsValidShapeType(String shapeType, float params[]) {
         return nativeIsValidShapeType(shapeType, params);
     }
+    //#ENDIF
 
     /*
      * Collision listener callback.

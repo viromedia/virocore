@@ -16,6 +16,7 @@ import java.io.InputStream;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class OpenCV {
 
     private static final String OUTPUT_PREFIX = "edge_";
@@ -26,14 +27,11 @@ public class OpenCV {
         mContext = context;
     }
 
-    /**
-     * Runs Canny edge detection on a given asset
-     *
-     * @param assetName - the name of the asset to run edge detection on ie. "boba.png"
-     * @return the Bitmap w/ the result!
-     */
+    /** Runs Canny edge detection on a given asset */
     public Bitmap edgeDetectImage(String assetName) {
-        // first write asset to cache
+        /*
+         first write asset to cache
+          */
         String inputFilePath = writeAssetImageToCache(assetName);
         String outputFilePath = mContext.getCacheDir().getAbsolutePath() + File.separator + OUTPUT_PREFIX + assetName;
         nativeRunEdgeDetection(inputFilePath, outputFilePath);
@@ -59,7 +57,9 @@ public class OpenCV {
         String outputFilePath = mContext.getCacheDir().getAbsolutePath() + File.separator + outputName;
 
         try {
-            // write from assets to image cache
+            /*
+             write from assets to image cache
+              */
             InputStream is = mContext.getAssets().open(inputName);
             int size = is.available();
             byte[] buffer = new byte[size];
@@ -70,7 +70,8 @@ public class OpenCV {
             FileOutputStream fos = new FileOutputStream(new File(outputFilePath));
             fos.write(buffer);
             fos.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Log.e("OpenCVJni", "oops! failed to write image [" + inputName + "] to output[" + outputName + "]", e);
             return null; // return null if we errored writing it out!
         }
@@ -81,3 +82,4 @@ public class OpenCV {
 
     private native void nativeReadWriteBitmap(String in, String out);
 }
+//#ENDIF

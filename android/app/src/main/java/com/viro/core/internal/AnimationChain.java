@@ -7,6 +7,7 @@ package com.viro.core.internal;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class AnimationChain extends ExecutableAnimation {
 
     public AnimationChain(ExecutionType type) {
@@ -45,3 +46,4 @@ public class AnimationChain extends ExecutableAnimation {
     private native void nativeDestroyAnimationChain(long nativeRef);
 
 }
+//#ENDIF

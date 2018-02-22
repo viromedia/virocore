@@ -7,6 +7,7 @@ package com.viro.core;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class SoundData {
     protected final long mNativeRef;
 
@@ -21,3 +22,4 @@ public class SoundData {
     private native long nativeCreateSoundData(String path);
     private native void nativeDestroySoundData(long nativeRef);
 }
+//#ENDIF

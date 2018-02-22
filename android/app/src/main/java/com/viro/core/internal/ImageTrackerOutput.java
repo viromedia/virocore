@@ -7,6 +7,7 @@ package com.viro.core.internal;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class ImageTrackerOutput {
     private final long mNativeRef;
 
@@ -25,3 +26,4 @@ public class ImageTrackerOutput {
     private native boolean nativeOutputFound(long nativeRef);
     private native float[] nativeOutputCorners(long nativeRef);
 }
+//#ENDIF

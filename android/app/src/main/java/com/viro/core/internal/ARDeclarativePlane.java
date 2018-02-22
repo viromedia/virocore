@@ -9,6 +9,7 @@ import com.viro.core.ARPlaneAnchor;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class ARDeclarativePlane extends ARDeclarativeNode {
 
     public ARDeclarativePlane(float minWidth, float minHeight, ARPlaneAnchor.Alignment alignment) {
@@ -20,7 +21,8 @@ public class ARDeclarativePlane extends ARDeclarativeNode {
     protected void finalize() throws Throwable {
         try {
             dispose();
-        } finally {
+        }
+        finally {
             super.finalize();
         }
     }
@@ -46,3 +48,4 @@ public class ARDeclarativePlane extends ARDeclarativeNode {
     private native void nativeSetAlignment(long nativeRef, String alignment);
 
 }
+//#ENDIF

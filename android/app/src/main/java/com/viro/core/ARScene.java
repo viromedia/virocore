@@ -4,8 +4,9 @@
  */
 package com.viro.core;
 
+//#IFDEF 'viro_react'
 import com.viro.core.internal.ARDeclarativeNode;
-
+//#ENDIF
 import java.util.EnumSet;
 
 /**
@@ -87,6 +88,7 @@ public class ARScene extends Scene {
     private Listener mListener = null;
     private long mNativeARDelegateRef;
 
+
     /**
      * Construct a new ARScene.
      */
@@ -100,12 +102,14 @@ public class ARScene extends Scene {
      * @hide
      * @param declarative
      */
+    //#IFDEF 'viro_react'
     public ARScene(boolean declarative) {
         super(true); // Invoke the dummy constructor
         long nativeRef = nativeCreateARSceneControllerDeclarative();
         setSceneRef(nativeRef);
         mNativeARDelegateRef = nativeCreateARSceneDelegate(mNativeRef);
     }
+    //#ENDIF
 
     /**
      * Invoked only by the default (no-arg) constructor.
@@ -225,22 +229,29 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public void addARDeclarativeNode(ARDeclarativeNode node) {
         nativeAddARNode(mNativeRef, node.mNativeRef);
     }
+    //#ENDIF
 
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public void updateARDeclarativeNode(ARDeclarativeNode node) {
         nativeUpdateARNode(mNativeRef, node.mNativeRef);
     }
+    //#ENDIF
+
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public void removeARDeclarativeNode(ARDeclarativeNode node) {
         nativeRemoveARNode(mNativeRef, node.mNativeRef);
     }
+    //#ENDIF
 
     private native long nativeCreateARSceneController();
     private native long nativeCreateARSceneControllerDeclarative();

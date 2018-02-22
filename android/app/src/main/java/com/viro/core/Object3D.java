@@ -92,6 +92,7 @@ public class Object3D extends Node {
      *                            the model's FBX or OBJ file, to the URI's of those resources.
      * @hide
      */
+    //#IFDEF 'viro_react'
     public void loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener,
                           Map<String, String> resourceNamesToUris) {
         removeAllChildNodes();
@@ -100,6 +101,7 @@ public class Object3D extends Node {
         nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, type == Type.FBX, requestID);
         mAsyncListener = asyncObjListener;
     }
+    //#ENDIF
 
     @Override
     public void setLightReceivingBitMask(int bitMask) {

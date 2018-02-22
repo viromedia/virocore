@@ -50,6 +50,7 @@ public class Spotlight extends Light {
      * @param innerAngle
      * @param outerAngle
      */
+    //#IFDEF 'viro_react'
     public Spotlight(long color, float intensity, float attenuationStartDistance,
                      float attenuationEndDistance, Vector position, Vector direction,
                      float innerAngle, float outerAngle) {
@@ -65,6 +66,7 @@ public class Spotlight extends Light {
                 position.x, position.y, position.z, direction.x, direction.y, direction.z,
                 innerAngle, outerAngle);
     }
+    //#ENDIF
 
     /**
      * Set the attenuation start distance, which determines when the light begins to attenuate.

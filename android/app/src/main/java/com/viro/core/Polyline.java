@@ -50,6 +50,7 @@ public class Polyline extends Geometry {
      * @param points
      * @param width
      */
+    //#IFDEF 'viro_react'
     public Polyline(float[][] points, float width) {
         mPoints = new ArrayList<Vector>();
         for (int i = 0; i < points.length; i++) {
@@ -57,6 +58,7 @@ public class Polyline extends Geometry {
         }
         mNativeRef = nativeCreatePolyline(points, width);
     }
+    //#ENDIF
 
     @Override
     protected void finalize() throws Throwable {

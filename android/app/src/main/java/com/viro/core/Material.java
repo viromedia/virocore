@@ -430,6 +430,7 @@ public class Material {
      * Hence this constructor that does it all at once on the UI thread.
      * @hide
      */
+    //#IFDEF 'viro_react'
     public Material(LightingModel lightingModel, int diffuseColor, Texture diffuseTexture, float diffuseIntensity, Texture specularTexture,
                     float shininess, float fresnelExponent, Texture normalMap, CullMode cullMode,
                     TransparencyMode transparencyMode, BlendMode blendMode, float bloomThreshold,
@@ -462,7 +463,7 @@ public class Material {
                 blendMode.getStringValue(),
                 bloomThreshold, writesToDepthBuffer, readsFromDepthBuffer);
     }
-
+    //#ENDIF
     @Override
     protected void finalize() throws Throwable {
         try {
@@ -603,19 +604,21 @@ public class Material {
      * @hide
      * @param diffuseIntensity
      */
+    //#IFDEF 'viro_react'
     public void setDiffuseIntensity(float diffuseIntensity) {
         mDiffuseIntensity = diffuseIntensity;
         nativeSetDiffuseIntensity(mNativeRef, diffuseIntensity);
     }
-
+    //#ENDIF
     /**
      * @hide
      * @return
      */
+    //#IFDEF 'viro_react'
     public float getDiffuseIntensity() {
         return mDiffuseIntensity;
     }
-
+    //#ENDIF
     /**
      * Set the specular {@link Texture} to use with this Material. The specular Texture defines
      * the amount of light that is reflected by the Material toward the user, resulting in a
@@ -853,19 +856,21 @@ public class Material {
      * @hide
      * @param fresnelExponent
      */
+    //#IFDEF 'viro_react'
     public void setFresnelExponent(float fresnelExponent) {
         mFresnelExponent = fresnelExponent;
         nativeSetFresnelExponent(mNativeRef, fresnelExponent);
     }
-
+    //#ENDIF
     /**
      * @hide
      * @return
      */
+    //#IFDEF 'viro_react'
     public float getFresnelExponent() {
         return mFresnelExponent;
     }
-
+    //#ENDIF
     /**
      * Set the {@link LightingModel} to use for this Material. LightingModel defines a formula for
      * combining a material’s diffuse, specular, and other properties with the Lights in the Scene,
@@ -1115,11 +1120,12 @@ public class Material {
          *
          * @return This builder.
          */
+        //#IFDEF 'viro_react'
         public MaterialBuilder diffuseIntensity(float diffuseIntensity) {
             material.setDiffuseIntensity(diffuseIntensity);
             return this;
         }
-
+        //#ENDIF
         /**
          * Refer to {@link Material#setSpecularTexture(Texture)}.
          *
@@ -1205,11 +1211,12 @@ public class Material {
          *
          * @return This builder.
          */
+        //#IFDEF 'viro_react'
         public MaterialBuilder fresnelExponent(float fresnelExponent) {
             material.setFresnelExponent(fresnelExponent);
             return this;
         }
-
+        //#ENDIF
         /**
          * Refer to {@link Material#setLightingModel(LightingModel)}.
          *

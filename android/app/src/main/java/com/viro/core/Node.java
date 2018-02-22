@@ -697,9 +697,11 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @hide
      * @param hierarchicalRendering
      */
+    //#IFDEF 'viro_react'
     public void setHierarchicalRendering(boolean hierarchicalRendering) {
         nativeSetHierarchicalRendering(mNativeRef, hierarchicalRendering);
     }
+    //#ENDIF
 
     /**
      * Set the {@link Geometry} of this Node. Geometries are the actual 3D objects that are rendered

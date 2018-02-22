@@ -119,11 +119,13 @@ public class SpatialSound implements BaseSound {
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public SpatialSound(SoundData data, ViroContext viroContext,
                         PlaybackListener delegate) {
         mNativeRef = nativeCreateSpatialSoundWithData(data.mNativeRef, viroContext.mNativeRef);
         mListener = delegate;
     }
+    //#ENDIF
 
     @Override
     protected void finalize() throws Throwable {

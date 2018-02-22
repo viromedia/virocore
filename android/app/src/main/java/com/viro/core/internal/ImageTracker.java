@@ -11,6 +11,7 @@ import android.util.Log;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class ImageTracker {
 
     private Context mContext;
@@ -36,3 +37,4 @@ public class ImageTracker {
     private native long nativeCreateImageTracker(Bitmap targetImage);
     private native long nativeFindTarget(long nativeRef, Bitmap bitmap);
 }
+//#ENDIF

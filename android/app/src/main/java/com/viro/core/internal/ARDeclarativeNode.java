@@ -12,6 +12,7 @@ import java.lang.ref.WeakReference;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class ARDeclarativeNode extends ARNode {
 
     public interface Delegate {
@@ -37,14 +38,13 @@ public class ARDeclarativeNode extends ARNode {
     protected void finalize() throws Throwable {
         try {
             dispose();
-        } finally {
+        }
+        finally {
             super.finalize();
         }
     }
 
-    /**
-     * Release native resources associated with this ARNode.
-     */
+    /** Release native resources associated with this ARNode. */
     @Override
     public void dispose() {
         super.dispose();
@@ -66,29 +66,23 @@ public class ARDeclarativeNode extends ARNode {
     private native long nativeCreateARNodeDelegate(long nativeRef);
     private native void nativeDestroyARNodeDelegate(long delegateRef);
 
-    // Invoked by Native
+    /*
+     Invoked by Native
+      */
 
-    /**
-     * @hide
-     */
     void onAnchorFound(ARAnchor anchor) {
         Delegate delegate;
         if (mARNodeDelegate != null && (delegate = mARNodeDelegate.get()) != null) {
             delegate.onAnchorFound(anchor);
         }
     }
-    /**
-     * @hide
-     */
     void onAnchorUpdated(ARAnchor anchor) {
         Delegate delegate;
         if (mARNodeDelegate != null && (delegate = mARNodeDelegate.get()) != null) {
             delegate.onAnchorUpdated(anchor);
         }
     }
-    /**
-     * @hide
-     */
+
     void onAnchorRemoved() {
         Delegate delegate;
         if (mARNodeDelegate != null && (delegate = mARNodeDelegate.get()) != null) {
@@ -97,3 +91,4 @@ public class ARDeclarativeNode extends ARNode {
     }
 
 }
+//#ENDIF

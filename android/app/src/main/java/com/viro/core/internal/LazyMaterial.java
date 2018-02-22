@@ -23,6 +23,7 @@ package com.viro.core.internal;
 
  @hide
  */
+//#IFDEF 'viro_react'
 public abstract class LazyMaterial {
 
     protected long mNativeRef;
@@ -53,3 +54,4 @@ public abstract class LazyMaterial {
     private native long nativeDestroyLazyMaterial(long nativeRef);
 
 }
+//#ENDIF

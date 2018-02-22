@@ -36,6 +36,7 @@ public class OmniLight extends Light {
      * @param attenuationEndDistance
      * @param position
      */
+    //#IFDEF 'viro_react'
     public OmniLight(long color, float intensity, float attenuationStartDistance,
                      float attenuationEndDistance, Vector position) {
         mColor = color;
@@ -46,6 +47,7 @@ public class OmniLight extends Light {
         mNativeRef = nativeCreateOmniLight(color, intensity, attenuationStartDistance,
                 attenuationEndDistance, position.x, position.y, position.z);
     }
+    //#ENDIF
 
     /**
      * Set the position of this OmniLight within the coordinate system of its parent {@link Node}.

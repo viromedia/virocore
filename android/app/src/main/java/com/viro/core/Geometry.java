@@ -69,10 +69,11 @@ public class Geometry {
 
     /**
      * @hide
+     * Create list of longs (refs) to all the materials. If any
+     * material has already been destroyed, return false
      */
+    //#IFDEF 'viro_react'
     public void copyAndSetMaterials(List<Material> materials) {
-        // Create list of longs (refs) to all the materials. If any
-        // material has already been destroyed, return false
         long[] materialRefs = new long[materials.size()];
         for (int i = 0; i < materials.size(); i++) {
             materialRefs[i] = materials.get(i).mNativeRef;
@@ -82,6 +83,7 @@ public class Geometry {
         }
         nativeCopyAndSetMaterials(mNativeRef, materialRefs);
     }
+    //#ENDIF
 
     private native void nativeSetMaterials(long nativeRef, long[] materials);
     private native void nativeCopyAndSetMaterials(long nativeRef, long[] materials);

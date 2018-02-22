@@ -8,7 +8,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
+//#IFDEF 'viro_react'
 import com.viro.core.internal.Image;
+//#ENDIF
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -280,9 +282,7 @@ public class Texture {
      * @hide
      */
     Texture() {
-
     }
-
     /**
      * Construct a new Texture with a passed in mNativeRef.
      *
@@ -295,6 +295,7 @@ public class Texture {
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public Texture(Image px, Image nx, Image py,
                    Image ny, Image pz, Image nz,
                    Format format) {
@@ -305,24 +306,29 @@ public class Texture {
         mWidth = (int) px.getWidth();
         mHeight = (int) px.getHeight();
     }
+    //#ENDIF
 
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public Texture(Image image, Format format, boolean sRGB, boolean mipmap) {
         mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, null);
         mWidth = (int) image.getWidth();
         mHeight = (int) image.getHeight();
     }
+    //#ENDIF
 
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     public Texture(Image image, Format format, boolean sRGB, boolean mipmap, String stereoMode) {
         mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, stereoMode);
         mWidth = (int) image.getWidth();
         mHeight = (int) image.getHeight();
     }
+    //#ENDIF
 
     /**
      * Construct a new cube map Texture out of the given images. Cube maps are a group of six

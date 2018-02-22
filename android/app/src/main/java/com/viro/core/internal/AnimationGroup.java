@@ -7,6 +7,7 @@ package com.viro.core.internal;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class AnimationGroup extends ExecutableAnimation {
 
     private LazyMaterial mLazyMaterial;
@@ -67,3 +68,4 @@ public class AnimationGroup extends ExecutableAnimation {
     private native long nativeCopyAnimation(long nativeRef);
     private native void nativeDestroyAnimationGroup(long nativeRef);
 }
+//#ENDIF

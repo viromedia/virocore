@@ -12,6 +12,7 @@ import com.viro.core.Texture;
 /**
  * @hide
  */
+//#IFDEF 'viro_react'
 public class Image {
     public long mNativeRef;
 
@@ -41,3 +42,4 @@ public class Image {
     private native long nativeGetHeight(long nativeRef);
     private native void nativeDestroyImage(long nativeRef);
 }
+//#ENDIF

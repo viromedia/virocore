@@ -342,10 +342,11 @@ public class Scene {
      * @param effects
      * @return
      */
+    //#IFDEF 'viro_react'
     public boolean setEffects(String[] effects){
         return nativeSetEffects(mNativeRef, effects);
     }
-
+    //#ENDIF
     /*
      * Native Functions called into JNI
      */
