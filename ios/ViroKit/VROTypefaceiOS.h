@@ -33,6 +33,9 @@ protected:
 private:
 
     std::weak_ptr<VRODriver> _driver;
+    
+    // Font data must not be deallocated until the typeface is destroyed
+    NSData *_fontData;
     NSData *getFontData(CGFontRef cgFont);
   
 };

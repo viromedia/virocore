@@ -48,10 +48,10 @@ FT_Face VROTypefaceiOS::loadFace(std::string name, int size, FT_Library ft) {
     
     CFStringRef fontName = (__bridge CFStringRef)[font fontName];
     CGFontRef fontRef = CGFontCreateWithFontName(fontName);
-    NSData *fontData = getFontData(fontRef);
+    _fontData = getFontData(fontRef);
     
     FT_Face face;
-    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[fontData bytes], [fontData length], 0, &face)) {
+    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &face)) {
         pabort("Failed to load font");
     }
     

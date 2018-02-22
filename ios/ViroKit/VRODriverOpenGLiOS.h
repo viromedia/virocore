@@ -113,15 +113,20 @@ public:
         std::string key = typefaceName + "_" + VROStringUtil::toString(size);
         auto it = _typefaces.find(key);
         if (it == _typefaces.end()) {
-            std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-            std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size, driver);
-            typeface->loadFace();
-            
+            std::shared_ptr<VROTypeface> typeface = createTypeface(typefaceName, size);
             _typefaces[key] = typeface;
             return typeface;
         }
         else {
-            return it->second;
+            std::shared_ptr<VROTypeface> typeface = it->second.lock();
+            if (typeface) {
+                return typeface;
+            }
+            else {
+                typeface = createTypeface(typefaceName, size);
+                _typefaces[key] = typeface;
+                return typeface;
+            }
         }
     }
     
@@ -133,7 +138,15 @@ protected:
     __weak GLKView *_viewGL;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     EAGLContext *_eaglContext;
-    std::map<std::string, std::shared_ptr<VROTypeface>> _typefaces;
+    std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
+    
+    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size) {
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size, driver);
+        typeface->loadFace();
+        return typeface;
+    }
+
     
 };
 
