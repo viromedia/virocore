@@ -274,7 +274,6 @@ public class ViroViewARCore extends ViroView {
         // TODO VIRO-2906 Perform a static check if ARCore supported (call isSupported down below?)
         /*
         try {
-
             mSession = new Session(activity);
         } catch (UnsatisfiedLinkError error){
             Toast.makeText(activity, "Installed version of Android does not support AR" +
@@ -435,7 +434,6 @@ public class ViroViewARCore extends ViroView {
         if (mWeakActivity.get() != activity){
             return;
         }
-
         mActivityPaused = true;
 
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
@@ -454,18 +452,16 @@ public class ViroViewARCore extends ViroView {
             return;
         }
 
+        if (!CameraPermissionHelper.hasCameraPermission(activity)) {
+            Log.e(TAG, "ERROR: Attempted to resume a Viro AR Core experience without " +
+                    "the required Camera permissions!");
+            return;
+        }
+
         mActivityPaused = false;
         setImmersiveSticky();
         mNativeRenderer.onResume();
-
-        // ARCore requires camera permissions to operate. If we did not yet obtain runtime
-        // permission on Android M and above, now is a good time to ask the user for it.
-        if (CameraPermissionHelper.hasCameraPermission(activity)) {
-            // Note that order matters - see the note in onPause(), the reverse applies here.
-            mSurfaceView.onResume();
-        } else {
-            CameraPermissionHelper.requestCameraPermission(activity);
-        }
+        mSurfaceView.onResume();
     }
 
     /**

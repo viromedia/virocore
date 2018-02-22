@@ -13,7 +13,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,15 +21,16 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.viro.core.ARAnchor;
 import com.viro.core.ARPointCloud;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.RendererConfiguration;
+import com.viro.core.ViroViewScene;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
-import com.viro.core.ARHitTestListener;
 import com.viro.core.ARHitTestResult;
 import com.viro.core.ARNode;
 import com.viro.core.ARPlaneAnchor;
@@ -45,6 +45,7 @@ import com.viro.core.Camera;
 import com.viro.core.Controller;
 import com.viro.core.DirectionalLight;
 import com.viro.core.EventDelegate;
+import com.viro.core.internal.CameraPermissionHelper;
 import com.viro.core.internal.Image;
 import com.viro.core.internal.ImageTracker;
 import com.viro.core.Material;
@@ -73,7 +74,6 @@ import com.viro.core.ViroView;
 import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
 import com.viro.core.ViroViewOVR;
-import com.viro.core.ViroViewScene;
 import com.viro.core.ClickState;
 import com.viro.core.ControllerStatus;
 import com.viro.core.PinchState;
@@ -101,13 +101,13 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     private final Map<String, SoundField> mSoundFieldMap = new HashMap();
     private final Map<String, SpatialSound> mSpatialSoundMap = new HashMap<>();
     private ARDeclarativeNode.Delegate mARNodeDelegate;
-    private ViroView mViroView;
+    private ViroView mViroView = null;
     private Handler mHandler;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+        mHandler = new Handler(getMainLooper());
 
         RendererConfiguration config = new RendererConfiguration();
         config.setShadowsEnabled(true);
@@ -124,21 +124,49 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             mViroView = new ViroViewOVR(this, this);
-        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-            mViroView = new ViroViewARCore(this, this, config);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
             mViroView = new ViroViewScene(this, this);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            setViroARView();
+            return;
         }
 
         mViroView.setVRModeEnabled(true);
         mViroView.setDebugHUDEnabled(true);
         mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView);
+    }
 
-        mHandler = new Handler(getMainLooper());
-        // uncomment the below line to test AR.
-        //testEdgeDetect();
-        //testFindTarget();
+    private void setViroARView(){
+        if (!CameraPermissionHelper.hasCameraPermission(ViroActivity.this)) {
+            CameraPermissionHelper.requestCameraPermission(ViroActivity.this);
+            return;
+        }
+
+        // Has permissions
+        RendererConfiguration config = new RendererConfiguration();
+        config.setShadowsEnabled(true);
+        config.setBloomEnabled(true);
+        config.setHDREnabled(true);
+        config.setPBREnabled(true);
+        mViroView = new ViroViewARCore(this, this, config);
+        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
+        setContentView(mViroView);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] perm, int[] result) {
+        if (mViroView == null) {
+            if (CameraPermissionHelper.checkResult(
+                        requestCode, perm, result, ViroActivity.this)) {
+                setViroARView();
+                mViroView.onActivityStarted(this);
+                mViroView.onActivityResumed(this);
+            } else {
+                Toast.makeText(ViroActivity.this, "Requested Camera permissions " +
+                        "that are required for AR has been denied.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
@@ -154,31 +182,43 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     protected void onStart(){
         super.onStart();
-        mViroView.onActivityStarted(this);
+        if (mViroView != null){
+            mViroView.onActivityStarted(this);
+        }
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        mViroView.onActivityResumed(this);
+        if (mViroView != null){
+            mViroView.onActivityResumed(this);
+        }
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        mViroView.onActivityPaused(this);
+        if (mViroView != null){
+            mViroView.onActivityPaused(this);
+        }
     }
 
     @Override
     protected void onStop(){
         super.onStop();
-        mViroView.onActivityStopped(this);
+
+        if (mViroView != null){
+            mViroView.onActivityStopped(this);
+        }
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        mViroView.onActivityDestroyed(this);
+
+        if (mViroView != null){
+            mViroView.onActivityDestroyed(this);
+        }
     }
 
     @Override

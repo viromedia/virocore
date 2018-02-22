@@ -34,4 +34,23 @@ public class CameraPermissionHelper {
     ActivityCompat.requestPermissions(activity, new String[]{CAMERA_PERMISSION},
             CAMERA_PERMISSION_CODE);
   }
+
+  /**
+   * Given a set of permissions and results from {@link Activity#onRequestPermissionsResult(int, String[], int[])},
+   * we check to see if the requested Camera permission had been granted or not.
+   */
+  public static boolean checkResult(int req, String[] perm, int[] result, Context context){
+    if (req != CAMERA_PERMISSION_CODE) {
+      return false;
+    }
+
+    for (int i = 0; i < perm.length; i ++){
+      if (perm[i].equals(Manifest.permission.CAMERA) &&
+              result[i] == PackageManager.PERMISSION_GRANTED) {
+          return true;
+        }
+      }
+
+    return false;
+  }
 }
