@@ -141,14 +141,17 @@ JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
                                                jlong scene_j,
                                                jlong texture_j) {
     std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
-    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
-
-    VROPlatformDispatchAsyncRenderer([scene_w, texture_w] {
+    long texture_ref = texture_j;
+    VROPlatformDispatchAsyncRenderer([scene_w, texture_ref] {
         std::shared_ptr<VROSceneController> scene = scene_w.lock();
-        std::shared_ptr<VROTexture> texture = texture_w.lock();
+        if (!scene){
+            return;
+        }
 
-        if (scene && texture) {
-            scene->getScene()->getRootNode()->setLightingEnvironment(texture);
+        if (texture_ref != 0){
+            scene->getScene()->getRootNode()->setLightingEnvironment(Texture::native(texture_ref));
+        } else {
+            scene->getScene()->getRootNode()->setLightingEnvironment(nullptr);
         }
     });
 }

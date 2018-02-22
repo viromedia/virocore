@@ -44,7 +44,7 @@ public class PortalScene extends Node {
     private boolean mPassable = false;
     private Portal mPortal;
     private Texture mLightingEnvironment;
-    private static final long INVALID_REF = -1;
+    private static final long INVALID_REF = 0;
 
     /**
      * Construct a new PortalScene. To be displayed, a {@link Portal} entrance has to be set for

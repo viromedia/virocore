@@ -166,14 +166,13 @@ JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
                                                jlong texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
     long texture_ref = texture_j;
-
     VROPlatformDispatchAsyncRenderer([portal_w, texture_ref] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();
         if (!portal){
             return;
         }
 
-        if (texture_ref != -1){
+        if (texture_ref != 0){
             portal->setLightingEnvironment(Texture::native(texture_ref));
         } else {
             portal->setLightingEnvironment(nullptr);

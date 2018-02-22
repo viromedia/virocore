@@ -301,7 +301,9 @@ public class Scene {
      */
     public void setLightingEnvironment(Texture lightingEnvironment) {
         mLightingEnvironment = lightingEnvironment;
-        nativeSetLightingEnvironment(mNativeRef, lightingEnvironment.mNativeRef);
+
+        long ref = lightingEnvironment == null ? 0 : lightingEnvironment.mNativeRef;
+        nativeSetLightingEnvironment(mNativeRef, ref);
     }
 
     /**
