@@ -33,7 +33,7 @@ public:
     /*
      Constructors.
      */
-    VROBoundingBox();
+    VROBoundingBox() noexcept;
     VROBoundingBox(float left, float right, float bottom, float top, float zmin, float zmax);
 
     /*

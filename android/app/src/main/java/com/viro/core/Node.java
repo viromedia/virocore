@@ -731,6 +731,13 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Get the {@link BoundingBox} computed for this Node.
+     */
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(nativeGetBoundingBox(mNativeRef));
+    }
+
+    /**
      * Set the {@link ParticleEmitter} to use for this Node. This will remove any {@link Geometry}
      * currently attached to the Node.
      *
@@ -1454,6 +1461,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native float[] nativeGetScale(long nodeReference);
     private native float[] nativeGetRotationEuler(long nodeReference);
     private native float[] nativeGetRotationQuaternion(long nodeReference);
+    private native float[] nativeGetBoundingBox(long boundingBox);
     private native String[] nativeGetAnimationKeys(long nodeReference);
     private native Geometry nativeGetGeometry(long nodeReference);
     private native void nativeSetTag(long nodeReference, String tag);

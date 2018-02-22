@@ -457,7 +457,7 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     _lastPosition.store(_position);
     _lastRotation.store(_rotation);
     _lastScale.store(_scale);
-    _lastBoundingBox.store(_computedBoundingBox);
+    _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
 
     /*
      Move down the tree.
@@ -573,8 +573,8 @@ VROVector3f VRONode::getLastLocalScale() const {
     return _lastScale.load();
 }
 
-VROBoundingBox VRONode::getLastBoundingBox() const {
-    return _lastBoundingBox.load();
+VROBoundingBox VRONode::getLastUmbrellaBoundingBox() const {
+    return _lastUmbrellaBoundingBox.load();
 }
 
 #pragma mark - Scene Graph

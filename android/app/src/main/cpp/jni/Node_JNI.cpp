@@ -413,6 +413,11 @@ JNI_METHOD(jfloatArray, nativeGetRotationQuaternion)(JNIEnv *env,
     return array_j;
 }
 
+JNI_METHOD(jfloatArray, nativeGetBoundingBox)(JNIEnv *env, jobject obj, jlong node_j) {
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    return ARUtilsCreateFloatArrayFromBoundingBox(node->getLastUmbrellaBoundingBox());
+}
+
 JNI_METHOD(jfloatArray, nativeConvertLocalPositionToWorldSpace)(JNIEnv *env,
                                                                  jobject obj,
                                                                  jlong node_j, float x, float y, float z) {

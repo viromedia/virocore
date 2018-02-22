@@ -17,6 +17,7 @@
 jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor);
 jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector);
 jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix);
+jfloatArray ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox);
 jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment);
 jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result);
 

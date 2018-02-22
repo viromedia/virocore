@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.viro.core.ARAnchor;
 import com.viro.core.ARPointCloud;
+import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.RendererConfiguration;
@@ -224,8 +225,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     public void onRendererStart() {
         Log.e("ViroActivity", "onRendererStart called");
-        //initializeVrScene();
-        initializeArScene();
+        initializeVrScene();
+        //initializeArScene();
     }
 
     private void initializeVrScene() {
@@ -599,6 +600,15 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         mat.setDiffuseColor(Color.RED);
 
         final AnimationTransaction transaction = AnimationTransaction.commit();
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                BoundingBox box = node1.getBoundingBox();
+                Log.d("Viro", "bounding box for [2,4,2] box is: " + box.minX + ", " + box.maxX + ", " + box.minY
+                        + ", " + box.maxY + ", " + box.minZ + ", " + box.maxZ);
+            }
+        }, 1000);
 
         return Arrays.asList(node1, node2, node3);
     }

@@ -27,7 +27,7 @@
 #pragma mark -
 #pragma mark Initialization
 
-VROBoundingBox::VROBoundingBox() :
+VROBoundingBox::VROBoundingBox() noexcept:
     _planes{0, 0, 0, 0, 0, 0} {
 
 }

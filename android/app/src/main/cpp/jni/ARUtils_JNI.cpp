@@ -79,6 +79,17 @@ jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
     return returnArray;
 }
 
+jfloatArray ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jfloatArray returnArray = env->NewFloatArray(6);
+    jfloat tempArr[6];
+    tempArr[0] = boundingBox.getMinX(); tempArr[1] = boundingBox.getMaxX();
+    tempArr[2] = boundingBox.getMinY(); tempArr[3] = boundingBox.getMaxY();
+    tempArr[4] = boundingBox.getMinZ(); tempArr[5] = boundingBox.getMaxZ();
+    env->SetFloatArrayRegion(returnArray, 0, 6, tempArr);
+    return returnArray;
+}
+
 jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     const char *strArr;
