@@ -94,6 +94,9 @@ void VROLightingUBO::updateLightsFragment() {
             data.lights[index].spot_outer_angle = cos(degrees_to_radians(light->getSpotOuterAngle() * 0.5));
             
             data.num_lights++;
+            if (data.num_lights >= kMaxLights) {
+                break;
+            }
         }
     }
     
@@ -128,6 +131,9 @@ void VROLightingUBO::updateLightsVertex() {
         memcpy(&vertexData.shadow_projection_matrices[i * kFloatsPerMatrix], shadowProjection.getArray(), kFloatsPerMatrix * sizeof(float));
         
         vertexData.num_lights++;
+        if (vertexData.num_lights >= kMaxLights) {
+            break;
+        }
     }
     
     glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
