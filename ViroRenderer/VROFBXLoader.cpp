@@ -191,6 +191,12 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
         for (std::shared_ptr<VRONode> child : fbxNode->getChildNodes()) {
             node->addChildNode(child);
         }
+        
+        // recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
+        // we notify the user that their FBX has finished loading
+        fbxNode->recomputeUmbrellaBoundingBox();
+        fbxNode->setAtomicRenderProperties();
+        
         if (onFinish) {
             onFinish(node, true);
         }

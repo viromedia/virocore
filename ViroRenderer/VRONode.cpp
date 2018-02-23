@@ -184,6 +184,21 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
     }
 }
 
+void VRONode::recomputeUmbrellaBoundingBox() {
+    std::shared_ptr<VRONode> parent = getParentNode();
+    if (!parent) {
+        return;
+    }
+    // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
+    // child's node transforms recursively.
+    computeTransforms(parent->getComputedTransform(), parent->getComputedRotation());
+    
+    _umbrellaBoundingBox = VROBoundingBox(_computedPosition.x, _computedPosition.x, _computedPosition.y,
+                                          _computedPosition.y, _computedPosition.z, _computedPosition.z);
+    
+    computeUmbrellaBounds(&_umbrellaBoundingBox);
+}
+
 #pragma mark - Sorting and Transforms
 
 void VRONode::resetDebugSortIndex() {

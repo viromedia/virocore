@@ -90,6 +90,12 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
  
     if (geometry) {
         node->setGeometry(geometry);
+        
+        // recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
+        // we notify the user that their OBJ has finished loading
+        node->recomputeUmbrellaBoundingBox();
+        node->setAtomicRenderProperties();
+
         if (onFinish) {
             onFinish(node, true);
         }

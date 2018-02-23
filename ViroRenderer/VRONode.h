@@ -212,6 +212,12 @@ public:
                            std::function<bool(const VRONode&)> filter,
                            const VRORenderContext &context, std::shared_ptr<VRODriver> &driver);
     
+    /*
+     This function recomputes this node's transform before recomputing its umbrella bounding box
+     using its parent's last computed transform.
+     */
+    void recomputeUmbrellaBoundingBox();
+    
 #pragma mark - Geometry
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
