@@ -166,12 +166,6 @@ public class ViroActivity extends AppCompatActivity {
     }
 
     private void setViroARView(){
-        if (!CameraPermissionHelper.hasCameraPermission(ViroActivity.this)) {
-            CameraPermissionHelper.requestCameraPermission(ViroActivity.this);
-            return;
-        }
-
-        // Has permissions
         RendererConfiguration config = new RendererConfiguration();
         config.setShadowsEnabled(true);
         config.setBloomEnabled(true);
@@ -190,21 +184,6 @@ public class ViroActivity extends AppCompatActivity {
         }, config);
         mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] perm, int[] result) {
-        if (mViroView == null) {
-            if (CameraPermissionHelper.checkResult(
-                        requestCode, perm, result, ViroActivity.this)) {
-                setViroARView();
-                mViroView.onActivityStarted(this);
-                mViroView.onActivityResumed(this);
-            } else {
-                Toast.makeText(ViroActivity.this, "Requested Camera permissions " +
-                        "that are required for AR has been denied.", Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
     @Override

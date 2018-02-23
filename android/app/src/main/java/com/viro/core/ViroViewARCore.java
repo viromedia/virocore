@@ -267,9 +267,10 @@ public class ViroViewARCore extends ViroView {
     private ViroMediaRecorder mMediaRecorder;
     private StartupListener mStartupListener;
 
-    // The renderer start listener is invoked when these are both true
+    // The renderer start listener is invoked when these are all true
     private AtomicBoolean mRendererSurfaceInitialized = new AtomicBoolean(false);
     private AtomicBoolean mARCoreInstalled = new AtomicBoolean(false);
+    private boolean mRequestedCameraPermissions = false;
 
     private boolean mAppRequestedInstall = true;
     private boolean mUserRequestedInstall = false;
@@ -484,7 +485,7 @@ public class ViroViewARCore extends ViroView {
 
         } catch (Exception e) {
             error = StartupError.ARCORE_UNKNOWN;
-            Log.i(TAG, "Error: Unknown error installing ARCore");
+            Log.i(TAG, "Error: Unknown error when installing ARCore: " + e.getMessage());
             message = "This device does not support AR";
         }
 
@@ -603,22 +604,31 @@ public class ViroViewARCore extends ViroView {
         if (mNativeRenderer == null) {
             return;
         }
+
         if (mWeakActivity.get() != activity) {
             return;
         }
 
+        if (!CameraPermissionHelper.hasCameraPermission(activity) && mRequestedCameraPermissions) {
+            notifyRendererFailed(StartupError.CAMERA_PERMISSIONS_NOT_GRANTED, "Error: " +
+                    "Attempted to resume an ARCore experience without the required camera permissions!");
+            return;
+        }
+
         if (!CameraPermissionHelper.hasCameraPermission(activity)) {
-            Log.e(TAG, "ERROR: Attempted to resume a Viro ARCore experience without " +
-                    "the required Camera permissions!");
+            CameraPermissionHelper.requestCameraPermission(activity);
+            mRequestedCameraPermissions = true;
             return;
         }
 
         setImmersiveSticky();
         boolean arcoreInstalled = requestARCoreInstall(activity);
-        if (arcoreInstalled) {
-            mNativeRenderer.onResume();
-            mSurfaceView.onResume();
+        if (!arcoreInstalled) {
+            return;
         }
+
+        mNativeRenderer.onResume();
+        mSurfaceView.onResume();
     }
 
     /**
