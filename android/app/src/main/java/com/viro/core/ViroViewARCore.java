@@ -405,6 +405,9 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void setPointOfView(Node node) {
         throw new IllegalStateException("Viro: Unable to set a different point of view in AR");
