@@ -448,16 +448,6 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
         
         updated = true;
     }
-    
-    /*
-     Now that _computedTransform has finished computing, save it so that others outside can query for it.
-     */
-    _lastComputedTransform.store(_computedTransform);
-    _lastComputedPosition.store(_computedPosition);
-    _lastPosition.store(_position);
-    _lastRotation.store(_rotation);
-    _lastScale.store(_scale);
-    _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
 
     /*
      Move down the tree.
@@ -836,6 +826,19 @@ void VRONode::setHidden(bool hidden) {
 void VRONode::setHighAccuracyGaze(bool enabled) {
     passert_thread();
     _highAccuracyGaze = enabled;
+}
+
+void VRONode::setAtomicRenderProperties() {
+    _lastComputedTransform.store(_computedTransform);
+    _lastComputedPosition.store(_computedPosition);
+    _lastPosition.store(_position);
+    _lastRotation.store(_rotation);
+    _lastScale.store(_scale);
+    _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
+    
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->setAtomicRenderProperties();
+    }
 }
 
 #pragma mark - Actions and Animations

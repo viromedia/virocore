@@ -147,7 +147,13 @@ public:
      */
     void applyConstraints(const VRORenderContext &context, VROMatrix4f parentTransform,
                           bool parentUpdated);
-  
+
+    /*
+     Recursively sets the atomic properties computed during a render pass. Should be
+     called after the computation occurs.
+     */
+    void setAtomicRenderProperties();
+    
     /*
      Update the position of each light in this node, and add to the outLights vector.
      Recurses down the tree.
