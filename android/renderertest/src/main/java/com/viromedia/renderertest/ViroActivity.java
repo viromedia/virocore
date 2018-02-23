@@ -29,7 +29,6 @@ import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.RendererConfiguration;
-import com.viro.core.RendererStartError;
 import com.viro.core.ViroViewScene;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
@@ -57,7 +56,6 @@ import com.viro.core.OmniLight;
 import com.viro.core.internal.OpenCV;
 import com.viro.core.ParticleEmitter;
 import com.viro.core.Polyline;
-import com.viro.core.RendererStartListener;
 import com.viro.core.Scene;
 import com.viro.core.Sound;
 import com.viro.core.SoundData;
@@ -96,7 +94,7 @@ import java.util.Map;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
-public class ViroActivity extends AppCompatActivity implements RendererStartListener {
+public class ViroActivity extends AppCompatActivity {
     private static final String TAG = ViroActivity.class.getSimpleName();
     private static int SOUND_COUNT = 0;
     private final Map<String, Sound> mSoundMap = new HashMap<>();
@@ -118,16 +116,48 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         config.setPBREnabled(true);
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            mViroView = new ViroViewGVR(this, this, new Runnable(){
+            mViroView = new ViroViewGVR(this, new ViroViewGVR.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewGVR.StartupError error, String errorMessage) {
+                    onRendererFailed(error.toString(), errorMessage);
+                }
+            }, new Runnable() {
                 @Override
                 public void run() {
                     Log.e(TAG, "On GVR userRequested exit");
                 }
             });
+
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-            mViroView = new ViroViewOVR(this, this);
+            mViroView = new ViroViewOVR(this, new ViroViewOVR.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewOVR.StartupError error, String errorMessage) {
+                    onRendererFailed(error.toString(), errorMessage);
+                }
+            });
+
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
-            mViroView = new ViroViewScene(this, this);
+            mViroView = new ViroViewScene(this, new ViroViewScene.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewScene.StartupError error, String errorMessage) {
+                    onRendererFailed(error.toString(), errorMessage);
+                }
+            });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             setViroARView();
             return;
@@ -147,7 +177,17 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         config.setBloomEnabled(true);
         config.setHDREnabled(true);
         config.setPBREnabled(true);
-        mViroView = new ViroViewARCore(this, true, this, config);
+        mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
+            @Override
+            public void onSuccess() {
+                onRendererStart();
+            }
+
+            @Override
+            public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
+                onRendererFailed(error.toString(), errorMessage);
+            }
+        }, config);
         mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView);
     }
@@ -219,8 +259,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         }
     }
 
-    @Override
-    public void onRendererStart() {
+    private void onRendererStart() {
         Log.e("ViroActivity", "onRendererStart called");
 
         mViroView.setVRModeEnabled(true);
@@ -231,8 +270,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         initializeArScene();
     }
 
-    @Override
-    public void onRendererFailed(RendererStartError error, String errorMessage) {
+    private void onRendererFailed(String error, String errorMessage) {
         Log.e("ViroActivity", "onRendererFailed [error: " + error + "], message [" + errorMessage + "]");
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
     }

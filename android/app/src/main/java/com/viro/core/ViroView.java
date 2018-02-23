@@ -73,7 +73,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     protected boolean mDestroyed = false;
     protected WeakReference<Activity> mWeakActivity;
     private String mApiKey;
-    protected RendererStartListener mRenderStartListener = null;
     protected Scene mCurrentScene;
     protected RendererConfiguration mRendererConfig;
 
@@ -321,11 +320,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @hide
      */
     public final void validateAPIKey(String apiKey) {
-        if (mNativeRenderer == null) {
-           Log.e(TAG,"Renderer initialization failed: cannot validate API key");
-           return;
-        }
-
         mNativeRenderer.setSuspended(false);
         // we actually care more about the headset than platform in this case.
         final WeakReference<Renderer> weakRenderer = new WeakReference<>(mNativeRenderer);
@@ -371,15 +365,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
-     * Set the callback listener that will be invoked when the renderer has finished initializing.
-     *
-     * @param renderStartListener {@link RendererStartListener} callback.
-     */
-    public final void setRenderStartListener(final RendererStartListener renderStartListener) {
-        mRenderStartListener = renderStartListener;
-    }
-
-    /**
      * Enable or disable rendering dynamic shadows. If shadows are disabled here, shadow
      * casting {@link Light}s will simply not cast a shadow.
      * <p>
@@ -388,9 +373,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @param enabled True to enable dynamic shadows for this ViroView.
      */
     public void setShadowsEnabled(boolean enabled) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot set shadows");
-        }
         mShadowsEnabled = enabled;
         mNativeRenderer.setShadowsEnabled(enabled);
     }
@@ -415,9 +397,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @param enabled True to enable HDR for this ViroView.
      */
     public void setHDREnabled(boolean enabled) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot set HDR");
-        }
         mHDREnabled = enabled;
         mNativeRenderer.setHDREnabled(enabled);
     }
@@ -442,9 +421,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @param enabled True to enable PBR for this ViroView.
      */
     public void setPBREnabled(boolean enabled) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot set PBR");
-        }
         mPBREnabled = enabled;
         mNativeRenderer.setPBREnabled(enabled);
     }
@@ -466,9 +442,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @param enabled True to enable bloom for this ViroView.
      */
     public void setBloomEnabled(boolean enabled) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot set Bloom");
-        }
         mBloomEnabled = enabled;
         mNativeRenderer.setBloomEnabled(enabled);
     }
@@ -495,9 +468,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * from 0.0 to 1.0.
      */
     public Vector projectPoint(Vector point) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot project point");
-        }
         return mNativeRenderer.projectPoint(point.x, point.y, point.z);
     }
 
@@ -516,9 +486,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @return The 3D point in world coordinates.
      */
     public Vector unprojectPoint(Vector point) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot unproject point");
-        }
         return mNativeRenderer.unprojectPoint(point.x, point.y, point.z);
     }
 
@@ -556,10 +523,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @param enabled
      */
     public final void setDebugHUDEnabled(boolean enabled) {
-        if (mNativeRenderer == null) {
-            Log.e(TAG, "Renderer initialization failed: cannot enable debug HUD");
-            return;
-        }
         mNativeRenderer.setDebugHUDEnabled(enabled);
     }
     /**

@@ -42,6 +42,41 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
     }
 
     /**
+     * Callback interface for responding to {@link ViroViewOVR} startup success or failure.
+     */
+    public interface StartupListener {
+
+        /**
+         * Callback invoked when {@link ViroViewOVR} has finished initialization, meaning the
+         * rendering surface was succesfully created and OVR was successfully initialized. When
+         * this is received, the ViroView is ready to begin rendering content.
+         */
+        void onSuccess();
+
+        /**
+         * Callback invoked when the {@link ViroViewOVR} failed to initialize.
+         *
+         * @param error        The error code.
+         * @param errorMessage The reason for the failure as a string.
+         */
+        void onFailure(StartupError error, String errorMessage);
+
+    }
+
+    /**
+     * Errors returned by the {@link StartupListener}, in response to Viro failing to
+     * initialize.
+     */
+    public enum StartupError {
+
+        /**
+         * Indicates an unknown error.
+         */
+        UNKNOWN,
+
+    };
+
+    /**
      * Executes events on the renderer thread by collecting them in a
      * queue and running them as a {@link FrameListener}.
      */
@@ -70,32 +105,33 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
     private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
     private PlatformUtil mPlatformUtil;
+    private StartupListener mStartupListener;
 
     /**
      * Create a new ViroViewOVR with the default {@link RendererConfiguration}.
      *
-     * @param activity              The activity containing the view.
-     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
-     *                              Optional, may be null.
+     * @param activity        The activity containing the view.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be null.
      */
-    public ViroViewOVR(final Activity activity, final RendererStartListener rendererStartListener) {
+    public ViroViewOVR(final Activity activity, final StartupListener startupListener) {
         super(activity, null);
-        init(rendererStartListener);
+        init(startupListener);
     }
 
     /**
      * Create a new ViroViewOVR with the given {@link RendererConfiguration}, which determines
      * the rendering techniques and rendering fidelity to use for this View.
      *
-     * @param activity              The activity containing the view.
-     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
-     *                              Optional, may be null.
-     * @param config                The {@link RendererConfiguration} to use.
+     * @param activity        The activity containing the view.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be null.
+     * @param config          The {@link RendererConfiguration} to use.
      */
-    public ViroViewOVR(final Activity activity, final RendererStartListener rendererStartListener,
+    public ViroViewOVR(final Activity activity, final StartupListener startupListener,
                        RendererConfiguration config) {
         super(activity, config);
-        init(rendererStartListener);
+        init(startupListener);
     }
 
     /**
@@ -133,7 +169,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         }
     }
 
-    private void init(final RendererStartListener rendererStartListener) {
+    private void init(final StartupListener startupListener) {
         Activity activity = mWeakActivity.get();
         if (activity == null) {
             return;
@@ -155,7 +191,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
                 this, activity, mAssetManager, mPlatformUtil, mRendererConfig);
 
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
-        mRenderStartListener = rendererStartListener;
+        mStartupListener = startupListener;
 
         // Note: unlike GVR we don't have to worry about restoring these Activity settings because
         // OVR apps aren't hybrid 2D -> VR applications.
@@ -324,8 +360,8 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
                 mNativeRenderer.initializeGL(true);
             }
         });
-        if (mRenderStartListener != null && !mDestroyed) {
-            mRenderStartListener.onRendererStart();
+        if (mStartupListener != null && !mDestroyed) {
+            mStartupListener.onSuccess();
         }
     }
 

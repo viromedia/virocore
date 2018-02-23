@@ -67,6 +67,74 @@ public class ViroViewARCore extends ViroView {
     private static final String TAG = "Viro";
 
     /**
+     * Callback interface for responding to {@link ViroViewARCore} startup success or failure.
+     */
+    public interface StartupListener {
+
+        /**
+         * Callback invoked when {@link ViroViewARCore} has finished initialization, meaning the
+         * rendering surface was succesfully created and ARCore was successfully installed and
+         * initialized. When this is received, the ViroView is ready to begin rendering content.
+         */
+        void onSuccess();
+
+        /**
+         * Callback invoked when the {@link ViroViewARCore} failed to initialize.
+         *
+         * @param error        The error code.
+         * @param errorMessage The reason for the failure as a string.
+         */
+        void onFailure(StartupError error, String errorMessage);
+
+    }
+
+    /**
+     * Errors returned by the {@link StartupListener}, in response to Viro failing to
+     * initialize.
+     */
+    public enum StartupError {
+
+        /**
+         * Indicates ARCore is not supported on the device.
+         */
+        ARCORE_NOT_SUPPORTED,
+
+        /**
+         * Indicates ARCore is supported by the device, but is not installed on the device and attempts
+         * to install it failed.
+         */
+        ARCORE_NOT_INSTALLED,
+
+        /**
+         * Indicates ARCore is supported by the device, and an install was requested by the application
+         * but declined by the user.
+         */
+        ARCORE_USER_DECLINED_INSTALL,
+
+        /**
+         * Indicates the version of ARCore on the user's device is out of date.
+         */
+        ARCORE_NEEDS_UPDATE,
+
+        /**
+         * Indicates the ARCore SDK used by this app is out of date.
+         */
+        ARCORE_SDK_NEEDS_UPDATE,
+
+        /**
+         * Indicates an unknown error detecting ARCore on the device.
+         */
+        ARCORE_UNKNOWN,
+
+        /**
+         * Indicates AR could not be started because camera permissions were not granted to the
+         * application.
+         */
+        CAMERA_PERMISSIONS_NOT_GRANTED,
+
+    };
+
+    /**
      * ARCore, which underlies Viro's augmented reality system, can be set to detect various types
      * of real world features (anchors) by continually scanning the incoming video feed from the
      * device camera. This enum indicates what anchors ARCore should attempt to detect. The {@link
@@ -195,9 +263,9 @@ public class ViroViewARCore extends ViroView {
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private PlatformUtil mPlatformUtil;
-    private boolean mActivityPaused = true;
     private ViroTouchGestureListener mViroTouchGestureListener;
     private ViroMediaRecorder mMediaRecorder;
+    private StartupListener mStartupListener;
 
     // The renderer start listener is invoked when these are both true
     private AtomicBoolean mRendererSurfaceInitialized = new AtomicBoolean(false);
@@ -208,47 +276,55 @@ public class ViroViewARCore extends ViroView {
 
     /**
      * Create a new ViroViewARCore with the default {@link RendererConfiguration}. This constructor
-     * will report a {@link RendererStartError} to the provided {@link RendererStartListener} if
-     * AR is not supported by this device, or if ARCore cannot be installed on the device (either
-     * because the app has requested not to by setting <tt>installARCore</tt> to <tt><false</tt> or
-     * the user has declined the install.
+     * will immediately throw an {@link UnavailableDeviceNotCompatibleException} if ARCore is not
+     * compatible with this device. You can also check for this condition with the static {@link
+     * #isDeviceCompatible(Context)} method.
+     * <p>
+     * If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
+     * prompt the user to install it if it isn't. Any error encountered during this process will be
+     * reported as a {@link StartupError} to the provided {@link StartupListener}. Many of these
+     * errors are asynchronous: for example, if the user does not have ARCore installed and declines
+     * to install it when prompted, or if the install fails.
+     * <p>
      *
-     * @param context               The activity context.
-     * @param installARCore         True if we should ask the user to install ARCore if it is not
-     *                              already installed on the device.
-     * @param rendererStartListener Listener to respond to successful initialization or to any
-     *                              errors encountered while initializing AR and the renderer.
-     *                              Optional, may be null.
-     * @throws UnavailableDeviceNotCompatibleException If AR is not supported by the device.
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing AR and the renderer.
+     *                        Optional, may be null.
+     * @throws UnavailableDeviceNotCompatibleException If ARCore is not compatible with the device.
      */
-    public ViroViewARCore(@NonNull final Context context, boolean installARCore,
-                          @Nullable final RendererStartListener rendererStartListener) {
-        this(context, installARCore, rendererStartListener, null);
+    public ViroViewARCore(@NonNull final Context context,
+                          @Nullable final StartupListener startupListener) {
+        this(context, startupListener, null);
     }
 
     /**
      * Create a new ViroViewARCore with the given {@link RendererConfiguration}, which determines
      * the rendering techniques and rendering fidelity to use for this View. This constructor
-     * will report a {@link RendererStartError} to the provided {@link RendererStartListener} if
-     * AR is not supported by this device, or if ARCore cannot be installed on the device (either
-     * because the app has requested not to by setting <tt>installARCore</tt> to <tt><false</tt> or
-     * the user has declined the install.
+     * will immediately throw an {@link UnavailableDeviceNotCompatibleException} if ARCore is not
+     * compatible with this device. You can also check for this condition with the static {@link
+     * #isDeviceCompatible(Context)} method.
+     * <p>
+     * If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
+     * prompt the user to install it if it isn't. Any error encountered during this process will be
+     * reported as a {@link StartupError} to the provided {@link StartupListener}. Many of these
+     * errors are asynchronous: for example, if the user does not have ARCore installed and declines
+     * to install it when prompted, or if the install fails.
+     * <p>
      *
-     * @param context               The activity context.
-     * @param installARCore         True if we should ask the user to install ARCore if it is not
-     *                              already installed on the device.
-     * @param rendererStartListener Listener to respond to successful initialization or to any
-     *                              errors encountered while initializing AR and the renderer.
-     *                              Optional, may be null.
-     * @param config                The {@link RendererConfiguration} to use. May be null to use the
-     *                              default configuration.
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing AR and the renderer.
+     *                        Optional, may be null.
+     * @param config          The {@link RendererConfiguration} to use. May be null to use the
+     *                        default configuration.
+     * @throws UnavailableDeviceNotCompatibleException If ARCore is not compatible with the device.
      */
-    public ViroViewARCore(@NonNull final Context context, boolean installARCore,
-                          @Nullable final RendererStartListener rendererStartListener,
+    public ViroViewARCore(@NonNull final Context context,
+                          @Nullable final StartupListener startupListener,
                           @Nullable RendererConfiguration config) {
         super(context, config);
-        mAppRequestedInstall = installARCore;
-        init(context, rendererStartListener);
+        init(context, startupListener);
     }
 
     /**
@@ -287,12 +363,12 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
-    private void init(final Context context, final RendererStartListener rendererStartListener) {
-        mRenderStartListener = rendererStartListener;
+    private void init(final Context context, final StartupListener startupListener) {
+        mStartupListener = startupListener;
         if (!isDeviceCompatible(context)) {
-            notifyRendererFailed(RendererStartError.ARCORE_NOT_SUPPORTED,
-                    "This device does not support ARCore");
-            return;
+            notifyRendererFailed(StartupError.ARCORE_NOT_SUPPORTED,
+                    "This device is not compatible with ARCore");
+            throw new UnavailableDeviceNotCompatibleException();
         }
 
         // We wait to load libraries until after the ARCore check, otherwise UnsatisfiedLinkErrors
@@ -336,14 +412,14 @@ public class ViroViewARCore extends ViroView {
     }
 
     private void notifyRendererStart() {
-        if (mRenderStartListener != null) {
-            mRenderStartListener.onRendererStart();
+        if (mStartupListener != null) {
+            mStartupListener.onSuccess();
         }
     }
 
-    private void notifyRendererFailed(RendererStartError error, String errorMessage) {
-        if (mRenderStartListener != null) {
-            mRenderStartListener.onRendererFailed(error, errorMessage);
+    private void notifyRendererFailed(StartupError error, String errorMessage) {
+        if (mStartupListener != null) {
+            mStartupListener.onFailure(error, errorMessage);
         }
     }
 
@@ -353,7 +429,7 @@ public class ViroViewARCore extends ViroView {
             return true;
         }
 
-        RendererStartError error = RendererStartError.ARCORE_UNKNOWN;
+        StartupError error = StartupError.ARCORE_UNKNOWN;
         String message = null;
         try {
             switch (ArCoreApk.getInstance().requestInstall(activity, mAppRequestedInstall)) {
@@ -378,27 +454,27 @@ public class ViroViewARCore extends ViroView {
                 notifyRendererStart();
             }
         } catch (UnavailableArcoreNotInstalledException e) {
-            error = RendererStartError.ARCORE_NOT_INSTALLED;
+            error = StartupError.ARCORE_NOT_INSTALLED;
             Log.i(TAG, "Error: ARCore not installed on device", e);
             message = "Please install ARCore on this device to use AR features";
 
         } catch (UnavailableUserDeclinedInstallationException e) {
-            error = RendererStartError.ARCORE_USER_DECLINED_INSTALL;
+            error = StartupError.ARCORE_USER_DECLINED_INSTALL;
             Log.i(TAG, "Error: User declined installing ARCore on device");
             message = "Please install ARCore on this device to use AR features";
 
         } catch (UnavailableApkTooOldException e) {
-            error = RendererStartError.ARCORE_NEEDS_UPDATE;
+            error = StartupError.ARCORE_NEEDS_UPDATE;
             Log.i(TAG, "Error: ARCore on this device needs to be updated");
             message = "Please update ARCore on this device to use AR features";
 
         } catch (UnavailableSdkTooOldException e) {
-            error = RendererStartError.ARCORE_SDK_NEEDS_UPDATE;
+            error = StartupError.ARCORE_SDK_NEEDS_UPDATE;
             Log.i(TAG, "Error: ARCore SDK used by this application needs to be updated");
             message = "Please update this app to support AR features";
 
         } catch (Exception e) {
-            error = RendererStartError.ARCORE_UNKNOWN;
+            error = StartupError.ARCORE_UNKNOWN;
             Log.i(TAG, "Error: Unknown error installing ARCore");
             message = "This device does not support AR";
         }
@@ -445,9 +521,6 @@ public class ViroViewARCore extends ViroView {
 
     @Override
     public void setScene(Scene scene) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot set Scene");
-        }
         if (scene == mCurrentScene) {
             return;
         }
@@ -506,8 +579,6 @@ public class ViroViewARCore extends ViroView {
         if (mWeakActivity.get() != activity){
             return;
         }
-        mActivityPaused = true;
-
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
         // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
         // still call mSession.update() and get a SessionPausedException.
@@ -533,9 +604,7 @@ public class ViroViewARCore extends ViroView {
             return;
         }
 
-        mActivityPaused = false;
         setImmersiveSticky();
-
         boolean arcoreInstalled = requestARCoreInstall(activity);
         if (arcoreInstalled) {
             mNativeRenderer.onResume();
@@ -641,9 +710,6 @@ public class ViroViewARCore extends ViroView {
      * @param types The set of anchor types that should be tracked.
      */
     public void setAnchorDetectionTypes(EnumSet<AnchorDetectionType> types) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot set anchor detection types");
-        }
         if (!mDestroyed) {
             mNativeRenderer.setAnchorDetectionTypes(types);
         }
@@ -659,9 +725,6 @@ public class ViroViewARCore extends ViroView {
      *                 results.
      */
     public void performARHitTestWithRay(Vector ray, ARHitTestListener callback) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot perform AR hit test");
-        }
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithRay(ray.toArray(), callback);
         }
@@ -678,9 +741,6 @@ public class ViroViewARCore extends ViroView {
      *                 results.
      */
     public void performARHitTestWithPosition(Vector position, ARHitTestListener callback) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot perform AR hit test");
-        }
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPosition(position.toArray(), callback);
         }
@@ -696,9 +756,6 @@ public class ViroViewARCore extends ViroView {
      *                 results.
      */
     public void performARHitTest(Point point, ARHitTestListener callback) {
-        if (mNativeRenderer == null) {
-            throw new IllegalStateException("Renderer initialization failed: cannot perform AR hit test");
-        }
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPoint(point.x, point.y, callback);
         }
@@ -725,10 +782,6 @@ public class ViroViewARCore extends ViroView {
      * @param rotation The rotation constant for the background camera view.
      */
     public void setCameraRotation(int rotation) {
-        if (mNativeRenderer == null) {
-            Log.e(TAG, "Renderer initialization failed: cannot set camera rotation");
-            return;
-        }
         mRotation = rotation;
         mNativeRenderer.setARDisplayGeometry(mRotation, mWidth, mHeight);
     }

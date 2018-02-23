@@ -52,6 +52,40 @@ public class ViroViewScene extends ViroView {
         System.loadLibrary("native-lib");
     }
 
+    /**
+     * Callback interface for responding to {@link ViroViewScene} startup success or failure.
+     */
+    public interface StartupListener {
+
+        /**
+         * Callback invoked when {@link ViroViewScene} has finished initialization, meaning the
+         * rendering surface was succesfully created. When this is received, the ViroView is ready
+         * to begin rendering content.
+         */
+        void onSuccess();
+
+        /**
+         * Callback invoked when the {@link ViroViewOVR} failed to initialize.
+         *
+         * @param error        The error code.
+         * @param errorMessage The reason for the failure as a string.
+         */
+        void onFailure(StartupError error, String errorMessage);
+
+    }
+
+    /**
+     * Errors returned by the {@link StartupListener}, in response to Viro failing to
+     * initialize.
+     */
+    public enum StartupError {
+
+        /**
+         * Indicates an unknown error.
+         */
+        UNKNOWN,
+
+    };
 
     private static class ViroSceneRenderer implements GLTextureView.Renderer {
         private WeakReference<ViroViewScene> mView;
@@ -86,7 +120,7 @@ public class ViroViewScene extends ViroView {
 
             view.mNativeRenderer.onSurfaceCreated(null);
             view.mNativeRenderer.initializeGL(sRGBFramebuffer);
-            if (view.mRenderStartListener != null) {
+            if (view.mStartupListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -94,7 +128,7 @@ public class ViroViewScene extends ViroView {
                         if (view == null || view.mDestroyed) {
                             return;
                         }
-                        view.mRenderStartListener.onRendererStart();
+                        view.mStartupListener.onSuccess();
                     }
                 };
                 new Handler(Looper.getMainLooper()).post(myRunnable);
@@ -131,32 +165,35 @@ public class ViroViewScene extends ViroView {
     private boolean mActivityPaused = true;
     private ViroMediaRecorder mMediaRecorder;
     private ViroTouchGestureListener mViroTouchGestureListener;
+    private StartupListener mStartupListener;
 
     /**
      * Create a new ViroViewScene with the default {@link RendererConfiguration}.
      *
-     * @param context               The activity context.
-     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
-     *                              Optional, may be null.
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be
+     *                        null.
      */
-    public ViroViewScene(Context context, RendererStartListener rendererStartListener) {
+    public ViroViewScene(Context context, StartupListener startupListener) {
         super(context, null);
-        init(context, rendererStartListener);
+        init(context, startupListener);
     }
 
     /**
      * Create a new ViroViewScene with the given {@link RendererConfiguration}, which determines
      * the rendering techniques and rendering fidelity to use for this View.
      *
-     * @param context               The activity context.
-     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
-     *                              Optional, may be null.
-     * @param config                The {@link RendererConfiguration} to use.
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be
+     *                        null.
+     * @param config          The {@link RendererConfiguration} to use.
      */
-    public ViroViewScene(Context context, RendererStartListener rendererStartListener,
+    public ViroViewScene(Context context, StartupListener startupListener,
                          RendererConfiguration config) {
         super(context, config);
-        init(context, rendererStartListener);
+        init(context, startupListener);
     }
 
     /**
@@ -195,7 +232,7 @@ public class ViroViewScene extends ViroView {
         }
     }
 
-    private void init(Context context, RendererStartListener rendererStartListener) {
+    private void init(Context context, StartupListener rendererStartListener) {
         mSurfaceView = new GLTextureView(context);
         addView(mSurfaceView);
 
@@ -214,7 +251,7 @@ public class ViroViewScene extends ViroView {
                 activityContext.getApplicationContext(), this,
                 mAssetManager, mPlatformUtil, mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
-        mRenderStartListener = rendererStartListener;
+        mStartupListener = rendererStartListener;
         mViroTouchGestureListener = new ViroTouchGestureListener(activity, mNativeRenderer);
         setOnTouchListener(mViroTouchGestureListener);
 

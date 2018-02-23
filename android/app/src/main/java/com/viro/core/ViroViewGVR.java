@@ -44,6 +44,7 @@ import javax.microedition.khronos.opengles.GL10;
  * handles all GVR initialization.
  */
 public class ViroViewGVR extends ViroView {
+
     private static final String TAG = "Viro";
 
     // Used to load the 'native-lib' library on application startup.
@@ -52,10 +53,47 @@ public class ViroViewGVR extends ViroView {
         System.loadLibrary("gvr_audio");
         System.loadLibrary("native-lib");
     }
+
+    /**
+     * Callback interface for responding to {@link ViroViewGVR} startup success or failure.
+     */
+    public interface StartupListener {
+
+        /**
+         * Callback invoked when {@link ViroViewGVR} has finished initialization, meaning the
+         * rendering surface was succesfully created and GVR was successfully initialized. When
+         * this is received, the ViroView is ready to begin rendering content.
+         */
+        void onSuccess();
+
+        /**
+         * Callback invoked when the {@link ViroViewGVR} failed to initialize.
+         *
+         * @param error        The error code.
+         * @param errorMessage The reason for the failure as a string.
+         */
+        void onFailure(StartupError error, String errorMessage);
+
+    }
+
+    /**
+     * Errors returned by the {@link StartupListener}, in response to Viro failing to
+     * initialize.
+     */
+    public enum StartupError {
+
+        /**
+         * Indicates an unknown error.
+         */
+        UNKNOWN,
+
+    };
+
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private PlatformUtil mPlatformUtil;
     private GvrLayout mGVRLayout;
+    private StartupListener mStartupListener;
 
     // Activity state to restore to before being modified by the renderer.
 
@@ -82,7 +120,7 @@ public class ViroViewGVR extends ViroView {
             view.mNativeRenderer.onSurfaceCreated(surface.getHolder().getSurface());
             // TODO VIRO-2278 Make this dynamically check for sRGB framebuffer support in Daydream
             view.mNativeRenderer.initializeGL(false);
-            if (view.mRenderStartListener != null) {
+            if (view.mStartupListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -90,7 +128,7 @@ public class ViroViewGVR extends ViroView {
                         if (view == null || view.mDestroyed) {
                             return;
                         }
-                        view.mRenderStartListener.onRendererStart();
+                        view.mStartupListener.onSuccess();
                     }
                 };
                 new Handler(Looper.getMainLooper()).post(myRunnable);
@@ -161,32 +199,32 @@ public class ViroViewGVR extends ViroView {
     /**
      * Create a new ViroViewGVR with the default {@link RendererConfiguration}.
      *
-     * @param context               The activity context.
-     * @param rendererStartListener Callback invoked when the renderer has finished initializing.
-     *                              Optional, may be null.
-     * @param vrExitListener        Runnable to invoke when the user manually exits VR mode by
-     *                              tapping on GVR's close button. Optional, may be null.
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be null.
+     * @param vrExitListener  Runnable to invoke when the user manually exits VR mode by tapping on
+     *                        GVR's close button. Optional, may be null.
      */
-    public ViroViewGVR(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener, @Nullable final Runnable vrExitListener) {
+    public ViroViewGVR(@NonNull final Context context, @Nullable final StartupListener startupListener, @Nullable final Runnable vrExitListener) {
         super(context, null);
-        init(context, rendererStartListener, vrExitListener);
+        init(context, startupListener, vrExitListener);
     }
 
     /**
      * Create a new ViroViewGVR with the given {@link RendererConfiguration}, which determines
      * the rendering techniques and rendering fidelity to use for this View.
      *
-     * @param context               The activity context.
-     * @param rendererStartListener Callback invoked when the renderer has finished initializing.
-     *                              Optional, may be null.
-     * @param vrExitListener        Runnable to invoke when the user manually exits VR mode by
-     *                              tapping on GVR's close button. Optional, may be null.
-     * @param config                The {@link RendererConfiguration} to use.
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be null.
+     * @param vrExitListener  Runnable to invoke when the user manually exits VR mode by tapping on
+     *                        GVR's close button. Optional, may be null.
+     * @param config          The {@link RendererConfiguration} to use.
      */
-    public ViroViewGVR(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener,
+    public ViroViewGVR(@NonNull final Context context, @Nullable final StartupListener startupListener,
                        @Nullable final Runnable vrExitListener, @Nullable RendererConfiguration config) {
         super(context, config);
-        init(context, rendererStartListener, vrExitListener);
+        init(context, startupListener, vrExitListener);
     }
 
     /**
@@ -225,7 +263,7 @@ public class ViroViewGVR extends ViroView {
 
     }
 
-    private void init(final Context context, final RendererStartListener rendererStartListener, final Runnable vrExitListener) {
+    private void init(final Context context, final StartupListener startupListener, final Runnable vrExitListener) {
         mGVRLayout = new GvrLayout(context);
 
         // Turn on async reprojection (which skews existing frames and fills them in when we're
@@ -255,7 +293,7 @@ public class ViroViewGVR extends ViroView {
                 mAssetManager, mPlatformUtil,
                 mGVRLayout.getGvrApi().getNativeGvrContext(), mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
-        mRenderStartListener = rendererStartListener;
+        mStartupListener = startupListener;
 
         // We want Android's VR mode on as long as the app is in either release or the device
         // is using Daydream. We don't want this on in Debug mode because it this option turns
