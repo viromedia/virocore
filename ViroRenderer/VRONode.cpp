@@ -412,6 +412,10 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
     if (_geometry) {
         _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
+    } else {
+        // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
+        _computedBoundingBox.set(_computedPosition.x, _computedPosition.x, _computedPosition.y,
+                                 _computedPosition.y, _computedPosition.z, _computedPosition.z);
     }
 }
 
@@ -494,7 +498,9 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
 void VRONode::updateVisibility(const VRORenderContext &context) {
     const VROFrustum &frustum = context.getCamera().getFrustum();
     
-    _umbrellaBoundingBox = VROBoundingBox();
+    // the umbrellaBoundingBox should be positioned at the node's position not at [0,0,0] b/c bounding boxes are in world coordinates
+    _umbrellaBoundingBox = VROBoundingBox(_computedPosition.x, _computedPosition.x, _computedPosition.y,
+                                          _computedPosition.y, _computedPosition.z, _computedPosition.z);
     computeUmbrellaBounds(&_umbrellaBoundingBox);
     
     VROFrustumResult result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
