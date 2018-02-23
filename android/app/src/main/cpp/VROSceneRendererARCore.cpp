@@ -45,7 +45,8 @@ VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
     _rendererSuspended(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
     _hasTrackingInitialized(false),
-    _hasTrackingResumed(false) {
+    _hasTrackingResumed(false),
+    _arcoreInstalled(false) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
     _session = std::make_shared<VROARSessionARCore>(context, _driver);
@@ -68,19 +69,24 @@ VROSceneRendererARCore::~VROSceneRendererARCore() {
 #pragma mark - Rendering
 
 void VROSceneRendererARCore::initGL() {
-    _session->initGL(_driver);
+
 }
 
 GLuint VROSceneRendererARCore::getCameraTextureId() const {
     return _session->getCameraTextureId();
 }
 
+void VROSceneRendererARCore::onARCoreInstalled(void *context) {
+    _arcoreInstalled = true;
+    _session->onARCoreInstalled(context);
+}
+
 void VROSceneRendererARCore::onDrawFrame() {
-    if (!_rendererSuspended) {
+    if (!_rendererSuspended && _arcoreInstalled) {
         renderFrame();
     }
     else {
-        renderSuspended();
+        renderNothing(_rendererSuspended);
     }
 
     ++_frame;
@@ -194,15 +200,17 @@ void VROSceneRendererARCore::renderWaitingForTracking(VROViewport viewport) {
     _renderer->endFrame(_driver);
 }
 
-void VROSceneRendererARCore::renderSuspended() {
+void VROSceneRendererARCore::renderNothing(bool suspended) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    // Notify the user about bad keys 5 times a second (every 200ms/.2s)
-    double newTime = VROTimeCurrentSeconds();
-    if (newTime - _suspendedNotificationTime > .2) {
-        perr("Renderer suspended! Do you have a valid key?");
-        _suspendedNotificationTime = newTime;
+    if (suspended) {
+        // Notify the user about bad keys 5 times a second (every 200ms/.2s)
+        double newTime = VROTimeCurrentSeconds();
+        if (newTime - _suspendedNotificationTime > .2) {
+            perr("Renderer suspended! Do you have a valid key?");
+            _suspendedNotificationTime = newTime;
+        }
     }
 }
 
@@ -214,6 +222,9 @@ void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr
                                                   0, 0, 1, 1);
     _cameraBackground->setScreenSpace(true);
     _cameraBackground->setName("Camera");
+
+    // Initialize the background texture in the session
+    _session->initCameraTexture(_driver);
 
     // Assign the background texture to the background surface
     std::shared_ptr<VROMaterial> material = _cameraBackground->getMaterials()[0];

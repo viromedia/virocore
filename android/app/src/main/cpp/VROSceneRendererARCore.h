@@ -81,6 +81,11 @@ public:
     void onSurfaceDestroyed() {}
 
     /*
+     Set to true when ARCore is installed. Unlocks the renderer.
+     */
+    void onARCoreInstalled(void *context);
+
+    /*
      Retrieves the texture ID used for the camera background.
      */
     GLuint getCameraTextureId() const;
@@ -112,13 +117,14 @@ private:
     void renderWithTracking(const std::shared_ptr<VROARCamera> &camera, const std::unique_ptr<VROARFrame> &frame,
                             VROViewport viewport, bool backgroundNeedsReset);
     void renderWaitingForTracking(VROViewport viewport);
-    void renderSuspended();
+    void renderNothing(bool suspended);
     void initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene);
 
     std::shared_ptr<VROSurface> _cameraBackground;
     gvr::Sizei _surfaceSize;
     bool _rendererSuspended;
     double _suspendedNotificationTime;
+    bool _arcoreInstalled;
 
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;

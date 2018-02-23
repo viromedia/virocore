@@ -74,6 +74,8 @@ public class Renderer {
         return nativeGetCameraTextureId(mNativeRef);
     }
 
+    public void onARCoreInstalled(Context context) { nativeOnARCoreInstalled(mNativeRef, context); }
+
     public void setARDisplayGeometry(int rotation, int width, int height) {
         nativeSetARDisplayGeometry(mNativeRef, rotation, width, height);
     }
@@ -306,4 +308,5 @@ public class Renderer {
     private native float nativeGetFieldOfView(long nativeRef);
     private native void nativeSetARDisplayGeometry(long nativeRef, int rotation, int width, int height);
     private native void nativeSetPlaneFindingMode(long nativeRef, boolean enabled);
+    private native void nativeOnARCoreInstalled(long nativeRef, Context context);
 }

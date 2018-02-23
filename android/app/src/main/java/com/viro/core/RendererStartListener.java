@@ -6,7 +6,7 @@ package com.viro.core;
 
 /**
  * Callback interface for responding to the Viro renderer finishing initialization. This listener
- * are used by the subclasses of {@link ViroView}.
+ * is used by the subclasses of {@link ViroView}.
  */
 public interface RendererStartListener {
 
@@ -15,4 +15,13 @@ public interface RendererStartListener {
      * the ViroView is ready to begin rendering content.
      */
     void onRendererStart();
+
+    /**
+     * Callback invoked when the {@link ViroView} failed to initialize.
+     *
+     * @param error The error code.
+     * @param errorMessage The reason for the failure as a string.
+     */
+    void onRendererFailed(RendererStartError error, String errorMessage);
+
 }

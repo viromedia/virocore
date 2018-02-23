@@ -29,6 +29,7 @@ import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.RendererConfiguration;
+import com.viro.core.RendererStartError;
 import com.viro.core.ViroViewScene;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
@@ -131,10 +132,6 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             setViroARView();
             return;
         }
-
-        mViroView.setVRModeEnabled(true);
-        mViroView.setDebugHUDEnabled(true);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView);
     }
 
@@ -150,7 +147,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         config.setBloomEnabled(true);
         config.setHDREnabled(true);
         config.setPBREnabled(true);
-        mViroView = new ViroViewARCore(this, this, config);
+        mViroView = new ViroViewARCore(this, true, this, config);
         mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView);
     }
@@ -225,8 +222,19 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     public void onRendererStart() {
         Log.e("ViroActivity", "onRendererStart called");
-        initializeVrScene();
-        //initializeArScene();
+
+        mViroView.setVRModeEnabled(true);
+        mViroView.setDebugHUDEnabled(true);
+        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
+
+        //initializeVrScene();
+        initializeArScene();
+    }
+
+    @Override
+    public void onRendererFailed(RendererStartError error, String errorMessage) {
+        Log.e("ViroActivity", "onRendererFailed [error: " + error + "], message [" + errorMessage + "]");
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
     }
 
     private void initializeVrScene() {

@@ -27,16 +27,20 @@ VROARSessionARCore::VROARSessionARCore(void *context, std::shared_ptr<VRODriverO
     _updateMode(arcore::config::UpdateMode::Blocking),
     _cameraTextureId(0) {
 
-    _session = arcore::session::create(context);
+    _session = nullptr;
     _frame = nullptr;
-    _configured = false;
+}
+
+void VROARSessionARCore::onARCoreInstalled(void *context) {
+    _session = arcore::session::create(context);
+    _frame = arcore::frame::create(_session);
 }
 
 GLuint VROARSessionARCore::getCameraTextureId() const {
     return _cameraTextureId;
 }
 
-void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
+void VROARSessionARCore::initCameraTexture(std::shared_ptr<VRODriverOpenGL> driver) {
     // Generate the background texture
     glGenTextures(1, &_cameraTextureId);
     
@@ -50,6 +54,7 @@ void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
             new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _cameraTextureId, driver, true));
     _background = std::make_shared<VROTexture>(VROTextureType::TextureEGLImage, std::move(substrate));
 
+    passert_msg(_session != nullptr, "ARCore must be installed before setting camera texture");
     arcore::session::setCameraTextureName(_session, _cameraTextureId);
 }
 
@@ -58,8 +63,8 @@ VROARSessionARCore::~VROARSessionARCore() {
         arcore::frame::destroy(_frame);
     }
 
-    // The session destructor crashes if it's called before the session has being configured
-    if (_configured) {
+    if (_session != nullptr) {
+        pinfo("Destroying ARCore session");
         arcore::session::destroy(_session);
     }
 }
@@ -67,9 +72,9 @@ VROARSessionARCore::~VROARSessionARCore() {
 #pragma mark - VROARSession implementation
 
 void VROARSessionARCore::run() {
-    // If we never managed to configure a session, then it will crash if try to resume it
-    if (_configured) {
+    if (_session != nullptr) {
         arcore::session::resume(_session);
+        pinfo("AR session resumed");
     }
     else {
         pinfo("AR session not resumed: has not yet been configured");
@@ -77,9 +82,9 @@ void VROARSessionARCore::run() {
 }
 
 void VROARSessionARCore::pause() {
-    // If we never managed to configure a session, then it will crash if try to pause it
-    if (_configured) {
+    if (_session != nullptr) {
         arcore::session::pause(_session);
+        pinfo("AR session paused");
     }
     else {
         pinfo("AR session not paused: has not yet been configured");
@@ -111,12 +116,11 @@ bool VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
     if (types.size() == 0) {
         _planeFindingMode = arcore::config::PlaneFindingMode::Disabled;
     }
-
     return updateARCoreConfig();
 }
 
 void VROARSessionARCore::setDisplayGeometry(int rotation, int width, int height) {
-    if (_configured) {
+    if (_session != nullptr) {
         arcore::session::setDisplayGeometry(_session, rotation, width, height);
     }
 }
@@ -131,6 +135,8 @@ bool VROARSessionARCore::configure(arcore::config::LightingMode lightingMode, ar
 }
 
 bool VROARSessionARCore::updateARCoreConfig() {
+    passert_msg(_session != nullptr, "ARCore must be installed before configuring session");
+
     ArConfig *config = arcore::config::create(_lightingMode, _planeFindingMode, _updateMode, _session);
     bool supported = arcore::session::checkSupported(_session, config);
     if (!supported) {
@@ -141,8 +147,9 @@ bool VROARSessionARCore::updateARCoreConfig() {
     arcore::config::destroy(config);
 
     if (status == AR_SUCCESS) {
+        pinfo("Successfully configured AR session [lighting %d, planes %d, update %d]",
+              _lightingMode, _planeFindingMode, _updateMode);
         arcore::session::resume(_session);
-        _configured = true;
         return true;
     }
     else if (status == AR_ERROR_UNSUPPORTED_CONFIGURATION) {
@@ -227,12 +234,6 @@ std::shared_ptr<VROTexture> VROARSessionARCore::getCameraBackgroundTexture() {
 }
 
 std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
-    // Lazily create the frame so we can first check if ARCore is even supported on this device
-    // (we don't know at the time of construction, and only session is safe to construct when
-    // ARCore is not supported)
-    if (!_frame) {
-        _frame = arcore::frame::create(_session);
-    }
     arcore::session::update(_session, _frame);
     _currentFrame = std::make_unique<VROARFrameARCore>(_frame, _viewport, shared_from_this());
 

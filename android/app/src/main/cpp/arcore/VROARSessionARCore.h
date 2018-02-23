@@ -64,11 +64,19 @@ public:
     };
 
     GLuint getCameraTextureId() const;
-    
+
+
+    // Internal methods
+
     /*
-     Internal methods.
+     Invoked when we know ARCore is present on the device.
      */
-    void initGL(std::shared_ptr<VRODriverOpenGL> driver);
+    void onARCoreInstalled(void *context);
+
+    /*
+     Initialize the camera background texture and install it on the ARCore session.
+     */
+    void initCameraTexture(std::shared_ptr<VRODriverOpenGL> driver);
     std::shared_ptr<VROARAnchor> getAnchorForNative(ArAnchor *anchor);
 
     ArSession *getSessionInternal() {
@@ -88,11 +96,6 @@ private:
      Reusable ARCore frame object.
      */
     ArFrame *_frame;
-
-    /*
-     Set to true when the AR session is successfully configured.
-     */
-    bool _configured;
 
     /*
      The last computed ARFrame.

@@ -455,6 +455,13 @@ JNI_METHOD(jfloatArray, nativeUnprojectPoint)(JNIEnv *env, jobject object, jlong
     return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
 }
 
+JNI_METHOD(void, nativeOnARCoreInstalled)(JNIEnv *env, jobject object, jlong renderer_j,
+                                          jobject context) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    arRenderer->onARCoreInstalled(context);
+}
+
 JNI_METHOD(void, nativeSetARDisplayGeometry)(JNIEnv *env, jobject object, jlong renderer_j,
                                              jint rotation, jint width, jint height) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
