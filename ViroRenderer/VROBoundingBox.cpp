@@ -32,17 +32,8 @@ VROBoundingBox::VROBoundingBox() :
 
 }
 
-VROBoundingBox::VROBoundingBox(const VROBoundingBox &copy) :
-    _planes{copy.getMinX(), copy.getMaxX(), copy.getMinY(), copy.getMaxY(), copy.getMinZ(), copy.getMaxZ()} {
-
-}
-
 VROBoundingBox::VROBoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) :
     _planes{xmin, xmax, ymin, ymax, zmin, zmax} {
-
-}
-
-VROBoundingBox::~VROBoundingBox() {
 
 }
 

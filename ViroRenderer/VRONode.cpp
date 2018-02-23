@@ -453,6 +453,7 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     _lastPosition.store(_position);
     _lastRotation.store(_rotation);
     _lastScale.store(_scale);
+    _lastBoundingBox.store(_computedBoundingBox);
 
     /*
      Move down the tree.
@@ -564,6 +565,10 @@ VROQuaternion VRONode::getLastLocalRotation() const {
 
 VROVector3f VRONode::getLastLocalScale() const {
     return _lastScale.load();
+}
+
+VROBoundingBox VRONode::getLastBoundingBox() const {
+    return _lastBoundingBox.load();
 }
 
 #pragma mark - Scene Graph
