@@ -29,7 +29,6 @@ import com.viro.core.Node;
 import com.viro.core.Object3D;
 import com.viro.core.OmniLight;
 import com.viro.core.ParticleEmitter;
-import com.viro.core.RendererStartListener;
 import com.viro.core.Scene;
 import com.viro.core.SpatialSound;
 import com.viro.core.Sphere;
@@ -52,7 +51,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-public class MemoryLeakTest extends AppCompatActivity implements RendererStartListener {
+public class MemoryLeakTest extends AppCompatActivity {
     private static final String TAG = MemoryLeakTest.class.getSimpleName();
 
     private boolean mGLInitialized = false;
@@ -66,7 +65,17 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         super.onCreate(savedInstanceState);
         System.out.println("onCreate called");
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            mViroView = new ViroViewGVR(this, this, new Runnable() {
+            mViroView = new ViroViewGVR(this, new ViroViewGVR.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewGVR.StartupError error, String errorMessage) {
+
+                }
+            }, new Runnable() {
                 @Override
                 public void run() {
                     Log.d(TAG, "On GVR userRequested exit");
@@ -74,11 +83,41 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             });
             mViroView.setVRModeEnabled(true);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-            mViroView = new ViroViewOVR(this, this);
+            mViroView = new ViroViewOVR(this, new ViroViewOVR.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewOVR.StartupError error, String errorMessage) {
+
+                }
+            });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-            mViroView = new ViroViewARCore(this, this);
+            mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
+
+                }
+            });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
-            mViroView = new ViroViewScene(this, this);
+            mViroView = new ViroViewScene(this, new ViroViewScene.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewScene.StartupError error, String errorMessage) {
+
+                }
+            });
         }
 
         Intent intent = getIntent();
@@ -121,7 +160,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
     }
 
 
-    @Override
     public void onRendererStart() {
         mGLInitialized = true;
         Log.e("ViroActivity", "onRendererStart called");
