@@ -205,6 +205,15 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Used by release tests.
+     * @hide
+     * @param listener
+     */
+    public void setStartupListener(StartupListener listener) {
+        mStartupListener = listener;
+    }
+
     @Override
     public void recenterTracking() {
         mNativeRenderer.recenterTracking();

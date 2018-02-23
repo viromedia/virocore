@@ -18,16 +18,19 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.viro.core.RendererCloseListener;
-import com.viro.core.RendererStartListener;
 import com.viro.core.ViroView;
+import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
 import com.crashlytics.android.Crashlytics;
+import com.viro.core.ViroViewOVR;
+import com.viro.core.ViroViewScene;
+
 import io.fabric.sdk.android.Fabric;
 /**
  * Created by manish on 10/25/17.
  */
 
-public class ViroReleaseTestActivity extends AppCompatActivity implements RendererStartListener, RendererCloseListener {
+public class ViroReleaseTestActivity extends AppCompatActivity implements RendererCloseListener {
     private static final String TAG = ViroReleaseTestActivity.class.getSimpleName();
 
     private ViroView mViroView;
@@ -42,6 +45,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         System.out.println("onCreate called");
+
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
             if (BuildConfig.VR_ENABLED == 1) {
                 setContentView(R.layout.activity_main_gvr_vr_enabled);
@@ -58,21 +62,64 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         }
 
         mViroView = (ViroView) findViewById(R.id.viro_view);
-        mViroView.setRenderStartListener(this);
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            ((ViroViewGVR)mViroView).setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
+            ((ViroViewGVR) mViroView).setStartupListener(new ViroViewGVR.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewGVR.StartupError error, String errorMessage) {
+
+                }
+            });
+            ((ViroViewGVR) mViroView).setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
             mViroView.setVRModeEnabled(BuildConfig.VR_ENABLED == 1);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
+            ((ViroViewOVR) mViroView).setStartupListener(new ViroViewOVR.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewOVR.StartupError error, String errorMessage) {
+
+                }
+            });
+
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            ((ViroViewARCore) mViroView).setStartupListener(new ViroViewARCore.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
+
+                }
+            });
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
+            ((ViroViewScene) mViroView).setStartupListener(new ViroViewScene.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewScene.StartupError error, String errorMessage) {
+
+                }
+            });
         }
 
-//        LayoutInflater inflater = LayoutInflater.from(this);
-
         if (BuildConfig.VR_ENABLED == 0) {
-
             mThumbsUp = (ImageView) findViewById(R.id.thumbsUp);
             mThumbsDown = (ImageView) findViewById(R.id.thumbsDown);
         }
-
         mHandler = new Handler(getMainLooper());
     }
 
@@ -125,7 +172,6 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         return mViroView;
     }
 
-    @Override
     public void onRendererStart() {
         Log.d(TAG, "onRendererStart called");
         mGLInitialized = true;

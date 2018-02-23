@@ -411,6 +411,15 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
+    /**
+     * Used by release tests.
+     * @hide
+     * @param listener
+     */
+    public void setStartupListener(StartupListener listener) {
+        mStartupListener = listener;
+    }
+
     private void notifyRendererStart() {
         if (mStartupListener != null) {
             mStartupListener.onSuccess();

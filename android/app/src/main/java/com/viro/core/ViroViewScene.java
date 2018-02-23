@@ -259,6 +259,16 @@ public class ViroViewScene extends ViroView {
             validateAPIKeyFromManifest();
         }
     }
+
+    /**
+     * Used by release tests.
+     * @hide
+     * @param listener
+     */
+    public void setStartupListener(StartupListener listener) {
+        mStartupListener = listener;
+    }
+
     private void initSurfaceView() {
         int colorBits = 8;
         int alphaBits = 8;

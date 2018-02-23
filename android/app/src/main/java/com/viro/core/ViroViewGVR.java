@@ -326,6 +326,15 @@ public class ViroViewGVR extends ViroView {
     }
 
     /**
+     * Used by release tests.
+     * @hide
+     * @param listener
+     */
+    public void setStartupListener(StartupListener listener) {
+        mStartupListener = listener;
+    }
+
+    /**
      * Create (or update) the {@link GLSurfaceView} to be used by GVR. This view will be shared
      * between both VR and 360 modes.
      */
