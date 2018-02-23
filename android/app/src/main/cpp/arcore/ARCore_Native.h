@@ -171,7 +171,7 @@ namespace arcore {
 
         ArSession *create(void *applicationContext);
         void destroy(ArSession *session);
-        void configure(ArSession *session, const ArConfig *config);
+        ArStatus configure(ArSession *session, const ArConfig *config);
         bool checkSupported(ArSession *session, const ArConfig *config);
         void setDisplayGeometry(ArSession *session, int rotation, int width, int height);
         void setCameraTextureName(ArSession *session, int32_t textureId);

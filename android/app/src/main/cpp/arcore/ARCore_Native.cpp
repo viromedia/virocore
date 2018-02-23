@@ -500,8 +500,8 @@ namespace arcore {
             ArSession_destroy(session);
         }
 
-        void configure(ArSession *session, const ArConfig *config) {
-            ArSession_configure(session, config);
+        ArStatus configure(ArSession *session, const ArConfig *config) {
+            return ArSession_configure(session, config);
         }
 
         bool checkSupported(ArSession *session, const ArConfig *config) {

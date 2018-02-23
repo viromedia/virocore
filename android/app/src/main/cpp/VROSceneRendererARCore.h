@@ -96,10 +96,15 @@ public:
     std::vector<VROARHitTestResult> performARHitTest(VROVector3f ray);
 
     /*
-     ARCore methods.
+     Set the size of the parent view holding the AR screen. Invoked from ViroViewARCore.
      */
     void setDisplayGeometry(int rotation, int width, int height);
-    void setPlaneFindingMode(bool enabled);
+
+    /*
+     Set the anchor detection mode used by ARCore. Returns false if not supported. Currently
+     this is a simplistic planes on/off but can be changed in the future.
+     */
+    bool setPlaneFindingMode(bool enabled);
 
 private:
 

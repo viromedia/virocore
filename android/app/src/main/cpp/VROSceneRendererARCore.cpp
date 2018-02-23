@@ -381,12 +381,12 @@ void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int hei
     _session->setDisplayGeometry(rotation, width, height);
 }
 
-void VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
+bool VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
     if (enabled) {
-        _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
+        return _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
     }
     else {
-        _session->setAnchorDetection({VROAnchorDetection::None});
+        return _session->setAnchorDetection({VROAnchorDetection::None});
     }
 }
 

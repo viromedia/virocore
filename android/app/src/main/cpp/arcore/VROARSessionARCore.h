@@ -31,10 +31,16 @@ public:
     void pause();
     bool isReady() const;
     void resetSession(bool resetTracking, bool removeAnchors);
+
+    /*
+     Configure this ARCore session with the given modes. Returns true if supported.
+     */
+    bool configure(arcore::config::LightingMode lightingMode, arcore::config::PlaneFindingMode planeFindingMode,
+                   arcore::config::UpdateMode updateMode);
     
     void setScene(std::shared_ptr<VROScene> scene);
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
-    void setAnchorDetection(std::set<VROAnchorDetection> types);
+    bool setAnchorDetection(std::set<VROAnchorDetection> types);
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
@@ -84,6 +90,11 @@ private:
     ArFrame *_frame;
 
     /*
+     Set to true when the AR session is successfully configured.
+     */
+    bool _configured;
+
+    /*
      The last computed ARFrame.
      */
     std::unique_ptr<VROARFrame> _currentFrame;
@@ -120,7 +131,7 @@ private:
      */
     GLuint _cameraTextureId;
 
-    void updateARCoreConfig();
+    bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);
     void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, ArAnchor *anchorAR);
     void updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, ArPlane *planeAR);

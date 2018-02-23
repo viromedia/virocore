@@ -45,8 +45,9 @@ void VROARSessionInertial::resetSession(bool resetTracking, bool removeAnchors) 
     return; // does nothing in inertial.
 }
 
-void VROARSessionInertial::setAnchorDetection(std::set<VROAnchorDetection> types) {
+bool VROARSessionInertial::setAnchorDetection(std::set<VROAnchorDetection> types) {
     // Unsupported
+    return true;
 }
 
 void VROARSessionInertial::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {

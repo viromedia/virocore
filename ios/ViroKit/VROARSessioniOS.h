@@ -36,7 +36,7 @@ public:
     
     void setScene(std::shared_ptr<VROScene> scene);
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
-    void setAnchorDetection(std::set<VROAnchorDetection> types);
+    bool setAnchorDetection(std::set<VROAnchorDetection> types);
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
