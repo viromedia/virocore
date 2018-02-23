@@ -20,7 +20,7 @@ include_directories(../../ViroRenderer
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             native-lib
+             viro_native
 
              # Sets the library as a shared library.
              SHARED
@@ -570,7 +570,7 @@ find_library( lib-z z )
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
+                       viro_native
 
                        # Links the target library to the log library
                        # included in the NDK.

@@ -376,7 +376,7 @@ public class ViroViewARCore extends ViroView {
         // may occur
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");
-        System.loadLibrary("native-lib");
+        System.loadLibrary("viro_native");
 
         mSurfaceView = new GLSurfaceView(context);
         addView(mSurfaceView);
