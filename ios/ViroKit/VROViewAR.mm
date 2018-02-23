@@ -627,6 +627,13 @@ static VROVector3f const kZeroVector = VROVector3f();
     _arSession->run();
 }
 
++ (BOOL) isARSupported {
+  if (@available(iOS 11, *)) {
+    return [ARConfiguration isSupported];
+  }
+  return false;
+}
+
 - (void)recenterTracking {
     // TODO Implement this, try to share code with VROSceneRendererCardboardOpenGL; maybe
     //      move the functionality into VRORenderer
