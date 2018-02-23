@@ -40,14 +40,14 @@ public class ViroViewARCoreTest {
              * Remove this once Google fixes the above issue. As of 02/05/2018, the issue is being
              * marked as "fixed in an upcoming release.
              */
-            assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isSupported(mActivity));
+            assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isDeviceCompatible(mActivity));
             return;
         }
 
         if (session.isSupported(config)) {
-            assertTrue("Expected ViroViewARCore to be supported", ViroViewARCore.isSupported(mActivity));
+            assertTrue("Expected ViroViewARCore to be supported", ViroViewARCore.isDeviceCompatible(mActivity));
         } else {
-            assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isSupported(mActivity));
+            assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isDeviceCompatible(mActivity));
         }
     }
 }

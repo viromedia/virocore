@@ -21,9 +21,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
-import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.widget.Toast;
 
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Session;
@@ -291,7 +289,7 @@ public class ViroViewARCore extends ViroView {
 
     private void init(final Context context, final RendererStartListener rendererStartListener) {
         mRenderStartListener = rendererStartListener;
-        if (!isSupported(context)) {
+        if (!isDeviceCompatible(context)) {
             notifyRendererFailed(RendererStartError.ARCORE_NOT_SUPPORTED,
                     "This device does not support ARCore");
             return;
@@ -767,13 +765,13 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * Checks if AR is supported on the target device. This does <i>not</i> indicate whether ARCore is
+     * Checks if ARCore is compatible with the target device. This does <i>not</i> indicate whether ARCore is
      * installed. If this method returns false, attempts to create {@link ViroViewARCore} will throw
      * an exception.
      *
      * @param context The {@link Context} of your application.
      */
-    public static boolean isSupported(Context context) {
+    public static boolean isDeviceCompatible(Context context) {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
         Log.i(TAG, "ARCore availability check returned [" + availability   + "]");
         if (availability == ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE) {
