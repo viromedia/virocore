@@ -348,21 +348,11 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (cameraForward.dot(ray) <= 0) {
         return std::vector<VROARHitTestResult>();
     }
+    
+    VROVector3f worldPoint = _renderer->getCamera().getPosition() + ray.normalize();
+    VROVector3f screenPoint = _renderer->projectPoint(worldPoint);
 
-    int viewportArr[4] = {0, 0,
-        (int) (self.bounds.size.width  * self.contentScaleFactor),
-        (int) (self.bounds.size.height * self.contentScaleFactor)};
-
-    // create the mvp (in this case, the model mat is identity).
-    VROMatrix4f projectionMat = _renderer->getCamera().getProjection();
-    VROMatrix4f viewMat = _renderer->getCamera().getLookAtMatrix();
-    VROMatrix4f vpMat = projectionMat.multiply(viewMat);
-
-    // get the 2D point
-    VROVector3f point;
-    VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
-
-    return [self performARHitTestWithPoint:point.x y:point.y];
+    return [self performARHitTestWithPoint:screenPoint.x y:screenPoint.y];
 }
 
 - (std::vector<VROARHitTestResult>)performARHitTestWithPoint:(int)x y:(int)y {

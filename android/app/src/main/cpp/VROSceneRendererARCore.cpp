@@ -382,7 +382,6 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVect
         return std::vector<VROARHitTestResult>();
     }
 
-    float fcp = getRenderer()->getCamera().getFCP();
     VROVector3f worldPoint = getRenderer()->getCamera().getPosition() + ray.normalize();
     VROVector3f screenPoint = _renderer->projectPoint(worldPoint);
     return performARHitTest(screenPoint.x, screenPoint.y);
