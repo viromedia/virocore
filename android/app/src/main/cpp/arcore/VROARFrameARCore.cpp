@@ -185,16 +185,17 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
 
     ArPointCloud *pointCloud = arcore::frame::acquirePointCloud(_frame, session->getSessionInternal());
     if (pointCloud != NULL) {
-        const float *pointsArray = arcore::pointcloud::getPoints(pointCloud, session->getSessionInternal());
+        const float *pointsArray = arcore::pointcloud::getPoints(pointCloud,
+                                                                 session->getSessionInternal());
         int numPoints = arcore::pointcloud::getNumPoints(pointCloud, session->getSessionInternal());
 
         for (int i = 0; i < numPoints; i++) {
-            // Only use points with > 0.0001. Average confidence when measured was around 0.001, so this
-            // is lower than that. This is just meant to make the display of the points look good (if low
-            // confidence points are used, we may end up with points very close to the camera).
-            if (pointsArray[i * 4 + 3] > .0001) {
+            // Only use points with > 0.1. This is just meant to make the display of the points
+            // look good (if low confidence points are used, we may end up with points very close
+            // to the camera).
+            if (pointsArray[i * 4 + 3] > .1) {
                 VROVector4f point = VROVector4f(pointsArray[i * 4 + 0], pointsArray[i * 4 + 1],
-                                                pointsArray[i * 4 + 2], pointsArray[i * 4+ 3]);
+                                                pointsArray[i * 4 + 2], pointsArray[i * 4 + 3]);
                 points.push_back(point);
             }
         }
