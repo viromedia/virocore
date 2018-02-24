@@ -39,7 +39,7 @@ static const double kFPSTarget = 60;
 // mono-rendering mode. This is similar to Hor+ scaling, in that one
 // dimension is fixed, and other is dependent on the viewport. Note
 // this value is degrees from edge to edge of the frustum.
-static const double kFovMonoMajor = 60;
+static const double kFovMonoMajor = 90;
 
 #pragma mark - Initialization
 
