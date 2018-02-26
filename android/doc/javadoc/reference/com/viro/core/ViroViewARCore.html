@@ -1191,8 +1191,9 @@ ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.
 
     
   <p>Create a new ViroViewARCore with the default <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>. This constructor
- will immediately throw an <code><a href="../../../../">ERROR(/UnavailableDeviceNotCompatibleException)</a></code> if ARCore is not
- compatible with this device. You can also check for this condition with the static <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#isDeviceCompatible(android.content.Context)">isDeviceCompatible(Context)</a></code> method.
+ will immediately throw an <code><a href="https://developers.google.com/ar/reference/java/com/google/ar/core/exceptions/UnavailableDeviceNotCompatibleException">UnavailableDeviceNotCompatibleException</a></code>
+ if ARCore is not compatible with this device. You can also check for this condition with the
+ static <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#isDeviceCompatible(android.content.Context)">isDeviceCompatible(Context)</a></code> method.
  <p>
  If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
  prompt the user to install it if it isn't. Any error encountered during this process will be
@@ -1212,18 +1213,10 @@ ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.
         <td width="100%">
           <code>ViroViewARCore.StartupListener</code>: Listener to respond to startup success or failure. Will be notified of
                         any errors encountered while initializing AR and the renderer.
-                        Optional, may be null.</p></td>
+                        Optional, may be null.
+</p></td>
       </tr>
     </table>
-      <table class="responsive">
-      <tr><th colspan=2>Throws</th></tr>
-        <tr>
-          <td><code></code></td>
-          <td width="100%">If ARCore is not compatible with the device.
-</td>
-        </tr>
-      </table>
-  
 
 </div>
 
@@ -1247,9 +1240,10 @@ ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.
 
     
   <p>Create a new ViroViewARCore with the given <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>, which determines
- the rendering techniques and rendering fidelity to use for this View. This constructor
- will immediately throw an <code><a href="../../../../">ERROR(/UnavailableDeviceNotCompatibleException)</a></code> if ARCore is not
- compatible with this device. You can also check for this condition with the static <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#isDeviceCompatible(android.content.Context)">isDeviceCompatible(Context)</a></code> method.
+ the rendering techniques and rendering fidelity to use for this View. This constructor will
+ immediately throw an <code><a href="https://developers.google.com/ar/reference/java/com/google/ar/core/exceptions/UnavailableDeviceNotCompatibleException">UnavailableDeviceNotCompatibleException</a></code>
+ if ARCore is not compatible with this device. You can also check for this condition with the
+ static <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#isDeviceCompatible(android.content.Context)">isDeviceCompatible(Context)</a></code> method.
  <p>
  If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
  prompt the user to install it if it isn't. Any error encountered during this process will be
@@ -1275,18 +1269,10 @@ ViroViewARCore (<a href="http://d.android.com/reference/android/content/Context.
         <td><code>config</code></td>
         <td width="100%">
           <code>RendererConfiguration</code>: The <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code> to use. May be null to use the
-                        default configuration.</p></td>
+                        default configuration.
+</p></td>
       </tr>
     </table>
-      <table class="responsive">
-      <tr><th colspan=2>Throws</th></tr>
-        <tr>
-          <td><code></code></td>
-          <td width="100%">If ARCore is not compatible with the device.
-</td>
-        </tr>
-      </table>
-  
 
 </div>
 
