@@ -55,7 +55,7 @@ public class ViroARHitTest extends ViroBaseTest {
                         Sphere sphere = new Sphere(.1f);
                         Material material = new Material();
                         material.setLightingModel(Material.LightingModel.BLINN);
-                        material.setDiffuseColor(Color.BLUE);
+                        material.setDiffuseColor(Color.GREEN);
                         sphere.setMaterials(Arrays.asList(material));
                         Node nodeSphere = new Node();
                         nodeSphere.setPosition(result.getPosition());
@@ -66,7 +66,7 @@ public class ViroARHitTest extends ViroBaseTest {
             });
         };
 
-        assertPass("Should see rendered results from AR HIT with ray (blue balls).");
+        assertPass("Should see rendered results from AR HIT with ray (green balls).");
     }
 
     private void testARCameraHitTest() {
@@ -87,7 +87,9 @@ public class ViroARHitTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Should see rendered results from Camera AR HIT Test in Red.");
+        assertPass("Should see rendered results from Camera AR HIT Test in Red.", ()->{
+            mViewARCore.setCameraARHitTestListener(null);
+        });
 
     }
 
@@ -109,7 +111,9 @@ public class ViroARHitTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Should see rendered results from AR HIT with position.");
+        assertPass("Should see rendered results from AR HIT with position.", ()->{
+
+        });
     }
 
     private void testPerformARHitTest() {

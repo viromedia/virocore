@@ -351,13 +351,13 @@ public class MemoryLeakTest extends AppCompatActivity {
 
         // Creation of ObjectJni to the right
         final Object3D objectJni = new Object3D();
-        objectJni.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        objectJni.loadModel(Uri.parse("file:///android_asset/dragao_2018.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
-                object.setPosition(new Vector(0, 0, -3));
+                object.setPosition(new Vector(0, 0, -6));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
 
-                final Animation animation = object.getAnimation("02_spin");
+                final Animation animation = object.getAnimation("01");
                 animation.setDelay(5000);
                 animation.setLoop(true);
                 animation.play();

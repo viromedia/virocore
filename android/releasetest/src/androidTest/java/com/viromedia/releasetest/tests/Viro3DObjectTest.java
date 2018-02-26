@@ -2,6 +2,7 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.Animation;
@@ -9,6 +10,7 @@ import com.viro.core.AsyncObject3DListener;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
+import com.viro.core.Scene;
 import com.viro.core.Text;
 import com.viro.core.Vector;
 
@@ -16,6 +18,10 @@ import com.viro.core.Vector;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by vadvani on 11/2/17.
@@ -46,6 +52,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         stage5_testLoadModelFBXError();
         stage5_testLoadModelError();
         stage6_testLoadModelOBJMaterials();
+        stage7_testLoadModelVRXReplaceMaterial();
     }
 
     public void stage1_testLoadModelFBX() {
@@ -280,5 +287,34 @@ public class Viro3DObjectTest extends ViroBaseTest {
             mTextNode2.removeFromParentNode();
             object3D.removeFromParentNode();
         });
+    }
+
+    public void stage7_testLoadModelVRXReplaceMaterial() {
+        final Object3D object3D = new Object3D();
+        mScene.getRootNode().addChildNode(object3D);
+        object3D.setPosition(new Vector(2, 0, -5));
+
+        object3D.loadModel(Uri.parse("file:///android_asset/dragao_2018.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+            }
+        });
+
+        final List<Integer> materialColors= Arrays.asList(Color.WHITE, Color.BLUE, Color.YELLOW, Color.CYAN);
+        final Iterator<Integer> iterator = Iterables.cycle(materialColors).iterator();
+        mMutableTestMethod = () -> {
+            if(object3D.getMaterials() != null && object3D.getMaterials().get(0) != null) {
+                object3D.getMaterials().get(0).setDiffuseColor(iterator.next());
+            }
+        };
+
+        assertPass("You should see dragon material change color over time from white, blue, green to black.",()->{
+            object3D.removeFromParentNode();
+        });
+
     }
 }
