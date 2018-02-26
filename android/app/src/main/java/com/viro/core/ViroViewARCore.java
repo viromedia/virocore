@@ -377,7 +377,12 @@ public class ViroViewARCore extends ViroView {
         // on native camera)
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");
-        System.loadLibrary("viro_arcore");
+        try {
+            System.loadLibrary("viro_arcore");
+        } catch (UnsatisfiedLinkError e) {
+            Log.i(TAG, "ViroCore not found, loading ViroReact");
+            System.loadLibrary("viro_react");
+        }
 
         mSurfaceView = new GLSurfaceView(context);
         addView(mSurfaceView);

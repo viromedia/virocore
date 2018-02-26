@@ -16,6 +16,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,7 +52,12 @@ public class ViroViewGVR extends ViroView {
     static {
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");
-        System.loadLibrary("viro_native");
+        try {
+            System.loadLibrary("viro_native");
+        } catch (UnsatisfiedLinkError e) {
+            Log.i(TAG, "ViroCore not found, loading ViroReact");
+            System.loadLibrary("viro_react");
+        }
     }
 
     /**

@@ -13,6 +13,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -38,7 +39,12 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
 
     static {
         System.loadLibrary("vrapi");
-        System.loadLibrary("viro_native");
+        try {
+            System.loadLibrary("viro_native");
+        } catch (UnsatisfiedLinkError e) {
+            Log.i("Viro", "ViroCore not found, loading ViroReact");
+            System.loadLibrary("viro_react");
+        }
     }
 
     /**
