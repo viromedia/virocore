@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Material.BlendMode | Android Developers
+  <title>BoundingBox | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -253,7 +253,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
@@ -326,7 +326,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
@@ -548,28 +548,22 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Material.BlendMode</h1>
+<h1 class="api-title">BoundingBox</h1>
 <p>
 <code class="api-signature">
   public
-  static
-  final
   
-  enum
-  Material.BlendMode
+  
+  
+  class
+  BoundingBox
 </code>
 <br>
 
 
 <code class="api-signature">
   
-  
-  
-</code>
-
-<code class="api-signature">
-  
-    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a>&gt;
+    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
   
   
   
@@ -586,7 +580,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -595,18 +589,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/Material.BlendMode.html">com.viro.core.Material.BlendMode</a>&gt;
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;</td>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Material.BlendMode
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.BoundingBox
     </td>
   </tr>
   
@@ -619,9 +602,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>BlendMode determines how a pixel's color, as it is being rendered, interacts with the color
- of the pixel <i>already</i> in the framebuffer. The former pixel is called the "source"
- pixel, and the latter the "destination" pixel.
+  <p>BoundingBox defines an axis-aligned 6-sided bounding volume.
 </p>
 
 
@@ -644,125 +625,143 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- =========== ENUM CONSTANT SUMMARY =========== -->
-<table id="enumconstants" class="responsive constants">
-  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
 
-  
+
+
+
+
+
+
+<!-- =========== FIELD SUMMARY =========== -->
+<table id="lfields" class="responsive properties">
+<tr><th colspan="2"><h3>Fields</h3></th></tr>
+
+
+
   <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>ADD</code>
-      <p>The source and destination pixel colors are added together.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>ALPHA</code>
-      <p>Blend based on the incoming pixel's alpha value.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>MULTIPLY</code>
-      <p>The source color is multiplied by the destination color.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>NONE</code>
-      <p>Disables blending: the incoming (source) pixel completely overwrites any existing
- (destination) pixel.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>SCREEN</code>
-      <p>The inverse of the source color is multiplied by the inverse of the destination color.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>SUBTRACT</code>
-      <p>The source color is subtracted from the destination color.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ========== METHOD SUMMARY =========== -->
-<table id="pubmethods" class="responsive methods">
-<tr><th colspan="2"><h3>Public methods</h3></th></tr>
-
-
-
-  
-  <tr class="api apilevel-" >
-  
-  
     <td><code>
-        
-        
-        static
-        
-        
-        <a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>
+    public
+    
+    
+    float</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/BoundingBox.html#maxX">maxX</a></code>
+      <p>The maximum X value.
+      
+    
+</p>
     </td>
+  </tr>
+  
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    
+    float</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/BoundingBox.html#maxY">maxY</a></code>
+      <p>The maximum Y value.
+      
+    
+</p>
+    </td>
+  </tr>
+  
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    
+    float</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/BoundingBox.html#maxZ">maxZ</a></code>
+      <p>The maximum Z value.
+      
+    
+</p>
+    </td>
+  </tr>
+  
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    
+    float</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/BoundingBox.html#minX">minX</a></code>
+      <p>The minimum X value.
+      
+    
+</p>
+    </td>
+  </tr>
+  
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    
+    float</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/BoundingBox.html#minY">minY</a></code>
+      <p>The minimum Y value.
+      
+    
+</p>
+    </td>
+  </tr>
+  
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    
+    float</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/BoundingBox.html#minZ">minZ</a></code>
+      <p>The minimum Z value.
+      
+    
+</p>
+    </td>
+  </tr>
+  
+
+
+</table>
+
+
+
+
+
+
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="responsive constructors">
+<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
+
+
+
+  
+  <tr class="api apilevel-" >
+  
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Material.BlendMode.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
+      <a href="../../../../reference/com/viro/core/BoundingBox.html#BoundingBox(float, float, float, float, float, float)">BoundingBox</a>(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
       </code>
+      
+        <p>Constructs a new BoundingBox with the given bounds on each axis.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -772,19 +771,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   <tr class="api apilevel-" >
   
   
-    <td><code>
-        
-        
-        static
-        final
-        
-        <a href="../../../../reference/com/viro/core/Material.BlendMode.html">BlendMode[]</a></code>
-    </td>
-  
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Material.BlendMode.html#values()">values</a>()
+      <a href="../../../../reference/com/viro/core/BoundingBox.html#BoundingBox(float[])">BoundingBox</a>(float[] bounds)
       </code>
+      
+        <p>Construct a new bounding box given a float array containing 6 elements representing
+ the bounds.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -800,168 +796,14 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+
+
+
+
 <!-- XML Attributes -->
 
 
 <!-- Enum Values -->
-
-
-<!-- ========= ENUM CONSTANTS DETAIL ======== -->
-<h2 class="api-section">Enum values</h2>
-
-
-
-
-<A NAME="ADD"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">ADD</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> ADD</pre>
-    
-    
-
-    
-  <p>The source and destination pixel colors are added together. This is useful for creating
- a 'glow' effect.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="ALPHA"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">ALPHA</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> ALPHA</pre>
-    
-    
-
-    
-  <p>Blend based on the incoming pixel's alpha value. The source pixel is multiplied by its
- alpha value and the destination pixel is multiplied by 1.0 minus the source pixel's
- alpha value.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="MULTIPLY"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">MULTIPLY</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> MULTIPLY</pre>
-    
-    
-
-    
-  <p>The source color is multiplied by the destination color. This results in colors that are
- at the same brightness or darker than either the source or destination color.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="NONE"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">NONE</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> NONE</pre>
-    
-    
-
-    
-  <p>Disables blending: the incoming (source) pixel completely overwrites any existing
- (destination) pixel.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="SCREEN"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">SCREEN</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> SCREEN</pre>
-    
-    
-
-    
-  <p>The inverse of the source color is multiplied by the inverse of the destination color.
- This results in colors that are the same brightness or lighter than either the source or
- destination color.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="SUBTRACT"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">SUBTRACT</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> SUBTRACT</pre>
-    
-    
-
-    
-  <p>The source color is subtracted from the destination color.
-</p></p>
-
-    
-</div>
-
-
 
 
 <!-- Constants -->
@@ -970,7 +812,256 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Fields -->
 
 
+<!-- ========= FIELD DETAIL ======== -->
+<h2 class="api-section">Fields</h2>
+
+
+
+
+<A NAME="maxX"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">maxX</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float maxX</pre>
+    
+    
+
+    
+  <p>The maximum X value.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="maxY"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">maxY</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float maxY</pre>
+    
+    
+
+    
+  <p>The maximum Y value.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="maxZ"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">maxZ</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float maxZ</pre>
+    
+    
+
+    
+  <p>The maximum Z value.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="minX"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">minX</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float minX</pre>
+    
+    
+
+    
+  <p>The minimum X value.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="minY"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">minY</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float minY</pre>
+    
+    
+
+    
+  <p>The minimum Y value.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="minZ"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">minZ</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float minZ</pre>
+    
+    
+
+    
+  <p>The minimum Z value.
+</p></p>
+
+    
+</div>
+
+
+
+
 <!-- Public ctors -->
+
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2 class="api-section">Public constructors</h2>
+
+
+
+<A NAME="BoundingBox(float, float, float, float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">BoundingBox</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+BoundingBox (float minX, 
+                float maxX, 
+                float minY, 
+                float maxY, 
+                float minZ, 
+                float maxZ)</pre>
+    
+    
+
+    
+  <p>Constructs a new BoundingBox with the given bounds on each axis.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>minX</code></td>
+        <td width="100%">
+          <code>float</code>: The minimum X value.</p></td>
+      </tr>
+      <tr>
+        <td><code>maxX</code></td>
+        <td width="100%">
+          <code>float</code>: The maximum X value.</p></td>
+      </tr>
+      <tr>
+        <td><code>minY</code></td>
+        <td width="100%">
+          <code>float</code>: The minimum Y value.</p></td>
+      </tr>
+      <tr>
+        <td><code>maxY</code></td>
+        <td width="100%">
+          <code>float</code>: The maximum Y value.</p></td>
+      </tr>
+      <tr>
+        <td><code>minZ</code></td>
+        <td width="100%">
+          <code>float</code>: The minimum Z value.</p></td>
+      </tr>
+      <tr>
+        <td><code>maxZ</code></td>
+        <td width="100%">
+          <code>float</code>: The maximum Z value.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="BoundingBox(float[])"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">BoundingBox</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+BoundingBox (float[] bounds)</pre>
+    
+    
+
+    
+  <p>Construct a new bounding box given a float array containing 6 elements representing
+ the bounds.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>bounds</code></td>
+        <td width="100%">
+          <code>float</code>: The bounds on each axis, in order [minX, maxX, minY, maxY, minZ, maxZ].
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 
 
 
@@ -981,75 +1072,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ========= METHOD DETAIL ======== -->
 <!-- Public methdos -->
-
-<h2 class="api-section">Public methods</h2>
-
-
-
-<A NAME="valueOf(java.lang.String)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">valueOf</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
-    
-    
-
-    
-  <p></p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>name</code></td>
-        <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="values()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">values</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">BlendMode[]</a> values ()</pre>
-    
-    
-
-    
-  <p></p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">BlendMode[]</a></code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
-      </tr>
-    </table>
-
-</div>
-
-
 
 
 

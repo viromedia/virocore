@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Material.BlendMode | Android Developers
+  <title>ViroViewARCore.StartupListener | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -233,7 +233,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.VideoRecordingFinishListener.html">ViroMediaRecorder.VideoRecordingFinishListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.StartupListener.html">ViroViewARCore.StartupListener</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.StartupListener.html">ViroViewARCore.StartupListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewGVR.StartupListener.html">ViroViewGVR.StartupListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewOVR.StartupListener.html">ViroViewOVR.StartupListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewScene.StartupListener.html">ViroViewScene.StartupListener</a></li>
@@ -326,7 +326,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
@@ -548,32 +548,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Material.BlendMode</h1>
+<h1 class="api-title">ViroViewARCore.StartupListener</h1>
 <p>
 <code class="api-signature">
   public
   static
-  final
   
-  enum
-  Material.BlendMode
+  
+  interface
+  ViroViewARCore.StartupListener
 </code>
 <br>
 
-
-<code class="api-signature">
-  
-  
-  
-</code>
-
-<code class="api-signature">
-  
-    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a>&gt;
-  
-  
-  
-</code>
 
 <code class="api-signature">
   
@@ -586,27 +572,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/Material.BlendMode.html">com.viro.core.Material.BlendMode</a>&gt;
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;</td>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Material.BlendMode
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ViroViewARCore.StartupListener
     </td>
   </tr>
   
@@ -619,9 +585,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>BlendMode determines how a pixel's color, as it is being rendered, interacts with the color
- of the pixel <i>already</i> in the framebuffer. The former pixel is called the "source"
- pixel, and the latter the "destination" pixel.
+  <p>Callback interface for responding to <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> startup success or failure.
 </p>
 
 
@@ -642,86 +606,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-<!-- =========== ENUM CONSTANT SUMMARY =========== -->
-<table id="enumconstants" class="responsive constants">
-  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
-
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>ADD</code>
-      <p>The source and destination pixel colors are added together.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>ALPHA</code>
-      <p>Blend based on the incoming pixel's alpha value.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>MULTIPLY</code>
-      <p>The source color is multiplied by the destination color.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>NONE</code>
-      <p>Disables blending: the incoming (source) pixel completely overwrites any existing
- (destination) pixel.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>SCREEN</code>
-      <p>The inverse of the source color is multiplied by the inverse of the destination color.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
-  <tr class="api apilevel-" >
-    <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>&nbsp;</td>
-    <td width="100%">
-      <code>SUBTRACT</code>
-      <p>The source color is subtracted from the destination color.&nbsp;
-      
-    
-</p>
-    </td>
-  </tr>
-  
-  
 
 
 
@@ -751,18 +635,23 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        abstract
         
         
-        static
         
         
-        <a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Material.BlendMode.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.StartupListener.html#onFailure(com.viro.core.ViroViewARCore.StartupError, java.lang.String)">onFailure</a>(<a href="../../../../reference/com/viro/core/ViroViewARCore.StartupError.html">ViroViewARCore.StartupError</a> error, <a href="http://d.android.com/reference/java/lang/String.html">String</a> errorMessage)
       </code>
+      
+        <p>Callback invoked when the <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> failed to initialize.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -773,18 +662,25 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        abstract
         
         
-        static
-        final
         
-        <a href="../../../../reference/com/viro/core/Material.BlendMode.html">BlendMode[]</a></code>
+        
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Material.BlendMode.html#values()">values</a>()
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.StartupListener.html#onSuccess()">onSuccess</a>()
       </code>
+      
+        <p>Callback invoked when <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> has finished initialization, meaning the
+ rendering surface was succesfully created and ARCore was successfully installed and
+ initialized.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -804,164 +700,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Enum Values -->
-
-
-<!-- ========= ENUM CONSTANTS DETAIL ======== -->
-<h2 class="api-section">Enum values</h2>
-
-
-
-
-<A NAME="ADD"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">ADD</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> ADD</pre>
-    
-    
-
-    
-  <p>The source and destination pixel colors are added together. This is useful for creating
- a 'glow' effect.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="ALPHA"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">ALPHA</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> ALPHA</pre>
-    
-    
-
-    
-  <p>Blend based on the incoming pixel's alpha value. The source pixel is multiplied by its
- alpha value and the destination pixel is multiplied by 1.0 minus the source pixel's
- alpha value.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="MULTIPLY"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">MULTIPLY</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> MULTIPLY</pre>
-    
-    
-
-    
-  <p>The source color is multiplied by the destination color. This results in colors that are
- at the same brightness or darker than either the source or destination color.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="NONE"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">NONE</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> NONE</pre>
-    
-    
-
-    
-  <p>Disables blending: the incoming (source) pixel completely overwrites any existing
- (destination) pixel.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="SCREEN"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">SCREEN</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> SCREEN</pre>
-    
-    
-
-    
-  <p>The inverse of the source color is multiplied by the inverse of the destination color.
- This results in colors that are the same brightness or lighter than either the source or
- destination color.
-</p></p>
-
-    
-</div>
-
-
-
-<A NAME="SUBTRACT"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">SUBTRACT</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> SUBTRACT</pre>
-    
-    
-
-    
-  <p>The source color is subtracted from the destination color.
-</p></p>
-
-    
-</div>
-
-
 
 
 <!-- Constants -->
@@ -986,10 +724,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="valueOf(java.lang.String)"></A>
+<A NAME="onFailure(com.viro.core.ViroViewARCore.StartupError, java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">valueOf</h3>
+    <h3 class="api-name">onFailure</h3>
     <div class="api-level">
       <div></div>
       
@@ -997,35 +735,35 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
+void onFailure (<a href="../../../../reference/com/viro/core/ViroViewARCore.StartupError.html">ViroViewARCore.StartupError</a> error, 
+                <a href="http://d.android.com/reference/java/lang/String.html">String</a> errorMessage)</pre>
     
     
 
     
-  <p></p></p>
+  <p>Callback invoked when the <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> failed to initialize.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>name</code></td>
+        <td><code>error</code></td>
         <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
+          <code>ViroViewARCore.StartupError</code>: The error code.</p></td>
       </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
+        <td><code>errorMessage</code></td>
+        <td width="100%">
+          <code>String</code>: The reason for the failure as a string.
+</p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="values()"></A>
+<A NAME="onSuccess()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">values</h3>
+    <h3 class="api-name">onSuccess</h3>
     <div class="api-level">
       <div></div>
       
@@ -1033,19 +771,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Material.BlendMode.html">BlendMode[]</a> values ()</pre>
+void onSuccess ()</pre>
     
     
 
     
-  <p></p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Material.BlendMode.html">BlendMode[]</a></code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
-      </tr>
-    </table>
+  <p>Callback invoked when <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></code> has finished initialization, meaning the
+ rendering surface was succesfully created and ARCore was successfully installed and
+ initialized. When this is received, the ViroView is ready to begin rendering content.
+</p></p>
 
 </div>
 
