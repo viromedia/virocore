@@ -193,9 +193,9 @@ public class Material {
         MULTIPLY("Multiply"),
 
         /**
-         * Blend by multiplying the inverse of the source color with the inverse of the destination
-         * color. This results in colors that are the same brightness or lighter than either the
-         * source or destination color.
+         * The inverse of the source color is multiplied by the inverse of the destination color.
+         * This results in colors that are the same brightness or lighter than either the source or
+         * destination color.
          */
         SCREEN("Screen");
 

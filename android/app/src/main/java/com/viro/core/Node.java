@@ -731,7 +731,10 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the {@link BoundingBox} computed for this Node.
+     * Get the {@link BoundingBox} of this Node. This bounding box encompasses this Node's geometry
+     * <i>and</i> the bounds of all of this Node's children.
+     *
+     * @return The {@link BoundingBox} of this Node.
      */
     public BoundingBox getBoundingBox() {
         return new BoundingBox(nativeGetBoundingBox(mNativeRef));

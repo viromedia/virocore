@@ -5,7 +5,7 @@
 package com.viro.core;
 
 /**
- * BoundingBox defines the axis-aligned box that encompasses a node's Geometry.
+ * BoundingBox defines an axis-aligned 6-sided bounding volume.
  */
 public class BoundingBox {
     /**
@@ -39,14 +39,14 @@ public class BoundingBox {
     public float maxZ;
 
     /**
-     * Constructs a new bounding box with the given bounds.
+     * Constructs a new BoundingBox with the given bounds on each axis.
      *
-     * @param minX - The minimum X value.
-     * @param maxX - The maximum X value.
-     * @param minY - The minimum Y value.
-     * @param maxY - The maximum Y value.
-     * @param minZ - The minimum Z value.
-     * @param maxZ - The maximum Z value.
+     * @param minX The minimum X value.
+     * @param maxX The maximum X value.
+     * @param minY The minimum Y value.
+     * @param maxY The maximum Y value.
+     * @param minZ The minimum Z value.
+     * @param maxZ The maximum Z value.
      */
     public BoundingBox(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
         this.minX = minX;
@@ -61,7 +61,7 @@ public class BoundingBox {
      * Construct a new bounding box given a float array containing 6 elements representing
      * the bounds.
      *
-     * @param bounds
+     * @param bounds The bounds on each axis, in order [minX, maxX, minY, maxY, minZ, maxZ].
      */
     public BoundingBox(float[] bounds) {
         this(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
