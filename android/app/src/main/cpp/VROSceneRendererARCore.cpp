@@ -40,8 +40,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Setup
 
 VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
-                                               std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                               void *context) :
+                                               std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _rendererSuspended(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
     _hasTrackingInitialized(false),
@@ -49,7 +48,7 @@ VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
     _arcoreInstalled(false) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
-    _session = std::make_shared<VROARSessionARCore>(context, _driver);
+    _session = std::make_shared<VROARSessionARCore>(_driver);
 
     // instantiate the input controller w/ viewport size (0,0) and update it later.
     std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0,0);

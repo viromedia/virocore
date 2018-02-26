@@ -20,7 +20,7 @@
 #include <VROStringUtil.h>
 #include "VROARHitTestResult.h"
 
-VROARSessionARCore::VROARSessionARCore(void *context, std::shared_ptr<VRODriverOpenGL> driver) :
+VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) :
     VROARSession(VROTrackingType::DOF6, VROWorldAlignment::Gravity),
     _lightingMode(arcore::config::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),

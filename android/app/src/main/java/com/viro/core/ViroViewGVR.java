@@ -47,7 +47,7 @@ public class ViroViewGVR extends ViroView {
 
     private static final String TAG = "Viro";
 
-    // Used to load the 'native-lib' library on application startup.
+    // Used to load the native libraries on application startup.
     static {
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");

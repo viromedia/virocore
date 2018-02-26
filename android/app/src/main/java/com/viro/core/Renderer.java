@@ -27,6 +27,10 @@ public class Renderer {
     protected long mNativeRef;
     private CameraListener mCameraListener;
 
+    protected Renderer() {
+
+    }
+
     /* ----------     Scene view only methods    ---------- */
 
     public Renderer(ClassLoader appClassLoader, Context context, ViroViewScene view, AssetManager assets,
@@ -60,50 +64,6 @@ public class Renderer {
     public void onSurfaceDestroyed(Surface surface) { nativeOnSurfaceDestroyed(mNativeRef); }
 
     public void recenterTracking() { nativeRecenterTracking(mNativeRef); }
-
-    /* ----------     ARCore only methods    ---------- */
-
-    public Renderer(ClassLoader appClassLoader, Context context,
-                    AssetManager assets, PlatformUtil platformUtil,
-                    RendererConfiguration config) {
-        mNativeRef = nativeCreateRendererARCore(appClassLoader, context, assets, platformUtil,
-                config.isShadowsEnabled(), config.isHDREnabled(), config.isPBREnabled(), config.isBloomEnabled());
-    }
-
-    public int getCameraTextureId() {
-        return nativeGetCameraTextureId(mNativeRef);
-    }
-
-    public void onARCoreInstalled(Context context) { nativeOnARCoreInstalled(mNativeRef, context); }
-
-    public void setARDisplayGeometry(int rotation, int width, int height) {
-        nativeSetARDisplayGeometry(mNativeRef, rotation, width, height);
-    }
-
-    public void setAnchorDetectionTypes(EnumSet<ViroViewARCore.AnchorDetectionType> types) {
-        if (types.size() == 0) {
-            nativeSetPlaneFindingMode(mNativeRef, false);
-        }
-        for (ViroViewARCore.AnchorDetectionType type : types) {
-            if (type == ViroViewARCore.AnchorDetectionType.NONE) {
-                nativeSetPlaneFindingMode(mNativeRef, false);
-            } else if (type == ViroViewARCore.AnchorDetectionType.PLANES_HORIZONTAL) {
-                nativeSetPlaneFindingMode(mNativeRef, true);
-            }
-        }
-    }
-
-    public void performARHitTestWithRay(float[] ray, ARHitTestListener callback) {
-        nativePerformARHitTestWithRay(mNativeRef, ray, callback);
-    }
-
-    public void performARHitTestWithPosition(float[] position, ARHitTestListener callback) {
-        nativePerformARHitTestWithPosition(mNativeRef, position, callback);
-    }
-
-    public void performARHitTestWithPoint(float x, float y, ARHitTestListener callback) {
-        nativePerformARHitTestWithPoint(mNativeRef, x, y, callback);
-    }
 
     /* ----------     Common lifecycle methods    ---------- */
 
@@ -259,9 +219,6 @@ public class Renderer {
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
                                                 ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil,
                                                 boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
-    private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
-                                                   AssetManager assets, PlatformUtil platformUtil,
-                                                   boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native long nativeCreateRendererSceneView(ClassLoader appClassLoader, Context context,
                                                       ViroViewScene view, AssetManager assets, PlatformUtil platformUtil,
                                                       boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
@@ -288,10 +245,6 @@ public class Renderer {
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
     private native void nativeRecenterTracking(long nativeRenderer);
-    private native int nativeGetCameraTextureId(long nativeRenderer);
-    private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
-    private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
-    private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
     private native void nativeSetClearColor(long sceneRef, int color);
     private native void nativeSetShadowsEnabled(long nativeRef, boolean enabled);
     private native void nativeSetHDREnabled(long nativeRef, boolean enabled);
@@ -306,7 +259,5 @@ public class Renderer {
     private native float[] nativeProjectPoint(long nativeRenderer, float x, float y, float z);
     private native float[] nativeUnprojectPoint(long nativeRenderer, float x, float y, float z);
     private native float nativeGetFieldOfView(long nativeRef);
-    private native void nativeSetARDisplayGeometry(long nativeRef, int rotation, int width, int height);
-    private native void nativeSetPlaneFindingMode(long nativeRef, boolean enabled);
-    private native void nativeOnARCoreInstalled(long nativeRef, Context context);
+
 }

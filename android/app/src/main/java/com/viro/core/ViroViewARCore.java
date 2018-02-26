@@ -240,7 +240,7 @@ public class ViroViewARCore extends ViroView {
             // the video background can be properly adjusted.
             view.mWidth = width;
             view.mHeight = height;
-            view.mNativeRenderer.setARDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
+            ((RendererARCore) view.mNativeRenderer).setARDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
         }
 
         @Override
@@ -373,10 +373,11 @@ public class ViroViewARCore extends ViroView {
         }
 
         // We wait to load libraries until after the ARCore check, otherwise UnsatisfiedLinkErrors
-        // may occur
+        // may occur on devices that are using Android 23 or earlier (due to ARCore's dependency
+        // on native camera)
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");
-        System.loadLibrary("viro_native");
+        System.loadLibrary("viro_arcore");
 
         mSurfaceView = new GLSurfaceView(context);
         addView(mSurfaceView);
@@ -399,7 +400,7 @@ public class ViroViewARCore extends ViroView {
                 mFrameListeners,
                 activityContext,
                 mAssetManager);
-        mNativeRenderer = new Renderer(
+        mNativeRenderer = new RendererARCore(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil, mRendererConfig);
@@ -457,8 +458,8 @@ public class ViroViewARCore extends ViroView {
             // Create a dummy session just to check if it's possible
             new Session(activity);
             mARCoreInstalled.set(true);
-            mNativeRenderer.onARCoreInstalled(getContext());
-            mNativeRenderer.setARDisplayGeometry(mRotation, mWidth, mHeight);
+            ((RendererARCore) mNativeRenderer).onARCoreInstalled(getContext());
+            ((RendererARCore) mNativeRenderer).setARDisplayGeometry(mRotation, mWidth, mHeight);
 
             if (mRendererSurfaceInitialized.get()) {
                 notifyRendererStart();
@@ -730,7 +731,7 @@ public class ViroViewARCore extends ViroView {
      */
     public void setAnchorDetectionTypes(EnumSet<AnchorDetectionType> types) {
         if (!mDestroyed) {
-            mNativeRenderer.setAnchorDetectionTypes(types);
+            ((RendererARCore) mNativeRenderer).setAnchorDetectionTypes(types);
         }
     }
 
@@ -745,7 +746,7 @@ public class ViroViewARCore extends ViroView {
      */
     public void performARHitTestWithRay(Vector ray, ARHitTestListener callback) {
         if (!mDestroyed) {
-            mNativeRenderer.performARHitTestWithRay(ray.toArray(), callback);
+            ((RendererARCore) mNativeRenderer).performARHitTestWithRay(ray.toArray(), callback);
         }
     }
 
@@ -761,7 +762,7 @@ public class ViroViewARCore extends ViroView {
      */
     public void performARHitTestWithPosition(Vector position, ARHitTestListener callback) {
         if (!mDestroyed) {
-            mNativeRenderer.performARHitTestWithPosition(position.toArray(), callback);
+            ((RendererARCore) mNativeRenderer).performARHitTestWithPosition(position.toArray(), callback);
         }
     }
 
@@ -776,7 +777,7 @@ public class ViroViewARCore extends ViroView {
      */
     public void performARHitTest(Point point, ARHitTestListener callback) {
         if (!mDestroyed) {
-            mNativeRenderer.performARHitTestWithPoint(point.x, point.y, callback);
+            ((RendererARCore) mNativeRenderer).performARHitTestWithPoint(point.x, point.y, callback);
         }
     }
 
@@ -802,7 +803,7 @@ public class ViroViewARCore extends ViroView {
      */
     public void setCameraRotation(int rotation) {
         mRotation = rotation;
-        mNativeRenderer.setARDisplayGeometry(mRotation, mWidth, mHeight);
+        ((RendererARCore) mNativeRenderer).setARDisplayGeometry(mRotation, mWidth, mHeight);
     }
 
     /**
@@ -815,7 +816,7 @@ public class ViroViewARCore extends ViroView {
      * @return The camera texture ID. Returns 0 if the camera texture has not yet been initialized.
      */
     public int getCameraTextureName() {
-        return mNativeRenderer.getCameraTextureId();
+        return ((RendererARCore) mNativeRenderer).getCameraTextureId();
     }
 
     /**

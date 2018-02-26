@@ -24,7 +24,7 @@ class VRODriverOpenGL;
 class VROARSessionARCore : public VROARSession, public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
-    VROARSessionARCore(void *context, std::shared_ptr<VRODriverOpenGL> driver);
+    VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROARSessionARCore();
 
     void run();

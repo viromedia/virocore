@@ -39,8 +39,7 @@ public:
      @param gvr_audio_api The (owned) gvr::AudioApi context.
      */
     VROSceneRendererARCore(VRORendererConfiguration config,
-                           std::shared_ptr<gvr::AudioApi> gvrAudio,
-                           void *context);
+                           std::shared_ptr<gvr::AudioApi> gvrAudio);
     virtual ~VROSceneRendererARCore();
 
     /*

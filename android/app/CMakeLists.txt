@@ -48,16 +48,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROInputControllerDaydream.cpp
              src/main/cpp/VROInputControllerCardboard.cpp
              src/main/cpp/VROInputControllerOVR.cpp
-             src/main/cpp/VROInputControllerARAndroid.cpp
              src/main/cpp/VROAVRecorderAndroid.cpp
-
-             # ARCore
-             src/main/cpp/VROSceneRendererARCore.cpp
-             src/main/cpp/arcore/VROARSessionARCore.cpp
-             src/main/cpp/arcore/VROARFrameARCore.cpp
-             src/main/cpp/arcore/VROARCameraARCore.cpp
-             src/main/cpp/arcore/ARCore_JNI.cpp
-             src/main/cpp/arcore/ARCore_Native.cpp
 
              # Android JNI
              src/main/cpp/jni/VRORenderer_JNI.cpp
@@ -95,9 +86,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/OBJLoaderDelegate_JNI.cpp
              src/main/cpp/jni/LazyMaterial_JNI.cpp
              src/main/cpp/jni/Polyline_JNI.cpp
-             # src/main/cpp/jni/OpenCV_JNI.cpp
-             # src/main/cpp/jni/ImageTracker_JNI.cpp
-             # src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
              src/main/cpp/jni/PhysicsDelegate_JNI.cpp
              src/main/cpp/jni/TransformDelegate_JNI.cpp
              src/main/cpp/jni/ParticleEmitter_JNI.cpp
@@ -107,13 +95,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/PhysicsBody_JNI.cpp
              src/main/cpp/jni/AnimationTransaction_JNI.cpp
              src/main/cpp/jni/MediaRecorder_JNI.cpp
-
-             # Android AR JNI
-             src/main/cpp/jni/ARNode_JNI.cpp
-             src/main/cpp/jni/ARDeclarativeNode_JNI.cpp
-             src/main/cpp/jni/ARDeclarativePlane_JNI.cpp
-             src/main/cpp/jni/ARSceneController_JNI.cpp
-             src/main/cpp/jni/ARUtils_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -199,10 +180,19 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROIrradianceRenderPass.cpp
              ../../ViroRenderer/VROPrefilterRenderPass.cpp
              ../../ViroRenderer/VROBRDFRenderPass.cpp
+             ../../ViroRenderer/VROPointCloudEmitter.cpp
 
-             # AR
+             # AR (no arcore dependencies)
              ../../ViroRenderer/VROARSceneController.cpp
+             ../../ViroRenderer/VROARScene.cpp
+             ../../ViroRenderer/VROARNode.cpp
+             ../../ViroRenderer/VROARConstraintMatcher.cpp
+             ../../ViroRenderer/VROARDeclarativeSession.cpp
+             ../../ViroRenderer/VROARImperativeSession.cpp
+             ../../ViroRenderer/VROInputControllerAR.cpp
              ../../ViroRenderer/VROARShadow.cpp
+             src/main/cpp/VROInputControllerARAndroid.cpp
+             src/main/cpp/jni/ARUtils_JNI.cpp
 
              # Animation
              ../../ViroRenderer/VROTimingFunction.cpp
@@ -255,19 +245,6 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPhysicsBody.cpp
              ../../ViroRenderer/VROPhysicsShape.cpp
 
-             # AR
-             ../../ViroRenderer/VROARScene.cpp
-             ../../ViroRenderer/VROARNode.cpp
-             ../../ViroRenderer/VROARConstraintMatcher.cpp
-             ../../ViroRenderer/VROARDeclarativeSession.cpp
-             ../../ViroRenderer/VROARImperativeSession.cpp
-             ../../ViroRenderer/VROInputControllerAR.cpp
-             ../../ViroRenderer/VROPointCloudEmitter.cpp
-
-             # Image Tracking
-             # ../../ViroRenderer/VROImageTracker.cpp
-             # ../../ViroRenderer/VROImageTrackerOutput.cpp
-
              # Renderer Test
              ../../ViroRenderer/VRORendererTestHarness.cpp
              ../../ViroRenderer/VROTestUtil.cpp
@@ -297,6 +274,33 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPhotometricLightTest.cpp
              ../../ViroRenderer/VRORendererSettingsTest.cpp
              )
+
+add_library( # Sets the name of the library.
+             viro_arcore
+
+             # Sets the library as a shared library.
+             SHARED
+
+             src/main/cpp/VROSceneRendererARCore.cpp
+             src/main/cpp/arcore/VROARSessionARCore.cpp
+             src/main/cpp/arcore/VROARFrameARCore.cpp
+             src/main/cpp/arcore/VROARCameraARCore.cpp
+             src/main/cpp/arcore/ARCore_Native.cpp
+
+             # Android AR JNI
+             src/main/cpp/jni/ARNode_JNI.cpp
+             src/main/cpp/jni/ARDeclarativeNode_JNI.cpp
+             src/main/cpp/jni/ARDeclarativePlane_JNI.cpp
+             src/main/cpp/jni/ARSceneController_JNI.cpp
+             src/main/cpp/jni/VRORendererARCore_JNI.cpp
+           # src/main/cpp/jni/OpenCV_JNI.cpp
+           # src/main/cpp/jni/ImageTracker_JNI.cpp
+           # src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
+
+             # Image Tracking
+           # ../../ViroRenderer/VROImageTracker.cpp
+           # ../../ViroRenderer/VROImageTrackerOutput.cpp
+           )
 
 # Add pre-built libraries
 add_library( lib-arcore
@@ -572,8 +576,7 @@ find_library( lib-z z )
 target_link_libraries( # Specifies the target library.
                        viro_native
 
-                       # Links the target library to the log library
-                       # included in the NDK.
+                       # Libraries linked with target
                        ${lib-log}
                        ${lib-android}
                        ${lib-jnigraphics}
@@ -584,7 +587,6 @@ target_link_libraries( # Specifies the target library.
                        ${lib-GLESv3}
                        ${lib-z}
                        atomic
-                       lib-arcore
                        lib-gvr
                        lib-gvr-audio
                        lib-ovr
@@ -594,7 +596,14 @@ target_link_libraries( # Specifies the target library.
                        lib-BulletCollision
                        lib-BulletDynamics
                        lib-BulletSoftBody
-                       lib-LinearMath
+                       lib-LinearMath)
+
+target_link_libraries( # Specifies the target library.
+                       viro_arcore
+
+                       # Libraries linked with target
+                       viro_native
+                       lib-arcore
 
                        # OpenCV Libs
                        # lib-OpenCV-Java3
