@@ -200,7 +200,7 @@ public class Camera {
      * consistent upon orientation changes, when the major/minor axes swap. The minor axis field of
      * view is automatically computed from the major axis field of view and the viewport.
      * <p>
-     * If this is set to 0, then Viro will use the default field of view: 60 degrees.
+     * If this is set to 0, then Viro will use the default field of view: 90 degrees.
      * <p>
      * This value is
      * ignored on VR and AR platforms, where the FOV is fixed by the VR headset or the AR camera.

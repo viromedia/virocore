@@ -243,7 +243,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * You can set the field of view when using a {@link ViroViewScene} by creating a {@link
      * Camera}, setting the camera's field of view with {@link Camera#setFieldOfView(float)}, and
      * making that Camera's Node the point of view through {@link #setPointOfView(Node)}. The
-     * default field of view for {@link ViroViewScene} is 60 degrees.
+     * default field of view for {@link ViroViewScene} is 90 degrees.
      * <p>
      * The field of view cannot be set for {@link ViroViewARCore} or {@link ViroViewGVR}: on those
      * platforms, field of view is fixed by the VR headset or AR camera.
