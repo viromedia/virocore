@@ -846,6 +846,7 @@ public class ViroViewARCore extends ViroView {
      * an exception.
      *
      * @param context The {@link Context} of your application.
+     * @return True if the current device is compatible with ARCore.
      */
     public static boolean isDeviceCompatible(Context context) {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
