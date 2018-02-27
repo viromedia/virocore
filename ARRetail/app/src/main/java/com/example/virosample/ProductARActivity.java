@@ -19,13 +19,12 @@ package com.example.virosample;
 import android.content.Intent;
 import android.os.Bundle;
 import com.example.virosample.model.Product;
-import com.viro.core.RendererStartListener;
 
 /**
  * A ViroCore ProductARActivity that coordinates the placing of a Product last selected in the
  * {@link ProductSelectionActivity} in AR.
  */
-public class ProductARActivity extends ViroActivity implements RendererStartListener {
+public class ProductARActivity extends ViroActivity {
     final public static String INTENT_PRODUCT_KEY = "product_key";
     private Product mSelectedProduct = null;
 

@@ -29,7 +29,6 @@ import com.viro.core.RotateState;
 
 import com.viro.core.Vector;
 import com.viro.core.ViroViewARCore;
-import com.viro.core.RendererStartListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ import java.util.List;
  * button to get a dialog of objects to place in the scene. Drag, rotate and scale the object using pinch and rotate
  * gestures.
  */
-public class ViroARObjectPlacementActivity extends ViroActivity  implements RendererStartListener  {
+public class ViroARObjectPlacementActivity extends ViroActivity {
 
     // Constants used to determine if plane or point is within bounds. Units in meters.
     static final float MIN_DISTANCE = .2f;

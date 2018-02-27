@@ -18,9 +18,11 @@ package com.example.virosample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
-import com.viro.core.RendererStartListener;
+import com.viro.core.RendererConfiguration;
+
 import com.viro.core.ViroView;
 import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
@@ -36,36 +38,104 @@ import com.viro.core.ViroViewScene;
  * Similar to {@link ViroARHelloWorldActivity}, simply extend and
  * override onRendererStart() to start building your 3D scenes.
  */
-public class ViroActivity extends Activity implements RendererStartListener{
+public class ViroActivity extends Activity {
     private static final String TAG = ViroActivity.class.getSimpleName();
     protected ViroView mViroView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("GVR")) {
-            mViroView = new ViroViewGVR(this, this, new Runnable() {
-                @Override
-                public void run() {
-                    // Handle existing GVR Here
-                    Log.d(TAG, "On GVR userRequested exit");
-                }
-            });
-            mViroView.setVRModeEnabled(true);
-        } else if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("OVR")) {
-            mViroView = new ViroViewOVR(this, this);
-        } else if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("ARCore")) {
-            mViroView = new ViroViewARCore(this, this);
-        } else if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("Scene")) {
-            mViroView = new ViroViewScene(this, this);
-        }
 
+        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("GVR")) {
+            mViroView = createGVRView();
+
+        } else if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("OVR")) {
+            mViroView = createOVRView();
+
+        } else if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("Scene")) {
+            mViroView = createViroViewScene();
+        } else if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase("ARCore")) {
+            mViroView = createViroARCoreScene();
+        }
         setContentView(mViroView);
     }
 
-    @Override
+    private ViroView createGVRView() {
+        ViroViewGVR viroView = new ViroViewGVR(this, new ViroViewGVR.StartupListener() {
+            @Override
+            public void onSuccess() {
+                onRendererStart();
+            }
+
+            @Override
+            public void onFailure(ViroViewGVR.StartupError error, String errorMessage) {
+                onRendererFailed(error.toString(), errorMessage);
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, "On GVR userRequested exit");
+            }
+        });
+        return viroView;
+    }
+
+    private ViroView createOVRView() {
+        ViroViewOVR viroView = new ViroViewOVR(this, new ViroViewOVR.StartupListener() {
+            @Override
+            public void onSuccess() {
+                onRendererStart();
+            }
+
+            @Override
+            public void onFailure(ViroViewOVR.StartupError error, String errorMessage) {
+                onRendererFailed(error.toString(), errorMessage);
+            }
+        });
+        return viroView;
+    }
+
+    private ViroView createViroViewScene() {
+        ViroViewScene viroView = new ViroViewScene(this, new ViroViewScene.StartupListener() {
+            @Override
+            public void onSuccess() {
+                onRendererStart();
+            }
+
+            @Override
+            public void onFailure(ViroViewScene.StartupError error, String errorMessage) {
+                onRendererFailed(error.toString(), errorMessage);
+            }
+        });
+        return viroView;
+    }
+
+    private ViroView createViroARCoreScene() {
+        RendererConfiguration config = new RendererConfiguration();
+        config.setShadowsEnabled(true);
+        config.setBloomEnabled(true);
+        config.setHDREnabled(true);
+        config.setPBREnabled(true);
+        ViroViewARCore viroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
+            @Override
+            public void onSuccess() {
+                onRendererStart();
+            }
+
+            @Override
+            public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
+                onRendererFailed(error.toString(), errorMessage);
+            }
+        }, config);
+        return viroView;
+    }
+
     public void onRendererStart() {
         // Override this function to start building your scene here!
+    }
+
+    public void onRendererFailed(String error, String errorMessage) {
+        // Fail as you wish!
     }
 
     @Override
@@ -92,3 +162,4 @@ public class ViroActivity extends Activity implements RendererStartListener{
         mViroView.onActivityStopped(this);
     }
 }
+

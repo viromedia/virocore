@@ -34,10 +34,11 @@ import com.viro.core.DragListener;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
-import com.viro.core.RendererStartListener;
+
 import com.viro.core.Surface;
 import com.viro.core.Texture;
 import com.viro.core.Vector;
+import com.viro.core.ViroViewARCore;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ import java.util.Set;
  * This activity builds an ar scene that renders tracked ar planes. Clicking on a point on
  * tracked ar planes will also spawn a 3d droid that can be dragged around.
  */
-public class ViroARHelloWorldActivity extends ViroActivity implements RendererStartListener {
+public class ViroARHelloWorldActivity extends ViroActivity  {
     /*
      Reference to the arScene we will be creating within this activity
      */
@@ -91,6 +92,7 @@ public class ViroARHelloWorldActivity extends ViroActivity implements RendererSt
         final Bitmap bot = ViroHelper.getBitmapFromAsset(this, "andy.png");
         final Object3D object3D = new Object3D();
         object3D.setPosition(position);
+
         mScene.getRootNode().addChildNode(object3D);
 
         // Load the Android model asynchronously.

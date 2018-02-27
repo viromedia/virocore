@@ -44,7 +44,6 @@ import com.viro.core.GestureRotateListener;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
-import com.viro.core.RendererStartListener;
 import com.viro.core.RotateState;
 import com.viro.core.Spotlight;
 import com.viro.core.Surface;
@@ -60,7 +59,7 @@ import java.util.List;
  * A ViroCore ProductARActivity that coordinates the placing of a Product last selected in the
  * {@link ProductSelectionActivity} in AR.
  */
-public class ProductARActivityComplete extends ViroActivity implements RendererStartListener {
+public class ProductARActivityComplete extends ViroActivity {
     final public static String INTENT_PRODUCT_KEY = "product_key";
     private View mHudGroupView = null;
     private TextView mHUDInstructions;

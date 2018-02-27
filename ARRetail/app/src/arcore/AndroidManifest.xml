@@ -27,6 +27,6 @@
         <activity
             android:label="Product Details"
             android:name="com.example.virosample.ProductDetailActivity"/>
-
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
     </application>
 </manifest>
