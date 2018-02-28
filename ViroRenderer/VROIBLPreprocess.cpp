@@ -48,6 +48,8 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
             context->setIrradianceMap(nullptr);
             context->setBRDFMap(nullptr);
             context->setPreFilteredMap(nullptr);
+            
+            _currentLightingEnvironment = nullptr;
         }
     }
     
