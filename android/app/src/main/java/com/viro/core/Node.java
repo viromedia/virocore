@@ -178,6 +178,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     protected boolean mDestroyed = false;
     private Geometry mGeometry;
     private ParticleEmitter mParticleEmitter;
+    private FixedParticleEmitter mFixedParticleEmitter;
     private PhysicsBody mPhysicsBody;
     private WeakReference<Node> mParent;
     private ArrayList<Node> mChildren = new ArrayList<Node>();
@@ -743,6 +744,29 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Set the {@link FixedParticleEmitter} to use for this Node. This will remove any {@link Geometry}
+     * currently attached to the Node.
+     *
+     * @param emitter The emitter to use for this Node. Null to remove any {@link ParticleEmitter}
+     *                from this Node.
+     */
+    public void setFixedParticleEmitter(FixedParticleEmitter emitter) {
+        mFixedParticleEmitter = emitter;
+
+        // If null, remove the emitter and return.
+        if (emitter == null){
+            removeFixedParticleEmitter();
+            return;
+        }
+
+        // Else, clean up any existing emitters if need be, and then set the particle emitter.
+        if (mParticleEmitter != null) {
+            removeParticleEmitter();
+        }
+        nativeSetFixedParticleEmitter(mNativeRef, emitter.mNativeRef);
+    }
+
+    /**
      * Set the {@link ParticleEmitter} to use for this Node. This will remove any {@link Geometry}
      * currently attached to the Node.
      *
@@ -750,13 +774,28 @@ public class Node implements EventDelegate.EventDelegateCallback {
      *                from this Node.
      */
     public void setParticleEmitter(ParticleEmitter emitter) {
-        if (emitter != null) {
-            mParticleEmitter = emitter;
-            nativeSetParticleEmitter(mNativeRef, emitter.mNativeRef);
+        mParticleEmitter = emitter;
+
+        // If null, remove the emitter and return.
+        if (emitter == null){
+            removeParticleEmitter();
+            return;
         }
-        else {
-            removeParticleEmitter();;
+
+        // Else, clean up any existing emitters if need be, and then set the particle emitter.
+        if (mFixedParticleEmitter != null) {
+            removeFixedParticleEmitter();
         }
+        nativeSetParticleEmitter(mNativeRef, emitter.mNativeRef);
+    }
+
+    /**
+     * Return the {@link FixedParticleEmitter} attached to this Node, if any.
+     *
+     * @return The {@link FixedParticleEmitter}, or null if none is attached.
+     */
+    public FixedParticleEmitter getFixedParticleEmitter() {
+        return mFixedParticleEmitter;
     }
 
     /**
@@ -773,6 +812,14 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void removeParticleEmitter() {
         mParticleEmitter = null;
+        nativeRemoveFixedParticleEmitter(mNativeRef);
+    }
+
+    /**
+     * Removes any attached {@link FixedParticleEmitter} from this Node.
+     */
+    public void removeFixedParticleEmitter() {
+        mFixedParticleEmitter = null;
         nativeRemoveParticleEmitter(mNativeRef);
     }
 
@@ -1479,7 +1526,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeRemoveSound(long nodeReference, long soundReference);
     private native void nativeRemoveAllSounds(long nodeReference);
     private native void nativeSetParticleEmitter(long nodeRef, long particleRef);
+    private native void nativeSetFixedParticleEmitter(long nodeRef, long particleRef);
     private native void nativeRemoveParticleEmitter(long nodeRef);
+    private native void nativeRemoveFixedParticleEmitter(long nodeRef);
     private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeGetWorldTransform(long nodeReference);

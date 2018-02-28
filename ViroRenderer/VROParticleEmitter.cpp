@@ -26,6 +26,21 @@ VROParticleEmitter::~VROParticleEmitter(){}
 
 void VROParticleEmitter::initEmitter(std::shared_ptr<VRODriver> driver,
                                      std::shared_ptr<VROSurface> particleGeometry) {
+    initParticleUBO(particleGeometry, driver);
+
+    std::shared_ptr<VROMaterial> material = particleGeometry->getMaterials()[0];
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(true);
+    material->setBlendMode(VROBlendMode::Add);
+
+    // Initialize the emitter with default values.
+    material->setLightingModel(VROLightingModel::Constant);
+    _particleGeometry = particleGeometry;
+    setDefaultValues();
+}
+
+void VROParticleEmitter::initParticleUBO(std::shared_ptr<VROSurface> particleGeometry,
+                                         std::shared_ptr<VRODriver> driver){
     // Create a particleUBO through which to batch particle information to the GPU.
     std::shared_ptr<VROParticleUBO> particleUBO = std::make_shared<VROParticleUBO>(driver);
 
@@ -38,14 +53,6 @@ void VROParticleEmitter::initEmitter(std::shared_ptr<VRODriver> driver,
     for (std::shared_ptr<VROShaderModifier> modifier : shaderModifiers) {
         material->addShaderModifier(modifier);
     }
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(true);
-    material->setBlendMode(VROBlendMode::Add);
-
-    // Initialize the emitter with default values.
-    material->setLightingModel(VROLightingModel::Constant);
-    _particleGeometry = particleGeometry;
-    setDefaultValues();
 }
 
 void VROParticleEmitter::setDefaultValues() {

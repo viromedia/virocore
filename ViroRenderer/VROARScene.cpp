@@ -10,11 +10,14 @@
 #include "VROARAnchor.h"
 #include "VROPortal.h"
 #include "VROARSession.h"
+#include "VROARFrame.h"
 #include "VROARDeclarativeNode.h"
 #include "VROARConstraintMatcher.h"
-#include "VROPointCloudEmitter.h"
+#include "VROFixedParticleEmitter.h"
 #include "VROARImperativeSession.h"
 #include "VROARDeclarativeSession.h"
+#include "VROMaterial.h"
+#include "VROImageUtil.h"
 
 VROARScene::~VROARScene() {
     // no-op, we define this here vs in header because for some reason if you want
@@ -87,41 +90,67 @@ void VROARScene::setDriver(std::shared_ptr<VRODriver> driver) {
     }
 }
 
+void VROARScene::updateParticles(const VRORenderContext &context) {
+    updatePointCloud();
+    VROScene::updateParticles(context);
+}
+
+void VROARScene::updatePointCloud(){
+    if (!_pointCloudEmitter || !_displayPointCloud){
+        return;
+    }
+
+    std::shared_ptr<VROARSession> arSession = _arSession.lock();
+    if (!arSession) {
+        return;
+    }
+
+    std::unique_ptr<VROARFrame> &frame = arSession->getLastFrame();
+    if (!frame) {
+        return;
+    }
+
+    std::vector<VROVector4f> pointCloudPoints = frame->getPointCloud()->getPoints();
+    _pointCloudEmitter->setParticleTransforms(pointCloudPoints);
+}
+
 void VROARScene::displayPointCloud(bool displayPointCloud) {
     _displayPointCloud = displayPointCloud;
 
     // If we should have an emitter and none exists, try to create one...
     if (_displayPointCloud && !_pointCloudEmitter) {
         // Note: the creation could fail!
-        _pointCloudEmitter = createPointCloudEmitter();
-        if (_pointCloudEmitter) {
-            if (_pointCloudSurface) {
-                _pointCloudEmitter->setParticleSurface(_pointCloudSurface);
-            }
-            _pointCloudEmitter->setMaxParticles(_pointCloudMaxPoints);
-            _pointCloudEmitter->setParticleScale(_pointCloudSurfaceScale);
-        }
+        initPointCloudEmitter();
     }
 
-    // If we had an emitter, then add or remove it.
-    if (_pointCloudEmitter) {
-        if (_displayPointCloud) {
-            _pointCloudNode->setParticleEmitter(_pointCloudEmitter);
-            if (_pointCloudNode->getParentNode() == nullptr) {
-                addNode(_pointCloudNode);
-            }
-        } else {
-            _pointCloudNode->removeParticleEmitter();
-            _pointCloudEmitter->clearParticles();
+    // Point cloud emitter has not yet initialized.
+    if (_pointCloudEmitter == nullptr){
+        return;
+    }
+
+    // Everything has been initialized, add / remove emitter as needed.
+    if (_displayPointCloud) {
+        _pointCloudNode->setParticleEmitter(_pointCloudEmitter);
+        if (_pointCloudNode->getParentNode() == nullptr) {
+            addNode(_pointCloudNode);
         }
+    } else {
+        _pointCloudNode->removeParticleEmitter();
+        _pointCloudEmitter->forceClearParticles();
     }
 }
 
 void VROARScene::resetPointCloudSurface() {
-    _pointCloudSurface = nullptr;
-    if (_pointCloudEmitter) {
-        _pointCloudEmitter->resetParticleSurface();
+    if (!_pointCloudEmitter) {
+        return;
     }
+
+    // Set the default surface on the point cloud emitter.
+    _pointCloudSurface = VROSurface::createSurface(1, 1);
+    _pointCloudSurface->getMaterials()[0]->getDiffuse().setTexture(getPointCloudTexture());
+    _pointCloudSurface->getMaterials()[0]->setBloomThreshold(-1);
+    _pointCloudSurface->getMaterials()[0]->setBlendMode(VROBlendMode::Add);
+    _pointCloudEmitter->setParticleSurface(_pointCloudSurface);
 }
 
 void VROARScene::setPointCloudSurface(std::shared_ptr<VROSurface> surface) {
@@ -145,13 +174,23 @@ void VROARScene::setPointCloudMaxPoints(int maxPoints) {
     }
 }
 
-std::shared_ptr<VROPointCloudEmitter> VROARScene::createPointCloudEmitter() {
+void VROARScene::initPointCloudEmitter() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     std::shared_ptr<VROARSession> arSession = _arSession.lock();
     if (!driver || !arSession) {
-        return nullptr;
+        return;
     }
-    return std::make_shared<VROPointCloudEmitter>(driver, arSession);
+
+    _pointCloudEmitter = std::make_shared<VROFixedParticleEmitter>(driver);
+    _pointCloudEmitter->setMaxParticles(_pointCloudMaxPoints);
+    _pointCloudEmitter->setParticleScale(_pointCloudSurfaceScale);
+
+    // Set a generic point cloud surface on the emitter if none is given.
+    if (!_pointCloudSurface) {
+        resetPointCloudSurface();
+    } else {
+        _pointCloudEmitter->setParticleSurface(_pointCloudSurface);
+    }
 }
 
 void VROARScene::setDelegate(std::shared_ptr<VROARSceneDelegate> delegate) {

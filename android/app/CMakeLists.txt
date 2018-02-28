@@ -89,6 +89,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Polyline_JNI.cpp
              src/main/cpp/jni/PhysicsDelegate_JNI.cpp
              src/main/cpp/jni/TransformDelegate_JNI.cpp
+             src/main/cpp/jni/FixedParticleEmitter_JNI.cpp
              src/main/cpp/jni/ParticleEmitter_JNI.cpp
              src/main/cpp/jni/Portal_JNI.cpp
              src/main/cpp/jni/PortalScene_JNI.cpp
@@ -182,7 +183,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROIrradianceRenderPass.cpp
              ../../ViroRenderer/VROPrefilterRenderPass.cpp
              ../../ViroRenderer/VROBRDFRenderPass.cpp
-             ../../ViroRenderer/VROPointCloudEmitter.cpp
+             ../../ViroRenderer/VROFixedParticleEmitter.cpp
 
              # AR (no arcore dependencies)
              ../../ViroRenderer/VROARSceneController.cpp

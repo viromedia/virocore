@@ -24,6 +24,7 @@
 #include "TransformDelegate_JNI.h"
 #include "ParticleEmitter_JNI.h"
 #include "ARUtils_JNI.h"
+#include "FixedParticleEmitter_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -131,16 +132,56 @@ JNI_METHOD(void, nativeClearGeometry)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetFixedParticleEmitter)(JNIEnv *env,
+                                           jclass clazz,
+                                           jlong node_j,
+                                           jlong particle_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VROFixedParticleEmitter> particle_w = FixedParticleEmitter::native(particle_j);
+    VROPlatformDispatchAsyncRenderer([node_w, particle_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        std::shared_ptr<VROFixedParticleEmitter> particle = particle_w.lock();
+        if (!node || !particle) {
+            return;
+        }
+
+        if (node->getParticleEmitter()) {
+            node->removeParticleEmitter();
+        }
+
+        node->setParticleEmitter(particle);
+    });
+}
+
 JNI_METHOD(void, nativeSetParticleEmitter)(JNIEnv *env,
                                            jclass clazz,
                                            jlong node_j,
                                            jlong particle_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
-    std::shared_ptr<VROParticleEmitter> particle = ParticleEmitter::native(particle_j);
-    VROPlatformDispatchAsyncRenderer([node_w, particle] {
+    std::weak_ptr<VROParticleEmitter> particle_w = ParticleEmitter::native(particle_j);
+    VROPlatformDispatchAsyncRenderer([node_w, particle_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        std::shared_ptr<VROParticleEmitter> particle = particle_w.lock();
+        if (!node || !particle) {
+            return;
+        }
+
+        if (node->getParticleEmitter()) {
+            node->removeParticleEmitter();
+        }
+
+        node->setParticleEmitter(particle);
+    });
+}
+
+JNI_METHOD(void, nativeRemoveFixedParticleEmitter)(JNIEnv *env,
+                                                   jclass clazz,
+                                                   jlong node_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->setParticleEmitter(particle);
+            node->removeParticleEmitter();
         }
     });
 }

@@ -20,6 +20,10 @@ std::shared_ptr<VROTexture> getBlankTexture() {
 }
 
 std::shared_ptr<VROTexture> getPointCloudTexture() {
+    if (!staticPointCloudTexture){
+        initPointCloudTexture();
+    }
+
     return staticPointCloudTexture;
 }
 
