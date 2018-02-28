@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.opengl.GLES20;
@@ -584,6 +583,17 @@ public class ViroMediaRecorder {
         nativeScheduleScreenCapture(mNativeRecorderRef);
     }
 
+    /**
+     * Schedules a screenshot to be taken and saved on the next rendered frame. When finished, a
+     * bitmap representing the taken screen shot will be provided in the ScreenshotFinishListener
+     * callback.
+     *
+     * @param finishListener Callback interface that is invoked on success or failure.
+     */
+    public void takeScreenShotAsync(ScreenshotFinishListener finishListener) {
+        takeScreenShotAsync(null, false, finishListener);
+    }
+
     /*
      ScreenShotRunnable for persisting screenshot images on the device asynchronously.
      */
@@ -629,7 +639,23 @@ public class ViroMediaRecorder {
             }
         }
 
-        protected void persistImageData() {
+        private void persistImageData() {
+            if (mFileName == null){
+                persistImageBitmap();
+            } else {
+                persistImageDataFile();
+            }
+        }
+
+        private void persistImageBitmap(){
+            Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+            mPixelBuf.rewind();
+            reverseBuf(mPixelBuf, mWidth, mHeight);
+            bitmap.copyPixelsFromBuffer(mPixelBuf);
+            mCompletionCallback.onSuccess(bitmap, null);
+        }
+
+        private void persistImageDataFile(){
             // If we've failed to render the screen capture, return.
             if (!mRunnableSuccess) {
                 mCompletionCallback.onError(Error.UNKNOWN);
