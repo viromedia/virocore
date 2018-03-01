@@ -1,54 +1,40 @@
 //
-//  VROViewAR.m
+//  VROViewScene.m
 //  ViroRenderer
 //
-//  Created by Raj Advani on 5/31/17.
-//  Copyright © 2017 Viro Media. All rights reserved.
+//  Created by Raj Advani on 3/1/18.
+//  Copyright © 2018 Viro Media. All rights reserved.
 //
 
-#import "VROViewAR.h"
+#import "VROViewScene.h"
 #import "VRORenderer.h"
-#import "VROARSceneController.h"
+#import "VROSceneController.h"
 #import "VRORenderDelegateiOS.h"
 #import "VROTime.h"
 #import "VROEye.h"
 #import "VRODriverOpenGLiOS.h"
 #import "VROApiKeyValidator.h"
 #import "VROApiKeyValidatorDynamo.h"
-#import "VROARSessioniOS.h" 
-#import "VROARSessionInertial.h"
-#import "VROARCamera.h"
-#import "VROARAnchor.h"
-#import "VROARFrame.h"
 #import "VROConvert.h"
-#import "VROARHitTestResult.h"
 #import "VRONodeCamera.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
-#import "VROARScene.h"
 #import "VROChoreographer.h"
 #import "VROInputControllerAR.h"
-#import "VROProjector.h"
 #import "VROWeakProxy.h"
 #import "VROViewRecorder.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 
-@interface VROViewAR () {
+@interface VROViewScene () {
     std::shared_ptr<VRORenderer> _renderer;
-    std::shared_ptr<VROARSceneController> _sceneController;
+    std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
-    std::shared_ptr<VROSurface> _cameraBackground;
-    std::shared_ptr<VROARSession> _arSession;
-    std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROInputControllerAR> _inputController;
     
     CADisplayLink *_displayLink;
     int _frame;
     double _suspendedNotificationTime;
-    bool _hasTrackingInitialized;
-
-    VROWorldAlignment _worldAlignment;
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -56,7 +42,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 @end
 
-@implementation VROViewAR
+@implementation VROViewScene
 
 @dynamic renderDelegate;
 @dynamic sceneController;
@@ -67,8 +53,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     self = [super initWithCoder:coder];
     if (self) {
         _suspended = YES;
-        _worldAlignment = VROWorldAlignment::Gravity;
-        
         VRORendererConfiguration config;
         [self initRenderer:config];
     }
@@ -77,12 +61,10 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (instancetype)initWithFrame:(CGRect)frame
                        config:(VRORendererConfiguration)config
-                      context:(EAGLContext *)context
-               worldAlignment:(VROWorldAlignment)worldAlignment {
+                      context:(EAGLContext *)context {
     self = [super initWithFrame:frame context:context];
     if (self) {
         _suspended = YES;
-        _worldAlignment = worldAlignment;
         [self initRenderer:config];
     }
     return self;
@@ -90,15 +72,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
-    
-    // If the frame changes, then update the _camera background to match
-    if (_cameraBackground) {
-        _cameraBackground->setX(self.frame.size.width * self.contentScaleFactor / 2.0);
-        _cameraBackground->setY(self.frame.size.height * self.contentScaleFactor / 2.0);
-        _cameraBackground->setWidth(self.frame.size.width * self.contentScaleFactor);
-        _cameraBackground->setHeight(self.frame.size.height * self.contentScaleFactor);
-    }
-
     if (_inputController) {
         _inputController->setViewportSize(self.frame.size.width * self.contentScaleFactor,
                                           self.frame.size.height * self.contentScaleFactor);
@@ -106,7 +79,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)initRenderer:(VRORendererConfiguration)config {
-    VROPlatformSetType(VROPlatformType::iOSARKit);
+    VROPlatformSetType(VROPlatformType::iOSSceneView);
     if (!self.context) {
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
         self.context = context;
@@ -154,12 +127,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context);
     _frame = 0;
     _suspendedNotificationTime = VROTimeCurrentSeconds();
-
     _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
                                                               self.frame.size.height * self.contentScaleFactor);
-    
     _renderer = std::make_shared<VRORenderer>(config, _inputController);
-    _hasTrackingInitialized = false;
     
     /*
      Set up the Audio Session properly for recording and playing back audio. We need
@@ -170,31 +140,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     [session setCategory:AVAudioSessionCategoryPlayAndRecord
              withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
                    error:nil];
-    
-    /*
-     Create AR session checking if an ARKit class and one of our classes have been defined. If not, then load VROARSessionInertial,
-     otherwise create a VROARSessioniOS w/ 6DOF tracking.
-     */
-    if (NSClassFromString(@"ARSession") == nil) {
-        _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
-        // in the 3DOF case, tracking doesn't take time to initialize, but the sceneController hasn't yet been set.
-        _hasTrackingInitialized = true;
-    } else {
-        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _worldAlignment, _driver);
-    }
-
-    _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
-    
-    // set session on input controller!
-    _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
-    
-    /*
-     Set the point of view to a special node that will follow the user's
-     real position.
-     */
-    _pointOfView = std::make_shared<VRONode>();
-    _pointOfView->setCamera(std::make_shared<VRONodeCamera>());
-    _renderer->setPointOfView(_pointOfView);
     
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
 
@@ -274,7 +219,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (void)handleTap:(UITapGestureRecognizer *)recognizer {
     CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-    
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
     
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
@@ -293,9 +237,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (void)deleteGL {
     [self.viewRecorder deleteGL];
-    if (_arSession) {
-        _arSession.reset();
-    }
     if (_sceneController) {
         _sceneController->getScene()->getRootNode()->deleteGL();
     }
@@ -339,59 +280,18 @@ static VROVector3f const kZeroVector = VROVector3f();
     [self.viewRecorder takeScreenshot:fileName saveToCameraRoll:saveToCamera withCompletionHandler:completionHandler];
 }
 
-#pragma mark - AR Functions
-
-- (std::vector<VROARHitTestResult>)performARHitTest:(VROVector3f)ray {
-    // check that the ray is in front of the camera
-    VROVector3f cameraForward = _renderer->getCamera().getForward();
-    if (cameraForward.dot(ray) <= 0) {
-        return std::vector<VROARHitTestResult>();
-    }
-    
-    VROVector3f worldPoint = _renderer->getCamera().getPosition() + ray.normalize();
-    VROVector3f screenPoint = _renderer->projectPoint(worldPoint);
-
-    return [self performARHitTestWithPoint:screenPoint.x y:screenPoint.y];
-}
-
-- (std::vector<VROARHitTestResult>)performARHitTestWithPoint:(int)x y:(int)y {
-    int viewportArr[4] = {0, 0,
-        (int) (self.bounds.size.width  * self.contentScaleFactor),
-        (int) (self.bounds.size.height * self.contentScaleFactor)};
-
-    // check the 2D point, perform and return the results from the AR hit test
-    std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
-    if (frame && x >= 0 && x <= viewportArr[2] && y >= 0 && y <= viewportArr[3]) {
-        std::vector<VROARHitTestResult> results = frame->hitTest(x, y,
-                                                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                                                     VROARHitTestResultType::ExistingPlane,
-                                                                     VROARHitTestResultType::EstimatedHorizontalPlane,
-                                                                     VROARHitTestResultType::FeaturePoint });
-        return results;
-    }
-
-    return std::vector<VROARHitTestResult>();
-}
-
-- (std::shared_ptr<VROARSession>)getARSession {
-    return _arSession;
-}
-
 #pragma mark - Settings and Notifications
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    // the _cameraBackground will be updated if/when the frame is actually set.
-    _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
+   
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
     _displayLink.paused = YES;
-    _arSession->pause();
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
     _displayLink.paused = NO;
-    _arSession->run(); 
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
@@ -399,12 +299,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     _renderer->setDelegate(_renderDelegateWrapper);
 }
 
-- (void)setARSessionDelegate:(std::shared_ptr<VROARSessionDelegate>)delegate {
-    _arSession->setDelegate(delegate);
-}
-
 - (void)setVrMode:(BOOL)enabled {
-    // No-op in AR mode
+    // No-op in scene view
 }
 
 - (void)setDebugHUDEnabled:(BOOL)enabled {
@@ -412,7 +308,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (NSString *)getPlatform {
-    return @"ar";
+    return @"scene";
 }
 
 - (NSString *)getHeadset {
@@ -446,8 +342,9 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Camera
 
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node {
-    pabort("May not set POV in AR mode");
+    _renderer->setPointOfView(node);
 }
+
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController {
@@ -457,26 +354,8 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
                   duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
-    _sceneController = std::dynamic_pointer_cast<VROARSceneController>(sceneController);
-    passert_msg (_sceneController != nullptr, "AR View requires an AR Scene Controller!");
-
+    _sceneController = sceneController;
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
-
-    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
-    passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-    
-    _arSession->setScene(arScene);
-    _arSession->setDelegate(arScene->getSessionDelegate());
-    arScene->setARSession(_arSession);
-    arScene->addNode(_pointOfView);
-    arScene->setDriver(_driver);
-    
-    if (_hasTrackingInitialized) {
-        arScene->trackingHasInitialized();
-    }
-
-    // Reset the camera background for the new scene
-    _cameraBackground.reset();
 }
 
 #pragma mark - Getters
@@ -506,94 +385,29 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)renderFrame {
-    if (!_arSession) {
-        return;
-    }
-    
-    /*
-     Setup GL state.
-     */
     glEnable(GL_DEPTH_TEST);    
     _driver->setCullMode(VROCullMode::Back);
     
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
-    
-    if (_sceneController) {
-        if (!_cameraBackground) {
-            [self initARSessionWithViewport:viewport scene:_sceneController->getScene()];
-        }
-    }
 
-    // The viewport can be 0, if say in React Native, the user accidentally messes up their
-    // styles and React Native lays the view out with 0 width or height. No use rendering
-    // in this case.
+    /*
+     The viewport can be 0, if say in React Native, the user accidentally messes up their
+     styles and React Native lays the view out with 0 width or height. No use rendering
+     in this case.
+     */
     if (viewport.getWidth() == 0 || viewport.getHeight() == 0) {
         return;
     }
-
-    if (_arSession->isReady()) {
-        // TODO Only on viewport change (and scene change!)
-        _arSession->setViewport(viewport);
-        if (!_sceneController->getScene()->getRootNode()->getBackground()) {
-            _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
-        }
-
-        /*
-         Retrieve transforms from the AR session.
-         */
-        std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
-        const std::shared_ptr<VROARCamera> camera = frame->getCamera();
-        
-        VROFieldOfView fov;
-        VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
-        VROMatrix4f rotation = camera->getRotation();
-        VROVector3f position = camera->getPosition();
-        
-        if (_sceneController && !_hasTrackingInitialized) {
-            if (position != kZeroVector) {
-                _hasTrackingInitialized = true;
-                
-                std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
-                passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-                arScene->trackingHasInitialized();
-            }
-        }
-        
-        // TODO Only on orientation change
-        VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();
-        _cameraBackground->setTexcoordTransform(backgroundTransform);
-        
-        /*
-         Render the 3D scene.
-         */
-        _pointOfView->getCamera()->setPosition(position);
-        _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
-        
-        glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-        _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
-        _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
-        _renderer->endFrame(_driver);
-
-        /*
-         Notify scene of the updated ambient light estimates.
-         */
-        std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_arSession->getScene());
-        scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
-    }
-    else {
-        /*
-         Render black while waiting for the AR session to initialize.
-         */
-        VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
-        VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
-        
-        _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
-        glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-        _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
-        _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
-        _renderer->endFrame(_driver);
-    }
+    
+    VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    
+    _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
+    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
+    _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
+    _renderer->endFrame(_driver);
 }
 
 - (void)renderSuspended {
@@ -608,34 +422,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 }
 
-- (void)initARSessionWithViewport:(VROViewport)viewport scene:(std::shared_ptr<VROScene>)scene {
-    _cameraBackground = VROSurface::createSurface(viewport.getX() + viewport.getWidth()  / 2.0,
-                                                  viewport.getY() + viewport.getHeight() / 2.0,
-                                                  viewport.getWidth(), viewport.getHeight(),
-                                                  0, 0, 1, 1);
-    _cameraBackground->setScreenSpace(true);
-    _cameraBackground->setName("Camera");
-    
-    std::shared_ptr<VROMaterial> material = _cameraBackground->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Constant);
-    material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
-    material->setWritesToDepthBuffer(false);
-    
-    _arSession->setViewport(viewport);
-    _arSession->setAnchorDetection({ VROAnchorDetection::PlanesHorizontal });
-    _arSession->run();
-}
-
-+ (BOOL) isARSupported {
-  if (@available(iOS 11, *)) {
-    return [ARConfiguration isSupported];
-  }
-  return false;
-}
-
 - (void)recenterTracking {
-    // TODO Implement this, try to share code with VROSceneRendererCardboardOpenGL; maybe
-    //      move the functionality into VRORenderer
+    // No-op in Scene view
 }
 
 @end

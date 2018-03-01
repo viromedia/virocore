@@ -12,10 +12,10 @@
 enum class VROTestSceneType {
     VR,
     AR,
+    Scene,
 };
 
-// Set to NO to test using an AR view
-static const VROTestSceneType kTestType = VROTestSceneType::VR;
+static const VROTestSceneType kTestType = VROTestSceneType::Scene;
 static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 @interface VROTestViewController ()
@@ -38,7 +38,7 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
         self.renderDelegate.test = kRendererTest;
         self.view = view;
     }
-    else {
+    else if (kTestType == VROTestSceneType::AR) {
         VROViewAR *view = [[VROViewAR alloc] initWithFrame:[UIScreen mainScreen].bounds
                                                     config:config
                                                    context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]
@@ -53,6 +53,18 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
         
         //[self testVideoRecording];
         //[self testScreenshot];
+    }
+    else {
+        VROViewScene *view = [[VROViewScene alloc] initWithFrame:[UIScreen mainScreen].bounds
+                                                          config:config
+                                                         context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]];
+        view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        view.renderDelegate = self.renderDelegate;
+        view.suspended = NO;
+        
+        self.renderDelegate.view = view;
+        self.renderDelegate.test = kRendererTest;
+        self.view = view;
     }
 }
 

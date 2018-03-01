@@ -663,6 +663,8 @@
 		8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */; };
 		8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */; };
 		8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */; };
+		8FFA8A0620485A9500C4D99B /* VROViewScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FFA8A0420485A9400C4D99B /* VROViewScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FFA8A0720485A9500C4D99B /* VROViewScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA8A0520485A9500C4D99B /* VROViewScene.mm */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */; };
@@ -1494,6 +1496,8 @@
 		8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aliengirl_normal.png; path = ViroSample/aliengirl_normal.png; sourceTree = "<group>"; };
 		8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aliengirl_specular.png; path = ViroSample/aliengirl_specular.png; sourceTree = "<group>"; };
 		8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = aliengirl.vrx; path = ViroSample/aliengirl.vrx; sourceTree = "<group>"; };
+		8FFA8A0420485A9400C4D99B /* VROViewScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewScene.h; sourceTree = "<group>"; };
+		8FFA8A0520485A9500C4D99B /* VROViewScene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROViewScene.mm; sourceTree = "<group>"; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
 		A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleEmitter.cpp; sourceTree = "<group>"; };
@@ -2318,6 +2322,7 @@
 		8FB659241CD9082000D036EB /* Platforms */ = {
 			isa = PBXGroup;
 			children = (
+				8FFA8A0320485A4E00C4D99B /* Scene */,
 				8F129FC11EDF6A8700341D83 /* AR */,
 				8FB659251CD9083800D036EB /* Metal */,
 				8F0FE6621CD25A3500A4C297 /* GVR */,
@@ -2708,6 +2713,15 @@
 			name = Sensors;
 			sourceTree = "<group>";
 		};
+		8FFA8A0320485A4E00C4D99B /* Scene */ = {
+			isa = PBXGroup;
+			children = (
+				8FFA8A0420485A9400C4D99B /* VROViewScene.h */,
+				8FFA8A0520485A9500C4D99B /* VROViewScene.mm */,
+			);
+			name = Scene;
+			sourceTree = "<group>";
+		};
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -3025,6 +3039,7 @@
 				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
 				8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */,
 				8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */,
+				8FFA8A0620485A9500C4D99B /* VROViewScene.h in Headers */,
 				8FCB100D1DD131C900FE425C /* VROPlatformUtil.h in Headers */,
 				8FEACF0420182CC80082D18B /* VROIrradianceRenderPass.h in Headers */,
 				8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */,
@@ -3719,6 +3734,7 @@
 				8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */,
 				8FD4DF0B1C18ED3C003DC425 /* VROGeometry.cpp in Sources */,
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
+				8FFA8A0720485A9500C4D99B /* VROViewScene.mm in Sources */,
 				8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,

@@ -41,7 +41,6 @@ void VROInputControllerAR::onRotateStart(VROVector3f touchPos) {
     VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, 0, VROEventDelegate::RotateState::RotateStart);
 }
 
-
 void VROInputControllerAR::onRotate(float rotationRadians) {
     _latestRotation = rotationRadians;
 }
@@ -58,7 +57,6 @@ void VROInputControllerAR::onPinchStart(VROVector3f touchPos) {
     VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
     VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, 1.0, VROEventDelegate::PinchState::PinchStart);
 }
-
 
 void VROInputControllerAR::onPinchScale(float scale) {
     _latestScale = scale;

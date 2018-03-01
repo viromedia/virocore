@@ -36,7 +36,8 @@ enum class VROPlatformType {
     AndroidARCore,
     AndroidSceneView,
     iOSCardboard,
-    iOSARKit
+    iOSARKit,
+    iOSSceneView,
 };
 
 void VROPlatformSetType(VROPlatformType type);
