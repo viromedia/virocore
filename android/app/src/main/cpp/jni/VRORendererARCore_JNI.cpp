@@ -54,11 +54,11 @@ JNI_METHOD(jint, nativeGetCameraTextureId)(JNIEnv *env,
     return arRenderer->getCameraTextureId();
 }
 
-JNI_METHOD(void, nativeOnARCoreInstalled)(JNIEnv *env, jobject object, jlong renderer_j,
-                                          jobject context) {
+JNI_METHOD(void, nativeSetARCoreSession)(JNIEnv *env, jobject object, jlong renderer_j,
+                                         jlong session_j) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
-    arRenderer->onARCoreInstalled(context);
+    arRenderer->setARCoreSession(reinterpret_cast<arcore::Session *>(session_j));
 }
 
 JNI_METHOD(void, nativeSetARDisplayGeometry)(JNIEnv *env, jobject object, jlong renderer_j,

@@ -13,7 +13,7 @@
 #include "VROPlatformUtil.h"
 #include "VROVector4f.h"
 
-VROARFrameARCore::VROARFrameARCore(ArFrame *frame,
+VROARFrameARCore::VROARFrameARCore(arcore::Frame *frame,
                                    VROViewport viewport,
                                    std::shared_ptr<VROARSessionARCore> session) :
     _session(session),
@@ -32,7 +32,7 @@ double VROARFrameARCore::getTimestamp() const {
     if (!session) {
         return 0;
     }
-    return (double) arcore::frame::getTimestampNs(_frame, session->getSessionInternal());
+    return (double) _frame->getTimestampNs();
 }
 
 const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
@@ -45,32 +45,37 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
     if (!session_s) {
         return {};
     }
-    ArSession *session = session_s->getSessionInternal();
+    arcore::Session *session = session_s->getSessionInternal();
 
-    ArHitResultList *hitResultList = arcore::hitresultlist::create(session);
-    arcore::frame::hitTest(_frame, x, y, session, hitResultList);
+    arcore::HitResultList *hitResultList = session->createHitResultList();
+    _frame->hitTest(x, y, hitResultList);
 
-    int listSize = arcore::hitresultlist::size(hitResultList, session);
+    int listSize = hitResultList->size();
     std::vector<VROARHitTestResult> toReturn;
 
     for (int i = 0; i < listSize; i++) {
-        ArHitResult *hitResult = arcore::hitresult::create(session);
-        arcore::hitresultlist::getItem(hitResultList, i, session, hitResult);
-        ArTrackable *trackable = arcore::hitresult::acquireTrackable(hitResult, session);
+        arcore::HitResult *hitResult = session->createHitResult();
+        hitResultList->getItem(i, hitResult);
 
-        ArPose *pose = arcore::pose::create(session);
-        arcore::hitresult::getPose(hitResult, session, pose);
+        arcore::Trackable *trackable = hitResult->acquireTrackable();
+        if (trackable == nullptr) {
+            delete (hitResult);
+            continue;
+        }
+
+        arcore::Pose *pose = session->createPose();
+        hitResult->getPose(pose);
 
         // Determine if the Trackable is a Plane
-        bool isPlane = arcore::trackable::getType(trackable, session) == arcore::TrackableType::Plane;
+        bool isPlane = trackable->getType() == arcore::TrackableType::Plane;
 
         // Create the anchor only if the Trackable is a Plane
         std::shared_ptr<VROARAnchor> vAnchor = nullptr;
         VROARHitTestResultType type;
         if (isPlane) {
-            ArPlane *plane = arcore::trackable::asPlane(trackable);
-            bool inExtent = arcore::plane::isPoseInExtents(plane, pose, session);
-            bool inPolygon = arcore::plane::isPoseInPolygon(plane, pose, session);
+            arcore::Plane *plane = (arcore::Plane *) trackable;
+            bool inExtent = plane->isPoseInExtents(pose);
+            bool inPolygon = plane->isPoseInPolygon(pose);
 
             if (inExtent || inPolygon) {
                 type = VROARHitTestResultType::ExistingPlaneUsingExtent;
@@ -78,20 +83,20 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
                 type = VROARHitTestResultType::EstimatedHorizontalPlane;
             }
 
-            ArAnchor *anchor = arcore::trackable::acquireAnchor(trackable, pose, session);
+            arcore::Anchor *anchor = trackable->acquireAnchor(pose);
             vAnchor = session_s->getAnchorForNative(anchor);
-            arcore::anchor::detach(anchor, session);
-            arcore::anchor::release(anchor);
+            anchor->detach();
+            delete (anchor);
         } else {
             type = VROARHitTestResultType::FeaturePoint;
         }
 
         // Get the distance from the camera to the HitResult.
-        float distance = arcore::hitresult::getDistance(hitResult, session);
+        float distance = hitResult->getDistance();
 
         // Get the transform to the HitResult.
         float worldTransformMtx[16];
-        arcore::pose::toMatrix(pose, session, worldTransformMtx);
+        pose->toMatrix(worldTransformMtx);
         VROMatrix4f worldTransform(worldTransformMtx);
 
         // Calculate the local transform, relative to the anchor (if anchor available).
@@ -105,11 +110,11 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
         VROARHitTestResult vResult(type, vAnchor, distance, worldTransform, localTransform);
         toReturn.push_back(vResult);
 
-        arcore::hitresult::destroy(hitResult);
-        arcore::trackable::release(trackable);
+        delete (hitResult);
+        delete (trackable);
     }
 
-    arcore::hitresultlist::destroy(hitResultList);
+    delete (hitResultList);
     return toReturn;
 }
 
@@ -122,7 +127,7 @@ bool VROARFrameARCore::hasDisplayGeometryChanged() {
     if (!session) {
         return false;
     }
-    return arcore::frame::hasDisplayGeometryChanged(_frame, session->getSessionInternal());
+    return _frame->hasDisplayGeometryChanged();
 }
 
 void VROARFrameARCore::getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR) {
@@ -132,7 +137,7 @@ void VROARFrameARCore::getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, 
     }
 
     float texcoords[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    arcore::frame::getBackgroundTexcoords(_frame, session->getSessionInternal(), texcoords);
+    _frame->getBackgroundTexcoords(texcoords);
     BL->x = texcoords[0];
     BL->y = texcoords[1];
     TL->x = texcoords[2];
@@ -154,17 +159,16 @@ float VROARFrameARCore::getAmbientLightIntensity() const {
     }
 
     float intensity = 0;
-    ArLightEstimate *estimate = arcore::light_estimate::create(session->getSessionInternal());
+    arcore::LightEstimate *estimate = session->getSessionInternal()->createLightEstimate();
 
-    arcore::frame::getLightEstimate(_frame, session->getSessionInternal(), estimate);
-    if (arcore::light_estimate::isValid(estimate, session->getSessionInternal())) {
-        intensity = arcore::light_estimate::getPixelIntensity(estimate, session->getSessionInternal());
+    _frame->getLightEstimate(estimate);
+    if (estimate->isValid()) {
+        intensity = estimate->getPixelIntensity();
     }
     else {
         intensity = 1.0;
     }
-    arcore::light_estimate::destroy(estimate);
-
+    delete (estimate);
     // multiply by 1000 because pixel intensity ranges from 0 to 1
     return intensity * 1000;
 }
@@ -183,15 +187,13 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
     }
 
     JNIEnv* env = VROPlatformGetJNIEnv();
-
     std::vector<VROVector4f> points;
     std::vector<uint64_t> identifiers; // Android doesn't have any identifiers with their point cloud!
 
-    ArPointCloud *pointCloud = arcore::frame::acquirePointCloud(_frame, session->getSessionInternal());
+    arcore::PointCloud *pointCloud = _frame->acquirePointCloud();
     if (pointCloud != NULL) {
-        const float *pointsArray = arcore::pointcloud::getPoints(pointCloud,
-                                                                 session->getSessionInternal());
-        int numPoints = arcore::pointcloud::getNumPoints(pointCloud, session->getSessionInternal());
+        const float *pointsArray = pointCloud->getPoints();
+        int numPoints = pointCloud->getNumPoints();
 
         for (int i = 0; i < numPoints; i++) {
             // Only use points with > 0.1. This is just meant to make the display of the points
@@ -203,9 +205,8 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
                 points.push_back(point);
             }
         }
-        arcore::pointcloud::release(pointCloud);
+        delete (pointCloud);
     }
-
     _pointCloud = std::make_shared<VROARPointCloud>(points, identifiers);
     return _pointCloud;
 }

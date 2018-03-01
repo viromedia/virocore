@@ -11,519 +11,499 @@
 
 namespace arcore {
 
-    namespace config {
+#pragma mark - Config
 
-        ArConfig *create(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                         UpdateMode updateMode, const ArSession *session) {
-
-            ArConfig *config;
-            ArConfig_create(session, &config);
-
-            // Set light estimation mode
-            ArLightEstimationMode arLightingMode;
-            switch(lightingMode) {
-                case LightingMode::Disabled: {
-                    arLightingMode = AR_LIGHT_ESTIMATION_MODE_DISABLED;
-                    break;
-                }
-                case LightingMode::AmbientIntensity: {
-                    arLightingMode = AR_LIGHT_ESTIMATION_MODE_AMBIENT_INTENSITY;
-                    break;
-                }
-            }
-            ArConfig_setLightEstimationMode(session, config, arLightingMode);
-
-            // Set plane finding mode
-            ArPlaneFindingMode arPlaneFindingMode;
-            switch(planeFindingMode) {
-                case PlaneFindingMode::Disabled: {
-                    arPlaneFindingMode = AR_PLANE_FINDING_MODE_DISABLED;
-                    break;
-                }
-                case PlaneFindingMode::Horizontal: {
-                    arPlaneFindingMode = AR_PLANE_FINDING_MODE_HORIZONTAL;
-                    break;
-                }
-            }
-            ArConfig_setPlaneFindingMode(session, config, arPlaneFindingMode);
-
-            // Set update mode
-            ArUpdateMode arUpdateMode;
-            switch(updateMode) {
-                case UpdateMode::Blocking: {
-                    arUpdateMode = AR_UPDATE_MODE_BLOCKING;
-                    break;
-                }
-                case UpdateMode::LatestCameraImage: {
-                    arUpdateMode = AR_UPDATE_MODE_LATEST_CAMERA_IMAGE;
-                    break;
-                }
-            }
-            ArConfig_setUpdateMode(session, config, arUpdateMode);
-
-            return config;
-        }
-
-        void destroy(ArConfig *config) {
-            ArConfig_destroy(config);
-        }
-
+    ConfigNative::~ConfigNative() {
+        ArConfig_destroy(_config);
     }
 
-    namespace pose {
+#pragma mark - Pose
 
-        ArPose *create(const ArSession *session) {
-            ArPose *pose;
-            ArPose_create(session, nullptr, &pose);
-            return pose;
-        }
-
-        void destroy(ArPose *pose) {
-            ArPose_destroy(pose);
-        }
-
-        void toMatrix(const ArPose *pose, const ArSession *session, float *outMatrix) {
-            ArPose_getMatrix(session, pose, outMatrix);
-        }
-
+    PoseNative::~PoseNative() {
+        ArPose_destroy(_pose);
     }
 
-    namespace anchorlist {
-
-        ArAnchorList *create(const ArSession *session) {
-            ArAnchorList *list;
-            ArAnchorList_create(session, &list);
-            return list;
-        }
-
-        void destroy(ArAnchorList *anchorList) {
-            ArAnchorList_destroy(anchorList);
-        }
-
-        ArAnchor *acquireItem(const ArAnchorList *anchorList, int index, const ArSession *session) {
-            ArAnchor *anchor;
-            ArAnchorList_acquireItem(session, anchorList, index, &anchor);
-            return anchor;
-        }
-
-        int size(const ArAnchorList *anchorList, const ArSession *session) {
-            int size;
-            ArAnchorList_getSize(session, anchorList, &size);
-            return size;
-        }
-
+    void PoseNative::toMatrix(float *outMatrix) {
+        ArPose_getMatrix(_session, _pose, outMatrix);
     }
 
-    namespace anchor {
+#pragma mark - AnchorList
 
-        uint64_t getHashCode(const ArAnchor *anchor) {
-            return reinterpret_cast<uint64_t>(anchor);
-        }
-
-        uint64_t getId(const ArAnchor *anchor) {
-            return reinterpret_cast<uint64_t>(anchor);
-        }
-
-        void getPose(const ArAnchor *anchor, const ArSession *session, ArPose *outPose) {
-            ArAnchor_getPose(session, anchor, outPose);
-        }
-
-        TrackingState getTrackingState(const ArAnchor *anchor, const ArSession *session) {
-            ArTrackingState trackingState;
-            ArAnchor_getTrackingState(session, anchor, &trackingState);
-
-            if (trackingState == AR_TRACKING_STATE_TRACKING) {
-                return TrackingState::Tracking;
-            }
-            else {
-                return TrackingState::NotTracking;
-            }
-        }
-
-        void detach(ArAnchor *anchor, ArSession *session) {
-            ArAnchor_detach(session, anchor);
-        }
-
-        void release(ArAnchor *anchor) {
-            ArAnchor_release(anchor);
-        }
-
+    AnchorListNative::~AnchorListNative() {
+        ArAnchorList_destroy(_anchorList);
     }
 
-    namespace trackablelist {
+    Anchor *AnchorListNative::acquireItem(int index) {
+        ArAnchor *anchor;
+        ArAnchorList_acquireItem(_session, _anchorList, index, &anchor);
+        return new AnchorNative(anchor, _session);
+    }
 
-        ArTrackableList *create(const ArSession *session) {
-            ArTrackableList *list;
-            ArTrackableList_create(session, &list);
-            return list;
-        }
+    int AnchorListNative::size() {
+        int size;
+        ArAnchorList_getSize(_session, _anchorList, &size);
+        return size;
+    }
 
-        void destroy(ArTrackableList *trackableList) {
-            ArTrackableList_destroy(trackableList);
-        }
+#pragma mark - Anchor
 
-        ArTrackable *acquireItem(const ArTrackableList *trackableList, int index, const ArSession *session) {
-            ArTrackable *trackable;
-            ArTrackableList_acquireItem(session, trackableList, index, &trackable);
-            return trackable;
-        }
+    AnchorNative::~AnchorNative() {
+        ArAnchor_release(_anchor);
+    }
 
-        int size(const ArTrackableList *trackableList, const ArSession *session) {
-            int size;
-            ArTrackableList_getSize(session, trackableList, &size);
-            return size;
+    uint64_t AnchorNative::getHashCode() {
+        return reinterpret_cast<uint64_t>(_anchor);
+    }
+
+    uint64_t AnchorNative::getId() {
+        return reinterpret_cast<uint64_t>(_anchor);
+    }
+
+    void AnchorNative::getPose(Pose *outPose) {
+        ArAnchor_getPose(_session, _anchor, ((PoseNative *)outPose)->_pose);
+    }
+
+    TrackingState AnchorNative::getTrackingState() {
+        ArTrackingState trackingState;
+        ArAnchor_getTrackingState(_session, _anchor, &trackingState);
+
+        if (trackingState == AR_TRACKING_STATE_TRACKING) {
+            return TrackingState::Tracking;
+        } else {
+            return TrackingState::NotTracking;
         }
     }
 
-    namespace trackable {
-
-        ArAnchor *acquireAnchor(ArTrackable *trackable, ArPose *pose, ArSession *session) {
-            ArAnchor *anchor;
-            ArTrackable_acquireNewAnchor(session, trackable, pose, &anchor);
-            return anchor;
-        }
-
-        TrackingState getTrackingState(const ArTrackable *trackable, const ArSession *session) {
-            ArTrackingState trackingState;
-            ArTrackable_getTrackingState(session, trackable, &trackingState);
-
-            if (trackingState == AR_TRACKING_STATE_TRACKING) {
-                return TrackingState::Tracking;
-            }
-            else {
-                return TrackingState::NotTracking;
-            }
-        }
-
-        TrackableType getType(const ArTrackable *trackable, const ArSession *session) {
-            ArTrackableType type;
-            ArTrackable_getType(session, trackable, &type);
-
-            if (type == AR_TRACKABLE_PLANE) {
-                return TrackableType::Plane;
-            }
-            else {
-                return TrackableType::Point;
-            }
-        }
-
-
-        void release(ArTrackable *trackable) {
-            ArTrackable_release(trackable);
-        }
-
-        ArPlane *asPlane(ArTrackable *trackable) {
-            return ArAsPlane(trackable);
-        }
-
+    void AnchorNative::detach() {
+        ArAnchor_detach(_session, _anchor);
     }
 
-    namespace plane {
+#pragma mark - TrackableList
 
-        uint64_t getHashCode(const ArPlane *plane) {
-            return reinterpret_cast<uint64_t>(plane);
-        }
-
-        void getCenterPose(const ArPlane *plane, const ArSession *session, ArPose *outPose) {
-            return ArPlane_getCenterPose(session, plane, outPose);
-        }
-
-        float getExtentX(const ArPlane *plane, const ArSession *session) {
-            float extent;
-            ArPlane_getExtentX(session, plane, &extent);
-            return extent;
-        }
-
-        float getExtentZ(const ArPlane *plane, const ArSession *session) {
-            float extent;
-            ArPlane_getExtentZ(session, plane, &extent);
-            return extent;
-        }
-
-        ArPlane *acquireSubsumedBy(const ArPlane *plane, const ArSession *session) {
-            ArPlane *subsumedBy;
-            ArPlane_acquireSubsumedBy(session, plane, &subsumedBy);
-            return subsumedBy;
-        }
-
-        PlaneType getType(const ArPlane *plane, const ArSession *session) {
-            ArPlaneType type;
-            ArPlane_getType(session, plane, &type);
-
-            if (type == AR_PLANE_HORIZONTAL_DOWNWARD_FACING) {
-                return PlaneType::HorizontalDownward;
-            }
-            else if (type == AR_PLANE_HORIZONTAL_UPWARD_FACING) {
-                return PlaneType::HorizontalUpward;
-            }
-            else {
-                return PlaneType::NonHorizontal;
-            }
-        }
-
-        bool isPoseInExtents(const ArPlane *plane, const ArPose *pose, const ArSession *session) {
-            int result;
-            ArPlane_isPoseInExtents(session, plane, pose, &result);
-            return (bool) result;
-        }
-
-        bool isPoseInPolygon(const ArPlane *plane, const ArPose *pose, const ArSession *session) {
-            int result;
-            ArPlane_isPoseInPolygon(session, plane, pose, &result);
-            return (bool) result;
-        }
-
-        ArTrackable *asTrackable(ArPlane *plane) {
-            return ArAsTrackable(plane);
-        }
-
+    TrackableListNative::~TrackableListNative() {
+        ArTrackableList_destroy(_trackableList);
     }
 
-    namespace light_estimate {
+    Trackable *TrackableListNative::acquireItem(int index) {
+        ArTrackable *trackable;
+        ArTrackableList_acquireItem(_session, _trackableList, index, &trackable);
 
-        ArLightEstimate *create(const ArSession *session) {
-            ArLightEstimate *estimate;
-            ArLightEstimate_create(session,  &estimate);
-            return estimate;
+        ArTrackableType type;
+        ArTrackable_getType(_session, trackable, &type);
+        if (type == AR_TRACKABLE_PLANE) {
+            return new PlaneNative(ArAsPlane(trackable), _session);
         }
-
-        void destroy(ArLightEstimate *lightEstimate) {
-            ArLightEstimate_destroy(lightEstimate);
-        }
-
-        float getPixelIntensity(const ArLightEstimate *lightEstimate, const ArSession *session) {
-            float intensity;
-            ArLightEstimate_getPixelIntensity(session, lightEstimate, &intensity);
-            return intensity;
-        }
-
-        bool isValid(const ArLightEstimate *lightEstimate, const ArSession *session) {
-            ArLightEstimateState state;
-            ArLightEstimate_getState(session, lightEstimate, &state);
-            if (state == AR_LIGHT_ESTIMATE_STATE_NOT_VALID) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
-
-    }
-
-    namespace frame {
-
-        ArFrame *create(const ArSession *session) {
-            ArFrame *frame;
-            ArFrame_create(session, &frame);
-            return frame;
-        }
-
-        void destroy(ArFrame *frame) {
-            ArFrame_destroy(frame);
-        }
-
-        void getViewMatrix(const ArFrame *frame, const ArSession *session, float *outMatrix) {
-            ArCamera *camera;
-            ArFrame_acquireCamera(session, frame, &camera);
-            float matrix[16];
-            ArCamera_getViewMatrix(session, camera, outMatrix);
-            ArCamera_release(camera);
-        }
-
-        void getProjectionMatrix(const ArFrame *frame, float near, float far, const ArSession *session, float *outMatrix) {
-            ArCamera *camera;
-            ArFrame_acquireCamera(session, frame, &camera);
-            float matrix[16];
-            ArCamera_getProjectionMatrix(session, camera, near, far, outMatrix);
-            ArCamera_release(camera);
-        }
-
-        TrackingState getTrackingState(const ArFrame *frame, const ArSession *session) {
-            ArCamera *camera;
-            ArFrame_acquireCamera(session, frame, &camera);
-
-            ArTrackingState trackingState;
-            ArCamera_getTrackingState(session, camera, &trackingState);
-            ArCamera_release(camera);
-
-            if (trackingState == AR_TRACKING_STATE_PAUSED || trackingState == AR_TRACKING_STATE_STOPPED) {
-                return TrackingState::NotTracking;
-            }
-            else {
-                return TrackingState::Tracking;
-            }
-        }
-
-        void getLightEstimate(const ArFrame *frame, const ArSession *session, ArLightEstimate *outLightEstimate) {
-            ArFrame_getLightEstimate(session, frame, outLightEstimate);
-        }
-
-        int64_t getTimestampNs(const ArFrame *frame, const ArSession *session) {
-            int64_t timestamp;
-            ArFrame_getTimestamp(session, frame, &timestamp);
-            return timestamp;
-        }
-
-        void getUpdatedAnchors(const ArFrame *frame, const ArSession *session, ArAnchorList *outList) {
-            ArFrame_getUpdatedAnchors(session, frame, outList);
-        }
-
-        void getUpdatedPlanes(const ArFrame *frame, const ArSession *session, ArTrackableList *outList) {
-            ArFrame_getUpdatedTrackables(session, frame, AR_TRACKABLE_PLANE, outList);
-        }
-
-        bool hasDisplayGeometryChanged(const ArFrame *frame, const ArSession *session) {
-            int changed;
-            ArFrame_getDisplayGeometryChanged(session, frame, &changed);
-            return (bool) changed;
-        }
-
-        void hitTest(const ArFrame *frame, float x, float y, const ArSession *session, ArHitResultList *outList) {
-            ArFrame_hitTest(session, frame, x, y, outList);
-        }
-
-        void getBackgroundTexcoords(const ArFrame *frame, const ArSession *session, float *outTexcoords) {
-            // BL, TL, BR, TR
-            const float source[8] = { 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0 };
-            float dest[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-            ArFrame_transformDisplayUvCoords(session, frame, 8, source, outTexcoords);
-        }
-
-        ArPointCloud *acquirePointCloud(const ArFrame *frame, const ArSession *session) {
-            ArPointCloud *cloud;
-            ArFrame_acquirePointCloud(session, frame, &cloud);
-            return cloud;
+        else {
+            return nullptr;
         }
     }
 
-    namespace pointcloud {
+    int TrackableListNative::size() {
+        int size;
+        ArTrackableList_getSize(_session, _trackableList, &size);
+        return size;
+    }
 
-        const float *getPoints(const ArPointCloud *cloud, const ArSession *session) {
-            const float *points;
-            ArPointCloud_getData(session, cloud, &points);
-            return points;
-        }
+#pragma mark - Plane
 
-        int getNumPoints(const ArPointCloud *cloud, const ArSession *session) {
-            int numPoints;
-            ArPointCloud_getNumberOfPoints(session, cloud, &numPoints);
-            return numPoints;
-        }
-
-        void release(ArPointCloud *cloud) {
-            ArPointCloud_release(cloud);
-        }
+    PlaneNative::PlaneNative(ArPlane *plane, ArSession *session) :
+        _trackable(ArAsTrackable(plane)), _plane(plane), _session(session) {
 
     }
 
-    namespace hitresultlist {
-
-        ArHitResultList *create(const ArSession *session) {
-            ArHitResultList *list;
-            ArHitResultList_create(session, &list);
-            return list;
-        }
-
-        void destroy(ArHitResultList *hitResultList) {
-            ArHitResultList_destroy(hitResultList);
-        }
-
-        void getItem(const ArHitResultList *hitResultList, int index, const ArSession *session, ArHitResult *outResult) {
-            ArHitResultList_getItem(session, hitResultList, index, outResult);
-        }
-
-        int size(const ArHitResultList *hitResultList, const ArSession *session) {
-            int size;
-            ArHitResultList_getSize(session, hitResultList, &size);
-            return size;
-        }
-
+    PlaneNative::~PlaneNative() {
+        ArTrackable_release(_trackable);
     }
 
-    namespace hitresult {
-
-        ArHitResult *create(const ArSession *session) {
-            ArHitResult *result;
-            ArHitResult_create(session, &result);
-            return result;
-        }
-
-        void destroy(ArHitResult *hitResult) {
-            ArHitResult_destroy(hitResult);
-        }
-
-        float getDistance(const ArHitResult *hitResult, const ArSession *session) {
-            float distance;
-            ArHitResult_getDistance(session, hitResult, &distance);
-            return distance;
-        }
-
-        void getPose(const ArHitResult *hitResult, const ArSession *session, ArPose *outPose) {
-            ArHitResult_getHitPose(session, hitResult, outPose);
-        }
-
-        ArTrackable *acquireTrackable(const ArHitResult *hitResult, const ArSession *session) {
-            ArTrackable *trackable;
-            ArHitResult_acquireTrackable(session, hitResult, &trackable);
-            return trackable;
-        }
-
-        ArAnchor *acquireAnchor(ArHitResult *hitResult, ArSession *session) {
-            ArAnchor *anchor;
-            ArHitResult_acquireNewAnchor(session, hitResult, &anchor);
-            return anchor;
-        }
-
+    Anchor *PlaneNative::acquireAnchor(Pose *pose) {
+        ArAnchor *anchor;
+        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *)pose)->_pose, &anchor);
+        return new AnchorNative(anchor, _session);
     }
 
-    namespace session {
+    TrackingState PlaneNative::getTrackingState() {
+        ArTrackingState trackingState;
+        ArTrackable_getTrackingState(_session, _trackable, &trackingState);
 
-        ArSession *create(void *applicationContext, JNIEnv *env) {
-            ArSession *session;
-            ArSession_create(env, applicationContext, &session);
-            return session;
+        if (trackingState == AR_TRACKING_STATE_TRACKING) {
+            return TrackingState::Tracking;
+        } else {
+            return TrackingState::NotTracking;
         }
+    }
 
-        void destroy(ArSession *session) {
-            ArSession_destroy(session);
+    TrackableType PlaneNative::getType() {
+        ArTrackableType type;
+        ArTrackable_getType(_session, _trackable, &type);
+
+        if (type == AR_TRACKABLE_PLANE) {
+            return TrackableType::Plane;
+        } else {
+            return TrackableType::Point;
         }
+    }
 
-        ConfigStatus configure(ArSession *session, const ArConfig *config) {
-            ArStatus status = ArSession_configure(session, config);
-            switch (status) {
-                case AR_SUCCESS:
-                    return ConfigStatus::Success;
-                case AR_ERROR_UNSUPPORTED_CONFIGURATION:
-                    return ConfigStatus::UnsupportedConfiguration;
-                case AR_ERROR_SESSION_NOT_PAUSED:
-                    return ConfigStatus::SessionNotPaused;
-            }
+    uint64_t PlaneNative::getHashCode() {
+        return reinterpret_cast<uint64_t>(_plane);
+    }
+
+    void PlaneNative::getCenterPose(Pose *outPose) {
+        return ArPlane_getCenterPose(_session, _plane, ((PoseNative *) outPose)->_pose);
+    }
+
+    float PlaneNative::getExtentX() {
+        float extent;
+        ArPlane_getExtentX(_session, _plane, &extent);
+        return extent;
+    }
+
+    float PlaneNative::getExtentZ() {
+        float extent;
+        ArPlane_getExtentZ(_session, _plane, &extent);
+        return extent;
+    }
+
+    Plane *PlaneNative::acquireSubsumedBy() {
+        ArPlane *subsumedBy;
+        ArPlane_acquireSubsumedBy(_session, _plane, &subsumedBy);
+        return subsumedBy != NULL ? new PlaneNative(subsumedBy, _session) : NULL;
+    }
+
+    PlaneType PlaneNative::getPlaneType() {
+        ArPlaneType type;
+        ArPlane_getType(_session, _plane, &type);
+
+        if (type == AR_PLANE_HORIZONTAL_DOWNWARD_FACING) {
+            return PlaneType::HorizontalDownward;
+        } else if (type == AR_PLANE_HORIZONTAL_UPWARD_FACING) {
+            return PlaneType::HorizontalUpward;
+        } else {
+            return PlaneType::NonHorizontal;
+        }
+    }
+
+    bool PlaneNative::isPoseInExtents(const Pose *pose) {
+        int result;
+        ArPlane_isPoseInExtents(_session, _plane, ((PoseNative *)pose)->_pose, &result);
+        return (bool) result;
+    }
+
+    bool PlaneNative::isPoseInPolygon(const Pose *pose) {
+        int result;
+        ArPlane_isPoseInPolygon(_session, _plane, ((PoseNative *)pose)->_pose, &result);
+        return (bool) result;
+    }
+
+#pragma mark - LightEstimate
+
+    LightEstimateNative::~LightEstimateNative() {
+            ArLightEstimate_destroy(_lightEstimate);
+     }
+
+    float LightEstimateNative::getPixelIntensity() {
+        float intensity;
+        ArLightEstimate_getPixelIntensity(_session, _lightEstimate, &intensity);
+        return intensity;
+    }
+
+    bool LightEstimateNative::isValid() {
+        ArLightEstimateState state;
+        ArLightEstimate_getState(_session, _lightEstimate, &state);
+        if (state == AR_LIGHT_ESTIMATE_STATE_NOT_VALID) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+#pragma mark - Frame
+
+    FrameNative::~FrameNative() {
+        ArFrame_destroy(_frame);
+    }
+
+    void FrameNative::getViewMatrix(float *outMatrix) {
+        ArCamera *camera;
+        ArFrame_acquireCamera(_session, _frame, &camera);
+        float matrix[16];
+        ArCamera_getViewMatrix(_session, camera, outMatrix);
+        ArCamera_release(camera);
+    }
+
+    void FrameNative::getProjectionMatrix(float near, float far, float *outMatrix) {
+        ArCamera *camera;
+        ArFrame_acquireCamera(_session, _frame, &camera);
+        float matrix[16];
+        ArCamera_getProjectionMatrix(_session, camera, near, far, outMatrix);
+        ArCamera_release(camera);
+    }
+
+    TrackingState FrameNative::getTrackingState() {
+        ArCamera *camera;
+        ArFrame_acquireCamera(_session, _frame, &camera);
+
+        ArTrackingState trackingState;
+        ArCamera_getTrackingState(_session, camera, &trackingState);
+        ArCamera_release(camera);
+
+        if (trackingState == AR_TRACKING_STATE_PAUSED ||
+            trackingState == AR_TRACKING_STATE_STOPPED) {
+            return TrackingState::NotTracking;
+        } else {
+            return TrackingState::Tracking;
+        }
+    }
+
+    void FrameNative::getLightEstimate(LightEstimate *outLightEstimate) {
+        ArFrame_getLightEstimate(_session, _frame,
+                                 ((LightEstimateNative *) outLightEstimate)->_lightEstimate);
+    }
+
+    int64_t FrameNative::getTimestampNs() {
+        int64_t timestamp;
+        ArFrame_getTimestamp(_session, _frame, &timestamp);
+        return timestamp;
+    }
+
+    void FrameNative::getUpdatedAnchors(AnchorList *outList) {
+        ArFrame_getUpdatedAnchors(_session, _frame, ((AnchorListNative *) outList)->_anchorList);
+    }
+
+    void FrameNative::getUpdatedPlanes(TrackableList *outList) {
+        ArFrame_getUpdatedTrackables(_session, _frame, AR_TRACKABLE_PLANE,
+                                     ((TrackableListNative *) outList)->_trackableList);
+    }
+
+    bool FrameNative::hasDisplayGeometryChanged() {
+        int changed;
+        ArFrame_getDisplayGeometryChanged(_session, _frame, &changed);
+        return (bool) changed;
+    }
+
+    void FrameNative::hitTest(float x, float y, HitResultList *outList) {
+        ArFrame_hitTest(_session, _frame, x, y, ((HitResultListNative *) outList)->_hitResultList);
+    }
+
+    void FrameNative::getBackgroundTexcoords(float *outTexcoords) {
+        // BL, TL, BR, TR
+        const float source[8] = {0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0};
+        float dest[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+        ArFrame_transformDisplayUvCoords(_session, _frame, 8, source, outTexcoords);
+    }
+
+    PointCloud *FrameNative::acquirePointCloud() {
+        ArPointCloud *cloud;
+        ArFrame_acquirePointCloud(_session, _frame, &cloud);
+        return new PointCloudNative(cloud, _session);
+    }
+
+#pragma mark - PointCloud
+
+    PointCloudNative::~PointCloudNative() {
+        ArPointCloud_release(_pointCloud);
+    }
+
+    const float *PointCloudNative::getPoints() {
+        const float *points;
+        ArPointCloud_getData(_session, _pointCloud, &points);
+        return points;
+    }
+
+    int PointCloudNative::getNumPoints() {
+        int numPoints;
+        ArPointCloud_getNumberOfPoints(_session, _pointCloud, &numPoints);
+        return numPoints;
+    }
+
+#pragma mark - HitResultList
+
+    HitResultListNative::~HitResultListNative() {
+        ArHitResultList_destroy(_hitResultList);
+    }
+
+    void HitResultListNative::getItem(int index, HitResult *outResult) {
+        ArHitResultList_getItem(_session, _hitResultList, index,
+                                ((HitResultNative *) outResult)->_hitResult);
+    }
+
+    int HitResultListNative::size() {
+        int size;
+        ArHitResultList_getSize(_session, _hitResultList, &size);
+        return size;
+    }
+
+#pragma mark - HitResult
+
+    HitResultNative::~HitResultNative() {
+        ArHitResult_destroy(_hitResult);
+    }
+
+    float HitResultNative::getDistance() {
+        float distance;
+        ArHitResult_getDistance(_session, _hitResult, &distance);
+        return distance;
+    }
+
+    void HitResultNative::getPose(Pose *outPose) {
+        ArHitResult_getHitPose(_session, _hitResult, ((PoseNative *) outPose)->_pose);
+    }
+
+    Trackable *HitResultNative::acquireTrackable() {
+        ArTrackable *trackable;
+        ArHitResult_acquireTrackable(_session, _hitResult, &trackable);
+
+        ArTrackableType type;
+        ArTrackable_getType(_session, trackable, &type);
+        if (type == AR_TRACKABLE_PLANE) {
+            return new PlaneNative(ArAsPlane(trackable), _session);
+        }
+        else {
+            return nullptr;
+        }
+    }
+
+    Anchor *HitResultNative::acquireAnchor() {
+        ArAnchor *anchor;
+        ArHitResult_acquireNewAnchor(_session, _hitResult, &anchor);
+        return new AnchorNative(anchor, _session);
+    }
+
+#pragma mark - Session
+
+    SessionNative::SessionNative(void *applicationContext, JNIEnv *env) {
+            ArSession_create(env, applicationContext, &_session);
+    }
+
+    SessionNative::~SessionNative() {
+        ArSession_destroy(_session);
+    }
+
+    ConfigStatus SessionNative::configure(Config *config) {
+        ArStatus status = ArSession_configure(_session, ((ConfigNative *) config)->_config);
+        if (status == AR_SUCCESS) {
+            return ConfigStatus::Success;
+        } else if (status == AR_ERROR_UNSUPPORTED_CONFIGURATION) {
             return ConfigStatus::UnsupportedConfiguration;
+        } else if (status == AR_ERROR_SESSION_NOT_PAUSED) {
+            return ConfigStatus::SessionNotPaused;
         }
-
-        bool checkSupported(ArSession *session, const ArConfig *config) {
-            return ArSession_checkSupported(session, config) == AR_SUCCESS;
-        }
-
-        void setDisplayGeometry(ArSession *session, int rotation, int width, int height) {
-            ArSession_setDisplayGeometry(session, rotation, width, height);
-        }
-
-        void setCameraTextureName(ArSession *session, int32_t textureId) {
-            ArSession_setCameraTextureName(session, textureId);
-        }
-
-        void pause(ArSession *session) {
-            ArSession_pause(session);
-        }
-
-        void resume(ArSession *session) {
-            ArSession_resume(session);
-        }
-
-        void update(ArSession *session, ArFrame *frame) {
-            ArSession_update(session, frame);
-        }
-
+        return ConfigStatus::UnsupportedConfiguration;
     }
+
+    bool SessionNative::checkSupported(Config *config) {
+        return ArSession_checkSupported(_session, ((ConfigNative *)config)->_config) == AR_SUCCESS;
+    }
+
+    void
+    SessionNative::setDisplayGeometry(int rotation, int width, int height) {
+        ArSession_setDisplayGeometry(_session, rotation, width, height);
+    }
+
+    void SessionNative::setCameraTextureName(int32_t textureId) {
+        ArSession_setCameraTextureName(_session, textureId);
+    }
+
+    void SessionNative::pause() {
+        ArSession_pause(_session);
+    }
+
+    void SessionNative::resume() {
+        ArSession_resume(_session);
+    }
+
+    void SessionNative::update(Frame *frame) {
+        ArSession_update(_session, ((FrameNative *)frame)->_frame);
+    }
+
+    Config *SessionNative::createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
+                                        UpdateMode updateMode) {
+        ArConfig *config;
+        ArConfig_create(_session, &config);
+
+        // Set light estimation mode
+        ArLightEstimationMode arLightingMode;
+        switch (lightingMode) {
+            case LightingMode::Disabled: {
+                arLightingMode = AR_LIGHT_ESTIMATION_MODE_DISABLED;
+                break;
+            }
+            case LightingMode::AmbientIntensity: {
+                arLightingMode = AR_LIGHT_ESTIMATION_MODE_AMBIENT_INTENSITY;
+                break;
+            }
+        }
+        ArConfig_setLightEstimationMode(_session, config, arLightingMode);
+
+        // Set plane finding mode
+        ArPlaneFindingMode arPlaneFindingMode;
+        switch (planeFindingMode) {
+            case PlaneFindingMode::Disabled: {
+                arPlaneFindingMode = AR_PLANE_FINDING_MODE_DISABLED;
+                break;
+            }
+            case PlaneFindingMode::Horizontal: {
+                arPlaneFindingMode = AR_PLANE_FINDING_MODE_HORIZONTAL;
+                break;
+            }
+        }
+        ArConfig_setPlaneFindingMode(_session, config, arPlaneFindingMode);
+
+        // Set update mode
+        ArUpdateMode arUpdateMode;
+        switch (updateMode) {
+            case UpdateMode::Blocking: {
+                arUpdateMode = AR_UPDATE_MODE_BLOCKING;
+                break;
+            }
+            case UpdateMode::LatestCameraImage: {
+                arUpdateMode = AR_UPDATE_MODE_LATEST_CAMERA_IMAGE;
+                break;
+            }
+        }
+        ArConfig_setUpdateMode(_session, config, arUpdateMode);
+        return new ConfigNative(config);
+    }
+
+    Pose *SessionNative::createPose() {
+        ArPose *pose;
+        ArPose_create(_session, nullptr, &pose);
+        return new PoseNative(pose, _session);
+    }
+
+    AnchorList *SessionNative::createAnchorList() {
+        ArAnchorList *list;
+        ArAnchorList_create(_session, &list);
+        return new AnchorListNative(list, _session);
+    }
+
+    TrackableList *SessionNative::createTrackableList() {
+        ArTrackableList *list;
+        ArTrackableList_create(_session, &list);
+        return new TrackableListNative(list, _session);
+    }
+
+    HitResultList *SessionNative::createHitResultList() {
+        ArHitResultList *list;
+        ArHitResultList_create(_session, &list);
+        return new HitResultListNative(list, _session);
+    }
+
+    LightEstimate *SessionNative::createLightEstimate() {
+        ArLightEstimate *estimate;
+        ArLightEstimate_create(_session, &estimate);
+        return new LightEstimateNative(estimate, _session);
+    }
+
+    HitResult *SessionNative::createHitResult() {
+        ArHitResult *result;
+        ArHitResult_create(_session, &result);
+        return new HitResultNative(result, _session);
+    }
+
+    Frame *SessionNative::createFrame() {
+        ArFrame *frame;
+        ArFrame_create(_session, &frame);
+        return new FrameNative(frame, _session);
+    }
+
 }

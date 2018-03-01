@@ -11,7 +11,6 @@
 #include <PersistentRef.h>
 #include <VROARHitTestResult.h>
 #include <VROFrameListener.h>
-#include "arcore/ARCore_Native.h"
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROProjector.h"

@@ -27,7 +27,14 @@ public class RendererARCore extends Renderer {
     }
 
     public void onARCoreInstalled(Context context) {
-        nativeOnARCoreInstalled(mNativeRef, context); }
+        // This is done in two steps because we create the ARCore session in libviro_arcore.so
+        // then inject it into the scene renderer from libviro_native.so. The two libraries are
+        // not linked so we need to perform the injection using reinterpret_cast. We do not link
+        // the libraries so that we can run libviro_native on older devices (libviro_arcore requires
+        // Android 24)
+        long sessionRef = nativeCreateARCoreSession(context);
+        nativeSetARCoreSession(mNativeRef, sessionRef);
+    }
 
     public void setARDisplayGeometry(int rotation, int width, int height) {
         nativeSetARDisplayGeometry(mNativeRef, rotation, width, height);
@@ -63,7 +70,8 @@ public class RendererARCore extends Renderer {
                                                    boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native void nativeSetARDisplayGeometry(long nativeRef, int rotation, int width, int height);
     private native void nativeSetPlaneFindingMode(long nativeRef, boolean enabled);
-    private native void nativeOnARCoreInstalled(long nativeRef, Context context);
+    private native long nativeCreateARCoreSession(Context context);
+    private native void nativeSetARCoreSession(long nativeRef, long sessionRef);
     private native int nativeGetCameraTextureId(long nativeRenderer);
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);

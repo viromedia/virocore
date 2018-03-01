@@ -10,7 +10,7 @@
 #define VROARCameraARCore_h
 
 #include "VROARCamera.h"
-#include "ARCore_Native.h"
+#include "ARCore_API.h"
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
 #include <memory>
@@ -22,7 +22,7 @@ enum class VROCameraOrientation;
 class VROARCameraARCore : public VROARCamera {
 public:
     
-    VROARCameraARCore(ArFrame *frame,
+    VROARCameraARCore(arcore::Frame *frame,
                       std::shared_ptr<VROARSessionARCore> session);
     virtual ~VROARCameraARCore();
     
@@ -37,7 +37,7 @@ public:
     
 private:
 
-    ArFrame *_frame;
+    arcore::Frame *_frame;
     std::weak_ptr<VROARSessionARCore> _session;
 
     VROVector3f _position;

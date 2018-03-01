@@ -17,13 +17,13 @@
 #include "VROMatrix4f.h"
 #include "VROARSessionARCore.h"
 
-VROARCameraARCore::VROARCameraARCore(ArFrame *frame,
+VROARCameraARCore::VROARCameraARCore(arcore::Frame *frame,
                                      std::shared_ptr<VROARSessionARCore> session) :
     _frame(frame),
     _session(session) {
 
     float viewMtx[16];
-    arcore::frame::getViewMatrix(frame, session->getSessionInternal(), viewMtx);
+    frame->getViewMatrix(viewMtx);
     VROMatrix4f viewMatrix(viewMtx);
     VROMatrix4f cameraMatrix = viewMatrix.invert();
 
@@ -63,7 +63,7 @@ VROARTrackingState VROARCameraARCore::getTrackingState() const {
         return VROARTrackingState::Unavailable;
     }
 
-    arcore::TrackingState trackingState = arcore::frame::getTrackingState(_frame, session->getSessionInternal());
+    arcore::TrackingState trackingState = _frame->getTrackingState();
     switch (trackingState) {
         case arcore::TrackingState::NotTracking:
             return VROARTrackingState::Unavailable;
@@ -91,7 +91,7 @@ VROMatrix4f VROARCameraARCore::getProjection(VROViewport viewport, float near, f
     }
 
     float projectionMtx[16];
-    arcore::frame::getProjectionMatrix(_frame, near, far, session->getSessionInternal(), projectionMtx);
+    _frame->getProjectionMatrix(near, far, projectionMtx);
     VROMatrix4f projection(projectionMtx);
 
     float fovX = toDegrees(atan(1.0f / projection[0]) * 2.0);

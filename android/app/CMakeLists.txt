@@ -297,6 +297,7 @@ add_library( viro_arcore
              SHARED
 
              src/main/cpp/arcore/ARCore_Native.cpp
+             src/main/cpp/arcore/VRORendererARCoreNative_JNI.cpp
            )
 
 # Add pre-built libraries
@@ -574,7 +575,6 @@ target_link_libraries( # Specifies the target library.
                        viro_native
 
                        # Libraries linked with target
-                       PRIVATE viro_arcore
                        ${lib-log}
                        ${lib-android}
                        ${lib-jnigraphics}
@@ -629,4 +629,4 @@ target_link_libraries( # Specifies the target library.
                        viro_arcore
 
                        # Libraries linked with target
-                       PRIVATE lib-arcore)
+                       lib-arcore)

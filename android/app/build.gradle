@@ -40,10 +40,9 @@ android {
             dimension "product"
             buildConfigField "String", "dummyField", "\"BridgeOnly\""
 
-            // ViroCore exports two shared libraries, viro-native and viro-arcore. The latter
-            // is only used in ViroViewARCore, thus allowing views like ViroSceneView to support
-            // platforms before Android-24 (which ARCore's min supported platform).
-            // Note that viro_arcore does not use STL, so we can still use static STL in viro_native
+            // ViroCore exports two shared libraries, viro-native and viro-arcore. This way we can
+            // load Viro without the AR, for devices that can't support the newer libs required by
+            // AR.
             externalNativeBuild {
                 cmake {
                     targets "viro_native", "viro_arcore"
@@ -56,6 +55,8 @@ android {
             dimension "product"
             buildConfigField "String", "dummyField", "\"ViroReact\""
 
+            // Note that viro_arcore does not use STL, so we can still use static STL in viro_native
+            // (thereby avoiding conflicts with React Android's shared STL)
             externalNativeBuild {
                 cmake {
                     targets "viro_native", "viro_arcore"

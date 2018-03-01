@@ -13,7 +13,7 @@
 #include "VROARFrameARCore.h"
 #include "VROViewport.h"
 #include "VROOpenGL.h"
-#include "arcore/ARCore_Native.h"
+#include "ARCore_API.h"
 #include <map>
 #include <vector>
 #include <VROCameraTexture.h>
@@ -35,8 +35,8 @@ public:
     /*
      Configure this ARCore session with the given modes. Returns true if supported.
      */
-    bool configure(arcore::config::LightingMode lightingMode, arcore::config::PlaneFindingMode planeFindingMode,
-                   arcore::config::UpdateMode updateMode);
+    bool configure(arcore::LightingMode lightingMode, arcore::PlaneFindingMode planeFindingMode,
+                   arcore::UpdateMode updateMode);
     
     void setScene(std::shared_ptr<VROScene> scene);
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
@@ -69,17 +69,18 @@ public:
     // Internal methods
 
     /*
-     Invoked when we know ARCore is present on the device.
+     Invoked when ARCore is installed on the device: sets the ARCore session implementation.
+     This object will own the session.
      */
-    void onARCoreInstalled(void *context);
+    void setARCoreSession(arcore::Session *session);
 
     /*
      Initialize the camera background texture and install it on the ARCore session.
      */
     void initCameraTexture(std::shared_ptr<VRODriverOpenGL> driver);
-    std::shared_ptr<VROARAnchor> getAnchorForNative(ArAnchor *anchor);
+    std::shared_ptr<VROARAnchor> getAnchorForNative(arcore::Anchor *anchor);
 
-    ArSession *getSessionInternal() {
+    arcore::Session *getSessionInternal() {
         return _session;
     }
 
@@ -90,12 +91,12 @@ private:
     /*
      The ARCore session.
      */
-    ArSession *_session;
+    arcore::Session *_session;
 
     /*
      Reusable ARCore frame object.
      */
-    ArFrame *_frame;
+    arcore::Frame *_frame;
 
     /*
      The last computed ARFrame.
@@ -113,9 +114,9 @@ private:
      */
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
 
-    arcore::config::LightingMode _lightingMode;
-    arcore::config::PlaneFindingMode _planeFindingMode;
-    arcore::config::UpdateMode  _updateMode;
+    arcore::LightingMode _lightingMode;
+    arcore::PlaneFindingMode _planeFindingMode;
+    arcore::UpdateMode  _updateMode;
 
     /*
      Map of ARCore anchors ("native" anchors) to their Viro representation.
@@ -136,8 +137,8 @@ private:
 
     bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);
-    void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, ArAnchor *anchorAR);
-    void updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, ArPlane *planeAR);
+    void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
+    void updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, arcore::Plane *planeAR);
 };
 
 #endif /* VROARSessionARCore_h */

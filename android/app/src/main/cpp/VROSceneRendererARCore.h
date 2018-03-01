@@ -82,7 +82,7 @@ public:
     /*
      Set to true when ARCore is installed. Unlocks the renderer.
      */
-    void onARCoreInstalled(void *context);
+    void setARCoreSession(arcore::Session *session);
 
     /*
      Retrieves the texture ID used for the camera background.
