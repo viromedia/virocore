@@ -32,7 +32,7 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     /*
      Load the background texture.
      */
-    rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
+    //rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
     //rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
@@ -77,6 +77,7 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     material->setLightingModel(VROLightingModel::Blinn);
     material->getDiffuse().setTexture(bobaTexture);
     material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+    material->setBloomThreshold(0.1);
     material->getSpecular().setTexture(VROTestUtil::loadSpecularTexture("specular"));
     
     /*
@@ -130,63 +131,6 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     boxParentNode->addChildNode(boxNode);
     rootNode->addChildNode(boxParentNode);
     //boxParentNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
-    
-    /*
-     Create a second box node behind the first.
-     */
-    std::shared_ptr<VROBox> box2 = VROBox::createBox(2, 4, 2);
-    box2->setName("Box 2");
-    
-    std::vector<std::shared_ptr<VROMaterial>> boxMaterials;
-    for (int i = 0; i < 6; i ++) {
-        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-        material->setLightingModel(VROLightingModel::Lambert);
-        
-        if (i == 0) {
-            material->getDiffuse().setTexture(VROTestUtil::loadDiffuseTexture("boba"));
-        }
-        else if (i == 1) {
-            material->getDiffuse().setColor({ 1.0, 0.0, 0.0, 1.0 });
-        }
-        else if (i == 2) {
-            material->getDiffuse().setColor({ 0.0, 1.0, 0.0, 1.0 });
-        }
-        else if (i == 3) {
-            material->getDiffuse().setColor({ 0.0, 0.0, 1.0, 1.0 });
-        }
-        else if (i == 4) {
-            material->getDiffuse().setColor({ 1.0, 0.0, 1.0, 1.0 });
-        }
-        else if (i == 5) {
-            material->getDiffuse().setColor({ 1.0, 1.0, 0.0, 1.0 });
-        }
-        
-        boxMaterials.push_back(material);
-    }
-    box2->setMaterials(boxMaterials);
-    
-    std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
-    boxNode2->setGeometry(box2);
-    boxNode2->setPosition({0, 0, -9});
-    
-    rootNode->addChildNode(boxNode2);
-    
-    /*
-     Create a third box node behind the second.
-     */
-    std::shared_ptr<VROBox> box3 = VROBox::createBox(2, 4, 2);
-    box3->setName("Box 3");
-    
-    std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
-    material3->setLightingModel(VROLightingModel::Lambert);
-    material3->getDiffuse().setTexture(VROTestUtil::loadDiffuseTexture("boba"));
-    material3->getSpecular().setTexture(VROTestUtil::loadSpecularTexture("specular"));
-    
-    std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
-    boxNode3->setGeometry(box3);
-    boxNode3->setPosition({0, 0, -13});
-    
-    rootNode->addChildNode(boxNode3);
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();    
     std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();

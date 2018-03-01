@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -103,6 +104,7 @@ public class ViroActivity extends AppCompatActivity {
     private ARDeclarativeNode.Delegate mARNodeDelegate;
     private ViroView mViroView = null;
     private Handler mHandler;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +133,8 @@ public class ViroActivity extends AppCompatActivity {
                 public void run() {
                     Log.e(TAG, "On GVR userRequested exit");
                 }
-            });
+            }, config);
+            setContentView(mViroView);
 
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             mViroView = new ViroViewOVR(this, new ViroViewOVR.StartupListener() {
@@ -144,7 +147,8 @@ public class ViroActivity extends AppCompatActivity {
                 public void onFailure(ViroViewOVR.StartupError error, String errorMessage) {
                     onRendererFailed(error.toString(), errorMessage);
                 }
-            });
+            }, config);
+            setContentView(mViroView);
 
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
             mViroView = new ViroViewScene(this, new ViroViewScene.StartupListener() {
@@ -157,33 +161,34 @@ public class ViroActivity extends AppCompatActivity {
                 public void onFailure(ViroViewScene.StartupError error, String errorMessage) {
                     onRendererFailed(error.toString(), errorMessage);
                 }
-            });
+            }, config);
+
+
+            mViroView.setPadding(60,60, 60,60);
+            mViroView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+
+            FrameLayout frameLayout = new FrameLayout(this);
+            frameLayout.addView(mViroView);
+            frameLayout.setBackgroundColor(Color.BLUE);
+
+            setContentView(frameLayout);
+
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-            setViroARView();
-            return;
+            mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
+                @Override
+                public void onSuccess() {
+                    onRendererStart();
+                }
+
+                @Override
+                public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
+                    onRendererFailed(error.toString(), errorMessage);
+                }
+            }, config);
+            setContentView(mViroView);
         }
-        setContentView(mViroView);
-    }
 
-    private void setViroARView(){
-        RendererConfiguration config = new RendererConfiguration();
-        config.setShadowsEnabled(true);
-        config.setBloomEnabled(true);
-        config.setHDREnabled(true);
-        config.setPBREnabled(true);
-        mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
-            @Override
-            public void onSuccess() {
-                onRendererStart();
-            }
 
-            @Override
-            public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
-                onRendererFailed(error.toString(), errorMessage);
-            }
-        }, config);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
-        setContentView(mViroView);
     }
 
     @Override
@@ -263,26 +268,10 @@ public class ViroActivity extends AppCompatActivity {
         final Scene scene = new Scene();
         final Node rootNode = scene.getRootNode();
         List<Node> nodes = new ArrayList<>();
-        //nodes = testSurfaceVideo(this);
-       // nodes = testSphereVideo(this);
         nodes = testBox(getApplicationContext());
-       // nodes = test3dObjectLoading(getApplicationContext());
+        //testBackgroundVideo(scene);
 
-        //nodes = testImageSurface(this);
-        //nodes = testText();
-//        nodes = testParticles();
-//        nodes = testARDrag();
-
-        testBackgroundVideo(scene);
-        //testBackgroundImage(scene);
-        //testSkyBoxImage(scene);
-
-        //nodes = testStereoSurfaceVideo(this);
-        //nodes = testStereoImageSurface(this);
         //nodes.add(testLine(this));
-        //testStereoBackgroundVideo(scene);
-        //testStereoBackgroundImage(scene);
-
         //addNormalSound("http://www.kozco.com/tech/32.mp3");
         //addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
         //addSoundField("file:///android_asset/thelin.wav");
@@ -323,7 +312,7 @@ public class ViroActivity extends AppCompatActivity {
         final Node rootNode = scene.getRootNode();
 
         final List<Node> nodes = new ArrayList<>();
-        //nodes.add(testLine(this));
+        nodes.addAll(testBox(this));
 
         //testBackgroundImage(scene);
 
@@ -583,9 +572,9 @@ public class ViroActivity extends AppCompatActivity {
 
         final Material material = new Material();
         material.setDiffuseTexture(bobaTexture);
-        material.setDiffuseColor(Color.BLUE);
         material.setSpecularTexture(specTexture);
-        material.setLightingModel(Material.LightingModel.LAMBERT);
+        material.setLightingModel(Material.LightingModel.PHYSICALLY_BASED);
+        material.setBloomThreshold(0.2f);
 
         // Creation of ViroBox to the right and billboarded
         final Box boxGeometry = new Box(2, 4, 2);
@@ -614,6 +603,13 @@ public class ViroActivity extends AppCompatActivity {
             }
         });
 
+        // Light for the box
+        Spotlight light = new Spotlight();
+        light.setDirection(new Vector(0, 0, -1));
+        light.setPosition(new Vector(0, 0, 5));
+        light.setIntensity(1500);
+        node1.addLight(light);
+
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDelay(1000);
         AnimationTransaction.setAnimationDuration(5000);
@@ -625,8 +621,6 @@ public class ViroActivity extends AppCompatActivity {
             }
         });
         node2.setPosition(new Vector(-2, 2.5f, -3));
-        Material mat = node2.getGeometry().getMaterials().get(0);
-        mat.setDiffuseColor(Color.RED);
 
         final AnimationTransaction transaction = AnimationTransaction.commit();
 
