@@ -68,7 +68,7 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
         std::shared_ptr<VROARAnchor> vAnchor = nullptr;
         VROARHitTestResultType type;
         if (isPlane) {
-            ArPlane *plane = ArAsPlane(trackable);
+            ArPlane *plane = arcore::trackable::asPlane(trackable);
             bool inExtent = arcore::plane::isPoseInExtents(plane, pose, session);
             bool inPolygon = arcore::plane::isPoseInPolygon(plane, pose, session);
 
@@ -90,7 +90,9 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
         float distance = arcore::hitresult::getDistance(hitResult, session);
 
         // Get the transform to the HitResult.
-        VROMatrix4f worldTransform = arcore::pose::toMatrix(pose, session);
+        float worldTransformMtx[16];
+        arcore::pose::toMatrix(pose, session, worldTransformMtx);
+        VROMatrix4f worldTransform(worldTransformMtx);
 
         // Calculate the local transform, relative to the anchor (if anchor available).
         // TODO: VIRO-1895 confirm this is correct. T(local) = T(world) x T(anchor)^-1
@@ -128,7 +130,9 @@ void VROARFrameARCore::getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, 
     if (!session) {
         return;
     }
-    std::vector<float> texcoords = arcore::frame::getBackgroundTexcoords(_frame, session->getSessionInternal());
+
+    float texcoords[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    arcore::frame::getBackgroundTexcoords(_frame, session->getSessionInternal(), texcoords);
     BL->x = texcoords[0];
     BL->y = texcoords[1];
     TL->x = texcoords[2];

@@ -39,12 +39,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
 
     static {
         System.loadLibrary("vrapi");
-        try {
-            System.loadLibrary("viro_native");
-        } catch (UnsatisfiedLinkError e) {
-            Log.i("Viro", "ViroCore not found, loading ViroReact");
-            System.loadLibrary("viro_react");
-        }
+        System.loadLibrary("viro_native");
     }
 
     /**

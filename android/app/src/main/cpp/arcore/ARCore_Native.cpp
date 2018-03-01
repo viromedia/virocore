@@ -7,13 +7,7 @@
 //
 
 #include "ARCore_Native.h"
-#include "VROPlatformUtil.h"
 #include "VROMatrix4f.h"
-#include <stdio.h>
-#include <sstream>
-#include <string>
-#include "VROStringUtil.h"
-#include "VROLog.h"
 
 namespace arcore {
 
@@ -88,10 +82,8 @@ namespace arcore {
             ArPose_destroy(pose);
         }
 
-        VROMatrix4f toMatrix(const ArPose *pose, const ArSession *session) {
-            float matrix[16];
-            ArPose_getMatrix(session, pose, matrix);
-            return { matrix };
+        void toMatrix(const ArPose *pose, const ArSession *session, float *outMatrix) {
+            ArPose_getMatrix(session, pose, outMatrix);
         }
 
     }
@@ -128,11 +120,8 @@ namespace arcore {
             return reinterpret_cast<uint64_t>(anchor);
         }
 
-        std::string getId(const ArAnchor *anchor) {
-            uint64_t nativeHandle = reinterpret_cast<uint64_t>(anchor);
-            std::stringstream ss;
-            ss << nativeHandle;
-            return ss.str();
+        uint64_t getId(const ArAnchor *anchor) {
+            return reinterpret_cast<uint64_t>(anchor);
         }
 
         void getPose(const ArAnchor *anchor, const ArSession *session, ArPose *outPose) {
@@ -184,7 +173,6 @@ namespace arcore {
             ArTrackableList_getSize(session, trackableList, &size);
             return size;
         }
-
     }
 
     namespace trackable {
@@ -222,6 +210,10 @@ namespace arcore {
 
         void release(ArTrackable *trackable) {
             ArTrackable_release(trackable);
+        }
+
+        ArPlane *asPlane(ArTrackable *trackable) {
+            return ArAsPlane(trackable);
         }
 
     }
@@ -280,6 +272,11 @@ namespace arcore {
             ArPlane_isPoseInPolygon(session, plane, pose, &result);
             return (bool) result;
         }
+
+        ArTrackable *asTrackable(ArPlane *plane) {
+            return ArAsTrackable(plane);
+        }
+
     }
 
     namespace light_estimate {
@@ -325,24 +322,20 @@ namespace arcore {
             ArFrame_destroy(frame);
         }
 
-        VROMatrix4f getViewMatrix(const ArFrame *frame, const ArSession *session) {
+        void getViewMatrix(const ArFrame *frame, const ArSession *session, float *outMatrix) {
             ArCamera *camera;
             ArFrame_acquireCamera(session, frame, &camera);
             float matrix[16];
-            ArCamera_getViewMatrix(session, camera, matrix);
+            ArCamera_getViewMatrix(session, camera, outMatrix);
             ArCamera_release(camera);
-
-            return { matrix };
         }
 
-        VROMatrix4f getProjectionMatrix(const ArFrame *frame, float near, float far, const ArSession *session) {
+        void getProjectionMatrix(const ArFrame *frame, float near, float far, const ArSession *session, float *outMatrix) {
             ArCamera *camera;
             ArFrame_acquireCamera(session, frame, &camera);
             float matrix[16];
-            ArCamera_getProjectionMatrix(session, camera, near, far, matrix);
+            ArCamera_getProjectionMatrix(session, camera, near, far, outMatrix);
             ArCamera_release(camera);
-
-            return { matrix };
         }
 
         TrackingState getTrackingState(const ArFrame *frame, const ArSession *session) {
@@ -389,15 +382,11 @@ namespace arcore {
             ArFrame_hitTest(session, frame, x, y, outList);
         }
 
-        std::vector<float> getBackgroundTexcoords(const ArFrame *frame, const ArSession *session) {
+        void getBackgroundTexcoords(const ArFrame *frame, const ArSession *session, float *outTexcoords) {
             // BL, TL, BR, TR
             const float source[8] = { 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0 };
             float dest[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-            ArFrame_transformDisplayUvCoords(session, frame, 8, source, dest);
-
-            std::vector<float> result;
-            result.assign(dest, dest + 8);
-            return result;
+            ArFrame_transformDisplayUvCoords(session, frame, 8, source, outTexcoords);
         }
 
         ArPointCloud *acquirePointCloud(const ArFrame *frame, const ArSession *session) {
@@ -489,8 +478,7 @@ namespace arcore {
 
     namespace session {
 
-        ArSession *create(void *applicationContext) {
-            JNIEnv *env = VROPlatformGetJNIEnv();
+        ArSession *create(void *applicationContext, JNIEnv *env) {
             ArSession *session;
             ArSession_create(env, applicationContext, &session);
             return session;
@@ -500,8 +488,17 @@ namespace arcore {
             ArSession_destroy(session);
         }
 
-        ArStatus configure(ArSession *session, const ArConfig *config) {
-            return ArSession_configure(session, config);
+        ConfigStatus configure(ArSession *session, const ArConfig *config) {
+            ArStatus status = ArSession_configure(session, config);
+            switch (status) {
+                case AR_SUCCESS:
+                    return ConfigStatus::Success;
+                case AR_ERROR_UNSUPPORTED_CONFIGURATION:
+                    return ConfigStatus::UnsupportedConfiguration;
+                case AR_ERROR_SESSION_NOT_PAUSED:
+                    return ConfigStatus::SessionNotPaused;
+            }
+            return ConfigStatus::UnsupportedConfiguration;
         }
 
         bool checkSupported(ArSession *session, const ArConfig *config) {

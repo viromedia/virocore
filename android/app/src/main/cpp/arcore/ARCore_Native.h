@@ -9,13 +9,33 @@
 #ifndef ARCORE_NATIVE_h
 #define ARCORE_NATIVE_h
 
+#include <stdint.h>
+#include <jni.h>
 #include "arcore_c_api.h"
-#include <string>
-#include <vector>
 
-class VROMatrix4f;
+/*
+struct ArSession;
+struct ArConfig;
+struct ArPose;
+struct ArAnchorList;
+struct ArAnchor;
+struct ArTrackableList;
+struct ArTrackable;
+struct ArPlane;
+struct ArLightEstimate;
+struct ArFrame;
+struct ArPointCloud;
+struct ArHitResult;
+struct ArHitResultList;
+ */
 
 namespace arcore {
+
+    enum class ConfigStatus {
+        Success,
+        UnsupportedConfiguration,
+        SessionNotPaused,
+    };
 
     enum class TrackingState {
         NotTracking,
@@ -58,7 +78,7 @@ namespace arcore {
 
         ArPose *create(const ArSession *session);
         void destroy(ArPose *pose);
-        VROMatrix4f toMatrix(const ArPose *pose, const ArSession *session);
+        void toMatrix(const ArPose *pose, const ArSession *session, float *outMatrix);
 
     }
 
@@ -74,7 +94,7 @@ namespace arcore {
     namespace anchor {
 
         uint64_t getHashCode(const ArAnchor *anchor);
-        std::string getId(const ArAnchor *anchor);
+        uint64_t getId(const ArAnchor *anchor);
         void getPose(const ArAnchor *anchor, const ArSession *session, ArPose *outPose);
         TrackingState getTrackingState(const ArAnchor *anchor, const ArSession *session);
         void detach(ArAnchor *anchor, ArSession *session);
@@ -97,6 +117,7 @@ namespace arcore {
         TrackingState getTrackingState(const ArTrackable *trackable, const ArSession *session);
         void release(ArTrackable *trackable);
         TrackableType getType(const ArTrackable *trackable, const ArSession *session);
+        ArPlane *asPlane(ArTrackable *trackable);
 
     }
 
@@ -110,6 +131,7 @@ namespace arcore {
         PlaneType getType(const ArPlane *plane, const ArSession *session);
         bool isPoseInExtents(const ArPlane *plane, const ArPose *pose, const ArSession *session);
         bool isPoseInPolygon(const ArPlane *plane, const ArPose *pose, const ArSession *session);
+        ArTrackable *asTrackable(ArPlane *plane);
     }
 
     namespace light_estimate {
@@ -125,8 +147,8 @@ namespace arcore {
 
         ArFrame *create(const ArSession *session);
         void destroy(ArFrame *frame);
-        VROMatrix4f getViewMatrix(const ArFrame *frame, const ArSession *session);
-        VROMatrix4f getProjectionMatrix(const ArFrame *frame, float near, float far, const ArSession *session);
+        void getViewMatrix(const ArFrame *frame, const ArSession *session, float *outMatrix);
+        void getProjectionMatrix(const ArFrame *frame, float near, float far, const ArSession *session, float *outMatrix);
         TrackingState getTrackingState(const ArFrame *frame, const ArSession *session);
         void getLightEstimate(const ArFrame *frame, const ArSession *session, ArLightEstimate *outLightEstimate);
         bool hasDisplayGeometryChanged(const ArFrame *frame, const ArSession *session);
@@ -134,7 +156,7 @@ namespace arcore {
         int64_t getTimestampNs(const ArFrame *frame, const ArSession *session);
         void getUpdatedAnchors(const ArFrame *frame, const ArSession *session, ArAnchorList *outList);
         void getUpdatedPlanes(const ArFrame *frame, const ArSession *session, ArTrackableList *outList);
-        std::vector<float> getBackgroundTexcoords(const ArFrame *frame, const ArSession *session);
+        void getBackgroundTexcoords(const ArFrame *frame, const ArSession *session, float *outTexcoords);
         ArPointCloud *acquirePointCloud(const ArFrame *frame, const ArSession *session);
 
     }
@@ -169,9 +191,9 @@ namespace arcore {
 
     namespace session {
 
-        ArSession *create(void *applicationContext);
+        ArSession *create(void *applicationContext, JNIEnv *env);
         void destroy(ArSession *session);
-        ArStatus configure(ArSession *session, const ArConfig *config);
+        ConfigStatus configure(ArSession *session, const ArConfig *config);
         bool checkSupported(ArSession *session, const ArConfig *config);
         void setDisplayGeometry(ArSession *session, int rotation, int width, int height);
         void setCameraTextureName(ArSession *session, int32_t textureId);

@@ -32,7 +32,8 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
 }
 
 void VROARSessionARCore::onARCoreInstalled(void *context) {
-    _session = arcore::session::create(context);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    _session = arcore::session::create(context, env);
     _frame = arcore::frame::create(_session);
 }
 
@@ -143,20 +144,20 @@ bool VROARSessionARCore::updateARCoreConfig() {
         pinfo("Failed to configure AR session: configuration not supported");
         return false;
     }
-    ArStatus status = arcore::session::configure(_session, config);
+    arcore::ConfigStatus status = arcore::session::configure(_session, config);
     arcore::config::destroy(config);
 
-    if (status == AR_SUCCESS) {
+    if (status == arcore::ConfigStatus::Success) {
         pinfo("Successfully configured AR session [lighting %d, planes %d, update %d]",
               _lightingMode, _planeFindingMode, _updateMode);
         arcore::session::resume(_session);
         return true;
     }
-    else if (status == AR_ERROR_UNSUPPORTED_CONFIGURATION) {
+    else if (status == arcore::ConfigStatus::UnsupportedConfiguration) {
         pinfo("Failed to configure AR session: configuration not supported");
         return false;
     }
-    else if (status == AR_ERROR_SESSION_NOT_PAUSED) {
+    else if (status == arcore::ConfigStatus::SessionNotPaused) {
         pinfo("Failed to change AR configuration: session must be paused");
         return false;
     }
@@ -287,7 +288,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
         for (int i = 0; i < anchorsSize; i++) {
             ArAnchor *anchor = arcore::anchorlist::acquireItem(anchorList, i, _session);
             std::shared_ptr<VROARAnchor> vAnchor;
-            std::string key = arcore::anchor::getId(anchor);
+            std::string key = VROStringUtil::toString64(arcore::anchor::getId(anchor));
 
             auto it = _nativeAnchorMap.find(key);
             if (it != _nativeAnchorMap.end()) {
@@ -310,7 +311,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
     if (planesSize > 0) {
         for (int i = 0; i < planesSize; i++) {
             ArTrackable *trackable = arcore::trackablelist::acquireItem(planesList, i, _session);
-            ArPlane *plane = ArAsPlane(trackable);
+            ArPlane *plane = arcore::trackable::asPlane(trackable);
 
             ArPlane *newPlane = arcore::plane::acquireSubsumedBy(plane, _session);
 
@@ -346,7 +347,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                         removeAnchor(vAnchor);
                     }
                 }
-                arcore::trackable::release(ArAsTrackable(newPlane));
+                arcore::trackable::release(arcore::plane::asTrackable(newPlane));
             }
 
             arcore::trackable::release(trackable);
@@ -360,7 +361,10 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 void VROARSessionARCore::updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, ArAnchor *anchorAR) {
     ArPose *pose = arcore::pose::create(_session);
     arcore::anchor::getPose(anchorAR, _session, pose);
-    anchor->setTransform(arcore::pose::toMatrix(pose, _session));
+
+    float mtx[16];
+    arcore::pose::toMatrix(pose, _session, mtx);
+    anchor->setTransform({ mtx });
     arcore::pose::destroy(pose);
 }
 
@@ -368,7 +372,9 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
     ArPose *pose = arcore::pose::create(_session);
     arcore::plane::getCenterPose(planeAR, _session, pose);
 
-    VROMatrix4f newTransform = arcore::pose::toMatrix(pose, _session);
+    float newTransformMtx[16];
+    arcore::pose::toMatrix(pose, _session, newTransformMtx);
+    VROMatrix4f newTransform(newTransformMtx);
     VROVector3f newTranslation = newTransform.extractTranslation();
 
     VROMatrix4f oldTransform = plane->getTransform();

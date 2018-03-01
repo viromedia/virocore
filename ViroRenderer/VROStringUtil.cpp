@@ -19,6 +19,12 @@ std::string VROStringUtil::toString(int i) {
     return ss.str();
 }
 
+std::string VROStringUtil::toString64(uint64_t i) {
+    std::stringstream ss;
+    ss << i;
+    return ss.str();
+}
+
 std::string VROStringUtil::toString(double n, int precision) {
     std::ostringstream ss;
     ss.setf(std::ios::fixed, std::ios::floatfield);

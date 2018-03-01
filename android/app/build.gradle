@@ -43,11 +43,10 @@ android {
             // ViroCore exports two shared libraries, viro-native and viro-arcore. The latter
             // is only used in ViroViewARCore, thus allowing views like ViroSceneView to support
             // platforms before Android-24 (which ARCore's min supported platform).
-            // Because we export two shared libraries, we have to use *shared* STL.
+            // Note that viro_arcore does not use STL, so we can still use static STL in viro_native
             externalNativeBuild {
                 cmake {
                     targets "viro_native", "viro_arcore"
-                    arguments "-DANDROID_STL=gnustl_shared"
                     cppFlags "-std=c++14 -frtti -fcxx-exceptions"
                 }
             }
@@ -57,11 +56,9 @@ android {
             dimension "product"
             buildConfigField "String", "dummyField", "\"ViroReact\""
 
-            // ViroReact exports a single shared library, viro-native. This allows us to use
-            // static STL, which is compatible with React Android's STL.
             externalNativeBuild {
                 cmake {
-                    targets "viro_react"
+                    targets "viro_native", "viro_arcore"
                     cppFlags "-std=c++14 -frtti -fcxx-exceptions"
                 }
             }

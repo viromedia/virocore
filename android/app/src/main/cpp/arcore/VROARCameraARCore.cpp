@@ -22,8 +22,9 @@ VROARCameraARCore::VROARCameraARCore(ArFrame *frame,
     _frame(frame),
     _session(session) {
 
-    VROMatrix4f viewMatrix = arcore::frame::getViewMatrix(frame,
-                                                          session->getSessionInternal());
+    float viewMtx[16];
+    arcore::frame::getViewMatrix(frame, session->getSessionInternal(), viewMtx);
+    VROMatrix4f viewMatrix(viewMtx);
     VROMatrix4f cameraMatrix = viewMatrix.invert();
 
     _position = { cameraMatrix[12], cameraMatrix[13], cameraMatrix[14] };
@@ -89,8 +90,10 @@ VROMatrix4f VROARCameraARCore::getProjection(VROViewport viewport, float near, f
         return {};
     }
 
-    VROMatrix4f projection = arcore::frame::getProjectionMatrix(_frame, near, far,
-                                                                session->getSessionInternal());
+    float projectionMtx[16];
+    arcore::frame::getProjectionMatrix(_frame, near, far, session->getSessionInternal(), projectionMtx);
+    VROMatrix4f projection(projectionMtx);
+
     float fovX = toDegrees(atan(1.0f / projection[0]) * 2.0);
     float fovY = toDegrees(atan(1.0f / projection[5]) * 2.0);
     *outFOV = VROFieldOfView(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
