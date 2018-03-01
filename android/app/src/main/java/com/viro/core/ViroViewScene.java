@@ -292,7 +292,7 @@ public class ViroViewScene extends ViroView {
     @Override
     public void setBackgroundColor(int color) {
         int alpha  = Color.alpha(color);
-        mSurfaceView.setOpaque(alpha > 0);
+        mSurfaceView.setOpaque(alpha == 255);
         mNativeRenderer.setClearColor(color);
     }
 

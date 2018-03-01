@@ -28,7 +28,6 @@ VROGaussianBlurRenderPass::~VROGaussianBlurRenderPass() {
 void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> driver) {
     std::vector<std::string> samplers = { "image" };
 
-    // TODO VIRO-2680: Enable Alpha Channel for Gaussian Blur / Bloom Shaders
     std::vector<std::string> code = {
         "uniform sampler2D image;",
         "uniform bool horizontal;",
@@ -38,22 +37,23 @@ void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> drive
         "ivec2 tex_size = textureSize(image, 0);",
         "highp vec2 tex_offset = vec2(1.0 / float(tex_size.x), 1.0 / float(tex_size.y));",
         
-        "highp vec4 result = texture(image, v_texcoord).rgba * weight[0];",
+        "highp vec4 center = texture(image, v_texcoord);"
+        "highp vec3 result = center.rgb * weight[0];",
         "if (horizontal)",
         "{",
-        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[1], 0.0)).rgba * weight[1];",
-        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[1], 0.0)).rgba * weight[1];",
-        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[2], 0.0)).rgba * weight[2];",
-        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[2], 0.0)).rgba * weight[2];",
+        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[1], 0.0)).rgb * weight[1];",
+        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[1], 0.0)).rgb * weight[1];",
+        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[2], 0.0)).rgb * weight[2];",
+        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[2], 0.0)).rgb * weight[2];",
         "}",
         "else",
         "{",
-        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[1])).rgba * weight[1];",
-        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[1])).rgba * weight[1];",
-        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[2])).rgba * weight[2];",
-        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[2])).rgba * weight[2];",
+        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[1])).rgb * weight[1];",
+        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[1])).rgb * weight[1];",
+        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[2])).rgb * weight[2];",
+        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[2])).rgb * weight[2];",
         "}",
-        "frag_color = result;",
+        "frag_color = vec4(result, center.a);",
     };
     
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
