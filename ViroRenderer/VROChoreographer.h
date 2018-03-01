@@ -134,6 +134,7 @@ private:
     
     std::weak_ptr<VRODriver> _driver;
     std::experimental::optional<VROViewport> _viewport;
+    VROVector4f _clearColor;
 
     /*
      True if the GPU supports multiple render targets.

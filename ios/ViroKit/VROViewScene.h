@@ -34,4 +34,10 @@ class VRORendererConfiguration;
  */
 - (void)setPaused:(BOOL)paused;
 
+/*
+ Set the background color for this view. This is the color that will be
+ rendered behind the scene graph.
+ */
+- (void)setBackgroundColor:(UIColor *)color;
+
 @end

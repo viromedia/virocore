@@ -31,6 +31,7 @@
 
 VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_ptr<VRODriver> driver) :
     _driver(driver),
+    _clearColor({ 0, 0, 0, 1 }),
     _renderTargetsChanged(false),
     _renderToTexture(false),
     _blurScaling(0.25) {
@@ -138,6 +139,7 @@ void VROChoreographer::createRenderTargets() {
     if (_viewport) {
         setViewport(*_viewport, driver);
     }
+    setClearColor(_clearColor, driver);
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
@@ -279,6 +281,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
 }
 
 void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver) {
+    _clearColor = color;
     // Set the default clear color for the following targets
     driver->getDisplay()->setClearColor(color);
     if (_blitTarget) {

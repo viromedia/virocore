@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 };
 
 static const VROTestSceneType kTestType = VROTestSceneType::Scene;
-static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
+static const VRORendererTestType kRendererTest = VRORendererTestType::Box;
 
 @interface VROTestViewController ()
 
@@ -55,16 +55,30 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
         //[self testScreenshot];
     }
     else {
-        VROViewScene *view = [[VROViewScene alloc] initWithFrame:[UIScreen mainScreen].bounds
+        config.enableHDR = YES;
+        config.enablePBR = YES;
+        config.enableBloom = YES;
+        
+        CGRect screenBounds = [UIScreen mainScreen].bounds;
+        CGRect viroBounds = CGRectInset(screenBounds, 50, 50);
+        
+        UIView *backingView = [[UIView alloc] initWithFrame:screenBounds];
+        backingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        backingView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"check"]];
+        
+        VROViewScene *view = [[VROViewScene alloc] initWithFrame:viroBounds
                                                           config:config
                                                          context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;
         view.suspended = NO;
+        view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.0 alpha:0.0];
         
         self.renderDelegate.view = view;
         self.renderDelegate.test = kRendererTest;
-        self.view = view;
+        
+        [backingView addSubview:view];
+        self.view = backingView;
     }
 }
 

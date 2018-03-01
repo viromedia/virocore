@@ -167,6 +167,17 @@ static VROVector3f const kZeroVector = VROVector3f();
     self.viewRecorder = [[VROViewRecorder alloc] initWithView:self renderer:_renderer driver:_driver];
 }
 
+- (void)setBackgroundColor:(UIColor *)color {
+    [super setBackgroundColor:color];
+    
+    double r, g, b, a;
+    [color getRed:&r green:&g blue:&b alpha:&a];
+    VROVector4f color_v((float) r, (float) g, (float) b, (float) a);
+    
+    self.renderer->setClearColor(color_v, _driver);
+    self.layer.opaque = (a > 0.999);
+}
+
 #pragma mark - Gesture handlers
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {

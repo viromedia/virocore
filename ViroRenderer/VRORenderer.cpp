@@ -48,6 +48,7 @@ VRORenderer::VRORenderer(VRORendererConfiguration config, std::shared_ptr<VROInp
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _inputController(inputController),
     _initialRendererConfig(config),
+    _clearColor({ 0, 0, 0, 1 }),
     _fpsTickIndex(0),
     _fpsTickSum(0) {
     _hasIncomingSceneTransition = false;
@@ -76,6 +77,7 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     _debugHUD->initRenderer(driver);
     
     _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
+    _choreographer->setClearColor(_clearColor, driver);
     _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
 }
 
@@ -243,11 +245,10 @@ VROMatrix4f VRORenderer::getLookAtMatrix() const {
 }
 
 void VRORenderer::setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver) {
-    if (_choreographer == nullptr) {
-        pwarn("Viro: Renderer has not yet initialized - Unable to set clearColor!");
-        return;
+    _clearColor = color;
+    if (_choreographer) {
+        _choreographer->setClearColor(color, driver);
     }
-    _choreographer->setClearColor(color, driver);
 }
 
 VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,

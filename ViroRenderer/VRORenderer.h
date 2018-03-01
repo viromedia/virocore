@@ -296,6 +296,12 @@ private:
      changed directly in the VROChoreographer after the renderer is initialized.
      */
     VRORendererConfiguration _initialRendererConfig;
+    
+    /*
+     Clear color used by the renderer. This is passed to the VROChoreographer
+     after initialization.
+     */
+    VROVector4f _clearColor;
 
     /*
      Invoked on the rendering thread to perform thread-specific initialization.
