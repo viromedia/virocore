@@ -622,7 +622,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     material->setWritesToDepthBuffer(false);
     
     _arSession->setViewport(viewport);
-    _arSession->setAnchorDetection({ VROAnchorDetection::PlanesHorizontal });
     _arSession->run();
 }
 
