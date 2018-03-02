@@ -436,11 +436,78 @@ do { \
 
 /////////////////////////////////////////////////////////////////////////////////
 //
+//  WASM: Logging
+//
+/////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark WASM Logging
+
+#if VRO_PLATFORM_WASM
+
+#define passert(condition) (assert(condition))
+
+#define cpverbose(tag, ...) ((void)0)
+#define cpdebug(tag, ...) ((void)0)
+#define pverbose(message,...) ((void)0)
+
+#define pdebug(message,...) \
+do { \
+\
+} while (0)
+
+#define pinfo(message,...) \
+do { \
+printf(#message"\n", ##__VA_ARGS__); \
+} while (0)
+
+#define pwarn(message,...) \
+do { \
+printf(#message"\n", ##__VA_ARGS__); \
+} while (0)
+
+#define perr(message,...) \
+do { \
+printf("Error: "#message"\n", ##__VA_ARGS__); \
+} while (0)
+
+#define pfatal(message,...) \
+do { \
+printf("Fatal Error: "#message"\n", ##__VA_ARGS__); \
+} while (0)
+
+#define pgllabel(message,...) \
+do { \
+char str[1024]; \
+sprintf(str, #message, ##__VA_ARGS__); \
+ \
+} while (0)
+
+#define pglpush(message,...) \
+do { \
+char str[1024]; \
+sprintf(str, #message, ##__VA_ARGS__); \
+ \
+} while (0)
+
+#define pglpop() \
+do { \
+ \
+} while (0)
+
+#define cpinfo(tag, ...) \
+do { \
+\
+} while (0)
+
+#endif
+
+/////////////////////////////////////////////////////////////////////////////////
+//
 //  Common: Logging
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark Common (Android & iOS) Logging
+#pragma mark Common Logging
 
 // --------------------------------
 // variables:

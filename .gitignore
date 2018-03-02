@@ -5,6 +5,9 @@
 /ios/Pods/
 .DS_Store
 
+# WASM
+/wasm/products/
+
 # Gradle
 android/.idea/
 android/.idea/misc.xml
