@@ -90,7 +90,7 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
         key.hierarchyDepth = hierarchyDepth;
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
-        key.elementIndex = i;
+        key.elementIndex = (int) i;
         key.distanceFromCamera = zFar - distanceFromCamera;
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];

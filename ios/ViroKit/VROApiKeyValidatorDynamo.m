@@ -43,9 +43,9 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
         _bundleId = [[NSBundle mainBundle] bundleIdentifier];
 
 #if DEBUG
-        [AWSLogger defaultLogger].logLevel = AWSLogLevelWarn;
-#else 
-        [AWSLogger defaultLogger].logLevel = AWSLogLevelWarn;
+        [AWSDDLog sharedInstance].logLevel = AWSLogLevelWarn;
+#else
+        [AWSDDLog sharedInstance].logLevel = AWSLogLevelWarn;
 #endif
         NSString *encodedAccessKey = kVROEncodedAccessKey;
         NSString *encodedSecretKey = kVROEncodedSecretKey;
