@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.net.rtp.AudioCodec;
 import android.opengl.GLES20;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -220,6 +221,14 @@ public class ViroMediaRecorder {
      */
     private List<ScreenShotRunnable> mQueuedScreenShots;
 
+    /*
+     Default Audio recording settings.
+     See https://developer.android.com/guide/topics/media/media-formats.html#audio-formats.
+     */
+    private int mAudioEncodingBitRate = 16;
+    private int mAudioSamplingBitRate = 44100;
+    private int mAudioEncoder = MediaRecorder.AudioEncoder.AAC;
+
     ViroMediaRecorder(Context context, Renderer rendererJni, int width, int height) {
         mAppContext = context.getApplicationContext();
         mUIHandler = new Handler(Looper.getMainLooper());
@@ -427,6 +436,21 @@ public class ViroMediaRecorder {
         return true;
     }
 
+    /**
+     * Reconfigures the audio settings of the underlying Android MediaRecorder used by the
+     * ViroMediaRecorder. This must be called before any recording for it to take effect.
+     * @param encodingBitRate - Sets the audio encoding bit rate for recording.
+     * @param samplingBitRate - Sets the audio sampling rate for recording. The sampling rate really
+     * depends on the format for the audio recording, as well as the capabilities of the platform.
+     * @param encoder - Sets the audio encoder to be used for recording.
+     * @see android.media.MediaRecorder.AudioEncoder
+     */
+    public void configureAudioInput(int encodingBitRate, int samplingBitRate, int encoder){
+        mAudioEncodingBitRate = encodingBitRate;
+        mAudioSamplingBitRate = samplingBitRate;
+        mAudioEncoder = encoder;
+    }
+
     private void initializeRecorder(int width, int height) {
         // Note: Order of operations matter!
         mRecorder = new MediaRecorder();
@@ -434,10 +458,10 @@ public class ViroMediaRecorder {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mRecorder.setAudioEncodingBitRate(16);
-        mRecorder.setAudioSamplingRate(44100);
+        mRecorder.setAudioEncoder(mAudioEncoder);
+        mRecorder.setAudioEncodingBitRate(mAudioEncodingBitRate);
+        mRecorder.setAudioSamplingRate(mAudioSamplingBitRate);
         mRecorder.setVideoEncodingBitRate(7000000);
         mRecorder.setVideoFrameRate(30);
         mRecorder.setVideoSize(width, height);
