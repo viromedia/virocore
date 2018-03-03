@@ -267,11 +267,11 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROPhysicsShape.cpp
 
              # Image Tracking
-             # ${VIRO_ANDROID_SRC}/jni/OpenCV_JNI.cpp
-             # ${VIRO_ANDROID_SRC}/jni/ImageTracker_JNI.cpp
-             # ${VIRO_ANDROID_SRC}/jni/ImageTrackerOutput_JNI.cpp
-             # ${VIRO_RENDERER_SRC}/VROImageTracker.cpp
-             # ${VIRO_RENDERER_SRC}/VROImageTrackerOutput.cpp
+             ${VIRO_ANDROID_SRC}/jni/OpenCV_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ImageTracker_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ImageTrackerOutput_JNI.cpp
+             ${VIRO_RENDERER_SRC}/VROARImageTracker.cpp
+             ${VIRO_RENDERER_SRC}/VROARImageTrackerOutput.cpp
 
              # Renderer Test
              ${VIRO_RENDERER_SRC}/VRORendererTestHarness.cpp

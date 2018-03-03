@@ -10,7 +10,7 @@
 #include <opencv2/imgproc.hpp>
 #include "PersistentRef.h"
 #include "ImageTrackerOutput_JNI.h"
-#include "VROImageTracker.h"
+#include "VROARImageTracker.h"
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgcodecs/imgcodecs.hpp"
 #include <android/bitmap.h>
@@ -21,13 +21,13 @@
       Java_com_viro_core_internal_ImageTracker_##method_name
 
 namespace ImageTracker {
-        inline jlong jptr(std::shared_ptr<VROImageTracker> tracker) {
-            PersistentRef<VROImageTracker> *nativeTracker = new PersistentRef<VROImageTracker>(tracker);
+        inline jlong jptr(std::shared_ptr<VROARImageTracker> tracker) {
+            PersistentRef<VROARImageTracker> *nativeTracker = new PersistentRef<VROARImageTracker>(tracker);
             return reinterpret_cast<intptr_t>(nativeTracker);
         }
 
-        inline std::shared_ptr<VROImageTracker> native(jlong ptr) {
-            PersistentRef<VROImageTracker> *persistentTracker = reinterpret_cast<PersistentRef<VROImageTracker> *>(ptr);
+        inline std::shared_ptr<VROARImageTracker> native(jlong ptr) {
+            PersistentRef<VROARImageTracker> *persistentTracker = reinterpret_cast<PersistentRef<VROARImageTracker> *>(ptr);
             return persistentTracker->get();
         }
 }
@@ -62,7 +62,7 @@ JNI_METHOD(jlong, nativeCreateImageTracker)(JNIEnv *env,
                                             jobject bitmapImage) {
     cv::Mat image = parseBitmapImage(env, bitmapImage);
 
-    std::shared_ptr<VROImageTracker> tracker = VROImageTracker::createImageTracker(image);
+    std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(image);
 
     return ImageTracker::jptr(tracker);
 
@@ -74,7 +74,7 @@ JNI_METHOD(jlong, nativeFindTarget)(JNIEnv *env,
                                     jobject bitmapImage) {
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 
-    std::shared_ptr<VROImageTrackerOutput> output = ImageTracker::native(nativeRef)->findTarget(imageMat);
+    std::shared_ptr<VROARImageTrackerOutput> output = ImageTracker::native(nativeRef)->findTarget(imageMat);
 
     return ImageTrackerOutput::jptr(output);
 }

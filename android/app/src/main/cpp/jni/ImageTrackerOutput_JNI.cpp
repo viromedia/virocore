@@ -24,7 +24,7 @@ JNI_METHOD(jfloatArray, nativeOutputCorners)(JNIEnv *env,
                                              jobject obj,
                                              jlong nativeRef) {
 
-    std::shared_ptr<VROImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
+    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
 
     int returnLength = output->corners.size() * 2;
     jfloatArray returnCorners = env->NewFloatArray(returnLength);
@@ -39,6 +39,44 @@ JNI_METHOD(jfloatArray, nativeOutputCorners)(JNIEnv *env,
     env->SetFloatArrayRegion(returnCorners, 0, returnLength, tempArr);
 
     return returnCorners;
+}
+
+JNI_METHOD(jfloatArray, nativeOutputPosition)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong nativeRef) {
+
+    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
+
+    jfloatArray returnPosition = env->NewFloatArray(3);
+    jfloat tempArr[3];
+
+    // We have to negate the y and z rotation because OpenCV y and z axis are opposite from ours.
+    tempArr[0] = output->translation.at<double>(0,0);
+    tempArr[1] = - output->translation.at<double>(1,0);
+    tempArr[2] = - output->translation.at<double>(2,0);
+
+    env->SetFloatArrayRegion(returnPosition, 0, 3, tempArr);
+
+    return returnPosition;
+}
+
+JNI_METHOD(jfloatArray, nativeOutputRotation)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong nativeRef) {
+
+    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
+
+    jfloatArray returnRotation = env->NewFloatArray(3);
+    jfloat tempArr[3];
+
+    // We have to negate the y and z rotation because OpenCV y and z axis are opposite from ours.
+    tempArr[0] = output->rotation.at<double>(0,0);
+    tempArr[1] = - output->rotation.at<double>(1,0);
+    tempArr[2] = - output->rotation.at<double>(2,0);
+
+    env->SetFloatArrayRegion(returnRotation, 0, 3, tempArr);
+
+    return returnRotation;
 }
 
 };

@@ -1,10 +1,10 @@
 //
-//  VROImageTracking.cpp
+//  VROARImageTracker.cpp
 //  ViroRenderer
 //
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
-#include "VROImageTracker.h"
+#include "VROARImageTracker.h"
 #include <sys/time.h>
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -22,17 +22,17 @@
     #define LOG_DETECT_TIME(message) ((void)0);
 #endif
 
-std::shared_ptr<VROImageTracker> VROImageTracker::createImageTracker(cv::Mat image) {
-    return std::shared_ptr<VROImageTracker>(new VROImageTracker(image, VROImageTrackerType::ORB4));
+std::shared_ptr<VROARImageTracker> VROARImageTracker::createARImageTracker(cv::Mat image) {
+    return std::shared_ptr<VROARImageTracker>(new VROARImageTracker(image, VROARImageTrackerType::ORB4));
 }
 
-VROImageTracker::VROImageTracker(cv::Mat targetImage, VROImageTrackerType type) :
+VROARImageTracker::VROARImageTracker(cv::Mat targetImage, VROARImageTrackerType type) :
     _targetImage(targetImage),
     _type(type) {
     updateTargetInfo();
 }
 
-void VROImageTracker::setType(VROImageTrackerType type) {
+void VROARImageTracker::setType(VROARImageTrackerType type) {
     if (_type == type) {
         return;
     }
@@ -40,20 +40,20 @@ void VROImageTracker::setType(VROImageTrackerType type) {
     updateTargetInfo();
 }
 
-void VROImageTracker::updateTargetInfo() {
+void VROARImageTracker::updateTargetInfo() {
     
     switch(_type) {
-        case VROImageTrackerType::ORB3:
+        case VROARImageTrackerType::ORB3:
             //int nfeatures=500, float scaleFactor=1.2f, int nlevels=8, int edgeThreshold=31, int firstLevel=0, int WTA_K=2, int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20);
             _feature = cv::ORB::create(500, 1.3f, 8, 31, 0, 3, cv::ORB::FAST_SCORE, 31);
             break;
-        case VROImageTrackerType::ORB4:
+        case VROARImageTrackerType::ORB4:
             _feature = cv::ORB::create(500, 1.3f, 8, 31, 0, 4);
             break;
-        case VROImageTrackerType::ORB:
+        case VROARImageTrackerType::ORB:
             _feature = cv::ORB::create();
             break;
-        case VROImageTrackerType::BRISK:
+        case VROARImageTrackerType::BRISK:
         default:
             _feature = cv::BRISK::create();
     }
@@ -63,32 +63,32 @@ void VROImageTracker::updateTargetInfo() {
     detectKeypointsAndDescriptors(_targetImage, _targetKeyPoints, _targetDescriptors);
     
     switch(_type) {
-        case VROImageTrackerType::ORB3:
-        case VROImageTrackerType::ORB4:
+        case VROARImageTrackerType::ORB3:
+        case VROARImageTrackerType::ORB4:
             _matcherType = cv::NORM_HAMMING2;
             break;
-        case VROImageTrackerType::BRISK:
-        case VROImageTrackerType::ORB:
+        case VROARImageTrackerType::BRISK:
+        case VROARImageTrackerType::ORB:
         default:
             _matcherType = cv::NORM_HAMMING;
             break;
     }
 }
 
-void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
-                                                    std::vector<cv::KeyPoint> &keypoints,
-                                                    cv::Mat &descriptors) {
+void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
+                                                      std::vector<cv::KeyPoint> &keypoints,
+                                                      cv::Mat &descriptors) {
     LOG_DETECT_TIME("start convert image to grayscale");
 
     // create empty mat for processing output
     cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_8UC1);
 
     switch(_type) {
-        case VROImageTrackerType::ORB:
+        case VROARImageTrackerType::ORB:
             // convert the image to gray scale
             cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
             break;
-        case VROImageTrackerType::BRISK:
+        case VROARImageTrackerType::BRISK:
         default:
             // convert the image to gray scale
             cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
@@ -105,25 +105,25 @@ void VROImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     LOG_DETECT_TIME("finish detect keypoints & descriptors");
 }
 
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
+std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
     _intrinsics = intrinsics;
 
     // Set this to true, if we just want to test solvePnP
     bool testSolvePnp = false;
     if (testSolvePnp) {
         testSolvePnP();
-        return VROImageTrackerOutput::createFalseOutput();
+        return VROARImageTrackerOutput::createFalseOutput();
     }
 
     return findTargetInternal(inputImage);
 }
 
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(cv::Mat inputImage) {
+std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage) {
     _intrinsics = NULL;
     return findTargetInternal(inputImage);
 }
 
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetInternal(cv::Mat inputImage) {
+std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::Mat inputImage) {
 
     _startTime = getCurrentTimeMs();
 
@@ -143,7 +143,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetInternal(cv::M
 
     detectKeypointsAndDescriptors(resizedInput, inputKeyPoints, inputDescriptors);
     
-    std::shared_ptr<VROImageTrackerOutput> output = findTarget(inputKeyPoints, inputDescriptors, inputImage);
+    std::shared_ptr<VROARImageTrackerOutput> output = findTarget(inputKeyPoints, inputDescriptors, inputImage);
     
     // Since we scaled the input image, we need to revert that scale when we return the corners!
     if (output->found) {
@@ -155,29 +155,29 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetInternal(cv::M
     return output;
 }
 
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTarget(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
+std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTarget(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
     if (inputKeypoints.size() == 0 || inputDescriptors.cols == 0) {
         pwarn("[Viro] Could not find keypoints and/or descriptors for the input image.");
-        return VROImageTrackerOutput::createFalseOutput();
+        return VROARImageTrackerOutput::createFalseOutput();
     }
 
     // TODO: add other findTarget types
     switch (_type) {
-        case VROImageTrackerType::BRISK:
+        case VROARImageTrackerType::BRISK:
         default:
             return findTargetBF(inputKeypoints, inputDescriptors, inputImage);
     }
 }
 
 // TODO: split out pose estimation
-std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
+std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTargetBF(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
 
     LOG_DETECT_TIME("start matching keypoints");
     
     int minGoodMatches = 15; // we need at least 15 good matches before we continue.
     std::vector<cv::DMatch> goodMatches;
 
-    bool useBfKnnMatcher = _type != VROImageTrackerType::BRISK;
+    bool useBfKnnMatcher = _type != VROARImageTrackerType::BRISK;
     if (!useBfKnnMatcher) {
         cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(_matcherType, true);
         std::vector<cv::DMatch> matches;
@@ -220,7 +220,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     if (goodMatches.size() < minGoodMatches) {
         pinfo("[Viro] Could not find enough good matching points.");
-        return VROImageTrackerOutput::createFalseOutput();
+        return VROARImageTrackerOutput::createFalseOutput();
     }
 
     std::vector<cv::Point2f> objectPoints;
@@ -237,7 +237,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     if (homographyMat.cols == 0) {
         pinfo("[Viro] Could not find a homography matrix.");
-        return VROImageTrackerOutput::createFalseOutput();
+        return VROARImageTrackerOutput::createFalseOutput();
     }
 
     LOG_DETECT_TIME("start finding perspective transform");
@@ -262,7 +262,7 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
 
     if (sumX < minCornerDistance || sumY < minCornerDistance || inputCorners.size() < objectCorners.size()) {
         pinfo("[Viro] Could not find corners of target in input image.");
-        return VROImageTrackerOutput::createFalseOutput();
+        return VROARImageTrackerOutput::createFalseOutput();
     }
 
     LOG_DETECT_TIME("start finding object pose");
@@ -343,10 +343,10 @@ std::shared_ptr<VROImageTrackerOutput> VROImageTracker::findTargetBF(std::vector
     pinfo("[Viro] rotation: %f, %f, %f", toDegrees(_rotation.at<double>(0,0)), toDegrees(_rotation.at<double>(1,0)), toDegrees(_rotation.at<double>(2,0)));
 #endif
 
-    return std::make_shared<VROImageTrackerOutput>(true, inputCorners, scaledTranslation, _rotation);
+    return std::make_shared<VROARImageTrackerOutput>(true, inputCorners, scaledTranslation, _rotation);
 }
 
-void VROImageTracker::testSolvePnP() {
+void VROARImageTracker::testSolvePnP() {
     
     bool runFirstSample = false;
     bool runSecondSample = false;
@@ -524,7 +524,7 @@ void VROImageTracker::testSolvePnP() {
     }
 }
 
-long VROImageTracker::getCurrentTimeMs() {
+long VROARImageTracker::getCurrentTimeMs() {
     struct timeval tp;
     gettimeofday(&tp, NULL);
     long ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;

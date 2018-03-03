@@ -54,6 +54,7 @@ import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
 import com.viro.core.OmniLight;
+import com.viro.core.internal.ImageTrackerOutput;
 import com.viro.core.internal.OpenCV;
 import com.viro.core.ParticleEmitter;
 import com.viro.core.Polyline;
@@ -258,6 +259,9 @@ public class ViroActivity extends AppCompatActivity {
         else {
             initializeVrScene();
         }
+
+        // Uncomment to run a test screenshot through the OpenCV target tracking code
+        //testFindInScreenshot();
     }
 
     private void onRendererFailed(String error, String errorMessage) {
@@ -338,12 +342,24 @@ public class ViroActivity extends AppCompatActivity {
         setContentView(image);
     }
 
-    private void testFindTarget() {
+    /*
+     This function runs the same test as VROTrackingHelper's findInScreenshot on iOS
+     */
+    private void testFindInScreenshot() {
         final Bitmap targetImage = getBitmapFromAssets("ben.jpg");
         final Bitmap screenshot = getBitmapFromAssets("screenshot.png");
         if (targetImage != null && screenshot != null) {
             final ImageTracker tracker = new ImageTracker(this, targetImage);
-            tracker.findTarget(screenshot);
+            ImageTrackerOutput output = tracker.findTarget(screenshot);
+            if (output.found()) {
+                for (float f : output.corners()) {
+                    Log.i("ImageTracker", "corners are: " + f);
+                }
+                float[] position = output.position();
+                Log.i("ImageTracker", "position is: " + position[0] + ", " + position[1] + ", " + position[2]);
+                float[] rotation = output.rotation();
+                Log.i("ImageTracker", "rotation is: " + rotation[0] + ", " + rotation[1] + ", " + rotation[2]);
+            }
         }
     }
 

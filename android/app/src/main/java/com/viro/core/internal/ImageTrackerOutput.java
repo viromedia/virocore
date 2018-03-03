@@ -23,7 +23,17 @@ public class ImageTrackerOutput {
         return nativeOutputCorners(mNativeRef);
     }
 
+    public float[] position() {
+        return nativeOutputPosition(mNativeRef);
+    }
+
+    public float[] rotation() {
+        return nativeOutputRotation(mNativeRef);
+    }
+
     private native boolean nativeOutputFound(long nativeRef);
     private native float[] nativeOutputCorners(long nativeRef);
+    private native float[] nativeOutputPosition(long nativeRef);
+    private native float[] nativeOutputRotation(long nativeRef);
 }
 //#ENDIF

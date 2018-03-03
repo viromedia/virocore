@@ -24,14 +24,8 @@ public class ImageTracker {
         mNativeRef = nativeCreateImageTracker(targetImage);
     }
 
-    public void findTarget(Bitmap image) {
-        ImageTrackerOutput output = new ImageTrackerOutput(nativeFindTarget(mNativeRef, image));
-
-        if (output.found()) {
-            for (float f : output.corners()) {
-                Log.i("ImageTrackerJni", "corners are: " + f);
-            }
-        }
+    public ImageTrackerOutput findTarget(Bitmap image) {
+        return new ImageTrackerOutput(nativeFindTarget(mNativeRef, image));
     }
 
     private native long nativeCreateImageTracker(Bitmap targetImage);

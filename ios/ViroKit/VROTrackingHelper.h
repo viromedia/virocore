@@ -9,13 +9,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 #import "opencv2/imgcodecs/ios.h"
-#import "VROImageTrackerOutput.h"
+#import "VROARImageTrackerOutput.h"
 
 @interface VROTrackingHelperOutput : NSObject
 
-- (instancetype) initWithTrackerOutput:(std::shared_ptr<VROImageTrackerOutput>)output withImage:(UIImage *)outputImage;
+- (instancetype) initWithTrackerOutput:(std::shared_ptr<VROARImageTrackerOutput>)output withImage:(UIImage *)outputImage;
 
-- (std::shared_ptr<VROImageTrackerOutput>)getImageTrackerOutput;
+- (std::shared_ptr<VROARImageTrackerOutput>)getImageTrackerOutput;
 - (UIImage *)getOutputImage;
 
 @end
@@ -23,12 +23,20 @@
 /*
  This class is currently meant to show as a proof of concept that we can fetch images from
  the AVCapture session and run them through image detection w/ OpenCV
+ 
+ This function
  */
 @interface VROTrackingHelper : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property (nonatomic, strong) UIImageView *overlayImageView;
 
 - (instancetype)init;
+
+/*
+ This function runs the same test as ViroActivity's testFindInScreenshot on Android. Useful
+ for ensuring similar performance on both platforms.
+ */
+- (void)findInScreenshot;
 
 - (void)setIntrinsics:(float *)intrinsics;
 

@@ -28,7 +28,7 @@
 #include "VROProjector.h"
 
 #include "VROARCameraiOS.h"
-#include "VROImageTrackerOutput.h"
+#include "VROARImageTrackerOutput.h"
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment worldAlignment, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, worldAlignment),
@@ -79,6 +79,9 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     }
     
     _trackingHelper = [[VROTrackingHelper alloc] init];
+      
+    // Uncomment to run a test screenshot through the OpenCV tracking code.
+    //[_trackingHelper findInScreenshot];
         
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);
@@ -309,7 +312,7 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                 if (_trackerOutputView != nil) {
                     [_trackerOutputView setImage:[output getOutputImage]];
                 }
-                std::shared_ptr<VROImageTrackerOutput> trackerOutput = [output getImageTrackerOutput];
+                std::shared_ptr<VROARImageTrackerOutput> trackerOutput = [output getImageTrackerOutput];
                 if (trackerOutput != nullptr && trackerOutput->found) {
                     VROMatrix4f camMatrix = VROMatrix4f();
                     camMatrix.translate(camera.getPosition());

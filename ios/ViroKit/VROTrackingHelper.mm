@@ -7,12 +7,12 @@
 //
 
 #import "VROTrackingHelper.h"
-#import "VROImageTracker.h"
+#import "VROARImageTracker.h"
 #import "opencv2/imgcodecs/ios.h"
 #import "opencv2/imgproc/imgproc.hpp"
 
 @interface VROTrackingHelperOutput() {
-    std::shared_ptr<VROImageTrackerOutput> _output;
+    std::shared_ptr<VROARImageTrackerOutput> _output;
 }
 
 @property (nonatomic, strong) UIImage *outputImage;
@@ -21,7 +21,7 @@
 
 @implementation VROTrackingHelperOutput
 
-- (instancetype) initWithTrackerOutput:(std::shared_ptr<VROImageTrackerOutput>)output withImage:(UIImage *)outputImage {
+- (instancetype) initWithTrackerOutput:(std::shared_ptr<VROARImageTrackerOutput>)output withImage:(UIImage *)outputImage {
     self = [super init];
     if (self) {
         _output = output;
@@ -30,7 +30,7 @@
     return self;
 }
 
-- (std::shared_ptr<VROImageTrackerOutput>)getImageTrackerOutput {
+- (std::shared_ptr<VROARImageTrackerOutput>)getImageTrackerOutput {
     return _output;
 }
 
@@ -41,7 +41,7 @@
 @end
 
 @interface VROTrackingHelper () {
-    std::shared_ptr<VROImageTracker> _tracker;
+    std::shared_ptr<VROARImageTracker> _tracker;
 }
 
 @property (nonatomic, assign) BOOL ready;
@@ -59,9 +59,35 @@
         _ready = YES;
         _count = 0;
         _intrinsics = NULL;
-        _shouldTrack = YES;
+        _shouldTrack = NO;
     }
     return self;
+}
+
+- (void)findInScreenshot {
+    UIImage *screenshot = [UIImage imageNamed:@"screenshot.png"];
+    cv::Mat screnshotMat = cv::Mat();
+    UIImageToMat(screenshot, screnshotMat);
+    
+    
+    UIImage *targetImage = [UIImage imageNamed:@"ben.jpg"];
+    cv::Mat targetMat = cv::Mat();
+    UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
+    std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(targetMat);
+    
+    std::shared_ptr<VROARImageTrackerOutput> output = tracker->findTarget(screnshotMat);
+    if (output->found) {
+        std::vector<cv::Point2f> corners = output->corners;
+        for (int i = 0; i < corners.size(); i++) {
+            cv::Point2f point = corners[i];
+            pinfo("TrackingHelper output corner %f", point.x);
+            pinfo("TrackingHelper output corner %f", point.y);
+        }
+        pinfo("TrackingHelper output position %f, %f, %f", output->translation.at<double>(0,0), - output->translation.at<double>(1,0), - output->translation.at<double>(2,0));
+        pinfo("TrackingHelper output rotation %f, %f, %f", output->rotation.at<double>(0,0), - output->rotation.at<double>(1,0), - output->rotation.at<double>(2,0));
+    } else {
+        pinfo("TrackingHelper findInScreenshot not found");
+    }
 }
 
 - (void)toggleTracking:(BOOL)tracking {
@@ -80,7 +106,7 @@
 }
 
 
-- (std::shared_ptr<VROImageTrackerOutput>)runTracking:(cv::Mat)cameraInput {
+- (std::shared_ptr<VROARImageTrackerOutput>)runTracking:(cv::Mat)cameraInput {
 
     if (!_tracker) {
         // fetch the target image to find
@@ -91,11 +117,11 @@
         UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
         
         // initialize the tracker
-        _tracker = VROImageTracker::createImageTracker(targetMat);
+        _tracker = VROARImageTracker::createARImageTracker(targetMat);
     }
 
     // find the target in the given cameraInput (should already be in RGB format).
-    std::shared_ptr<VROImageTrackerOutput> output;
+    std::shared_ptr<VROARImageTrackerOutput> output;
     if (_intrinsics == NULL) {
         output = _tracker->findTarget(cameraInput);
     } else {
@@ -191,7 +217,7 @@
     // anything higher than "low" priority and we start skipping frames (probably because
     // the low level camera notification API's notify on the background thread). - actually it seems to be okay on "high"
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        std::shared_ptr<VROImageTrackerOutput> output = [self runTracking:rgbImage];
+        std::shared_ptr<VROARImageTrackerOutput> output = [self runTracking:rgbImage];
         if (_shouldTrack && completionHandler) {
             completionHandler([[VROTrackingHelperOutput alloc] initWithTrackerOutput:output withImage:MatToUIImage(output->outputImage)]);
         }
