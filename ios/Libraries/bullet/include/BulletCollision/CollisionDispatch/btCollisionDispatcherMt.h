@@ -1,6 +1,6 @@
 /*
 Bullet Continuous Collision Detection and Physics Library
-Copyright (c) 2003-2008 Erwin Coumans  http://bulletphysics.com
+Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
@@ -13,25 +13,27 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef __BT_ACTIVATING_COLLISION_ALGORITHM_H
-#define __BT_ACTIVATING_COLLISION_ALGORITHM_H
+#ifndef BT_COLLISION_DISPATCHER_MT_H
+#define BT_COLLISION_DISPATCHER_MT_H
 
-#include "BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
+#include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
+#include "LinearMath/btThreads.h"
 
-///This class is not enabled yet (work-in-progress) to more aggressively activate objects.
-class btActivatingCollisionAlgorithm : public btCollisionAlgorithm
+
+class btCollisionDispatcherMt : public btCollisionDispatcher
 {
-//	btCollisionObject* m_colObj0;
-//	btCollisionObject* m_colObj1;
+public:
+    btCollisionDispatcherMt( btCollisionConfiguration* config, int grainSize = 40 );
+
+    virtual btPersistentManifold* getNewManifold( const btCollisionObject* body0, const btCollisionObject* body1 ) BT_OVERRIDE;
+    virtual void releaseManifold( btPersistentManifold* manifold ) BT_OVERRIDE;
+
+    virtual void dispatchAllCollisionPairs( btOverlappingPairCache* pairCache, const btDispatcherInfo& info, btDispatcher* dispatcher ) BT_OVERRIDE;
 
 protected:
-
-	btActivatingCollisionAlgorithm (const btCollisionAlgorithmConstructionInfo& ci);
-
-	btActivatingCollisionAlgorithm (const btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap);
-
-public:
-	virtual ~btActivatingCollisionAlgorithm();
-
+    bool m_batchUpdating;
+    int m_grainSize;
 };
-#endif //__BT_ACTIVATING_COLLISION_ALGORITHM_H
+
+#endif //BT_COLLISION_DISPATCHER_MT_H
+
