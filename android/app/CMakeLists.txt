@@ -59,6 +59,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Box_JNI.cpp
              src/main/cpp/jni/Controller_JNI.cpp
              src/main/cpp/jni/Surface_JNI.cpp
+             src/main/cpp/jni/Polygon_JNI.cpp
              src/main/cpp/jni/Sphere_JNI.cpp
              src/main/cpp/jni/Material_JNI.cpp
              src/main/cpp/jni/Image_JNI.cpp
@@ -225,6 +226,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROBox.cpp
              ../../ViroRenderer/VROSkybox.cpp
              ../../ViroRenderer/VROSurface.cpp
+             ../../ViroRenderer/VROPolygon.cpp
              ../../ViroRenderer/VROTorusKnot.cpp
              ../../ViroRenderer/VROShapeUtils.cpp
              ../../ViroRenderer/VROSphere.cpp

@@ -4,6 +4,7 @@
  */
 package com.viro.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,17 +66,34 @@ public class ARPlaneAnchor extends ARAnchor {
     private Alignment mAlignment;
     private Vector mExtent;
     private Vector mCenter;
+    private ArrayList<Vector> mVertices;
 
     /**
      * Invoked from JNI
      * @hide
      */
-    ARPlaneAnchor(String anchorId, String type, float[] position, float[] rotation,
-                         float[] scale, String alignment, float[] extent, float[] center) {
+    ARPlaneAnchor(String anchorId,
+                  String type,
+                  float[] position,
+                  float[] rotation,
+                  float[] scale,
+                  String alignment,
+                  float[] extent,
+                  float[] center,
+                  float[] boundaryVerticesArray) {
         super(anchorId, type, position, rotation, scale);
         mAlignment = Alignment.valueFromString(alignment);
         mExtent = new Vector(extent);
         mCenter = new Vector(center);
+        mVertices = new ArrayList<Vector>();
+
+        for (int i = 0; i < boundaryVerticesArray.length / 3 ; i ++) {
+            Vector point = new Vector();
+            point.x = boundaryVerticesArray[i*3 + 0];
+            point.y = boundaryVerticesArray[i*3 + 1];
+            point.z = boundaryVerticesArray[i*3 + 2];
+            mVertices.add(point);
+        }
     }
 
     /**
@@ -104,5 +122,15 @@ public class ARPlaneAnchor extends ARAnchor {
      */
     public Vector getCenter() {
         return mCenter;
+    }
+
+    /**
+     * Returns an array list containing the (x,y,z) position of each vertex representing
+     * the polygon shape of this plane.
+     *
+     * @return A list of boundary vertices in the model coordinates.
+     */
+    public ArrayList<Vector> getBoundaryVertices() {
+        return mVertices;
     }
 }

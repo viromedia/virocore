@@ -717,6 +717,9 @@
 		A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */; };
 		A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */; };
 		A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */; };
+		A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */; };
+		A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; };
+		A5B4AF0B20535D460006D970 /* VROPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65821EB3ECE200FE220E /* libBulletCollision.a */; };
 		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
 		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
@@ -1547,6 +1550,8 @@
 		A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3602.jpg; path = ViroSample/stereo3602.jpg; sourceTree = "<group>"; };
 		A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid.mp4; path = ViroSample/stereoVid.mp4; sourceTree = "<group>"; };
 		A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid360.mp4; path = ViroSample/stereoVid360.mp4; sourceTree = "<group>"; };
+		A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPolygon.cpp; sourceTree = "<group>"; };
+		A5B4AF0720535CDA0006D970 /* VROPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPolygon.h; sourceTree = "<group>"; };
 		A5EC65821EB3ECE200FE220E /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = Libraries/bullet/libBulletCollision.a; sourceTree = "<group>"; };
 		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
 		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
@@ -1924,6 +1929,8 @@
 				8F152A791C10D4AE00A211F8 /* VROShapeUtils.cpp */,
 				8F83DEAD1C50278C0089C31A /* VROSphere.h */,
 				8F83DEAC1C50278C0089C31A /* VROSphere.cpp */,
+				A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */,
+				A5B4AF0720535CDA0006D970 /* VROPolygon.h */,
 				8FDDB4A11DAF0BC300DE0968 /* VROPolyline.h */,
 				8FDDB4A21DAF0BC300DE0968 /* VROPolyline.cpp */,
 			);
@@ -2778,6 +2785,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5B4AF0B20535D460006D970 /* VROPolygon.h in Headers */,
 				8FD2A5071F81276B00E831A6 /* VROPencil.h in Headers */,
 				8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */,
 				A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */,
@@ -3421,6 +3429,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */,
 				A547DB6C2022ED0700C8FE67 /* brdf_fsh.glsl in Resources */,
 				A547DB6D2022ED0700C8FE67 /* brdf_vsh.glsl in Resources */,
 				A597F8E8201AB9EE007EE387 /* prefilter_convolution_fsh.glsl in Resources */,
@@ -3789,6 +3798,7 @@
 				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8F17D5411FCE165400141042 /* VROViewRecorder.mm in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
+				A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */,
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8F56AEB11DE7873E00DD65B6 /* VROTypefaceiOS.cpp in Sources */,

@@ -86,6 +86,8 @@ namespace arcore {
         virtual PlaneType getPlaneType();
         virtual bool isPoseInExtents(const Pose *pose);
         virtual bool isPoseInPolygon(const Pose *pose);
+        virtual float *getPolygon();
+        virtual int getPolygonSize();
     private:
         ArTrackable *_trackable;
         ArPlane *_plane;

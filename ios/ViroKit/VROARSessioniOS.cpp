@@ -353,10 +353,11 @@ void VROARSessioniOS::setFrame(ARFrame *frame) {
 void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor) {
     if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
         ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
-        
+
         std::shared_ptr<VROARPlaneAnchor> pAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(vAnchor);
         pAnchor->setCenter(VROConvert::toVector3f(planeAnchor.center));
         pAnchor->setExtent(VROConvert::toVector3f(planeAnchor.extent));
+        pAnchor->setBoundaryVertices(std::vector<VROVector3f>());
 
         if (planeAnchor.alignment == ARPlaneAnchorAlignmentHorizontal) {
             pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
@@ -364,6 +365,17 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
         else if (@available(iOS 11.3, *) && planeAnchor.alignment == ARPlaneAnchorAlignmentVertical) {
             pAnchor->setAlignment(VROARPlaneAlignment::Vertical);
+        }
+
+        if (planeAnchor.geometry && planeAnchor.geometry.boundaryVertices && planeAnchor.geometry.boundaryVertexCount > 0) {
+            std::vector<VROVector3f> points;
+            for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i ++) {
+                vector_float3 vertex = planeAnchor.geometry.boundaryVertices[i];
+                SCNVector3 vector3 = SCNVector3FromFloat3(vertex);
+                points.push_back(VROVector3f(vector3.x, vector3.y, vector3.z));
+            }
+
+            pAnchor->setBoundaryVertices(points);
         }
 #endif
     }

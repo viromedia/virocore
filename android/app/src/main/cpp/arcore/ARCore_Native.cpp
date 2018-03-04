@@ -188,6 +188,25 @@ namespace arcore {
         return (bool) result;
     }
 
+    float* PlaneNative::getPolygon() {
+        int32_t polygon_length;
+        ArPlane_getPolygonSize(_session, _plane, &polygon_length);
+
+        float *polygonBoundaryVertices = new float[polygon_length];
+        if (polygon_length == 0) {
+            return polygonBoundaryVertices;
+        }
+
+        ArPlane_getPolygon(_session, _plane, polygonBoundaryVertices);
+        return polygonBoundaryVertices;
+    }
+
+    int PlaneNative::getPolygonSize() {
+        int32_t polygon_length;
+        ArPlane_getPolygonSize(_session, _plane, &polygon_length);
+        return polygon_length;
+    }
+
     bool PlaneNative::isPoseInPolygon(const Pose *pose) {
         int result;
         ArPlane_isPoseInPolygon(_session, _plane, ((PoseNative *)pose)->_pose, &result);

@@ -20,7 +20,7 @@ jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix);
 jfloatArray ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox);
 jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment);
 jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result);
-
+jfloatArray ARUtilsCreatePointsArray(std::vector<VROVector3f> points);
 
 // Helper functions to create a Java ARPointCloud object
 jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud);

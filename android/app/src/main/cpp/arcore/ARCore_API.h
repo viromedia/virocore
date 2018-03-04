@@ -108,6 +108,8 @@ namespace arcore {
         virtual PlaneType getPlaneType() = 0;
         virtual bool isPoseInExtents(const Pose *pose) = 0;
         virtual bool isPoseInPolygon(const Pose *pose) = 0;
+        virtual float *getPolygon() = 0;
+        virtual int getPolygonSize() = 0;
     };
 
     class LightEstimate {

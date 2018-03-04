@@ -35,17 +35,18 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
          float[] scale, String alignment, float[] extent, float[] center
          */
         jclass cls = env->FindClass("com/viro/core/ARPlaneAnchor");
-        jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F)V");
+        jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F[F)V");
 
         jstring alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
         jfloatArray extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
         jfloatArray centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
+        jfloatArray polygonPointsArray = ARUtilsCreatePointsArray(plane->getBoundaryVertices());
 
         const char *typeArr = "plane";
         jstring type = env->NewStringUTF(typeArr);
 
         return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray,
-                                            alignment, extentArray, centerArray);
+                                            alignment, extentArray, centerArray, polygonPointsArray);
     }
     else {
         /*
@@ -170,3 +171,20 @@ jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
 
     return env->NewObject(arPointCloudClass, constructorMethod, jConfidencesArray);
 }
+
+jfloatArray ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jfloat tempPointsArr[points.size() * 3];
+
+    // populate the array with Vector objects
+    for (int i = 0; i < points.size(); i++) {
+        tempPointsArr[i*3] = points[i].x;
+        tempPointsArr[i*3+1] = points[i].y;
+        tempPointsArr[i*3+2] = points[i].z;
+    }
+
+    jfloatArray jPointsArray = env->NewFloatArray(points.size() * 3);
+    env->SetFloatArrayRegion(jPointsArray, 0, points.size() * 3, tempPointsArr);
+    return jPointsArray;
+}
+

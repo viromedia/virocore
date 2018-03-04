@@ -410,4 +410,24 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
     plane->setExtent(VROVector3f(extentX, 0, extentZ));
 
     delete (pose);
+
+    // Grab the polygon points from ARCore,
+    std::vector<VROVector3f> boundaryVertices;
+    float* poylgonArray = planeAR->getPolygon();
+    int polygonArraySize = planeAR->getPolygonSize();
+
+    if (polygonArraySize > 0) {
+        // Parse out polygons from the shape.
+        for (int i = 0; i < polygonArraySize; i = i + 2) {
+            VROVector3f newPoint;
+            newPoint.x = poylgonArray[i];
+            newPoint.y = 0;
+            newPoint.z = poylgonArray[i+1];
+            boundaryVertices.push_back(newPoint);
+        }
+
+        delete [] poylgonArray;
+    }
+
+    plane->setBoundaryVertices(boundaryVertices);
 }
