@@ -1,0 +1,113 @@
+include_directories(
+	../../include
+)
+
+SET(BulletDynamics_SRCS
+	Character/btKinematicCharacterController.cpp
+	ConstraintSolver/btConeTwistConstraint.cpp
+	ConstraintSolver/btContactConstraint.cpp
+	ConstraintSolver/btFixedConstraint.cpp
+	ConstraintSolver/btGearConstraint.cpp
+	ConstraintSolver/btGeneric6DofConstraint.cpp
+	ConstraintSolver/btGeneric6DofSpringConstraint.cpp
+	ConstraintSolver/btHinge2Constraint.cpp
+	ConstraintSolver/btHingeConstraint.cpp
+	ConstraintSolver/btPoint2PointConstraint.cpp
+	ConstraintSolver/btSequentialImpulseConstraintSolver.cpp
+	ConstraintSolver/btSliderConstraint.cpp
+	ConstraintSolver/btSolve2LinearConstraint.cpp
+	ConstraintSolver/btTypedConstraint.cpp
+	ConstraintSolver/btUniversalConstraint.cpp
+	Dynamics/btDiscreteDynamicsWorld.cpp
+	Dynamics/btRigidBody.cpp
+	Dynamics/btSimpleDynamicsWorld.cpp
+	Vehicle/btRaycastVehicle.cpp
+	Vehicle/btWheelInfo.cpp
+	Featherstone/btMultiBody.cpp
+	Featherstone/btMultiBodyConstraintSolver.cpp
+	Featherstone/btMultiBodyDynamicsWorld.cpp
+	Featherstone/btMultiBodyJointLimitConstraint.cpp
+	Featherstone/btMultiBodyConstraint.cpp
+	Featherstone/btMultiBodyPoint2Point.cpp
+	Featherstone/btMultiBodyJointMotor.cpp
+	MLCPSolvers/btDantzigLCP.cpp
+	MLCPSolvers/btMLCPSolver.cpp
+)
+
+SET(Root_HDRS
+	../btBulletDynamicsCommon.h
+	../btBulletCollisionCommon.h
+)
+SET(ConstraintSolver_HDRS
+	ConstraintSolver/btConeTwistConstraint.h
+	ConstraintSolver/btConstraintSolver.h
+	ConstraintSolver/btContactConstraint.h
+	ConstraintSolver/btContactSolverInfo.h
+	ConstraintSolver/btFixedConstraint.h
+	ConstraintSolver/btGearConstraint.h
+	ConstraintSolver/btGeneric6DofConstraint.h
+	ConstraintSolver/btGeneric6DofSpringConstraint.h
+	ConstraintSolver/btHinge2Constraint.h
+	ConstraintSolver/btHingeConstraint.h
+	ConstraintSolver/btJacobianEntry.h
+	ConstraintSolver/btPoint2PointConstraint.h
+	ConstraintSolver/btSequentialImpulseConstraintSolver.h
+	ConstraintSolver/btSliderConstraint.h
+	ConstraintSolver/btSolve2LinearConstraint.h
+	ConstraintSolver/btSolverBody.h
+	ConstraintSolver/btSolverConstraint.h
+	ConstraintSolver/btTypedConstraint.h
+	ConstraintSolver/btUniversalConstraint.h
+)
+SET(Dynamics_HDRS
+	Dynamics/btActionInterface.h
+	Dynamics/btDiscreteDynamicsWorld.h
+	Dynamics/btDynamicsWorld.h
+	Dynamics/btSimpleDynamicsWorld.h
+	Dynamics/btRigidBody.h
+)
+SET(Vehicle_HDRS
+	Vehicle/btRaycastVehicle.h
+	Vehicle/btVehicleRaycaster.h
+	Vehicle/btWheelInfo.h
+)
+
+SET(Featherstone_HDRS
+	Featherstone/btMultiBody.h
+	Featherstone/btMultiBodyConstraintSolver.h
+	Featherstone/btMultiBodyDynamicsWorld.h
+	Featherstone/btMultiBodyLink.h
+	Featherstone/btMultiBodyLinkCollider.h
+	Featherstone/btMultiBodySolverConstraint.h
+	Featherstone/btMultiBodyConstraint.h
+	Featherstone/btMultiBodyJointLimitConstraint.h
+	Featherstone/btMultiBodyConstraint.h
+	Featherstone/btMultiBodyPoint2Point.h
+	Featherstone/btMultiBodyJointMotor.h
+)
+
+SET(MLCPSolvers_HDRS
+	MLCPSolvers/btDantzigLCP.h
+	MLCPSolvers/btDantzigSolver.h
+	MLCPSolvers/btMLCPSolver.h
+	MLCPSolvers/btMLCPSolverInterface.h
+	MLCPSolvers/btPATHSolver.h
+	MLCPSolvers/btSolveProjectedGaussSeidel.h	
+)
+
+SET(Character_HDRS
+	Character/btCharacterControllerInterface.h
+	Character/btKinematicCharacterController.h
+)
+
+SET(BulletDynamics_HDRS
+	${Root_HDRS}
+	${ConstraintSolver_HDRS}
+	${Dynamics_HDRS}
+	${Vehicle_HDRS}
+	${Character_HDRS}
+	${Featherstone_HDRS}
+	${MLCPSolvers_HDRS}
+)
+
+ADD_LIBRARY(bullet_dynamics ${BulletDynamics_SRCS} ${BulletDynamics_HDRS})

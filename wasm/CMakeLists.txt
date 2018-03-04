@@ -16,7 +16,7 @@ include_directories(../ViroRenderer
 	            ${OPENGL_INCLUDE_DIR}
                     #../libs/freetype/include
                     #../libs/protobuf/include
-                    #../libs/bullet/include
+                    libs/bullet/include
 		    )
 
 add_library( viro_renderer
@@ -88,6 +88,11 @@ add_library( viro_renderer
              ../ViroRenderer/VROBRDFRenderPass.cpp
              ../ViroRenderer/VROPointCloudEmitter.cpp
 
+             # Physics
+             ../ViroRenderer/VROPhysicsWorld.cpp
+             ../ViroRenderer/VROPhysicsBody.cpp
+             ../ViroRenderer/VROPhysicsShape.cpp
+
              # AR
              ../ViroRenderer/VROARSceneController.cpp
              ../ViroRenderer/VROARScene.cpp
@@ -147,13 +152,23 @@ add_library( viro_renderer
              ../ViroRenderer/VROProjector.cpp
              ../ViroRenderer/VRODualQuaternion.cpp
 	     ../ViroRenderer/VROVector3f.cpp
-             ../ViroRenderer/VROVector4f.cpp)    
+             ../ViroRenderer/VROVector4f.cpp
+)    
+
+add_subdirectory(libs/bullet/src/LinearMath)
+add_subdirectory(libs/bullet/src/BulletSoftBody)
+add_subdirectory(libs/bullet/src/BulletDynamics)
+add_subdirectory(libs/bullet/src/BulletCollision)
 
 target_link_libraries ( viro_renderer
-			${OPENGL_gl_LIBRARY}) 
+			bullet_linearmath
+			bullet_softbody
+			bullet_dynamics
+			bullet_collision ) 
 
 add_executable( viro_test
 	        hello.cpp)
 
 set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 --emrun")
-target_link_libraries ( viro_test viro_renderer )
+target_link_libraries ( viro_test 
+                        viro_renderer )
