@@ -12,15 +12,19 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 find_package(OPENGL REQUIRED)
 
 include_directories(../ViroRenderer
-                    
+                    src/cpp
 	            ${OPENGL_INCLUDE_DIR}
-                    #../libs/freetype/include
-                    #../libs/protobuf/include
+                    #libs/freetype/include
+                    #libs/protobuf/include
                     libs/bullet/include
 		    )
 
 add_library( viro_renderer
              STATIC
+
+             # Web Platform
+             src/cpp/VROViewScene.cpp
+             src/cpp/VROInputControllerWasm.cpp
 
              # Util
              ../ViroRenderer/VROAllocationTracker.cpp
@@ -87,6 +91,9 @@ add_library( viro_renderer
              ../ViroRenderer/VROPrefilterRenderPass.cpp
              ../ViroRenderer/VROBRDFRenderPass.cpp
              ../ViroRenderer/VROPointCloudEmitter.cpp
+
+             # UI
+             ../ViroRenderer/VROReticle.cpp
 
              # Physics
              ../ViroRenderer/VROPhysicsWorld.cpp
@@ -169,6 +176,8 @@ target_link_libraries ( viro_renderer
 add_executable( viro_test
 	        hello.cpp)
 
-set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 --emrun")
+MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
+
+set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
 target_link_libraries ( viro_test 
                         viro_renderer )
