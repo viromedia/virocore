@@ -22,7 +22,7 @@ uint64_t VROTimeGetCalendarTime() {
 }
 
 double VROTimeCurrentSeconds() {
-#if VRO_PLATFORM_ANDROID
+#if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
     return VROTimeCurrentMillis() / 1000.0;
 #elif VRO_PLATFORM_IOS
     return CACurrentMediaTime();
@@ -30,7 +30,7 @@ double VROTimeCurrentSeconds() {
 }
 
 double VROTimeCurrentMillis() {
-#if VRO_PLATFORM_ANDROID
+#if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
     struct timespec time;
     clock_gettime(CLOCK_MONOTONIC, &time);
 
@@ -41,7 +41,7 @@ double VROTimeCurrentMillis() {
 }
 
 uint64_t VRONanoTime() {
-#if VRO_PLATFORM_ANDROID
+#if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return ((uint64_t)ts.tv_sec * 1000000000ULL) + (uint64_t)ts.tv_nsec;

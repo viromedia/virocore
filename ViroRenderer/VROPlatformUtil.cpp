@@ -38,6 +38,7 @@ std::string VROPlatformLoadFileAsString(std::string path) {
     return {};
 }
 
+#pragma mark - iOS
 #if VRO_PLATFORM_IOS
 
 #import <UIKit/UIKit.h>
@@ -168,6 +169,7 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
     return "";
 }
 
+#pragma mark - Android
 #elif VRO_PLATFORM_ANDROID
 
 #include "VROImageAndroid.h"
@@ -837,8 +839,55 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
     VROPlatformRunTask(taskId);
 }
 
-#endif
+#pragma mark - WebAssembly
+#elif VRO_PLATFORM_WASM
 
+std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
+    // TODO VIRO-3064 Resource loading on WASM
+    return "";
+}
+
+std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
+    // TODO VIRO-3064 Resource loading on WASM
+    return "";
+}
+
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
+    // TODO VIRO-3064 Resource loading on WASM
+}
+
+std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
+    // TODO VIRO-3064 Resource loading on WASM
+    *isTemp = false;
+    return asset;
+}
+
+void VROPlatformDeleteFile(std::string filename) {
+    // Not supported on WASM
+}
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
+                                                       VROTextureInternalFormat format) {
+    // TODO VIRO-3064 Resource loading on WASM
+    return nullptr;
+}
+
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
+    // Multithreading not supported on WASM
+    fcn();
+}
+
+void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
+    // Multithreading not supported on WASM
+    fcn();
+}
+
+std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::string, std::string> resourceMap) {
+    return "";
+}
+
+#endif
+#pragma mark - iOS and Android
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
 
 #include "VROStringUtil.h"
