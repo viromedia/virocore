@@ -47,16 +47,13 @@ out vec2 v_texcoord;
 out vec3 v_surface_position;
 flat out int v_instance_id;
 
-#include skinning_vsh
-#include particles_vsh
-
 void main() {
     _geometry.position = position;
     _geometry.normal = normal;
     _geometry.texcoord = texcoord;
     _geometry.tangent = tangent;
-    _geometry.bone_weights = bone_weights;
-    _geometry.bone_indices = bone_indices;
+    //_geometry.bone_weights = bone_weights;
+    //_geometry.bone_indices = bone_indices;
 
     _transforms.model_matrix = model_matrix;
     _transforms.view_matrix = view_matrix;
