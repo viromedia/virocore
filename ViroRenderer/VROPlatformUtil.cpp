@@ -842,14 +842,14 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 #pragma mark - WebAssembly
 #elif VRO_PLATFORM_WASM
 
-std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
-    // TODO VIRO-3064 Resource loading on WASM
-    return "";
-}
+#include "emscripten.h"
 
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
-    // TODO VIRO-3064 Resource loading on WASM
-    return "";
+    std::string path = "/Users/radvani/Source/ViroRenderer/wasm/resources/" + resource + "." + type;
+    pinfo("Loading file from path %s", path.c_str());
+    std::string file = VROPlatformLoadFileAsString(path);
+    //pinfo("loaded file %s", file.c_str());
+    return file;
 }
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
