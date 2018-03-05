@@ -305,9 +305,11 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
     camera.computeLookAtMatrix();
     camera.computeFrustum();
 
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _lastComputedCameraPosition.store(camera.getPosition());
     _lastComputedCameraRotation.store(camera.getRotation().toEuler());
     _lastComputedCameraForward.store(camera.getForward());
+#endif
 
     if (_cameraDelegate) {
         _cameraDelegate->onCameraTransformationUpdate(

@@ -844,12 +844,14 @@ void VRONode::setHighAccuracyGaze(bool enabled) {
 }
 
 void VRONode::setAtomicRenderProperties() {
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _lastComputedTransform.store(_computedTransform);
     _lastComputedPosition.store(_computedPosition);
     _lastPosition.store(_position);
     _lastRotation.store(_rotation);
     _lastScale.store(_scale);
     _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
+#endif
     
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->setAtomicRenderProperties();
