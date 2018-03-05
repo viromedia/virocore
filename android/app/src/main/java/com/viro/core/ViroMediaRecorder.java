@@ -225,8 +225,8 @@ public class ViroMediaRecorder {
      Default Audio recording settings.
      See https://developer.android.com/guide/topics/media/media-formats.html#audio-formats.
      */
-    private int mAudioEncodingBitRate = 16;
     private int mAudioSamplingBitRate = 44100;
+    private int mAudioEncodingBitRate = mAudioSamplingBitRate * 16;
     private int mAudioEncoder = MediaRecorder.AudioEncoder.AAC;
 
     ViroMediaRecorder(Context context, Renderer rendererJni, int width, int height) {
