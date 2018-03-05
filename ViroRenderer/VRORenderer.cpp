@@ -7,6 +7,7 @@
 //
 
 #include "VRORenderer.h"
+#include "VRODefines.h"
 #include "VROTime.h"
 #include "VROEye.h"
 #include "VROTransaction.h"
@@ -52,9 +53,12 @@ VRORenderer::VRORenderer(VRORendererConfiguration config, std::shared_ptr<VROInp
     _fpsTickIndex(0),
     _fpsTickSum(0) {
     _hasIncomingSceneTransition = false;
-    _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
     _frameScheduler = std::make_shared<VROFrameScheduler>();
     _mpfTarget = 1000.0 / kFPSTarget;
+        
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
+    _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
+#endif
 
     _context = std::make_shared<VRORenderContext>(_frameSynchronizer, _frameScheduler);
     _context->setPencil(std::make_shared<VROPencil>());
@@ -74,7 +78,9 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     if (delegate) {
         delegate->setupRendererWithDriver(driver);
     }
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _debugHUD->initRenderer(driver);
+#endif
     
     _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
     _choreographer->setClearColor(_clearColor, driver);
@@ -86,7 +92,9 @@ void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegat
 }
 
 void VRORenderer::setDebugHUDEnabled(bool enabled) {
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _debugHUD->setEnabled(enabled);
+#endif
 }
 
 const std::shared_ptr<VROChoreographer> VRORenderer::getChoreographer() const {
@@ -399,7 +407,9 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     }
 
     driver->willRenderFrame(context);
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _debugHUD->prepare(context);
+#endif
     pglpop();
 }
 
@@ -454,7 +464,9 @@ void VRORenderer::renderHUD(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setViewMatrix(eyeFromHeadMatrix);
     _context->setProjectionMatrix(eyeProjection);
     _context->setEyeType(eye);
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _debugHUD->renderEye(eye, *_context.get(), driver);
+#endif
 
     /*
      For the reticle, we choose our view matrix based on whether or not it's headlocked.
