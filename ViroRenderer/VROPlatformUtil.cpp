@@ -845,11 +845,8 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 #include "emscripten.h"
 
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
-    std::string path = "/Users/radvani/Source/ViroRenderer/wasm/resources/" + resource + "." + type;
-    pinfo("Loading file from path %s", path.c_str());
-    std::string file = VROPlatformLoadFileAsString(path);
-    //pinfo("loaded file %s", file.c_str());
-    return file;
+    std::string path = "/" + resource + "." + type;
+    return VROPlatformLoadFileAsString(path);
 }
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {

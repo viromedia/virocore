@@ -172,7 +172,7 @@ add_executable( viro_test
 
 MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
 
-set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 -s FULL_ES2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/resources --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
+set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 -s FULL_ES2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/resources@/ --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
 target_link_libraries ( viro_test 
                         viro_renderer 
                         bullet_linearmath
