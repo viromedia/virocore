@@ -5,14 +5,16 @@ import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.AmbientLight;
+import com.viro.core.DirectionalLight;
 import com.viro.core.Animation;
 import com.viro.core.AsyncObject3DListener;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
-import com.viro.core.Scene;
 import com.viro.core.Text;
 import com.viro.core.Vector;
+import com.viro.core.Surface;
+
 
 
 import org.junit.FixMethodOrder;
@@ -32,15 +34,18 @@ public class Viro3DObjectTest extends ViroBaseTest {
     private Object3D mObject3D;
     private Animation mAnimation;
     private boolean mIsAnimPaused = false;
+    private AmbientLight mAmbientLight;
 
     @Override
     void configureTestScene() {
         // Creation of ObjectJni to the right
         mObject3D = new Object3D();
         mObject3D.setPosition(new Vector(0, 0, -5));
-        AmbientLight ambientLight = new AmbientLight(Color.WHITE, 1000f);
-        mScene.getRootNode().addLight(ambientLight);
+        mAmbientLight = new AmbientLight(Color.WHITE, 1000f);
+        mScene.getRootNode().addLight(mAmbientLight);
         mScene.getRootNode().addChildNode(mObject3D);
+
+
     }
 
     @Test
@@ -53,6 +58,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         stage5_testLoadModelError();
         stage6_testLoadModelOBJMaterials();
         stage7_testLoadModelVRXReplaceMaterial();
+        stage8_testLoadModelAnimateVRXWithShadow();
     }
 
     public void stage1_testLoadModelFBX() {
@@ -61,7 +67,6 @@ public class Viro3DObjectTest extends ViroBaseTest {
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, -3));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
-
                 mAnimation = object.getAnimation("02_spin");
                 mAnimation.setDelay(2000);
                 mAnimation.setLoop(true);
@@ -174,6 +179,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
         assertPass("Text should display saying object failed to load.",()->{
             node.removeFromParentNode();
+            mObject3D.removeFromParentNode();
         });
     }
 
@@ -312,5 +318,54 @@ public class Viro3DObjectTest extends ViroBaseTest {
             object3D.removeFromParentNode();
         });
 
+    }
+
+    public void stage8_testLoadModelAnimateVRXWithShadow() {
+        DirectionalLight light = new DirectionalLight();
+        light.setColor(Color.WHITE);
+        light.setDirection(new Vector(0, -1, 0));
+        light.setShadowOrthographicPosition(new Vector(0, 20, -9));
+        light.setShadowOrthographicSize(60);
+        light.setShadowNearZ(1);
+        light.setShadowFarZ(60);
+        light.setShadowOpacity(1.0f);
+        light.setCastsShadow(true);
+        mScene.getRootNode().removeLight(mAmbientLight);
+        mScene.getRootNode().addLight(light);
+
+        Material coloredMaterial = new Material();
+        coloredMaterial.setDiffuseColor(Color.RED);
+        coloredMaterial.setLightingModel(Material.LightingModel.BLINN);
+        //used to be 60 for width and height
+        Surface surface = new Surface(60, 60);
+        surface.setMaterials(Arrays.asList(coloredMaterial));
+        Node surfaceNode = new Node();
+        surfaceNode.setGeometry(surface);
+        surfaceNode.setRotation(new Vector((float) -Math.PI / 2.0f, 0, 0));
+        surfaceNode.setPosition(new Vector(0, -5, -9));
+        mScene.getRootNode().addChildNode(surfaceNode);
+
+        final Object3D object3D = new Object3D();
+        mScene.getRootNode().addChildNode(object3D);
+        object3D.loadModel(Uri.parse("file:///android_asset/dragao.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -9));
+                object.setScale(new Vector(0.2f, 0.2f, 0.2f));
+                mAnimation = object.getAnimation("01");
+                mAnimation.setDelay(1000);
+                mAnimation.setLoop(true);
+                mAnimation.play();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        assertPass("You should see an animated dragon with it's shadow moving.",()->{
+            object3D.removeFromParentNode();
+        });
     }
 }
