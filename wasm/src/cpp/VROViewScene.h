@@ -7,6 +7,8 @@
 //
 
 #include <memory>
+#include "emscripten.h"
+#include "emscripten/html5.h"
 
 class VRORenderer;
 class VROInputControllerWasm;
@@ -19,6 +21,8 @@ public:
     
     void drawFrame();
     void update();
+    
+    void buildTestScene();
     void onResize();
     void onBlur();
     void onFocus();
@@ -32,5 +36,7 @@ private:
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROInputControllerWasm> _inputController;
     std::shared_ptr<VRODriverOpenGLWasm> _driver;
+    
+    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE _context;
     
 };

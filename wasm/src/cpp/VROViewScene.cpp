@@ -13,8 +13,10 @@
 #include "VRODriverOpenGLWasm.h"
 #include "VROInputControllerWasm.h"
 #include "VROEye.h"
-#include "emscripten.h"
-#include "emscripten/html5.h"
+
+#include "VROMaterial.h"
+#include "VRONode.h"
+#include "VROBox.h"
 
 static VROViewScene *sInstance = nullptr;
 
@@ -28,11 +30,15 @@ VROViewScene::VROViewScene() {
     
     EmscriptenWebGLContextAttributes attribs;
     emscripten_webgl_init_context_attributes(&attribs);
-    attribs.alpha = false;
-    attribs.enableExtensionsByDefault = false;
+    attribs.majorVersion = 2.0;
+    attribs.minorVersion = 0.0;
+    attribs.explicitSwapControl = 0;
+    attribs.depth = 1;
+    attribs.stencil = 1;
+    attribs.antialias = 0;
     
-    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE context = emscripten_webgl_create_context("display", &attribs);
-    emscripten_webgl_make_context_current(context);
+    _context = emscripten_webgl_create_context("viroCanvas", &attribs);
+    emscripten_webgl_make_context_current(_context);
     //emscripten_set_resize_callback(0 /* Window */, this, false, &VROViewScene::onResize);
     //emscripten_set_blur_callback("#window", NULL, false, onBlur);
     //emscripten_set_focus_callback("#window", NULL, false, onFocus);
@@ -50,17 +56,85 @@ VROViewScene::VROViewScene() {
     _renderer = std::make_shared<VRORenderer>(config, std::dynamic_pointer_cast<VROInputControllerBase>(_inputController));
     
     update();
-    //ContextRestored();
+    buildTestScene();
     emscripten_set_main_loop(VROMainLoop, 0, 0);
 }
 
-VROViewScene::~VROViewScene() {
+void VROViewScene::buildTestScene() {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
+    rootNode->setPosition({0, 0, 0});
+    
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({ 0.6, 0.6, 0.6 });
+    
+    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
+    spotRed->setColor({ 1.0, 0.0, 0.0 });
+    spotRed->setPosition( { -5, 0, 0 });
+    spotRed->setDirection( { 1.0, 0, -1.0 });
+    spotRed->setAttenuationStartDistance(20);
+    spotRed->setAttenuationEndDistance(30);
+    spotRed->setSpotInnerAngle(5);
+    spotRed->setSpotOuterAngle(15);
+    
+    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
+    spotBlue->setColor({ 0.0, 0.0, 1.0 });
+    spotBlue->setPosition( { 5, 0, 0 });
+    spotBlue->setDirection( { -1.0, 0, -1.0 });
+    spotBlue->setAttenuationStartDistance(20);
+    spotBlue->setAttenuationEndDistance(30);
+    spotBlue->setSpotInnerAngle(5);
+    spotBlue->setSpotOuterAngle(15);
+    
+    rootNode->addLight(ambient);
+    rootNode->addLight(spotRed);
+    rootNode->addLight(spotBlue);
+    
+    /*
+    std::shared_ptr<VROTexture> bobaTexture = VROTestUtil::loadDiffuseTexture("boba.png");
+    bobaTexture->setWrapS(VROWrapMode::Repeat);
+    bobaTexture->setWrapT(VROWrapMode::Repeat);
+    bobaTexture->setMinificationFilter(VROFilterMode::Linear);
+    bobaTexture->setMagnificationFilter(VROFilterMode::Linear);
+    bobaTexture->setMipFilter(VROFilterMode::Linear);
+    */
+    std::shared_ptr<VROBox> box = VROBox::createBox(3, 3, 3);
+    box->setName("Box 1");
+    
+    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Blinn);
+    //material->getDiffuse().setTexture(bobaTexture);
+    material->getDiffuse().setColor({0.8, 0.8, 0.8, 1.0});
+    //material->getSpecular().setTexture(VROTestUtil::loadSpecularTexture("specular"));
+    
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
+    boxNode->setGeometry(box);
+    boxNode->setPosition({0, 0, -5});
+    rootNode->addChildNode(boxNode);
+    
+    _renderer->setSceneController(sceneController, _driver);
+    
+    VROTransaction::begin();
+    VROTransaction::setAnimationDelay(2);
+    VROTransaction::setAnimationDuration(6);
+    
+    spotRed->setPosition({5, 0, 0});
+    spotRed->setDirection({-1, 0, -1});
+    spotBlue->setPosition({-5, 0, 0});
+    spotBlue->setDirection({1, 0, -1});
+    boxNode->setRotationEulerZ(M_PI_2);
+    
+    VROTransaction::commit();
+}
+
+VROViewScene::~VROViewScene() {
+    // destroy the context
 }
 
 void VROViewScene::drawFrame() {
-    glEnable(GL_DEPTH_TEST);
-    _driver->setCullMode(VROCullMode::Back);
+    emscripten_webgl_make_context_current(_context);
     
     VROViewport viewport(0, 0, _width, _height);
     if (viewport.getWidth() == 0 || viewport.getHeight() == 0) {
@@ -69,6 +143,8 @@ void VROViewScene::drawFrame() {
     
     VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    
+    _renderer->setClearColor({0.0, 1.0, 0.0, 1.0}, _driver);
     
     _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
@@ -82,20 +158,9 @@ void VROViewScene::drawFrame() {
 void VROViewScene::update() {
     double w = 0.0;
     double h = 0.0;
-    emscripten_get_element_css_size("display", &w, &h);
-    
-    pinfo("width %f, height %f", w, h);
-    
+    emscripten_get_element_css_size("viroCanvas", &w, &h);
     _width  = (int)w;
     _height = (int)h;
-    
-    EM_ASM_({
-        const display = document.querySelector("#display");
-        display.width = $0;
-        display.height = $1;
-        display.tabIndex = 0;
-    }, _width, _height);
-    //Resized();
 }
 
 void VROViewScene::onResize() {
