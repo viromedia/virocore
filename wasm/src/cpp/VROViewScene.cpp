@@ -26,8 +26,10 @@ void VROMainLoop() {
 
 VROViewScene::VROViewScene() {
     sInstance = this;
-    pinfo("Constructed the VROViewScene");
+    VROThreadRestricted::setThread(VROThreadName::Renderer);
     
+    pinfo("Constructed the VROViewScene");
+
     EmscriptenWebGLContextAttributes attribs;
     emscripten_webgl_init_context_attributes(&attribs);
     attribs.majorVersion = 2.0;

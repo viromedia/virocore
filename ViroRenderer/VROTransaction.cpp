@@ -113,7 +113,7 @@ float VROTransaction::getAnimationDuration() {
     return animation->_durationSeconds;
 }
 
-void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction){
+void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction) {
     if (transaction->_t == 1.0){
         pinfo("WARN: Cannot resume a completed VROTansaction!");
         return;
@@ -128,7 +128,7 @@ void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction){
     transaction->_paused = false;
 }
 
-void VROTransaction::pause(std::shared_ptr<VROTransaction> transaction){
+void VROTransaction::pause(std::shared_ptr<VROTransaction> transaction) {
     if (transaction->_t == 1.0){
         pinfo("WARN: Cannot to pause completed VROTansaction!");
         return;
@@ -234,7 +234,6 @@ void VROTransaction::processAnimations(float t) {
 
 void VROTransaction::onTermination() {
     _t = 1.0;
-
     for (std::shared_ptr<VROAnimation> animation : _animations) {
         animation->onTermination();
     }
