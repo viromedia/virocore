@@ -1,14 +1,14 @@
 ViroCore
 =====================
 
-ViroCore is SceneKit for Android, a 3D framework for developers to build immersive applications using Java. ViroCore combines a high-performance rendering engine with a descriptive API for creating 3D/AR/VR apps. While lower-level APIs like OpenGL require you to learn and precisely implement rendering algorithms, ViroCore requires only high-level scene descriptions and the events and interactions you desire.
+ViroCore is SceneKit for Android, a 3D framework for developers to build immersive applications using Java. ViroCore combines a high-performance rendering engine with a descriptive API for creating 3D, AR, and VR apps. While lower-level APIs like OpenGL require you to precisely implement complex rendering algorithms, ViroCore requires only high-level scene descriptions, and code for the interactivity and animations you want your application to perform.
 
 Platforms supported:
 Android, ARCore, Google Daydream, Samsung GearVR, Google Cardboard VR
 
 [Sign up](https://viromedia.com/signup) for an API key. The platform is free to use with no limits on distribution.
 
-To report bugs/issues with Viro platform, please file new issues on this repository.
+To report bugs/issues with the Viro platform, please file new issues on this repository.
 
 ## Instructions for running sample code:
 
@@ -16,10 +16,9 @@ To report bugs/issues with Viro platform, please file new issues on this reposit
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
 3. Choose the code sample you wish to deploy, and open the root directory in Android studio. 
 4. Edit AndroidManifest.xml, and replace "API_KEY_HERE" with the key emailed to you with signup.
-5. Click on Build Variants, and select arcoreDebug as the build variant.
-6. (Optional) Clean and gradle sync
-7. Built and deploy.
-8. You should now be in the application! Enjoy!
+5. (Optional) Clean and gradle sync.
+6. Build and deploy.
+7. You should now be in the application! Enjoy!
 
 ## More Information
 
