@@ -231,12 +231,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
                 builder.append("\nmAttained Values: ");
                 builder.append("\nmName: ");
                 builder.append(mat.getName());
-                builder.append("\nmDiffuseIntensity: ");
-                builder.append(mat.getDiffuseIntensity());
                 builder.append("\nmShininess: ");
                 builder.append(mat.getShininess());
-                builder.append("\nmFresnelExponent: ");
-                builder.append(mat.getFresnelExponent());
                 builder.append("\nmBloomThreshold: ");
                 builder.append(mat.getBloomThreshold());
                 builder.append("\nmRoughness: ");
