@@ -6,6 +6,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#if ENABLE_OPENCV
+
 #import "VROTrackingHelper.h"
 #import "VROARImageTracker.h"
 #import "opencv2/imgcodecs/ios.h"
@@ -59,7 +61,7 @@
         _ready = YES;
         _count = 0;
         _intrinsics = NULL;
-        _shouldTrack = NO;
+        _shouldTrack = YES; // if this is initialized to NO, then tracking won't turn on
     }
     return self;
 }
@@ -288,3 +290,5 @@
 }
 
 @end
+
+#endif /* ENABLE_OPENCV */

@@ -5,6 +5,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#if ENABLE_OPENCV
+
 #include "VROARImageTrackerOutput.h"
 
 std::shared_ptr<VROARImageTrackerOutput> VROARImageTrackerOutput::createFalseOutput() {
@@ -25,3 +27,5 @@ VROARImageTrackerOutput::VROARImageTrackerOutput(bool found, std::vector<cv::Poi
 VROARImageTrackerOutput::~VROARImageTrackerOutput() {
 
 }
+
+#endif /* ENABLE_OPENCV */

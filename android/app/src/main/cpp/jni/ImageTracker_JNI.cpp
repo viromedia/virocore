@@ -20,6 +20,7 @@
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ImageTracker_##method_name
 
+#if ENABLE_OPENCV
 namespace ImageTracker {
         inline jlong jptr(std::shared_ptr<VROARImageTracker> tracker) {
             PersistentRef<VROARImageTracker> *nativeTracker = new PersistentRef<VROARImageTracker>(tracker);
@@ -31,9 +32,11 @@ namespace ImageTracker {
             return persistentTracker->get();
         }
 }
+#endif /* ENABLE_OPENCV */
 
 extern "C" {
 
+#if ENABLE_OPENCV
 // TODO: move this method somewhere else (VROPlatformUtils maybe?)
 // This logic comes from OpenCV's java library: https://github.com/opencv/opencv/blob/master/modules/java/generator/src/cpp/utils.cpp
 cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
@@ -56,27 +59,35 @@ cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
     AndroidBitmap_unlockPixels(env, bitmap);
     return toReturn;
 }
+#endif /* ENABLE_OPENCV */
 
 JNI_METHOD(jlong, nativeCreateImageTracker)(JNIEnv *env,
                                             jclass clazz,
                                             jobject bitmapImage) {
+#if ENABLE_OPENCV
     cv::Mat image = parseBitmapImage(env, bitmapImage);
 
     std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(image);
 
     return ImageTracker::jptr(tracker);
-
+#else
+    return 0;
+#endif /* ENABLE_OPENCV */
 }
 
 JNI_METHOD(jlong, nativeFindTarget)(JNIEnv *env,
                                     jclass clazz,
                                     jlong nativeRef,
                                     jobject bitmapImage) {
+#if ENABLE_OPENCV
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 
     std::shared_ptr<VROARImageTrackerOutput> output = ImageTracker::native(nativeRef)->findTarget(imageMat);
 
     return ImageTrackerOutput::jptr(output);
+#else
+    return 0;
+#endif /* ENABLE_OPENCV */
 }
 
 }

@@ -261,7 +261,7 @@ public class ViroActivity extends AppCompatActivity {
         }
 
         // Uncomment to run a test screenshot through the OpenCV target tracking code
-        //testFindInScreenshot();
+        testFindInScreenshot();
     }
 
     private void onRendererFailed(String error, String errorMessage) {

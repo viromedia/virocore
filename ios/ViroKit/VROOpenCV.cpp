@@ -6,6 +6,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#if ENABLE_OPENCV
+
 #include "VROOpenCV.h"
 #include "opencv2/imgcodecs/imgcodecs.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -28,3 +30,5 @@ void VROOpenCV::runEdgeDetection(const char* inputFile, const char* outputFile) 
 void VROOpenCV::runEdgeDetection(cv::Mat inputFile, cv::Mat outputFile) {
     cv::Canny(inputFile, outputFile, 70, 100);
 }
+
+#endif /* ENABLE_OPENCV */

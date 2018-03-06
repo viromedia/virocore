@@ -17,12 +17,17 @@ extern "C" {
 JNI_METHOD(jboolean, nativeOutputFound)(JNIEnv *env,
                                         jobject obj,
                                         jlong nativeRef) {
+#if ENABLE_OPENCV
     return ImageTrackerOutput::native(nativeRef)->found;
+#else
+    return false;
+#endif /* ENABLE_OPENCV */
 }
 
 JNI_METHOD(jfloatArray, nativeOutputCorners)(JNIEnv *env,
                                              jobject obj,
                                              jlong nativeRef) {
+#if ENABLE_OPENCV
 
     std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
 
@@ -39,16 +44,21 @@ JNI_METHOD(jfloatArray, nativeOutputCorners)(JNIEnv *env,
     env->SetFloatArrayRegion(returnCorners, 0, returnLength, tempArr);
 
     return returnCorners;
+#else
+    return nullptr;
+#endif /* ENABLE_OPENCV */
+
 }
 
 JNI_METHOD(jfloatArray, nativeOutputPosition)(JNIEnv *env,
                                              jobject obj,
                                              jlong nativeRef) {
 
-    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
-
     jfloatArray returnPosition = env->NewFloatArray(3);
     jfloat tempArr[3];
+
+#if ENABLE_OPENCV
+    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
 
     // We have to negate the y and z rotation because OpenCV y and z axis are opposite from ours.
     tempArr[0] = output->translation.at<double>(0,0);
@@ -56,6 +66,7 @@ JNI_METHOD(jfloatArray, nativeOutputPosition)(JNIEnv *env,
     tempArr[2] = - output->translation.at<double>(2,0);
 
     env->SetFloatArrayRegion(returnPosition, 0, 3, tempArr);
+#endif /* ENABLE_OPENCV */
 
     return returnPosition;
 }
@@ -64,10 +75,11 @@ JNI_METHOD(jfloatArray, nativeOutputRotation)(JNIEnv *env,
                                              jobject obj,
                                              jlong nativeRef) {
 
-    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
-
     jfloatArray returnRotation = env->NewFloatArray(3);
     jfloat tempArr[3];
+
+#if ENABLE_OPENCV
+    std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
 
     // We have to negate the y and z rotation because OpenCV y and z axis are opposite from ours.
     tempArr[0] = output->rotation.at<double>(0,0);
@@ -75,6 +87,7 @@ JNI_METHOD(jfloatArray, nativeOutputRotation)(JNIEnv *env,
     tempArr[2] = - output->rotation.at<double>(2,0);
 
     env->SetFloatArrayRegion(returnRotation, 0, 3, tempArr);
+#endif /* ENABLE_OPENCV */
 
     return returnRotation;
 }

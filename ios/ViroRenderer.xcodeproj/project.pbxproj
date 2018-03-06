@@ -30,6 +30,7 @@
 		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
 		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
+		8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
 		8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A5C05581EF6416900F94CB9 /* VROARNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A5CDD741F636C300093F43B /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A99E6C41EF1B7B300712D79 /* ARKit.framework */; };
 		8A99E6C31EF1B76F00712D79 /* VROARSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -48,7 +49,6 @@
 		8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */; };
 		8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */; };
 		8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F531DB957C900BD9C83 /* VROCredentials.h */; };
-		8ABEDD3420115A1F003E8AFF /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
 		8ABEDD3620115EA8003E8AFF /* VROARImageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A35172D1EE09E3F00B6E786 /* VROARImageTracker.cpp */; };
 		8ABEDD3720115EB1003E8AFF /* VROARImageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ABEDD3820115EC7003E8AFF /* VROTrackingHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */; };
@@ -1671,7 +1671,7 @@
 				A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */,
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
 				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
-				8ABEDD3420115A1F003E8AFF /* opencv2.framework in Frameworks */,
+				8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
 				8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */,
 				8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */,
@@ -4358,6 +4358,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/opencv",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"ENABLE_OPENCV=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -4473,6 +4477,10 @@
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"ENABLE_OPENCV=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

@@ -5,6 +5,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#if ENABLE_OPENCV
+
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
@@ -21,10 +23,8 @@
 @end
 
 /*
- This class is currently meant to show as a proof of concept that we can fetch images from
- the AVCapture session and run them through image detection w/ OpenCV
- 
- This function
+ This class is a helper class that takes the given PixelBuffer and feeds it into a
+ VROARImageTracker that has been preconfigured with a target image
  */
 @interface VROTrackingHelper : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 
@@ -60,3 +60,5 @@
 
 
 @end
+
+#endif /* ENABLE_OPENCV */

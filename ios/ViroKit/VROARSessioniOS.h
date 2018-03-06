@@ -67,6 +67,7 @@ public:
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
 
+#if ENABLE_OPENCV
     // -- Image tracking functions --
     void setTrackerOutputView(UIImageView *view) {
         _trackerOutputView = view;
@@ -75,24 +76,9 @@ public:
     void setTrackerOutputText(UITextView *outputText) {
         _trackerOutputText = outputText;
     }
-
-    void setTrackerStatusText(UITextView *statusText) {
-        _trackerStatusText = statusText;
-    }
-
-    void setRenderer(std::shared_ptr<VRORenderer> renderer) {
-        _renderer = renderer;
-    }
-
-    void setWidth(float width) {
-        _screenWidth = width;
-    }
-
-    void setHeight(float height) {
-        _screenHeight = height;
-    }
     
     void outputTextTapped();
+#endif /* ENABLE_OPENCV */
 
 private:
     
@@ -158,7 +144,8 @@ private:
      Update the VROARAnchor with the transforms in the given ARAnchor.
      */
     void updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor);
-    
+
+#if ENABLE_OPENCV
     // -- Image tracking-required stuff --
     
     /*
@@ -177,21 +164,14 @@ private:
     UITextView *_trackerOutputText;
     
     /*
-     The UITextView used to display tracking status... ish
-     */
-    UITextView *_trackerStatusText;
-    
-    /*
      The node will be moved according to the results of image tracking.
      */
     std::shared_ptr<VRONode> _imageTrackingResultNode;
     
     std::shared_ptr<VRONode> _imageResultsContainer;
-    
-    float _screenWidth;
-    float _screenHeight;
 
-    std::shared_ptr<VRORenderer> _renderer; // this is bad... but temporary for now.
+#endif /* ENABLE_OPENCV */
+
 };
 
 /*

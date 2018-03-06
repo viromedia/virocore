@@ -11,6 +11,7 @@
 #include "VROARImageTrackerOutput.h"
 #include "PersistentRef.h"
 
+#if ENABLE_OPENCV
 
 namespace ImageTrackerOutput {
     inline jlong jptr(std::shared_ptr<VROARImageTrackerOutput> tracker) {
@@ -23,5 +24,7 @@ namespace ImageTrackerOutput {
         return persistentOutput->get();
     }
 }
+
+#endif /* ENABLE_OPENCV */
 
 #endif //ANDROID_IMAGETRACKEROUTPUT_JNI_H

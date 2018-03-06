@@ -18,7 +18,7 @@ android {
         externalNativeBuild {
             cmake {
                 targets "viro_renderer"
-                cppFlags "-std=c++14 -frtti -fcxx-exceptions"
+                cppFlags "-std=c++14 -frtti -fcxx-exceptions -DENABLE_OPENCV=1"
             }
         }
 

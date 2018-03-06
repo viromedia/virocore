@@ -174,7 +174,6 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
         self.texture = texture;
         self.cache = cache;
         self.driver = driver;
-        self.trackingHelper = [[VROTrackingHelper alloc] init];
     }
     
     return self;
@@ -190,9 +189,6 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
         texture->displayPixelBuffer(cache->createTextureSubstrate(sampleBuffer,
                                                                   driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
-
-    // Uncomment this line to enable image detection
-    // [_trackingHelper processBuffer:sampleBuffer];
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer

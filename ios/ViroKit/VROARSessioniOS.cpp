@@ -78,6 +78,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
         _sessionConfiguration = config;
     }
     
+#if ENABLE_OPENCV
     _trackingHelper = [[VROTrackingHelper alloc] init];
       
     // Uncomment to run a test screenshot through the OpenCV tracking code.
@@ -93,6 +94,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
         
     _imageResultsContainer = std::make_shared<VRONode>();
     _imageResultsContainer->addChildNode(_imageTrackingResultNode);
+#endif /* ENABLE_OPENCV */
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -157,8 +159,11 @@ bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
 
 void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
     VROARSession::setScene(scene);
+
+#if ENABLE_OPENCV
     // when we add a scene, make sure that we add this node to it.
     scene->getRootNode()->addChildNode(_imageResultsContainer);
+#endif /* ENABLE_OPENCV */
 }
 
 void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate) {
@@ -278,11 +283,6 @@ std::shared_ptr<VROTexture> VROARSessioniOS::getCameraBackgroundTexture() {
     return _background;
 }
 
-void VROARSessioniOS::outputTextTapped() {
-    BOOL tracking = [_trackingHelper toggleTracking];
-    _trackerOutputText.text = tracking ? @"Started Tracking!" : @"Not Tracking!";
-}
-
 std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     VROARFrameiOS *frameiOS = (VROARFrameiOS *)_currentFrame.get();
 
@@ -293,16 +293,17 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     _background->setSubstrate(0, std::move(substrates[0]));
     _background->setSubstrate(1, std::move(substrates[1]));
 
-    if (isReady() && _renderer) {
+#if ENABLE_OPENCV
 
-        // Uncomment the below line to enable running image recognition
+    if (isReady()) {
+
         // Get and set intrinsic matrix
         std::shared_ptr<VROARCameraiOS> arCameraiOS = std::dynamic_pointer_cast<VROARCameraiOS>(frameiOS->getCamera());
         float* intrinsics = arCameraiOS->getIntrinsics();
         [_trackingHelper setIntrinsics:intrinsics];
 
         // fetch camera pointer
-        VROCamera camera = _renderer->getCamera();
+        std::shared_ptr<VROARCamera> lastCamera = getLastFrame()->getCamera();
         
         [_trackingHelper processPixelBufferRef:frameiOS->getImage()
                                       forceRun:false
@@ -315,8 +316,8 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                 std::shared_ptr<VROARImageTrackerOutput> trackerOutput = [output getImageTrackerOutput];
                 if (trackerOutput != nullptr && trackerOutput->found) {
                     VROMatrix4f camMatrix = VROMatrix4f();
-                    camMatrix.translate(camera.getPosition());
-                    camMatrix.rotate(camera.getRotation());
+                    camMatrix.translate(lastCamera->getPosition());
+                    camMatrix.rotate(lastCamera->getRotation());
                     
                     // Compute the matrix from the camera to the image, we need to negate the Y and Z axis because
                     // the OpenCV coordinate system: http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/OWENS/LECT9/node2.html
@@ -329,16 +330,10 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                     fromCamMatrix.rotateY(- trackerOutput->rotation.at<double>(1,0));
                     fromCamMatrix.rotateZ(- trackerOutput->rotation.at<double>(2,0));
 
-                    VROMatrix4f endTransformation = camMatrix.multiply(fromCamMatrix);//fromCamMatrix.multiply(camMatrix);
+                    VROMatrix4f endTransformation = camMatrix.multiply(fromCamMatrix);
                     
                     _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
                     _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
-
-//                    _imageTrackingResultNode->setPosition(fromCamMatrix.extractTranslation());
-//                    _imageTrackingResultNode->setRotation(fromCamMatrix.extractRotation({1,1,1}));
-//
-//                    _imageResultsContainer->setPosition(camMatrix.extractTranslation());
-//                    _imageResultsContainer->setRotation(camMatrix.extractRotation({1,1,1}));
                     
                     VROVector3f pos = endTransformation.extractTranslation();
                     VROVector3f rot = endTransformation.extractRotation({1,1,1}).toEuler();
@@ -356,28 +351,22 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                                                 pos.x, pos.y, pos.z];
                         _trackerOutputText.text = outputText;
                     }
-                    
-                    // TODO: fix the below, i'm getting negative x and y values... or just remove it since it's only for debugging.
-                    int viewportArr[4] = {0, 0, (int)_screenWidth, (int)_screenHeight};
-
-                    // create the mvp (in this case, the model mat is identity).
-                    VROMatrix4f projectionMat = camera.getProjection();
-                    VROMatrix4f viewMat = camera.getLookAtMatrix();
-                    VROMatrix4f vpMat = projectionMat.multiply(viewMat);
-                    
-                    // get the 2D point
-                    VROVector3f point;
-                    VROProjector::project(fromCamMatrix.extractTranslation(), vpMat.getArray(), viewportArr, &point);
-
-                    pinfo("[Viro] projected point is %f, %f", point.x, point.y);
-                    [_trackerStatusText setFrame:CGRectMake(point.x - 2, point.y - 2, 5, 5)];
                 }
             });
         }];
     }
+#endif /* ENABLE_OPENCV */
 
     return _currentFrame;
 }
+
+#if ENABLE_OPENCV
+void VROARSessioniOS::outputTextTapped() {
+    BOOL tracking = [_trackingHelper toggleTracking];
+    _trackerOutputText.text = tracking ? @"Started Tracking!" : @"Not Tracking!";
+}
+#endif /* ENABLE_OPENCV */
+
 
 std::unique_ptr<VROARFrame> &VROARSessioniOS::getLastFrame() {
     return _currentFrame;

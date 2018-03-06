@@ -4,6 +4,8 @@
 //
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
+#if ENABLE_OPENCV
+
 #include "VROARImageTracker.h"
 #include <sys/time.h>
 #include "opencv2/calib3d/calib3d.hpp"
@@ -321,6 +323,8 @@ std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTargetBF(std::ve
     
     //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
     cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
+    
+    // TODO: sanitize the inputCorners, using ORB gives us lots of false positives, if we just add some logic to ensure lines don't cross we'll be good.
 
     LOG_DETECT_TIME("finished detection & pose extraction");
 
@@ -530,4 +534,6 @@ long VROARImageTracker::getCurrentTimeMs() {
     long ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
     return ms;
 }
+
+#endif /* ENABLE_OPENCV */
 

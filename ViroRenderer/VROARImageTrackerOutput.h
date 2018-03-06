@@ -5,6 +5,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#if ENABLE_OPENCV
+
 #ifndef VROARImageTrackerOutput_h
 #define VROARImageTrackerOutput_h
 
@@ -31,3 +33,5 @@ private:
 };
 
 #endif /* VROARImageTrackerOutput_hpp */
+
+#endif /* ENABLE_OPENCV */

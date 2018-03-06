@@ -6,6 +6,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#if ENABLE_OPENCV
+
 #ifndef VROOpenCV_h
 #define VROOpenCV_h
 
@@ -26,3 +28,5 @@ public:
     static void runEdgeDetection(cv::Mat inputFile, cv::Mat outputFile);
 };
 #endif /* VROOpenCV_h */
+
+#endif /* ENABLE_OPENCV */
