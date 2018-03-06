@@ -43,7 +43,6 @@ import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
 import com.viro.core.ViroViewOVR;
 import com.viro.core.ViroViewScene;
-import com.viro.core.internal.Image;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -382,12 +381,25 @@ public class MemoryLeakTest extends AppCompatActivity {
         node.addLight(directionalLightJni);
 
         final float[] omniLightPosition = {1, 0, 0};
-        final OmniLight omniLightJni = new OmniLight(Color.RED, 1000.0f, 1, 10, new Vector(omniLightPosition));
+        final OmniLight omniLightJni = new OmniLight();
+        omniLightJni.setColor(Color.RED);
+        omniLightJni.setIntensity(1000.0f);
+        omniLightJni.setAttenuationStartDistance(1);
+        omniLightJni.setAttenuationEndDistance(10);
+        omniLightJni.setPosition(new Vector(omniLightPosition));
         node.addLight(omniLightJni);
 
         final float[] spotLightPosition = {-2, 0, 3};
-        final Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
-                new Vector(lightDirection), (float) Math.toRadians(2), (float) Math.toRadians(10));
+
+        final Spotlight spotLightJni = new Spotlight();
+        spotLightJni.setColor(Color.YELLOW);
+        spotLightJni.setIntensity(1000.0f);
+        spotLightJni.setAttenuationStartDistance(1);
+        spotLightJni.setAttenuationEndDistance(10);
+        spotLightJni.setPosition(new Vector(spotLightPosition));
+        spotLightJni.setDirection(new Vector(lightDirection));
+        spotLightJni.setInnerAngle((float) Math.toRadians(2));
+        spotLightJni.setOuterAngle((float) Math.toRadians(10));
         node.addLight(spotLightJni);
 
         Node nodeBox = new Node();
