@@ -46,7 +46,6 @@ std::shared_ptr<VROTexture> VROHDRLoader::loadTexture(float *data, int width, in
     header[1] = height;
     header[2] = 1; // Mip levels
     
-    pinfo("Packing...");
     int packedLength = numPixels * sizeof(uint32_t);
     uint32_t *packedF9E5 = (uint32_t *) malloc(packedLength);
     for (int i = 0; i < numPixels; i++) {
