@@ -122,34 +122,33 @@ class PreProcessor {
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-def getCurrentFlavor() {
+task preProcessSourceCodeReleaseViro_Core {
     Gradle gradle = getGradle()
     String  tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
 
-    Pattern pattern;
+    Pattern flavor;
 
     if( tskReqStr.contains( "assemble" ) )
-        pattern = Pattern.compile("assemble(\\w+)(Release|Debug)")
+        flavor = Pattern.compile("assemble(\\w+)(Release|Debug)");
     else
-        pattern = Pattern.compile("generate(\\w+)(Release|Debug)")
+        flavor = Pattern.compile("generate(\\w+)(Release|Debug)");
 
-    Matcher matcher = pattern.matcher( tskReqStr )
+    Matcher flavorMatcher = flavor.matcher( tskReqStr );
 
-    if( matcher.find() )
-        return matcher.group(1).toLowerCase()
-    else
-    {
-        println "NO MATCH FOUND"
-        return "";
+    if (flavorMatcher.find()) {
+        String buildFlavor = flavorMatcher.group(1).toLowerCase();
+        String buildType = flavorMatcher.group(2).toLowerCase();
+        println ("---> Parsed buildType: " + buildType + ", buildFlavor: "  + buildFlavor);
+        description("preprocess free code after //#IFDEF 'debug' to //#ENDIF");
+        if (buildType.equalsIgnoreCase('Release') && buildFlavor.equalsIgnoreCase('viro_core')) {
+            println ("Running preprocessor since -> viro_core, release");
+            PreProcessor.preProcessSourceCode(javaFiles, buildType, buildFlavor);
+        } else {
+            println ("Not running preprocessor");
+        }
+    } else {
+        println ("No match found")
     }
-}
-
-task preProcessSourceCodeReleaseViro_Core {
-    println ("Running preProcessSourceCodeReleaseViro_Core")
-    String buildFlavor = getCurrentFlavor();
-    logger.debug("---> PreProcessor.preProcessSourceCode(javaFiles, 'release', '" + buildFlavor + "')");
-    description("preprocess free code after //#IFDEF 'debug' to //#ENDIF")
-    PreProcessor.preProcessSourceCode(javaFiles, 'release', buildFlavor)
 }
 
 tasks.whenTaskAdded { task ->
