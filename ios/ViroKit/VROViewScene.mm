@@ -170,7 +170,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setBackgroundColor:(UIColor *)color {
     [super setBackgroundColor:color];
     
-    double r, g, b, a;
+    CGFloat r, g, b, a;
     [color getRed:&r green:&g blue:&b alpha:&a];
     VROVector4f color_v((float) r, (float) g, (float) b, (float) a);
     
