@@ -1,8 +1,8 @@
 ARRetail 
 =====================
-With the ARRetail ViroCore demo, users will be able to choose furnitures from an android listview, to be then placed and dragged around in an AR environment. You can effectively build an experience that will be very similiar to the [Amazon AR Application](https://www.youtube.com/watch?v=uhdOzpblrm0)! 
+With the ARRetail ViroCore demo, users are able to choose furniture from an Android ListView, and then place and drag the objects around an AR environment. This shows the ease with which Viro allows you build experiences similar to the [Amazon AR Application](https://www.youtube.com/watch?v=uhdOzpblrm0).
 
-Feel free to follow our tutorial [here](https://blog.viromedia.com/tutorial-how-to-build-amazons-ar-view-for-arcore-android-using-virocore-and-java-ba1cc3ff2d87).
+This example is meant to be used with our tutorial [here](https://blog.viromedia.com/tutorial-how-to-build-amazons-ar-view-for-arcore-android-using-virocore-and-java-ba1cc3ff2d87).
 
 Or refer to the instructions for setting up the sample code [here](https://github.com/viromedia/virocore/blob/master/README.md).
 

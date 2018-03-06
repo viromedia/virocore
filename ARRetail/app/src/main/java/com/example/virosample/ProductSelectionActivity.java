@@ -42,9 +42,8 @@ import java.util.List;
 import static com.example.virosample.ProductARActivity.INTENT_PRODUCT_KEY;
 
 /**
- * ProductSelectionActivity displays a list of categories and products through which customers
- * can click on to select the desired product they which to display in AR. Once the desired
- * product is selected, we launch them into the {@link ProductARActivity}.
+ * ProductSelectionActivity displays a list of categories and products. Customers can tap on a
+ * product to display it in AR. Upon selection of a product we launch into {@link ProductARActivityComplete}.
  */
 public class ProductSelectionActivity extends Activity {
     private ProductAdapter mProductAdapter;

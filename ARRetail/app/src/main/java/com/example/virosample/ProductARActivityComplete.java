@@ -16,6 +16,7 @@
  */
 package com.example.virosample;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -44,24 +45,29 @@ import com.viro.core.GestureRotateListener;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
+import com.viro.core.RendererConfiguration;
 import com.viro.core.RotateState;
 import com.viro.core.Spotlight;
 import com.viro.core.Surface;
 import com.viro.core.Vector;
 import com.viro.core.ViroMediaRecorder;
+import com.viro.core.ViroView;
 import com.viro.core.ViroViewARCore;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 /**
- * A ViroCore ProductARActivity that coordinates the placing of a Product last selected in the
- * {@link ProductSelectionActivity} in AR.
+ * ProductARActivityComplete coordinates the placing (in AR) of the product last selected in the
+ * {@link ProductSelectionActivity}.
  */
-public class ProductARActivityComplete extends ViroActivity {
+public class ProductARActivityComplete extends Activity {
+
+    private static final String TAG = ProductARActivityComplete.class.getSimpleName();
     final public static String INTENT_PRODUCT_KEY = "product_key";
-    private View mHudGroupView = null;
+
+    private ViroView mViroView;
+    private View mHudGroupView;
     private TextView mHUDInstructions;
     private ImageView mCameraButton;
     private View mIconShakeView;
@@ -89,6 +95,26 @@ public class ProductARActivityComplete extends ViroActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        RendererConfiguration config = new RendererConfiguration();
+        config.setShadowsEnabled(true);
+        config.setBloomEnabled(true);
+        config.setHDREnabled(true);
+        config.setPBREnabled(true);
+
+        mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
+            @Override
+            public void onSuccess() {
+                displayScene();
+            }
+
+            @Override
+            public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
+                Log.e(TAG, "Failed to load AR Scene [" + errorMessage + "]");
+            }
+        }, config);
+        setContentView(mViroView);
+
         Intent intent = getIntent();
         String key = intent.getStringExtra(INTENT_PRODUCT_KEY);
         ProductApplicationContext context = (ProductApplicationContext)getApplicationContext();
@@ -100,13 +126,36 @@ public class ProductARActivityComplete extends ViroActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mViroView.onActivityStarted(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mViroView.onActivityResumed(this);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mViroView.onActivityPaused(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mViroView.onActivityStopped(this);
+    }
+
+    @Override
     protected void onDestroy(){
         ((ViroViewARCore)mViroView).setCameraARHitTestListener(null);
         super.onDestroy();
     }
 
-    @Override
-    public void onRendererStart() {
+    private void displayScene() {
         // Create the ARScene within which to load our ProductAR Experience
         ARScene arScene = new ARScene();
         mMainLight = new AmbientLight(Color.parseColor("#606060"), 400);
@@ -114,7 +163,7 @@ public class ProductARActivityComplete extends ViroActivity {
         arScene.getRootNode().addLight(mMainLight);
 
         // Setup our 3D and HUD controls
-        initARCrossHair(arScene);
+        initARCrosshair(arScene);
         init3DModelProduct(arScene);
         initARHud();
 
@@ -176,14 +225,14 @@ public class ProductARActivityComplete extends ViroActivity {
         mIconShakeView = mViroView.findViewById(R.id.icon_shake_phone);
     }
 
-    private void initARCrossHair(ARScene scene){
+    private void initARCrosshair(ARScene scene){
         if (mCrosshairModel != null){
             return;
         }
 
-        final Object3D crossHairModel = new Object3D();
-        scene.getRootNode().addChildNode(crossHairModel);
-        crossHairModel.loadModel(Uri.parse("file:///android_asset/tracking_1.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        final Object3D crosshairModel = new Object3D();
+        scene.getRootNode().addChildNode(crosshairModel);
+        crosshairModel.loadModel(Uri.parse("file:///android_asset/tracking_1.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(Object3D object3D, Object3D.Type type) {
 
@@ -398,15 +447,15 @@ public class ProductARActivityComplete extends ViroActivity {
             final Vector cameraPos  = viewARView.getLastCameraPositionRealtime();
 
             // Grab the closest ar hit target
-            float closestsDistance = Float.MAX_VALUE;
+            float closestDistance = Float.MAX_VALUE;
             ARHitTestResult result = null;
             for (int i = 0; i < arHitTestResults.length; i++) {
                 ARHitTestResult currentResult = arHitTestResults[i];
 
                 float distance = currentResult.getPosition().distance(cameraPos);
-                if (distance < closestsDistance && distance > .3 && distance < 5){
+                if (distance < closestDistance && distance > .3 && distance < 5){
                     result = currentResult;
-                    closestsDistance = distance;
+                    closestDistance = distance;
                 }
             }
 
@@ -441,7 +490,7 @@ public class ProductARActivityComplete extends ViroActivity {
             // The Renderer is ready - turn everything visible.
             mHudGroupView.setVisibility(View.VISIBLE);
 
-            // Update our ui views to the finding surface state.
+            // Update our UI views to the finding surface state.
             setTrackingStatus(TRACK_STATUS.FINDING_SURFACE);
         }
 

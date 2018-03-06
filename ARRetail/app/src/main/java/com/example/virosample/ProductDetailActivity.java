@@ -28,7 +28,7 @@ import com.example.virosample.model.Product;
 import static com.example.virosample.ProductARActivity.INTENT_PRODUCT_KEY;
 
 /**
- * A ProductDetailActivity that mocks the displaying of product detail information in a web view.
+ * ProductDetailActivity mocks the displaying of product detail information in a WebView.
  */
 public class ProductDetailActivity extends Activity {
 

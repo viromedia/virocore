@@ -16,6 +16,7 @@
  */
 package com.example.virosample;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import com.example.virosample.model.Product;
@@ -23,8 +24,11 @@ import com.example.virosample.model.Product;
 /**
  * A ViroCore ProductARActivity that coordinates the placing of a Product last selected in the
  * {@link ProductSelectionActivity} in AR.
+ *
+ * Note: this class is a <b>stub</b> referenced by the tutorial. You can refer to the tutorial
+ * here: https://blog.viromedia.com/tutorial-how-to-build-amazons-ar-view-for-arcore-android-using-virocore-and-java-ba1cc3ff2d87
  */
-public class ProductARActivity extends ViroActivity {
+public class ProductARActivity extends Activity {
     final public static String INTENT_PRODUCT_KEY = "product_key";
     private Product mSelectedProduct = null;
 
@@ -37,8 +41,4 @@ public class ProductARActivity extends ViroActivity {
         mSelectedProduct = context.getProductDB().getProductByName(key);
     }
 
-    @Override
-    public void onRendererStart() {
-        // Do stuff here.
-    }
 }

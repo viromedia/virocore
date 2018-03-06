@@ -20,29 +20,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    productFlavors {
-        gvr {
-            resValue "string", "app_name", "ViroSample-gvr"
-            applicationIdSuffix ".gvr"
-            buildConfigField "String", "VIRO_PLATFORM", "\"GVR\""
-        }
-        ovr {
-            resValue "string", "app_name", "ViroSample-ovr"
-            applicationIdSuffix ".ovr"
-            buildConfigField "String", "VIRO_PLATFORM", "\"OVR\""
-        }
-        arcore {
-            resValue "string", "app_name", "ViroSample-arcore"
-            applicationIdSuffix ".arcore"
-            buildConfigField "String", "VIRO_PLATFORM", "\"ARCore\""
-        }
-        scene {
-            resValue "string", "app_name", "ViroSample-scene"
-            applicationIdSuffix ".scene"
-            buildConfigField "String", "VIRO_PLATFORM", "\"Scene\""
-        }
-    }
 }
 
 dependencies {

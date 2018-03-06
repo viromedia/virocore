@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.virosample">
 
-    <!-- Required to read the paired viewer's distortion parameters -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Required for AR -->
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <!-- Required for Recording -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -20,6 +20,32 @@
         <meta-data
             android:name="com.viromedia.API_KEY"
             android:value="API_KEY_HERE" />
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
+        <activity
+            android:name="com.example.virosample.ProductSelectionActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:label="Amazon AR Gallery">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.example.virosample.ProductARActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.example.virosample.ProductARActivityComplete"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:label="Product Details"
+            android:name="com.example.virosample.ProductDetailActivity"/>
     </application>
 
 </manifest>
