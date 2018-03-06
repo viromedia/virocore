@@ -32,8 +32,8 @@ public:
             case VROGPUType::Adreno330OrOlder:
                 return VROColorRenderingMode::NonLinear;
             default:
-                // If the GPU doesn't support sRGB framebuffers then disable HDR entirely
-                return _sRGBFramebuffer ? VROColorRenderingMode::Linear : VROColorRenderingMode::NonLinear;
+                // If the GPU doesn't support sRGB framebuffers then use software gamma correction
+                return _sRGBFramebuffer ? VROColorRenderingMode::Linear : VROColorRenderingMode::LinearSoftware;
         }
     }
 
