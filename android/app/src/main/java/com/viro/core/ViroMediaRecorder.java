@@ -439,13 +439,15 @@ public class ViroMediaRecorder {
     /**
      * Reconfigures the audio settings of the underlying Android MediaRecorder used by the
      * ViroMediaRecorder. This must be called before any recording for it to take effect.
-     * @param encodingBitRate - Sets the audio encoding bit rate for recording.
-     * @param samplingBitRate - Sets the audio sampling rate for recording. The sampling rate really
-     * depends on the format for the audio recording, as well as the capabilities of the platform.
-     * @param encoder - Sets the audio encoder to be used for recording.
+     *
+     * @param encodingBitRate Sets the audio encoding bit rate for recording.
+     * @param samplingBitRate Sets the audio sampling rate for recording. The sampling rate is
+     *                        ultimately determined by the format of the audio recording and
+     *                        capabilities of the platform.
+     * @param encoder         Sets the audio encoder to be used for recording.
      * @see android.media.MediaRecorder.AudioEncoder
      */
-    public void configureAudioInput(int encodingBitRate, int samplingBitRate, int encoder){
+    public void configureAudioInput(int encodingBitRate, int samplingBitRate, int encoder) {
         mAudioEncodingBitRate = encodingBitRate;
         mAudioSamplingBitRate = samplingBitRate;
         mAudioEncoder = encoder;
@@ -609,7 +611,7 @@ public class ViroMediaRecorder {
 
     /**
      * Schedules a screenshot to be taken and saved on the next rendered frame. When finished, a
-     * bitmap representing the taken screen shot will be provided in the ScreenshotFinishListener
+     * bitmap representing the taken screenshot will be provided in the ScreenshotFinishListener
      * callback.
      *
      * @param finishListener Callback interface that is invoked on success or failure.

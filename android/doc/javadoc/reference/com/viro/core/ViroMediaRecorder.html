@@ -741,6 +741,34 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#configureAudioInput(int, int, int)">configureAudioInput</a>(int encodingBitRate, int samplingBitRate, int encoder)
+      </code>
+      
+        <p>Reconfigures the audio settings of the underlying Android MediaRecorder used by the
+ ViroMediaRecorder.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#startRecordingAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.RecordingErrorListener)">startRecordingAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a> errorListener)
       </code>
       
@@ -772,6 +800,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Schedules the conclusion of the current video recording, if any.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#takeScreenShotAsync(com.viro.core.ViroMediaRecorder.ScreenshotFinishListener)">takeScreenShotAsync</a>(<a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a> finishListener)
+      </code>
+      
+        <p>Schedules a screenshot to be taken and saved on the next rendered frame.
         
     
 </p>
@@ -843,6 +898,55 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <h2 class="api-section">Public methods</h2>
 
+
+
+<A NAME="configureAudioInput(int, int, int)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">configureAudioInput</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void configureAudioInput (int encodingBitRate, 
+                int samplingBitRate, 
+                int encoder)</pre>
+    
+    
+
+    
+  <p>Reconfigures the audio settings of the underlying Android MediaRecorder used by the
+ ViroMediaRecorder. This must be called before any recording for it to take effect.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>encodingBitRate</code></td>
+        <td width="100%">
+          <code>int</code>: Sets the audio encoding bit rate for recording.</p></td>
+      </tr>
+      <tr>
+        <td><code>samplingBitRate</code></td>
+        <td width="100%">
+          <code>int</code>: Sets the audio sampling rate for recording. The sampling rate is
+                        ultimately determined by the format of the audio recording and
+                        capabilities of the platform.</p></td>
+      </tr>
+      <tr>
+        <td><code>encoder</code></td>
+        <td width="100%">
+          <code>int</code>: Sets the audio encoder to be used for recording.</p></td>
+      </tr>
+    </table>
+  <div>
+      <p><b>See also:</b></p>
+      <ul class="nolist"><li><code><a href="../../../../http://d.android.com/reference/android/media/MediaRecorder.AudioEncoder.html">MediaRecorder.AudioEncoder</a></code></li>
+      </ul>
+  </div>
+
+</div>
 
 
 <A NAME="startRecordingAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.RecordingErrorListener)"></A>
@@ -917,6 +1021,38 @@ void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaR
         <td><code>finishListener</code></td>
         <td width="100%">
           <code>ViroMediaRecorder.VideoRecordingFinishListener</code>: Callback interface that is invoked on success or failure.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="takeScreenShotAsync(com.viro.core.ViroMediaRecorder.ScreenshotFinishListener)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">takeScreenShotAsync</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void takeScreenShotAsync (<a href="../../../../reference/com/viro/core/ViroMediaRecorder.ScreenshotFinishListener.html">ViroMediaRecorder.ScreenshotFinishListener</a> finishListener)</pre>
+    
+    
+
+    
+  <p>Schedules a screenshot to be taken and saved on the next rendered frame. When finished, a
+ bitmap representing the taken screenshot will be provided in the ScreenshotFinishListener
+ callback.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>finishListener</code></td>
+        <td width="100%">
+          <code>ViroMediaRecorder.ScreenshotFinishListener</code>: Callback interface that is invoked on success or failure.
 </p></td>
       </tr>
     </table>
