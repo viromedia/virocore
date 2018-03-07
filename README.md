@@ -28,7 +28,7 @@ ViroCore Documentation: https://virocore.viromedia.com/
 
 API Reference(Java Docs): https://developer.viromedia.com/
 
-Join our Slack group [here](https://join.slack.com/t/virodevelopers/shared_invite/enQtMzExNTgyNjkwMjU2LWM2OGNmYTI4NjI5OWI5NDc4ZGMwNTJjNGUzNDZjYjU0YjVmNjcxNjZkZjU3ZGM1YmY5ZGEwY2I1MzNlZDIyNGY).
+Join our Slack group [here](https://join.slack.com/t/virodevelopers/shared_invite/enQtMzI3MzgwNDM2NDM5LTBiOTRkMDg0Zjc0ODIyYTAxZDczYzFmODJhMDUxZjVhOTk0NGVhMjNlZTY0ZjkxNjMzZGEyNDNlYzc4ZTkzNzQ).
 
 Check out our [blog](https://blog.viromedia.com/) for tutorials, news, and updates.
 
