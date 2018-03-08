@@ -8,6 +8,7 @@
 
 #include "VROSoundDataGVR.h"
 #include <VROPlatformUtil.h>
+#include "VROLog.h"
 
 std::shared_ptr<VROSoundDataGVR> VROSoundDataGVR::create(std::string resource, VROResourceType type) {
     std::shared_ptr<VROSoundDataGVR> data = std::make_shared<VROSoundDataGVR>(resource, type);
@@ -35,7 +36,6 @@ void VROSoundDataGVR::setup(std::string resource, VROResourceType resourceType) 
         std::function<void(std::string, bool)> onFinish = [weakPtr](std::string fileName, bool isTemp) {
             std::shared_ptr<VROSoundDataGVR> data = weakPtr.lock();
             if (data) {
-                // TODO Is this safe to call from a background thread?
                 data->ready(fileName, isTemp);
             }
         };
@@ -46,9 +46,11 @@ void VROSoundDataGVR::setup(std::string resource, VROResourceType resourceType) 
                 data->error(error);
             }
         };
-        
-        VROModelIOUtil::retrieveResourceAsync(resource, resourceType, onFinish, [onError]() {
-            onError("Failed to load sound");
+        VROModelIOUtil::retrieveResourceAsync(resource, resourceType, onFinish,
+               [resource, onError]() {
+                   // Error callback
+                   pinfo("Failed to load sound resource [%s]", resource.c_str());
+                   onError("Failed to load sound");
         });
     }
 }

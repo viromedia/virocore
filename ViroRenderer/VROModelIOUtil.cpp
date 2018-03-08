@@ -87,6 +87,11 @@ void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string
 void VROModelIOUtil::retrieveResourceAsync(std::string resource, VROResourceType type,
                                            std::function<void(std::string, bool)> onSuccess,
                                            std::function<void()> onFailure) {
+    // If we're given a URL with the res:/ prefix, then treat it as a BundledResource
+    if (type == VROResourceType::URL && VROStringUtil::startsWith(resource, "res:")) {
+        type = VROResourceType::BundledResource;
+    }
+
     if (type == VROResourceType::BundledResource) {
         bool temp;
         std::string path = VROPlatformCopyResourceToFile(resource, &temp);
@@ -101,6 +106,11 @@ void VROModelIOUtil::retrieveResourceAsync(std::string resource, VROResourceType
 }
 
 std::string VROModelIOUtil::retrieveResource(std::string resource, VROResourceType type, bool *isTemp, bool *success) {
+    // If we're given a URL with the res:/ prefix, then treat it as a BundledResource
+    if (type == VROResourceType::URL && VROStringUtil::startsWith(resource, "res:")) {
+        type = VROResourceType::BundledResource;
+    }
+
     std::string path;
     *isTemp = false;
     
