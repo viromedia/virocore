@@ -65,8 +65,8 @@ NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
     sessionConfig.timeoutIntervalForRequest = 30;
     
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
-    NSURLSessionDataTask * downloadTask = [downloadSession dataTaskWithURL:url
-                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
+                                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                                             if (httpResponse.statusCode != 200) {
                                                 NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
@@ -88,7 +88,7 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
     sessionConfig.timeoutIntervalForRequest = 30;
     
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
-    NSURLSessionDataTask * downloadTask = [downloadSession dataTaskWithURL:url
+    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
                                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
                                             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                                             if (httpResponse.statusCode != 200) {
@@ -105,7 +105,6 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     NSURL *URL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
-    
     __block NSString *tempFilePath;
     
     downloadDataWithURLSynchronous(URL, ^(NSData *data, NSError *error) {
@@ -116,7 +115,6 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
         if (data && !error) {
             NSString *fileName = [NSString stringWithFormat:@"%@.tmp", [[NSProcessInfo processInfo] globallyUniqueString]];
             NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
-            
             [data writeToURL:fileURL atomically:NO];
             
             *temp = true;
@@ -132,6 +130,32 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
         *success = false;
         return "";
     }
+}
+
+void VROPlatformDownloadURLToFileAsync(std::string url,
+                                       std::function<void(std::string, bool)> onSuccess,
+                                       std::function<void()> onFailure) {
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
+    VROPlatformDownloadDataWithURL(URL, ^(NSData *data, NSError *error) {
+        if (error.code == NSURLErrorCancelled) {
+            return;
+        }
+        
+        if (data && !error) {
+            NSString *fileName = [NSString stringWithFormat:@"%@.tmp", [[NSProcessInfo processInfo] globallyUniqueString]];
+            NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
+            [data writeToURL:fileURL atomically:NO];
+            
+            VROPlatformDispatchAsyncRenderer([fileURL, onSuccess] {
+                onSuccess([[fileURL path] UTF8String], true);
+            });
+        }
+        else {
+            VROPlatformDispatchAsyncRenderer([onFailure] {
+                onFailure();
+            });
+        }
+    });
 }
 
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
@@ -281,14 +305,14 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jurl = env->NewStringUTF(url.c_str());
-
+    
     jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
     jmethodID jmethod = env->GetMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
-
+    
     env->DeleteLocalRef(jurl);
     env->DeleteLocalRef(cls);
-
+    
     if (jpath == nullptr) {
         *success = false;
         return "";
@@ -296,23 +320,42 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
     else {
         *success = true;
     }
-
+    
     const char *path = env->GetStringUTFChars(jpath, 0);
     std::string spath(path);
-
+    
     pinfo("Path to file is %s", path);
-
+    
     env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
-
+    
     *temp = true;
     return spath;
+}
+
+void VROPlatformDownloadURLToFileAsync(std::string url,
+                                       std::function<void(std::string, bool)> onSuccess,
+                                       std::function<void()> onFailure) {
+    VROPlatformDispatchAsyncBackground([url, onSuccess, onFailure] {
+        bool temp, success;
+        std::string file = VROPlatformDownloadURLToFile(url, &temp, &success);
+        if (success) {
+            VROPlatformDispatchAsyncRenderer([file, onSuccess] {
+                onSuccess(file, true);
+            });
+        }
+        else {
+            VROPlatformDispatchAsyncRenderer([onFailure] {
+                onFailure();
+            });
+        }
+    });
 }
 
 void VROPlatformDeleteFile(std::string filename) {
     // As SoundData finalizers in Java can get called after the renderer is destroyed,
     // we perform a null check here. TODO VIRO-2441: Perform Proper sound data cleanup.
-    if (sPlatformUtil == NULL){
+    if (sPlatformUtil == NULL) {
         return;
     }
 

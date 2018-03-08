@@ -132,6 +132,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROThreadRestricted.cpp
              ../../ViroRenderer/VROCompress.cpp
              ../../ViroRenderer/VRORenderUtil.cpp
+             ../../ViroRenderer/VROTaskQueue.cpp
              ../../ViroRenderer/Nodes.pb.cc
 
              # Renderer

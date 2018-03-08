@@ -224,7 +224,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
 #endif
 
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node, true,
+    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node,
                                         [scale, position, lightMask, animation](std::shared_ptr<VRONode> node, bool success) {
                                             if (!success) {
                                                 return;

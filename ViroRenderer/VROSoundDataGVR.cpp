@@ -35,6 +35,7 @@ void VROSoundDataGVR::setup(std::string resource, VROResourceType resourceType) 
         std::function<void(std::string, bool)> onFinish = [weakPtr](std::string fileName, bool isTemp) {
             std::shared_ptr<VROSoundDataGVR> data = weakPtr.lock();
             if (data) {
+                // TODO Is this safe to call from a background thread?
                 data->ready(fileName, isTemp);
             }
         };
@@ -46,15 +47,8 @@ void VROSoundDataGVR::setup(std::string resource, VROResourceType resourceType) 
             }
         };
         
-        VROPlatformDispatchAsyncBackground([resource, resourceType, onFinish, onError] {
-            bool isTemp, success;
-            std::string path = VROModelIOUtil::processResource(resource, resourceType, &isTemp, &success);
-            if (success) {
-                onFinish(path, isTemp);
-            }
-            else {
-                onError("Failed to load sound");
-            }
+        VROModelIOUtil::retrieveResourceAsync(resource, resourceType, onFinish, [onError]() {
+            onError("Failed to load sound");
         });
     }
 }

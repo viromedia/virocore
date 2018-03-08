@@ -14,71 +14,96 @@
 #include "VROTextureUtil.h"
 #include "VROStringUtil.h"
 
-std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, VROResourceType type, bool sRGB,
-                                                        const std::map<std::string, std::string> *resourceMap,
-                                                        std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
-    std::shared_ptr<VROTexture> texture;
-
-    auto it = cache.find(name);
-    if (it == cache.end()) {
-        bool isTempTextureFile = false;
-        bool success = false;
-        std::string textureFile;
-
-        if (resourceMap == nullptr) {
-            textureFile = base + "/" + name;
-        } else {
-            textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
-        }
-        textureFile = processResource(textureFile, type, &isTempTextureFile, &success);
-
-        // Abort (return empty texture) if the file wasn't found
-        if (!success || textureFile.length() == 0) {
-            return texture;
-        }
-
-        if (VROStringUtil::endsWith(name, "ktx")) {
-            int dataLength;
-            void *data = VROPlatformLoadFile(textureFile, &dataLength);
-
-            VROTextureFormat format;
-            int texWidth;
-            int texHeight;
-            std::vector<uint32_t> mipSizes;
-            std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *) data, (uint32_t) dataLength,
-                                                                             &format, &texWidth, &texHeight, &mipSizes);
-            std::vector<std::shared_ptr<VROData>> dataVec = { texData };
-
-            texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
-                                                   VROTextureInternalFormat::RGBA8, true,
-                                                   VROMipmapMode::Pregenerated,
-                                                   dataVec, texWidth, texHeight, mipSizes);
-        }
-        else {
-            std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile,
-                                                                           VROTextureInternalFormat::RGBA8);
-            if (isTempTextureFile) {
-                VROPlatformDeleteFile(textureFile);
-            }
-            if (!image) {
-                pinfo("Failed to load texture [%s] at path [%s]", name.c_str(), textureFile.c_str());
-                return {};
-            }
-            texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, sRGB, VROMipmapMode::Runtime, image);
-        }
-        cache.insert(std::make_pair(name, texture));
+void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string &base, VROResourceType type, bool sRGB,
+                                      const std::map<std::string, std::string> *resourceMap,
+                                      std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
+                                      std::function<void(std::shared_ptr<VROTexture> texture)> onFinished) {
+    
+    // First check the cache, which can only be accessed on the rendering thread
+    auto it = textureCache.find(name);
+    if (it != textureCache.end()) {
+        onFinished(it->second);
+        return;
     }
-    else {
-        texture = it->second;
+    
+    std::string textureFile;
+    if (resourceMap == nullptr) {
+        textureFile = base + "/" + name;
+    } else {
+        textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
     }
-
-    return texture;
+        
+    retrieveResourceAsync(textureFile, type,
+          [name, sRGB, onFinished, &textureCache](std::string path, bool isTemp) {
+              // Abort (return empty texture) if the file wasn't found
+              if (path.length() == 0) {
+                  onFinished(nullptr);
+                  return;
+              }
+              
+              std::shared_ptr<VROTexture> texture;
+              if (VROStringUtil::endsWith(name, "ktx")) {
+                  int dataLength;
+                  void *data = VROPlatformLoadFile(path, &dataLength);
+                  
+                  VROTextureFormat format;
+                  int texWidth;
+                  int texHeight;
+                  std::vector<uint32_t> mipSizes;
+                  std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *) data, (uint32_t) dataLength,
+                                                                                   &format, &texWidth, &texHeight, &mipSizes);
+                  std::vector<std::shared_ptr<VROData>> dataVec = { texData };
+                  
+                  texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
+                                                         VROTextureInternalFormat::RGBA8, true,
+                                                         VROMipmapMode::Pregenerated,
+                                                         dataVec, texWidth, texHeight, mipSizes);
+                  textureCache.insert(std::make_pair(name, texture));
+                  onFinished(texture);
+              }
+              else {
+                  std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(path, VROTextureInternalFormat::RGBA8);
+                  if (isTemp) {
+                      VROPlatformDeleteFile(path);
+                  }
+                  
+                  if (!image) {
+                      pinfo("Failed to load texture [%s] at path [%s]", name.c_str(), path.c_str());
+                      onFinished(nullptr);
+                  }
+                  else {
+                      texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, sRGB, VROMipmapMode::Runtime, image);
+                      textureCache.insert(std::make_pair(name, texture));
+                      onFinished(texture);
+                  }
+              }
+          },
+          [onFinished]() {
+              onFinished(nullptr);
+          }
+    );
 }
 
-std::string VROModelIOUtil::processResource(std::string resource, VROResourceType type, bool *isTemp, bool *success) {
+void VROModelIOUtil::retrieveResourceAsync(std::string resource, VROResourceType type,
+                                           std::function<void(std::string, bool)> onSuccess,
+                                           std::function<void()> onFailure) {
+    if (type == VROResourceType::BundledResource) {
+        bool temp;
+        std::string path = VROPlatformCopyResourceToFile(resource, &temp);
+        onSuccess(path, temp);
+    }
+    else if (type == VROResourceType::URL) {
+        VROPlatformDownloadURLToFileAsync(resource, onSuccess, onFailure);
+    }
+    else {
+        onSuccess(resource, false);
+    }
+}
+
+std::string VROModelIOUtil::retrieveResource(std::string resource, VROResourceType type, bool *isTemp, bool *success) {
     std::string path;
     *isTemp = false;
-
+    
     if (type == VROResourceType::BundledResource) {
         path = VROPlatformCopyResourceToFile(resource, isTemp);
         *success = true;

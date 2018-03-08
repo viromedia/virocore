@@ -32,7 +32,7 @@ void VROARDraggableNodeTest::build(std::shared_ptr<VRORenderer> renderer,
     std::string base = url.substr(0, url.find_last_of('/'));
 
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode, true,
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode,
                                       [this](std::shared_ptr<VRONode> node, bool success) {
                                           if (!success) {
                                               return;

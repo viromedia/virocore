@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Methods accessed by JNI to perform platform-dependent
@@ -53,6 +54,7 @@ public class PlatformUtil {
     private List<FrameListener> mFrameListeners;
     private Map<Integer, VideoSink> mVideoSinks = new HashMap();
     private Handler mApplicationHandler;
+    private RandomString mRandomStringGenerator = new RandomString();
 
     public PlatformUtil(RenderCommandQueue queue, List<FrameListener> frameListeners,
                         Context context, AssetManager assetManager) {
@@ -177,7 +179,7 @@ public class PlatformUtil {
         // If the URL begins with file:///android_asset, then copy the asset
         // to file.
         if (url.startsWith(ASSET_URL_PREFIX)) {
-            Log.w("Viro", "Copying asset at URL " + url);
+            Log.i("Viro", "Copying asset at URL " + url);
             return copyAssetToFile(url.substring(ASSET_URL_PREFIX.length() + 1));
         }
 
@@ -250,7 +252,7 @@ public class PlatformUtil {
 
     // Accessed by Native code (VROPlatformUtil.cpp)
     public String copyAssetToFile(String asset) throws IOException {
-        File file = new File(mContext.getCacheDir(), asset);
+        File file = new File(mContext.getCacheDir(), asset + "_" + mRandomStringGenerator.nextString());
 
         InputStream in = null;
         FileOutputStream out = null;

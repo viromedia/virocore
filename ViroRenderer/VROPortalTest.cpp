@@ -198,7 +198,7 @@ std::shared_ptr<VROPortalFrame> VROPortalTest::loadPortalEntrance() {
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, node, true,
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, node,
                                                                  [](std::shared_ptr<VRONode> node, bool success) {
                                                                      if (!success) {
                                                                          return;
@@ -219,7 +219,7 @@ std::shared_ptr<VROPortalFrame> VROPortalTest::loadFBXPortalEntrance(std::string
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node, true,
+    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node,
                                                                  [scale](std::shared_ptr<VRONode> node, bool success) {
                                                                      if (!success) {
                                                                          return;

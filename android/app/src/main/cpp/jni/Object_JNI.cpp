@@ -38,21 +38,20 @@ JNI_METHOD(void, nativeLoadModelFromURL)(JNIEnv *env,
                 }
             };
 
-    // We can run this on the UI thread because it's async, so it will immediately dispatch
-    // to the background anyway
     std::shared_ptr<VRONode> node = Node::native(node_j);
-    if (isFBX) {
-        VROFBXLoader::loadFBXFromResource(URL, VROResourceType::URL, node, true, onFinish);
-    }
-    else {
-        VROOBJLoader::loadOBJFromResource(URL, VROResourceType::URL, node, true, onFinish);
-    }
+    VROPlatformDispatchAsyncRenderer([isFBX, node, URL, onFinish] {
+        if (isFBX) {
+            VROFBXLoader::loadFBXFromResource(URL, VROResourceType::URL, node, onFinish);
+        } else {
+            VROOBJLoader::loadOBJFromResource(URL, VROResourceType::URL, node, onFinish);
+        }
+    });
 }
 
 JNI_METHOD(void, nativeLoadModelFromResources)(JNIEnv *env,
                                                 jobject object,
                                                 jstring jresource,
-                                                jobject resourceMap,
+                                                jobject resourceMap_j,
                                                 jlong node_j,
                                                 jboolean isFBX,
                                                 jlong requestId) {
@@ -68,31 +67,33 @@ JNI_METHOD(void, nativeLoadModelFromResources)(JNIEnv *env,
                 }
             };
 
-    // We can run this on the UI thread because it's async, so it will immediately dispatch
-    // to the background anyway
+    std::map<std::string, std::string> resourceMap;
+    bool hasResourceMap = false;
+    if (resourceMap_j != nullptr) {
+        resourceMap = VROPlatformConvertFromJavaMap(resourceMap_j);
+        hasResourceMap = true;
+    }
+
     std::shared_ptr<VRONode> node = Node::native(node_j);
-    if (isFBX) {
-        if (resourceMap == nullptr) {
-            VROFBXLoader::loadFBXFromResource(resource, VROResourceType::BundledResource, node,
-                                              true, onFinish);
+    VROPlatformDispatchAsyncRenderer([isFBX, resource, hasResourceMap, resourceMap, node, onFinish] {
+        if (isFBX) {
+            if (!hasResourceMap) {
+                VROFBXLoader::loadFBXFromResource(resource, VROResourceType::BundledResource, node,
+                                                  onFinish);
+            } else {
+                VROFBXLoader::loadFBXFromResources(resource, VROResourceType::BundledResource, node,
+                                                   resourceMap, onFinish);
+            }
+        } else {
+            if (!hasResourceMap) {
+                VROOBJLoader::loadOBJFromResource(resource, VROResourceType::BundledResource, node,
+                                                  onFinish);
+            } else {
+                VROOBJLoader::loadOBJFromResources(resource, VROResourceType::BundledResource, node,
+                                                   resourceMap, onFinish);
+            }
         }
-        else {
-            VROFBXLoader::loadFBXFromResources(resource, VROResourceType::BundledResource, node,
-                                               VROPlatformConvertFromJavaMap(resourceMap),
-                                               true, onFinish);
-        }
-    }
-    else {
-        if (resourceMap == nullptr) {
-            VROOBJLoader::loadOBJFromResource(resource, VROResourceType::BundledResource, node,
-                                                     true, onFinish);
-        }
-        else {
-            VROOBJLoader::loadOBJFromResources(resource, VROResourceType::BundledResource, node,
-                                               VROPlatformConvertFromJavaMap(resourceMap),
-                                               true, onFinish);
-        }
-    }
+    });
 }
 
 } // extern "C"
