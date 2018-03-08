@@ -41,6 +41,12 @@ VROImageAndroid::VROImageAndroid(jobject jbitmap, VROTextureInternalFormat inter
     }
 }
 
+VROImageAndroid::VROImageAndroid(jobject jbitmap) {
+    _format = VROPlatformGetBitmapFormat(jbitmap);
+    bool hasAlpha;
+    _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height, &hasAlpha);
+}
+
 VROImageAndroid::~VROImageAndroid() {
     free(_data);
 }

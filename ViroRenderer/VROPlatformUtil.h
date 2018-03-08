@@ -10,6 +10,7 @@
 #define VROPlatformUtil_h
 
 #include "VRODefines.h"
+#include "VROTexture.h"
 #include <string>
 #include <memory>
 #include <functional>
@@ -114,6 +115,9 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
 
 // Test function to save RGBA8 data as PNG files
 void VROPlatformSaveRGBAImage(void *data, int length, int width, int height, std::string path);
+
+// Returns a best guess of the VROTextureFormat based on the given bitmap's info
+VROTextureFormat VROPlatformGetBitmapFormat(jobject jbitmap);
 
 #endif
 

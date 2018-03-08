@@ -203,6 +203,11 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/arcore/VROARCameraARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROYuvImageConverter.cpp
 
+             # AR (Image Tracking)
+             ../../ViroRenderer/VROARTrackingSession.cpp
+             ../../ViroRenderer/VROARImageTargetAndroid.cpp
+             src/main/cpp/jni/ARImageTarget_JNI.cpp
+
              # Android AR JNI
              ${VIRO_ANDROID_SRC}/jni/ARNode_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/ARDeclarativeNode_JNI.cpp

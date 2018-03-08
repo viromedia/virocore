@@ -23,6 +23,10 @@ public:
     // This is the constructor that should be called from JNI
     VROImageAndroid(jobject jbitmap, VROTextureInternalFormat internalFormat);
 
+    // This constructor attempts to get the format based on the bitmap properties/info
+    VROImageAndroid(jobject jbitmap);
+
+
     virtual ~VROImageAndroid();
 
     int getWidth() const;

@@ -578,6 +578,23 @@ jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat
     return jbitmap;
 }
 
+VROTextureFormat VROPlatformGetBitmapFormat(jobject jbitmap) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    AndroidBitmapInfo bitmapInfo;
+    AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
+
+    // TODO: add more format maps, the two below are the common ones.
+    switch(bitmapInfo.format) {
+        case ANDROID_BITMAP_FORMAT_RGB_565:
+            return VROTextureFormat::RGB565;
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+        default:
+            return VROTextureFormat::RGB8;
+    }
+}
+
 void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height, bool *hasAlpha) {
     JNIEnv *env;
     getJNIEnv(&env);

@@ -27,7 +27,12 @@ public:
     
     VROARImageTarget() {}
     virtual ~VROARImageTarget() {}
-    
+
+    /*
+     We need this function because the creation of the ImageTarget may
+     not know what the tracking impl type is. This is called by the
+     ARSession/ARTrackingSession.
+     */
     virtual void initWithTrackingImpl(VROImageTrackingImpl impl) = 0;
 
     void setAnchor(std::shared_ptr<VROARAnchor> anchor) {
