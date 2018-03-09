@@ -17,6 +17,7 @@
 #include "VROMaterial.h"
 #include "VRONode.h"
 #include "VROBox.h"
+#include "VROPlatformUtil.h"
 
 static VROViewScene *sInstance = nullptr;
 
@@ -94,20 +95,21 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
     
-    /*
-    std::shared_ptr<VROTexture> bobaTexture = VROTestUtil::loadDiffuseTexture("boba.png");
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
+                                                                           VROPlatformLoadImageFromFile("boba.png", format));
     bobaTexture->setWrapS(VROWrapMode::Repeat);
     bobaTexture->setWrapT(VROWrapMode::Repeat);
     bobaTexture->setMinificationFilter(VROFilterMode::Linear);
     bobaTexture->setMagnificationFilter(VROFilterMode::Linear);
     bobaTexture->setMipFilter(VROFilterMode::Linear);
-    */
+    
     std::shared_ptr<VROBox> box = VROBox::createBox(3, 3, 3);
     box->setName("Box 1");
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    //material->getDiffuse().setTexture(bobaTexture);
+    material->getDiffuse().setTexture(bobaTexture);
     material->getDiffuse().setColor({0.8, 0.8, 0.8, 1.0});
     //material->getSpecular().setTexture(VROTestUtil::loadSpecularTexture("specular"));
     

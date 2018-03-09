@@ -886,6 +886,21 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 #elif VRO_PLATFORM_WASM
 
 #include "emscripten.h"
+#include "VROImageWasm.h"
+
+std::string VROPlatformRandomString(size_t length) {
+    auto randchar = []() -> char {
+        const char charset[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[ rand() % max_index ];
+    };
+    std::string str(length,0);
+    std::generate_n( str.begin(), length, randchar );
+    return str;
+}
 
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
     std::string path = "/" + resource + "." + type;
@@ -893,13 +908,14 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 }
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
-    // TODO VIRO-3064 Resource loading on WASM
+    // Synchronous download not supported on WASM
+    pabort();
 }
 
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
-    // TODO VIRO-3064 Resource loading on WASM
+    // In WebAssembly, "resources" are preloaded files at the root of the virtual filesystem
     *isTemp = false;
-    return asset;
+    return "/" + asset;
 }
 
 void VROPlatformDeleteFile(std::string filename) {
@@ -908,8 +924,7 @@ void VROPlatformDeleteFile(std::string filename) {
 
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
-    // TODO VIRO-3064 Resource loading on WASM
-    return nullptr;
+    return std::make_shared<VROImageWasm>(filename, format);
 }
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {

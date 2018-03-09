@@ -65,8 +65,11 @@ void initPointCloudTexture() {
 
 #elif VRO_PLATFORM_WASM
 
+#include "VROImageWasm.h"
+
 void initBlankTexture(const VRORenderContext &context) {
-   
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageWasm>("blank.png", VROTextureInternalFormat::RGBA8);
+    staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
 }
 
 void initPointCloudTexture() {
