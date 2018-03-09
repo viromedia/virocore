@@ -12,6 +12,7 @@
 #include <vector>
 #include <map>
 #include "VROARImageTarget.h"
+#include "VROARImageAnchor.h"
 
 /*
  Listener interface for the VROARTrackingSession
@@ -20,9 +21,9 @@ class VROARTrackingListener {
 public:
     virtual ~VROARTrackingListener() {}
 
-    virtual void onARAnchorFound(std::shared_ptr<VROARAnchor> anchor) = 0;
-    virtual void onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) = 0;
-    virtual void onARAnchorRemoved(std::shared_ptr<VROARAnchor> anchor) = 0;
+    virtual void onTrackedAnchorFound(std::shared_ptr<VROARAnchor> anchor) = 0;
+    virtual void onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) = 0;
+    virtual void onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anchor) = 0;
 };
 
 /*
@@ -34,7 +35,7 @@ public:
     /*
      Notifies the tracking session that a new frame has been found.
      */
-    void updateFrame(std::unique_ptr<VROARFrame> frame);
+    void updateFrame(VROARFrame *frame);
 
     /*
      Sets the listener
@@ -67,6 +68,13 @@ private:
      Maps each VROARImageTarget to the VROARAnchor that it will update if the image is found
      */
     std::map<std::shared_ptr<VROARImageTarget>, std::shared_ptr<VROARAnchor>> _targetAnchorMap;
+
+    /*
+     TODO: remove this when we actually get tracking working/integrated
+     The below fields are just used for mocking
+     */
+    long _count = 0;
+    std::shared_ptr<VROARImageAnchor> _imageAnchor;
 };
 
 

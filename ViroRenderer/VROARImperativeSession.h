@@ -9,6 +9,7 @@
 #ifndef VROARImperativeSession_h
 #define VROARImperativeSession_h
 
+#include <vector>
 #include "VROARSession.h"
 
 class VROARScene;
@@ -19,7 +20,12 @@ public:
     
     VROARImperativeSession(std::shared_ptr<VROARScene> scene);
     virtual ~VROARImperativeSession();
-    
+
+    // TODO: the following 3 functions are also in VROARDeclarativeSession
+    void setARSession(std::shared_ptr<VROARSession> session);
+    void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
+    void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
+
     // VROARSessionDelegate methods
     virtual void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor);
     virtual void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor);
@@ -32,9 +38,11 @@ public:
     
 private:
 
+    std::weak_ptr<VROARSession> _arSession;
     std::weak_ptr<VROARScene> _scene;
     std::weak_ptr<VROARImperativeSessionDelegate> _delegate;
-    
+    std::vector<std::shared_ptr<VROARImageTarget>> _imageTargets;
+
 };
 
 class VROARImperativeSessionDelegate {

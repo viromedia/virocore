@@ -29,7 +29,12 @@ public class ARAnchor {
         /**
          * Plane type for an {@link ARAnchor}, representing a detected horizontal surface.
          */
-        PLANE("plane");
+        PLANE("plane"),
+
+        /**
+         * Image type for an {@link ARAnchor}, representing a detect {@link ARImageTarget}.
+         */
+        IMAGE("image");
 
         private String mStringValue;
 

@@ -15,7 +15,8 @@ JNI_METHOD(jlong, nativeCreateARImageTarget) (JNIEnv *env,
                                              jclass clazz,
                                              jobject bitmap,
                                              jstring orientation,
-                                             jfloat physicalWidth) {
+                                             jfloat physicalWidth,
+                                             jstring id) {
 
     std::string strOrientation = VROPlatformGetString(orientation, env);
 
@@ -31,8 +32,10 @@ JNI_METHOD(jlong, nativeCreateARImageTarget) (JNIEnv *env,
         imageOrientation = VROImageOrientation::Up;
     }
 
+    std::string strId = VROPlatformGetString(id, env);
+
     std::shared_ptr<VROARImageTargetAndroid> target =
-            std::make_shared<VROARImageTargetAndroid>(bitmap, imageOrientation, physicalWidth);
+            std::make_shared<VROARImageTargetAndroid>(bitmap, imageOrientation, physicalWidth, strId);
 
     return ARImageTarget::jptr(target);
 }

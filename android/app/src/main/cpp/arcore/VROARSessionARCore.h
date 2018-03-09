@@ -18,6 +18,7 @@
 #include <vector>
 #include <VROCameraTexture.h>
 #include <VROARPlaneAnchor.h>
+#include <VROARTrackingSession.h>
 
 
 enum class VROARDisplayRotation {
@@ -29,7 +30,7 @@ enum class VROARDisplayRotation {
 
 class VRODriverOpenGL;
 
-class VROARSessionARCore : public VROARSession, public std::enable_shared_from_this<VROARSessionARCore> {
+class VROARSessionARCore : public VROARSession, public VROARTrackingListener, public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
     VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver);
@@ -97,6 +98,11 @@ public:
     int getWidth() const { return _width; }
     int getHeight() const { return _height; }
 
+    // VROARTrackingListener Implementation
+    virtual void onTrackedAnchorFound(std::shared_ptr<VROARAnchor> anchor);
+    virtual void onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
+    virtual void onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anchor);
+
 private:
 
     /*
@@ -140,6 +146,11 @@ private:
      Background to be assigned to the VROScene.
      */
     std::shared_ptr<VROTexture> _background;
+
+    /*
+     The tracking session that handles all the tracking for us
+     */
+    std::shared_ptr<VROARTrackingSession> _arTrackingSession;
 
     /*
      The GL_TEXTURE_EXTERNAL_OES texture used for the camera background.

@@ -42,6 +42,10 @@ void VROARScene::initImperativeSession() {
 
     std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(shared_from_this());
     _imperativeSession = std::make_shared<VROARImperativeSession>(scene);
+    std::shared_ptr<VROARSession> session = _arSession.lock();
+    if (session) {
+        _imperativeSession->setARSession(session);
+    }
 }
 
 std::shared_ptr<VROARSessionDelegate> VROARScene::getSessionDelegate() {
@@ -76,6 +80,10 @@ void VROARScene::setARSession(std::shared_ptr<VROARSession> arSession) {
 
     if (_declarativeSession) {
         _declarativeSession->setARSession(arSession);
+    }
+
+    if (_imperativeSession) {
+        _imperativeSession->setARSession(arSession);
     }
 
     arSession->setAnchorDetection(_detectionTypes);

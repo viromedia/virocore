@@ -15,16 +15,27 @@
 
 class VROARImageTargetAndroid : public VROARImageTarget {
 public:
-    VROARImageTargetAndroid(jobject bitmapImage, VROImageOrientation orientation, float physicalWidth);
+    /*
+     Unlike the iOS version of this class we have a string ID here because in the imperative case
+     we need to be able to return an anchor and allow the user to match their target w/ the anchor.
+     iOS doesn't need this because it's solely a declarative API for image markers.
+     */
+    VROARImageTargetAndroid(jobject bitmapImage, VROImageOrientation orientation,
+                            float physicalWidth, std::string id);
 
     virtual ~VROARImageTargetAndroid();
 
     void initWithTrackingImpl(VROImageTrackingImpl impl);
 
+    std::string getId() const {
+        return _id;
+    }
+
 private:
     std::shared_ptr<VROImage> _image;
     VROImageOrientation _orientation;
     float _physicalWidth;
+    std::string _id;
 
     VROImageTrackingImpl _currentImpl;
 };

@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.viro.core.ARAnchor;
+import com.viro.core.ARImageAnchor;
+import com.viro.core.ARImageTarget;
 import com.viro.core.ARPointCloud;
 import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
@@ -318,11 +320,12 @@ public class ViroActivity extends AppCompatActivity {
         final Node rootNode = scene.getRootNode();
 
         final List<Node> nodes = new ArrayList<>();
-        nodes.addAll(testBox(this));
+        //nodes.addAll(testBox(this));
 
         //testBackgroundImage(scene);
 
-        nodes.addAll(testImperativePlane(scene));
+        //nodes.addAll(testImperativePlane(scene));
+        nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
@@ -904,6 +907,75 @@ public class ViroActivity extends AppCompatActivity {
         });
 
         final ArrayList<Node> list = new ArrayList<>();
+        return list;
+    }
+
+    private Node mImageMarkerTestNode;
+    private ARImageTarget mARImageTarget;
+
+    private List<Node> testARImageTarget(final ARScene arScene) {
+
+        final Bitmap targetImage = getBitmapFromAssets("ben.jpg");
+        // store this in a field so it doesn't get destroyed before we can use it!
+        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .1f);
+        arScene.addARImageTarget(mARImageTarget);
+
+        mImageMarkerTestNode = new Node();
+
+        arScene.setListener(new ARScene.Listener() {
+            @Override
+            public void onTrackingInitialized() {
+
+            }
+
+            @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
+            }
+
+            @Override
+            public void onAmbientLightUpdate(final float lightIntensity, final float colorTemperature) {
+
+            }
+
+            @Override
+            public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
+                if (anchor instanceof ARImageAnchor) {
+                    Log.d("ViroActivity", "onAnchorFound - testARImageTarget - id: " + anchor.getAnchorId() + ", " + anchor.getPosition());
+                    mImageMarkerTestNode.setVisible(true);
+                    mImageMarkerTestNode.setPosition(anchor.getPosition());
+                    mImageMarkerTestNode.setRotation(anchor.getRotation());
+                }
+            }
+
+            @Override
+            public void onAnchorUpdated(final ARAnchor anchor, final ARNode node) {
+                if (anchor instanceof ARImageAnchor) {
+                    Log.d("ViroActivity", "onAnchorUpdated - testARImageTarget - id: " + anchor.getAnchorId() + ", " + anchor.getPosition());
+                    mImageMarkerTestNode.setPosition(anchor.getPosition());
+                    mImageMarkerTestNode.setRotation(anchor.getRotation());
+                }
+            }
+
+            @Override
+            public void onAnchorRemoved(final ARAnchor anchor, final ARNode node) {
+                if (anchor instanceof ARImageAnchor) {
+                    Log.d("ViroActivity", "onAnchorRemoved - testARImageTarget - id: " + anchor.getAnchorId() + ", " + anchor.getPosition());
+                    mImageMarkerTestNode.setVisible(false);
+                }
+            }
+        });
+
+        Node boxNode = new Node();
+        Box box = new Box(0.157f, .07f, 0.066294f);
+        boxNode.setGeometry(box);
+        boxNode.setPosition(new Vector(0f, .35f, 0f));
+
+        mImageMarkerTestNode.addChildNode(boxNode);
+        mImageMarkerTestNode.setVisible(false);
+
+        final ArrayList<Node> list = new ArrayList<>();
+        list.add(mImageMarkerTestNode);
         return list;
     }
 

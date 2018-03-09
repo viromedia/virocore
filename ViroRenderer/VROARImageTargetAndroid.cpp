@@ -9,9 +9,11 @@
 #include "VROARImageTargetAndroid.h"
 #include "VROImageAndroid.h"
 
-VROARImageTargetAndroid::VROARImageTargetAndroid(jobject bitmapImage, VROImageOrientation orientation, float physicalWidth) :
+VROARImageTargetAndroid::VROARImageTargetAndroid(jobject bitmapImage, VROImageOrientation orientation,
+                                                 float physicalWidth, std::string id) :
     _orientation(orientation),
-    _physicalWidth(physicalWidth) {
+    _physicalWidth(physicalWidth),
+    _id(id) {
     _image = std::make_shared<VROImageAndroid>(bitmapImage);
 }
 

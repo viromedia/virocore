@@ -328,6 +328,22 @@ public class ARScene extends Scene {
     }
     //#ENDIF
 
+    public void addARImageTarget(ARImageTarget target) {
+        nativeAddARImageTarget(mNativeRef, target.mNativeRef);
+    }
+
+    public void removeARImageTarget(ARImageTarget target) {
+        nativeRemoveARImageTarget(mNativeRef, target.mNativeRef);
+    }
+
+    public void addARImageTargetDeclarative(ARImageTarget target) {
+        nativeAddARImageTargetDeclarative(mNativeRef, target.mNativeRef);
+    }
+
+    public void removeARImageTargetDeclarative(ARImageTarget target) {
+        nativeRemoveARImageTargetDeclarative(mNativeRef, target.mNativeRef);
+    }
+
     private native long nativeCreateARSceneController();
     private native long nativeCreateARSceneControllerDeclarative();
     private native long nativeCreateARSceneDelegate(long sceneControllerRef);
@@ -341,6 +357,10 @@ public class ARScene extends Scene {
     private native void nativeSetPointCloudSurface(long sceneControllerRef, long surfaceRef);
     private native void nativeSetPointCloudSurfaceScale(long sceneControllerRef, float scaleX, float scaleY, float scaleZ);
     private native void nativeSetPointCloudMaxPoints(long sceneControllerRef, int maxPoints);
+    private native void nativeAddARImageTarget(long sceneControllerRef, long arImageTargetRef);
+    private native void nativeRemoveARImageTarget(long sceneControllerRef, long arImageTargetRef);
+    private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
+    private native void nativeRemoveARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
 
     // Called by JNI
 

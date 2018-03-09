@@ -14,7 +14,9 @@
 #include "ARUtils_JNI.h"
 #include "ARNode_JNI.h"
 #include "Surface_JNI.h"
+#include "ARImageTarget_JNI.h"
 #include <VROPlatformUtil.h>
+#include <VROARImageTargetAndroid.h>
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -217,6 +219,78 @@ JNI_METHOD(void, nativeRemoveARNode) (JNIEnv *env,
 
         if (arScene && node) {
             arScene->getDeclarativeSession()->removeARNode(node);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeAddARImageTarget) (JNIEnv *env,
+                                          jobject object,
+                                          jlong arSceneControllerPtr,
+                                          jlong arImageTargetPtr) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+
+    VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+
+        if (arScene && arImageTarget) {
+            arScene->getImperativeSession()->addARImageTarget(arImageTarget);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveARImageTarget) (JNIEnv *env,
+                                          jobject object,
+                                          jlong arSceneControllerPtr,
+                                          jlong arImageTargetPtr) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+
+    VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+
+        if (arScene && arImageTarget) {
+            arScene->getImperativeSession()->removeARImageTarget(arImageTarget);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeAddARImageTargetDeclarative) (JNIEnv *env,
+                                          jobject object,
+                                          jlong arSceneControllerPtr,
+                                          jlong arImageTargetPtr) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+
+    VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+
+        if (arScene && arImageTarget) {
+            arScene->getDeclarativeSession()->addARImageTarget(arImageTarget);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveARImageTargetDeclarative) (JNIEnv *env,
+                                          jobject object,
+                                          jlong arSceneControllerPtr,
+                                          jlong arImageTargetPtr) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+
+    VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+
+        if (arScene && arImageTarget) {
+            arScene->getDeclarativeSession()->removeARImageTarget(arImageTarget);
         }
     });
 }

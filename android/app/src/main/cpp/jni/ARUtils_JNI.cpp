@@ -6,6 +6,7 @@
 //
 
 #include <VROPlatformUtil.h>
+#include <VROARImageAnchor.h>
 #include "ARUtils_JNI.h"
 #include "VROARPointCloud.h"
 
@@ -27,6 +28,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
                                                                       rotationRads.z});
     jfloatArray scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
 
+    // Create an ARPlaneAnchor if necessary and return.
     std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
     if (plane) {
         /*
@@ -48,18 +50,35 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
         return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray,
                                             alignment, extentArray, centerArray, polygonPointsArray);
     }
-    else {
+
+    // Create an ARImageAnchor in necessary and return.
+    std::shared_ptr<VROARImageAnchor> imageAnchor = std::dynamic_pointer_cast<VROARImageAnchor>(anchor);
+    if (imageAnchor) {
         /*
-         ARAnchor's constructor has the following args:
+         ARImageAnchor's constructor has the following args:
          String anchorId, String type, float[] position, float[] rotation, float[] scale
          */
-        jclass cls = env->FindClass("com/viro/core/ARAnchor");
+        jclass cls = env->FindClass("com/viro/core/ARImageAnchor");
         jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
 
-        const char *typeArr = "anchor";
+        const char *typeArr = "image";
         jstring type = env->NewStringUTF(typeArr);
         return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
     }
+
+
+    // Create normal ARAnchor object and return it
+    /*
+     ARAnchor's constructor has the following args:
+     String anchorId, String type, float[] position, float[] rotation, float[] scale
+     */
+    jclass cls = env->FindClass("com/viro/core/ARAnchor");
+    jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
+
+    const char *typeArr = "anchor";
+    jstring type = env->NewStringUTF(typeArr);
+    return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
+
 }
 
 jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {

@@ -30,6 +30,8 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
 
     _session = nullptr;
     _frame = nullptr;
+
+    _arTrackingSession = std::make_shared<VROARTrackingSession>();
 }
 
 void VROARSessionARCore::setARCoreSession(arcore::Session *session) {
@@ -57,6 +59,9 @@ void VROARSessionARCore::initCameraTexture(std::shared_ptr<VRODriverOpenGL> driv
 
     passert_msg(_session != nullptr, "ARCore must be installed before setting camera texture");
     _session->setCameraTextureName(_cameraTextureId);
+
+    // This is a good place to set "this" as the listener. We can't do it in the constructor.
+    _arTrackingSession->setListener(shared_from_this());
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
@@ -189,11 +194,11 @@ void VROARSessionARCore::setDelegate(std::shared_ptr<VROARSessionDelegate> deleg
 }
 
 void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
-    // no-op
+    _arTrackingSession->addARImageTarget(target);
 }
 
 void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
-    // no-op
+    _arTrackingSession->removeARImageTarget(target);
 }
 
 void VROARSessionARCore::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
@@ -251,6 +256,9 @@ std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
 
     VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
     processUpdatedAnchors(arFrame);
+
+    _arTrackingSession->updateFrame((VROARFrame *) _currentFrame.get());
+
     return _currentFrame;
 }
 
@@ -268,6 +276,20 @@ void VROARSessionARCore::setOrientation(VROCameraOrientation orientation) {
 
 void VROARSessionARCore::setWorldOrigin(VROMatrix4f relativeTransform) {
     // no-op on Android
+}
+
+#pragma mark - VROARTrackingListener Implementation
+
+void VROARSessionARCore::onTrackedAnchorFound(std::shared_ptr<VROARAnchor> anchor) {
+    addAnchor(anchor);
+}
+
+void VROARSessionARCore::onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
+    updateAnchor(anchor);
+}
+
+void VROARSessionARCore::onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anchor) {
+    removeAnchor(anchor);
 }
 
 #pragma mark - Internal Methods
