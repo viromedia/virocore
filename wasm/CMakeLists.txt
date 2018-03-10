@@ -44,6 +44,7 @@ add_library( viro_renderer
              ../ViroRenderer/tiny_obj_loader.cc
              ../ViroRenderer/VROThreadRestricted.cpp
              ../ViroRenderer/VRORenderUtil.cpp
+             ../ViroRenderer/VROTaskQueue.cpp
 
 	     # Renderer
              ../ViroRenderer/VROScene.cpp

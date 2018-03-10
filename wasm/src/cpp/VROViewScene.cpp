@@ -18,6 +18,7 @@
 #include "VRONode.h"
 #include "VROBox.h"
 #include "VROPlatformUtil.h"
+#include "VROOBJLoader.h"
 
 static VROViewScene *sInstance = nullptr;
 
@@ -38,7 +39,7 @@ VROViewScene::VROViewScene() {
     attribs.explicitSwapControl = 0;
     attribs.depth = 1;
     attribs.stencil = 1;
-    attribs.antialias = 0;
+    attribs.antialias = 1;
     
     _context = emscripten_webgl_create_context("viroCanvas", &attribs);
     emscripten_webgl_make_context_current(_context);
@@ -95,6 +96,29 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
     
+    std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
+    VROOBJLoader::loadOBJFromResource("https://s3-us-west-2.amazonaws.com/developer.viromedia.com/test/male02.obj", VROResourceType::URL, objNode,
+                                      [](std::shared_ptr<VRONode> node, bool success) {
+                                          if (!success) {
+                                              pinfo("Failed to load OBJ");
+                                              return;
+                                          }
+                                          node->setPosition({0, -5, -8});
+                                          node->setScale({0.05f, 0.05f, 0.05f});
+                                          pinfo("Finished loading OBJ file");
+                                      });
+    rootNode->addChildNode(objNode);
+    _renderer->setSceneController(sceneController, _driver);
+    
+    VROTransaction::begin();
+    VROTransaction::setAnimationDelay(2);
+    VROTransaction::setAnimationDuration(12);
+    
+    objNode->setRotationEulerY(359.0f * M_PI / 180.0f);
+    
+    VROTransaction::commit();
+
+    /*
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
                                                                            VROPlatformLoadImageFromFile("boba.png", format));
@@ -148,7 +172,7 @@ void VROViewScene::drawFrame() {
     VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     
-    _renderer->setClearColor({0.0, 1.0, 0.0, 1.0}, _driver);
+    _renderer->setClearColor({0.8, 0.8, 0.8, 1.0}, _driver);
     
     _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());

@@ -14,7 +14,7 @@ VROImageWasm::VROImageWasm(std::string file, VROTextureInternalFormat internalFo
     _surface = IMG_Load(file.c_str());
     _format = VROTextureFormat::RGBA8;
     if (_surface == NULL) {
-        pinfo("Failed to load image at path [%s]", file.c_str);
+        pinfo("Failed to load image at path [%s]", file.c_str());
     }
 }
 

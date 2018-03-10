@@ -907,9 +907,54 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
     return VROPlatformLoadFileAsString(path);
 }
 
+class VROPlatformWGetContext {
+public:
+    std::function<void(std::string, bool)> onSuccess;
+    std::function<void()> onFailure;
+};
+
+void VROPlatformWGetDownloadCallback(unsigned int x, void *arg, const char *file) {
+    pinfo("Download file [%s]", file);
+    
+    VROPlatformWGetContext *context = (VROPlatformWGetContext *) arg;
+    context->onSuccess(std::string(file), true);
+    delete (context);
+}
+
+void VROPlatformWGetErrorCallback(unsigned int x, void *arg, int error) {
+    pinfo("Error executing wget [%d]", error);
+
+    VROPlatformWGetContext *context = (VROPlatformWGetContext *) arg;
+    context->onFailure();
+    delete (context);
+}
+
+void VROPlatformWGetStatusCallback(unsigned int x, void *arg, int percentage) {
+    pinfo("wget status %d", percentage);
+}
+
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     // Synchronous download not supported on WASM
     pabort();
+}
+
+void VROPlatformDownloadURLToFileAsync(std::string url,
+                                       std::function<void(std::string, bool)> onSuccess,
+                                       std::function<void()> onFailure) {
+    VROPlatformWGetContext *context = new VROPlatformWGetContext();
+    context->onSuccess = onSuccess;
+    context->onFailure = onFailure;
+    
+    size_t lastIndex = url.find_last_of("/");
+    std::string prefix;
+    if (lastIndex == std::string::npos) {
+        prefix = "download";
+    } else {
+        prefix = url.substr(lastIndex);
+    }
+    std::string tempFile = prefix + "_" + VROPlatformRandomString(8);
+    emscripten_async_wget2(url.c_str(), tempFile.c_str(), "GET", "", context,
+                           &VROPlatformWGetDownloadCallback, &VROPlatformWGetErrorCallback, &VROPlatformWGetStatusCallback);
 }
 
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
