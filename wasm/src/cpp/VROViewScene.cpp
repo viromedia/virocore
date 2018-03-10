@@ -155,6 +155,7 @@ void VROViewScene::buildTestScene() {
     boxNode->setRotationEulerZ(M_PI_2);
     
     VROTransaction::commit();
+     */
 }
 
 VROViewScene::~VROViewScene() {

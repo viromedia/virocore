@@ -38,6 +38,19 @@ std::string VROPlatformLoadFileAsString(std::string path) {
     return {};
 }
 
+void *VROPlatformLoadFile(std::string filename, int *outLength) {
+    FILE *fl = fopen(filename.c_str(), "r");
+    fseek(fl, 0, SEEK_END);
+    *outLength = (int) ftell(fl);
+    
+    char *ret = (char *)malloc(*outLength);
+    fseek(fl, 0, SEEK_SET);
+    fread(ret, 1, *outLength, fl);
+    fclose(fl);
+    
+    return ret;
+}
+
 #pragma mark - iOS
 #if VRO_PLATFORM_IOS
 
@@ -930,7 +943,7 @@ void VROPlatformWGetErrorCallback(unsigned int x, void *arg, int error) {
 }
 
 void VROPlatformWGetStatusCallback(unsigned int x, void *arg, int percentage) {
-    pinfo("wget status %d", percentage);
+    pinfo("    Downloaded %f%", ((float) percentage) / 100.0);
 }
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
@@ -955,6 +968,7 @@ void VROPlatformDownloadURLToFileAsync(std::string url,
     std::string tempFile = prefix + "_" + VROPlatformRandomString(8);
     emscripten_async_wget2(url.c_str(), tempFile.c_str(), "GET", "", context,
                            &VROPlatformWGetDownloadCallback, &VROPlatformWGetErrorCallback, &VROPlatformWGetStatusCallback);
+    pinfo("Downloading URL [%s]", url.c_str());
 }
 
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
@@ -992,19 +1006,6 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
 
 #include "VROStringUtil.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
-
-void *VROPlatformLoadFile(std::string filename, int *outLength) {
-    FILE *fl = fopen(filename.c_str(), "r");
-    fseek(fl, 0, SEEK_END);
-    *outLength = (int) ftell(fl);
-    
-    char *ret = (char *)malloc(*outLength);
-    fseek(fl, 0, SEEK_SET);
-    fread(ret, 1, *outLength, fl);
-    fclose(fl);
-    
-    return ret;
-}
 
 int VROPlatformParseGVRAudioMaterial(std::string property) {
     if (VROStringUtil::strcmpinsensitive(property, "transparent")) {
