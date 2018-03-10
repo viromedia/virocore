@@ -927,7 +927,7 @@ public:
 };
 
 void VROPlatformWGetDownloadCallback(unsigned int x, void *arg, const char *file) {
-    pinfo("Download file [%s]", file);
+    pinfo("Downloaded file [%s]", file);
     
     VROPlatformWGetContext *context = (VROPlatformWGetContext *) arg;
     context->onSuccess(std::string(file), true);
