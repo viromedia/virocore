@@ -14,7 +14,7 @@ find_package(OPENGL REQUIRED)
 include_directories(../ViroRenderer
                     src/cpp
 	            ${OPENGL_INCLUDE_DIR}
-                    #libs/freetype/include
+                    libs/freetype/include
                     #libs/protobuf/include
                     libs/bullet/include
 		    )
@@ -26,6 +26,7 @@ add_library( viro_renderer
              src/cpp/VROViewScene.cpp
              src/cpp/VROInputControllerWasm.cpp
              src/cpp/VROImageWasm.cpp
+             src/cpp/VROTypefaceWasm.cpp
 
              # Util
              ../ViroRenderer/VROAllocationTracker.cpp
@@ -96,6 +97,10 @@ add_library( viro_renderer
 
              # UI
              ../ViroRenderer/VROReticle.cpp
+             ../ViroRenderer/VROText.cpp
+             ../ViroRenderer/VROKnuthPlassFormatter.cpp
+             ../ViroRenderer/VRODebugHUD.cpp
+             ../ViroRenderer/VROGlyphOpenGL.cpp
 
              # Physics
              ../ViroRenderer/VROPhysicsWorld.cpp
@@ -174,7 +179,7 @@ add_executable( viro_test
 
 MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
 
-set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_WEBGL2=1 -s FULL_ES2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/resources@/ --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
+set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_FREETYPE=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_WEBGL2=1 -s FULL_ES2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/resources@/ --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
 target_link_libraries ( viro_test 
                         viro_renderer 
                         bullet_linearmath

@@ -18,6 +18,7 @@
 #include "VRONode.h"
 #include "VROBox.h"
 #include "VROPlatformUtil.h"
+#include "VROText.h"
 #include "VROOBJLoader.h"
 
 static VROViewScene *sInstance = nullptr;
@@ -97,7 +98,7 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotBlue);
     
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource("https://s3-us-west-2.amazonaws.com/developer.viromedia.com/test/male02.obj", VROResourceType::URL, objNode,
+    VROOBJLoader::loadOBJFromResource("test/male02.obj", VROResourceType::URL, objNode,
                                       [](std::shared_ptr<VRONode> node, bool success) {
                                           if (!success) {
                                               pinfo("Failed to load OBJ");
@@ -117,6 +118,31 @@ void VROViewScene::buildTestScene() {
     objNode->setRotationEulerY(359.0f * M_PI / 180.0f);
     
     VROTransaction::commit();
+    
+    // Text test
+    std::shared_ptr<VROTypeface> typeface = _driver->newTypeface("Helvetica", 24);
+    VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
+    VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
+    int width = 10;
+    int height = 10;
+    
+    std::wstring string = L"Déspacito In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
+    
+    VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode, 0);
+    pinfo("Estimated size %f, %f", size.x, size.y);
+    
+    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 0.0, 0.0, 1.0}, width, height,
+                                                        VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
+                                                        linebreakMode, clipMode);
+    
+    text->setName("Text");
+    pinfo("Realized size %f, %f", text->getRealizedWidth(), text->getRealizedHeight());
+    
+    std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
+    textNode->setGeometry(text);
+    textNode->setPosition({0, 0, -5});
+    
+    rootNode->addChildNode(textNode);
 
     /*
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
