@@ -17,6 +17,7 @@ JNI_METHOD(jlong, nativeCreateARImageTarget) (JNIEnv *env,
                                              jstring orientation,
                                              jfloat physicalWidth,
                                              jstring id) {
+    VROPlatformSetEnv(env);
 
     std::string strOrientation = VROPlatformGetString(orientation, env);
 

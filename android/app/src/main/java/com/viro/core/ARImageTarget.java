@@ -45,7 +45,7 @@ public class ARImageTarget {
         }
     }
 
-    long mNativeRef;
+    public long mNativeRef;
     private final String mId;
     private final Orientation mOrientation;
     private final float mPhysicalWidth;

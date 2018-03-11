@@ -207,6 +207,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROARTrackingSession.cpp
              ../../ViroRenderer/VROARImageTargetAndroid.cpp
              src/main/cpp/jni/ARImageTarget_JNI.cpp
+             src/main/cpp/jni/ARDeclarativeImageNode_JNI.cpp
 
              # Android AR JNI
              ${VIRO_ANDROID_SRC}/jni/ARNode_JNI.cpp

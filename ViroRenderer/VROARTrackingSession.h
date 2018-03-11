@@ -66,6 +66,8 @@ private:
 
     /*
      Maps each VROARImageTarget to the VROARAnchor that it will update if the image is found
+     TODO: just a thought, if we do this right, we don't need _targetAnchorMap b/c target has a
+     ptr to anchor
      */
     std::map<std::shared_ptr<VROARImageTarget>, std::shared_ptr<VROARAnchor>> _targetAnchorMap;
 

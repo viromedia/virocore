@@ -22,11 +22,12 @@ void VROARTrackingSession::updateFrame(VROARFrame *frame) {
     if (_count == 180) { // 3 seconds at 60 fps, 6 seconds at 30 fps
         std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
         if (listener) {
+            pinfo("VROARTrackingSession - mock found");
             // create a new ImageAnchor!
             _imageAnchor = std::make_shared<VROARImageAnchor>(_imageTargets[0]);
-            std::shared_ptr<VROARImageTargetAndroid> _imageTargetAndroid =
+            std::shared_ptr<VROARImageTargetAndroid> imageTargetAndroid =
                     std::dynamic_pointer_cast<VROARImageTargetAndroid>(_imageTargets[0]);
-            _imageAnchor->setId(_imageTargetAndroid->getId());
+            _imageAnchor->setId(imageTargetAndroid->getId());
 
             VROMatrix4f mat;
             mat.rotateZ(-90); // rotate clockwise 90 WRT to initial camera position
@@ -39,6 +40,7 @@ void VROARTrackingSession::updateFrame(VROARFrame *frame) {
     } else if(_count > 180 && _count % 60 == 0 && _count < 600) { // every 60 frames after that...
         std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
         if (listener) {
+            pinfo("VROARTrackingSession - mock updated");
             // update the ImageAnchor!
             VROMatrix4f mat = _imageAnchor->getTransform();
             mat.translate({0,0,-.15f});
@@ -48,6 +50,7 @@ void VROARTrackingSession::updateFrame(VROARFrame *frame) {
     } else if (_count == 600) {
         std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
         if (listener) {
+            pinfo("VROARTrackingSession - mock removed");
             // remove the ImageAnchor!
             listener->onTrackedAnchorRemoved(_imageAnchor);
         }
@@ -61,23 +64,31 @@ void VROARTrackingSession::setListener(std::shared_ptr<VROARTrackingListener> li
 void VROARTrackingSession::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
     _imageTargets.push_back(target);
 
+    // TODO: you also need to set the ID on the VROARImageAnchor for Android (methinks)
     _targetAnchorMap[target] = std::make_shared<VROARImageAnchor>(target);
 }
 
 void VROARTrackingSession::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
-    // add target to the list of tracked targets
+
+    // remove the ARImageTarget from the list of tracked targets
     _imageTargets.erase(std::remove_if(_imageTargets.begin(), _imageTargets.end(),
                                   [target](std::shared_ptr<VROARImageTarget> candidate) {
                                       return candidate == target;
                                   }), _imageTargets.end());
 
-    // notify the listener that the anchor was removed
-    std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
-    if (listener) {
-        listener->onTrackedAnchorRemoved(_targetAnchorMap[target]);
-    }
 
-    // remove the target & anchor from the map
+    // If an anchor was found with the target, then notify the listener and remove it from the map.
+    // TODO: just a thought, if we do this right, we don't need _targetAnchorMap b/c target has a
+    // ptr to anchor
     auto it = _targetAnchorMap.find(target);
-    _targetAnchorMap.erase(it);
+    if (it != _targetAnchorMap.end()) {
+        // notify the listener that the anchor was removed
+        std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
+        if (listener) {
+            listener->onTrackedAnchorRemoved(_targetAnchorMap.find(target)->second);
+        }
+
+        // remove the target & anchor from the map
+        _targetAnchorMap.erase(it);
+    }
 }
