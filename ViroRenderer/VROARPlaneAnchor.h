@@ -65,7 +65,7 @@ public:
         _boundaryVertices = points;
     }
 
-    std::vector<VROVector3f>getBoundaryVertices() {
+    std::vector<VROVector3f> getBoundaryVertices() {
         return  _boundaryVertices;
     }
     

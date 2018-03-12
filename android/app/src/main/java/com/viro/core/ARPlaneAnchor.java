@@ -6,6 +6,7 @@ package com.viro.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -125,12 +126,10 @@ public class ARPlaneAnchor extends ARAnchor {
     }
 
     /**
-     * Returns an array list containing the (x,y,z) position of each vertex representing
-     * the polygon shape of this plane.
-     *
-     * @return A list of boundary vertices in the model coordinates.
+     * Returns a {@link List} of the vertices composing the boundary of this polygonal plane.
+     * @return The boundary vertices, each as a {@link Vector}.
      */
-    public ArrayList<Vector> getBoundaryVertices() {
+    public List<Vector> getBoundaryVertices() {
         return mVertices;
     }
 }
