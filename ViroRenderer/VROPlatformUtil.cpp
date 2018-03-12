@@ -943,7 +943,7 @@ void VROPlatformWGetErrorCallback(unsigned int x, void *arg, int error) {
 }
 
 void VROPlatformWGetStatusCallback(unsigned int x, void *arg, int percentage) {
-    pinfo("    Downloaded %f%", ((float) percentage) / 100.0);
+    pinfo("    Downloaded %d%%", percentage);
 }
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {

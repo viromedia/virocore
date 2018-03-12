@@ -63,7 +63,7 @@ VROVector3f VROText::getTextSize(std::wstring text, std::shared_ptr<VROTypeface>
         FT_ULong charCode = *c;
         if (glyphMap.find(charCode) == glyphMap.end()) {
             std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(charCode, false);
-            glyphMap[charCode] = std::move(glyph);
+            glyphMap[charCode] = glyph;
         }
     }
     

@@ -64,7 +64,7 @@ public:
         
         std::shared_ptr<VROGlyph> glyph = loadGlyph(charCode, forRendering);
         if (forRendering) {
-            _glyphCache[charCode] = glyph;
+            _glyphCache.insert(std::make_pair(charCode, glyph));
         }
         return glyph;
     }

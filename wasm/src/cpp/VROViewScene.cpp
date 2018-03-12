@@ -120,13 +120,13 @@ void VROViewScene::buildTestScene() {
     VROTransaction::commit();
     
     // Text test
-    std::shared_ptr<VROTypeface> typeface = _driver->newTypeface("Helvetica", 24);
+    std::shared_ptr<VROTypeface> typeface = _driver->newTypeface("Helvetica", 42);
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
     int width = 10;
     int height = 10;
     
-    std::wstring string = L"Déspacito In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
+    std::wstring string = L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     
     VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode, 0);
     pinfo("Estimated size %f, %f", size.x, size.y);
@@ -140,7 +140,7 @@ void VROViewScene::buildTestScene() {
     
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
     textNode->setGeometry(text);
-    textNode->setPosition({0, 0, -5});
+    textNode->setPosition({0, 0, -10});
     
     rootNode->addChildNode(textNode);
 
