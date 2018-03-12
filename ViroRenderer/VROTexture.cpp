@@ -45,6 +45,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
     _textureId(sTextureId++),
     _type(type),
     _format(VROTextureFormat::RGBA8),
+    _internalFormat(VROTextureInternalFormat::RGBA8),
     _stereoMode(stereoState),
 
     // Note these parameters are irrelevent for this constructor, since they are used
