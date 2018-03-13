@@ -296,7 +296,7 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             if (!substrate) {
                 // Use a blank placeholder if a texture is not yet available (i.e.
                 // during video texture loading)
-                std::shared_ptr<VROTexture> blank = getBlankTexture();
+                std::shared_ptr<VROTexture> blank = getBlankTexture(texture->getType());
                 substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(0, driver, nullptr);
             }
             

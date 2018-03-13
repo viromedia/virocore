@@ -12,18 +12,22 @@
 #include "VROImage.h"
 
 static std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
-
+static std::shared_ptr<VROTexture> staticBlankCubeTexture = nullptr;
 static std::shared_ptr<VROTexture> staticPointCloudTexture = nullptr;
 
-std::shared_ptr<VROTexture> getBlankTexture() {
-    return staticBlankTexture;
+std::shared_ptr<VROTexture> getBlankTexture(VROTextureType type) {
+    if (type == VROTextureType::None || type == VROTextureType::Texture2D || type == VROTextureType::TextureEGLImage) {
+        return staticBlankTexture;
+    }
+    else {
+        return staticBlankCubeTexture;
+    }
 }
 
 std::shared_ptr<VROTexture> getPointCloudTexture() {
     if (!staticPointCloudTexture){
         initPointCloudTexture();
     }
-
     return staticPointCloudTexture;
 }
 
@@ -38,6 +42,9 @@ void initBlankTexture(const VRORenderContext &context) {
     
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image, VROTextureInternalFormat::RGBA8);
     staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    
+    std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
+    staticBlankCubeTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, cubeImages);
 }
 
 void initPointCloudTexture() {
@@ -60,6 +67,9 @@ void initPointCloudTexture() {
 void initBlankTexture(const VRORenderContext &context) {
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageAndroid>("blank.png", VROTextureInternalFormat::RGBA8);
     staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    
+    std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
+    staticBlankCubeTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, cubeImages);
 }
 
 void initPointCloudTexture() {
@@ -74,6 +84,9 @@ void initPointCloudTexture() {
 void initBlankTexture(const VRORenderContext &context) {
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageWasm>("blank.png", VROTextureInternalFormat::RGBA8);
     staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    
+    std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
+    staticBlankCubeTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, cubeImages);
 }
 
 void initPointCloudTexture() {
