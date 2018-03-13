@@ -38,9 +38,12 @@ void VROFrameScheduler::processTasks(const VROFrameTimer &timer) {
     bool processedAnyTask = false;
     
     while (!_taskQueue.empty()) {
+        // The iOS simulator is so slow (due to GPU emulation) we don't bother with waiting
+#if !TARGET_OS_SIMULATOR
         if (!timer.isTimeRemainingInFrame()) {
             break;
         }
+#endif
         VROFrameTask task;
         
         // Lock the mutex while retrieving the task from the queue
