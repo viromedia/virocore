@@ -30,6 +30,7 @@ std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool
         if (hasScale) {
             if (!sSkinningShaderModifierWithScale) {
                 std::vector<std::string> modifierCode =  {
+                    "#include skinning_vsh",
                     "vec4 blended_s = get_blended_scale(_geometry.bone_indices, _geometry.bone_weights);",
                     "_geometry.position = _geometry.position * blended_s.xyz;",
                     "_geometry.normal = _geometry.normal / blended_s.xyz;", // Equivalent to multiplying by inverse-transpose of scale matrix
@@ -48,6 +49,7 @@ std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool
         else {
             if (!sSkinningShaderModifier) {
                 std::vector<std::string> modifierCode =  {
+                    "#include skinning_vsh",
                     "mat2x4 blended_dq = get_blended_dual_quaternion(_geometry.bone_indices, _geometry.bone_weights);",
                     "_geometry.position = dual_quat_transform_point(_geometry.position.xyz, blended_dq[0], blended_dq[1]);",
                     "_geometry.normal = quat_rotate_vector(_geometry.normal.xyz, blended_dq[0]);"
@@ -63,6 +65,7 @@ std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool
     else {
         if (!sSkinningShaderModifier) {
             std::vector<std::string> modifierCode =  {
+                    "#include skinning_vsh",
                     "vec4 pos_h = vec4(_geometry.position, 1.0);",
                     "vec4 pos_blended = (bone_matrices[_geometry.bone_indices.x] * pos_h) * _geometry.bone_weights.x + "
                                        "(bone_matrices[_geometry.bone_indices.y] * pos_h) * _geometry.bone_weights.y + "

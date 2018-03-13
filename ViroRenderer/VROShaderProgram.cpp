@@ -62,13 +62,14 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
         _shaderName = fragmentShader.substr(0, fragmentShader.length() - 4);
     }
     _vertexSource = loadTextAsset(vertexShader);
+    _fragmentSource = loadTextAsset(fragmentShader);
+
+    // Inflate includes after modifiers (for cases where modifiers have includes)
+    inflateVertexShaderModifiers(modifiers, _vertexSource);
     inflateIncludes(_vertexSource);
 
-    _fragmentSource = loadTextAsset(fragmentShader);
-    inflateIncludes(_fragmentSource);
-
-    inflateVertexShaderModifiers(modifiers, _vertexSource);
     inflateFragmentShaderModifiers(modifiers, _fragmentSource);
+    inflateIncludes(_fragmentSource);
 
     if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
         std::map<std::string, std::string> adrenoReplacements;

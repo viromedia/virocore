@@ -89,7 +89,8 @@ bool VROShaderModifier::isVariableDeclaration(std::string &line) {
     return VROStringUtil::startsWith(line, "uniform ") ||
            VROStringUtil::startsWith(line, "in ") ||
            VROStringUtil::startsWith(line, "out ") ||
-           VROStringUtil::startsWith(line, "layout ");
+           VROStringUtil::startsWith(line, "layout ") ||
+           VROStringUtil::startsWith(line, "#include");
 }
 
 std::string VROShaderModifier::getDirective(VROShaderSection section) const {
