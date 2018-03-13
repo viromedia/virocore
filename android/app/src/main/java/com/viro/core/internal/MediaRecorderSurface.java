@@ -60,7 +60,8 @@ public class MediaRecorderSurface {
                 EGL14.EGL_GREEN_SIZE, 8,
                 EGL14.EGL_BLUE_SIZE, 8,
                 EGL14.EGL_ALPHA_SIZE, 8,
-                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
+                EGL14.EGL_RENDERABLE_TYPE,
+                EGL14.EGL_OPENGL_ES2_BIT,
                 EGL_RECORDABLE_ANDROID, 1,
                 EGL14.EGL_NONE
         };
@@ -86,12 +87,18 @@ public class MediaRecorderSurface {
         }
 
         // Finally, create a window egl surface with the shared eglContext and mRecorderSurface.
-        int[] surfaceAttribs = {
+        final int EGL_GL_COLORSPACE_KHR = 0x309D;
+        final int EGL_GL_COLORSPACE_SRGB_KHR = 0x3089;
+        final int[] surfaceAttribs = {
+                EGL_GL_COLORSPACE_KHR,
+                EGL_GL_COLORSPACE_SRGB_KHR,
                 EGL14.EGL_NONE
         };
         mEGLSurface = EGL14.eglCreateWindowSurface(mEGLDisplay, configs[0], mRecorderSurface,
                 surfaceAttribs, 0);
-        if (!checkEglError("eglCreateWindowSurface")) {
+
+        if (!checkEglError("eglCreateWindowSurface") || mEGLSurface == EGL14.EGL_NO_SURFACE) {
+            Log.e("Viro"," failed to create an egl window surface.");
             return false;
         }
 
