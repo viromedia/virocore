@@ -98,7 +98,7 @@ void VROModelIOUtil::retrieveResourceAsync(std::string resource, VROResourceType
         onSuccess(path, temp);
     }
     else if (type == VROResourceType::URL) {
-        VROPlatformDownloadURLToFileAsync(resource, onSuccess, onFailure);
+        VROPlatformDownloadURLToFileAsync(VROStringUtil::encodeURL(resource), onSuccess, onFailure);
     }
     else {
         onSuccess(resource, false);
@@ -119,7 +119,7 @@ std::string VROModelIOUtil::retrieveResource(std::string resource, VROResourceTy
         *success = true;
     }
     else if (type == VROResourceType::URL) {
-        path = VROPlatformDownloadURLToFile(resource, isTemp, success);
+        path = VROPlatformDownloadURLToFile(VROStringUtil::encodeURL(resource), isTemp, success);
     }
     else {
         path = resource;

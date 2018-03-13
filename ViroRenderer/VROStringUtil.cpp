@@ -11,7 +11,11 @@
 #include <string>
 #include <cstdlib>
 #include <algorithm>
+#include <stdexcept>
+#include <regex>
+#include <iomanip>
 #include "VRODefines.h"
+#include "VROLog.h"
 
 std::string VROStringUtil::toString(int i) {
     std::stringstream ss;
@@ -159,5 +163,92 @@ void VROStringUtil::replaceAll(std::string &str, const std::string &from, const 
         str.replace(start_pos, from.length(), to);
         start_pos += to.length();
     }
+}
+
+std::string charToHex(unsigned char c) {
+    short i = c;
+    std::stringstream s;
+    s << "%" << std::setw(2) << std::setfill('0') << std::hex << i;
+    return s.str();
+}
+
+std::string VROStringUtil::escapeReservedURLCharacters(std::string text) {
+    std::ostringstream out;
+    
+    // All input characters that are not a-z, A-Z, 0-9, '-', '.', '_' or '~'
+    // are converted to their "URL escaped" version
+    for (std::string::size_type i=0; i < text.length(); ++i) {
+        short t = text.at(i);
+        if (t == 45 ||                // hyphen
+            t == 46 ||                // period
+           (t >= 48 && t <= 57) ||    // 0-9
+           (t >= 65 && t <= 90) ||    // A-Z
+            t == 95 ||                // underscore
+           (t >= 97 && t <= 122) ||   // a-z
+            t == 126) {               // tilde
+            out << text.at(i);
+        } else {
+            out << charToHex(text.at(i));
+        }
+    }
+    return out.str();
+}
+
+std::string VROStringUtil::escapeSpaces(std::string text) {
+    std::ostringstream out;
+    for (std::string::size_type i=0; i < text.length(); ++i) {
+        short t = text.at(i);
+        if (t == 32) {
+            out << charToHex(text.at(i));
+        } else {
+            out << text.at(i);
+        }
+    }
+    return out.str();
+}
+
+std::vector<std::string> VROStringUtil::parseURL(std::string url) {
+    std::regex regexURL(R"(^([^:\/?#]+:?//[^\/?#]*)?([^?#]*)(\?[^#]*)?(#.*)?)", std::regex::extended);
+    unsigned counter = 0;
+    std::vector<std::string> components;
+    
+    std::smatch match;
+    if (std::regex_match(url, match, regexURL)) {
+        for (const auto &res : match) {
+            std::stringstream s; s << res;
+            std::string component = s.str();
+        
+            if (counter > 0) {
+                components.push_back(component);
+            }
+            // Commented out below: useful for debugging
+            // pinfo("%d: %s", counter, component.c_str());
+            counter++;
+        }
+    }
+    return components;
+}
+
+std::string VROStringUtil::encodeURL(std::string url) {
+    std::vector<std::string> components = parseURL(url);
+    if (components.empty()) {
+        pinfo("Failed to encode URL [%s], URL is malformed", url.c_str());
+        return url;
+    }
+    
+    std::stringstream s;
+    for (int i = 0; i < components.size(); i++) {
+        if (i == 1) {
+            // Path components need spaces escaped
+            s << escapeSpaces(components[i]);
+        } else if (i == 2) {
+            // Currently do nothing with the query string; in the future will want to escape
+            // all reserved characters between the ?, &, and = delimeters
+            s << components[i];
+        } else {
+            s << components[i];
+        }
+    }
+    return s.str();
 }
 

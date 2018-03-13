@@ -666,6 +666,10 @@
 		8FFA8A0A2048703500C4D99B /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A082048702B00C4D99B /* check.png */; };
 		8FFA8A1520504E7D00C4D99B /* VROTaskQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */; };
 		8FFA8A1620504E7D00C4D99B /* VROTaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FFA8A1B20571E7C00C4D99B /* Lamborginhi Aventador_gloss.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1720571E7B00C4D99B /* Lamborginhi Aventador_gloss.jpeg */; };
+		8FFA8A1C20571E7C00C4D99B /* Lamborginhi Aventador_spec.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */; };
+		8FFA8A1D20571E7C00C4D99B /* Lamborginhi Aventador_diffuse.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */; };
+		8FFA8A1E20571E7C00C4D99B /* lamborghini.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */; };
@@ -715,12 +719,12 @@
 		A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */; };
 		A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */; };
 		A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */; };
-		A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */; };
-		A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; };
-		A5B4AF0B20535D460006D970 /* VROPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B433EC204E64A600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B433EB204E64A500E9EE53 /* VROFixedParticleEmitter.cpp */; };
 		A5B433ED204E659A00E9EE53 /* VROFixedParticleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B433EA204E64A500E9EE53 /* VROFixedParticleEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B433EE204E65B600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B433EB204E64A500E9EE53 /* VROFixedParticleEmitter.cpp */; };
+		A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */; };
+		A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; };
+		A5B4AF0B20535D460006D970 /* VROPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65821EB3ECE200FE220E /* libBulletCollision.a */; };
 		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
 		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
@@ -1506,6 +1510,10 @@
 		8FFA8A082048702B00C4D99B /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check.png; path = ViroSample/check.png; sourceTree = "<group>"; };
 		8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTaskQueue.cpp; sourceTree = "<group>"; };
 		8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTaskQueue.h; sourceTree = "<group>"; };
+		8FFA8A1720571E7B00C4D99B /* Lamborginhi Aventador_gloss.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_gloss.jpeg"; path = "ViroSample/Lamborginhi Aventador_gloss.jpeg"; sourceTree = "<group>"; };
+		8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_spec.jpeg"; path = "ViroSample/Lamborginhi Aventador_spec.jpeg"; sourceTree = "<group>"; };
+		8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_diffuse.jpeg"; path = "ViroSample/Lamborginhi Aventador_diffuse.jpeg"; sourceTree = "<group>"; };
+		8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = lamborghini.vrx; path = ViroSample/lamborghini.vrx; sourceTree = "<group>"; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
 		A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleEmitter.cpp; sourceTree = "<group>"; };
@@ -1549,10 +1557,10 @@
 		A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3602.jpg; path = ViroSample/stereo3602.jpg; sourceTree = "<group>"; };
 		A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid.mp4; path = ViroSample/stereoVid.mp4; sourceTree = "<group>"; };
 		A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid360.mp4; path = ViroSample/stereoVid360.mp4; sourceTree = "<group>"; };
-		A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPolygon.cpp; sourceTree = "<group>"; };
-		A5B4AF0720535CDA0006D970 /* VROPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPolygon.h; sourceTree = "<group>"; };
 		A5B433EA204E64A500E9EE53 /* VROFixedParticleEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFixedParticleEmitter.h; sourceTree = "<group>"; };
 		A5B433EB204E64A500E9EE53 /* VROFixedParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFixedParticleEmitter.cpp; sourceTree = "<group>"; };
+		A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPolygon.cpp; sourceTree = "<group>"; };
+		A5B4AF0720535CDA0006D970 /* VROPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPolygon.h; sourceTree = "<group>"; };
 		A5EC65821EB3ECE200FE220E /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = Libraries/bullet/libBulletCollision.a; sourceTree = "<group>"; };
 		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
 		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
@@ -2542,6 +2550,10 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */,
+				8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */,
+				8FFA8A1720571E7B00C4D99B /* Lamborginhi Aventador_gloss.jpeg */,
+				8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */,
 				8FFA8A082048702B00C4D99B /* check.png */,
 				8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */,
 				8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */,
@@ -3373,9 +3385,12 @@
 				8F129FBC1ED603BE00341D83 /* heart.vrx in Resources */,
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
 				8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */,
+				8FFA8A1D20571E7C00C4D99B /* Lamborginhi Aventador_diffuse.jpeg in Resources */,
 				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F129FBB1ED603BA00341D83 /* fox.vrx in Resources */,
+				8FFA8A1B20571E7C00C4D99B /* Lamborginhi Aventador_gloss.jpeg in Resources */,
+				8FFA8A1E20571E7C00C4D99B /* lamborghini.vrx in Resources */,
 				8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */,
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
@@ -3391,6 +3406,7 @@
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
+				8FFA8A1C20571E7C00C4D99B /* Lamborginhi Aventador_spec.jpeg in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
 				8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */,
