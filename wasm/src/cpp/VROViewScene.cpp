@@ -20,6 +20,7 @@
 #include "VROPlatformUtil.h"
 #include "VROText.h"
 #include "VROOBJLoader.h"
+#include "VROParticleEmitter.h"
 
 static VROViewScene *sInstance = nullptr;
 
@@ -68,7 +69,8 @@ VROViewScene::VROViewScene() {
 void VROViewScene::buildTestScene() {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    
+    _renderer->setSceneController(sceneController, _driver);
+
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     
@@ -97,6 +99,8 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
     
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
     VROOBJLoader::loadOBJFromResource("test/male02.obj", VROResourceType::URL, objNode,
                                       [](std::shared_ptr<VRONode> node, bool success) {
@@ -109,7 +113,6 @@ void VROViewScene::buildTestScene() {
                                           pinfo("Finished loading OBJ file");
                                       });
     rootNode->addChildNode(objNode);
-    _renderer->setSceneController(sceneController, _driver);
     
     VROTransaction::begin();
     VROTransaction::setAnimationDelay(2);
@@ -120,18 +123,18 @@ void VROViewScene::buildTestScene() {
     VROTransaction::commit();
     
     // Text test
-    std::shared_ptr<VROTypeface> typeface = _driver->newTypeface("Helvetica", 42);
-    VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
-    VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
-    int width = 10;
-    int height = 10;
+    std::shared_ptr<VROTypeface> typeface = _driver->newTypeface("Helvetica", 28);
+    VROLineBreakMode linebreakMode = VROLineBreakMode::WordWrap;
+    VROTextClipMode clipMode = VROTextClipMode::None;
+    int width = 5;
+    int height = 8;
     
     std::wstring string = L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     
     VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode, 0);
     pinfo("Estimated size %f, %f", size.x, size.y);
     
-    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 0.0, 0.0, 1.0}, width, height,
+    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {0.0, 0.0, 1.0, 1.0}, width, height,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
                                                         linebreakMode, clipMode);
     
@@ -140,12 +143,43 @@ void VROViewScene::buildTestScene() {
     
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
     textNode->setGeometry(text);
-    textNode->setPosition({0, 0, -10});
+    textNode->setPosition({0, 0, -4});
     
     rootNode->addChildNode(textNode);
-
+    
+    std::shared_ptr<VRONode> particleNode = std::make_shared<VRONode>();
+    particleNode->setPosition({0, -10, -15});
+    particleNode->setTag("Particles");
+    
+    std::shared_ptr<VROTexture> imgTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
+                                                                           VROPlatformLoadImageFromFile("cloud.png", format));
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1,1);
+    std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>(_driver, surface);
+    
+    // Vec of intervals to interpolate this modifier along.
+    std::vector<VROParticleModifier::VROModifierInterval> intervals;
+    VROParticleModifier::VROModifierInterval interval1;
+    interval1.startFactor = 0;
+    interval1.endFactor = 1000;
+    interval1.targetedValue = VROVector3f(0,0,0);
+    intervals.push_back(interval1);
+    
+    // Modifier's starting configuration. Provide different numbers to randomize.
+    VROVector3f sizeMinStart = VROVector3f(2,2,2);
+    VROVector3f sizeMaxStart = VROVector3f(2,2,2);
+    
+    std::shared_ptr<VROParticleModifier> mod = std::make_shared<VROParticleModifier>(sizeMinStart,
+                                                                                     sizeMaxStart,
+                                                                                     VROParticleModifier::VROModifierFactor::Time,
+                                                                                     intervals);
+    // Finally set this modifier.
+    particleEmitter->setScaleModifier(mod);
+    particleNode->setParticleEmitter(particleEmitter);
+    rootNode->addChildNode(particleNode);
+    particleEmitter->setRun(true);
+    
+    
     /*
-    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
                                                                            VROPlatformLoadImageFromFile("boba.png", format));
     bobaTexture->setWrapS(VROWrapMode::Repeat);
