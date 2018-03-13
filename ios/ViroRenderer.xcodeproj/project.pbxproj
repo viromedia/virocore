@@ -235,7 +235,6 @@
 		8F56AEA11DE7619000DD65B6 /* VROGlyph.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F56AE9F1DE7619000DD65B6 /* VROGlyph.h */; };
 		8F56AEA41DE764A700DD65B6 /* VROGlyphOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F56AEA21DE764A700DD65B6 /* VROGlyphOpenGL.cpp */; };
 		8F56AEA51DE764A700DD65B6 /* VROGlyphOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F56AEA31DE764A700DD65B6 /* VROGlyphOpenGL.h */; };
-		8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */; };
 		8F56AEA91DE76E1D00DD65B6 /* VROText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F56AEA71DE76E1D00DD65B6 /* VROText.cpp */; };
 		8F56AEAA1DE76E1D00DD65B6 /* VROText.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F56AEA81DE76E1D00DD65B6 /* VROText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F56AEAE1DE77B2700DD65B6 /* VROTypeface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F56AEAC1DE77B2700DD65B6 /* VROTypeface.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -333,6 +332,7 @@
 		8F9278031C66BD4500FF892A /* pz1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FD1C66BD4500FF892A /* pz1.jpg */; };
 		8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278041C670B0300FF892A /* VROTriangle.cpp */; };
 		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F951F9320583790000DC58F /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F951F9220583790000DC58F /* libfreetype.a */; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -670,6 +670,7 @@
 		8FFA8A1C20571E7C00C4D99B /* Lamborginhi Aventador_spec.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */; };
 		8FFA8A1D20571E7C00C4D99B /* Lamborginhi Aventador_diffuse.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */; };
 		8FFA8A1E20571E7C00C4D99B /* lamborghini.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */; };
+		8FFA8A232057903800C4D99B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFA8A222057903700C4D99B /* libbz2.tbd */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */; };
@@ -1228,6 +1229,7 @@
 		8F9277FD1C66BD4500FF892A /* pz1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pz1.jpg; path = ViroSample/pz1.jpg; sourceTree = "<group>"; };
 		8F9278041C670B0300FF892A /* VROTriangle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTriangle.cpp; sourceTree = "<group>"; };
 		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
+		8F951F9220583790000DC58F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = Libraries/freetype/armv7_arm64/libfreetype.a; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -1514,6 +1516,8 @@
 		8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_spec.jpeg"; path = "ViroSample/Lamborginhi Aventador_spec.jpeg"; sourceTree = "<group>"; };
 		8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_diffuse.jpeg"; path = "ViroSample/Lamborginhi Aventador_diffuse.jpeg"; sourceTree = "<group>"; };
 		8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = lamborghini.vrx; path = ViroSample/lamborghini.vrx; sourceTree = "<group>"; };
+		8FFA8A1F20578E4500C4D99B /* libfreetyped.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetyped.a; path = Libraries/freetype/x86_64/libfreetyped.a; sourceTree = "<group>"; };
+		8FFA8A222057903700C4D99B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
 		A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleEmitter.cpp; sourceTree = "<group>"; };
@@ -1603,6 +1607,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F951F9320583790000DC58F /* libfreetype.a in Frameworks */,
+				8FFA8A232057903800C4D99B /* libbz2.tbd in Frameworks */,
 				8A5CDD741F636C300093F43B /* ARKit.framework in Frameworks */,
 				8A9EEC6F1F26BE9700EB2228 /* Photos.framework in Frameworks */,
 				8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */,
@@ -1612,7 +1618,6 @@
 				A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */,
 				A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */,
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
-				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
 				8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */,
 				8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */,
@@ -2754,6 +2759,9 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F951F9220583790000DC58F /* libfreetype.a */,
+				8FFA8A222057903700C4D99B /* libbz2.tbd */,
+				8FFA8A1F20578E4500C4D99B /* libfreetyped.a */,
 				8AF39AB51F2295F700229AC0 /* Photos.framework */,
 				8A99E6C41EF1B7B300712D79 /* ARKit.framework */,
 				8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */,
@@ -4223,9 +4231,20 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype",
-					"$(PROJECT_DIR)/Libraries/protobuf",
-					"$(PROJECT_DIR)/Libraries/bullet",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
@@ -4269,6 +4288,20 @@
 					"$(PROJECT_DIR)/Libraries/freetype",
 					"$(PROJECT_DIR)/Libraries/protobuf",
 					"$(PROJECT_DIR)/Libraries/bullet",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
