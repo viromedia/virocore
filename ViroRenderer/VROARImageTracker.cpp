@@ -24,14 +24,19 @@
     #define LOG_DETECT_TIME(message) ((void)0);
 #endif
 
-std::shared_ptr<VROARImageTracker> VROARImageTracker::createARImageTracker(cv::Mat image) {
-    return std::shared_ptr<VROARImageTracker>(new VROARImageTracker(image, VROARImageTrackerType::ORB4));
+std::shared_ptr<VROARImageTracker> VROARImageTracker::createARImageTracker(std::shared_ptr<VROARImageTarget> arImageTarget) {
+    std::shared_ptr<VROARImageTracker> tracker = std::make_shared<VROARImageTracker>(VROARImageTrackerType::ORB4);
+    tracker->addARImageTarget(arImageTarget);
+    return tracker;
 }
 
-VROARImageTracker::VROARImageTracker(cv::Mat targetImage, VROARImageTrackerType type) :
-    _targetImage(targetImage),
+std::shared_ptr<VROARImageTracker> VROARImageTracker::createDefaultTracker() {
+    return std::make_shared<VROARImageTracker>(VROARImageTrackerType::ORB4);
+}
+
+VROARImageTracker::VROARImageTracker(VROARImageTrackerType type) :
     _type(type) {
-    updateTargetInfo();
+    updateType();
 }
 
 void VROARImageTracker::setType(VROARImageTrackerType type) {
@@ -39,42 +44,54 @@ void VROARImageTracker::setType(VROARImageTrackerType type) {
         return;
     }
     _type = type;
-    updateTargetInfo();
+    updateType();
 }
 
-void VROARImageTracker::updateTargetInfo() {
-    
+void VROARImageTracker::updateType() {
     switch(_type) {
         case VROARImageTrackerType::ORB3:
-            //int nfeatures=500, float scaleFactor=1.2f, int nlevels=8, int edgeThreshold=31, int firstLevel=0, int WTA_K=2, int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20);
             _feature = cv::ORB::create(500, 1.3f, 8, 31, 0, 3, cv::ORB::FAST_SCORE, 31);
+            _matcherType = cv::NORM_HAMMING2;
             break;
         case VROARImageTrackerType::ORB4:
             _feature = cv::ORB::create(500, 1.3f, 8, 31, 0, 4);
+            _matcherType = cv::NORM_HAMMING2;
             break;
         case VROARImageTrackerType::ORB:
             _feature = cv::ORB::create();
+            _matcherType = cv::NORM_HAMMING;
             break;
         case VROARImageTrackerType::BRISK:
-        default:
             _feature = cv::BRISK::create();
-    }
-    
-    // automatically run keypoint and descriptor extraction on the target image.
-    // TODO: we can scale the target image lower to speed up processing, but that'll throw off the translation matrix (by the same factor)
-    detectKeypointsAndDescriptors(_targetImage, _targetKeyPoints, _targetDescriptors);
-    
-    switch(_type) {
-        case VROARImageTrackerType::ORB3:
-        case VROARImageTrackerType::ORB4:
-            _matcherType = cv::NORM_HAMMING2;
-            break;
-        case VROARImageTrackerType::BRISK:
-        case VROARImageTrackerType::ORB:
-        default:
             _matcherType = cv::NORM_HAMMING;
             break;
     }
+
+    // Since we may have changed the _feature/_matcherType, we need to recreate all the
+    for (int i = 0; i < _arImageTargets.size(); i++) {
+        _targetsMap[_arImageTargets[i]] = updateTargetInfo(_arImageTargets[i]);
+    }
+}
+
+VROARImageTargetOpenCV VROARImageTracker::updateTargetInfo(std::shared_ptr<VROARImageTarget> arImageTarget) {
+    
+    std::vector<cv::KeyPoint> targetKeyPoints;
+    cv::Mat targetDescriptors;
+    
+    // automatically run keypoint and descriptor extraction on the target image.
+    // TODO: we can scale the target image lower to speed up processing, but that'll throw off the translation matrix (by the same factor)
+    detectKeypointsAndDescriptors(arImageTarget->getTargetMat(), targetKeyPoints, targetDescriptors);
+
+    return {arImageTarget, targetKeyPoints, targetDescriptors, cv::Mat(), cv::Mat()};
+}
+
+void VROARImageTracker::addARImageTarget(std::shared_ptr<VROARImageTarget> arImageTarget) {
+    _arImageTargets.push_back(arImageTarget);
+    _targetsMap[arImageTarget] = updateTargetInfo(arImageTarget);
+}
+
+void VROARImageTracker::removeARImageTarget(std::shared_ptr<VROARImageTarget> arImageTarget) {
+    // TODO: fill this in
 }
 
 void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
@@ -107,174 +124,94 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     LOG_DETECT_TIME("finish detect keypoints & descriptors");
 }
 
-std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
+std::vector<std::shared_ptr<VROARImageTrackerOutput>> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
     _intrinsics = intrinsics;
 
-    // Set this to true, if we just want to test solvePnP
-    bool testSolvePnp = false;
-    if (testSolvePnp) {
-        testSolvePnP();
-        return VROARImageTrackerOutput::createFalseOutput();
-    }
-
     return findTargetInternal(inputImage);
 }
 
-std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage) {
-    _intrinsics = NULL;
-    return findTargetInternal(inputImage);
-}
+std::vector<std::shared_ptr<VROARImageTrackerOutput>> VROARImageTracker::findTargetInternal(cv::Mat inputImage) {
 
-std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::Mat inputImage) {
-
+    // start the timer...
     _startTime = getCurrentTimeMs();
-
-    std::vector<cv::KeyPoint> inputKeyPoints;
-    cv::Mat inputDescriptors;
 
     pinfo("[Viro] raw input size is %d x %d", inputImage.rows, inputImage.cols);
-    
+
+    // TODO: scale input image for performance, not sure if we need this now, but the option is there.
+    // you *might* need to also account fot the scaling in the calculations later to extract position
+    // although you may be fine because we overwrite inputImage w/ the scale image...
+    bool shouldScaleInput = false;
     float xScale = 1; float yScale = 1;
     
-    _startTime = getCurrentTimeMs();
-    cv::Size newSize(inputImage.cols * xScale, inputImage.rows * yScale);
-    cv::Mat resizedInput;
-    cv::resize(inputImage, resizedInput, newSize);
-    
-    pinfo("[Viro] resized image size is %d x %d", resizedInput.rows, resizedInput.cols);
+    if (shouldScaleInput) {
+        _startTime = getCurrentTimeMs();
+        cv::Size newSize(inputImage.cols * xScale, inputImage.rows * yScale);
+        cv::Mat resizedInput;
+        cv::resize(inputImage, resizedInput, newSize);
+        pinfo("[Viro] resized image size is %d x %d", resizedInput.rows, resizedInput.cols);
 
-    detectKeypointsAndDescriptors(resizedInput, inputKeyPoints, inputDescriptors);
-    
-    std::shared_ptr<VROARImageTrackerOutput> output = findTarget(inputKeyPoints, inputDescriptors, inputImage);
-    
-    // Since we scaled the input image, we need to revert that scale when we return the corners!
-    if (output->found) {
-        for (int i = 0; i < output->corners.size(); i++) {
-            output->corners[i] = cv::Point2f(output->corners[i].x / xScale, output->corners[i].y / yScale);
-        }
+        inputImage = resizedInput;
     }
+    
+    // process the input image to extract keypoints and descriptors
+    std::vector<cv::KeyPoint> inputKeyPoints;
+    cv::Mat inputDescriptors;
+    detectKeypointsAndDescriptors(inputImage, inputKeyPoints, inputDescriptors);
 
-    return output;
-}
-
-std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTarget(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
-    if (inputKeypoints.size() == 0 || inputDescriptors.cols == 0) {
+    // make sure we have some keypoints/descriptors.
+    if (inputKeyPoints.size() == 0 || inputDescriptors.cols == 0) {
         pwarn("[Viro] Could not find keypoints and/or descriptors for the input image.");
-        return VROARImageTrackerOutput::createFalseOutput();
+        return {};
     }
 
+    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs;
     // TODO: add other findTarget types
     switch (_type) {
         case VROARImageTrackerType::BRISK:
         default:
-            return findTargetBF(inputKeypoints, inputDescriptors, inputImage);
+            outputs = findMultipleTargetsBF(inputKeyPoints, inputDescriptors, inputImage);
+    }
+
+    for (int i = 0; i < outputs.size(); i++) {
+        std::shared_ptr<VROARImageTrackerOutput> output = outputs[i];
+        // Since we scaled the input image, we need to revert that scale when we return the corners!
+        if (output->found && shouldScaleInput) {
+            for (int i = 0; i < output->corners.size(); i++) {
+                output->corners[i] = cv::Point2f(output->corners[i].x / xScale, output->corners[i].y / yScale);
+            }
+        }
+    }
+
+    if (outputs.size() > 0) {
+        return outputs;
+    } else {
+        return {};
     }
 }
 
-// TODO: split out pose estimation
-std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTargetBF(std::vector<cv::KeyPoint> inputKeypoints, cv::Mat inputDescriptors, cv::Mat inputImage) {
-
-    LOG_DETECT_TIME("start matching keypoints");
+std::vector<std::shared_ptr<VROARImageTrackerOutput>> VROARImageTracker::findMultipleTargetsBF(std::vector<cv::KeyPoint> inputKeypoints,
+                                                                                               cv::Mat inputDescriptors,  cv::Mat inputImage) {
+    LOG_DETECT_TIME("Starting findMultipleTargetsBF.");
     
-    int minGoodMatches = 15; // we need at least 15 good matches before we continue.
-    std::vector<cv::DMatch> goodMatches;
-
+    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs;
+    
+    VROARImageTargetOpenCV currentTarget;
+    
+    // Pre-create the matcher.
+    cv::Ptr<cv::BFMatcher> matcher;
     bool useBfKnnMatcher = _type != VROARImageTrackerType::BRISK;
     if (!useBfKnnMatcher) {
-        cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(_matcherType, true);
-        std::vector<cv::DMatch> matches;
-        matcher->match(_targetDescriptors, inputDescriptors, matches);
-        LOG_DETECT_TIME("start filtering good matches");
-        
-        double maxDist = 0;
-        double minDist = 100;
-        
-        for (int i = 0; i < matches.size(); i++) {
-            float dist = matches[i].distance;
-            if (dist < minDist) {
-                minDist = dist;
-            }
-            if (dist > maxDist) {
-                maxDist = dist;
-            }
-        }
-
-        double goodMatchThreshold = 3 * minDist; // TODO: make sure this is a legitimate value.
-
-        for (int i = 0; i < matches.size(); i++) {
-            if (matches[i].distance < goodMatchThreshold) {
-                goodMatches.push_back(matches[i]);
-            }
-        }
-
+        matcher = cv::BFMatcher::create(_matcherType, true);
     } else {
-        cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create();
-        std::vector<std::vector<cv::DMatch>> matches;
-        matcher->knnMatch(_targetDescriptors, inputDescriptors, matches, 2);
-        LOG_DETECT_TIME("start filtering good matches");
-        
-        for (int i = 0; i < matches.size(); i++) {
-            if (matches[i][0].distance < (.75 * matches[i][1].distance)) {
-                goodMatches.push_back(matches[i][0]);
-            }
-        }
+        matcher = cv::BFMatcher::create();
     }
-
-    if (goodMatches.size() < minGoodMatches) {
-        pinfo("[Viro] Could not find enough good matching points.");
-        return VROARImageTrackerOutput::createFalseOutput();
-    }
-
-    std::vector<cv::Point2f> objectPoints;
-    std::vector<cv::Point2f> inputPoints;
     
-    for( int i = 0; i < goodMatches.size(); i++ ) {
-        objectPoints.push_back(_targetKeyPoints[goodMatches[i].queryIdx].pt);
-        inputPoints.push_back(inputKeypoints[goodMatches[i].trainIdx].pt);
-    }
-
-    LOG_DETECT_TIME("start finding homography matrix");
-
-    cv::Mat homographyMat = findHomography(cv::Mat(objectPoints), cv::Mat(inputPoints), CV_RANSAC, 5.0);
-
-    if (homographyMat.cols == 0) {
-        pinfo("[Viro] Could not find a homography matrix.");
-        return VROARImageTrackerOutput::createFalseOutput();
-    }
-
-    LOG_DETECT_TIME("start finding perspective transform");
-
-    std::vector<cv::Point2f> objectCorners(4);
-    objectCorners[0] = cvPoint(0,0);
-    objectCorners[1] = cvPoint(_targetImage.cols, 0);
-    objectCorners[2] = cvPoint(_targetImage.cols, _targetImage.rows);
-    objectCorners[3] = cvPoint(0, _targetImage.rows);
-    
-    std::vector<cv::Point2f> inputCorners;
-    perspectiveTransform(objectCorners, inputCorners, homographyMat);
-    
-    // filter out false positives.
-    int minCornerDistance = 20;
-    double sumX = 0;
-    double sumY = 0;
-    for (int i = 0; i < inputCorners.size() - 1; i++) {
-        sumX += std::abs(inputCorners[i].x - inputCorners[i + 1].x);
-        sumY += std::abs(inputCorners[i].y - inputCorners[i + 1].y);
-    }
-
-    if (sumX < minCornerDistance || sumY < minCornerDistance || inputCorners.size() < objectCorners.size()) {
-        pinfo("[Viro] Could not find corners of target in input image.");
-        return VROARImageTrackerOutput::createFalseOutput();
-    }
-
-    LOG_DETECT_TIME("start finding object pose");
-
-    /* Get the Camera Intrinsic Matrix
+    /* Get/calculate the Camera Intrinsic Matrix
      
      The intrinsic matrix looks like the following:
      [ f_x  0  x_0
-        0  f_y y_0
-        0   0   1 ]
+     0  f_y y_0
+     0   0   1 ]
      
      Where f_x and f_y are the focal length whereas x_0 and y_0 is the pixel from the top left representing the "center" of the camera.
      see http://ksimek.github.io/2013/08/13/intrinsic/
@@ -300,232 +237,184 @@ std::shared_ptr<VROARImageTrackerOutput> VROARImageTracker::findTargetBF(std::ve
     std::cout << "[Viro] Camera Intrinsic Matrix: " << cameraMatrix << std::endl;
     
     cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
-
-    // Output rotation and translation
-    std::vector<cv::Point3d> targetCorners;
-
-    // use the below corners to find the "top left" corner
-//    targetCorners.push_back(cvPoint3D32f(0, 0, 0));
-//    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, 0, 0));
-//    targetCorners.push_back(cvPoint3D32f(_targetImage.cols, _targetImage.rows, 0));
-//    targetCorners.push_back(cvPoint3D32f(0, _targetImage.rows, 0));
-
-    // use the below corners to find the "center" of the image.
-    targetCorners.push_back(cvPoint3D32f(- _targetImage.cols / 2, - _targetImage.rows / 2, 0));
-    targetCorners.push_back(cvPoint3D32f(_targetImage.cols / 2, - _targetImage.rows / 2, 0));
-    targetCorners.push_back(cvPoint3D32f(_targetImage.cols / 2, _targetImage.rows / 2, 0));
-    targetCorners.push_back(cvPoint3D32f(- _targetImage.cols / 2, _targetImage.rows / 2, 0));
     
-    // TODO: if we've scaled the input, then inverse the scaling on the corner values before using solvePnP.
-
-    // Solve for pose
-    bool useExtrinsicGuess = true;
     
-    //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
-    cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
-    
-    // TODO: sanitize the inputCorners, using ORB gives us lots of false positives, if we just add some logic to ensure lines don't cross we'll be good.
-
-    LOG_DETECT_TIME("finished detection & pose extraction");
-
-    // This conversion rate is based on the fact that the target image (100 bill) is 505x1188 pixels
-    // vs its real world size of 2.61x6.14 inches. TODO: take this as an argument.
-    double pixPerMeter = 7617.58; // ben.jpg
-    //double pixPerMeter = 16404.2; // wikipedia_qr.png (2.4 inches represents 1000 px)
-
-    cv::Mat scaledTranslation(3, 1, cv::DataType<double>::type);
-    scaledTranslation.at<double>(0,0) = _translation.at<double>(0,0) / pixPerMeter;
-    scaledTranslation.at<double>(1,0) = _translation.at<double>(1,0) / pixPerMeter;
-    scaledTranslation.at<double>(2,0) = _translation.at<double>(2,0) / pixPerMeter;
-    
+    // Start the loop over all the targets!
+    for (int i = 0; i < _arImageTargets.size(); i++) {
+        pinfo("[Viro] processing target #%d", i);
+        
+        currentTarget = _targetsMap.find(_arImageTargets[i])->second;
+        
+        LOG_DETECT_TIME("start matching keypoints");
+        
+        int minGoodMatches = 15; // we need at least 15 good matches before we continue.
+        std::vector<cv::DMatch> goodMatches;
+        
+        bool useBfKnnMatcher = _type != VROARImageTrackerType::BRISK;
+        if (!useBfKnnMatcher) {
+            std::vector<cv::DMatch> matches;
+            matcher->match(currentTarget.descriptors, inputDescriptors, matches);
+            LOG_DETECT_TIME("start filtering good matches");
+            
+            double maxDist = 0;
+            double minDist = 100;
+            
+            for (int i = 0; i < matches.size(); i++) {
+                float dist = matches[i].distance;
+                if (dist < minDist) {
+                    minDist = dist;
+                }
+                if (dist > maxDist) {
+                    maxDist = dist;
+                }
+            }
+            
+            double goodMatchThreshold = 3 * minDist; // TODO: make sure this is a legitimate value.
+            
+            for (int i = 0; i < matches.size(); i++) {
+                if (matches[i].distance < goodMatchThreshold) {
+                    goodMatches.push_back(matches[i]);
+                }
+            }
+            
+        } else {
+            std::vector<std::vector<cv::DMatch>> matches;
+            matcher->knnMatch(currentTarget.descriptors, inputDescriptors, matches, 2);
+            LOG_DETECT_TIME("start filtering good matches");
+            
+            for (int i = 0; i < matches.size(); i++) {
+                if (matches[i][0].distance < (.75 * matches[i][1].distance)) {
+                    goodMatches.push_back(matches[i][0]);
+                }
+            }
+        }
+        
+        if (goodMatches.size() < minGoodMatches) {
+            pinfo("[Viro] Could not find enough good matching points.");
+            continue;
+        }
+        
+        std::vector<cv::Point2f> objectPoints;
+        std::vector<cv::Point2f> inputPoints;
+        
+        for( int i = 0; i < goodMatches.size(); i++ ) {
+            objectPoints.push_back(currentTarget.keyPoints[goodMatches[i].queryIdx].pt);
+            inputPoints.push_back(inputKeypoints[goodMatches[i].trainIdx].pt);
+        }
+        
+        LOG_DETECT_TIME("start finding homography matrix");
+        
+        cv::Mat homographyMat = findHomography(cv::Mat(objectPoints), cv::Mat(inputPoints), CV_RANSAC, 5.0);
+        
+        if (homographyMat.cols == 0) {
+            pinfo("[Viro] Could not find a homography matrix.");
+            continue;
+        }
+        
+        LOG_DETECT_TIME("start finding perspective transform");
+        
+        std::vector<cv::Point2f> objectCorners(4);
+        objectCorners[0] = cvPoint(0,0);
+        objectCorners[1] = cvPoint(currentTarget.arImageTarget->getTargetMat().cols, 0);
+        objectCorners[2] = cvPoint(currentTarget.arImageTarget->getTargetMat().cols, currentTarget.arImageTarget->getTargetMat().rows);
+        objectCorners[3] = cvPoint(0, currentTarget.arImageTarget->getTargetMat().rows);
+        
+        std::vector<cv::Point2f> inputCorners;
+        perspectiveTransform(objectCorners, inputCorners, homographyMat);
+        
+        // filter out false positives.
+        int minCornerDistance = 20;
+        double sumX = 0;
+        double sumY = 0;
+        for (int i = 0; i < inputCorners.size() - 1; i++) {
+            sumX += std::abs(inputCorners[i].x - inputCorners[i + 1].x);
+            sumY += std::abs(inputCorners[i].y - inputCorners[i + 1].y);
+        }
+        
+        if (sumX < minCornerDistance || sumY < minCornerDistance || inputCorners.size() < objectCorners.size()) {
+            pinfo("[Viro] Could not find corners of target in input image.");
+            continue;
+        }
+        
+        LOG_DETECT_TIME("start finding object pose");
+        
+        // Output rotation and translation
+        std::vector<cv::Point3d> targetCorners;
+        
+        // use the below corners to find the position of the "top left" corner of the target
+        //    CvPoint3D32f topLeft = cvPoint3D32f(0, 0, 0);
+        //    CvPoint3D32f topRight = cvPoint3D32f(currentTarget.arImageTarget.cols, 0, 0);
+        //    CvPoint3D32f bottomRight = cvPoint3D32f(currentTarget.arImageTarget.cols, currentTarget.arImageTarget.rows, 0);
+        //    CvPoint3D32f bottomLeft = cvPoint3D32f(0, currentTarget.arImageTarget.rows, 0);
+        
+        // define corners starting from the top left of the image
+        CvPoint3D32f topLeft = cvPoint3D32f(- currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
+        CvPoint3D32f topRight = cvPoint3D32f(currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
+        CvPoint3D32f bottomRight = cvPoint3D32f(currentTarget.arImageTarget->getTargetMat().cols / 2, currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
+        CvPoint3D32f bottomLeft = cvPoint3D32f(- currentTarget.arImageTarget->getTargetMat().cols / 2, currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
+        
+        switch(currentTarget.arImageTarget->getOrientation()) {
+            case VROImageOrientation::Up:
+                targetCorners = {topLeft, topRight, bottomRight, bottomLeft};
+                break;
+            case VROImageOrientation::Down:
+                targetCorners = {bottomRight, bottomLeft, topLeft, topRight};
+                break;
+            case VROImageOrientation::Left:
+                targetCorners = {bottomLeft, topLeft, topRight, bottomRight};
+                break;
+            case VROImageOrientation::Right:
+                targetCorners = {topRight, bottomRight, bottomLeft, topLeft};
+                break;
+        }
+        
+        
+        // -- Solve for pose --
+        
+        // TODO: if we've scaled the input, then inverse the scaling on the corner values before using solvePnP.
+        // actually i dont think we need this as long as we overrode the inputImage?
+        
+        // whether or not to use the (previous) values in _rotation/_translation to help with extracting the next set of them.
+        bool useExtrinsicGuess = true;
+        
+        //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
+        cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
+        
+        // TODO: sanitize the inputCorners, using ORB gives us lots of false positives (ie. make sure the boundary lines don't cross)
+        
+        LOG_DETECT_TIME("finished detection & pose extraction");
+        
+        // Calculate the pixels per meter based on the orientation, size of the target image (in pixels) and the given physical width.
+        double pixPerMeter;
+        switch (currentTarget.arImageTarget->getOrientation()) {
+            case VROImageOrientation::Up:
+            case VROImageOrientation::Down:
+                pixPerMeter = currentTarget.arImageTarget->getTargetMat().cols / currentTarget.arImageTarget->getPhysicalWidth();
+                break;
+            case VROImageOrientation::Left:
+            case VROImageOrientation::Right:
+                pixPerMeter = currentTarget.arImageTarget->getTargetMat().rows / currentTarget.arImageTarget->getPhysicalWidth();
+                break;
+        }
+        
+        cv::Mat scaledTranslation(3, 1, cv::DataType<double>::type);
+        scaledTranslation.at<double>(0,0) = currentTarget.translation.at<double>(0,0) / pixPerMeter;
+        scaledTranslation.at<double>(1,0) = currentTarget.translation.at<double>(1,0) / pixPerMeter;
+        scaledTranslation.at<double>(2,0) = currentTarget.translation.at<double>(2,0) / pixPerMeter;
+        
 #if ENABLE_DETECT_LOGGING
-    for (int i = 0; i < inputCorners.size(); i++) {
-        pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
-    }
-    
-    pinfo("[Viro] translation: %f, %f, %f", scaledTranslation.at<double>(0,0), scaledTranslation.at<double>(1,0), scaledTranslation.at<double>(2,0));
-    pinfo("[Viro] rotation: %f, %f, %f", toDegrees(_rotation.at<double>(0,0)), toDegrees(_rotation.at<double>(1,0)), toDegrees(_rotation.at<double>(2,0)));
+        for (int i = 0; i < inputCorners.size(); i++) {
+            pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
+        }
+        
+        pinfo("[Viro] translation: %f, %f, %f", scaledTranslation.at<double>(0,0), scaledTranslation.at<double>(1,0), scaledTranslation.at<double>(2,0));
+        pinfo("[Viro] rotation: %f, %f, %f", toDegrees(currentTarget.rotation.at<double>(0,0)), toDegrees(currentTarget.rotation.at<double>(1,0)), toDegrees(currentTarget.rotation.at<double>(2,0)));
 #endif
-
-    return std::make_shared<VROARImageTrackerOutput>(true, inputCorners, scaledTranslation, _rotation);
-}
-
-void VROARImageTracker::testSolvePnP() {
-    
-    bool runFirstSample = false;
-    bool runSecondSample = false;
-    bool runThirdSample = true;
-    
-    cv::Mat cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
-
-    std::vector<cv::Point3f> targetCorners;
-    targetCorners.push_back(cv::Point3f(0,0,0));
-    targetCorners.push_back(cv::Point3f(_targetImage.cols, 0, 0));
-    targetCorners.push_back(cv::Point3f(_targetImage.cols, _targetImage.rows, 0));
-    targetCorners.push_back(cv::Point3f(0, _targetImage.rows, 0));
-    
-    cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assuming no lens distortion
-
-    cv::Mat inputTranslation(3, 1, cv::DataType<double>::type);
-    cv::Mat inputRotation(3, 1, cv::DataType<double>::type);
-    
-    double pixPerMeter = 7617.58;
-
-    // Updateable values
-    
-    std::vector<cv::Point2f> inputCorners(4);
-
-    if (runFirstSample) {
-        //cv::setIdentity(cameraMatrix);
         
-        std::cout << "[Viro] Initial cameraMatrix: " << cameraMatrix << std::endl;
-
-        
-        pinfo("[Viro] Run #1 -------------------");
-        inputCorners[0] = cvPoint(199,719);
-        inputCorners[1] = cvPoint(506, 725);
-        inputCorners[2] = cvPoint(509, 860);
-        inputCorners[3] = cvPoint(190, 854);
-
-        cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
-
-        inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
-        inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
-        inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
-
-        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
-        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
-
-
-
-        pinfo("[Viro] Run #2 -------------------");
-        inputCorners[0] = cvPoint(299,719);
-        inputCorners[1] = cvPoint(606, 725);
-        inputCorners[2] = cvPoint(609, 860);
-        inputCorners[3] = cvPoint(290, 854);
-
-        cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
-
-        inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
-        inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
-        inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
-
-        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
-        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
-
-
-
-
-        pinfo("[Viro] Run #3 -------------------");
-        inputCorners[0] = cvPoint(299,919);
-        inputCorners[1] = cvPoint(606, 925);
-        inputCorners[2] = cvPoint(609, 1060);
-        inputCorners[3] = cvPoint(290, 1054);
-
-        cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
-
-        inputTranslation.at<double>(0,0) = inputTranslation.at<double>(0,0) / pixPerMeter;
-        inputTranslation.at<double>(1,0) = inputTranslation.at<double>(1,0) / pixPerMeter;
-        inputTranslation.at<double>(2,0) = inputTranslation.at<double>(2,0) / pixPerMeter;
-
-        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
-        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
+        outputs.push_back(std::make_shared<VROARImageTrackerOutput>(true, inputCorners, scaledTranslation, currentTarget.rotation, currentTarget.arImageTarget));
     }
     
-    if (runSecondSample) {
-        std::vector<cv::Point3f> points;
-        
-        float x,y,z;
-        x=.5;y=.5;z=-.5;
-        points.push_back(cv::Point3f(x,y,z));
-        x=.5;y=.5;z=.5;
-        points.push_back(cv::Point3f(x,y,z));
-        x=-.5;y=.5;z=.5;
-        points.push_back(cv::Point3f(x,y,z));
-        x=-.5;y=.5;z=-.5;
-        points.push_back(cv::Point3f(x,y,z));
-        x=.5;y=-.5;z=-.5;
-        points.push_back(cv::Point3f(x,y,z));
-        x=-.5;y=-.5;z=-.5;
-        points.push_back(cv::Point3f(x,y,z));
-        x=-.5;y=-.5;z=.5;
-        points.push_back(cv::Point3f(x,y,z));
-
-        std::vector<cv::Point2f> points2d;
-        x=382;y=274;
-        points2d.push_back(cv::Point2f(x,y));
-        x=497;y=227;
-        points2d.push_back(cv::Point2f(x,y));
-        x=677;y=271;
-        points2d.push_back(cv::Point2f(x,y));
-        x=562;y=318;
-        points2d.push_back(cv::Point2f(x,y));
-        x=370;y=479;
-        points2d.push_back(cv::Point2f(x,y));
-        x=550;y=523;
-        points2d.push_back(cv::Point2f(x,y));
-        x=666;y=475;
-        points2d.push_back(cv::Point2f(x,y));
-        
-        cv::setIdentity(cameraMatrix);
-
-        cv::solvePnP(points, points2d, cameraMatrix, distCoeffs, inputRotation, inputTranslation, false, cv::SOLVEPNP_EPNP);
-        
-        pinfo("[Viro] translation: %f, %f, %f", inputTranslation.at<double>(0,0), inputTranslation.at<double>(1,0), inputTranslation.at<double>(2,0));
-        pinfo("[Viro] rotation: %f, %f, %f", inputRotation.at<double>(0,0), inputRotation.at<double>(1,0), inputRotation.at<double>(2,0));
-    }
-    
-    if (runThirdSample) {
-        std::vector<cv::Point2f> points1, points2;
-        
-        //First point's set
-        points1.push_back(cv::Point2f(384.3331f,  162.23618f));
-        points1.push_back(cv::Point2f(385.27521f, 135.21503f));
-        points1.push_back(cv::Point2f(409.36746f, 139.30315f));
-        points1.push_back(cv::Point2f(407.43854f, 165.64435f));
-        
-        //Second point's set
-        points2.push_back(cv::Point2f(427.64938f, 158.77661f));
-        points2.push_back(cv::Point2f(428.79471f, 131.60953f));
-        points2.push_back(cv::Point2f(454.04532f, 134.97353f));
-        points2.push_back(cv::Point2f(452.23096f, 162.13156f));
-        
-        //Real object point's set
-        std::vector<cv::Point3f> object;
-        object.push_back(cv::Point3f(-88.0f,88.0f,0));
-        object.push_back(cv::Point3f(-88.0f,-88.0f,0));
-        object.push_back(cv::Point3f(88.0f,-88.0f,0));
-        object.push_back(cv::Point3f(88.0f,88.0f,0));
-        
-        //Camera matrix
-        cv::Mat cam_matrix = cv::Mat(3,3,CV_32FC1,cv::Scalar::all(0));
-        cam_matrix.at<float>(0,0) = 519.0f;
-        cam_matrix.at<float>(0,2) = 320.0f;
-        cam_matrix.at<float>(1,1) = 522.0f;
-        cam_matrix.at<float>(1,2) = 240.0f;
-        cam_matrix.at<float>(2,2) = 1.0f;
-        
-        //PnP
-        cv::Mat rvec1i,rvec2i,tvec1i,tvec2i;
-        cv::Mat rvec1p,rvec2p,tvec1p,tvec2p;
-        solvePnP(cv::Mat(object),cv::Mat(points1),cam_matrix,cv::Mat(),rvec1i,tvec1i,false,CV_ITERATIVE);
-        solvePnP(cv::Mat(object),cv::Mat(points2),cam_matrix,cv::Mat(),rvec2i,tvec2i,false,CV_ITERATIVE);
-        solvePnP(cv::Mat(object),cv::Mat(points1),cam_matrix,cv::Mat(),rvec1p,tvec1p,false,CV_P3P);
-        solvePnP(cv::Mat(object),cv::Mat(points2),cam_matrix,cv::Mat(),rvec2p,tvec2p,false,CV_P3P);
-        
-        //Print result
-        std::cout<<"Iterative: "<<std::endl;
-        std::cout<<" rvec1 "<<std::endl<<" "<<rvec1i<<std::endl<<std::endl;
-        std::cout<<" rvec2 "<<std::endl<<" "<<rvec2i<<std::endl<<std::endl;
-        std::cout<<" tvec1 "<<std::endl<<" "<<tvec1i<<std::endl<<std::endl;
-        std::cout<<" tvec1 "<<std::endl<<" "<<tvec2i<<std::endl<<std::endl;
-        
-        std::cout<<"P3P: "<<std::endl;
-        std::cout<<" rvec1 "<<std::endl<<" "<<rvec1p<<std::endl<<std::endl;
-        std::cout<<" rvec2 "<<std::endl<<" "<<rvec2p<<std::endl<<std::endl;
-        std::cout<<" tvec1 "<<std::endl<<" "<<tvec1p<<std::endl<<std::endl;
-        std::cout<<" tvec1 "<<std::endl<<" "<<tvec2p<<std::endl<<std::endl;
-    }
+    return outputs;
 }
 
 long VROARImageTracker::getCurrentTimeMs() {

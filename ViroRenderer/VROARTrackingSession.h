@@ -13,6 +13,7 @@
 #include <map>
 #include "VROARImageTarget.h"
 #include "VROARImageAnchor.h"
+#include "VROARImageTracker.h"
 
 /*
  Listener interface for the VROARTrackingSession
@@ -31,6 +32,9 @@ public:
  */
 class VROARTrackingSession {
 public:
+    
+    VROARTrackingSession();
+    virtual ~VROARTrackingSession();
 
     /*
      Notifies the tracking session that a new frame has been found.
@@ -66,17 +70,28 @@ private:
 
     /*
      Maps each VROARImageTarget to the VROARAnchor that it will update if the image is found
-     TODO: just a thought, if we do this right, we don't need _targetAnchorMap b/c target has a
-     ptr to anchor
+     TODO: anchor has a shared_ptr to target, but target has a weak_ptr to anchor, if we reversed
+     that we may not need this map, because we have targets and we want the anchor they're attached
+     to, but we'll need to test ARKit targets/anchors to make sure nothing blows up in our faces
      */
     std::map<std::shared_ptr<VROARImageTarget>, std::shared_ptr<VROARAnchor>> _targetAnchorMap;
 
+#if ENABLE_OPENCV
+    /*
+     This is the component that contains all the logic for tracking. TODO: we should probably move
+     that logic into this class instead (but all the old testing code uses VROARImageTracker).
+     */
+    std::shared_ptr<VROARImageTracker> _tracker;
+#endif
+
     /*
      TODO: remove this when we actually get tracking working/integrated
-     The below fields are just used for mocking
+     The below fields/functions are just used for mocking
      */
     long _count = 0;
     std::shared_ptr<VROARImageAnchor> _imageAnchor;
+    void mockTracking();
+
 };
 
 

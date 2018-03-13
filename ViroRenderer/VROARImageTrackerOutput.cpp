@@ -19,8 +19,8 @@ VROARImageTrackerOutput::VROARImageTrackerOutput(bool found) :
 }
 
 VROARImageTrackerOutput::VROARImageTrackerOutput(bool found, std::vector<cv::Point2f> corners,
-                                             cv::Mat translation, cv::Mat rotation) :
-    found(found), corners(corners), translation(translation), rotation(rotation) {
+                                                 cv::Mat translation, cv::Mat rotation, std::shared_ptr<VROARImageTarget> target) :
+    found(found), corners(corners), translation(translation), rotation(rotation), target(target) {
     
 }
 

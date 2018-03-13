@@ -352,7 +352,9 @@ public class ViroActivity extends AppCompatActivity {
         final Bitmap targetImage = getBitmapFromAssets("ben.jpg");
         final Bitmap screenshot = getBitmapFromAssets("screenshot.png");
         if (targetImage != null && screenshot != null) {
-            final ImageTracker tracker = new ImageTracker(this, targetImage);
+            // width of a US bill is 6.14 inches ~= .156 meters
+            final ARImageTarget arImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .156f);
+            final ImageTracker tracker = new ImageTracker(arImageTarget);
             ImageTrackerOutput output = tracker.findTarget(screenshot);
             if (output.found()) {
                 for (float f : output.corners()) {

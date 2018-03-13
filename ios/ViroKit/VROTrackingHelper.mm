@@ -51,6 +51,12 @@
 @property (nonatomic, assign) float *intrinsics;
 @property (nonatomic, assign) BOOL shouldTrack;
 
+/*
+ Turning this on saves the image with the corners drawn to the camera roll and only runs
+ the algorithm once (was useful back then before we added the preview UIImageView).
+ */
+@property (nonatomic, assign) BOOL writeResultToCameraRoll;
+
 @end
 
 @implementation VROTrackingHelper
@@ -62,6 +68,8 @@
         _count = 0;
         _intrinsics = NULL;
         _shouldTrack = YES; // if this is initialized to NO, then tracking won't turn on
+
+        _writeResultToCameraRoll = NO; // should prob be NO for now.
     }
     return self;
 }
@@ -70,15 +78,12 @@
     UIImage *screenshot = [UIImage imageNamed:@"screenshot.png"];
     cv::Mat screnshotMat = cv::Mat();
     UIImageToMat(screenshot, screnshotMat);
+
+    std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker([self getBenTarget]);
     
-    
-    UIImage *targetImage = [UIImage imageNamed:@"ben.jpg"];
-    cv::Mat targetMat = cv::Mat();
-    UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
-    std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(targetMat);
-    
-    std::shared_ptr<VROARImageTrackerOutput> output = tracker->findTarget(screnshotMat);
-    if (output->found) {
+    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = tracker->findTarget(screnshotMat, NULL);
+    if (outputs.size() > 0) {
+        std::shared_ptr<VROARImageTrackerOutput> output = outputs[0];
         std::vector<cv::Point2f> corners = output->corners;
         for (int i = 0; i < corners.size(); i++) {
             cv::Point2f point = corners[i];
@@ -90,6 +95,30 @@
     } else {
         pinfo("TrackingHelper findInScreenshot not found");
     }
+}
+
+- (std::shared_ptr<VROARImageTarget>)getBenTarget {
+    UIImage *targetImage = [UIImage imageNamed:@"ben.jpg"];
+    cv::Mat targetMat = cv::Mat();
+    UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
+    
+    // width of a US bill is 6.14 inches ~= .156 meters
+    std::shared_ptr<VROARImageTarget> arImageTarget = std::make_shared<VROARImageTarget>(VROImageOrientation::Up, .156);
+    arImageTarget->setTargetMat(targetMat);
+
+    return arImageTarget;
+}
+
+- (std::shared_ptr<VROARImageTarget>)getQRCodeTarget {
+    UIImage *targetImage = [UIImage imageNamed:@"wikipedia_qr.jpg"];
+    cv::Mat targetMat = cv::Mat();
+    UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
+    
+    // the printed QR code is 0.06096 meters wide
+    std::shared_ptr<VROARImageTarget> arImageTarget = std::make_shared<VROARImageTarget>(VROImageOrientation::Up, .156);
+    arImageTarget->setTargetMat(targetMat);
+    
+    return arImageTarget;
 }
 
 - (void)toggleTracking:(BOOL)tracking {
@@ -111,44 +140,47 @@
 - (std::shared_ptr<VROARImageTrackerOutput>)runTracking:(cv::Mat)cameraInput {
 
     if (!_tracker) {
-        // fetch the target image to find
-        UIImage *targetImage = [UIImage imageNamed:@"ben.jpg"];
-        //UIImage *targetImage = [UIImage imageNamed:@"wikipedia_qr.jpg"];
-        
-        cv::Mat targetMat = cv::Mat();
-        UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
-        
         // initialize the tracker
-        _tracker = VROARImageTracker::createARImageTracker(targetMat);
+        _tracker = VROARImageTracker::createARImageTracker([self getBenTarget]);
+        //_tracker = VROARImageTracker::createARImageTracker([self getQRCodeTarget]);
     }
 
     // find the target in the given cameraInput (should already be in RGB format).
     std::shared_ptr<VROARImageTrackerOutput> output;
-    if (_intrinsics == NULL) {
-        output = _tracker->findTarget(cameraInput);
+    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = _tracker->findTarget(cameraInput, _intrinsics);
+    if (outputs.size() > 0) {
+        output = outputs[0]; // grab the first one because we only have 1 target here
     } else {
-        output = _tracker->findTarget(cameraInput, _intrinsics);
+        output = VROARImageTrackerOutput::createFalseOutput();
     }
     
     if (!output->found) {
         NSLog(@"VROTrackingHelper, couldn't find target in given image");
     } else {
+        // draw lines between the corners of the target in the input image
         cv::line(cameraInput, output->corners[0], output->corners[1], cv::Scalar(0, 255, 0), 5);
         cv::line(cameraInput, output->corners[1], output->corners[2], cv::Scalar(0, 255, 0), 5);
         cv::line(cameraInput, output->corners[2], output->corners[3], cv::Scalar(0, 255, 0), 5);
         cv::line(cameraInput, output->corners[3], output->corners[0], cv::Scalar(0, 255, 0), 5);
         
+        // return the input image w/ target outlined to display in the test imageView
         output->outputImage = cameraInput;
-        // write to photo album...
-        //UIImage *outputImage = MatToUIImage(cameraInput);
-        //UIImageWriteToSavedPhotosAlbum(outputImage, nil, nil, nil);
+        
+        // check if we should write to photo album...
+        if (_writeResultToCameraRoll) {
+            UIImage *outputImage = MatToUIImage(cameraInput);
+            UIImageWriteToSavedPhotosAlbum(outputImage, nil, nil, nil);
+        }
     }
     
     @synchronized (self) {
-        // since we're writing out to the camera roll, do it only once :p
-        //if (!output->found) {
+        // if we're not writing to the camera roll, then we're ready once we're done processing a frame
+        // otherwise, we'll only run until the first time we "found" the target, then leave _ready = NO
+        // so we don't keep running and creating more and more images in the camera roll. Normally this
+        // should always set _ready = YES to process the next frame.
+        if (!_writeResultToCameraRoll || !output->found) {
             _ready = YES;
-        //}
+        }
     }
 
     return output;

@@ -7,14 +7,18 @@
 
 #include <jni.h>
 #include <memory>
-#include <opencv2/imgproc.hpp>
 #include "PersistentRef.h"
 #include "ImageTrackerOutput_JNI.h"
 #include "VROARImageTracker.h"
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgcodecs/imgcodecs.hpp"
 #include <android/bitmap.h>
 
+#if ENABLE_OPENCV
+#include <opencv2/imgproc.hpp>
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgcodecs/imgcodecs.hpp"
+#include "ARImageTarget_JNI.h"
+
+#endif /* ENABLE_OPENCV */
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -63,11 +67,17 @@ cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
 
 JNI_METHOD(jlong, nativeCreateImageTracker)(JNIEnv *env,
                                             jclass clazz,
-                                            jobject bitmapImage) {
+                                            jlong imageTargetRef) {
 #if ENABLE_OPENCV
-    cv::Mat image = parseBitmapImage(env, bitmapImage);
+    std::shared_ptr<VROARImageTargetAndroid> arImageTarget = ARImageTarget::native(imageTargetRef);
+    std::shared_ptr<VROImage> image = arImageTarget->getImage();
 
-    std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(image);
+    size_t length;
+    cv::Mat temp(image->getHeight(), image->getWidth(), CV_8UC4, image->getData(&length));
+
+    arImageTarget->setTargetMat(temp);
+
+    std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(arImageTarget);
 
     return ImageTracker::jptr(tracker);
 #else
@@ -82,7 +92,13 @@ JNI_METHOD(jlong, nativeFindTarget)(JNIEnv *env,
 #if ENABLE_OPENCV
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 
-    std::shared_ptr<VROARImageTrackerOutput> output = ImageTracker::native(nativeRef)->findTarget(imageMat);
+    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = ImageTracker::native(nativeRef)->findTarget(imageMat, NULL);
+    std::shared_ptr<VROARImageTrackerOutput> output;
+    if (outputs.size() > 0) {
+        output = outputs[0]; // grab the first one because there should only be one (only 1 target)
+    } else {
+        output = VROARImageTrackerOutput::createFalseOutput();
+    }
 
     return ImageTrackerOutput::jptr(output);
 #else

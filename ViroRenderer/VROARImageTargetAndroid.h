@@ -9,7 +9,6 @@
 #ifndef ANDROID_VROARIMAGETARGETANDROID_H
 #define ANDROID_VROARIMAGETARGETANDROID_H
 
-
 #include "VROARImageTarget.h"
 #include "VROImage.h"
 
@@ -31,13 +30,16 @@ public:
         return _id;
     }
 
+    std::shared_ptr<VROImage> getImage() {
+        return _image;
+    }
+
 private:
     std::shared_ptr<VROImage> _image;
-    VROImageOrientation _orientation;
-    float _physicalWidth;
     std::string _id;
 
     VROImageTrackingImpl _currentImpl;
+
 };
 
 

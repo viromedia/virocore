@@ -10,9 +10,8 @@
 #include <ARKit/ARKit.h>
 
 VROARImageTargetiOS::VROARImageTargetiOS(UIImage *sourceImage, VROImageOrientation orientation, float physicalWidth) :
-    _sourceImage(sourceImage),
-    _orientation(orientation),
-    _physicalWidth(physicalWidth) {
+    VROARImageTarget(orientation, physicalWidth),
+    _sourceImage(sourceImage) {
         
 }
 
@@ -26,7 +25,7 @@ void VROARImageTargetiOS::initWithTrackingImpl(VROImageTrackingImpl impl) {
     if (@available(iOS 11.3, *)) {
         if (_currentImpl == VROImageTrackingImpl::ARKit) {
             CGImagePropertyOrientation cgOrientation;
-            switch (_orientation) {
+            switch (getOrientation()) {
                 case VROImageOrientation::Down:
                     cgOrientation = kCGImagePropertyOrientationDown;
                     break;
@@ -43,7 +42,7 @@ void VROARImageTargetiOS::initWithTrackingImpl(VROImageTrackingImpl impl) {
             }
             _referenceImage = [[ARReferenceImage alloc] initWithCGImage:_sourceImage.CGImage
                                                             orientation:cgOrientation
-                                                          physicalWidth:_physicalWidth];
+                                                          physicalWidth:getPhysicalWidth()];
         }
     }
 #endif

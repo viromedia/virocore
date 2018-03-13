@@ -28,6 +28,8 @@
 		8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
 		8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517301EE0A50A00B6E786 /* screenshot.png */; };
 		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
+		8A35CE902058386200ADD393 /* VROARTrackingSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */; };
+		8A35CE912058386200ADD393 /* VROARTrackingSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */; };
 		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
 		8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
@@ -869,6 +871,8 @@
 		8A3517351EE0B55400B6E786 /* VROARImageTrackerOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARImageTrackerOutput.h; sourceTree = "<group>"; };
 		8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTrackingHelper.h; sourceTree = "<group>"; };
 		8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROTrackingHelper.mm; sourceTree = "<group>"; };
+		8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARTrackingSession.h; sourceTree = "<group>"; };
+		8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARTrackingSession.cpp; sourceTree = "<group>"; };
 		8A39B1A820181A36007E41E2 /* wikipedia_qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wikipedia_qr.png; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A5C05581EF6416900F94CB9 /* VROARNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNode.h; sourceTree = "<group>"; };
@@ -1717,6 +1721,8 @@
 				8A35172D1EE09E3F00B6E786 /* VROARImageTracker.cpp */,
 				8A3517351EE0B55400B6E786 /* VROARImageTrackerOutput.h */,
 				8A3517341EE0B55400B6E786 /* VROARImageTrackerOutput.cpp */,
+				8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */,
+				8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */,
 			);
 			name = ImageTracking;
 			sourceTree = "<group>";
@@ -3082,6 +3088,7 @@
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8F17D5401FCE165400141042 /* VROViewRecorder.h in Headers */,
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
+				8A35CE902058386200ADD393 /* VROARTrackingSession.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
 				8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
@@ -3857,6 +3864,7 @@
 				A51347401F3544A600FF3726 /* VROParticleUBO.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FEACEEC2017AC310082D18B /* VROEquirectangularToCubeRenderPass.cpp in Sources */,
+				8A35CE912058386200ADD393 /* VROARTrackingSession.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
 				8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */,
 				8AABB6FD1F1ECD4E00D48D5C /* VROWeakProxy.mm in Sources */,
