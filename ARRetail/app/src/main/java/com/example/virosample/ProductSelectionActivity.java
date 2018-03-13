@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,7 @@ import static com.example.virosample.ProductARActivity.INTENT_PRODUCT_KEY;
 
 /**
  * ProductSelectionActivity displays a list of categories and products. Customers can tap on a
- * product to display it in AR. Upon selection of a product we launch into {@link ProductARActivityComplete}.
+ * product to display it in AR. Upon selection of a product we launch into {@link ProductARActivity}.
  */
 public class ProductSelectionActivity extends Activity {
     private ProductAdapter mProductAdapter;
@@ -100,7 +99,7 @@ public class ProductSelectionActivity extends Activity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Product selectedProduct = (Product) mProductAdapter.getItem(position);
-                Intent intent = new Intent(ProductSelectionActivity.this, ProductARActivityComplete.class);
+                Intent intent = new Intent(ProductSelectionActivity.this, ProductARActivity.class);
                 intent.putExtra(INTENT_PRODUCT_KEY, selectedProduct.mName);
                 startActivity(intent);
             }
