@@ -152,6 +152,7 @@ public class ProductARActivityComplete extends Activity {
     @Override
     protected void onDestroy(){
         ((ViroViewARCore)mViroView).setCameraARHitTestListener(null);
+        mViroView.onActivityDestroyed(this);
         super.onDestroy();
     }
 

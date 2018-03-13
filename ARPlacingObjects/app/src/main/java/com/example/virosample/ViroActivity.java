@@ -302,4 +302,10 @@ public class ViroActivity extends Activity {
         super.onStop();
         mViroView.onActivityStopped(this);
     }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mViroView.onActivityDestroyed(this);
+    }
 }
