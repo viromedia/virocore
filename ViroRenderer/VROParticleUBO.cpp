@@ -47,6 +47,7 @@ VROParticleUBO::~VROParticleUBO() {
 std::vector<std::shared_ptr<VROShaderModifier>> VROParticleUBO::createInstanceShaderModifier() {
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     std::vector<std::string> vertexModifierCode =  {
+            "#include particles_vsh",
             "_transforms.model_matrix = particles_vertex_transform[v_instance_id];",
     };
 
@@ -54,6 +55,7 @@ std::vector<std::shared_ptr<VROShaderModifier>> VROParticleUBO::createInstanceSh
     // This is because bloom effects are applied before this code is run, resulting in
     // undesired effects. To get around that, we apply a surface modifier instead.
     std::vector<std::string> surfaceModifierCode = {
+            "#include particles_fsh",
             "highp vec4 particleColorAll = particles_fragment_color[v_instance_id];",
             "highp vec3 particleJustColor = vec3(particleColorAll.x, particleColorAll.y, particleColorAll.z);",
             "highp float particleAlpha = particleColorAll.w;",
@@ -62,7 +64,7 @@ std::vector<std::shared_ptr<VROShaderModifier>> VROParticleUBO::createInstanceSh
     };
 
     modifiers.push_back(
-            std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,  vertexModifierCode));
+            std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, vertexModifierCode));
     modifiers.push_back(
             std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, surfaceModifierCode));
     return modifiers;
