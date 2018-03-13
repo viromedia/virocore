@@ -18,22 +18,28 @@ VROTypefaceWasm::VROTypefaceWasm(std::string name, int size,
         VROTypeface(name, size),
         _driver(driver) {
 
+    if (FT_Init_FreeType(&_ft)) {
+        pabort("Could not initialize freetype library");
+    }
 }
 
 VROTypefaceWasm::~VROTypefaceWasm() {
-
+    FT_Done_Face(_face);
+    FT_Done_FreeType(_ft);
 }
 
-FT_Face VROTypefaceWasm::loadFace(std::string name, int size, FT_Library ft) {
-    FT_Face face;
-    if (FT_New_Face(_ft, getFontPath(name).c_str(), 0, &face)) {
-        if (FT_New_Face(_ft, getFontPath(kSystemFont).c_str(), 0, &face)) {
+void VROTypefaceWasm::loadFace(std::string name, int size) {
+    if (FT_New_Face(_ft, getFontPath(name).c_str(), 0, &_face)) {
+        if (FT_New_Face(_ft, getFontPath(kSystemFont).c_str(), 0, &_face)) {
             pabort("Failed to load system font %s", kSystemFont.c_str());
         }
     }
 
-    FT_Set_Pixel_Sizes(face, 0, size);
-    return face;
+    FT_Set_Pixel_Sizes(_face, 0, size);
+}
+
+float VROTypefaceWasm::getLineHeight() const {
+    return _face->size->metrics.height >> 6;
 }
 
 std::shared_ptr<VROGlyph> VROTypefaceWasm::loadGlyph(FT_ULong charCode, bool forRendering) {

@@ -93,11 +93,12 @@ add_library( viro_renderer
              ../ViroRenderer/VROIrradianceRenderPass.cpp
              ../ViroRenderer/VROPrefilterRenderPass.cpp
              ../ViroRenderer/VROBRDFRenderPass.cpp
-             ../ViroRenderer/VROPointCloudEmitter.cpp
+             ../ViroRenderer/VROFixedParticleEmitter.cpp
 
              # UI
              ../ViroRenderer/VROReticle.cpp
              ../ViroRenderer/VROText.cpp
+             ../ViroRenderer/VROTypeface.cpp
              ../ViroRenderer/VROKnuthPlassFormatter.cpp
              ../ViroRenderer/VRODebugHUD.cpp
              ../ViroRenderer/VROGlyphOpenGL.cpp

@@ -12,6 +12,8 @@
 #include "VROTypeface.h"
 #include <memory>
 #include <string>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 class VRODriver;
 
@@ -22,15 +24,19 @@ public:
     VROTypefaceAndroid(std::string name, int size, std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceAndroid();
 
+    float getLineHeight() const;
     std::shared_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
 
 protected:
 
-    FT_Face loadFace(std::string name, int size, FT_Library ft);
+    void loadFace(std::string name, int size);
 
 private:
 
     std::weak_ptr<VRODriver> _driver;
+    FT_Library _ft;
+    FT_Face _face;
+
     std::string getFontPath(std::string fontName);
 
 };

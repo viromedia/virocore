@@ -13,6 +13,8 @@
 #import <QuartzCore/QuartzCore.h>
 #include "VROTypeface.h"
 #include <string>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 class VRODriver;
 
@@ -23,16 +25,18 @@ public:
     VROTypefaceiOS(std::string name, int size, std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceiOS();
     
-    float getLineHeight();
-    std::shared_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
-    
+    float getLineHeight() const;
+    std::shared_ptr<VROGlyph> loadGlyph(unsigned long charCode, bool forRendering);
+
 protected:
     
-    FT_Face loadFace(std::string name, int size, FT_Library ft);
+    void loadFace(std::string name, int size);
     
 private:
 
     std::weak_ptr<VRODriver> _driver;
+    FT_Library _ft;
+    FT_Face _face;
     
     // Font data must not be deallocated until the typeface is destroyed
     NSData *_fontData;

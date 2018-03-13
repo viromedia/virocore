@@ -333,6 +333,7 @@
 		8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278041C670B0300FF892A /* VROTriangle.cpp */; };
 		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F951F9320583790000DC58F /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F951F9220583790000DC58F /* libfreetype.a */; };
+		8F951F9D20587D6E000DC58F /* VROTypeface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F951F9C20587D6E000DC58F /* VROTypeface.cpp */; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -1228,6 +1229,7 @@
 		8F9278041C670B0300FF892A /* VROTriangle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTriangle.cpp; sourceTree = "<group>"; };
 		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
 		8F951F9220583790000DC58F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = Libraries/freetype/armv7_arm64/libfreetype.a; sourceTree = "<group>"; };
+		8F951F9C20587D6E000DC58F /* VROTypeface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTypeface.cpp; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -2156,6 +2158,7 @@
 			children = (
 				8F56AE9F1DE7619000DD65B6 /* VROGlyph.h */,
 				8F56AEAC1DE77B2700DD65B6 /* VROTypeface.h */,
+				8F951F9C20587D6E000DC58F /* VROTypeface.cpp */,
 				8F56AEA81DE76E1D00DD65B6 /* VROText.h */,
 				8F56AEA71DE76E1D00DD65B6 /* VROText.cpp */,
 				8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */,
@@ -3785,6 +3788,7 @@
 				8FD4DF0B1C18ED3C003DC425 /* VROGeometry.cpp in Sources */,
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
 				8FFA8A0720485A9500C4D99B /* VROViewScene.mm in Sources */,
+				8F951F9D20587D6E000DC58F /* VROTypeface.cpp in Sources */,
 				8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,

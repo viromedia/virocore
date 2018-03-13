@@ -31,15 +31,17 @@ VROTypefaceiOS::VROTypefaceiOS(std::string name, int size,
                                std::shared_ptr<VRODriver> driver) :
     VROTypeface(name, size),
     _driver(driver) {
-    
-    
+    if (FT_Init_FreeType(&_ft)) {
+        pabort("Could not initialize freetype library");
+    }
 }
 
 VROTypefaceiOS::~VROTypefaceiOS() {
-
+    FT_Done_Face(_face);
+    FT_Done_FreeType(_ft);
 }
 
-FT_Face VROTypefaceiOS::loadFace(std::string name, int size, FT_Library ft) {
+void VROTypefaceiOS::loadFace(std::string name, int size) {
     UIFont *font = [UIFont fontWithName:[NSString stringWithUTF8String:name.c_str()] size:size];
     if (!font) {
         pinfo("Could not find font with name %s, reverting to system font", name.c_str());
@@ -50,13 +52,11 @@ FT_Face VROTypefaceiOS::loadFace(std::string name, int size, FT_Library ft) {
     CGFontRef fontRef = CGFontCreateWithFontName(fontName);
     _fontData = getFontData(fontRef);
     
-    FT_Face face;
-    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &face)) {
+    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &_face)) {
         pabort("Failed to load font");
     }
     
-    FT_Set_Pixel_Sizes(face, 0, size);
-    return face;
+    FT_Set_Pixel_Sizes(_face, 0, size);
 }
 
 std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forRendering) {
@@ -64,6 +64,10 @@ std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forR
     glyph->load(_face, charCode, forRendering, _driver.lock());
     
     return glyph;
+}
+
+float VROTypefaceiOS::getLineHeight() const {
+    return _face->size->metrics.height >> 6;
 }
 
 static uint32_t CalcTableCheckSum(const uint32_t *table, uint32_t numberOfBytesInTable) {

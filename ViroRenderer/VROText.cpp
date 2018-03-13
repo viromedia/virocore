@@ -17,6 +17,8 @@
 #include <limits>
 #include "VROStringUtil.h"
 #include "VROKnuthPlassFormatter.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 static const int kVerticesPerGlyph = 6;
 static const float kTextPointToWorldScale = 0.01;
