@@ -1111,7 +1111,6 @@
 		8F548E481C23656000556688 /* VROAnimationVector3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationVector3f.h; sourceTree = "<group>"; };
 		8F548E4C1C23665100556688 /* VROAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatable.h; sourceTree = "<group>"; };
 		8F548E511C2378D500556688 /* VROAnimatable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAnimatable.cpp; sourceTree = "<group>"; };
-		8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFreetype2.a; path = Libraries/freetype/libFreetype2.a; sourceTree = "<group>"; };
 		8F56AE9F1DE7619000DD65B6 /* VROGlyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGlyph.h; sourceTree = "<group>"; };
 		8F56AEA21DE764A700DD65B6 /* VROGlyphOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGlyphOpenGL.cpp; sourceTree = "<group>"; };
 		8F56AEA31DE764A700DD65B6 /* VROGlyphOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGlyphOpenGL.h; sourceTree = "<group>"; };
@@ -1149,7 +1148,6 @@
 		8F5EEEA320329C9B0059C9E7 /* cupcake.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cupcake.mtl; path = ViroSample/cupcake.mtl; sourceTree = "<group>"; };
 		8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cupcake_vanilla_1001_AO.png; path = ViroSample/cupcake_vanilla_1001_AO.png; sourceTree = "<group>"; };
 		8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_Diffuse.jpg; path = ViroSample/Heart_Diffuse.jpg; sourceTree = "<group>"; };
-		8F618E301EB935A40020B33B /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Libraries/protobuf/libprotobuf.a; sourceTree = "<group>"; };
 		8F6248311BDAB44B000755E5 /* VRODevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODevice.h; sourceTree = "<group>"; };
 		8F6248341BDAB970000755E5 /* VRODistortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortion.h; sourceTree = "<group>"; };
 		8F6248371BDABB43000755E5 /* VROEye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEye.h; sourceTree = "<group>"; };
@@ -1516,7 +1514,6 @@
 		8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_spec.jpeg"; path = "ViroSample/Lamborginhi Aventador_spec.jpeg"; sourceTree = "<group>"; };
 		8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_diffuse.jpeg"; path = "ViroSample/Lamborginhi Aventador_diffuse.jpeg"; sourceTree = "<group>"; };
 		8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = lamborghini.vrx; path = ViroSample/lamborghini.vrx; sourceTree = "<group>"; };
-		8FFA8A1F20578E4500C4D99B /* libfreetyped.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetyped.a; path = Libraries/freetype/x86_64/libfreetyped.a; sourceTree = "<group>"; };
 		8FFA8A222057903700C4D99B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
@@ -2761,19 +2758,16 @@
 			children = (
 				8F951F9220583790000DC58F /* libfreetype.a */,
 				8FFA8A222057903700C4D99B /* libbz2.tbd */,
-				8FFA8A1F20578E4500C4D99B /* libfreetyped.a */,
 				8AF39AB51F2295F700229AC0 /* Photos.framework */,
 				8A99E6C41EF1B7B300712D79 /* ARKit.framework */,
 				8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */,
 				8A07C1821ED8D5EA00757C29 /* opencv2.framework */,
-				8F618E301EB935A40020B33B /* libprotobuf.a */,
 				8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */,
 				A5EC65821EB3ECE200FE220E /* libBulletCollision.a */,
 				A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */,
 				A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */,
 				A5EC65851EB3ECE200FE220E /* libLinearMath.a */,
 				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
-				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
 				48567375A658D093284ACEDD /* libPods-ViroARKit.a */,
 				574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */,
@@ -4229,11 +4223,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
-					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
@@ -4283,14 +4273,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype",
-					"$(PROJECT_DIR)/Libraries/protobuf",
-					"$(PROJECT_DIR)/Libraries/bullet",
-					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
-					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
