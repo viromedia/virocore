@@ -164,22 +164,20 @@ public class ProductARActivity extends Activity {
 
     private void requestPermissions(){
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 0);
     }
 
-    private static boolean hasAudioAndRecordingPermissions(Context context) {
-        boolean hasRecordPermissions = ContextCompat.checkSelfPermission(context,
-                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+    private static boolean hasRecordingStoragePermissions(Context context) {
         boolean hasExternalStoragePerm = ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        return hasRecordPermissions && hasExternalStoragePerm;
+        return hasExternalStoragePerm;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        if (!hasAudioAndRecordingPermissions(ProductARActivity.this)) {
+        if (!hasRecordingStoragePermissions(ProductARActivity.this)) {
             Toast toast = Toast.makeText(ProductARActivity.this, "User denied permissions", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -235,7 +233,7 @@ public class ProductARActivity extends Activity {
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!hasAudioAndRecordingPermissions(getBaseContext())){
+                if (!hasRecordingStoragePermissions(getBaseContext())){
                     requestPermissions();
                     return;
                 }
