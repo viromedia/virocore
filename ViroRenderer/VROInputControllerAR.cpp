@@ -203,7 +203,11 @@ VROVector3f VROInputControllerAR::getNextDragPosition(std::vector<VROARHitTestRe
             case VROARHitTestResultType::FeaturePoint:
                 featurePoints.push_back(result);
                 break;
-            }
+            default:
+                // EstimatedPlane is not trusted enough to use as a drag position, because
+                // there's too much volatility in their creation
+                break;
+        }
     }
     
     // Handle feature points. The most obnoxious thing we need to handle is the fact that ARKit likes to return

@@ -103,7 +103,7 @@ std::shared_ptr<VROGeometryElement> VROPolygon::buildElement(size_t pathLength) 
      */
     for (int i = 1; i <= pathLength/2; i++) {
         pathIndex++;
-        indices[pathIndex] = pathLength - i;
+        indices[pathIndex] = (int) (pathLength - i);
 
         if (pathLength - i == i) {
             continue;
