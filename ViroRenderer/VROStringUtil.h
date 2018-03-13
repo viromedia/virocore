@@ -84,6 +84,11 @@ public:
      parts, then aggregating the URL back together.
      */
     static std::string encodeURL(std::string url);
+    
+    /*
+     Print the given code, with line numbers.
+     */
+    static void printCode(std::string &code);
 
 private:
     

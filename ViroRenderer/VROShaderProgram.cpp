@@ -24,6 +24,8 @@
 #define kDebugShaders 0
 
 static std::atomic_int sMaterialId;
+static const int shaderMaxLogLength = 4096;
+char shaderLog[shaderMaxLogLength];
 
 std::string loadTextAsset(std::string resource) {
     return VROPlatformLoadResourceAsString(resource, "glsl");
@@ -199,14 +201,9 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
 
 #if kDebugShaders
     GLint logLength;
-    glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength); // <-- This is broken in qcomm's drivers
-
-    logLength = 4096; // make this "big enough"
-    char elog[logLength];
-    glGetShaderInfoLog(*shader, logLength, &logLength, elog);
-
+    glGetShaderInfoLog(*shader, shaderMaxLogLength, &logLength, shaderLog);
     if (logLength > 1) { // when there are no logs we have just a '\n', don't print that out
-        perr("Shader compile log:\n%s", elog);
+        perr("Shader compile log:\n%s", shaderLog);
     }
 #endif
 
@@ -225,13 +222,9 @@ bool VROShaderProgram::linkProgram(GLuint prog) {
 
 #if kDebugShaders
     GLint logLength;
-    // glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength); // <-- This is broken in qcomm's drivers
-    logLength = 4096; // make this "big enough"
-    if (logLength > 0) {
-        char *elog = (char *) malloc(logLength);
-        glGetProgramInfoLog(prog, logLength, &logLength, elog);
-        perr("Program link log:\n%s", elog);
-        free(elog);
+    glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog);
+    if (logLength > 1) {
+        perr("Program link log:\n%s", shaderLog);
     }
 #endif
 
@@ -245,18 +238,13 @@ bool VROShaderProgram::linkProgram(GLuint prog) {
 
 bool VROShaderProgram::validateProgram(GLuint prog) {
     GLint status;
-
     glValidateProgram(prog);
 
 #if kDebugShaders
     GLint logLength;
-    // glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength); // <-- This is broken in qcomm's drivers
-    logLength = 4096; // make this "big enough"
-    if (logLength > 0) {
-        char *elog = (char *) malloc(logLength);
-        glGetProgramInfoLog(prog, logLength, &logLength, elog);
-        perr("Program validate log:\n%s", elog);
-        free(elog);
+    glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog);
+    if (logLength > 1) {
+        perr("Program validate log:\n%s", shaderLog);
     }
 #endif
 
@@ -264,7 +252,6 @@ bool VROShaderProgram::validateProgram(GLuint prog) {
     if (status == 0) {
         return false;
     }
-
     return true;
 }
 
@@ -299,14 +286,18 @@ bool VROShaderProgram::compileAndLink() {
     passert (!_fragmentSource.empty());
 
     if (!compileShader(&vertShader, GL_VERTEX_SHADER, _vertexSource.c_str())) {
-        pabort("Failed to compile vertex shader \"%s\" with code:\n%s",
-               _shaderName.c_str(), _vertexSource.c_str());
+        pwarn("Failed to compile vertex shader \"%s\" with code:\n",
+               _shaderName.c_str());
+        VROStringUtil::printCode(_vertexSource);
+        pabort("Failed to compile vertex shader %s", _shaderName.c_str());
         return false;
     }
 
     if (!compileShader(&fragShader, GL_FRAGMENT_SHADER, _fragmentSource.c_str())) {
-        pabort("Failed to compile fragment shader \"%s\" with code:\n%s",
-               _shaderName.c_str(), _fragmentSource.c_str());
+        pwarn("Failed to compile fragment shader \"%s\" with code:\n",
+               _shaderName.c_str());
+        VROStringUtil::printCode(_fragmentSource);
+        pabort("Failed to compile fragment shader %s", _shaderName.c_str());
         return false;
     }
 

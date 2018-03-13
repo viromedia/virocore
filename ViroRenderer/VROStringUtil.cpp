@@ -252,3 +252,13 @@ std::string VROStringUtil::encodeURL(std::string url) {
     return s.str();
 }
 
+void VROStringUtil::printCode(std::string &code) {
+    std::vector<std::string> lines = split(code, "\n", true);
+    
+    int lineNumber = 0;
+    for (std::string &line : lines) {
+        ++lineNumber;
+        pinfo("%d: %s", lineNumber, line.c_str());
+    }
+}
+
