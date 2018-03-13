@@ -54,11 +54,6 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
     
     _activeBinding = getShaderBindingForLights(lights, context, driver);
     driver->bindShader(_activeBinding->getProgram());
-
-    if (lights.empty()) {
-        _lightingUBO.reset();
-        return;
-    }
     
     VRODriverOpenGL &glDriver = (VRODriverOpenGL &)(*driver.get());
     for (const std::shared_ptr<VROLight> &light : lights) {
