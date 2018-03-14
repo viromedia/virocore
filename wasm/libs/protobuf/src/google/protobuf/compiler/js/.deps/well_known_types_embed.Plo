@@ -1,0 +1,11 @@
+google/protobuf/compiler/js/well_known_types_embed.lo: \
+  google/protobuf/compiler/js/well_known_types_embed.cc \
+  google/protobuf/compiler/js/well_known_types_embed.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stddef.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/__stddef_max_align_t.h
+
+google/protobuf/compiler/js/well_known_types_embed.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stddef.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/__stddef_max_align_t.h:

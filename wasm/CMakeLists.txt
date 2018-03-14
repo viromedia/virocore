@@ -15,8 +15,9 @@ include_directories(../ViroRenderer
                     src/cpp
 	            ${OPENGL_INCLUDE_DIR}
                     libs/freetype/include
-                    #libs/protobuf/include
+                    libs/protobuf/include
                     libs/bullet/include
+                    libs/zlib/include
 		    )
 
 add_library( viro_renderer
@@ -46,6 +47,9 @@ add_library( viro_renderer
              ../ViroRenderer/VROThreadRestricted.cpp
              ../ViroRenderer/VRORenderUtil.cpp
              ../ViroRenderer/VROTaskQueue.cpp
+             ../ViroRenderer/VROFBXLoader.cpp
+             ../ViroRenderer/VROCompress.cpp
+             ../ViroRenderer/Nodes.pb.cc
 
 	     # Renderer
              ../ViroRenderer/VROScene.cpp
@@ -166,23 +170,30 @@ add_library( viro_renderer
              ../ViroRenderer/VROMath.cpp
              ../ViroRenderer/VROProjector.cpp
              ../ViroRenderer/VRODualQuaternion.cpp
-	     ../ViroRenderer/VROVector3f.cpp
-             ../ViroRenderer/VROVector4f.cpp
+             ../ViroRenderer/VROVector3f.cpp
+             ../ViroRenderer/VROVector4f.cpp 
+
+             # Renderer Test
+             ../ViroRenderer/VRORendererTestHarness.cpp
+             ../ViroRenderer/VROTestUtil.cpp
+
 )    
 
 add_subdirectory(libs/bullet/src/LinearMath)
 add_subdirectory(libs/bullet/src/BulletSoftBody)
 add_subdirectory(libs/bullet/src/BulletDynamics)
 add_subdirectory(libs/bullet/src/BulletCollision)
+add_subdirectory(libs/protobuf/src)
 
 add_executable( viro_test
 	        hello.cpp)
 
 MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
 
-set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_FREETYPE=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_WEBGL2=1 -s FULL_ES2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/resources@/ --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
+set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_ZLIB=1 -s USE_FREETYPE=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_WEBGL2=1 -s FULL_ES2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/resources@/ --shell-file ${CMAKE_SOURCE_DIR}/src/viro_shell.html --emrun")
 target_link_libraries ( viro_test 
                         viro_renderer 
+                        protobuf-lite
                         bullet_linearmath
                         bullet_softbody
                         bullet_dynamics

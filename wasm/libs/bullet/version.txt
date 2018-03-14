@@ -1,0 +1,3 @@
+Bullet version 2.82
+
+(source compiled from ammo.js)
