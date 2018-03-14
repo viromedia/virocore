@@ -832,7 +832,11 @@ public class ViroActivity extends AppCompatActivity {
         arScene.setListener(new ARScene.Listener() {
             @Override
             public void onTrackingInitialized() {
+            }
 
+            @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+                Log.i("Viro","Tracking state " + state.toString() + " Reason : " + reason.toString());
             }
 
             @Override

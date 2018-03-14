@@ -18,6 +18,7 @@
 #include "VROARDeclarativeSession.h"
 #include "VROMaterial.h"
 #include "VROImageUtil.h"
+#include "VROARCamera.h"
 
 VROARScene::~VROARScene() {
     // no-op, we define this here vs in header because for some reason if you want
@@ -195,26 +196,21 @@ void VROARScene::initPointCloudEmitter() {
 
 void VROARScene::setDelegate(std::shared_ptr<VROARSceneDelegate> delegate) {
     _delegate = delegate;
-    if (delegate && _hasTrackingInitialized) {
-        delegate->onTrackingInitialized();
-    }
+    setTrackingState(_currentTrackingState, _currentTrackingStateReason, true);
 }
 
-void VROARScene::trackingHasInitialized() {
-    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
-    
-    // if delegate hasn't yet been set, then just store that tracking was initialized.
-    if (!delegate) {
-        _hasTrackingInitialized = true;
+void VROARScene::setTrackingState(VROARTrackingState state, VROARTrackingStateReason reason,
+                                  bool force) {
+    if (_currentTrackingState == state && _currentTrackingStateReason == reason && !force) {
         return;
     }
-    
-    // if delegate was initialized, then only notify if tracking hasn't yet been initialized
-    if(!_hasTrackingInitialized) {
-        _hasTrackingInitialized = true;
-        if (delegate) {
-            delegate->onTrackingInitialized();
-        }
+    _currentTrackingState = state;
+    _currentTrackingStateReason = reason;
+
+    // Notify delegates.
+    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onTrackingUpdated(state, reason);
     }
 }
 

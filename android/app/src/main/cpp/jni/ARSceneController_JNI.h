@@ -50,7 +50,7 @@ public:
         return persistentDelegate->get();
     }
 
-    void onTrackingInitialized();
+    void onTrackingUpdated(VROARTrackingState state, VROARTrackingStateReason reason);
     void onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature);
     void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor);
     void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor);
@@ -81,7 +81,7 @@ public:
         return persistentDelegate->get();
     }
 
-    void onTrackingInitialized();
+    void onTrackingUpdated(VROARTrackingState state, VROARTrackingStateReason reason);
     void onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature);
     void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node);
     void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node);

@@ -30,7 +30,6 @@ import java.util.EnumSet;
  * href="https://virocore.viromedia.com/docs/augmented-reality-ar">Augmented Reality Guide</a>.
  */
 public class ARScene extends Scene {
-
     /**
      * Callback interface for ARScene events. These include the detection of ambient light and the
      * tracking of real-world features.
@@ -39,7 +38,17 @@ public class ARScene extends Scene {
         /**
          * Invoked when tracking is initialized and functional.
          */
+        // TODO VIRO-3172: Remove deprecated onTrackingInitialized callback in future releases.
+        @Deprecated
         void onTrackingInitialized();
+
+        /**
+         * Invoked when the tracking state of the ARCamera within this ARSession changes.
+         * @param state The {@link TrackingState} of the current ARCamera in this scene.
+         * @param reason The {@link TrackingStateReason} should the tracking state of this ARCamera
+         *               fail with limited or unavailable states.
+         */
+        void onTrackingUpdated(TrackingState state, TrackingStateReason reason);
 
         /**
          * Invoked when the AR system's estimation of the current ambient light levels are
@@ -85,9 +94,68 @@ public class ARScene extends Scene {
         void onAnchorRemoved(ARAnchor anchor, ARNode arNode);
     }
 
+    /**
+     * Possible values for position tracking quality.
+     */
+    public enum TrackingState {
+        /**
+         * Camera position is not available.
+         */
+        UNAVAILABLE(1),
+
+        /**
+         * Tracking is available but quality of results can be may be wildly inaccurate
+         * and should generally not be used
+         */
+        LIMITED(2),
+
+        /**
+         * Camera position tracking is providing optimal results.
+         */
+        NORMAL(3);
+
+        private int mTypeId;
+        TrackingState(int flag){
+            mTypeId = flag;
+        }
+        public int getId(){
+            return mTypeId;
+        }
+    };
+
+    /**
+     * A possible diagnosis for limited position tracking quality as of when the camera
+     * captured a frame.
+     */
+    public enum TrackingStateReason {
+        /**
+         * The current tracking state is not limited.
+         */
+        NONE(1),
+
+        /**
+         * The device is moving too fast for accurate image-based position tracking.
+         */
+        EXCESSIVE_MOTION(2),
+
+        /**
+         * The scene visible to the camera does not contain enough distinguishable features for
+         * image-based position tracking.
+         */
+        INSUFFICIENT_FEATURES(3);
+
+        private int mTypeId;
+        TrackingStateReason(int flag){
+            mTypeId = flag;
+        }
+        public int getId(){
+            return mTypeId;
+        }
+    };
+
     private Listener mListener = null;
     private long mNativeARDelegateRef;
-
+    private boolean mHasTrackingInitialized = false;
 
     /**
      * Construct a new ARScene.
@@ -272,11 +340,55 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
-    void onTrackingInitialized() {
-        if (mListener != null) {
+    void onTrackingUpdated(int stateInt, int reasonInt) {
+        if (mListener == null) {
+            return;
+        }
+        TrackingState state = getTrackingState(stateInt);
+        if (state == TrackingState.NORMAL && !mHasTrackingInitialized){
+            mHasTrackingInitialized = true;
             mListener.onTrackingInitialized();
         }
+
+        mListener.onTrackingUpdated(getTrackingState(stateInt), getTrackingStateReason(reasonInt));
     }
+
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
+    private static TrackingState getTrackingState(int stateInt){
+        switch(stateInt){
+            case 1:
+                return TrackingState.UNAVAILABLE;
+            case 2:
+                return TrackingState.LIMITED;
+            case 3:
+                return TrackingState.NORMAL;
+        }
+
+        return TrackingState.UNAVAILABLE;
+    }
+    //#ENDIF
+
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
+    private static TrackingStateReason getTrackingStateReason(int stateInt){
+        switch(stateInt){
+            case 1:
+                return TrackingStateReason.NONE;
+            case 2:
+                return TrackingStateReason.EXCESSIVE_MOTION;
+            case 3:
+                return TrackingStateReason.INSUFFICIENT_FEATURES;
+        }
+
+        return TrackingStateReason.NONE;
+    }
+    //#ENDIF
+
     /**
      * @hide
      */

@@ -223,10 +223,11 @@ JNI_METHOD(void, nativeRemoveARNode) (JNIEnv *env,
 
 }  // extern "C"
 
-void ARDeclarativeSceneDelegate::onTrackingInitialized() {
+void ARDeclarativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
+                                                   VROARTrackingStateReason reason) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak] {
+    VROPlatformDispatchAsyncApplication([jObjWeak, state, reason] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
@@ -234,7 +235,7 @@ void ARDeclarativeSceneDelegate::onTrackingInitialized() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onTrackingInitialized", "()V");
+        VROPlatformCallJavaFunction(localObj, "onTrackingUpdated", "(II)V", state, reason);
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(jObjWeak);
     });
@@ -327,10 +328,11 @@ void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> a
 // | Imperative Delegate
 // +---------------------------------------------------------------------------+
 
-void ARImperativeSceneDelegate::onTrackingInitialized() {
+void ARImperativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
+                                                      VROARTrackingStateReason reason) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak] {
+    VROPlatformDispatchAsyncApplication([jObjWeak, state, reason] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
@@ -338,7 +340,7 @@ void ARImperativeSceneDelegate::onTrackingInitialized() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onTrackingInitialized", "()V");
+        VROPlatformCallJavaFunction(localObj, "onTrackingUpdated", "(II)V", state, reason);
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(jObjWeak);
     });

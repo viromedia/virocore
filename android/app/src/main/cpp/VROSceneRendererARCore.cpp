@@ -43,8 +43,6 @@ VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
                                                std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _rendererSuspended(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
-    _hasTrackingInitialized(false),
-    _hasTrackingResumed(false),
     _arcoreInstalled(false) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
@@ -99,8 +97,8 @@ void VROSceneRendererARCore::renderFrame() {
     glEnable(GL_DEPTH_TEST);
     _driver->setCullMode(VROCullMode::Back);
 
+    // Attempt to initialize the ARSession if we have not yet done so.
     VROViewport viewport(0, 0, _surfaceSize.width, _surfaceSize.height);
-
     bool backgroundNeedsReset = false;
     if (_sceneController) {
         if (!_cameraBackground) {
@@ -109,63 +107,67 @@ void VROSceneRendererARCore::renderFrame() {
         }
     }
 
-    if (_session->isReady()) {
-        _session->setViewport(viewport);
-
-        /*
-         Retrieve transforms from the AR session.
-         */
-        std::unique_ptr<VROARFrame> &frame = _session->updateFrame();
-        const std::shared_ptr<VROARCamera> camera = frame->getCamera();
-
-        /*
-         If we attempt to get the projection matrix from the session before tracking has
-         resumed (even if the session itself has been resumed) we'll get a SessionPausedException.
-         Protect against this by not accessing the session until tracking is operational.
-         */
-        if (_hasTrackingResumed || camera->getTrackingState() == VROARTrackingState::Normal) {
-            renderWithTracking(camera, frame, viewport, !_hasTrackingResumed || backgroundNeedsReset);
-            _hasTrackingResumed = true;
-        }
-        else {
-            renderWaitingForTracking(viewport);
-        }
-    }
-    else {
+    // If the ARSession is not yet ready, we renderWaitingForTracking.
+    if (!_session->isReady()){
         renderWaitingForTracking(viewport);
+        return;
+    }
+
+    // Else, the ARSession is ready, update our scenes as usual.
+    _session->setViewport(viewport);
+    std::unique_ptr<VROARFrame> &frame = _session->updateFrame();
+    updateARBackground(frame, backgroundNeedsReset);
+
+    // Notify the current ARScene with the ARCamera's tracking state.
+    const std::shared_ptr<VROARCamera> camera = frame->getCamera();
+    if (_sceneController) {
+        std::shared_ptr<VROARScene> arScene
+                = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+        passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+        arScene->setTrackingState(camera->getTrackingState(),
+                                  camera->getLimitedTrackingStateReason(), false);
+    }
+
+    /*
+     * Finally, retrieve transforms from the AR session and render the scene
+     * if we have proper tracking. If we attempt to get the projection matrix
+     * from the session before tracking has resumed (even if the session itself
+     * has been resumed) we'll get a SessionPausedException. Protect against this
+     * by not accessing the session until tracking is operational.
+     */
+    if (camera->getTrackingState() == VROARTrackingState::Normal){
+        renderWithTracking(camera, frame, viewport);
+        return;
+    } else {
+        renderWaitingForTracking(viewport);
+    }
+}
+
+void VROSceneRendererARCore::updateARBackground(std::unique_ptr<VROARFrame> &frame,
+                                                bool forceReset) {
+    // Only update the rendered camera background if need be.
+    if (!forceReset && !((VROARFrameARCore *) frame.get())->hasDisplayGeometryChanged()) {
+        return;
+    }
+
+    VROVector3f BL, BR, TL, TR;
+    ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
+
+    _cameraBackground->setTextureCoordinates(BL, BR, TL, TR);
+
+    // Wait until we have these proper texture coordinates before installing the background
+    if (!_sceneController->getScene()->getRootNode()->getBackground()) {
+        _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
     }
 }
 
 void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamera> &camera,
                                                 const std::unique_ptr<VROARFrame> &frame,
-                                                VROViewport viewport,
-                                                bool backgroundNeedsReset) {
+                                                VROViewport viewport) {
     VROFieldOfView fov;
     VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
     VROMatrix4f rotation = camera->getRotation();
     VROVector3f position = camera->getPosition();
-
-    if (_sceneController && !_hasTrackingInitialized) {
-        if (position != kZeroVector) {
-            _hasTrackingInitialized = true;
-
-            std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
-            passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-            arScene->trackingHasInitialized();
-        }
-    }
-
-    if (backgroundNeedsReset || ((VROARFrameARCore *) frame.get())->hasDisplayGeometryChanged()) {
-        VROVector3f BL, BR, TL, TR;
-        ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
-
-        _cameraBackground->setTextureCoordinates(BL, BR, TL, TR);
-
-        // Wait until we have these proper texture coordinates before installing the background
-        if (!_sceneController->getScene()->getRootNode()->getBackground()) {
-            _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
-        }
-    }
 
     /*
      Render the 3D scene.
@@ -309,11 +311,6 @@ void VROSceneRendererARCore::onResume() {
         shared->_renderer->getInputController()->onResume();
         shared->_driver->resume();
     });
-
-    // Place this here instead of onPause(), just in case a stray render occurs
-    // after pause (while shutting down the GL thread) that flips it back to
-    // true.
-    _hasTrackingResumed = false;
 }
 
 void VROSceneRendererARCore::setVRModeEnabled(bool enabled) {
@@ -328,11 +325,6 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     _sceneController = sceneController;
 
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
-    if (arScene) {
-        if (_hasTrackingInitialized) {
-            arScene->trackingHasInitialized();
-        }
-    }
     passert_msg(arScene != nullptr, "[Viro] AR requires using ARScene");
 
     VROSceneRenderer::setSceneController(sceneController);
@@ -345,13 +337,7 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
                         VROTimingFunctionType timingFunction) {
 
     _sceneController = sceneController;
-
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
-    if (arScene) {
-        if (_hasTrackingInitialized) {
-            arScene->trackingHasInitialized();
-        }
-    }
     passert_msg(arScene != nullptr, "[Viro] AR requires using ARScene");
 
     VROSceneRenderer::setSceneController(sceneController, seconds, timingFunction);

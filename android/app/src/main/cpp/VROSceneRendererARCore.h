@@ -114,7 +114,8 @@ private:
 
     void renderFrame();
     void renderWithTracking(const std::shared_ptr<VROARCamera> &camera, const std::unique_ptr<VROARFrame> &frame,
-                            VROViewport viewport, bool backgroundNeedsReset);
+                            VROViewport viewport);
+    void updateARBackground(std::unique_ptr<VROARFrame> &frame, bool forceReset);
     void renderWaitingForTracking(VROViewport viewport);
     void renderNothing(bool suspended);
     void initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene);
@@ -128,15 +129,6 @@ private:
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROSceneController> _sceneController;
-
-    /*
-     The hasTrackingInitialized bool gets flipped to true when tracking
-     is initialized for the first time, and stays that way. The resumed
-     flag is set to false whenever the activity is paused, then returns
-     to true after tracking is resumed.
-     */
-    bool _hasTrackingInitialized;
-    bool _hasTrackingResumed;
 };
 
 #endif  // VRO_SCENE_RENDERER_ARCORE_H  // NOLINT
