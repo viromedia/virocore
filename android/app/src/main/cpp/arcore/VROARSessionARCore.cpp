@@ -110,6 +110,9 @@ bool VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
             case VROAnchorDetection::PlanesHorizontal:
                 _planeFindingMode = arcore::PlaneFindingMode::Horizontal;
                 break;
+            default:
+                _planeFindingMode = arcore::PlaneFindingMode::Horizontal;
+                break;
         }
     }
 
@@ -158,6 +161,10 @@ bool VROARSessionARCore::updateARCoreConfig() {
     }
     else if (status == arcore::ConfigStatus::SessionNotPaused) {
         pinfo("Failed to change AR configuration: session must be paused");
+        return false;
+    }
+    else {
+        pinfo("Unknown error updating AR configuration");
         return false;
     }
 }
@@ -398,7 +405,7 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
             plane->setAlignment(VROARPlaneAlignment::HorizontalDownward);
             break;
         default:
-            plane->setAlignment(VROARPlaneAlignment::NonHorizontal);
+            plane->setAlignment(VROARPlaneAlignment::Horizontal);
     }
 
     // the center is 0, because in ARCore, planes only have a position (at their center) vs
