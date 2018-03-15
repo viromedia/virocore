@@ -468,7 +468,7 @@ public class ViroActivity extends AppCompatActivity {
 
     private void testBackgroundImage(final Scene scene) {
         final Image imageJni = new Image("boba.png", Format.RGBA8);
-        final Texture videoTexture = new Texture(imageJni, Format.RGBA8, true, false);
+        final Texture videoTexture = new Texture(imageJni, true, false);
         scene.setBackgroundTexture(videoTexture);
         final float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(new Vector(rotation));
@@ -485,7 +485,7 @@ public class ViroActivity extends AppCompatActivity {
         final Image nzimageJni = new Image("nz.png", format);
 
         final Texture cubeTexture = new Texture(pximageJni, nximageJni, pyimageJni, nyimageJni,
-                pzimageJni, nzimageJni, format);
+                pzimageJni, nzimageJni);
 
         scene.setBackgroundCubeTexture(cubeTexture);
     }
@@ -666,7 +666,7 @@ public class ViroActivity extends AppCompatActivity {
         final Node node = new Node();
         final Image bobaImage = new Image("boba.png", Format.RGBA8);
 
-        final Texture bobaTexture = new Texture(bobaImage, Format.RGBA8, true, true);
+        final Texture bobaTexture = new Texture(bobaImage, true, true);
         final Material material = new Material();
 
         final Surface surface = new Surface(1, 1, 0, 0, 1, 1);
@@ -692,8 +692,7 @@ public class ViroActivity extends AppCompatActivity {
     private Node getStereoImage(final float[] pos, final String img) {
         final Node node = new Node();
         final Image bobaImage = new Image(img, Format.RGBA8);
-        final Texture bobaTexture = new Texture(bobaImage,
-                Format.RGBA8, true, true, "LeftRight");
+        final Texture bobaTexture = new Texture(bobaImage, true, true, "LeftRight");
         final Material material = new Material();
         final Surface surface = new Surface(1, 1, 0, 0, 1, 1);
         surface.setMaterial(material);
@@ -705,8 +704,7 @@ public class ViroActivity extends AppCompatActivity {
 
     private void testStereoBackgroundImage(final Scene scene) {
         final Image imageJni = new Image("stereo3601.jpg", Format.RGBA8);
-        final Texture videoTexture = new Texture(imageJni,
-                Format.RGBA8, true, false, "TopBottom");
+        final Texture videoTexture = new Texture(imageJni, true, false, "TopBottom");
         scene.setBackgroundTexture(videoTexture);
         final float[] rotation = {0, 0, 0};
         scene.setBackgroundRotation(new Vector(rotation));
