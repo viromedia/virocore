@@ -21,7 +21,7 @@ Copyright   :   Copyright 2016 Oculus VR, LLC. All Rights reserved.
 // Basic Ext Types
 //-----------------------------------------------------------------
 
-// This type is just to make parm chain traversal simple
+/// This type is just to make parm chain traversal simple
 typedef struct ovrFrameParmsExtBase
 {
 	ovrStructureType Type;
@@ -51,6 +51,8 @@ static inline const ovrFrameParms * vrapi_GetFrameParmsConst( const ovrFrameParm
 
 	return 	(const ovrFrameParms *)frameParmsChain;
 }
+
+
 
 
 

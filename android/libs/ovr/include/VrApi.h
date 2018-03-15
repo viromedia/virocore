@@ -16,7 +16,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "VrApi_Version.h"
 #include "VrApi_Types.h"
 
-/*
+/** \mainpage 
 
 VrApi
 =====
@@ -69,6 +69,8 @@ surfaceDestroyed() or onPause(), whichever comes first.
 
 Android VR life cycle
 =====================
+
+\code
 
 // Setup the Java references.
 ovrJava java;
@@ -183,6 +185,7 @@ for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 // Shut down the API.
 vrapi_Shutdown();
 
+\endcode
 
 Integration
 ===========
@@ -335,6 +338,7 @@ SwapInterval = 1
 ExtraLatencyMode = off
 Expected single-threaded simulation latency = 33 milliseconds
 The ATW brings this down to 8-16 milliseconds.
+\verbatim
 |-------|-------|-------|  - V-syncs
 |   *   |   *   |   *   |  - eye image display periods (* = predicted time in middle of display period)
      \     / \ / \ /
@@ -348,11 +352,13 @@ The ATW brings this down to 8-16 milliseconds.
     |   +---- Generate GPU commands and execute commands on GPU.
     |
     +---- vrapi_SubmitFrame releases the renderer thread.
+\endverbatim
 
 SwapInterval = 1
 ExtraLatencyMode = on
 Expected single-threaded simulation latency = 49 milliseconds
 The ATW brings this down to 8-16 milliseconds.
+\verbatim
 |-------|-------|-------|-------|  - V-syncs
 |   *   |   *   |   *   |   *   |  - display periods (* = predicted time in middle of display period)
      \             / \ / \ /
@@ -367,11 +373,13 @@ The ATW brings this down to 8-16 milliseconds.
     |       +---- Generate GPU commands on CPU and execute commands on GPU.
     |
     +---- Frame submission releases the renderer thread.
+\endverbatim
 
 SwapInterval = 2
 ExtraLatencyMode = off
 Expected single-threaded simulation latency = 58 milliseconds
 The ATW brings this down to 8-16 milliseconds.
+\verbatim
 |-------|-------|-------|-------|-------|  - V-syncs
 *       |       *       |       *       |  - eye image display periods (* = predicted time in middle of display period)
      \             / \ / \ / \ / \ /
@@ -387,11 +395,13 @@ The ATW brings this down to 8-16 milliseconds.
     |       +---- Generate GPU commands and execute commands on GPU.
     |
     +---- vrapi_SubmitFrame releases the renderer thread.
+\endverbatim
 
 SwapInterval = 2
 ExtraLatencyMode = on
 Expected single-threaded simulation latency = 91 milliseconds
 The ATW brings this down to 8-16 milliseconds.
+\verbatim
 |-------|-------|-------|-------|-------|-------|-------|  - V-syncs
 *       |       *       |       *       |       *       |  - eye image display periods (* = predicted time in middle of display period)
      \                             / \ / \ / \ / \ /
@@ -407,6 +417,7 @@ The ATW brings this down to 8-16 milliseconds.
     |               +---- Generate GPU commands and execute commands on GPU.
     |                
     +---- vrapi_SubmitFrame releases the renderer thread.
+\endverbatim
 
 */
 
@@ -414,57 +425,72 @@ The ATW brings this down to 8-16 milliseconds.
 extern "C" {
 #endif
 
-// Returns the version + compile time stamp as a string.
-// Can be called any time from any thread.
+/// Returns the version + compile time stamp as a string.
+/// Can be called any time from any thread.
 OVR_VRAPI_EXPORT const char * vrapi_GetVersionString();
 
-// Returns global, absolute high-resolution time in seconds. This is the same value
-// as used in sensor messages and on Android also the same as Java's system.nanoTime(),
-// which is what the Choreographer V-sync timestamp is based on.
-// WARNING: do not use this time as a seed for simulations, animations or other logic.
-// An animation, for instance, should not be updated based on the "real time" the
-// animation code is executed. Instead, an animation should be updated based on the
-// time it will be displayed. Using the "real time" will introduce intra-frame motion
-// judder when the code is not executed at a consistent point in time every frame.
-// In other words, for simulations, animations and other logic use the time returned
-// by vrapi_GetPredictedDisplayTime().
-// Can be called any time from any thread.
+/// Returns global, absolute high-resolution time in seconds. This is the same value
+/// as used in sensor messages and on Android also the same as Java's system.nanoTime(),
+/// which is what the Choreographer V-sync timestamp is based on.
+/// \warning Do not use this time as a seed for simulations, animations or other logic.
+/// An animation, for instance, should not be updated based on the "real time" the
+/// animation code is executed. Instead, an animation should be updated based on the
+/// time it will be displayed. Using the "real time" will introduce intra-frame motion
+/// judder when the code is not executed at a consistent point in time every frame.
+/// In other words, for simulations, animations and other logic use the time returned
+/// by vrapi_GetPredictedDisplayTime().
+/// Can be called any time from any thread.
 OVR_VRAPI_EXPORT double vrapi_GetTimeInSeconds();
 
 //-----------------------------------------------------------------
 // Initialization/Shutdown
 //-----------------------------------------------------------------
 
-// Initializes the API for application use.
-// This is lightweight and does not create any threads.
-// This is typically called from onCreate() or shortly thereafter.
-// Can be called from any thread.
-// Returns a non-zero value from ovrInitializeStatus on error.
+/// Initializes the API for application use.
+/// This is lightweight and does not create any threads.
+/// This is typically called from onCreate() or shortly thereafter.
+/// Can be called from any thread.
+/// Returns a non-zero value from ovrInitializeStatus on error.
 OVR_VRAPI_EXPORT ovrInitializeStatus vrapi_Initialize( const ovrInitParms * initParms );
 
-// Shuts down the API on application exit.
-// This is typically called from onDestroy() or shortly thereafter.
-// Can be called from any thread.
+/// Shuts down the API on application exit.
+/// This is typically called from onDestroy() or shortly thereafter.
+/// Can be called from any thread.
 OVR_VRAPI_EXPORT void vrapi_Shutdown();
 
+//-----------------------------------------------------------------
+// VrApi Properties
+//-----------------------------------------------------------------
+
+/// Returns a VrApi property.
+/// These functions can be called any time from any thread once the VrApi is initialized.
+OVR_VRAPI_EXPORT void vrapi_SetPropertyInt( const ovrJava * java, const ovrProperty propType, const int intVal );
+OVR_VRAPI_EXPORT void vrapi_SetPropertyFloat( const ovrJava * java, const ovrProperty propType, const float floatVal );
+
+/// Returns false if the property cannot be read.
+OVR_VRAPI_EXPORT bool vrapi_GetPropertyInt( const ovrJava * java, const ovrProperty propType, int * intVal );
 
 //-----------------------------------------------------------------
 // System Properties
 //-----------------------------------------------------------------
 
-// Returns a system property. These are constants for a particular device.
-// This function can be called any time from any thread once the VrApi is initialized.
+/// Returns a system property. These are constants for a particular device.
+/// These functions can be called any time from any thread once the VrApi is initialized.
 OVR_VRAPI_EXPORT int vrapi_GetSystemPropertyInt( const ovrJava * java, const ovrSystemProperty propType );
 OVR_VRAPI_EXPORT float vrapi_GetSystemPropertyFloat( const ovrJava * java, const ovrSystemProperty propType );
-// The return memory is guaranteed to be valid until the next call to vrapi_GetSystemPropertyString.
+/// Returns the number of elements written to values array.
+OVR_VRAPI_EXPORT int vrapi_GetSystemPropertyFloatArray( const ovrJava * java, const ovrSystemProperty propType,
+														float * values, int numArrayValues );
+
+/// The return memory is guaranteed to be valid until the next call to vrapi_GetSystemPropertyString.
 OVR_VRAPI_EXPORT const char * vrapi_GetSystemPropertyString( const ovrJava * java, const ovrSystemProperty propType );
 
 //-----------------------------------------------------------------
 // System Status
 //-----------------------------------------------------------------
 
-// Returns a system status. These are variables that may change at run-time.
-// This function can be called any time from any thread once the VrApi is initialized.
+/// Returns a system status. These are variables that may change at run-time.
+/// This function can be called any time from any thread once the VrApi is initialized.
 OVR_VRAPI_EXPORT int vrapi_GetSystemStatusInt( const ovrJava * java, const ovrSystemStatus statusType );
 OVR_VRAPI_EXPORT float vrapi_GetSystemStatusFloat( const ovrJava * java, const ovrSystemStatus statusType );
 
@@ -472,241 +498,244 @@ OVR_VRAPI_EXPORT float vrapi_GetSystemStatusFloat( const ovrJava * java, const o
 // Enter/Leave VR mode
 //-----------------------------------------------------------------
 
-// Starts up the time warp, V-sync tracking, sensor reading, clock locking,
-// thread scheduling, and sets video options. The parms are copied, and are
-// not referenced after the function returns.
-//
-// This should be called after vrapi_Initialize(), when the app is both
-// resumed and has a valid window surface (ANativeWindow).
-//
-// On Android, an application cannot just allocate a new window surface
-// and render to it. Android allocates and manages the window surface and
-// (after the fact) notifies the application of the state of affairs through
-// life cycle events (surfaceCreated / surfaceChanged / surfaceDestroyed).
-// The application (or 3rd party engine) typically handles these events.
-// Since the VrApi cannot just allocate a new window surface, and the VrApi
-// does not handle the life cycle events, the VrApi somehow has to take over
-// ownership of the Android surface from the application. To allow this, the
-// application can explicitly pass the EGLDisplay, EGLContext and EGLSurface
-// or ANativeWindow to vrapi_EnterVrMode(). The EGLDisplay and EGLContext are
-// used to create a shared context used by the background time warp thread.
-//
-// If, however, the application does not explicitly pass in these objects, then
-// vrapi_EnterVrMode() *must* be called from a thread with an OpenGL ES context
-// current on the Android window surface. The context of the calling thread is
-// then used to match the version and config for the context used by the background
-// time warp thread. The time warp will also hijack the Android window surface
-// from the context that is current on the calling thread. On return, the context
-// from the calling thread will be current on an invisible pbuffer, because the
-// time warp takes ownership of the Android window surface. Note that this requires
-// the config used by the calling thread to have an EGL_SURFACE_TYPE with EGL_PBUFFER_BIT.
-//
-// New applications should always explicitly pass in the EGLDisplay, EGLContext
-// and ANativeWindow. The other paths are still available to support old applications
-// but they will be deprecated.
-//
-// This function will return NULL when entering VR mode failed because the ANativeWindow
-// was not valid. If the ANativeWindow's buffer queue is abandoned
-// ("BufferQueueProducer: BufferQueue has been abandoned"), then the app can wait for a
-// new ANativeWindow (through SurfaceCreated). If another API is already connected to
-// the ANativeWindow ("BufferQueueProducer: already connected"), then the app has to first
-// disconnect whatever is connected to the ANativeWindow (typically an EGLSurface).
+/// Starts up the time warp, V-sync tracking, sensor reading, clock locking,
+/// thread scheduling, and sets video options. The parms are copied, and are
+/// not referenced after the function returns.
+///
+/// This should be called after vrapi_Initialize(), when the app is both
+/// resumed and has a valid window surface (ANativeWindow).
+///
+/// On Android, an application cannot just allocate a new window surface
+/// and render to it. Android allocates and manages the window surface and
+/// (after the fact) notifies the application of the state of affairs through
+/// life cycle events (surfaceCreated / surfaceChanged / surfaceDestroyed).
+/// The application (or 3rd party engine) typically handles these events.
+/// Since the VrApi cannot just allocate a new window surface, and the VrApi
+/// does not handle the life cycle events, the VrApi somehow has to take over
+/// ownership of the Android surface from the application. To allow this, the
+/// application can explicitly pass the EGLDisplay, EGLContext and EGLSurface
+/// or ANativeWindow to vrapi_EnterVrMode(). The EGLDisplay and EGLContext are
+/// used to create a shared context used by the background time warp thread.
+///
+/// If, however, the application does not explicitly pass in these objects, then
+/// vrapi_EnterVrMode() *must* be called from a thread with an OpenGL ES context
+/// current on the Android window surface. The context of the calling thread is
+/// then used to match the version and config for the context used by the background
+/// time warp thread. The time warp will also hijack the Android window surface
+/// from the context that is current on the calling thread. On return, the context
+/// from the calling thread will be current on an invisible pbuffer, because the
+/// time warp takes ownership of the Android window surface. Note that this requires
+/// the config used by the calling thread to have an EGL_SURFACE_TYPE with EGL_PBUFFER_BIT.
+///
+/// New applications must always explicitly pass in the EGLDisplay, EGLContext
+/// and ANativeWindow, otherwise vrapi_EnterVrMode will fail.
+///
+/// This function will return NULL when entering VR mode failed because the ANativeWindow
+/// was not valid. If the ANativeWindow's buffer queue is abandoned
+/// ("BufferQueueProducer: BufferQueue has been abandoned"), then the app can wait for a
+/// new ANativeWindow (through SurfaceCreated). If another API is already connected to
+/// the ANativeWindow ("BufferQueueProducer: already connected"), then the app has to first
+/// disconnect whatever is connected to the ANativeWindow (typically an EGLSurface).
 OVR_VRAPI_EXPORT ovrMobile * vrapi_EnterVrMode( const ovrModeParms * parms );
 
-// Shut everything down for window destruction or when the activity is paused.
-// The ovrMobile object is freed by this function.
-//
-// Must be called from the same thread that called vrapi_EnterVrMode(). If the
-// application did not explicitly pass in the Android window surface, then this
-// thread *must* have the same OpenGL ES context that was current on the Android
-// window surface before calling vrapi_EnterVrMode(). By calling this function,
-// the time warp gives up ownership of the Android window surface, and on return,
-// the context from the calling thread will be current again on the Android window
-// surface.
+/// Shut everything down for window destruction or when the activity is paused.
+/// The ovrMobile object is freed by this function.
+///
+/// Must be called from the same thread that called vrapi_EnterVrMode(). If the
+/// application did not explicitly pass in the Android window surface, then this
+/// thread *must* have the same OpenGL ES context that was current on the Android
+/// window surface before calling vrapi_EnterVrMode(). By calling this function,
+/// the time warp gives up ownership of the Android window surface, and on return,
+/// the context from the calling thread will be current again on the Android window
+/// surface.
 OVR_VRAPI_EXPORT void vrapi_LeaveVrMode( ovrMobile * ovr );
 
 //-----------------------------------------------------------------
 // Tracking
 //-----------------------------------------------------------------
 
-// Returns a predicted absolute system time in seconds at which the next set
-// of eye images will be displayed.
-//
-// The predicted time is the middle of the time period during which the new
-// eye images will be displayed. The number of frames predicted ahead depends
-// on the pipeline depth of the engine and the minumum number of V-syncs in
-// between eye image rendering. The better the prediction, the less black will
-// be pulled in at the edges by the time warp.
-//
-// The frameIndex is an application controlled number that uniquely identifies
-// the new set of eye images for which synthesis is about to start. This same
-// frameIndex must be passed to vrapi_SubmitFrame() when the new eye images are
-// submitted to the time warp. The frameIndex is expected to be incremented
-// once every frame before calling this function.
-//
-// Can be called from any thread while in VR mode.
+/// Returns a predicted absolute system time in seconds at which the next set
+/// of eye images will be displayed.
+///
+/// The predicted time is the middle of the time period during which the new
+/// eye images will be displayed. The number of frames predicted ahead depends
+/// on the pipeline depth of the engine and the minumum number of V-syncs in
+/// between eye image rendering. The better the prediction, the less black will
+/// be pulled in at the edges by the time warp.
+///
+/// The frameIndex is an application controlled number that uniquely identifies
+/// the new set of eye images for which synthesis is about to start. This same
+/// frameIndex must be passed to vrapi_SubmitFrame() when the new eye images are
+/// submitted to the time warp. The frameIndex is expected to be incremented
+/// once every frame before calling this function.
+///
+/// Can be called from any thread while in VR mode.
 OVR_VRAPI_EXPORT double vrapi_GetPredictedDisplayTime( ovrMobile * ovr, long long frameIndex );
 
-// Returns the predicted sensor state based on the specified absolute system time
-// in seconds. Pass absTime value of 0.0 to request the most recent sensor reading.
-//
-// Can be called from any thread while in VR mode.
+/// Returns the predicted sensor state based on the specified absolute system time
+/// in seconds. Pass absTime value of 0.0 to request the most recent sensor reading.
+///
+/// Can be called from any thread while in VR mode.
 OVR_VRAPI_EXPORT ovrTracking2 vrapi_GetPredictedTracking2( ovrMobile * ovr, double absTimeInSeconds );
 
 OVR_VRAPI_EXPORT ovrTracking vrapi_GetPredictedTracking( ovrMobile * ovr, double absTimeInSeconds );
 
-// Recenters the orientation on the yaw axis and will recenter the position
-// when position tracking is available.
-//
-// Note that this immediately affects vrapi_GetPredictedTracking() which may
-// be called asynchronously from the time warp. It is therefore best to
-// make sure the screen is black before recentering to avoid previous eye
-// images from being abrubtly warped across the screen.
-//
-// Can be called from any thread while in VR mode.
+/// Recenters the orientation on the yaw axis and will recenter the position
+/// when position tracking is available.
+///
+/// \note This immediately affects vrapi_GetPredictedTracking() which may
+/// be called asynchronously from the time warp. It is therefore best to
+/// make sure the screen is black before recentering to avoid previous eye
+/// images from being abrubtly warped across the screen.
+///
+/// Can be called from any thread while in VR mode.
 OVR_VRAPI_EXPORT void vrapi_RecenterPose( ovrMobile * ovr );
-
 
 //-----------------------------------------------------------------
 // Tracking Transform
 //
 //-----------------------------------------------------------------
 
-// The coordinate system used by the tracking system is defined in meters
-// with its positive y axis pointing up, but its origin and yaw are unspecified.
-//
-// Applications generally prefer to operate in a well-defined coordinate system
-// relative to some base pose. The tracking transform allows the application to
-// specify the space that tracking poses are reported in.
-//
-// The tracking transform is specified as the ovrPosef of the base pose in tracking
-// system coordinates.
-//
-// Head poses the application supplies in vrapi_SubmitFrame() are transformed
-// by the tracking transform.
-// Pose predictions generated by the system are transformed by the inverse of the
-// tracking transform before being reported to the application.
-//
-// Note that this immediately affects vrapi_SubmitFrame() and
-// vrapi_GetPredictedTracking(). It is important for the app to make sure that
-// the tracking transform does not change between the fetching of a pose prediction
-// and the submission of poses in vrapi_SubmitFrame().
-//
-// The default Tracking Transform is VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL.
+/// The coordinate system used by the tracking system is defined in meters
+/// with its positive y axis pointing up, but its origin and yaw are unspecified.
+///
+/// Applications generally prefer to operate in a well-defined coordinate system
+/// relative to some base pose. The tracking transform allows the application to
+/// specify the space that tracking poses are reported in.
+///
+/// The tracking transform is specified as the ovrPosef of the base pose in tracking
+/// system coordinates.
+///
+/// Head poses the application supplies in vrapi_SubmitFrame() are transformed
+/// by the tracking transform.
+/// Pose predictions generated by the system are transformed by the inverse of the
+/// tracking transform before being reported to the application.
+///
+/// \note This immediately affects vrapi_SubmitFrame() and
+/// vrapi_GetPredictedTracking(). It is important for the app to make sure that
+/// the tracking transform does not change between the fetching of a pose prediction
+/// and the submission of poses in vrapi_SubmitFrame().
+///
+/// The default Tracking Transform is VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL.
 
-
-// Returns a pose suitable to use as a tracking transform.
-// Applications that want to use an eye-level based coordinate system can fetch
-// the VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL transform.
-// Applications that want to use a floor-level based coordinate system can fetch
-// the VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_FLOOR_LEVEL transform.
-// To determine the current tracking transform, applications can fetch the
-// VRAPI_TRACKING_TRANSFORM_CURRENT transform.
+/// Returns a pose suitable to use as a tracking transform.
+/// Applications that want to use an eye-level based coordinate system can fetch
+/// the VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL transform.
+/// Applications that want to use a floor-level based coordinate system can fetch
+/// the VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_FLOOR_LEVEL transform.
+/// To determine the current tracking transform, applications can fetch the
+/// VRAPI_TRACKING_TRANSFORM_CURRENT transform.
 OVR_VRAPI_EXPORT ovrPosef  vrapi_GetTrackingTransform( ovrMobile * ovr, ovrTrackingTransform whichTransform );
 
-// Sets the transform used convert between tracking coordinates and a canonical
-// application-defined space.
-// Only the yaw component of the orientation is used.
+/// Sets the transform used convert between tracking coordinates and a canonical
+/// application-defined space.
+/// Only the yaw component of the orientation is used.
 OVR_VRAPI_EXPORT void vrapi_SetTrackingTransform( ovrMobile * ovr, ovrPosef pose );
-
 
 //-----------------------------------------------------------------
 // Texture Swap Chains
 //
 //-----------------------------------------------------------------
 
-// Create a texture swap chain that can be passed to vrapi_SubmitFrame.
-// Must be called from a thread with a valid OpenGL ES context current.
-//
-// Specifying 0 levels allows the individual texture ids to be set with
-// vrapi_SetTextureSwapChainHandle().
-//
-// Specifying VRAPI_TEXTURE_SWAPCHAIN_FULL_MIP_CHAIN levels will calculate
-// the levels based on width and height.
-//
-// Buffers used to be a bool that selected either a single texture index
-// or a triple buffered index, but the new entry point allows up to 16 buffers
-// to be allocated, which is useful for maintaining a deep video buffer queue
-// to get better frame timing.
+/// Create a texture swap chain that can be passed to vrapi_SubmitFrame.
+/// Must be called from a thread with a valid OpenGL ES context current.
+///
+/// Specifying 0 levels allows the individual texture ids to be set with
+/// vrapi_SetTextureSwapChainHandle().
+///
+/// Buffers used to be a bool that selected either a single texture index
+/// or a triple buffered index, but the new entry point allows up to 16 buffers
+/// to be allocated, which is useful for maintaining a deep video buffer queue
+/// to get better frame timing.
 OVR_VRAPI_EXPORT ovrTextureSwapChain * vrapi_CreateTextureSwapChain2( ovrTextureType type, ovrTextureFormat format,
 																int width, int height, int levels, int bufferCount );
 
 OVR_VRAPI_EXPORT ovrTextureSwapChain * vrapi_CreateTextureSwapChain( ovrTextureType type, ovrTextureFormat format,
                                                                 int width, int height, int levels, bool buffered );
 
-// Destroy the given texture swap chain.
-// Must be called from a thread with the same OpenGL ES context current when vrapi_CreateTextureSwapChain was called.
+/// Destroy the given texture swap chain.
+/// Must be called from a thread with the same OpenGL ES context current when vrapi_CreateTextureSwapChain was called.
 OVR_VRAPI_EXPORT void vrapi_DestroyTextureSwapChain( ovrTextureSwapChain * chain );
 
-// Returns the number of textures in the swap chain.
+/// Returns the number of textures in the swap chain.
 OVR_VRAPI_EXPORT int vrapi_GetTextureSwapChainLength( ovrTextureSwapChain * chain );
 
-// Get the OpenGL name of the texture at the given index.
+/// Get the OpenGL name of the texture at the given index.
 OVR_VRAPI_EXPORT unsigned int vrapi_GetTextureSwapChainHandle( ovrTextureSwapChain * chain, int index );
 
-// Set the OpenGL name of the texture at the given index. NOTE: This is not portable to PC.
-// This will silently fail with:
-// W/TimeWarp: SetTextureSwapChainHandle: chain->Allocated
-// Unless the SwapChain was created with 0 levels.
+/// Set the OpenGL name of the texture at the given index. \note This is not portable to PC.
+/// This will silently fail with:
+/// W/TimeWarp: SetTextureSwapChainHandle: chain->Allocated
+/// Unless the SwapChain was created with 0 levels.
 OVR_VRAPI_EXPORT void vrapi_SetTextureSwapChainHandle( ovrTextureSwapChain * chain, int index, unsigned int handle );
 
 //-----------------------------------------------------------------
 // Frame Submission
 //-----------------------------------------------------------------
 
-// Accepts new eye images plus poses that will be used for future warps.
-// The parms are copied, and are not referenced after the function returns.
-//
-// This will block until the textures from the previous vrapi_SubmitFrame() have been
-// consumed by the background thread, to allow one frame of overlap for maximum
-// GPU utilization, while preventing multiple frames from piling up variable latency.
-//
-// This will block until at least SwapInterval vsyncs have passed since the last
-// call to vrapi_SubmitFrame() to prevent applications with simple scenes from
-// generating completely wasted frames.
-//
-// IMPORTANT: any dynamic textures that are passed to vrapi_SubmitFrame() must be
-// triple buffered to avoid flickering and performance problems.
-//
-// The VrApi allows for one frame of overlap which is essential on tiled mobile GPUs.
-// Because there is one frame of overlap, the eye images have typically not completed
-// rendering by the time they are submitted to vrapi_SubmitFrame(). To allow the time
-// warp to check whether the eye images have completed rendering, the application can
-// explicitly pass in a sync object (CompletionFence) for each eye image through
-// vrapi_SubmitFrame(). Note that these sync objects must be EGLSyncKHR because the
-// VrApi still supports OpenGL ES 2.0.
-// 
-// If, however, the application does not explicitly pass in sync objects, then
-// vrapi_SubmitFrame() *must* be called from the thread with the OpenGL ES context that
-// was used for rendering, which allows vrapi_SubmitFrame() to add a sync object to
-// the current context and check if rendering has completed.
+/// Accepts new eye images plus poses that will be used for future warps.
+/// The parms are copied, and are not referenced after the function returns.
+///
+/// This will block until the textures from the previous vrapi_SubmitFrame() have been
+/// consumed by the background thread, to allow one frame of overlap for maximum
+/// GPU utilization, while preventing multiple frames from piling up variable latency.
+///
+/// This will block until at least SwapInterval vsyncs have passed since the last
+/// call to vrapi_SubmitFrame() to prevent applications with simple scenes from
+/// generating completely wasted frames.
+///
+/// IMPORTANT: any dynamic textures that are passed to vrapi_SubmitFrame() must be
+/// triple buffered to avoid flickering and performance problems.
+///
+/// The VrApi allows for one frame of overlap which is essential on tiled mobile GPUs.
+/// Because there is one frame of overlap, the eye images have typically not completed
+/// rendering by the time they are submitted to vrapi_SubmitFrame(). To allow the time
+/// warp to check whether the eye images have completed rendering, the application can
+/// explicitly pass in a sync object (CompletionFence) for each eye image through
+/// vrapi_SubmitFrame(). \note These sync objects must be EGLSyncKHR because the
+/// VrApi still supports OpenGL ES 2.0.
+/// 
+/// If, however, the application does not explicitly pass in sync objects, then
+/// vrapi_SubmitFrame() *must* be called from the thread with the OpenGL ES context that
+/// was used for rendering, which allows vrapi_SubmitFrame() to add a sync object to
+/// the current context and check if rendering has completed.
 OVR_VRAPI_EXPORT void vrapi_SubmitFrame( ovrMobile * ovr, const ovrFrameParms * parms );
 
-// vrapi_SubmitFrame2 takes a frameDescription describing per-frame information such as:
-// a flexible list of layers which should be drawn this frame, a single fence to signal
-// frame completion, and a frame index.
+/// vrapi_SubmitFrame2 takes a frameDescription describing per-frame information such as:
+/// a flexible list of layers which should be drawn this frame, a single fence to signal
+/// frame completion, and a frame index.
 OVR_VRAPI_EXPORT ovrResult vrapi_SubmitFrame2( ovrMobile * ovr, const ovrSubmitFrameDescription2 * frameDescription );
 
 //-----------------------------------------------------------------
 // Performance
 //-----------------------------------------------------------------
 
-// Set the CPU and GPU performance levels.
-//
-// Increasing the levels increases performance at the cost of higher power consumption
-// which likely leads to a greater chance of overheating.
-//
-// Levels will be clamped to the expected range. Default clock levels are cpuLevel = 2, gpuLevel = 2.
+/// Set the CPU and GPU performance levels.
+///
+/// Increasing the levels increases performance at the cost of higher power consumption
+/// which likely leads to a greater chance of overheating.
+///
+/// Levels will be clamped to the expected range. Default clock levels are cpuLevel = 2, gpuLevel = 2.
 OVR_VRAPI_EXPORT ovrResult vrapi_SetClockLevels( ovrMobile * ovr, const int32_t cpuLevel, const int32_t gpuLevel );
 
-// Specify which app threads should be given higher scheduling priority.
+/// Specify which app threads should be given higher scheduling priority.
 OVR_VRAPI_EXPORT ovrResult vrapi_SetPerfThread( ovrMobile * ovr, const ovrPerfThreadType type, const uint32_t threadId );
 
-// If VRAPI_EXTRA_LATENCY_MODE_ON specified, adds an extra frame of latency for full GPU utilization.
-// Default is VRAPI_EXTRA_LATENCY_MODE_OFF.
-// 
-// The latency mode specified will be applied on the next call to vrapi_SubmitFrame(2).
+/// If VRAPI_EXTRA_LATENCY_MODE_ON specified, adds an extra frame of latency for full GPU utilization.
+/// Default is VRAPI_EXTRA_LATENCY_MODE_OFF.
+/// 
+/// The latency mode specified will be applied on the next call to vrapi_SubmitFrame(2).
 OVR_VRAPI_EXPORT ovrResult vrapi_SetExtraLatencyMode( ovrMobile * ovr, const ovrExtraLatencyMode mode );
+
+//-----------------------------------------------------------------
+// Display Refresh Rate
+//-----------------------------------------------------------------
+
+/// Set the Display Refresh Rate.
+/// Returns ovrSuccess or an ovrError code.
+/// Returns 'ovrError_InvalidParameter' if requested refresh rate is not supported by the device.
+/// Returns 'ovrError_InvalidOperation' if setting the display refresh rate was not successful.
+OVR_VRAPI_EXPORT ovrResult vrapi_SetDisplayRefreshRate( ovrMobile * ovr, const float refreshRate );
 
 #if defined( __cplusplus )
 }	// extern "C"

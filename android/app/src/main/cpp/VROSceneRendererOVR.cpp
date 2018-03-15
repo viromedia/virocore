@@ -969,7 +969,7 @@ static void ovrApp_BackButtonAction( ovrApp * app, const ovrPerformanceParms * p
     else if ( app->BackButtonState == BACK_BUTTON_STATE_PENDING_SHORT_PRESS && !app->BackButtonDown )
     {
         if ( ( vrapi_GetTimeInSeconds() - app->BackButtonDownStartTime ) >
-             vrapi_GetSystemPropertyFloat( &app->Java, VRAPI_SYS_PROP_BACK_BUTTON_DOUBLETAP_TIME ) )
+             vrapi_GetSystemPropertyFloat( &app->Java, VRAPI_SYS_PROP_BACK_BUTTON_SHORTPRESS_TIME ) )
         {
             ALOGV( "back button short press" );
             ALOGV( "        ovrApp_PushBlackFinal()" );
@@ -991,7 +991,7 @@ static int ovrApp_HandleKeyEvent( ovrApp * app, const int keyCode, const int act
             if ( !app->BackButtonDown )
             {
                 if ( ( vrapi_GetTimeInSeconds() - app->BackButtonDownStartTime ) <
-                     vrapi_GetSystemPropertyFloat( &app->Java, VRAPI_SYS_PROP_BACK_BUTTON_DOUBLETAP_TIME ) )
+                     vrapi_GetSystemPropertyFloat( &app->Java, VRAPI_SYS_PROP_BACK_BUTTON_SHORTPRESS_TIME ) )
                 {
                     app->BackButtonState = BACK_BUTTON_STATE_PENDING_DOUBLE_TAP;
                 }
