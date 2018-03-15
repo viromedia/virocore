@@ -33,7 +33,7 @@ public:
         attachLaserToController();
 
         std::shared_ptr<VROTexture> reticleTexture
-                = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
+                = std::make_shared<VROTexture>(true,
                                                VROMipmapMode::Runtime,
                                                VROPlatformLoadImageFromAsset("dd_reticle_large.png", VROTextureInternalFormat::RGBA8));
         std::shared_ptr<VROReticle> reticle = std::make_shared<VROReticle>(reticleTexture);
@@ -52,19 +52,19 @@ public:
 
     void attachControllerNode() {
         // Textures needed by the controller model representing different controller UI states
-        _controllerIdleTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
+        _controllerIdleTexture = std::make_shared<VROTexture>(true,
                                                               VROMipmapMode::Runtime,
                                                               VROPlatformLoadImageFromAsset("ddcontroller_idle.jpg",
                                                                                             VROTextureInternalFormat::RGBA8));
-        _controllerAppButtonPressedTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
+        _controllerAppButtonPressedTexture = std::make_shared<VROTexture>(true,
                                                                           VROMipmapMode::Runtime,
                                                                           VROPlatformLoadImageFromAsset("ddcontroller_app.jpg",
                                                                                                         VROTextureInternalFormat::RGBA8));
-        _controllerHomeButtonPressedTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
+        _controllerHomeButtonPressedTexture = std::make_shared<VROTexture>(true,
                                                                            VROMipmapMode::Runtime,
                                                                            VROPlatformLoadImageFromAsset("ddcontroller_system.jpg",
                                                                                                          VROTextureInternalFormat::RGBA8));
-        _controllerTouchPadPressedTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
+        _controllerTouchPadPressedTexture = std::make_shared<VROTexture>(true,
                                                                          VROMipmapMode::Runtime,
                                                                          VROPlatformLoadImageFromAsset("ddcontroller_touchpad.jpg",
                                                                                                        VROTextureInternalFormat::RGBA8));
@@ -96,7 +96,7 @@ public:
     }
 
     void attachLaserToController() {
-        _laserTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
+        _laserTexture = std::make_shared<VROTexture>(true,
                                                      VROMipmapMode::Runtime,
                                                      VROPlatformLoadImageFromAsset("ddLaserTexture.jpg", VROTextureInternalFormat::RGBA8));
         // Create our laser obj

@@ -40,6 +40,7 @@ VROImageiOS::VROImageiOS(UIImage *image, VROTextureInternalFormat internalFormat
         _dataLength = _height * _width * (int)bytesPerPixel * sizeof(unsigned char);
         _data = (unsigned char *)srcBuffer.data;
         _format = VROTextureFormat::RGB565;
+        _internalFormat = VROTextureInternalFormat::RGB565;
     }
     
     // RGBA
@@ -67,7 +68,18 @@ VROImageiOS::VROImageiOS(UIImage *image, VROTextureInternalFormat internalFormat
         
         _dataLength = _height * _width * (int)bytesPerPixel * sizeof(unsigned char);
         _data = (unsigned char *)srcBuffer.data;
-        _format = hasAlpha(image) ? VROTextureFormat::RGBA8 : VROTextureFormat::RGB8;
+        
+        if (hasAlpha(image)) {
+            _format = VROTextureFormat::RGBA8;
+            _internalFormat = VROTextureInternalFormat::RGBA8;
+        }
+        else {
+            // Note that the internal format remains as RGBA8, because we do not provide an internal
+            // RGB8 format (because sRGB8 is not compatible with automatic mipmap generation in
+            // OpenGL 3.0).
+            _format = VROTextureFormat::RGB8;
+            _internalFormat = VROTextureInternalFormat::RGBA8;
+        }
     }
 }
 

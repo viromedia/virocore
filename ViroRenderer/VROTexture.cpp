@@ -61,7 +61,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(VROTextureInternalFormat internalFormat, bool sRGB,
+VROTexture::VROTexture(bool sRGB,
                        VROMipmapMode mipmapMode,
                        std::shared_ptr<VROImage> image,
                        VROStereoMode stereoMode) :
@@ -69,7 +69,7 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat, bool sRGB,
     _type(VROTextureType::Texture2D),
     _images( {image} ),
     _format(image->getFormat()),
-    _internalFormat(internalFormat),
+    _internalFormat(image->getInternalFormat()),
     _width(image->getWidth()),
     _height(image->getHeight()),
     _mipmapMode(mipmapMode),
@@ -81,18 +81,18 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat, bool sRGB,
     _magnificationFilter(VROFilterMode::Linear),
     _mipFilter(VROFilterMode::Linear) {
     
-    setNumSubstrates(getNumSubstratesForFormat(internalFormat));
+    setNumSubstrates(getNumSubstratesForFormat(_internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(VROTextureInternalFormat internalFormat, bool sRGB,
+VROTexture::VROTexture(bool sRGB,
                        std::vector<std::shared_ptr<VROImage>> &images,
                        VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(VROTextureType::TextureCube),
     _images(images),
     _format(images.front()->getFormat()),
-    _internalFormat(internalFormat),
+    _internalFormat(images.front()->getInternalFormat()),
     _width(images.front()->getWidth()),
     _height(images.front()->getHeight()),
     _mipmapMode(VROMipmapMode::None), // No mipmapping for cube textures
@@ -104,7 +104,7 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat, bool sRGB,
     _magnificationFilter(VROFilterMode::Linear),
     _mipFilter(VROFilterMode::Linear) {
     
-    setNumSubstrates(getNumSubstratesForFormat(internalFormat));
+    setNumSubstrates(getNumSubstratesForFormat(_internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -198,10 +198,15 @@ void VROTexture::hydrate(std::shared_ptr<VRODriver> &driver) {
         std::vector<std::shared_ptr<VROData>> data;
         for (std::shared_ptr<VROImage> &image : _images) {
             passert (image->getFormat() == _format);
+            passert (image->getInternalFormat() == _internalFormat);
             
-            size_t length;
-            void *bytes = image->getData(&length);
-            data.push_back(std::make_shared<VROData>(bytes, length, VRODataOwnership::Wrap));
+            image->lock();
+            {
+                size_t length;
+                void *bytes = image->getData(&length);
+                data.push_back(std::make_shared<VROData>(bytes, length, VRODataOwnership::Wrap));
+            }
+            image->unlock();
         }
         
         std::vector<uint32_t> mipSizes;

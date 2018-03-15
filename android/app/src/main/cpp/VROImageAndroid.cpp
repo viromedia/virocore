@@ -16,9 +16,14 @@ VROImageAndroid::VROImageAndroid(std::string asset, VROTextureInternalFormat int
 
     if (internalFormat == VROTextureInternalFormat::RGB565) {
         _format = VROTextureFormat::RGB565;
+        _internalFormat = VROTextureInternalFormat::RGB565;
     }
     else {
+        // Note that VROPlatformLoadBitmapFromAsset always generates RGBA8, even from
+        // RGB8 images. This is considered optimal because sRGB8 is not compatible with
+        // automatic mipmap generation in OpenGL 3.0
         _format = VROTextureFormat::RGBA8;
+        _internalFormat = VROTextureInternalFormat::RGBA8;
     }
 }
 
@@ -26,9 +31,11 @@ VROImageAndroid::VROImageAndroid(jobject jbitmap, VROTextureInternalFormat inter
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height);
     if (internalFormat == VROTextureInternalFormat::RGB565) {
         _format = VROTextureFormat::RGB565;
+        _internalFormat = VROTextureInternalFormat::RGB565;
     }
     else {
         _format = VROTextureFormat::RGBA8;
+        _internalFormat = VROTextureInternalFormat::RGBA8;
     }
 }
 

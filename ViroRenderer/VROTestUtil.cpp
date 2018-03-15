@@ -40,7 +40,7 @@ std::string VROTestUtil::getURLForResource(std::string resource, std::string typ
                                                         ofType:[NSString stringWithUTF8String:type.c_str()]];
     NSURL *objURL = [NSURL fileURLWithPath:objPath];
     return std::string([[objURL description] UTF8String]);
-#else
+#elif VRO_PLATFORM_ANDROID
     return "file:///android_asset/" + resource  + "." + type;
 #endif
 }
@@ -57,7 +57,7 @@ void *VROTestUtil::loadDataForResource(std::string resource, std::string type, i
     
     *outLength = (int)[data length];
     return outBytes;
-#else
+#elif VRO_PLATFORM_ANDROID
     std::string path = VROPlatformCopyAssetToFile(resource + "." + type);
     return VROPlatformLoadFile(path, outLength);
 #endif
@@ -76,8 +76,8 @@ std::shared_ptr<VROTexture> VROTestUtil::loadCloudBackground() {
         std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz1.jpg"], format)
     };
     
-    return std::make_shared<VROTexture>(format, true, cubeImages);
-#else
+    return std::make_shared<VROTexture>(true, cubeImages);
+#elif VRO_PLATFORM_ANDROID
     std::vector<std::shared_ptr<VROImage>> cubeImages = {
             std::make_shared<VROImageAndroid>("px1.jpg", format),
             std::make_shared<VROImageAndroid>("nx1.jpg", format),
@@ -87,7 +87,7 @@ std::shared_ptr<VROTexture> VROTestUtil::loadCloudBackground() {
             std::make_shared<VROImageAndroid>("nz1.jpg", format)
     };
 
-    return std::make_shared<VROTexture>(format, true, cubeImages);
+    return std::make_shared<VROTexture>(true, cubeImages);
 #endif
 }
 
@@ -104,8 +104,8 @@ std::shared_ptr<VROTexture> VROTestUtil::loadNiagaraBackground() {
         std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz"], format)
     };
     
-    return std::make_shared<VROTexture>(format, true, cubeImages);
-#else
+    return std::make_shared<VROTexture>(true, cubeImages);
+#elif VRO_PLATFORM_ANDROID
     std::vector<std::shared_ptr<VROImage>> cubeImages = {
         std::make_shared<VROImageAndroid>("px.png", format),
         std::make_shared<VROImageAndroid>("nx.png", format),
@@ -115,17 +115,17 @@ std::shared_ptr<VROTexture> VROTestUtil::loadNiagaraBackground() {
         std::make_shared<VROImageAndroid>("nz.png", format)
     };
 
-    return std::make_shared<VROTexture>(format, true, cubeImages);
+    return std::make_shared<VROTexture>(true, cubeImages);
 #endif
 }
 
 std::shared_ptr<VROTexture> VROTestUtil::loadWestlakeBackground() {
 #if VRO_PLATFORM_IOS
-    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None,
+    return std::make_shared<VROTexture>(true, VROMipmapMode::None,
                                         std::make_shared<VROImageiOS>([UIImage imageNamed:@"360_westlake.jpg"],
                                                                       VROTextureInternalFormat::RGBA8));
-#else
-    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None,
+#elif VRO_PLATFORM_ANDROID
+    return std::make_shared<VROTexture>(true, VROMipmapMode::None,
                                         std::make_shared<VROImageAndroid>("360_westlake.jpg",
                                                                           VROTextureInternalFormat::RGBA8));
 #endif
@@ -137,7 +137,7 @@ std::shared_ptr<VROTexture> VROTestUtil::loadRadianceHDRTexture(std::string text
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:texture.c_str()]
                                                         ofType:@"hdr"];
     path = std::string([fbxPath UTF8String]);
-#else
+#elif VRO_PLATFORM_ANDROID
     path = VROPlatformCopyAssetToFile(texture + ".hdr");
 #endif
     return VROHDRLoader::loadRadianceHDRTexture(path);
@@ -170,13 +170,13 @@ std::shared_ptr<VROTexture> VROTestUtil::loadDiffuseTexture(std::string texture,
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
 
 #if VRO_PLATFORM_IOS
-    return std::make_shared<VROTexture>(format, true, mipmap,
+    return std::make_shared<VROTexture>(true, mipmap,
                                         std::make_shared<VROImageiOS>([UIImage imageNamed:[NSString stringWithUTF8String:texture.c_str()]], format), stereo);
-#else
+#elif VRO_PLATFORM_ANDROID
     if (texture.find(".") == std::string::npos) {
         texture = texture + ".png";
     }
-    return std::make_shared<VROTexture>(format, true, mipmap,
+    return std::make_shared<VROTexture>(true, mipmap,
                                         std::make_shared<VROImageAndroid>(texture.c_str(), format), stereo);
 #endif
 }
@@ -193,13 +193,13 @@ std::shared_ptr<VROTexture> VROTestUtil::loadTexture(std::string texture, bool s
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
 #if VRO_PLATFORM_IOS
-    return std::make_shared<VROTexture>(format, sRGB, VROMipmapMode::Runtime,
+    return std::make_shared<VROTexture>(sRGB, VROMipmapMode::Runtime,
                                         std::make_shared<VROImageiOS>([UIImage imageNamed:[NSString stringWithUTF8String:texture.c_str()]], format));
-#else
+#elif VRO_PLATFORM_ANDROID
     if (texture.find(".") == std::string::npos) {
         texture = texture + ".png";
     }
-    return std::make_shared<VROTexture>(format, sRGB, VROMipmapMode::Runtime,
+    return std::make_shared<VROTexture>(sRGB, VROMipmapMode::Runtime,
                                         std::make_shared<VROImageAndroid>(texture.c_str(), format));
 #endif
 }
@@ -218,8 +218,11 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     NSString *basePath = [fbxPath stringByDeletingLastPathComponent];
     NSURL *baseURL = [NSURL fileURLWithPath:basePath];
     base = std::string([[baseURL description] UTF8String]);
-#else
+#elif VRO_PLATFORM_ANDROID
     url = "file:///android_asset/" + model + ".vrx";
+    base = url.substr(0, url.find_last_of('/'));
+#else
+    url = model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
 #endif
 
@@ -275,7 +278,7 @@ std::shared_ptr<VROVideoTexture> VROTestUtil::loadVideoTexture(std::shared_ptr<V
     callback(texture);
 
     return texture;
-#else
+#elif VRO_PLATFORM_ANDROID
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(stereo);
     VROPlatformDispatchAsyncApplication([videoTexture, driver, callback] {
         videoTexture->init();

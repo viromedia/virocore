@@ -72,7 +72,7 @@ void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string
                       onFinished(nullptr);
                   }
                   else {
-                      texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, sRGB, VROMipmapMode::Runtime, image);
+                      texture = std::make_shared<VROTexture>(sRGB, VROMipmapMode::Runtime, image);
                       textureCache.insert(std::make_pair(name, texture));
                       onFinished(texture);
                   }

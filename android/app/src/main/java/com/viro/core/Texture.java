@@ -297,12 +297,10 @@ public class Texture {
      */
     //#IFDEF 'viro_react'
     public Texture(Image px, Image nx, Image py,
-                   Image ny, Image pz, Image nz,
-                   Format format) {
+                   Image ny, Image pz, Image nz) {
         mNativeRef = nativeCreateCubeTexture(px.mNativeRef, nx.mNativeRef,
                                              py.mNativeRef, ny.mNativeRef,
-                                             pz.mNativeRef, nz.mNativeRef,
-                                             format.getStringValue());
+                                             pz.mNativeRef, nz.mNativeRef);
         mWidth = (int) px.getWidth();
         mHeight = (int) px.getHeight();
     }
@@ -312,8 +310,8 @@ public class Texture {
      * @hide
      */
     //#IFDEF 'viro_react'
-    public Texture(Image image, Format format, boolean sRGB, boolean mipmap) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, null);
+    public Texture(Image image, boolean sRGB, boolean mipmap) {
+        mNativeRef = nativeCreateImageTexture(image.mNativeRef, sRGB, mipmap, null);
         mWidth = (int) image.getWidth();
         mHeight = (int) image.getHeight();
     }
@@ -323,8 +321,8 @@ public class Texture {
      * @hide
      */
     //#IFDEF 'viro_react'
-    public Texture(Image image, Format format, boolean sRGB, boolean mipmap, String stereoMode) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, stereoMode);
+    public Texture(Image image, boolean sRGB, boolean mipmap, String stereoMode) {
+        mNativeRef = nativeCreateImageTexture(image.mNativeRef, sRGB, mipmap, stereoMode);
         mWidth = (int) image.getWidth();
         mHeight = (int) image.getHeight();
     }
@@ -626,9 +624,8 @@ public class Texture {
 
     private static native long nativeCreateRadianceHDRTexture(String uri);
     private native long nativeCreateCubeTexture(long px, long nx, long py,
-                                                long ny, long pz, long nz,
-                                                String format);
-    private native long nativeCreateImageTexture(long image, String format, boolean sRGB, boolean mipmap, String stereoMode);
+                                                long ny, long pz, long nz);
+    private native long nativeCreateImageTexture(long image, boolean sRGB, boolean mipmap, String stereoMode);
     private native long nativeCreateCubeTextureBitmap(Bitmap px, Bitmap nx, Bitmap py,
                                                       Bitmap ny, Bitmap pz, Bitmap nz,
                                                       String format);

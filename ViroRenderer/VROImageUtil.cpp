@@ -41,10 +41,10 @@ void initBlankTexture(const VRORenderContext &context) {
     UIImage *image = [UIImage imageWithContentsOfFile:path];
     
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image, VROTextureInternalFormat::RGBA8);
-    staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    staticBlankTexture = std::make_shared<VROTexture>(true, VROMipmapMode::None, wrapper);
     
     std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
-    staticBlankCubeTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, cubeImages);
+    staticBlankCubeTexture = std::make_shared<VROTexture>(true, cubeImages);
 }
 
 void initPointCloudTexture() {
@@ -57,7 +57,7 @@ void initPointCloudTexture() {
     UIImage *image = [UIImage imageWithContentsOfFile:path];
     
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image, VROTextureInternalFormat::RGBA8);
-    staticPointCloudTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    staticPointCloudTexture = std::make_shared<VROTexture>(true, VROMipmapMode::None, wrapper);
 }
 
 #elif VRO_PLATFORM_ANDROID
@@ -66,15 +66,15 @@ void initPointCloudTexture() {
 
 void initBlankTexture(const VRORenderContext &context) {
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageAndroid>("blank.png", VROTextureInternalFormat::RGBA8);
-    staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    staticBlankTexture = std::make_shared<VROTexture>(true, VROMipmapMode::None, wrapper);
     
     std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
-    staticBlankCubeTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, cubeImages);
+    staticBlankCubeTexture = std::make_shared<VROTexture>(true, cubeImages);
 }
 
 void initPointCloudTexture() {
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageAndroid>("point_cloud.png", VROTextureInternalFormat::RGBA8);
-    staticPointCloudTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    staticPointCloudTexture = std::make_shared<VROTexture>(true, VROMipmapMode::None, wrapper);
 }
 
 #elif VRO_PLATFORM_WASM
@@ -83,10 +83,10 @@ void initPointCloudTexture() {
 
 void initBlankTexture(const VRORenderContext &context) {
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageWasm>("blank.png", VROTextureInternalFormat::RGBA8);
-    staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None, wrapper);
+    staticBlankTexture = std::make_shared<VROTexture>(true, VROMipmapMode::None, wrapper);
     
     std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
-    staticBlankCubeTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, cubeImages);
+    staticBlankCubeTexture = std::make_shared<VROTexture>(true, cubeImages);
 }
 
 void initPointCloudTexture() {
