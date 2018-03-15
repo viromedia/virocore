@@ -1,3 +1,0 @@
-zap com.google.android.aidl.BaseProxy
-zap com.google.android.aidl.BaseStub
-zap com.google.android.aidl.Codecs

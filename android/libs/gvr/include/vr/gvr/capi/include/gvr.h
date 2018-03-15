@@ -76,7 +76,7 @@ extern "C" {
 ///       gvr_clock_time_point next_vsync = AppGetNextVsyncTime();
 ///
 ///       const gvr_mat4f head_view =
-///           gvr_get_head_space_from_start_space_rotation(gvr, next_vsync);
+///           gvr_get_head_space_from_start_space_transform(gvr, next_vsync);
 ///       const gvr_mat4f left_eye_view = MatrixMultiply(
 ///           gvr_get_eye_from_head_matrix(gvr, GVR_LEFT_EYE), head_view);
 ///       const gvr::Mat4f right_eye_view = MatrixMultiply(
@@ -499,7 +499,12 @@ int32_t gvr_buffer_viewport_get_external_surface_id(
     const gvr_buffer_viewport* viewport);
 
 /// Sets the ID of the externally-managed Surface texture from which this
-/// viewport reads. The ID is issued by GvrLayout.
+/// viewport reads. The ID is issued by GvrLayout. If this viewport does not
+/// read from an external surface, this should be set to
+/// GVR_EXTERNAL_SURFACE_ID_NONE, which is also the default value. If it does
+/// read from an external surface, set this to the ID obtained from GvrLayout
+/// and set the source buffer index to the special value
+/// GVR_BUFFER_INDEX_EXTERNAL_SURFACE.
 ///
 /// @param viewport The buffer viewport.
 /// @param external_surface_id The ID of the surface to read from.
@@ -702,10 +707,17 @@ gvr_swap_chain* gvr_swap_chain_create(gvr_context* gvr,
                                       const gvr_buffer_spec** buffers,
                                       int32_t count);
 
-/// Destroys the swap chain and nulls the pointer.
+/// Destroys the swap chain and nulls the pointer that is passed in.  This
+/// should be called after rendering is finished to free all the buffers that
+/// have been allocated in the swap chain.
+///
+/// @param swap_chain The swap chain to destroy.
 void gvr_swap_chain_destroy(gvr_swap_chain** swap_chain);
 
 /// Gets the number of buffers in each frame of the swap chain.
+///
+/// @param swap_chain The swap chain to query.
+/// @return The number of buffers in the swap chain.
 int32_t gvr_swap_chain_get_buffer_count(const gvr_swap_chain* swap_chain);
 
 /// Retrieves the size of the specified pixel buffer. Note that if the buffer
@@ -795,6 +807,10 @@ AHardwareBuffer* gvr_frame_get_hardware_buffer(const gvr_frame* frame,
 /// Submits the frame for distortion and display on the screen. The passed
 /// pointer is nulled to prevent reuse.
 ///
+/// Note: On Cardboard devices, this function makes OpenGL commands in the
+/// current thread's GL context; this can affect various GL state such as
+/// texture bindings, depth testing, backface culling, and blending.
+///
 /// @param frame The frame to submit.
 /// @param list Buffer view configuration to be used for this frame.
 /// @param head_space_from_start_space Transform from start space (space with
@@ -821,6 +837,11 @@ void gvr_bind_default_framebuffer(gvr_context* gvr);
 /// @return The current monotonic system time.
 gvr_clock_time_point gvr_get_time_point_now();
 
+/// @deprecated Calls to this method can be safely replaced by calls to
+///    gvr_get_head_space_from_start_space_transform. The new API reflects that
+///    the call *can* return a full 6DoF transform when supported by both the
+///    host platform and the client application.
+///
 /// Gets the rotation from start space to head space.  The head space is a
 /// space where the head is at the origin and faces the -Z direction.
 ///
@@ -835,6 +856,11 @@ gvr_mat4f gvr_get_head_space_from_start_space_rotation(
 
 /// Gets the position and rotation from start space to head space.  The head
 /// space is a space where the head is at the origin and faces the -Z direction.
+///
+/// For platforms that support 6DoF head tracking, the app may also be required
+/// to declare support for 6DoF in order to receive a fully formed 6DoF pose,
+/// e.g., on Android, this requires declaration of support for at least version
+/// 1 of the "android.hardware.vr.headtracking" feature in the manifest.
 ///
 /// @param gvr Pointer to the gvr instance from which to get the pose.
 /// @param time The time at which to get the head pose. The time should be in
@@ -1032,7 +1058,7 @@ class UserPrefs : public WrapperBase<const gvr_user_prefs> {
   }
 };
 
-/// Convenience C++ wrapper for gvr_user_prefs.
+/// Convenience C++ wrapper for gvr_properties.
 class Properties : public WrapperBase<const gvr_properties> {
  public:
   using WrapperBase::WrapperBase;
@@ -1442,7 +1468,7 @@ class GvrApi {
     if (!context) {
       return nullptr;
     }
-    return std::unique_ptr<GvrApi>(new GvrApi(context, true /* owned */));
+    return std::unique_ptr<GvrApi>(new GvrApi(context, /*owned=*/true));
   }
 #else
   /// Instantiates and returns a GvrApi instance that owns a gvr_context.
@@ -1453,7 +1479,7 @@ class GvrApi {
     if (!context) {
       return nullptr;
     }
-    return std::unique_ptr<GvrApi>(new GvrApi(context, true /* owned */));
+    return std::unique_ptr<GvrApi>(new GvrApi(context, /*owned=*/true));
   }
 #endif  // #ifdef __ANDROID__
 
@@ -1684,7 +1710,7 @@ class GvrApi {
   /// @param context Pointer to a non-null, non-owned gvr_context instance.
   /// @return unique_ptr to the created GvrApi instance. Never null.
   static std::unique_ptr<GvrApi> WrapNonOwned(gvr_context* context) {
-    return std::unique_ptr<GvrApi>(new GvrApi(context, false /* owned */));
+    return std::unique_ptr<GvrApi>(new GvrApi(context, /*owned=*/false));
   }
   /// @}
 
