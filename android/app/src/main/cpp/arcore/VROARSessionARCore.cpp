@@ -318,16 +318,17 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
         for (int i = 0; i < planesSize; i++) {
             arcore::Trackable *trackable = planesList->acquireItem(i);
             arcore::Plane *plane = (arcore::Plane *)trackable;
-
             arcore::Plane *newPlane = plane->acquireSubsumedBy();
-
             std::shared_ptr<VROARPlaneAnchor> vAnchor;
             // ARCore doesn't use ID for planes, but rather they simply return the same object, so
             // the hashcodes should be reliable.
+
             std::string key = VROStringUtil::toString(plane->getHashCode());
+            arcore::TrackingState state = trackable->getTrackingState();
+            bool currentPlaneIsTracked = state == arcore::TrackingState::Tracking;
 
             // If the plane wasn't subsumed by a new plane, then don't remove it.
-            if (newPlane == NULL) {
+            if (newPlane == NULL && currentPlaneIsTracked) {
                 auto it = _nativeAnchorMap.find(key);
                 if (it != _nativeAnchorMap.end()) {
                     vAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(it->second);
