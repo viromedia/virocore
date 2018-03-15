@@ -28,9 +28,13 @@ public:
     int getHeight() const;
     unsigned char *getData(size_t *length);
     
+    void lock();
+    void unlock();
+    
 private:
     
     SDL_Surface *_surface;
+    SDL_Surface *convertToRGBA8(SDL_Surface *surface);
     
 };
 

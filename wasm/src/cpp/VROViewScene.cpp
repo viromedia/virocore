@@ -21,6 +21,7 @@
 #include "VROText.h"
 #include "VROOBJLoader.h"
 #include "VROParticleEmitter.h"
+#include "VROTestUtil.h"
 
 static VROViewScene *sInstance = nullptr;
 
@@ -100,7 +101,7 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotBlue);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
-    
+    /*
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
     VROOBJLoader::loadOBJFromResource("test/male02.obj", VROResourceType::URL, objNode,
                                       [](std::shared_ptr<VRONode> node, bool success) {
@@ -177,7 +178,15 @@ void VROViewScene::buildTestScene() {
     particleNode->setParticleEmitter(particleEmitter);
     rootNode->addChildNode(particleNode);
     particleEmitter->setRun(true);
+    */
     
+    std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/portal_archway", { 0, 0, -3 }, { 1, 1, 1 }, 1, "02");
+
+
+    rootNode->addChildNode(fbxNode);
     
     /*
     std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
