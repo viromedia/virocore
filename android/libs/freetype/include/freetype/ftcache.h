@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType Cache subsystem (specification).                            */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010 by */
+/*  Copyright 1996-2018 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __FTCACHE_H__
-#define __FTCACHE_H__
+#ifndef FTCACHE_H_
+#define FTCACHE_H_
 
 
 #include <ft2build.h>
@@ -56,9 +56,12 @@ FT_BEGIN_HEADER
    *   interpret them in any way.
    *
    *   Second, the cache calls, only when needed, a client-provided function
-   *   to convert a @FTC_FaceID into a new @FT_Face object.  The latter is
+   *   to convert an @FTC_FaceID into a new @FT_Face object.  The latter is
    *   then completely managed by the cache, including its termination
-   *   through @FT_Done_Face.
+   *   through @FT_Done_Face.  To monitor termination of face objects, the
+   *   finalizer callback in the `generic' field of the @FT_Face object can
+   *   be used, which might also be used to store the @FTC_FaceID of the
+   *   face.
    *
    *   Clients are free to map face IDs to anything else.  The most simple
    *   usage is to associate them to a (pathname,face_index) pair that is
@@ -153,7 +156,7 @@ FT_BEGIN_HEADER
    * @note:
    *   Never use NULL as a valid @FTC_FaceID.
    *
-   *   Face IDs are passed by the client to the cache manager, which calls,
+   *   Face IDs are passed by the client to the cache manager that calls,
    *   when needed, the @FTC_Face_Requester to translate them into new
    *   @FT_Face objects.
    *
@@ -206,16 +209,10 @@ FT_BEGIN_HEADER
   typedef FT_Error
   (*FTC_Face_Requester)( FTC_FaceID  face_id,
                          FT_Library  library,
-                         FT_Pointer  request_data,
+                         FT_Pointer  req_data,
                          FT_Face*    aface );
 
- /* */
-
-#define FT_POINTER_TO_ULONG( p )  ( (FT_ULong)(FT_Pointer)(p) )
-
-#define FTC_FACE_ID_HASH( i )                                \
-          ((FT_UInt32)(( FT_POINTER_TO_ULONG( i ) >> 3 ) ^   \
-                       ( FT_POINTER_TO_ULONG( i ) << 7 ) ) )
+  /* */
 
 
   /*************************************************************************/
@@ -373,7 +370,7 @@ FT_BEGIN_HEADER
   /*    should never try to discard it yourself.                           */
   /*                                                                       */
   /*    The @FT_Face object doesn't necessarily have a current size object */
-  /*    (i.e., face->size can be 0).  If you need a specific `font size',  */
+  /*    (i.e., face->size can be~0).  If you need a specific `font size',  */
   /*    use @FTC_Manager_LookupSize instead.                               */
   /*                                                                       */
   /*    Never change the face's transformation matrix (i.e., never call    */
@@ -543,13 +540,6 @@ FT_BEGIN_HEADER
                             FTC_FaceID   face_id );
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Section>                                                             */
-  /*    cache_subsystem                                                    */
-  /*                                                                       */
-  /*************************************************************************/
-
   /*************************************************************************
    *
    * @type:
@@ -627,14 +617,6 @@ FT_BEGIN_HEADER
 
 
   /*************************************************************************/
-  /*                                                                       */
-  /* <Section>                                                             */
-  /*    cache_subsystem                                                    */
-  /*                                                                       */
-  /*************************************************************************/
-
-
-  /*************************************************************************/
   /*************************************************************************/
   /*************************************************************************/
   /*****                                                               *****/
@@ -670,8 +652,8 @@ FT_BEGIN_HEADER
   typedef struct  FTC_ImageTypeRec_
   {
     FTC_FaceID  face_id;
-    FT_Int      width;
-    FT_Int      height;
+    FT_UInt     width;
+    FT_UInt     height;
     FT_Int32    flags;
 
   } FTC_ImageTypeRec;
@@ -697,11 +679,6 @@ FT_BEGIN_HEADER
             (d1)->width   == (d2)->width   && \
             (d1)->flags   == (d2)->flags   )
 
-#define FTC_IMAGE_TYPE_HASH( d )                          \
-          (FT_UFast)( FTC_FACE_ID_HASH( (d)->face_id )  ^ \
-                      ( (d)->width << 8 ) ^ (d)->height ^ \
-                      ( (d)->flags << 4 )               )
-
 
   /*************************************************************************/
   /*                                                                       */
@@ -709,7 +686,7 @@ FT_BEGIN_HEADER
   /*    FTC_ImageCache                                                     */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    A handle to an glyph image cache object.  They are designed to     */
+  /*    A handle to a glyph image cache object.  They are designed to      */
   /*    hold many distinct glyph images while not exceeding a certain      */
   /*    memory threshold.                                                  */
   /*                                                                       */
@@ -757,7 +734,7 @@ FT_BEGIN_HEADER
   /*    aglyph :: The corresponding @FT_Glyph object.  0~in case of        */
   /*              failure.                                                 */
   /*                                                                       */
-  /*    anode  :: Used to return the address of of the corresponding cache */
+  /*    anode  :: Used to return the address of the corresponding cache    */
   /*              node after incrementing its reference count (see note    */
   /*              below).                                                  */
   /*                                                                       */
@@ -810,7 +787,7 @@ FT_BEGIN_HEADER
   /*    aglyph     :: The corresponding @FT_Glyph object.  0~in case of    */
   /*                  failure.                                             */
   /*                                                                       */
-  /*    anode      :: Used to return the address of of the corresponding   */
+  /*    anode      :: Used to return the address of the corresponding      */
   /*                  cache node after incrementing its reference count    */
   /*                  (see note below).                                    */
   /*                                                                       */
@@ -965,7 +942,7 @@ FT_BEGIN_HEADER
   /* <Output>                                                              */
   /*    sbit   :: A handle to a small bitmap descriptor.                   */
   /*                                                                       */
-  /*    anode  :: Used to return the address of of the corresponding cache */
+  /*    anode  :: Used to return the address of the corresponding cache    */
   /*              node after incrementing its reference count (see note    */
   /*              below).                                                  */
   /*                                                                       */
@@ -1020,7 +997,7 @@ FT_BEGIN_HEADER
   /* <Output>                                                              */
   /*    sbit       :: A handle to a small bitmap descriptor.               */
   /*                                                                       */
-  /*    anode      :: Used to return the address of of the corresponding   */
+  /*    anode      :: Used to return the address of the corresponding      */
   /*                  cache node after incrementing its reference count    */
   /*                  (see note below).                                    */
   /*                                                                       */
@@ -1054,72 +1031,12 @@ FT_BEGIN_HEADER
                               FTC_SBit      *sbit,
                               FTC_Node      *anode );
 
-
- /* */
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  /*@***********************************************************************/
-  /*                                                                       */
-  /* <Struct>                                                              */
-  /*    FTC_FontRec                                                        */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A simple structure used to describe a given `font' to the cache    */
-  /*    manager.  Note that a `font' is the combination of a given face    */
-  /*    with a given character size.                                       */
-  /*                                                                       */
-  /* <Fields>                                                              */
-  /*    face_id    :: The ID of the face to use.                           */
-  /*                                                                       */
-  /*    pix_width  :: The character width in integer pixels.               */
-  /*                                                                       */
-  /*    pix_height :: The character height in integer pixels.              */
-  /*                                                                       */
-  typedef struct  FTC_FontRec_
-  {
-    FTC_FaceID  face_id;
-    FT_UShort   pix_width;
-    FT_UShort   pix_height;
-
-  } FTC_FontRec;
-
-
   /* */
 
 
-#define FTC_FONT_COMPARE( f1, f2 )                  \
-          ( (f1)->face_id    == (f2)->face_id    && \
-            (f1)->pix_width  == (f2)->pix_width  && \
-            (f1)->pix_height == (f2)->pix_height )
-
-#define FTC_FONT_HASH( f )                              \
-          (FT_UInt32)( FTC_FACE_ID_HASH((f)->face_id) ^ \
-                       ((f)->pix_width << 8)          ^ \
-                       ((f)->pix_height)              )
-
-  typedef FTC_FontRec*  FTC_Font;
-
-
-  FT_EXPORT( FT_Error )
-  FTC_Manager_Lookup_Face( FTC_Manager  manager,
-                           FTC_FaceID   face_id,
-                           FT_Face     *aface );
-
-  FT_EXPORT( FT_Error )
-  FTC_Manager_Lookup_Size( FTC_Manager  manager,
-                           FTC_Font     font,
-                           FT_Face     *aface,
-                           FT_Size     *asize );
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-
- /* */
-
 FT_END_HEADER
 
-#endif /* __FTCACHE_H__ */
+#endif /* FTCACHE_H_ */
 
 
 /* END */
