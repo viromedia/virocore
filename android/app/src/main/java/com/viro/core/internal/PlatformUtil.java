@@ -200,7 +200,7 @@ public class PlatformUtil {
             Log.w(TAG, "No file found at URL [" + url + "], not copying to temporary file");
             return null;
         }catch(IOException e) {
-            Log.w(TAG, "IO error downloading file at URL [" + url + "], download failed");
+            Log.w(TAG, "IO error downloading file at URL [" + url + "], download failed with error:" + e.getMessage());
             return null;
         }catch(Exception e) {
             Log.w(TAG, "Unknown error downloading file at URL [" + url + "]", e);
