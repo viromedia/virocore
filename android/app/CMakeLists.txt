@@ -339,7 +339,7 @@ add_library( lib-freetype
              IMPORTED )
 set_target_properties( lib-freetype
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libfreetype.so )
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libfreetyped.so )
 
 add_library( lib-protobuf
              SHARED
