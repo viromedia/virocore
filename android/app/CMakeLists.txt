@@ -1,18 +1,19 @@
-# Sets the minimum version of CMake required to build the native
-# library. You should either keep the default value or only pass a
-# value of 3.4.0 or lower.
-
 cmake_minimum_required(VERSION 3.4.1)
 
-include_directories(../../ViroRenderer
-                    src/main/cpp
-                    ../libs/gvr/include
-                    ../libs/ovr/include
-                    ../libs/freetype/include
-                    ../libs/protobuf/include
-                    ../libs/bullet/include
-                    ../libs/opencv/include
-                    ../libs/arcore/include)
+set(VIRO_ANDROID_INCLUDES ${CMAKE_SOURCE_DIR}/../libs)
+set(VIRO_ANDROID_LIBS     ${CMAKE_SOURCE_DIR}/../app/src/main/jniLibs)
+set(VIRO_RENDERER_SRC     ${CMAKE_SOURCE_DIR}/../../ViroRenderer)
+set(VIRO_ANDROID_SRC      ${CMAKE_SOURCE_DIR}/../app/src/main/cpp)
+
+include_directories(${VIRO_RENDERER_SRC}
+                    ${VIRO_ANDROID_SRC}
+                    ${VIRO_ANDROID_INCLUDES}/gvr/include
+                    ${VIRO_ANDROID_INCLUDES}/ovr/include
+                    ${VIRO_ANDROID_INCLUDES}/freetype/include
+                    ${VIRO_ANDROID_INCLUDES}/protobuf/include
+                    ${VIRO_ANDROID_INCLUDES}/bullet/include
+                    ${VIRO_ANDROID_INCLUDES}/opencv/include
+                    ${VIRO_ANDROID_INCLUDES}/arcore/include)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -20,7 +21,7 @@ include_directories(../../ViroRenderer
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             viro_native
+             viro_renderer
 
              # Sets the library as a shared library.
              SHARED
@@ -30,279 +31,279 @@ add_library( # Sets the name of the library.
              # file are automatically included.
 
              # Android Platform
-             src/main/cpp/native-lib.cpp
-             src/main/cpp/debug_stacktrace.cpp
-             src/main/cpp/debug_mapinfo.cpp
-             src/main/cpp/VROLooper.cpp
-             src/main/cpp/VROSceneRendererGVR.cpp
-             src/main/cpp/VROSceneRendererOVR.cpp
-             src/main/cpp/VROSceneRendererSceneView.cpp
-             src/main/cpp/VROSample.cpp
-             src/main/cpp/VROImageAndroid.cpp
-             src/main/cpp/VROPCMAudioPlayer.cpp
-             src/main/cpp/VROVideoTextureAndroid.cpp
-             src/main/cpp/VROAudioPlayerAndroid.cpp
-             src/main/cpp/VROAVPlayer.cpp
-             src/main/cpp/VROVideoTextureAVP.cpp
-             src/main/cpp/VROTypefaceAndroid.cpp
-             src/main/cpp/VROInputControllerDaydream.cpp
-             src/main/cpp/VROInputControllerCardboard.cpp
-             src/main/cpp/VROInputControllerOVR.cpp
-             src/main/cpp/VROAVRecorderAndroid.cpp
+             ${VIRO_ANDROID_SRC}/native-lib.cpp
+             ${VIRO_ANDROID_SRC}/debug_stacktrace.cpp
+             ${VIRO_ANDROID_SRC}/debug_mapinfo.cpp
+             ${VIRO_ANDROID_SRC}/VROLooper.cpp
+             ${VIRO_ANDROID_SRC}/VROSceneRendererGVR.cpp
+             ${VIRO_ANDROID_SRC}/VROSceneRendererOVR.cpp
+             ${VIRO_ANDROID_SRC}/VROSceneRendererSceneView.cpp
+             ${VIRO_ANDROID_SRC}/VROSample.cpp
+             ${VIRO_ANDROID_SRC}/VROImageAndroid.cpp
+             ${VIRO_ANDROID_SRC}/VROPCMAudioPlayer.cpp
+             ${VIRO_ANDROID_SRC}/VROVideoTextureAndroid.cpp
+             ${VIRO_ANDROID_SRC}/VROAudioPlayerAndroid.cpp
+             ${VIRO_ANDROID_SRC}/VROAVPlayer.cpp
+             ${VIRO_ANDROID_SRC}/VROVideoTextureAVP.cpp
+             ${VIRO_ANDROID_SRC}/VROTypefaceAndroid.cpp
+             ${VIRO_ANDROID_SRC}/VROInputControllerDaydream.cpp
+             ${VIRO_ANDROID_SRC}/VROInputControllerCardboard.cpp
+             ${VIRO_ANDROID_SRC}/VROInputControllerOVR.cpp
+             ${VIRO_ANDROID_SRC}/VROAVRecorderAndroid.cpp
 
              # Android JNI
-             src/main/cpp/jni/VRORenderer_JNI.cpp
-             src/main/cpp/jni/Node_JNI.cpp
-             src/main/cpp/jni/Geometry_JNI.cpp
-             src/main/cpp/jni/SceneController_JNI.cpp
-             src/main/cpp/jni/Camera_JNI.cpp
-             src/main/cpp/jni/Box_JNI.cpp
-             src/main/cpp/jni/Controller_JNI.cpp
-             src/main/cpp/jni/Surface_JNI.cpp
-             src/main/cpp/jni/Polygon_JNI.cpp
-             src/main/cpp/jni/Sphere_JNI.cpp
-             src/main/cpp/jni/Material_JNI.cpp
-             src/main/cpp/jni/Image_JNI.cpp
-             src/main/cpp/jni/Texture_JNI.cpp
-             src/main/cpp/jni/VideoTexture_JNI.cpp
-             src/main/cpp/jni/VideoDelegate_JNI.cpp
-             src/main/cpp/jni/ViroContext_JNI.cpp
-             src/main/cpp/jni/EventDelegate_JNI.cpp
-             src/main/cpp/jni/AnimationChain_JNI.cpp
-             src/main/cpp/jni/AnimationGroup_JNI.cpp
-             src/main/cpp/jni/ExecutableAnimation_JNI.cpp
-             src/main/cpp/jni/Light_JNI.cpp
-             src/main/cpp/jni/AmbientLight_JNI.cpp
-             src/main/cpp/jni/SpotLight_JNI.cpp
-             src/main/cpp/jni/DirectionalLight_JNI.cpp
-             src/main/cpp/jni/OmniLight_JNI.cpp
-             src/main/cpp/jni/Sound_JNI.cpp
-             src/main/cpp/jni/SoundField_JNI.cpp
-             src/main/cpp/jni/SpatialSound_JNI.cpp
-             src/main/cpp/jni/SoundDelegate_JNI.cpp
-             src/main/cpp/jni/Text_JNI.cpp
-             src/main/cpp/jni/TextDelegate_JNI.cpp
-             src/main/cpp/jni/SoundData_JNI.cpp
-             src/main/cpp/jni/Object_JNI.cpp
-             src/main/cpp/jni/OBJLoaderDelegate_JNI.cpp
-             src/main/cpp/jni/LazyMaterial_JNI.cpp
-             src/main/cpp/jni/Polyline_JNI.cpp
-             src/main/cpp/jni/PhysicsDelegate_JNI.cpp
-             src/main/cpp/jni/TransformDelegate_JNI.cpp
-             src/main/cpp/jni/FixedParticleEmitter_JNI.cpp
-             src/main/cpp/jni/ParticleEmitter_JNI.cpp
-             src/main/cpp/jni/Portal_JNI.cpp
-             src/main/cpp/jni/PortalScene_JNI.cpp
-             src/main/cpp/jni/PortalDelegate_JNI.cpp
-             src/main/cpp/jni/PhysicsBody_JNI.cpp
-             src/main/cpp/jni/AnimationTransaction_JNI.cpp
-             src/main/cpp/jni/MediaRecorder_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/VRORenderer_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Node_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Geometry_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/SceneController_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Camera_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Box_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Controller_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Surface_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Polygon_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Sphere_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Material_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Image_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Texture_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/VideoTexture_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/VideoDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ViroContext_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/EventDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/AnimationChain_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/AnimationGroup_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ExecutableAnimation_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Light_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/AmbientLight_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/SpotLight_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/DirectionalLight_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/OmniLight_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Sound_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/SoundField_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/SpatialSound_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/SoundDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Text_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/TextDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/SoundData_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Object_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/OBJLoaderDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/LazyMaterial_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Polyline_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/PhysicsDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/TransformDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/FixedParticleEmitter_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ParticleEmitter_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Portal_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/PortalScene_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/PortalDelegate_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/PhysicsBody_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/AnimationTransaction_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/MediaRecorder_JNI.cpp
 
              # Math
-             ../../ViroRenderer/VROLineSegment.cpp
-             ../../ViroRenderer/VROTriangle.cpp
-             ../../ViroRenderer/VROQuaternion.cpp
-             ../../ViroRenderer/VROPlane.cpp
-             ../../ViroRenderer/VROFrustum.cpp
-             ../../ViroRenderer/VROFrustumPlane.cpp
-             ../../ViroRenderer/VROBoundingBox.cpp
-             ../../ViroRenderer/VROFrustumBoxIntersectionMetadata.cpp
-             ../../ViroRenderer/VROVector3f.cpp
-             ../../ViroRenderer/VROVector4f.cpp
-             ../../ViroRenderer/VROMatrix4f.cpp
-             ../../ViroRenderer/VROMath.cpp
-             ../../ViroRenderer/VROProjector.cpp
-             ../../ViroRenderer/VRODualQuaternion.cpp
+             ${VIRO_RENDERER_SRC}/VROLineSegment.cpp
+             ${VIRO_RENDERER_SRC}/VROTriangle.cpp
+             ${VIRO_RENDERER_SRC}/VROQuaternion.cpp
+             ${VIRO_RENDERER_SRC}/VROPlane.cpp
+             ${VIRO_RENDERER_SRC}/VROFrustum.cpp
+             ${VIRO_RENDERER_SRC}/VROFrustumPlane.cpp
+             ${VIRO_RENDERER_SRC}/VROBoundingBox.cpp
+             ${VIRO_RENDERER_SRC}/VROFrustumBoxIntersectionMetadata.cpp
+             ${VIRO_RENDERER_SRC}/VROVector3f.cpp
+             ${VIRO_RENDERER_SRC}/VROVector4f.cpp
+             ${VIRO_RENDERER_SRC}/VROMatrix4f.cpp
+             ${VIRO_RENDERER_SRC}/VROMath.cpp
+             ${VIRO_RENDERER_SRC}/VROProjector.cpp
+             ${VIRO_RENDERER_SRC}/VRODualQuaternion.cpp
 
              # Util
-             ../../ViroRenderer/VROAllocationTracker.cpp
-             ../../ViroRenderer/VROTime.cpp
-             ../../ViroRenderer/VROLog.cpp
-             ../../ViroRenderer/VROByteBuffer.cpp
-             ../../ViroRenderer/VROImageUtil.cpp
-             ../../ViroRenderer/VROData.cpp
-             ../../ViroRenderer/VROGeometryUtil.cpp
-             ../../ViroRenderer/VROTextureUtil.cpp
-             ../../ViroRenderer/VROStringUtil.cpp
-             ../../ViroRenderer/VROPlatformUtil.cpp
-             ../../ViroRenderer/VROFBXLoader.cpp
-             ../../ViroRenderer/VROModelIOUtil.cpp
-             ../../ViroRenderer/VROOBJLoader.cpp
-             ../../ViroRenderer/VROHDRLoader.cpp
-             ../../ViroRenderer/tiny_obj_loader.cc
-             ../../ViroRenderer/VROGVRUtil.cpp
-             ../../ViroRenderer/VROThreadRestricted.cpp
-             ../../ViroRenderer/VROCompress.cpp
-             ../../ViroRenderer/VRORenderUtil.cpp
-             ../../ViroRenderer/VROTaskQueue.cpp
-             ../../ViroRenderer/Nodes.pb.cc
+             ${VIRO_RENDERER_SRC}/VROAllocationTracker.cpp
+             ${VIRO_RENDERER_SRC}/VROTime.cpp
+             ${VIRO_RENDERER_SRC}/VROLog.cpp
+             ${VIRO_RENDERER_SRC}/VROByteBuffer.cpp
+             ${VIRO_RENDERER_SRC}/VROImageUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROData.cpp
+             ${VIRO_RENDERER_SRC}/VROGeometryUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROTextureUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROStringUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROPlatformUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROFBXLoader.cpp
+             ${VIRO_RENDERER_SRC}/VROModelIOUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROOBJLoader.cpp
+             ${VIRO_RENDERER_SRC}/VROHDRLoader.cpp
+             ${VIRO_RENDERER_SRC}/tiny_obj_loader.cc
+             ${VIRO_RENDERER_SRC}/VROGVRUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROThreadRestricted.cpp
+             ${VIRO_RENDERER_SRC}/VROCompress.cpp
+             ${VIRO_RENDERER_SRC}/VRORenderUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROTaskQueue.cpp
+             ${VIRO_RENDERER_SRC}/Nodes.pb.cc
 
              # Renderer
-             ../../ViroRenderer/VROScene.cpp
-             ../../ViroRenderer/VROSceneController.cpp
-             ../../ViroRenderer/VROCamera.cpp
-             ../../ViroRenderer/VRONode.cpp
-             ../../ViroRenderer/VROPortal.cpp
-             ../../ViroRenderer/VROPortalFrame.cpp
-             ../../ViroRenderer/VROGeometry.cpp
-             ../../ViroRenderer/VROGeometryElement.cpp
-             ../../ViroRenderer/VROGeometrySource.cpp
-             ../../ViroRenderer/VROMaterial.cpp
-             ../../ViroRenderer/VROMaterialVisual.cpp
-             ../../ViroRenderer/VROTexture.cpp
-             ../../ViroRenderer/VROLight.cpp
-             ../../ViroRenderer/VROBillboardConstraint.cpp
-             ../../ViroRenderer/VROTransformConstraint.cpp
-             ../../ViroRenderer/VRORenderer.cpp
-             ../../ViroRenderer/VROFrameSynchronizerInternal.cpp
-             ../../ViroRenderer/VROPortalTraversalListener.cpp
-             ../../ViroRenderer/VROGeometrySubstrate.cpp
-             ../../ViroRenderer/VROTextureSubstrate.cpp
-             ../../ViroRenderer/VROMaterialSubstrate.cpp
-             ../../ViroRenderer/VRONodeCamera.cpp
-             ../../ViroRenderer/VROInputControllerBase.cpp
-             ../../ViroRenderer/VROFrameScheduler.cpp
-             ../../ViroRenderer/VROChoreographer.cpp
-             ../../ViroRenderer/VROPortalTreeRenderPass.cpp
-             ../../ViroRenderer/VRORenderTargetOpenGL.cpp
-             ../../ViroRenderer/VROImageShaderProgram.cpp
-             ../../ViroRenderer/VROImagePostProcessOpenGL.cpp
-             ../../ViroRenderer/VROParticleEmitter.cpp
-             ../../ViroRenderer/VROParticleUBO.cpp
-             ../../ViroRenderer/VROShadowPreprocess.cpp
-             ../../ViroRenderer/VROShadowMapRenderPass.cpp
-             ../../ViroRenderer/VROShaderFactory.cpp
-             ../../ViroRenderer/VROShaderCapabilities.cpp
-             ../../ViroRenderer/VROTextureReference.cpp
-             ../../ViroRenderer/VROMaterialShaderBinding.cpp
-             ../../ViroRenderer/VROPostProcessEffectFactory.cpp
-             ../../ViroRenderer/VROToneMappingRenderPass.cpp
-             ../../ViroRenderer/VROGaussianBlurRenderPass.cpp
-             ../../ViroRenderer/VROIBLPreprocess.cpp
-             ../../ViroRenderer/VROEquirectangularToCubeRenderPass.cpp
-             ../../ViroRenderer/VROIrradianceRenderPass.cpp
-             ../../ViroRenderer/VROPrefilterRenderPass.cpp
-             ../../ViroRenderer/VROBRDFRenderPass.cpp
-             ../../ViroRenderer/VROFixedParticleEmitter.cpp
+             ${VIRO_RENDERER_SRC}/VROScene.cpp
+             ${VIRO_RENDERER_SRC}/VROSceneController.cpp
+             ${VIRO_RENDERER_SRC}/VROCamera.cpp
+             ${VIRO_RENDERER_SRC}/VRONode.cpp
+             ${VIRO_RENDERER_SRC}/VROPortal.cpp
+             ${VIRO_RENDERER_SRC}/VROPortalFrame.cpp
+             ${VIRO_RENDERER_SRC}/VROGeometry.cpp
+             ${VIRO_RENDERER_SRC}/VROGeometryElement.cpp
+             ${VIRO_RENDERER_SRC}/VROGeometrySource.cpp
+             ${VIRO_RENDERER_SRC}/VROMaterial.cpp
+             ${VIRO_RENDERER_SRC}/VROMaterialVisual.cpp
+             ${VIRO_RENDERER_SRC}/VROTexture.cpp
+             ${VIRO_RENDERER_SRC}/VROLight.cpp
+             ${VIRO_RENDERER_SRC}/VROBillboardConstraint.cpp
+             ${VIRO_RENDERER_SRC}/VROTransformConstraint.cpp
+             ${VIRO_RENDERER_SRC}/VRORenderer.cpp
+             ${VIRO_RENDERER_SRC}/VROFrameSynchronizerInternal.cpp
+             ${VIRO_RENDERER_SRC}/VROPortalTraversalListener.cpp
+             ${VIRO_RENDERER_SRC}/VROGeometrySubstrate.cpp
+             ${VIRO_RENDERER_SRC}/VROTextureSubstrate.cpp
+             ${VIRO_RENDERER_SRC}/VROMaterialSubstrate.cpp
+             ${VIRO_RENDERER_SRC}/VRONodeCamera.cpp
+             ${VIRO_RENDERER_SRC}/VROInputControllerBase.cpp
+             ${VIRO_RENDERER_SRC}/VROFrameScheduler.cpp
+             ${VIRO_RENDERER_SRC}/VROChoreographer.cpp
+             ${VIRO_RENDERER_SRC}/VROPortalTreeRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VRORenderTargetOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROImageShaderProgram.cpp
+             ${VIRO_RENDERER_SRC}/VROImagePostProcessOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROParticleEmitter.cpp
+             ${VIRO_RENDERER_SRC}/VROParticleUBO.cpp
+             ${VIRO_RENDERER_SRC}/VROShadowPreprocess.cpp
+             ${VIRO_RENDERER_SRC}/VROShadowMapRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROShaderFactory.cpp
+             ${VIRO_RENDERER_SRC}/VROShaderCapabilities.cpp
+             ${VIRO_RENDERER_SRC}/VROTextureReference.cpp
+             ${VIRO_RENDERER_SRC}/VROMaterialShaderBinding.cpp
+             ${VIRO_RENDERER_SRC}/VROPostProcessEffectFactory.cpp
+             ${VIRO_RENDERER_SRC}/VROToneMappingRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROGaussianBlurRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROIBLPreprocess.cpp
+             ${VIRO_RENDERER_SRC}/VROEquirectangularToCubeRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROIrradianceRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROPrefilterRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROBRDFRenderPass.cpp
+             ${VIRO_RENDERER_SRC}/VROFixedParticleEmitter.cpp
 
              # AR (no arcore dependencies)
-             ../../ViroRenderer/VROARSceneController.cpp
-             ../../ViroRenderer/VROARScene.cpp
-             ../../ViroRenderer/VROARNode.cpp
-             ../../ViroRenderer/VROARConstraintMatcher.cpp
-             ../../ViroRenderer/VROARDeclarativeSession.cpp
-             ../../ViroRenderer/VROARImperativeSession.cpp
-             ../../ViroRenderer/VROInputControllerAR.cpp
-             ../../ViroRenderer/VROARShadow.cpp
-             src/main/cpp/VROInputControllerARAndroid.cpp
-             src/main/cpp/jni/ARUtils_JNI.cpp
-             src/main/cpp/VROSceneRendererARCore.cpp
-             src/main/cpp/arcore/VROARSessionARCore.cpp
-             src/main/cpp/arcore/VROARFrameARCore.cpp
-             src/main/cpp/arcore/VROARCameraARCore.cpp
+             ${VIRO_RENDERER_SRC}/VROARSceneController.cpp
+             ${VIRO_RENDERER_SRC}/VROARScene.cpp
+             ${VIRO_RENDERER_SRC}/VROARNode.cpp
+             ${VIRO_RENDERER_SRC}/VROARConstraintMatcher.cpp
+             ${VIRO_RENDERER_SRC}/VROARDeclarativeSession.cpp
+             ${VIRO_RENDERER_SRC}/VROARImperativeSession.cpp
+             ${VIRO_RENDERER_SRC}/VROInputControllerAR.cpp
+             ${VIRO_RENDERER_SRC}/VROARShadow.cpp
+             ${VIRO_ANDROID_SRC}/VROInputControllerARAndroid.cpp
+             ${VIRO_ANDROID_SRC}/jni/ARUtils_JNI.cpp
+             ${VIRO_ANDROID_SRC}/VROSceneRendererARCore.cpp
+             ${VIRO_ANDROID_SRC}/arcore/VROARSessionARCore.cpp
+             ${VIRO_ANDROID_SRC}/arcore/VROARFrameARCore.cpp
+             ${VIRO_ANDROID_SRC}/arcore/VROARCameraARCore.cpp
 
              # Android AR JNI
-             src/main/cpp/jni/ARNode_JNI.cpp
-             src/main/cpp/jni/ARDeclarativeNode_JNI.cpp
-             src/main/cpp/jni/ARDeclarativePlane_JNI.cpp
-             src/main/cpp/jni/ARSceneController_JNI.cpp
-             src/main/cpp/jni/VRORendererARCore_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ARNode_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ARDeclarativeNode_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ARDeclarativePlane_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/ARSceneController_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/VRORendererARCore_JNI.cpp
 
              # Animation
-             ../../ViroRenderer/VROTimingFunction.cpp
-             ../../ViroRenderer/VROTransaction.cpp
-             ../../ViroRenderer/VROAnimatable.cpp
-             ../../ViroRenderer/VROAction.cpp
-             ../../ViroRenderer/VROAnimationChain.cpp
-             ../../ViroRenderer/VROAnimationGroup.cpp
-             ../../ViroRenderer/VROPropertyAnimation.cpp
-             ../../ViroRenderer/VROSkinner.cpp
-             ../../ViroRenderer/VROSkeleton.cpp
-             ../../ViroRenderer/VROBone.cpp
-             ../../ViroRenderer/VROBoneUBO.cpp
-             ../../ViroRenderer/VROSkeletalAnimation.cpp
-             ../../ViroRenderer/VROKeyframeAnimation.cpp
+             ${VIRO_RENDERER_SRC}/VROTimingFunction.cpp
+             ${VIRO_RENDERER_SRC}/VROTransaction.cpp
+             ${VIRO_RENDERER_SRC}/VROAnimatable.cpp
+             ${VIRO_RENDERER_SRC}/VROAction.cpp
+             ${VIRO_RENDERER_SRC}/VROAnimationChain.cpp
+             ${VIRO_RENDERER_SRC}/VROAnimationGroup.cpp
+             ${VIRO_RENDERER_SRC}/VROPropertyAnimation.cpp
+             ${VIRO_RENDERER_SRC}/VROSkinner.cpp
+             ${VIRO_RENDERER_SRC}/VROSkeleton.cpp
+             ${VIRO_RENDERER_SRC}/VROBone.cpp
+             ${VIRO_RENDERER_SRC}/VROBoneUBO.cpp
+             ${VIRO_RENDERER_SRC}/VROSkeletalAnimation.cpp
+             ${VIRO_RENDERER_SRC}/VROKeyframeAnimation.cpp
 
              # Shapes
-             ../../ViroRenderer/VROBox.cpp
-             ../../ViroRenderer/VROSkybox.cpp
-             ../../ViroRenderer/VROSurface.cpp
-             ../../ViroRenderer/VROPolygon.cpp
-             ../../ViroRenderer/VROTorusKnot.cpp
-             ../../ViroRenderer/VROShapeUtils.cpp
-             ../../ViroRenderer/VROSphere.cpp
-             ../../ViroRenderer/VROPolyline.cpp
-             ../../ViroRenderer/VROVideoSurface.cpp
-             ../../ViroRenderer/VROPencil.cpp
+             ${VIRO_RENDERER_SRC}/VROBox.cpp
+             ${VIRO_RENDERER_SRC}/VROSkybox.cpp
+             ${VIRO_RENDERER_SRC}/VROSurface.cpp
+             ${VIRO_RENDERER_SRC}/VROPolygon.cpp
+             ${VIRO_RENDERER_SRC}/VROTorusKnot.cpp
+             ${VIRO_RENDERER_SRC}/VROShapeUtils.cpp
+             ${VIRO_RENDERER_SRC}/VROSphere.cpp
+             ${VIRO_RENDERER_SRC}/VROPolyline.cpp
+             ${VIRO_RENDERER_SRC}/VROVideoSurface.cpp
+             ${VIRO_RENDERER_SRC}/VROPencil.cpp
 
              # UI
-             ../../ViroRenderer/VROReticle.cpp
-             ../../ViroRenderer/VROText.cpp
-             ../../ViroRenderer/VROTypeface.cpp
-             ../../ViroRenderer/VROKnuthPlassFormatter.cpp
-             ../../ViroRenderer/VRODebugHUD.cpp
+             ${VIRO_RENDERER_SRC}/VROReticle.cpp
+             ${VIRO_RENDERER_SRC}/VROText.cpp
+             ${VIRO_RENDERER_SRC}/VROTypeface.cpp
+             ${VIRO_RENDERER_SRC}/VROKnuthPlassFormatter.cpp
+             ${VIRO_RENDERER_SRC}/VRODebugHUD.cpp
 
              # OpenGL
-             ../../ViroRenderer/VROGeometrySubstrateOpenGL.cpp
-             ../../ViroRenderer/VROMaterialSubstrateOpenGL.cpp
-             ../../ViroRenderer/VROTextureSubstrateOpenGL.cpp
-             ../../ViroRenderer/VROUniform.cpp
-             ../../ViroRenderer/VROShaderProgram.cpp
-             ../../ViroRenderer/VROShaderModifier.cpp
-             ../../ViroRenderer/VROLightingUBO.cpp
-             ../../ViroRenderer/VROGlyphOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROGeometrySubstrateOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROMaterialSubstrateOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROTextureSubstrateOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROUniform.cpp
+             ${VIRO_RENDERER_SRC}/VROShaderProgram.cpp
+             ${VIRO_RENDERER_SRC}/VROShaderModifier.cpp
+             ${VIRO_RENDERER_SRC}/VROLightingUBO.cpp
+             ${VIRO_RENDERER_SRC}/VROGlyphOpenGL.cpp
 
              # GVR Audio
-             ../../ViroRenderer/VROSoundGVR.cpp
-             ../../ViroRenderer/VROSoundDataGVR.cpp
+             ${VIRO_RENDERER_SRC}/VROSoundGVR.cpp
+             ${VIRO_RENDERER_SRC}/VROSoundDataGVR.cpp
 
              # Physics
-             ../../ViroRenderer/VROPhysicsWorld.cpp
-             ../../ViroRenderer/VROPhysicsBody.cpp
-             ../../ViroRenderer/VROPhysicsShape.cpp
+             ${VIRO_RENDERER_SRC}/VROPhysicsWorld.cpp
+             ${VIRO_RENDERER_SRC}/VROPhysicsBody.cpp
+             ${VIRO_RENDERER_SRC}/VROPhysicsShape.cpp
 
              # Image Tracking
-             # src/main/cpp/jni/OpenCV_JNI.cpp
-             # src/main/cpp/jni/ImageTracker_JNI.cpp
-             # src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
-             # ../../ViroRenderer/VROImageTracker.cpp
-             # ../../ViroRenderer/VROImageTrackerOutput.cpp
+             # ${VIRO_ANDROID_SRC}/jni/OpenCV_JNI.cpp
+             # ${VIRO_ANDROID_SRC}/jni/ImageTracker_JNI.cpp
+             # ${VIRO_ANDROID_SRC}/jni/ImageTrackerOutput_JNI.cpp
+             # ${VIRO_RENDERER_SRC}/VROImageTracker.cpp
+             # ${VIRO_RENDERER_SRC}/VROImageTrackerOutput.cpp
 
              # Renderer Test
-             ../../ViroRenderer/VRORendererTestHarness.cpp
-             ../../ViroRenderer/VROTestUtil.cpp
-             ../../ViroRenderer/VROPhysicsTest.cpp
-             ../../ViroRenderer/VROARDraggableNodeTest.cpp
-             ../../ViroRenderer/VROARPlaneTest.cpp
-             ../../ViroRenderer/VROShadowTest.cpp
-             ../../ViroRenderer/VROARShadowTest.cpp
-             ../../ViroRenderer/VROBloomTest.cpp
-             ../../ViroRenderer/VROParticleTest.cpp
-             ../../ViroRenderer/VROFBXTest.cpp
-             ../../ViroRenderer/VROHDRTest.cpp
-             ../../ViroRenderer/VRONormalMapTest.cpp
-             ../../ViroRenderer/VROOBJTest.cpp
-             ../../ViroRenderer/VROPerfTest.cpp
-             ../../ViroRenderer/VROPortalTest.cpp
-             ../../ViroRenderer/VROShadowTest.cpp
-             ../../ViroRenderer/VROStereoscopicTest.cpp
-             ../../ViroRenderer/VROTextTest.cpp
-             ../../ViroRenderer/VROTorusTest.cpp
-             ../../ViroRenderer/VROVideoSphereTest.cpp
-             ../../ViroRenderer/VROBoxTest.cpp
-             ../../ViroRenderer/VROPolylineTest.cpp
-             ../../ViroRenderer/VROPBRDirectTest.cpp
-             ../../ViroRenderer/VROPBRTexturedTest.cpp
-             ../../ViroRenderer/VRODiffuseIrradianceTest.cpp
-             ../../ViroRenderer/VROPhotometricLightTest.cpp
-             ../../ViroRenderer/VRORendererSettingsTest.cpp
+             ${VIRO_RENDERER_SRC}/VRORendererTestHarness.cpp
+             ${VIRO_RENDERER_SRC}/VROTestUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROPhysicsTest.cpp
+             ${VIRO_RENDERER_SRC}/VROARDraggableNodeTest.cpp
+             ${VIRO_RENDERER_SRC}/VROARPlaneTest.cpp
+             ${VIRO_RENDERER_SRC}/VROShadowTest.cpp
+             ${VIRO_RENDERER_SRC}/VROARShadowTest.cpp
+             ${VIRO_RENDERER_SRC}/VROBloomTest.cpp
+             ${VIRO_RENDERER_SRC}/VROParticleTest.cpp
+             ${VIRO_RENDERER_SRC}/VROFBXTest.cpp
+             ${VIRO_RENDERER_SRC}/VROHDRTest.cpp
+             ${VIRO_RENDERER_SRC}/VRONormalMapTest.cpp
+             ${VIRO_RENDERER_SRC}/VROOBJTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPerfTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPortalTest.cpp
+             ${VIRO_RENDERER_SRC}/VROShadowTest.cpp
+             ${VIRO_RENDERER_SRC}/VROStereoscopicTest.cpp
+             ${VIRO_RENDERER_SRC}/VROTextTest.cpp
+             ${VIRO_RENDERER_SRC}/VROTorusTest.cpp
+             ${VIRO_RENDERER_SRC}/VROVideoSphereTest.cpp
+             ${VIRO_RENDERER_SRC}/VROBoxTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPolylineTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPBRDirectTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPBRTexturedTest.cpp
+             ${VIRO_RENDERER_SRC}/VRODiffuseIrradianceTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPhotometricLightTest.cpp
+             ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
              )
 
 add_library( viro_arcore
              SHARED
 
-             src/main/cpp/arcore/ARCore_Native.cpp
-             src/main/cpp/arcore/VRORendererARCoreNative_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARCore_Native.cpp
+             ${VIRO_ANDROID_SRC}/arcore/VRORendererARCoreNative_JNI.cpp
            )
 
 # Add pre-built libraries
@@ -311,69 +312,70 @@ add_library( lib-arcore
              IMPORTED )
 set_target_properties( lib-arcore
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libarcore_sdk.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libarcore_sdk.so )
 
 add_library( lib-gvr
              SHARED
              IMPORTED )
 set_target_properties( lib-gvr
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libgvr.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libgvr.so )
 
 add_library( lib-gvr-audio
              SHARED
              IMPORTED )
 set_target_properties( lib-gvr-audio
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libgvr_audio.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libgvr_audio.so )
 
 add_library( lib-ovr
              SHARED
              IMPORTED )
 set_target_properties( lib-ovr
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libvrapi.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libvrapi.so )
 
 add_library( lib-freetype
              SHARED
              IMPORTED )
 set_target_properties( lib-freetype
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libfreetyped.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libfreetyped.so )
 
 add_library( lib-protobuf
              SHARED
              IMPORTED )
 set_target_properties( lib-protobuf
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libprotobuf-lite.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libprotobuf-lite.so )
 
 add_library( lib-BulletCollision
              SHARED
              IMPORTED )
 set_target_properties( lib-BulletCollision
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libBulletCollision.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libBulletCollision.so )
+
 add_library( lib-BulletDynamics
              SHARED
              IMPORTED )
 set_target_properties( lib-BulletDynamics
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libBulletDynamics.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libBulletDynamics.so )
 
 add_library( lib-BulletSoftBody
              SHARED
              IMPORTED )
 set_target_properties( lib-BulletSoftBody
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libBulletSoftBody.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libBulletSoftBody.so )
 
 add_library( lib-LinearMath
              SHARED
              IMPORTED )
 set_target_properties( lib-LinearMath
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libLinearMath.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libLinearMath.so )
 
 # -- OpenCV Libraries --
 
@@ -382,42 +384,42 @@ add_library( lib-OpenCV-Calib3D
              IMPORTED )
 set_target_properties (lib-OpenCV-Calib3D
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_calib3d.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_calib3d.a )
 
 add_library( lib-OpenCV-Core
              STATIC
              IMPORTED )
 set_target_properties (lib-OpenCV-Core
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_core.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_core.a )
 
 add_library( lib-OpenCV-Features2D
              STATIC
              IMPORTED )
 set_target_properties (lib-OpenCV-Features2D
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_features2d.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_features2d.a )
 
 add_library( lib-OpenCV-Flann
              STATIC
              IMPORTED )
 set_target_properties (lib-OpenCV-Flann
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_flann.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_flann.a )
 
 add_library( lib-OpenCV-ImgCodecs
              STATIC
              IMPORTED )
 set_target_properties (lib-OpenCV-ImgCodecs
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_imgcodecs.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_imgcodecs.a )
 
 add_library( lib-OpenCV-ImgProc
              STATIC
              IMPORTED )
 set_target_properties (lib-OpenCV-ImgProc
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_imgproc.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_imgproc.a )
 
 # -- OpenCV 3rd Party Libraries --
 
@@ -426,56 +428,56 @@ add_library( lib-OpenCV-TP-IlmImf
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-IlmImf
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libIlmImf.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libIlmImf.a )
 
 add_library( lib-OpenCV-TP-Jasper
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-Jasper
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/liblibjasper.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibjasper.a )
 
 add_library( lib-OpenCV-TP-JPEG
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-JPEG
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/liblibjpeg.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibjpeg.a )
 
 add_library( lib-OpenCV-TP-PNG
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-PNG
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/liblibpng.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibpng.a )
 
 add_library( lib-OpenCV-TP-TIFF
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-TIFF
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/liblibtiff.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibtiff.a )
 
 add_library( lib-OpenCV-TP-WebP
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-WebP
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/liblibwebp.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibwebp.a )
 
 add_library( lib-OpenCV-TP-TBB
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-TBB
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libtbb.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libtbb.a )
 
 add_library( lib-OpenCV-TP-Tegra-Hal
                STATIC
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-Tegra-Hal
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libtegra_hal.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libtegra_hal.a )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
@@ -499,7 +501,7 @@ find_library( lib-z z )
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       viro_native
+                       viro_renderer
 
                        # Libraries linked with target
                        ${lib-log}

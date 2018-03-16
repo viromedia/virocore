@@ -69,7 +69,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':libs:arcore')
     implementation project(':libs:gvr')
-    implementation project(':app')
+    implementation project(':virocore')
     implementation 'com.android.support:appcompat-v7:25.0.0'
     implementation ('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;

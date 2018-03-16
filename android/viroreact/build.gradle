@@ -1,0 +1,99 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        ndk {
+            // React Native does not support arm64-v8a yet, so don't bother including
+            // it here.
+            // Tracking issue for RN: https://github.com/facebook/react-native/issues/2814
+            abiFilters "armeabi-v7a"
+        }
+
+        // Note that viro_arcore does not use STL, so we can still use static STL in viro_native
+        // (thereby avoiding conflicts with React Android's shared STL)
+        externalNativeBuild {
+            cmake {
+                targets "viro_renderer", "viro_arcore"
+                cppFlags "-std=c++14 -frtti -fcxx-exceptions"
+            }
+        }
+    }
+
+    // Use the /app directory for the source
+    sourceSets {
+        main {
+            java.srcDirs = ['../app/src/main/java']
+            res.srcDirs = ['../app/src/main/res']
+            assets.srcDirs = ['../app/src/main/assets']
+            jniLibs.srcDirs = ['../app/src/main/jniLibs']
+            manifest.srcFile '../app/src/main/AndroidManifest.xml'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../app/CMakeLists.txt"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
+        }
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
+        }
+    }
+
+    dexOptions {
+        preDexLibraries true
+    }
+
+    packagingOptions {
+        // The NDK ABI filters above prevent us from building arm64-v8a and x86 architectures for
+        // viro_renderer and viro_arcore, but we also have to stop gradle from copying all of our
+        // arm64-v8a and x86 dependencies. We do that through these packaging options.
+        exclude '**/x86/**'
+        exclude '**/arm64-v8a/**'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:25.0.0'
+    implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
+    implementation project(':libs:gvr')
+    implementation project(':libs:arcore')
+    implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
+
+}
+
+task copyReleaseAAR(type: Copy) {
+    from('build/outputs/aar')
+    // Change the next line to reflect the path to your react-viro repo, this
+    // script is run from ViroRenderer/android/app/
+    into('../../../react-viro/android/viro_renderer/')
+    include('viroreact-release.aar')
+    rename('viroreact-release.aar', 'viro_renderer-release.aar')
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleRelease') {
+        task.finalizedBy 'copyReleaseAAR'
+    }
+}

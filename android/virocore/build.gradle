@@ -1,10 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: 'maven-push.gradle'
-
-// This module is not used to build ViroReact or ViroCore, nor is it used as any dependency.
-// It is only here to make Android Studio's internal compiler work so we get code-completion,
-// etc. in the IDE. To actually build ViroReact and ViroCore, use the viroreact and virocore
-// modules
+apply from: 'preprocessor.gradle'
 
 android {
     flavorDimensions  "product"
@@ -17,9 +12,34 @@ android {
         versionName "1.0"
 
         ndk {
-            // Specifies the ABI configurations of your native
-            // libraries Gradle should build and package with your APK.
             abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+
+        // ViroCore exports two shared libraries, viro-native and viro-arcore. This way we can
+        // load Viro without the AR, for devices that can't support the newer libs required by
+        // AR.
+        externalNativeBuild {
+            cmake {
+                targets "viro_renderer", "viro_arcore"
+                cppFlags "-std=c++14 -frtti -fcxx-exceptions"
+            }
+        }
+    }
+
+    // Use the /app directory for the source
+    sourceSets {
+        main {
+            java.srcDirs = ['../app/src/main/java']
+            res.srcDirs = ['../app/src/main/res']
+            assets.srcDirs = ['../app/src/main/assets']
+            jniLibs.srcDirs = ['../app/src/main/jniLibs']
+            manifest.srcFile '../app/src/main/AndroidManifest.xml'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../app/CMakeLists.txt"
         }
     }
 
@@ -37,6 +57,19 @@ android {
 
     dexOptions {
         preDexLibraries true
+    }
+
+    // If the flavors are updated, make sure to update ViroView.java's static flavor fields.
+    productFlavors {
+        viro_core {
+            dimension "product"
+            buildConfigField "String", "dummyField", "\"BridgeOnly\""
+        }
+    }
+
+    packagingOptions {
+        // x86 is currently not supported, so do not copy over these resources
+        exclude '**/x86/**'
     }
 }
 

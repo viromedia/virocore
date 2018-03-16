@@ -49,7 +49,7 @@ public class ViroViewScene extends ViroView {
     static {
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");
-        System.loadLibrary("viro_native");
+        System.loadLibrary("viro_renderer");
     }
 
     /**
