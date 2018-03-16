@@ -255,7 +255,7 @@ public class ViroViewScene extends ViroView {
         mViroTouchGestureListener = new ViroTouchGestureListener(activity, mNativeRenderer);
         setOnTouchListener(mViroTouchGestureListener);
 
-        if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
+        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
             validateAPIKeyFromManifest();
         }
     }

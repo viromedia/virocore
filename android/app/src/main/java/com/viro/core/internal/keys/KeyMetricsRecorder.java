@@ -6,7 +6,6 @@ package com.viro.core.internal.keys;
 
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -18,7 +17,6 @@ import com.viro.core.ViroView;
 import com.viro.core.internal.BuildInfo;
 import com.viro.renderer.BuildConfig;
 
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -103,7 +101,7 @@ public class KeyMetricsRecorder {
         // Add the API key
         builder.append(key).append(DELIMITER);
         // Add the OS
-        if (BuildConfig.FLAVOR.equalsIgnoreCase(ViroView.FLAVOR_VIRO_CORE)) {
+        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(ViroView.PLATFORM_VIRO_CORE)) {
             // don't reuse FLAVOR_VIRO_CORE because our delimiter is an underscore...
             builder.append("virocore").append(DELIMITER);
         } else {

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: 'preprocessor.gradle'
+//apply from: 'preprocessor.gradle'
 
 android {
     flavorDimensions  "product"
@@ -24,6 +24,9 @@ android {
                 cppFlags "-std=c++14 -frtti -fcxx-exceptions"
             }
         }
+
+        // Used to differentiate virocore from viroreact in code
+        buildConfigField "String", "VIRO_PLATFORM", "\"VIRO_CORE\""
     }
 
     // Use the /app directory for the source
@@ -57,14 +60,6 @@ android {
 
     dexOptions {
         preDexLibraries true
-    }
-
-    // If the flavors are updated, make sure to update ViroView.java's static flavor fields.
-    productFlavors {
-        viro_core {
-            dimension "product"
-            buildConfigField "String", "dummyField", "\"BridgeOnly\""
-        }
     }
 
     packagingOptions {

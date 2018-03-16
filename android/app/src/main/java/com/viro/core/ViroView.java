@@ -54,15 +54,15 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     private final static String API_KEY_METADATA_TAG = "com.viromedia.API_KEY";
     private final static String INVALID_KEY_MESSAGE = "Your API key is missing/invalid!";
 
-    // Available renderer flavors, can be accessed through com.viro.renderer.BuildConfig.FLAVOR
+    // Available platform types, can be accessed through com.viro.renderer.BuildConfig.VIRO_PLATFORM
     /**
      * @hide
      */
-    public final static String FLAVOR_VIRO_REACT = "viro_react";
+    public final static String PLATFORM_VIRO_REACT = "VIRO_REACT";
     /**
      * @hide
      */
-    public final static String FLAVOR_VIRO_CORE = "viro_core";
+    public final static String PLATFORM_VIRO_CORE = "VIRO_CORE";
 
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;

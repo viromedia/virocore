@@ -24,6 +24,9 @@ android {
                 cppFlags "-std=c++14 -frtti -fcxx-exceptions"
             }
         }
+
+        // Used to differentiate virocore from viroreact in code
+        buildConfigField "String", "VIRO_PLATFORM", "\"VIRO_REACT\""
     }
 
     // Use the /app directory for the source
