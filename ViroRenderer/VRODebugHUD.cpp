@@ -58,7 +58,7 @@ void VRODebugHUD::prepare(const VRORenderContext &context) {
 }
 
 void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (!_enabled) {
+    if (!_enabled || !_node->getGeometry()) {
         return;
     }
     if (kDebugSortOrder) {
@@ -73,12 +73,12 @@ void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std
     _node->updateSortKeys(0, renderParams, metadata, context, driver);
     _node->setAtomicRenderProperties();
 
-    
+
     for (int i = 0; i < _node->getGeometry()->getGeometryElements().size(); i++) {
         std::shared_ptr<VROMaterial> &material = _node->getGeometry()->getMaterialForElement(i);
         material->bindShader(0, {}, context, driver);
         material->bindProperties(driver);
-        
+
         _node->render(i, material, context, driver);
     }
 }
