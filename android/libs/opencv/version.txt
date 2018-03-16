@@ -1,0 +1,21 @@
+OpenCV v3.2.0
+
+This version was downloaded from:
+https://sourceforge.net/projects/opencvlibrary/files/opencv-android/3.2.0/opencv-3.2.0-android-sdk.zip/download
+
+OpenCV libs are provided for arm64-v8a and armabi-v7a architectures. 
+
+The following opencv libs were removed from src/main/jniLibs as they are not needed currently.
+However they are included as source under include in case they’ll be needed in the future:
+
+lib-openCV-java3
+lib-OpenCV-HighGUI
+lib-OpenCV-ML
+lib-OpenCV-ObjDetect
+lib-OpenCV-Photo
+lib-OpenCV-Shape
+lib-OpenCV-Stitching
+lib-OpenCV-SuperRes
+lib-OpenCV-Video
+lib-OpenCV-VideoIO
+lib-OpenCV-VideoStab

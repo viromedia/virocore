@@ -377,14 +377,6 @@ set_target_properties( lib-LinearMath
 
 # -- OpenCV Libraries --
 
-# add_library( lib-OpenCV-Java3
-#              SHARED
-#              IMPORTED )
-# set_target_properties (lib-OpenCV-Java3
-#                        PROPERTIES IMPORTED_LOCATION
-#                        ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so )
-
-
 add_library( lib-OpenCV-Calib3D
              STATIC
              IMPORTED )
@@ -413,13 +405,6 @@ set_target_properties (lib-OpenCV-Flann
                        PROPERTIES IMPORTED_LOCATION
                        ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_flann.a )
 
-add_library( lib-OpenCV-HighGUI
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-HighGUI
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_highgui.a )
-
 add_library( lib-OpenCV-ImgCodecs
              STATIC
              IMPORTED )
@@ -433,69 +418,6 @@ add_library( lib-OpenCV-ImgProc
 set_target_properties (lib-OpenCV-ImgProc
                        PROPERTIES IMPORTED_LOCATION
                        ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_imgproc.a )
-
-add_library( lib-OpenCV-ML
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-ML
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_ml.a )
-
-add_library( lib-OpenCV-ObjDetect
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-ObjDetect
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_objdetect.a )
-
-add_library( lib-OpenCV-Photo
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Photo
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_photo.a )
-
-add_library( lib-OpenCV-Shape
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Shape
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_shape.a )
-
-add_library( lib-OpenCV-Stitching
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Stitching
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_stitching.a )
-
-add_library( lib-OpenCV-SuperRes
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-SuperRes
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_superres.a )
-
-add_library( lib-OpenCV-Video
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Video
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_video.a )
-
-add_library( lib-OpenCV-VideoIO
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-VideoIO
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_videoio.a )
-
-add_library( lib-OpenCV-VideoStab
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-VideoStab
-                       PROPERTIES IMPORTED_LOCATION
-                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libopencv_videostab.a )
 
 # -- OpenCV 3rd Party Libraries --
 
@@ -602,23 +524,12 @@ target_link_libraries( # Specifies the target library.
                        lib-LinearMath
 
                        # OpenCV Libs
-                       # lib-OpenCV-Java3
                        lib-OpenCV-Calib3D
-                       lib-OpenCV-Core
                        lib-OpenCV-Features2D
                        lib-OpenCV-Flann
-                       lib-OpenCV-HighGUI
                        lib-OpenCV-ImgCodecs
                        lib-OpenCV-ImgProc
-                       lib-OpenCV-ML
-                       lib-OpenCV-ObjDetect
-                       lib-OpenCV-Photo
-                       lib-OpenCV-Shape
-                       lib-OpenCV-Stitching
-                       lib-OpenCV-SuperRes
-                       lib-OpenCV-Video
-                       lib-OpenCV-VideoIO
-                       lib-OpenCV-VideoStab
+                       lib-OpenCV-Core
 
                        # OpenCV 3rd Party Libs
                        lib-OpenCV-TP-IlmImf
