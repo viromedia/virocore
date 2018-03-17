@@ -10,7 +10,7 @@
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
 #include "VRODriverOpenGLiOS.h"
-#import <UIKit/UIKit.h>
+#import <CoreText/CoreText.h>
 
 typedef struct FontHeader {
     int32_t fVersion;
@@ -43,21 +43,44 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
         return;
     }
     
-    UIFont *font = [UIFont fontWithName:[NSString stringWithUTF8String:name.c_str()] size:size];
-    if (!font) {
-        pinfo("Could not find font with name %s, reverting to system font", name.c_str());
-        font = [UIFont systemFontOfSize:size];
+    NSString *familyName = [NSString stringWithUTF8String:name.c_str()];
+    
+    // Create the symbolic traits bit-mask
+    CTFontSymbolicTraits symbolicTraits = 0;
+    if (getStyle() == VROFontStyle::Italic) {
+        symbolicTraits |= kCTFontTraitItalic;
     }
     
-    CFStringRef fontName = (__bridge CFStringRef)[font fontName];
-    CGFontRef fontRef = CGFontCreateWithFontName(fontName);
-    _fontData = getFontData(fontRef);
+    // CoreText font weight runs from -1.0 to 1.0 (regular is 0.0, which is 400 in our scale)
+    CGFloat weight = VROMathInterpolate((float) getWeight(), 100, 900, -1.0, 1.0);
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    [attributes setObject:familyName forKey:(id)kCTFontFamilyNameAttribute];
     
+    // The attributes dictionary contains another dictionary, the traits dictionary
+    NSMutableDictionary *traits = [NSMutableDictionary dictionary];
+    [traits setObject:[NSNumber numberWithUnsignedInt:symbolicTraits] forKey:(id)kCTFontSymbolicTrait];
+    [traits setObject:[NSNumber numberWithFloat:weight] forKey:(id)kCTFontWeightTrait];
+    [attributes setObject:traits forKey:(id)kCTFontTraitsAttribute];
+    [attributes setObject:[NSNumber numberWithFloat:size] forKey:(id)kCTFontSizeAttribute];
+    
+    // Create the CTFont from the attributes
+    CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
+    CTFontRef font = CTFontCreateWithFontDescriptor(descriptor, 0.0, NULL);
+    
+    // Convert the CTFont to a CGFont and extract the font data
+    CGFontRef graphicsFont = CTFontCopyGraphicsFont(font, NULL);
+    _fontData = getFontData(graphicsFont);
+    
+    // Create the FT font from the font data
     FT_Library ft = std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getFreetype();
     if (FT_New_Memory_Face(ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &_face)) {
         pabort("Failed to load font");
     }
     FT_Set_Pixel_Sizes(_face, 0, size);
+    
+    CFRelease(descriptor);
+    CFRelease(font);
+    CFRelease(graphicsFont);
 }
 
 std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forRendering) {
@@ -171,7 +194,6 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
         CFRelease(tableDataRef);
     }
     
-    CFRelease(cgFont);
     free(tableSizes);
     NSData *fontData = [NSData dataWithBytesNoCopy:stream
                                             length:totalSize

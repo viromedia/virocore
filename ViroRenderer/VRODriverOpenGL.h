@@ -366,7 +366,9 @@ public:
 
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size, VROFontStyle style,
                                              VROFontWeight weight) {
-        std::string key = typefaceName + "_" + VROStringUtil::toString(size);
+        std::string key = typefaceName + "_" + VROStringUtil::toString(size) + "_" +
+                                               VROStringUtil::toString((int) style) + "_" +
+                                               VROStringUtil::toString((int) weight);
         auto it = _typefaces.find(key);
         if (it == _typefaces.end()) {
             std::shared_ptr<VROTypeface> typeface = createTypeface(typefaceName, size, style, weight);
