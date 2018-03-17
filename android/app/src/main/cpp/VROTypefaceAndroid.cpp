@@ -28,9 +28,14 @@ VROTypefaceAndroid::~VROTypefaceAndroid() {
 }
 
 void VROTypefaceAndroid::loadFace(std::string name, int size) {
-    if (FT_New_Face(_ft, getFontPath(name).c_str(), 0, &_face)) {
-        if (FT_New_Face(_ft, getFontPath(kSystemFont).c_str(), 0, &_face)) {
-            pabort("Failed to load system font %s", kSystemFont.c_str());
+    pinfo("Loading font face [%s]", name.c_str());
+
+    if (FT_New_Face(_ft, getFontPath(name, "ttf").c_str(), 0, &_face)) {
+        if (FT_New_Face(_ft, getFontPath(name, "ttc").c_str(), 0, &_face)) {
+            pinfo("Failed to load font face [%s], defaulting to system font", name.c_str());
+            if (FT_New_Face(_ft, getFontPath(kSystemFont, "ttf").c_str(), 0, &_face)) {
+                pabort("Failed to load system font %s", kSystemFont.c_str());
+            }
         }
     }
 
@@ -44,11 +49,9 @@ std::shared_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(FT_ULong charCode, bool 
     return glyph;
 }
 
-std::string VROTypefaceAndroid::getFontPath(std::string fontName) {
+std::string VROTypefaceAndroid::getFontPath(std::string fontName, std::string suffix) {
     std::string prefix = "/system/fonts/";
-    std::string suffix = ".ttf";
-
-    return prefix + fontName + suffix;
+    return prefix + fontName + "." + suffix;
 }
 
 float VROTypefaceAndroid::getLineHeight() const {
