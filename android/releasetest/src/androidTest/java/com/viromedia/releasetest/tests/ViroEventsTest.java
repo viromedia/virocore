@@ -67,7 +67,8 @@ public class ViroEventsTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(objectNode);
         mScene.getRootNode().addChildNode(sphereNode);
         eventText = new Text(mViroView.getViroContext(),
-                DEFAULT_EVENT_TEXT, "Roboto", 20, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                DEFAULT_EVENT_TEXT, "Roboto", 20, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 
         Node textNode = new Node();

@@ -129,7 +129,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage5_testLoadModelFBXError() {
         Node node = new Node();
         final Text text = new Text(mViroView.getViroContext(), "Awaiting fbx load.....",
-                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
 
         final float[] classNamePosition = {0, -.5f, -3.3f};
@@ -157,7 +158,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage5_testLoadModelError() {
         Node node = new Node();
         final Text text = new Text(mViroView.getViroContext(), "Awaiting obj load.....",
-                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
 
         final float[] classNamePosition = {0, -.5f, -3.3f};
@@ -186,14 +188,16 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage6_testLoadModelOBJMaterials() {
         Node mTextNode1 = new Node();
         Text text1 = new Text(mViroView.getViroContext(), "Toggle BLoom",
-                "Roboto", 15, Color.WHITE, 5f, 5f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 15, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 5f, 5f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.BOTTOM, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 50);
         mTextNode1.setGeometry(text1);
         mTextNode1.setPosition(new Vector(-2,-0,-4));
 
         Node mTextNode2 = new Node();
         Text text2 = new Text(mViroView.getViroContext(), "Toggle BLoom",
-                "Roboto", 15, Color.WHITE, 5f, 5f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 15, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 5f, 5f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.BOTTOM, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 50);
         mTextNode2.setGeometry(text2);
         mTextNode2.setPosition(new Vector(0.5,0.0,-4));

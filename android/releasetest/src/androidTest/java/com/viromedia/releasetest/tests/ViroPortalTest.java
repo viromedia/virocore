@@ -169,7 +169,8 @@ public class ViroPortalTest extends ViroBaseTest  {
         mPortalScene.setPassable(true);
         mScene.getRootNode().setCamera(mCamera);
         final Text text = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
-                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
 
         final Node textNode = new Node();

@@ -233,7 +233,7 @@ public class MemoryLeakTest extends AppCompatActivity {
 
         final Node node3 = new Node();
         final Text textJni = new Text(mViroView.getViroContext(), "Test text 1 2 3", "Roboto", 24,
-                Color.WHITE, 10, 4, Text.HorizontalAlignment.CENTER, Text.VerticalAlignment.CENTER, Text.LineBreakMode.NONE,
+                Text.FontStyle.Normal, Text.FontWeight.Regular, Color.WHITE, 10, 4, Text.HorizontalAlignment.CENTER, Text.VerticalAlignment.CENTER, Text.LineBreakMode.NONE,
                 Text.ClipMode.CLIP_TO_BOUNDS, 1);
 
         final float[] position = {0, -1, -2};

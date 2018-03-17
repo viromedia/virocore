@@ -130,7 +130,8 @@ public class ViroCameraTest extends ViroBaseTest {
 
     private void testCameraCallbacks(){
         Text output = new Text(mViroView.getViroContext(), "",
-                "Roboto", 18, Color.WHITE, 9f, 2f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 18, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                Color.WHITE, 9f, 2f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 4);
 
         Node textNode = new Node();

@@ -337,7 +337,7 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
     const char *path = env->GetStringUTFChars(jpath, 0);
     std::string spath(path);
     
-    pinfo("Path to file is %s", path);
+    pinfo("Downloaded URL [%s] to file [%s]", path);
     
     env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
@@ -392,8 +392,7 @@ std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
     std::string spath = VROPlatformGetString(jpath, env);
-
-    pinfo("Path to file is %s", spath.c_str());
+    pinfo("Copied resource %s to [%s]", asset.c_str(), spath.c_str());
 
     env->DeleteLocalRef(jpath);
     env->DeleteLocalRef(jasset);
@@ -487,8 +486,7 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
     std::string spath = VROPlatformGetString(jpath, env);
-
-    pinfo("Path to file is %s", spath.c_str());
+    pinfo("Copied asset %s to [%s]", asset.c_str(), spath.c_str());
 
     env->DeleteLocalRef(jpath);
     env->DeleteLocalRef(jasset);
