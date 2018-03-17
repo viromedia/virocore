@@ -25,6 +25,89 @@ import android.graphics.Color;
 public class Text extends Geometry {
 
     /**
+     * The style of the font used to render {@link Text}.
+     */
+    public enum FontStyle {
+        /**
+         * Normal font.
+         */
+        Normal(0),
+
+        /**
+         * Italic font.
+         */
+        Italic(1);
+
+        private int mIntValue;
+        private FontStyle(int value) {
+            this.mIntValue = value;
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public int getIntValue() {
+            return mIntValue;
+        }
+    };
+
+    /**
+     * The weight of the font used to render {@link Text}. These constants map to numerical
+     * weights (100 to 900). Note that not all fonts support all weights: if a weight is not
+     * supported, its nearest neighbor will be used as a fallback.
+     */
+    public enum FontWeight {
+        /**
+         * Ultra light font weight. Numerical value 100.
+         */
+        UltraLight(100),
+        /**
+         * Thin font weight. Numerical value 200.
+         */
+        Thin(200),
+        /**
+         * Light font weight. Numerical value 300.
+         */
+        Light(300),
+        /**
+         * Regular font weight. Numerical value 400.
+         */
+        Regular(400),
+        /**
+         * Medium font weight. Numerical value 500.
+         */
+        Medium (500),
+        /**
+         * Semibold font weight. Numerical value 600.
+         */
+        Semibold(600),
+        /**
+         * Bold font weight. Numerical value 700.
+         */
+        Bold(700),
+        /**
+         * Heavy font weight. Numerical value 800.
+         */
+        Heavy(800),
+        /**
+         * Extra black font weight. Numerical value 900.
+         */
+        ExtraBlack(900);
+
+        private int mIntValue;
+        private FontWeight(int value) {
+            this.mIntValue = value;
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public int getIntValue() {
+            return mIntValue;
+        }
+    };
+
+    /**
      * Controls the horizontal alignment of Text within its bounds.
      */
     public enum HorizontalAlignment {
@@ -162,6 +245,8 @@ public class Text extends Geometry {
 
     private static final String DEFAULT_FONT_FAMILY = "Roboto";
     private static final int DEFAULT_FONT_SIZE = 12;
+    private static final FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
+    private static final FontWeight DEFAULT_FONT_WEIGHT = FontWeight.Regular;
     private static final long DEFAULT_COLOR = Color.WHITE;
     private static final HorizontalAlignment DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER;
     private static final VerticalAlignment DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER;
@@ -175,6 +260,8 @@ public class Text extends Geometry {
     private float mHeight;
     private String mFontFamilyName = DEFAULT_FONT_FAMILY;
     private int mFontSize = DEFAULT_FONT_SIZE;
+    private FontStyle mFontStyle = DEFAULT_FONT_STYLE;
+    private FontWeight mFontWeight = DEFAULT_FONT_WEIGHT;
     private long mColor = DEFAULT_COLOR;
     private HorizontalAlignment mHorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT;
     private VerticalAlignment mVerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT;
@@ -193,7 +280,8 @@ public class Text extends Geometry {
      * @param height The height of the bounds within which to display the text.
      */
     public Text(ViroContext viroContext, String text, float width, float height) {
-        this(viroContext, text, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, DEFAULT_COLOR, width, height,
+        this(viroContext, text, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, DEFAULT_FONT_STYLE,
+                DEFAULT_FONT_WEIGHT, DEFAULT_COLOR, width, height,
                 DEFAULT_HORIZONTAL_ALIGNMENT, DEFAULT_VERTICAL_ALIGNMENT, DEFAULT_LINE_BREAK_MODE,
                 DEFAULT_CLIP_MODE, DEFAULT_MAX_LINES);
     }
@@ -213,6 +301,8 @@ public class Text extends Geometry {
      * @param fontFamilyName      The name of the font's family name (e.g. 'Roboto' or
      *                            'Roboto-Italic').
      * @param size                The point size of the font.
+     * @param fontStyle           The style of the font (e.g., Italic).
+     * @param fontWeight          The weigh to the font.
      * @param color               The color of the text.
      * @param width               The width of the bounds within which to display the text.
      * @param height              The height of the bounds within which to display the text.
@@ -228,13 +318,15 @@ public class Text extends Geometry {
      *                            is no limit to the number of lines generated.
      */
     public Text(ViroContext viroContext, String text, String fontFamilyName,
-                int size, long color, float width, float height,
+                int size, FontStyle fontStyle, FontWeight fontWeight, long color, float width, float height,
                 HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
         mViroContext = viroContext;
         mText = text;
         mFontFamilyName = fontFamilyName;
         mFontSize = size;
+        mFontStyle = fontStyle;
+        mFontWeight = fontWeight;
         mColor = color;
         mWidth = width;
         mHeight = height;
@@ -244,9 +336,10 @@ public class Text extends Geometry {
         mClipMode = clipMode;
         mMaxLines = maxLines;
 
-        mNativeRef = nativeCreateText(mViroContext.mNativeRef, mText, mFontFamilyName, mFontSize, mColor, mWidth,
-                mHeight, mHorizontalAlignment.getStringValue(), mVerticalAlignment.getStringValue(), mLineBreakMode.getStringValue(),
-                mClipMode.getStringValue(), mMaxLines);
+        mNativeRef = nativeCreateText(mViroContext.mNativeRef, mText, mFontFamilyName, mFontSize,
+                                      mFontStyle.getIntValue(), mFontWeight.getIntValue(), mColor, mWidth,
+                                      mHeight, mHorizontalAlignment.getStringValue(), mVerticalAlignment.getStringValue(),
+                                      mLineBreakMode.getStringValue(), mClipMode.getStringValue(), mMaxLines);
     }
 
     @Override
@@ -307,7 +400,8 @@ public class Text extends Geometry {
      */
     public void setFontFamilyName(String fontFamily) {
         this.mFontFamilyName = fontFamily;
-        nativeSetFont(mViroContext.mNativeRef, mNativeRef, fontFamily, mFontSize);
+        nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, mFontSize,
+                mFontStyle.getIntValue(), mFontWeight.getIntValue());
     }
 
     /**
@@ -327,7 +421,49 @@ public class Text extends Geometry {
      */
     public void setFontSize(int fontSize) {
         this.mFontSize = fontSize;
-        nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, fontSize);
+        nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, mFontSize,
+                mFontStyle.getIntValue(), mFontWeight.getIntValue());
+    }
+
+    /**
+     * Get the font style used when rendering this Text.
+     *
+     * @return The font style of the Text.
+     */
+    public FontStyle getFontStyle() {
+        return mFontStyle;
+    }
+
+    /**
+     * Set the style of the font to use when rendering this Text (e.g., italic).
+     *
+     * @param fontStyle The {@link FontStyle} to use.
+     */
+    public void setFontStyle(FontStyle fontStyle) {
+        this.mFontStyle = fontStyle;
+        nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, mFontSize,
+                mFontStyle.getIntValue(), mFontWeight.getIntValue());
+    }
+
+    /**
+     * Get the font weight used when rendering this Text.
+     *
+     * @return The {@link FontWeight} of the Text.
+     */
+    public FontWeight getFontWeight() {
+        return mFontWeight;
+    }
+
+    /**
+     * Set the weight of the font to use when rendering this Text. The values of the {@link FontWeight}
+     * enum all map to standard font weight numerical values (100 to 900).
+     *
+     * @param fontWeight The {@link FontWeight} to use.
+     */
+    public void setFontWeight(FontWeight fontWeight) {
+        this.mFontWeight = fontWeight;
+        nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, mFontSize,
+                      mFontStyle.getIntValue(), mFontWeight.getIntValue());
     }
 
     public long getColor() {
@@ -485,12 +621,12 @@ public class Text extends Geometry {
     }
 
     private native long nativeCreateText(long viroContext, String text, String fontFamilyName,
-                                         int size, long color, float width, float height,
+                                         int size, int style, int weight, long color, float width, float height,
                                          String horizontalAlignment, String verticalAlignment,
                                          String lineBreakMode, String clipMode, int maxLines);
     private native void nativeDestroyText(long textRef);
     private native void nativeSetText(long textRef, String text);
-    private native void nativeSetFont(long viroContext, long textRef, String family, int size);
+    private native void nativeSetFont(long viroContext, long textRef, String family, int size, int style, int weight);
     private native void nativeSetColor(long textRef, long color);
     private native void nativeSetWidth(long textRef, float width);
     private native void nativeSetHeight(long textRef, float height);
@@ -518,6 +654,8 @@ public class Text extends Geometry {
         private float mHeight;
         private String mFontFamilyName = DEFAULT_FONT_FAMILY;
         private int mFontSize = DEFAULT_FONT_SIZE;
+        private FontStyle mFontStyle = DEFAULT_FONT_STYLE;
+        private FontWeight mFontWeight = DEFAULT_FONT_WEIGHT;
         private long mColor = DEFAULT_COLOR;
         private HorizontalAlignment mHorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT;
         private VerticalAlignment mVerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT;
@@ -562,6 +700,26 @@ public class Text extends Geometry {
          */
         public TextBuilder fontSize(int mFontSize) {
             this.mFontSize = mFontSize;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setFontStyle(FontStyle)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder fontStyle(FontStyle style) {
+            this.mFontStyle = style;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setFontWeight(FontWeight)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder fontWeight(FontWeight weight) {
+            this.mFontWeight = weight;
             return this;
         }
 
@@ -651,8 +809,9 @@ public class Text extends Geometry {
          * @return The built Text.
          */
         public Text build() {
-            return new Text(mViroContext, mText, mFontFamilyName,mFontSize, mColor, mWidth, mHeight,
-            mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
+            return new Text(mViroContext, mText, mFontFamilyName, mFontSize, mFontStyle, mFontWeight,
+                    mColor, mWidth, mHeight, mHorizontalAlignment, mVerticalAlignment, mLineBreakMode,
+                    mClipMode, mMaxLines);
         }
 
     }

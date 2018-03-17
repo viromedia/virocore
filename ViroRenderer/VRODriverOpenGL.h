@@ -338,15 +338,6 @@ public:
         return _display;
     }
     
-    virtual std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() = 0;
-    virtual std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) = 0;
-    virtual std::shared_ptr<VROSound> newSound(std::string resource, VROResourceType resourceType, VROSoundType type) = 0;
-    virtual std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::shared_ptr<VROSoundData> data) = 0;
-    virtual std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName, bool isLocal) = 0;
-    virtual std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) = 0;
-    virtual void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
-                              std::string ceilingMaterial, std::string floorMaterial) = 0;
-    
     std::shared_ptr<VROLightingUBO> getLightingUBO(int lightsHash) {
         auto it = _lightingUBOs.find(lightsHash);
         if (it != _lightingUBOs.end()) {
@@ -373,12 +364,40 @@ public:
         return _shaderFactory;
     }
 
+    std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size, VROFontStyle style,
+                                             VROFontWeight weight) {
+        std::string key = typefaceName + "_" + VROStringUtil::toString(size);
+        auto it = _typefaces.find(key);
+        if (it == _typefaces.end()) {
+            std::shared_ptr<VROTypeface> typeface = createTypeface(typefaceName, size, style, weight);
+            _typefaces[key] = typeface;
+            return typeface;
+        }
+        else {
+            std::shared_ptr<VROTypeface> typeface = it->second.lock();
+            if (typeface) {
+                return typeface;
+            }
+            else {
+                typeface = createTypeface(typefaceName, size, style, weight);
+                _typefaces[key] = typeface;
+                return typeface;
+            }
+        }
+    }
+
 protected:
     
     /*
      The backbuffer render target.
      */
     std::shared_ptr<VRORenderTarget> _display;
+
+    /*
+     Create the typeface with the given name, size, style, and weight.
+     */
+    virtual std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size, VROFontStyle style,
+                                                        VROFontWeight weight) = 0;
 
 private:
 
@@ -410,6 +429,11 @@ private:
     
     std::weak_ptr<VRORenderTarget> _boundRenderTarget;
     std::shared_ptr<VROShaderProgram> _boundShader;
+
+    /*
+     Caches typefaces.
+     */
+    std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
 
     /*
      ID of the backbuffer.

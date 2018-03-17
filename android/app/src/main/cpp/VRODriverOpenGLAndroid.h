@@ -23,9 +23,14 @@ class VRODriverOpenGLAndroid : public VRODriverOpenGL {
 public:
 
     VRODriverOpenGLAndroid(std::shared_ptr<gvr::AudioApi> gvrAudio) :
-        _gvrAudio(gvrAudio) {
+        _gvrAudio(gvrAudio),
+        _ft(nullptr) {
     }
-    virtual ~VRODriverOpenGLAndroid() { }
+    virtual ~VRODriverOpenGLAndroid() {
+        if (_ft != nullptr) {
+            FT_Done_FreeType(_ft);
+        }
+    }
 
     virtual VROColorRenderingMode getColorRenderingMode() {
         switch (getGPUType()) {
@@ -82,25 +87,8 @@ public:
         return std::make_shared<VROAudioPlayerAndroid>(fileName);
     }
 
-    std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
-        std::string key = typefaceName + "_" + VROStringUtil::toString(size);
-        auto it = _typefaces.find(key);
-        if (it == _typefaces.end()) {
-            std::shared_ptr<VROTypeface> typeface = createTypeface(typefaceName, size);
-            _typefaces[key] = typeface;
-            return typeface;
-        }
-        else {
-            std::shared_ptr<VROTypeface> typeface = it->second.lock();
-            if (typeface) {
-                return typeface;
-            }
-            else {
-                typeface = createTypeface(typefaceName, size);
-                _typefaces[key] = typeface;
-                return typeface;
-            }
-        }
+    FT_Library getFreetype() {
+        return _ft;
     }
 
     void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
@@ -120,18 +108,29 @@ public:
         _sRGBFramebuffer = sRGBFramebuffer;
     }
 
+protected:
+
+    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size, VROFontStyle style,
+                                                VROFontWeight weight) {
+        if (_ft == nullptr) {
+            if (FT_Init_FreeType(&_ft)) {
+                pabort("Could not initialize freetype library");
+            }
+        }
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size, style,
+                                                                                     weight, driver);
+        typeface->loadFace();
+        return typeface;
+    }
+
 private:
 
     bool _sRGBFramebuffer;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
-    std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
+    FT_Library _ft;
 
-    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size) {
-        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size, driver);
-        typeface->loadFace();
-        return typeface;
-    }
+
 };
 
 #endif //ANDROID_VRODRIVEROPENGLANDROID_H

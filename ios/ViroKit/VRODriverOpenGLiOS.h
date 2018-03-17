@@ -30,10 +30,15 @@ public:
      */
     VRODriverOpenGLiOS(GLKView *viewGL, EAGLContext *eaglContext) :
         _viewGL(viewGL),
-        _eaglContext(eaglContext) {
+        _eaglContext(eaglContext),
+         _ft(nullptr) {
     }
     
-    virtual ~VRODriverOpenGLiOS() { }
+    virtual ~VRODriverOpenGLiOS() {
+        if (_ft != nullptr) {
+            FT_Done_FreeType(_ft);
+        }
+    }
     
     /*
      We lazily initialize GVR audio until VIRO-2944 is resolved.
@@ -109,25 +114,8 @@ public:
         return std::make_shared<VROAudioPlayeriOS>(data);
     }
     
-    std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
-        std::string key = typefaceName + "_" + VROStringUtil::toString(size);
-        auto it = _typefaces.find(key);
-        if (it == _typefaces.end()) {
-            std::shared_ptr<VROTypeface> typeface = createTypeface(typefaceName, size);
-            _typefaces[key] = typeface;
-            return typeface;
-        }
-        else {
-            std::shared_ptr<VROTypeface> typeface = it->second.lock();
-            if (typeface) {
-                return typeface;
-            }
-            else {
-                typeface = createTypeface(typefaceName, size);
-                _typefaces[key] = typeface;
-                return typeface;
-            }
-        }
+    FT_Library getFreetype() {
+        return _ft;
     }
     
     void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
@@ -139,14 +127,20 @@ protected:
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     EAGLContext *_eaglContext;
     std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
+    FT_Library _ft;
     
-    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size) {
+    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size, VROFontStyle style, VROFontWeight weight) {
+        if (_ft == nullptr) {
+            if (FT_Init_FreeType(&_ft)) {
+                pabort("Could not initialize freetype library");
+            }
+        }
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size, driver);
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size, style, weight, driver);
+        
         typeface->loadFace();
         return typeface;
     }
-
     
 };
 

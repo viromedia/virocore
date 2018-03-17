@@ -9,31 +9,35 @@
 #include "VROTypefaceAndroid.h"
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
-#include "VRODriverOpenGL.h"
+#include "VRODriverOpenGLAndroid.h"
 
 static const std::string kSystemFont = "Roboto-Regular";
 
-VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size,
+VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size, VROFontStyle style,
+                                       VROFontWeight weight,
                                        std::shared_ptr<VRODriver> driver) :
-    VROTypeface(name, size),
+    VROTypeface(name, size, style, weight),
     _driver(driver) {
-    if (FT_Init_FreeType(&_ft)) {
-        pabort("Could not initialize freetype library");
-    }
+
 }
 
 VROTypefaceAndroid::~VROTypefaceAndroid() {
     FT_Done_Face(_face);
-    FT_Done_FreeType(_ft);
 }
 
 void VROTypefaceAndroid::loadFace(std::string name, int size) {
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (!driver) {
+        return;
+    }
+
     pinfo("Loading font face [%s]", name.c_str());
 
-    if (FT_New_Face(_ft, getFontPath(name, "ttf").c_str(), 0, &_face)) {
-        if (FT_New_Face(_ft, getFontPath(name, "ttc").c_str(), 0, &_face)) {
+    FT_Library ft = std::dynamic_pointer_cast<VRODriverOpenGLAndroid>(driver)->getFreetype();
+    if (FT_New_Face(ft, getFontPath(name, "ttf").c_str(), 0, &_face)) {
+        if (FT_New_Face(ft, getFontPath(name, "ttc").c_str(), 0, &_face)) {
             pinfo("Failed to load font face [%s], defaulting to system font", name.c_str());
-            if (FT_New_Face(_ft, getFontPath(kSystemFont, "ttf").c_str(), 0, &_face)) {
+            if (FT_New_Face(ft, getFontPath(kSystemFont, "ttf").c_str(), 0, &_face)) {
                 pabort("Failed to load system font %s", kSystemFont.c_str());
             }
         }

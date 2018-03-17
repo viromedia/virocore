@@ -21,7 +21,8 @@ class VROTypefaceAndroid : public VROTypeface {
 
 public:
 
-    VROTypefaceAndroid(std::string name, int size, std::shared_ptr<VRODriver> driver);
+    VROTypefaceAndroid(std::string name, int size, VROFontStyle style, VROFontWeight weight,
+                       std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceAndroid();
 
     float getLineHeight() const;
@@ -34,7 +35,6 @@ protected:
 private:
 
     std::weak_ptr<VRODriver> _driver;
-    FT_Library _ft;
     FT_Face _face;
 
     std::string getFontPath(std::string fontName, std::string suffix);

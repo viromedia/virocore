@@ -10,9 +10,11 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-VROTypeface::VROTypeface(std::string name, int size) :
+VROTypeface::VROTypeface(std::string name, int size, VROFontStyle style, VROFontWeight weight) :
     _name(name),
-    _size(size) {
+    _size(size),
+    _style(style),
+    _weight(weight) {
     
     ALLOCATION_TRACKER_ADD(Typefaces, 1);
 }

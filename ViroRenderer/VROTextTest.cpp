@@ -8,6 +8,8 @@
 
 #include "VROTextTest.h"
 #include "VROTestUtil.h"
+#include "VRODefines.h"
+#include "VROTypeface.h"
 
 VROTextTest::VROTextTest() :
     VRORendererTest(VRORendererTestType::Text) {
@@ -21,13 +23,22 @@ VROTextTest::~VROTextTest() {
 void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
                         std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                         std::shared_ptr<VRODriver> driver) {
-    
-    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("PingFang HK", 32));
-    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ", driver->newTypeface("Apple SD Gothic Neo", 32));
-    _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ", driver->newTypeface("Heiti TC", 32));
-    _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ", driver->newTypeface("Devanagari Sangam MN", 32));
-    _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض", driver->newTypeface("Geeza Pro", 32));
-    _textSamples.emplace_back(L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.", driver->newTypeface("SF Mono", 32));
+
+#if VRO_PLATFORM_IOS
+    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ", driver->newTypeface("Apple SD Gothic Neo", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ", driver->newTypeface("Heiti TC", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ", driver->newTypeface("Devanagari Sangam MN", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض", driver->newTypeface("Geeza Pro", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.", driver->newTypeface("SF Mono", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+#elif VRO_PLATFORM_ANDROID
+    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("NotoSansCJK-Regular", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ", driver->newTypeface("NotoSansCJK-Regular", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ", driver->newTypeface("NotoSansCJK-Regular", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ", driver->newTypeface("NotoSansDevanagari-Regular", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض", driver->newTypeface("NotoNaskhArabic-Regular", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.", driver->newTypeface("Roboto", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+#endif
 
     _sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();

@@ -9,7 +9,7 @@
 #include "VROTypefaceiOS.h"
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
-
+#include "VRODriverOpenGLiOS.h"
 #import <UIKit/UIKit.h>
 
 typedef struct FontHeader {
@@ -27,21 +27,22 @@ typedef struct TableEntry {
     uint32_t fLength;
 } TableEntry;
 
-VROTypefaceiOS::VROTypefaceiOS(std::string name, int size,
+VROTypefaceiOS::VROTypefaceiOS(std::string name, int size, VROFontStyle style, VROFontWeight weight,
                                std::shared_ptr<VRODriver> driver) :
-    VROTypeface(name, size),
+    VROTypeface(name, size, style, weight),
     _driver(driver) {
-    if (FT_Init_FreeType(&_ft)) {
-        pabort("Could not initialize freetype library");
-    }
 }
 
 VROTypefaceiOS::~VROTypefaceiOS() {
     FT_Done_Face(_face);
-    FT_Done_FreeType(_ft);
 }
 
 void VROTypefaceiOS::loadFace(std::string name, int size) {
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (!driver) {
+        return;
+    }
+    
     UIFont *font = [UIFont fontWithName:[NSString stringWithUTF8String:name.c_str()] size:size];
     if (!font) {
         pinfo("Could not find font with name %s, reverting to system font", name.c_str());
@@ -52,10 +53,10 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
     CGFontRef fontRef = CGFontCreateWithFontName(fontName);
     _fontData = getFontData(fontRef);
     
-    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &_face)) {
+    FT_Library ft = std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getFreetype();
+    if (FT_New_Memory_Face(ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &_face)) {
         pabort("Failed to load font");
     }
-    
     FT_Set_Pixel_Sizes(_face, 0, size);
 }
 

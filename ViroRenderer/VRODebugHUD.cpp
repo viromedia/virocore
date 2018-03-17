@@ -36,7 +36,7 @@ void VRODebugHUD::initRenderer(std::shared_ptr<VRODriver> driver) {
      because VROTypeface cannot load new glyphs in the midst of a render-cycle
      (loading glyphs modifies the OpenGL context).
      */
-    _typeface = driver->newTypeface("Helvetica", 26);
+    _typeface = driver->newTypeface("Helvetica", 26, VROFontStyle::Normal, VROFontWeight::Regular);
     _typeface->preloadGlyphs("0123456789.");
     _node->setPosition({-.5, .5, -2.5});
 }
