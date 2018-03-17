@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-//apply from: 'preprocessor.gradle'
+apply from: 'preprocessor.gradle'
 
 android {
     flavorDimensions  "product"
