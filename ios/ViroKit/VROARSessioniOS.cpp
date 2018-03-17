@@ -28,7 +28,7 @@
 #include "VROProjector.h"
 
 #include "VROARCameraiOS.h"
-#include "VROARImageTrackerOutput.h"
+#include "VROARImageTracker.h"
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment worldAlignment, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, worldAlignment),
@@ -307,30 +307,17 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
         
         [_trackingHelper processPixelBufferRef:frameiOS->getImage()
                                       forceRun:false
+                                        camera:arCameraiOS
                                     completion:
          ^(VROTrackingHelperOutput *output) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (_trackerOutputView != nil) {
+                if (_trackerOutputView != nil && [output getImageTrackerOutput].found) {
                     [_trackerOutputView setImage:[output getOutputImage]];
                 }
-                std::shared_ptr<VROARImageTrackerOutput> trackerOutput = [output getImageTrackerOutput];
-                if (trackerOutput != nullptr && trackerOutput->found) {
-                    VROMatrix4f camMatrix = VROMatrix4f();
-                    camMatrix.translate(lastCamera->getPosition());
-                    camMatrix.rotate(lastCamera->getRotation());
+                VROARImageTrackerOutput trackerOutput = [output getImageTrackerOutput];
+                if (trackerOutput.found) {
                     
-                    // Compute the matrix from the camera to the image, we need to negate the Y and Z axis because
-                    // the OpenCV coordinate system: http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/OWENS/LECT9/node2.html
-                    // has its Z going "forward" its Y "downwards" which is opposite of the Viro coordinate system.
-                    VROMatrix4f fromCamMatrix = VROMatrix4f();
-                    fromCamMatrix.translate(trackerOutput->translation.at<double>(0,0),
-                                            - trackerOutput->translation.at<double>(1,0),
-                                            - trackerOutput->translation.at<double>(2,0));
-                    fromCamMatrix.rotateX(trackerOutput->rotation.at<double>(0,0));
-                    fromCamMatrix.rotateY(- trackerOutput->rotation.at<double>(1,0));
-                    fromCamMatrix.rotateZ(- trackerOutput->rotation.at<double>(2,0));
-
-                    VROMatrix4f endTransformation = camMatrix.multiply(fromCamMatrix);
+                    VROMatrix4f endTransformation = trackerOutput.worldTransform;
                     
                     _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
                     _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
@@ -342,12 +329,12 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                     pinfo("[Viro] the world rotation was: %f, %f, %f", toDegrees(rot.x), toDegrees(rot.y), toDegrees(rot.z));
                     
                     if (_trackerOutputText != nil) {
-                        VROVector3f camPos = camMatrix.extractTranslation();
+                        VROVector3f camPos = arCameraiOS->getPosition();
                         NSString *outputText = [NSString stringWithFormat:@"Camera Pos: [%.03f, %.03f, %.03f]\nImage Pos: [%.03f, %.03f, %.03f]\nWorld Pos: [%.03f, %.03f, %.03f]",
                                                 camPos.x, camPos.y, camPos.z,
-                                                trackerOutput->translation.at<double>(0,0),
-                                                - trackerOutput->translation.at<double>(1,0), // because Y and Z axis are flipped in OpenCV.
-                                                - trackerOutput->translation.at<double>(2,0),
+                                                trackerOutput.translation.at<double>(0,0),
+                                                - trackerOutput.translation.at<double>(1,0), // because Y and Z axis are flipped in OpenCV.
+                                                - trackerOutput.translation.at<double>(2,0),
                                                 pos.x, pos.y, pos.z];
                         _trackerOutputText.text = outputText;
                     }

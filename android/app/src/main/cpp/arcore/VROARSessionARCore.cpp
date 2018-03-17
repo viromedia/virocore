@@ -194,6 +194,8 @@ void VROARSessionARCore::setDelegate(std::shared_ptr<VROARSessionDelegate> deleg
 }
 
 void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
+    // on Android we always use Viro tracking implementation
+    target->initWithTrackingImpl(VROImageTrackingImpl::Viro);
     _arTrackingSession->addARImageTarget(target);
 }
 

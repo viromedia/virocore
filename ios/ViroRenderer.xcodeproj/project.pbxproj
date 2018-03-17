@@ -55,8 +55,6 @@
 		8ABEDD3720115EB1003E8AFF /* VROARImageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ABEDD3820115EC7003E8AFF /* VROTrackingHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */; };
 		8ABEDD3920115ECA003E8AFF /* VROTrackingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8ABEDD3A20115ED7003E8AFF /* VROARImageTrackerOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A3517351EE0B55400B6E786 /* VROARImageTrackerOutput.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8ABEDD3B20115EDB003E8AFF /* VROARImageTrackerOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3517341EE0B55400B6E786 /* VROARImageTrackerOutput.cpp */; };
 		8ABEDD3C20115F29003E8AFF /* VROOpenCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A3517281EDE035300B6E786 /* VROOpenCV.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ABEDD3D20115F2F003E8AFF /* VROOpenCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3517271EDE035300B6E786 /* VROOpenCV.cpp */; };
 		8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
@@ -867,8 +865,6 @@
 		8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARImageTracker.h; sourceTree = "<group>"; };
 		8A3517301EE0A50A00B6E786 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = screenshot.png; path = ViroSample/screenshot.png; sourceTree = "<group>"; };
 		8A3517311EE0A50A00B6E786 /* ben.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = ben.jpg; path = ViroSample/ben.jpg; sourceTree = "<group>"; };
-		8A3517341EE0B55400B6E786 /* VROARImageTrackerOutput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARImageTrackerOutput.cpp; sourceTree = "<group>"; };
-		8A3517351EE0B55400B6E786 /* VROARImageTrackerOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARImageTrackerOutput.h; sourceTree = "<group>"; };
 		8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTrackingHelper.h; sourceTree = "<group>"; };
 		8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROTrackingHelper.mm; sourceTree = "<group>"; };
 		8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARTrackingSession.h; sourceTree = "<group>"; };
@@ -1719,8 +1715,6 @@
 			children = (
 				8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */,
 				8A35172D1EE09E3F00B6E786 /* VROARImageTracker.cpp */,
-				8A3517351EE0B55400B6E786 /* VROARImageTrackerOutput.h */,
-				8A3517341EE0B55400B6E786 /* VROARImageTrackerOutput.cpp */,
 				8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */,
 				8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */,
 			);
@@ -3061,7 +3055,6 @@
 				8A2DA3AF1F8B2D25001FC3BA /* VROInputControllerAR.h in Headers */,
 				8FB5351F1EB85A7C00E8E1A6 /* Nodes.pb.h in Headers */,
 				8FD2A5371F813C4100E831A6 /* VROBloomTest.h in Headers */,
-				8ABEDD3A20115ED7003E8AFF /* VROARImageTrackerOutput.h in Headers */,
 				8F92091D1F3CE241003305C8 /* VROImagePostProcessOpenGL.h in Headers */,
 				8A99E6D11EF1B95800712D79 /* VROARScene.h in Headers */,
 				8F50FC801E0AEC0A00A9B4B2 /* VROFieldOfView.h in Headers */,
@@ -3943,7 +3936,6 @@
 				8ABEDD3D20115F2F003E8AFF /* VROOpenCV.cpp in Sources */,
 				8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */,
 				8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */,
-				8ABEDD3B20115EDB003E8AFF /* VROARImageTrackerOutput.cpp in Sources */,
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
 				8FD4DEF41C18ED19003DC425 /* VROFrustumPlane.cpp in Sources */,
 				8F3AF9921F95024D0087BA73 /* VROPolylineTest.cpp in Sources */,

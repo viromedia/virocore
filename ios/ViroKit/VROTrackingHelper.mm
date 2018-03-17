@@ -14,7 +14,7 @@
 #import "opencv2/imgproc/imgproc.hpp"
 
 @interface VROTrackingHelperOutput() {
-    std::shared_ptr<VROARImageTrackerOutput> _output;
+    VROARImageTrackerOutput _output;
 }
 
 @property (nonatomic, strong) UIImage *outputImage;
@@ -23,7 +23,7 @@
 
 @implementation VROTrackingHelperOutput
 
-- (instancetype) initWithTrackerOutput:(std::shared_ptr<VROARImageTrackerOutput>)output withImage:(UIImage *)outputImage {
+- (instancetype) initWithTrackerOutput:(VROARImageTrackerOutput)output withImage:(UIImage *)outputImage {
     self = [super init];
     if (self) {
         _output = output;
@@ -32,7 +32,7 @@
     return self;
 }
 
-- (std::shared_ptr<VROARImageTrackerOutput>)getImageTrackerOutput {
+- (VROARImageTrackerOutput)getImageTrackerOutput {
     return _output;
 }
 
@@ -81,17 +81,17 @@
 
     std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker([self getBenTarget]);
     
-    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = tracker->findTarget(screnshotMat, NULL);
+    std::vector<VROARImageTrackerOutput> outputs = tracker->findTarget(screnshotMat, NULL);
     if (outputs.size() > 0) {
-        std::shared_ptr<VROARImageTrackerOutput> output = outputs[0];
-        std::vector<cv::Point2f> corners = output->corners;
+        VROARImageTrackerOutput output = outputs[0];
+        std::vector<cv::Point2f> corners = output.corners;
         for (int i = 0; i < corners.size(); i++) {
             cv::Point2f point = corners[i];
             pinfo("TrackingHelper output corner %f", point.x);
             pinfo("TrackingHelper output corner %f", point.y);
         }
-        pinfo("TrackingHelper output position %f, %f, %f", output->translation.at<double>(0,0), - output->translation.at<double>(1,0), - output->translation.at<double>(2,0));
-        pinfo("TrackingHelper output rotation %f, %f, %f", output->rotation.at<double>(0,0), - output->rotation.at<double>(1,0), - output->rotation.at<double>(2,0));
+        pinfo("TrackingHelper output position %f, %f, %f", output.translation.at<double>(0,0), - output.translation.at<double>(1,0), - output.translation.at<double>(2,0));
+        pinfo("TrackingHelper output rotation %f, %f, %f", output.rotation.at<double>(0,0), - output.rotation.at<double>(1,0), - output.rotation.at<double>(2,0));
     } else {
         pinfo("TrackingHelper findInScreenshot not found");
     }
@@ -136,8 +136,8 @@
     _intrinsics = intrinsics;
 }
 
-
-- (std::shared_ptr<VROARImageTrackerOutput>)runTracking:(cv::Mat)cameraInput {
+- (VROARImageTrackerOutput)runTracking:(cv::Mat)cameraInput
+                                camera:(std::shared_ptr<VROARCamera>)camera {
 
     if (!_tracker) {
         // initialize the tracker
@@ -146,29 +146,30 @@
     }
 
     // find the target in the given cameraInput (should already be in RGB format).
-    std::shared_ptr<VROARImageTrackerOutput> output;
-    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = _tracker->findTarget(cameraInput, _intrinsics);
+    VROARImageTrackerOutput output = {false, };
+    std::vector<VROARImageTrackerOutput> outputs = _tracker->findTarget(cameraInput, _intrinsics, camera);
     if (outputs.size() > 0) {
         output = outputs[0]; // grab the first one because we only have 1 target here
-    } else {
-        output = VROARImageTrackerOutput::createFalseOutput();
     }
     
-    if (!output->found) {
+    if (!output.found) {
         NSLog(@"VROTrackingHelper, couldn't find target in given image");
     } else {
         // draw lines between the corners of the target in the input image
-        cv::line(cameraInput, output->corners[0], output->corners[1], cv::Scalar(0, 255, 0), 5);
-        cv::line(cameraInput, output->corners[1], output->corners[2], cv::Scalar(0, 255, 0), 5);
-        cv::line(cameraInput, output->corners[2], output->corners[3], cv::Scalar(0, 255, 0), 5);
-        cv::line(cameraInput, output->corners[3], output->corners[0], cv::Scalar(0, 255, 0), 5);
+        cv::line(cameraInput, output.corners[0], output.corners[1], cv::Scalar(0, 255, 0), 5);
+        cv::line(cameraInput, output.corners[1], output.corners[2], cv::Scalar(0, 255, 0), 5);
+        cv::line(cameraInput, output.corners[2], output.corners[3], cv::Scalar(0, 255, 0), 5);
+        cv::line(cameraInput, output.corners[3], output.corners[0], cv::Scalar(0, 255, 0), 5);
+        
+        cv::Mat processedImage = cv::Mat(cameraInput.rows, cameraInput.cols, CV_32F);
+        cv::cvtColor(cameraInput, processedImage, cv::COLOR_BGRA2RGBA);
         
         // return the input image w/ target outlined to display in the test imageView
-        output->outputImage = cameraInput;
+        output.outputImage = processedImage;
         
         // check if we should write to photo album...
         if (_writeResultToCameraRoll) {
-            UIImage *outputImage = MatToUIImage(cameraInput);
+            UIImage *outputImage = MatToUIImage(processedImage);
             UIImageWriteToSavedPhotosAlbum(outputImage, nil, nil, nil);
         }
     }
@@ -178,7 +179,7 @@
         // otherwise, we'll only run until the first time we "found" the target, then leave _ready = NO
         // so we don't keep running and creating more and more images in the camera roll. Normally this
         // should always set _ready = YES to process the next frame.
-        if (!_writeResultToCameraRoll || !output->found) {
+        if (!_writeResultToCameraRoll || !output.found) {
             _ready = YES;
         }
     }
@@ -205,11 +206,14 @@
 
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(newBuffer);
 
-    [self processPixelBufferRef:pixelBuffer forceRun:YES completion:nil];
+    [self processPixelBufferRef:pixelBuffer forceRun:YES camera:nullptr completion:nil];
 }
 
 // this function is called by forceRun = true if the input is from camera, or false if from AR.
-- (void)processPixelBufferRef:(CVPixelBufferRef)pixelBuffer forceRun:(BOOL)forceRun completion:(void (^)(VROTrackingHelperOutput *output))completionHandler {
+- (void)processPixelBufferRef:(CVPixelBufferRef)pixelBuffer
+                     forceRun:(BOOL)forceRun
+                       camera:(std::shared_ptr<VROARCamera>)camera
+                   completion:(void (^)(VROTrackingHelperOutput *output))completionHandler {
     if (!_shouldTrack) {
         return;
     }
@@ -251,9 +255,9 @@
     // anything higher than "low" priority and we start skipping frames (probably because
     // the low level camera notification API's notify on the background thread). - actually it seems to be okay on "high"
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        std::shared_ptr<VROARImageTrackerOutput> output = [self runTracking:rgbImage];
+        VROARImageTrackerOutput output = [self runTracking:rgbImage camera:camera];
         if (_shouldTrack && completionHandler) {
-            completionHandler([[VROTrackingHelperOutput alloc] initWithTrackerOutput:output withImage:MatToUIImage(output->outputImage)]);
+            completionHandler([[VROTrackingHelperOutput alloc] initWithTrackerOutput:output withImage:MatToUIImage(output.outputImage)]);
         }
     });
 }

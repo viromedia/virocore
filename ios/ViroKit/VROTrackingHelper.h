@@ -11,13 +11,14 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 #import "opencv2/imgcodecs/ios.h"
-#import "VROARImageTrackerOutput.h"
+#import "VROARCamera.h"
+#import "VROARImageTracker.h"
 
 @interface VROTrackingHelperOutput : NSObject
 
-- (instancetype) initWithTrackerOutput:(std::shared_ptr<VROARImageTrackerOutput>)output withImage:(UIImage *)outputImage;
+- (instancetype)initWithTrackerOutput:(VROARImageTrackerOutput)output withImage:(UIImage *)outputImage;
 
-- (std::shared_ptr<VROARImageTrackerOutput>)getImageTrackerOutput;
+- (VROARImageTrackerOutput)getImageTrackerOutput;
 - (UIImage *)getOutputImage;
 
 @end
@@ -44,6 +45,7 @@
 
 - (void)processPixelBufferRef:(CVPixelBufferRef)pixelBuffer
                      forceRun:(BOOL)forceRun
+                       camera:(std::shared_ptr<VROARCamera>)camera
                    completion:(void (^)(VROTrackingHelperOutput *output))completionHandler;
 
 - (cv::Mat)matFromYCbCrBuffer:(CVImageBufferRef)buffer;

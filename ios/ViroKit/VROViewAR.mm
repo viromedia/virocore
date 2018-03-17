@@ -202,7 +202,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 #if ENABLE_OPENCV
     // Below code is used to help us debug OpenCV tracking
     if (NSClassFromString(@"ARSession") != nil) {
-        _trackerViewScale = .33; // scale w.r.t. the entire screen of the output image w/ the edges drawn (from the bottom right)
+        _trackerViewScale = .50; // scale w.r.t. the entire screen of the output image w/ the edges drawn (from the bottom right)
         _textHeight = 75; // height of the output text view at the bottom (blue box w/ text)
 
         // Create a new ImageView for displaying image tracking

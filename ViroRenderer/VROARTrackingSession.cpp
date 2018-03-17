@@ -31,7 +31,7 @@ void VROARTrackingSession::updateFrame(VROARFrame *frame) {
         return;
     }
 
-    bool shouldMock = false;
+    bool shouldMock = true;
     // TODO: below code is for mocking this class
     if (shouldMock) {
         mockTracking();
@@ -47,13 +47,13 @@ void VROARTrackingSession::updateFrame(VROARFrame *frame) {
         // invoke VROARImageTracker.findTarget on a background thread.
         // TODO: grab the intrinsic matrix...
         VROPlatformDispatchAsyncBackground([this, matImage] {
-            std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = _tracker->findTarget(matImage, NULL);
+            std::vector<VROARImageTrackerOutput> outputs = _tracker->findTarget(matImage, NULL);
             for (int i = 0; i < outputs.size(); i++) {
-                std::shared_ptr<VROARImageTrackerOutput> output = outputs[i];
+                VROARImageTrackerOutput output = outputs[i];
                 std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
 
-                if (output->found && listener) {
-                    auto it = _targetAnchorMap.find(output->target);
+                if (output.found && listener) {
+                    auto it = _targetAnchorMap.find(output.target);
                     if (it != _targetAnchorMap.end()) {
                         // there's already an anchor, so notify that it's been updated.
                         std::shared_ptr<VROARAnchor> anchor = it->second;
@@ -65,12 +65,12 @@ void VROARTrackingSession::updateFrame(VROARFrame *frame) {
                         // there hasn't been an anchor created, so create an anchor and notify that it has been found
                         // TODO: you also need to set the ID on the VROARImageAnchor for Android (methinks), iOS uses
                         // the attached anchors to determine if an anchor is for a target (why can't we do that?)
-                        std::shared_ptr<VROARImageAnchor> imageAnchor = std::make_shared<VROARImageAnchor>(output->target);
+                        std::shared_ptr<VROARImageAnchor> imageAnchor = std::make_shared<VROARImageAnchor>(output.target);
                         // TODO: update anchor's transform with the output transform!
-                        _targetAnchorMap[output->target] = imageAnchor;
+                        _targetAnchorMap[output.target] = imageAnchor;
                         
                         // VROARImageAnchor is a type of VROARAnchor, but Xcode complains if I don't cast.
-                        output->target->setAnchor(std::dynamic_pointer_cast<VROARAnchor>(imageAnchor));
+                        output.target->setAnchor(std::dynamic_pointer_cast<VROARAnchor>(imageAnchor));
 
                         // TODO: should this call back on the render thread?
                         listener->onTrackedAnchorFound(std::dynamic_pointer_cast<VROARAnchor>(imageAnchor));

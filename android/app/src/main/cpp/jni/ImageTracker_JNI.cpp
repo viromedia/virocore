@@ -9,10 +9,10 @@
 #include <memory>
 #include "PersistentRef.h"
 #include "ImageTrackerOutput_JNI.h"
-#include "VROARImageTracker.h"
 #include <android/bitmap.h>
 
 #if ENABLE_OPENCV
+#include "VROARImageTracker.h"
 #include <opencv2/imgproc.hpp>
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgcodecs/imgcodecs.hpp"
@@ -92,15 +92,15 @@ JNI_METHOD(jlong, nativeFindTarget)(JNIEnv *env,
 #if ENABLE_OPENCV
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 
-    std::vector<std::shared_ptr<VROARImageTrackerOutput>> outputs = ImageTracker::native(nativeRef)->findTarget(imageMat, NULL);
-    std::shared_ptr<VROARImageTrackerOutput> output;
+    std::vector<VROARImageTrackerOutput> outputs = ImageTracker::native(nativeRef)->findTarget(imageMat, NULL);
+    VROARImageTrackerOutput output;
     if (outputs.size() > 0) {
         output = outputs[0]; // grab the first one because there should only be one (only 1 target)
     } else {
-        output = VROARImageTrackerOutput::createFalseOutput();
+        output = VROARImageTracker::createFalseOutput();
     }
 
-    return ImageTrackerOutput::jptr(output);
+    return ImageTrackerOutput::jptr(std::make_shared<VROARImageTrackerOutput>(output));
 #else
     return 0;
 #endif /* ENABLE_OPENCV */

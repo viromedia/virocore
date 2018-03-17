@@ -914,10 +914,11 @@ public class ViroActivity extends AppCompatActivity {
 
     private Node mImageMarkerTestNode;
     private ARImageTarget mARImageTarget;
+    private Bitmap targetImage;
 
     private List<Node> testARImageTarget(final ARScene arScene) {
 
-        final Bitmap targetImage = getBitmapFromAssets("ben.jpg");
+        targetImage = getBitmapFromAssets("ben.jpg");
         // store this in a field so it doesn't get destroyed before we can use it!
         mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .1f);
         arScene.addARImageTarget(mARImageTarget);

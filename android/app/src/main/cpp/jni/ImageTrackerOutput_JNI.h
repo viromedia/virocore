@@ -8,10 +8,10 @@
 #include <jni.h>
 #include <memory>
 
-#include "VROARImageTrackerOutput.h"
-#include "PersistentRef.h"
-
 #if ENABLE_OPENCV
+
+#include "VROARImageTracker.h"
+#include "PersistentRef.h"
 
 namespace ImageTrackerOutput {
     inline jlong jptr(std::shared_ptr<VROARImageTrackerOutput> tracker) {
