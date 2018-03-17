@@ -11,6 +11,25 @@
 
 #include "VRORendererTest.h"
 
+class VROTextTest;
+
+class VROTextEventDelegate : public VROEventDelegate {
+public:
+    VROTextEventDelegate(VROTextTest *test) : _test(test) {};
+    virtual ~VROTextEventDelegate() {};
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
+private:
+    VROTextTest *_test;
+};
+
+class VROTextSample {
+public:
+    std::wstring sample;
+    std::shared_ptr<VROTypeface> typeface;
+    VROTextSample(std::wstring sample, std::shared_ptr<VROTypeface> typeface) : sample(sample), typeface(typeface) {}
+    ~VROTextSample() {}
+};
+
 class VROTextTest : public VRORendererTest {
 public:
     
@@ -27,10 +46,16 @@ public:
         return _sceneController;
     }
     
+    void rotateText();
+
 private:
 
+    int _textIndex;
+    std::vector<VROTextSample> _textSamples;
+    std::shared_ptr<VRONode> _textNode;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VROTextEventDelegate> _eventDelegate;
     
 };
 

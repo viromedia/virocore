@@ -11,7 +11,7 @@
 
 VROTextTest::VROTextTest() :
     VRORendererTest(VRORendererTestType::Text) {
-        
+    _textIndex = 0;
 }
 
 VROTextTest::~VROTextTest() {
@@ -21,19 +21,26 @@ VROTextTest::~VROTextTest() {
 void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
                         std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                         std::shared_ptr<VRODriver> driver) {
+    
+    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("PingFang HK", 32));
+    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ", driver->newTypeface("Apple SD Gothic Neo", 32));
+    _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ", driver->newTypeface("Heiti TC", 32));
+    _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ", driver->newTypeface("Devanagari Sangam MN", 32));
+    _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض", driver->newTypeface("Geeza Pro", 32));
+    _textSamples.emplace_back(L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.", driver->newTypeface("SF Mono", 32));
+
     _sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setBackgroundCube(VROTestUtil::loadCloudBackground());
     
     /*
-     Create background for text.
+     KTX texture with text.
      */
     int width = 10;
     int height = 10;
-    
+
     int fileLength;
     void *fileData = VROTestUtil::loadDataForResource("card_main", "ktx", &fileLength);
     
@@ -57,35 +64,42 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
-    surfaceNode->setPosition({0, 0, -10.01});
+    surfaceNode->setPosition({0, -10, -10.01});
     
     rootNode->addChildNode(surfaceNode);
+    free (fileData);
     
     /*
-     Create text.
+     Actual text.
      */
+    _textNode = std::make_shared<VRONode>();
+    _textNode->setPosition({0, 0, -5});
+    rootNode->addChildNode(_textNode);
+    rotateText();
+    
+    _eventDelegate = std::make_shared<VROTextEventDelegate>(this);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    rootNode->setEventDelegate(_eventDelegate);
+}
+
+void VROTextTest::rotateText() {
+    int width = 5;
+    int height = 5;
+    std::wstring &string = _textSamples[_textIndex].sample;
+    std::shared_ptr<VROTypeface> typeface = _textSamples[_textIndex].typeface;
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
-    
-    std::shared_ptr<VROTypeface> typeface = driver->newTypeface("SF", 24);
-    //std::wstring string = L"Déspacito. This is a test of wrapping a long piece of text, longer than all the previous pieces of text.";
-    
-    std::wstring string = L"Déspacito In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
-    
-    VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode, 0);
-    pinfo("Estimated size %f, %f", size.x, size.y);
-    
-    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 0.0, 0.0, 1.0}, width, height,
+    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 1.0, 1.0, 1.0}, width, height,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
                                                         linebreakMode, clipMode);
+    _textNode->setGeometry(text);
     
-    text->setName("Text");
-    pinfo("Realized size %f, %f", text->getRealizedWidth(), text->getRealizedHeight());
-    
-    std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
-    textNode->setGeometry(text);
-    textNode->setPosition({0, 0, -10});
-    
-    rootNode->addChildNode(textNode);
-    free (fileData);
+    _textIndex = (_textIndex + 1) % _textSamples.size();
+}
+
+void VROTextEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
+                                   std::vector<float> position) {
+    if (clickState == ClickState::Clicked) {
+        _test->rotateText();
+    }
 }
