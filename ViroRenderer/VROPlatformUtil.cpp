@@ -495,6 +495,30 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
     return spath;
 }
 
+std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isItalic, int weight) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jstring jtypeface = env->NewStringUTF(typeface.c_str());
+    
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jfindFontFile = env->GetMethodID(cls, "findFontFile", "(Ljava/lang/String;ZI)Ljava/lang/String;");
+    jmethodID jfindFontIndex = env->GetMethodID(cls, "findFontIndex", "(Ljava/lang/String;ZI)I");
+
+    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jfindFontFile, jtypeface, isItalic, weight);
+
+    std::string path;
+    int index = -1;
+
+    if (jpath != NULL) {
+        path = VROPlatformGetString(jpath, env);
+        index = env->CallIntMethod(sPlatformUtil, jfindFontIndex, jtypeface, isItalic, weight);
+        env->DeleteLocalRef(jpath);
+    }
+    env->DeleteLocalRef(jtypeface);
+    env->DeleteLocalRef(cls);
+
+    return std::make_pair(path, index);
+}
+
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
     jobject bitmap = VROPlatformLoadBitmapFromFile(filename, format);

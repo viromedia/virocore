@@ -16,9 +16,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 
-import com.viro.core.internal.FrameListener;
-import com.viro.core.internal.RenderCommandQueue;
-import com.viro.core.internal.VideoSink;
+import com.viro.core.internal.font.FontFamily;
+import com.viro.core.internal.font.SystemFontLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Methods accessed by JNI to perform platform-dependent
@@ -63,6 +61,13 @@ public class PlatformUtil {
         mAssetManager = assetManager;
         mRenderQueue = queue;
         mApplicationHandler = new Handler(Looper.getMainLooper());
+
+        // Android devices store font configuration XML in /system/fonts/fonts.xml
+        try {
+            SystemFontLoader.init();
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to load font configuration: all fonts will be system default", e);
+        }
     }
 
     @Override
@@ -277,6 +282,24 @@ public class PlatformUtil {
     public void deleteFile(String path) throws IOException {
         File file = new File(path);
         file.delete();
+    }
+
+    // Accessed by Native code
+    public String findFontFile(String typeface, boolean isItalic, int weight) {
+        FontFamily.Font font = SystemFontLoader.findFont(typeface, isItalic, weight);
+        if (font == null) {
+            return null;
+        }
+        return font.getPath();
+    }
+
+    // Accessed by Native code
+    public int findFontIndex(String typeface, boolean isItalic, int weight) {
+        FontFamily.Font font = SystemFontLoader.findFont(typeface, isItalic, weight);
+        if (font == null) {
+            return 0;
+        }
+        return font.getIndex();
     }
 
     private static void downloadURLSynchronous(String myurl, File file) throws IOException {
