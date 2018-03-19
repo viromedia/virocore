@@ -809,9 +809,8 @@ public class Text extends Geometry {
          * @return The built Text.
          */
         public Text build() {
-            return new Text(mViroContext, mText, mFontFamilyName, mFontSize, mFontStyle, mFontWeight,
-                    mColor, mWidth, mHeight, mHorizontalAlignment, mVerticalAlignment, mLineBreakMode,
-                    mClipMode, mMaxLines);
+            return new Text(mViroContext, mText, mFontFamilyName, mFontSize, mFontStyle, mFontWeight, mColor, mWidth, mHeight,
+            mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
         }
 
     }

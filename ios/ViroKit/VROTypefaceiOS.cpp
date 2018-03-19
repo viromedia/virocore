@@ -30,11 +30,14 @@ typedef struct TableEntry {
 VROTypefaceiOS::VROTypefaceiOS(std::string name, int size, VROFontStyle style, VROFontWeight weight,
                                std::shared_ptr<VRODriver> driver) :
     VROTypeface(name, size, style, weight),
-    _driver(driver) {
+    _driver(driver),
+    _face(nullptr) {
 }
 
 VROTypefaceiOS::~VROTypefaceiOS() {
-    FT_Done_Face(_face);
+    if (_face != nullptr) {
+        FT_Done_Face(_face);
+    }
 }
 
 void VROTypefaceiOS::loadFace(std::string name, int size) {
@@ -76,6 +79,7 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
     if (FT_New_Memory_Face(ft, (const FT_Byte *)[_fontData bytes], [_fontData length], 0, &_face)) {
         pabort("Failed to load font");
     }
+    
     FT_Set_Pixel_Sizes(_face, 0, size);
     
     CFRelease(descriptor);
@@ -108,24 +112,18 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
         return nullptr;
     }
     
-    CFRetain(cgFont);
-    
     CFArrayRef tags = CGFontCopyTableTags(cgFont);
     CFIndex tableCount = CFArrayGetCount(tags);
-    
     size_t *tableSizes = (size_t *) malloc(sizeof(size_t) * tableCount);
     memset(tableSizes, 0, sizeof(size_t) * tableCount);
     
     BOOL containsCFFTable = NO;
-    
     size_t totalSize = sizeof(FontHeader) + sizeof(TableEntry) * tableCount;
     
     for (int index = 0; index < tableCount; ++index) {
-        
         //get size
         size_t tableSize = 0;
         uintptr_t aTag = (uintptr_t)CFArrayGetValueAtIndex(tags, index);
-        
         if (aTag == 'CFF ' && !containsCFFTable) {
             containsCFFTable = YES;
         }
@@ -141,7 +139,6 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
     }
     
     unsigned char *stream = (unsigned char *) malloc(totalSize);
-    
     memset(stream, 0, totalSize);
     char* dataStart = (char*)stream;
     char* dataPtr = dataStart;
@@ -176,7 +173,6 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
     dataPtr += sizeof(TableEntry) * tableCount;
     
     for (int index = 0; index < tableCount; ++index) {
-        
         uintptr_t aTag = (uintptr_t)CFArrayGetValueAtIndex(tags, index);
         CFDataRef tableDataRef = CGFontCopyTableForTag(cgFont, (uint32_t)aTag);
         size_t tableSize = CFDataGetLength(tableDataRef);

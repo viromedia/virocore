@@ -16,12 +16,15 @@ static const std::string kSystemFont = "Roboto-Regular";
 VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size, VROFontStyle style,
                                        VROFontWeight weight, std::shared_ptr<VRODriver> driver) :
     VROTypeface(name, size, style, weight),
-    _driver(driver) {
+    _driver(driver),
+    _face(nullptr) {
 
 }
 
 VROTypefaceAndroid::~VROTypefaceAndroid() {
-    FT_Done_Face(_face);
+    if (_face != nullptr) {
+        FT_Done_Face(_face);
+    }
 }
 
 void VROTypefaceAndroid::loadFace(std::string name, int size) {

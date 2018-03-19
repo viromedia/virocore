@@ -12,11 +12,13 @@
 #include <stdio.h>
 #include <string>
 #include <memory>
+#include <climits>
 #include <map>
 #include "VROLog.h"
 #include "VROAllocationTracker.h"
 
 class VROGlyph;
+struct FT_FaceRec_;
 
 enum class VROFontStyle {
     Normal,
@@ -81,6 +83,12 @@ protected:
     int _size;
     VROFontStyle _style;
     VROFontWeight _weight;
+    
+    /*
+     Returns the languages the given face was designed for, and the languages the face
+     supports, both as comma-separated strings of BCP-47 identifiers.
+     */
+    std::pair<std::string, std::string> getLanguages(FT_FaceRec_* face);
     
 private:
     
