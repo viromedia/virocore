@@ -159,6 +159,7 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
         // we notify the user that their FBX has finished loading
         fbxNode->recomputeUmbrellaBoundingBox();
         fbxNode->setAtomicRenderProperties();
+        node->setIgnoreEventHandling(node->getIgnoreEventHandling());
         
         if (onFinish) {
             onFinish(node, true);
