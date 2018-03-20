@@ -30,6 +30,7 @@
 		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
 		8A35CE902058386200ADD393 /* VROARTrackingSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */; };
 		8A35CE912058386200ADD393 /* VROARTrackingSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */; };
+		8A35CEFB2060711300ADD393 /* george.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A35CEFA2060711200ADD393 /* george.jpg */; };
 		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
 		8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
@@ -869,6 +870,7 @@
 		8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROTrackingHelper.mm; sourceTree = "<group>"; };
 		8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARTrackingSession.h; sourceTree = "<group>"; };
 		8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARTrackingSession.cpp; sourceTree = "<group>"; };
+		8A35CEFA2060711200ADD393 /* george.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = george.jpg; path = ViroSample/george.jpg; sourceTree = "<group>"; };
 		8A39B1A820181A36007E41E2 /* wikipedia_qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wikipedia_qr.png; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A5C05581EF6416900F94CB9 /* VROARNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNode.h; sourceTree = "<group>"; };
@@ -2661,6 +2663,7 @@
 				8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */,
 				8FA9A243207E81040022C55D /* lamborghini_v2.vrx */,
 				8FA9A23F207DB56E0022C55D /* transparent.png */,
+				8A35CEFA2060711200ADD393 /* george.jpg */,
 				8FFA8A082048702B00C4D99B /* check.png */,
 				8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */,
 				8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */,
@@ -3423,6 +3426,7 @@
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
+				8A35CEFB2060711300ADD393 /* george.jpg in Resources */,
 				8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */,
 				8FEACEDC2012605F0082D18B /* pbr_sample_metallic.png in Resources */,
 				8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */,

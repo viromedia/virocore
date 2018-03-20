@@ -115,7 +115,7 @@
     UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
     
     // the printed QR code is 0.06096 meters wide
-    std::shared_ptr<VROARImageTarget> arImageTarget = std::make_shared<VROARImageTarget>(VROImageOrientation::Up, .156);
+    std::shared_ptr<VROARImageTarget> arImageTarget = std::make_shared<VROARImageTarget>(VROImageOrientation::Up, 0.06096);
     arImageTarget->setTargetMat(targetMat);
     
     return arImageTarget;
@@ -155,21 +155,9 @@
     if (!output.found) {
         NSLog(@"VROTrackingHelper, couldn't find target in given image");
     } else {
-        // draw lines between the corners of the target in the input image
-        cv::line(cameraInput, output.corners[0], output.corners[1], cv::Scalar(0, 255, 0), 5);
-        cv::line(cameraInput, output.corners[1], output.corners[2], cv::Scalar(0, 255, 0), 5);
-        cv::line(cameraInput, output.corners[2], output.corners[3], cv::Scalar(0, 255, 0), 5);
-        cv::line(cameraInput, output.corners[3], output.corners[0], cv::Scalar(0, 255, 0), 5);
-        
-        cv::Mat processedImage = cv::Mat(cameraInput.rows, cameraInput.cols, CV_32F);
-        cv::cvtColor(cameraInput, processedImage, cv::COLOR_BGRA2RGBA);
-        
-        // return the input image w/ target outlined to display in the test imageView
-        output.outputImage = processedImage;
-        
         // check if we should write to photo album...
         if (_writeResultToCameraRoll) {
-            UIImage *outputImage = MatToUIImage(processedImage);
+            UIImage *outputImage = MatToUIImage(output.outputImage);
             UIImageWriteToSavedPhotosAlbum(outputImage, nil, nil, nil);
         }
     }

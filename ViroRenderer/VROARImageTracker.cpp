@@ -61,12 +61,12 @@ void VROARImageTracker::updateType() {
     switch(_type) {
         case VROARImageTrackerType::ORB4:
             
-            _numberFeaturePoints = 3500;
-            _minGoodMatches = 15;
+            _numberFeaturePoints = 3000;
+            _minGoodMatches = 20;
             pinfo("[Viro] minGoodMatches: %f - average", _minGoodMatches);
             
             // original feature property:
-            _feature = cv::ORB::create(500, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
+            //_feature = cv::ORB::create(500, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
 
             
             // absurdly high, but accurate IIRC:
@@ -74,7 +74,7 @@ void VROARImageTracker::updateType() {
 
             // current testing iPhone SE
             _feature = cv::ORB::create(_numberFeaturePoints, 1.1f, 12, 0, 0, 4, cv::ORB::HARRIS_SCORE);
-            _targetFeature = cv::ORB::create(550, 1.2f, 12, 31, 0, 4, cv::ORB::HARRIS_SCORE);
+            _targetFeature = cv::ORB::create(700, 1.2f, 12, 31, 0, 4, cv::ORB::HARRIS_SCORE);
 
             // current iPad Testing
             //_feature = cv::ORB::create(3000, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
@@ -105,7 +105,7 @@ void VROARImageTracker::updateType() {
 
     // Since we may have changed the _feature/_matcherType, we need to recreate all the
     for (int i = 0; i < _arImageTargets.size(); i++) {
-        _targetsMap[_arImageTargets[i]] = updateTargetInfo(_arImageTargets[i]);
+        _targetToTargetMap[_arImageTargets[i]] = updateTargetInfo(_arImageTargets[i]);
     }
 }
 
@@ -118,12 +118,12 @@ VROARImageTargetOpenCV VROARImageTracker::updateTargetInfo(std::shared_ptr<VROAR
     // TODO: we can scale the target image lower to speed up processing, but that'll throw off the translation matrix (by the same factor)
     detectKeypointsAndDescriptors(arImageTarget->getTargetMat(), targetKeyPoints, targetDescriptors, true);
 
-    return {arImageTarget, targetKeyPoints, targetDescriptors, cv::Mat(), cv::Mat()};
+    return {arImageTarget, targetKeyPoints, targetDescriptors, cv::Mat(), cv::Mat(), {}, createFalseOutput(), false};
 }
 
 void VROARImageTracker::addARImageTarget(std::shared_ptr<VROARImageTarget> arImageTarget) {
     _arImageTargets.push_back(arImageTarget);
-    _targetsMap[arImageTarget] = updateTargetInfo(arImageTarget);
+    _targetToTargetMap[arImageTarget] = updateTargetInfo(arImageTarget);
 }
 
 void VROARImageTracker::removeARImageTarget(std::shared_ptr<VROARImageTarget> arImageTarget) {
@@ -173,15 +173,14 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat input
     _currentCamera = camera;
     std::vector<VROARImageTrackerOutput> outputs = findTargetInternal(inputImage);
     
+    // Process outputs before determining if our outputs are good
+    outputs = processOutputs(outputs);
+    
     return outputs;
 }
 
 std::vector<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics) {
-    _intrinsics = intrinsics;
-    _currentCamera = nullptr;
-    std::vector<VROARImageTrackerOutput> outputs = findTargetInternal(inputImage);
-    
-    return outputs;
+    return findTarget(inputImage, intrinsics, nullptr);
 }
 
 std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::Mat inputImage) {
@@ -278,11 +277,15 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
     for (int i = 0; i < _arImageTargets.size(); i++) {
         pinfo("[Viro] processing target #%d", i);
         
-        currentTarget = _targetsMap.find(_arImageTargets[i])->second;
+        currentTarget = _targetToTargetMap.find(_arImageTargets[i])->second;
+        
+        if (currentTarget.disableTracking) {
+            pinfo("[Viro] target is disabled, skipping this target");
+            continue;
+        }
         
         LOG_DETECT_TIME("start matching keypoints");
         
-        // we need at least 15 good matches before we continue - for 500 feature pts.
         // use the new calculate _minGoodMatches instead now.
         int minGoodMatches = _minGoodMatches; // used to be hard-coded to 15
         std::vector<cv::DMatch> goodMatches;
@@ -418,8 +421,17 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         // whether or not to use the (previous) values in _rotation/_translation to help with extracting the next set of them.
         bool useExtrinsicGuess = true;
         
-        //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, _rotation, _translation, useExtrinsicGuess);
-        cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
+        //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
+        
+        /*
+         InputArray objectPoints, InputArray imagePoints,
+         InputArray cameraMatrix, InputArray distCoeffs,
+         OutputArray rvec, OutputArray tvec,
+         bool useExtrinsicGuess = false, int iterationsCount = 100,
+         float reprojectionError = 8.0, double confidence = 0.99,
+         OutputArray inliers = noArray(), int flags = SOLVEPNP_ITERATIVE
+         */
+        cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, currentTarget.rotation, currentTarget.translation, useExtrinsicGuess, 100, 8.0, .99, {}, cv::SOLVEPNP_ITERATIVE);
 
         LOG_DETECT_TIME("finished detection & pose extraction");
         
@@ -444,15 +456,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         scaledTranslation.at<double>(0,0) = currentTarget.translation.at<double>(0,0) / pixPerMeter;
         scaledTranslation.at<double>(1,0) = currentTarget.translation.at<double>(1,0) / pixPerMeter;
         scaledTranslation.at<double>(2,0) = currentTarget.translation.at<double>(2,0) / pixPerMeter;
-
-#if ENABLE_DETECT_LOGGING
-        for (int i = 0; i < inputCorners.size(); i++) {
-            pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
-        }
-        
-        pinfo("[Viro] translation: %f, %f, %f", scaledTranslation.at<double>(0,0), scaledTranslation.at<double>(1,0), scaledTranslation.at<double>(2,0));
-        pinfo("[Viro] rotation: %f, %f, %f", toDegrees(currentTarget.rotation.at<double>(0,0)), toDegrees(currentTarget.rotation.at<double>(1,0)), toDegrees(currentTarget.rotation.at<double>(2,0)));
-#endif
         
         VROVector3f outRotation;
         VROVector3f outTranslation;
@@ -460,10 +463,229 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
 
         VROMatrix4f worldTransform = convertToWorldCoordinates(_currentCamera, outTranslation, outRotation);
         
-        outputs.push_back({true, inputCorners, scaledTranslation, currentTarget.rotation, worldTransform, currentTarget.arImageTarget});
+#if ENABLE_DETECT_LOGGING
+        for (int i = 0; i < inputCorners.size(); i++) {
+            pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
+        }
+        
+        VROVector3f tempTrans = worldTransform.extractTranslation();
+        VROVector3f tempRot = worldTransform.extractRotation(worldTransform.extractScale()).toEuler();
+        
+        pinfo("[Viro] translation: %f, %f, %f", tempTrans.x, tempTrans.y, tempTrans.z);
+        pinfo("[Viro] rotation: %f, %f, %f", toDegrees(tempRot.x), toDegrees(tempRot.y), toDegrees(tempRot.z));
+#endif
+        
+        // draw lines between the corners of the target in the input image
+        // TODO: remove this when not debugging.
+        cv::line(inputImage, inputCorners[0], inputCorners[1], cv::Scalar(0, 255, 0), 5);
+        cv::line(inputImage, inputCorners[1], inputCorners[2], cv::Scalar(0, 255, 0), 5);
+        cv::line(inputImage, inputCorners[2], inputCorners[3], cv::Scalar(0, 255, 0), 5);
+        cv::line(inputImage, inputCorners[3], inputCorners[0], cv::Scalar(0, 255, 0), 5);
+        
+        cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_32F);
+        cv::cvtColor(inputImage, processedImage, cv::COLOR_BGRA2RGBA);
+
+        VROARImageTrackerOutput output = {true, inputCorners, scaledTranslation, currentTarget.rotation, worldTransform, currentTarget.arImageTarget};
+        output.outputImage = processedImage;
+
+        outputs.push_back(output);
     }
     
     return outputs;
+}
+
+std::vector<VROARImageTrackerOutput> VROARImageTracker::processOutputs(std::vector<VROARImageTrackerOutput> rawOutputs) {
+    std::vector<VROARImageTrackerOutput> newOutputs;
+    
+    for (int i = 0; i < rawOutputs.size(); i++) {
+        VROARImageTrackerOutput output = rawOutputs[i];
+        if (output.found) {
+            VROARImageTrackerOutput realOutput = determineFoundOrUpdate(output);
+            if (realOutput.found) {
+                newOutputs.push_back(realOutput);
+            }
+        }
+    }
+
+    return newOutputs;
+}
+
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdate(VROARImageTrackerOutput output) {
+    return determineFoundOrUpdateV3(output);
+}
+
+/*
+ This version of determineFoundOrUpdate is the default case where we simply return the rawOutput and
+ disable tracking after finding 5 results. This is not that good because while we run pretty fast,
+ sometimes the rotations/position are bad.
+ */
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV1(VROARImageTrackerOutput rawOutput) {
+    if (rawOutput.found) {
+        VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
+
+        // if the previous last output was "found" then this is an update.
+        rawOutput.isUpdate = targetOpenCV->lastOutput.found;
+
+        targetOpenCV->lastOutput = rawOutput;
+        
+        targetOpenCV->rawOutputs.push_back(rawOutput);
+        if (targetOpenCV->rawOutputs.size() >= 5) {
+            targetOpenCV->disableTracking = true;
+        }
+        
+        return rawOutput;
+    }
+    return createFalseOutput();
+}
+
+/*
+ This version of determineFoundOrUpdate waits until we find at least 2 rawOutputs with "similar" transforms
+ before returning a "found" and then it throws away all other rawOutputs except the ones that match. Then it
+ looks for more outputs that match the first two until we get 5.
+ 
+ This runs quickly because it's a N^2 comparison until we find 2 similar outputs, and then it's a constant
+ check ("is similar"), but if the original 2 outputs are "wrong" then we'll never correct ourselves.
+ */
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTrackerOutput rawOutput) {
+    int minimumQuorum = 2;
+    int maximumQuorum = 5;
+
+    VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
+    
+    //if target has already been found
+    if (targetOpenCV->lastOutput.found) {
+        // if new rawOutput is similar to existing
+        if (areOutputsSimilar(rawOutput, targetOpenCV->lastOutput)) {
+            // add to the rawOutputs array
+            targetOpenCV->rawOutputs.push_back(rawOutput);
+            // if rawOutputs >= maximumQuorum
+            if (targetOpenCV->rawOutputs.size() > maximumQuorum) {
+                // disable target (we don't want to waste cycles to look for it anymore since it's stable.)
+                targetOpenCV->disableTracking = true;
+            }
+            // update target // TODO: compute a better output rather than the last output.
+            rawOutput.isUpdate = true;
+            targetOpenCV->lastOutput = rawOutput;
+            return rawOutput;
+        // if not similar to existing
+        } else {
+            // throw away rawOutput(?)
+        }
+    // if target hasn't been found
+    } else {
+        // add rawOutput to array
+        targetOpenCV->rawOutputs.push_back(rawOutput);
+        // if we get a minimumQuorum of matched rawOutputs - v1: truly n^2 runtime, but this is only until we find a quorum...
+        for (int i = 0; i < targetOpenCV->rawOutputs.size(); i++) {
+            std::vector<VROARImageTrackerOutput> tempVector;
+            for (int j = 0; j < targetOpenCV->rawOutputs.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                
+                if (areOutputsSimilar(targetOpenCV->rawOutputs[i], targetOpenCV->rawOutputs[j])) {
+                    tempVector.push_back(targetOpenCV->rawOutputs[j]);
+                }
+            }
+            
+            // don't forget to add the output we're comparing to the others to the vector!
+            tempVector.push_back(targetOpenCV->rawOutputs[i]);
+            
+            if (tempVector.size() >= minimumQuorum) {
+                // throw away bad rawOutputs(?)
+                targetOpenCV->lastOutput = targetOpenCV->rawOutputs[i]; // choose the output that matched with everything else (grab it first before overriding rawOutputs)
+                targetOpenCV->rawOutputs = tempVector; // by overwriting rawOutputs, we've "deleted" all the bad outputs
+                // return the last target (assuming it's the most recent, and so it's the most accurate)
+                return targetOpenCV->lastOutput;
+            }
+        }
+    }
+    return createFalseOutput();
+}
+
+/*
+ This version of determineFoundOrUpdate tries to return as fast as possible while trying to use all the
+ information it has to make the best decision by constantly reevaluating which output is the best.
+ */
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTrackerOutput rawOutput) {
+    int maximumQuorum = 5;
+    
+    VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
+    
+    std::vector<VROARImageTrackerOutput> rawOutputs = targetOpenCV->rawOutputs;
+    
+    // this will be the new list for this output.
+    std::vector<VROARImageTrackerOutput> newList = {rawOutput};
+    
+    long max = 0;
+    int maxIndex = 0;
+    
+    for (int i = 0; i < rawOutputs.size(); i++) {
+        if (areOutputsSimilar(rawOutput, rawOutputs[i])) {
+            _targetToSimilarOutputs[i].push_back(rawOutput);
+            newList.push_back(rawOutputs[i]);
+        }
+
+        // we want >= because the rawOutputs are in order, hopefully the "later" outputs are more accurate than
+        // earlier ones?
+        if (_targetToSimilarOutputs[i].size() >= max) {
+            max = _targetToSimilarOutputs[i].size();
+            maxIndex = i;
+        }
+    }
+    
+    _targetToSimilarOutputs.push_back(newList);
+    
+    VROARImageTrackerOutput toReturn;
+    if (newList.size() >= max) {
+        max = newList.size();
+        toReturn = newList[0];
+    } else {
+        toReturn = _targetToSimilarOutputs[maxIndex][0];
+    }
+
+    // if there was a lastOutput, then this is now an update!
+    toReturn.isUpdate = targetOpenCV->lastOutput.found;
+    targetOpenCV->lastOutput = toReturn;
+    // disableTracking once we have maximumQuorum of points that 'agree'
+    targetOpenCV->disableTracking = max >= maximumQuorum;
+    // add the rawOutput to the list of rawOutputs
+    targetOpenCV->rawOutputs.push_back(rawOutput);
+    
+    return toReturn;
+}
+
+bool VROARImageTracker::areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second) {
+    float similarDistanceThreshold = .015; // 1.5 cm <- TODO: should it be dependent on the physical width of the target? probably.
+    
+    // if either outputs aren't a "found" output, return false
+    if (!first.found || !second.found) {
+        return false;
+    }
+
+    // Check if the cartesian distance are within a similarDistanceThreshold
+    if (first.worldTransform.extractTranslation().distance(second.worldTransform.extractTranslation()) > similarDistanceThreshold) {
+        return false;
+    }
+    
+    // Check if the rotations are similar...
+    
+    // try comparing rotations?
+    VROVector3f firstRotation = first.worldTransform.extractRotation(first.worldTransform.extractScale()).toEuler();
+    VROVector3f secondRotation = second.worldTransform.extractRotation(second.worldTransform.extractScale()).toEuler();
+    
+    float xDiff = abs(firstRotation.x - secondRotation.x);
+    float yDiff = abs(firstRotation.y - secondRotation.y);
+    float zDiff = abs(firstRotation.z - secondRotation.z);
+
+    float maxAxisDiff = 5 * M_PI / 180; // 5 degrees
+    float maxTotalDiff = 10 * M_PI / 180; // 10 degrees
+    
+    if (xDiff > maxAxisDiff || yDiff > maxAxisDiff || zDiff > maxAxisDiff || (xDiff + yDiff + zDiff) > maxTotalDiff) {
+        return false;
+    }
+    
+    return true;
 }
 
 bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {

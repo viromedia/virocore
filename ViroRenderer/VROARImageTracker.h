@@ -26,6 +26,7 @@ enum class VROARImageTrackerType {
     ORB4,
 };
 
+// TODO: VROARImageTrackerOutput is heavily overloaded.
 struct VROARImageTrackerOutput {
     bool found;
     std::vector<cv::Point2f> corners;
@@ -36,6 +37,7 @@ struct VROARImageTrackerOutput {
     std::shared_ptr<VROARImageTarget> target;
 
     cv::Mat outputImage;
+    bool isUpdate;
 };
 
 struct VROARImageTargetOpenCV {
@@ -44,6 +46,11 @@ struct VROARImageTargetOpenCV {
     cv::Mat descriptors;
     cv::Mat rotation; // the most recent found rotation for this target in the last input image
     cv::Mat translation; // the most recent found translation for this target in the last input image
+
+    std::vector<VROARImageTrackerOutput> rawOutputs; // the raw outputs that we've found so far.
+    VROARImageTrackerOutput lastOutput; // the most recent output that was returned to the caller for this target.
+
+    bool disableTracking; // disable this once we've found enough rawOutputs // TODO: actually disable
 };
 
 // TODO: merge this class into VROARTrackingSession
@@ -94,6 +101,29 @@ private:
     std::vector<VROARImageTrackerOutput> findMultipleTargetsBF(std::vector<cv::KeyPoint> inputKeypoints,
                                                                                 cv::Mat inputDescriptors,  cv::Mat inputImage);
     
+    /*
+     This function takes a list of raw outputs and adds them to the _targetOutputsMap before invoking findUpdates on
+     each updated outputs vector.
+     */
+    std::vector<VROARImageTrackerOutput> processOutputs(std::vector<VROARImageTrackerOutput> rawOutputs);
+
+    /*
+     This function takes a list of "found" raw Outputs and attempts to determine if the given rawOutput adds
+     enough information to update or declare a target "found"
+     */
+    VROARImageTrackerOutput determineFoundOrUpdate(VROARImageTrackerOutput output);
+    
+    // Different versions of determineFoundOrUpdate
+    VROARImageTrackerOutput determineFoundOrUpdateV1(VROARImageTrackerOutput output);
+    VROARImageTrackerOutput determineFoundOrUpdateV2(VROARImageTrackerOutput output);
+    VROARImageTrackerOutput determineFoundOrUpdateV3(VROARImageTrackerOutput output);
+    VROARImageTrackerOutput determineFoundOrUpdateV4(VROARImageTrackerOutput output);
+
+    /*
+     This function takes two outputs and determines if they are similar
+     */
+    bool areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second);
+
     bool areCornersValid(std::vector<cv::Point2f> corners);
 
     /*
@@ -137,8 +167,12 @@ private:
     double _totalFailedIteration;
     
     std::vector<std::shared_ptr<VROARImageTarget>> _arImageTargets;
-    std::map<std::shared_ptr<VROARImageTarget>, VROARImageTargetOpenCV> _targetsMap;
-    std::map<std::shared_ptr<VROARImageTarget>, std::vector<VROARImageTrackerOutput>> _targetOuputsMap;
+    std::map<std::shared_ptr<VROARImageTarget>, VROARImageTargetOpenCV> _targetToTargetMap;
+    
+    // testing for determineFoundOrUpdateV3... this is a 1 to 1 index map between the
+    // rawOutputs in a VROARImageTargetOpenCV and a list of outputs that are similar to it.
+    // TODO: move this into VROARImageTargetOpenCV (this will bug out for 2+ targets!)
+    std::vector<std::vector<VROARImageTrackerOutput>> _targetToSimilarOutputs;
 
     float *_intrinsics;
 };

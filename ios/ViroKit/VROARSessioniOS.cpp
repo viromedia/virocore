@@ -82,7 +82,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     _trackingHelper = [[VROTrackingHelper alloc] init];
       
     // Uncomment to run a test screenshot through the OpenCV tracking code.
-    //[_trackingHelper findInScreenshot];
+    // [_trackingHelper findInScreenshot];
         
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);
@@ -91,6 +91,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
 
     _imageTrackingResultNode = std::make_shared<VRONode>();
     _imageTrackingResultNode->addChildNode(boxNode);
+    _imageTrackingResultNode->setHidden(true);
         
     _imageResultsContainer = std::make_shared<VRONode>();
     _imageResultsContainer->addChildNode(_imageTrackingResultNode);
@@ -319,6 +320,7 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
                     
                     VROMatrix4f endTransformation = trackerOutput.worldTransform;
                     
+                    _imageTrackingResultNode->setHidden(false);
                     _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
                     _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
                     
