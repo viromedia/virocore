@@ -35,9 +35,9 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ", driver->newTypeface("Heiti TC", 32, VROFontStyle::Normal, VROFontWeight::Regular));
     _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ", driver->newTypeface("Devanagari Sangam MN", 32, VROFontStyle::Normal, VROFontWeight::Regular));
     _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض", driver->newTypeface("Geeza Pro", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(englishText, driver->newTypeface("SF Mono", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(englishText, driver->newTypeface("Helvetica", 32, VROFontStyle::Italic, VROFontWeight::Regular));
-    _textSamples.emplace_back(englishText, driver->newTypeface("Helvetica", 32, VROFontStyle::Normal, VROFontWeight::ExtraBlack));
+    _textSamples.emplace_back(englishText, driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(englishText, driver->newTypeface("", 32, VROFontStyle::Italic, VROFontWeight::Regular));
+    _textSamples.emplace_back(englishText, driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::ExtraBlack));
 
 #elif VRO_PLATFORM_ANDROID
     _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("NotoSansCJK", 32, VROFontStyle::Normal, VROFontWeight::Regular));

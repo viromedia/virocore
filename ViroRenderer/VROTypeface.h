@@ -41,6 +41,11 @@ class VROTypeface {
     
 public:
     
+    /*
+     Construct a new typeface with the given family name, size, style, and weight.
+     If the provided family name is empty, then the system default font will be
+     used.
+     */
     VROTypeface(std::string name, int size, VROFontStyle style, VROFontWeight weight);
     virtual ~VROTypeface();
     

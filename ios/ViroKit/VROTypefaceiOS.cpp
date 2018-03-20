@@ -10,7 +10,13 @@
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
 #include "VRODriverOpenGLiOS.h"
-#import <CoreText/CoreText.h>
+
+#include <TargetConditionals.h>
+#if TARGET_RT_BIG_ENDIAN
+#   define FourCC2Str(fourcc) (const char[]){*((char*)&fourcc), *(((char*)&fourcc)+1), *(((char*)&fourcc)+2), *(((char*)&fourcc)+3),0}
+#else
+#   define FourCC2Str(fourcc) (const char[]){*(((char*)&fourcc)+3), *(((char*)&fourcc)+2), *(((char*)&fourcc)+1), *(((char*)&fourcc)+0),0}
+#endif
 
 typedef struct FontHeader {
     int32_t fVersion;
@@ -45,34 +51,42 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
     if (!driver) {
         return;
     }
+
+    NSString *requestedFamily;
+    if (!name.empty()) {
+        requestedFamily = [NSString stringWithUTF8String:name.c_str()];
+    } else {
+        // TODO VIRO-3196: The San Francisco font is not rendered with weights correctly
+        //                 by Freetype; only its italicized and regular weight versions
+        //                 render as expected.
+        //                 Additionally, its actual family name ".SF UI Display" is kept
+        //                 private and subject to change by Apple. Becuase of these
+        //                 complications we use Helvetica Neue as the system font for iOS.
+        requestedFamily = @"Helvetica Neue";
+    }
+
+    // Try to create the requested font
+    CTFontRef font = createFont(requestedFamily, size, getStyle(), getWeight());
     
-    NSString *familyName = [NSString stringWithUTF8String:name.c_str()];
+    NSString *realizedFamily = (__bridge NSString *) CTFontCopyFamilyName(font);
+    pinfo("Realized font [name: %@, family: %@] for requested family [%@]",
+          CTFontCopyPostScriptName(font),
+          realizedFamily, requestedFamily);
     
-    // Create the symbolic traits bit-mask
-    CTFontSymbolicTraits symbolicTraits = 0;
-    if (getStyle() == VROFontStyle::Italic) {
-        symbolicTraits |= kCTFontTraitItalic;
+    // If the font we received differs from the requested one, re-create with the correct
+    // weight and style (for some reason if CoreText uses a fallback font it doesn't always
+    // transfer the attributes).
+    if (![realizedFamily isEqualToString:requestedFamily]) {
+        NSLog(@"Realized family [%@] does not match requested family [%@], recreating with requested attributes",
+              realizedFamily, requestedFamily);
+        
+        CTFontRef newFont = createFont(realizedFamily, size, getStyle(), getWeight());
+        CFRelease(font);
+        font = newFont;
     }
     
-    // CoreText font weight runs from -1.0 to 1.0 (regular is 0.0, which is 400 in our scale)
-    CGFloat weight = VROMathInterpolate((float) getWeight(), 100, 900, -1.0, 1.0);
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    [attributes setObject:familyName forKey:(id)kCTFontFamilyNameAttribute];
-    
-    // The attributes dictionary contains another dictionary, the traits dictionary
-    NSMutableDictionary *traits = [NSMutableDictionary dictionary];
-    [traits setObject:[NSNumber numberWithUnsignedInt:symbolicTraits] forKey:(id)kCTFontSymbolicTrait];
-    [traits setObject:[NSNumber numberWithFloat:weight] forKey:(id)kCTFontWeightTrait];
-    [attributes setObject:traits forKey:(id)kCTFontTraitsAttribute];
-    [attributes setObject:[NSNumber numberWithFloat:size] forKey:(id)kCTFontSizeAttribute];
-    
-    // Create the CTFont from the attributes
-    CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
-    CTFontRef font = CTFontCreateWithFontDescriptor(descriptor, 0.0, NULL);
-    
-    // Convert the CTFont to a CGFont and extract the font data
-    CGFontRef graphicsFont = CTFontCopyGraphicsFont(font, NULL);
-    _fontData = getFontData(graphicsFont);
+    // Get the font table data
+    _fontData = getFontData(font);
     
     // Create the FT font from the font data
     FT_Library ft = std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getFreetype();
@@ -81,10 +95,34 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
     }
     
     FT_Set_Pixel_Sizes(_face, 0, size);
-    
-    CFRelease(descriptor);
     CFRelease(font);
-    CFRelease(graphicsFont);
+}
+
+CTFontRef VROTypefaceiOS::createFont(NSString *family, int size, VROFontStyle style, VROFontWeight weight) {
+    // Create the symbolic traits bit-mask
+    CTFontSymbolicTraits symbolicTraits = 0;
+    if (getStyle() == VROFontStyle::Italic) {
+        symbolicTraits |= kCTFontTraitItalic;
+    }
+    
+    // CoreText font weight runs from -1.0 to 1.0 (regular is 0.0, which is 400 in our scale)
+    CGFloat w = VROMathInterpolate((float) weight, 100, 900, -1.0, 1.0);
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    [attributes setObject:family forKey:(id)kCTFontFamilyNameAttribute];
+    
+    // The attributes dictionary contains another dictionary, the traits dictionary
+    NSMutableDictionary *traits = [NSMutableDictionary dictionary];
+    [traits setObject:[NSNumber numberWithUnsignedInt:symbolicTraits] forKey:(id)kCTFontSymbolicTrait];
+    [traits setObject:[NSNumber numberWithFloat:w] forKey:(id)kCTFontWeightTrait];
+    [attributes setObject:traits forKey:(id)kCTFontTraitsAttribute];
+    [attributes setObject:[NSNumber numberWithInt:size] forKey:(id)kCTFontSizeAttribute];
+    
+    // Create the CTFont from the attributes
+    CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
+    CTFontRef font = CTFontCreateWithFontDescriptor(descriptor, 0.0, NULL);
+    CFRelease(descriptor);
+    
+    return font;
 }
 
 std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forRendering) {
@@ -107,12 +145,8 @@ static uint32_t CalcTableCheckSum(const uint32_t *table, uint32_t numberOfBytesI
     return sum;
 }
 
-NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
-    if (!cgFont) {
-        return nullptr;
-    }
-    
-    CFArrayRef tags = CGFontCopyTableTags(cgFont);
+NSData *VROTypefaceiOS::getFontData(CTFontRef font) {
+    CFArrayRef tags = CTFontCopyAvailableTables(font, kCTFontTableOptionNoOptions);
     CFIndex tableCount = CFArrayGetCount(tags);
     size_t *tableSizes = (size_t *) malloc(sizeof(size_t) * tableCount);
     memset(tableSizes, 0, sizeof(size_t) * tableCount);
@@ -120,15 +154,25 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
     BOOL containsCFFTable = NO;
     size_t totalSize = sizeof(FontHeader) + sizeof(TableEntry) * tableCount;
     
+    // Every TrueType and OpenType font consists of a header follows by font tables.
+    // CoreText exposes these tables so we are able to infer the header and directly
+    // copy the tables to create an in-memory byte representation of the font usable
+    // by Freetype. The spec for these tables come from both Apple and Microsoft at
+    // the following links:
+    //
+    // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6head.html
+    // https://docs.microsoft.com/en-us/typography/opentype/spec/font-file
+    
     for (int index = 0; index < tableCount; ++index) {
-        //get size
         size_t tableSize = 0;
-        uintptr_t aTag = (uintptr_t)CFArrayGetValueAtIndex(tags, index);
-        if (aTag == 'CFF ' && !containsCFFTable) {
+        uintptr_t tag = (uintptr_t)CFArrayGetValueAtIndex(tags, index);
+        
+        // The 'CFF' table differentiates OpenType from TrueType
+        if (tag == 'CFF ' && !containsCFFTable) {
             containsCFFTable = YES;
         }
         
-        CFDataRef tableDataRef = CGFontCopyTableForTag(cgFont, (uint32_t)aTag);
+        CFDataRef tableDataRef = CTFontCopyTable(font, (uint32_t)tag, kCTFontTableOptionNoOptions);
         if (tableDataRef != NULL) {
             tableSize = CFDataGetLength(tableDataRef);
             CFRelease(tableDataRef);
@@ -143,10 +187,9 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
     char* dataStart = (char*)stream;
     char* dataPtr = dataStart;
     
-    // compute font header entries
+    // Compute font header entries
     uint16_t entrySelector = 0;
     uint16_t searchRange = 1;
-    
     while (searchRange < tableCount >> 1) {
         entrySelector++;
         searchRange <<= 1;
@@ -155,11 +198,11 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
     
     uint16_t rangeShift = (tableCount << 4) - searchRange;
     
-    // write font header (also called sfnt header, offset subtable)
-    FontHeader* offsetTable = (FontHeader*)dataPtr;
+    // Write the inferred font header (also called sfnt header or the offset subtable)
+    FontHeader *offsetTable = (FontHeader*)dataPtr;
     
-    //OpenType Font contains CFF Table use 'OTTO' as version, and with .otf extension
-    //otherwise 0001 0000
+    // If we found a CFF table then we have an OpenType font, so use the 'OTTO' version.
+    // Otherwise indicate TTF with 0001 0000
     offsetTable->fVersion = containsCFFTable ? 'OTTO' : CFSwapInt16HostToBig(1);
     offsetTable->fNumTables = CFSwapInt16HostToBig((uint16_t)tableCount);
     offsetTable->fSearchRange = CFSwapInt16HostToBig((uint16_t)searchRange);
@@ -168,13 +211,13 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
     
     dataPtr += sizeof(FontHeader);
     
-    // write tables
+    // Write the tables
     TableEntry* entry = (TableEntry*)dataPtr;
     dataPtr += sizeof(TableEntry) * tableCount;
     
     for (int index = 0; index < tableCount; ++index) {
         uintptr_t aTag = (uintptr_t)CFArrayGetValueAtIndex(tags, index);
-        CFDataRef tableDataRef = CGFontCopyTableForTag(cgFont, (uint32_t)aTag);
+        CFDataRef tableDataRef = CTFontCopyTable(font, (uint32_t)aTag, kCTFontTableOptionNoOptions);
         size_t tableSize = CFDataGetLength(tableDataRef);
         
         memcpy(dataPtr, CFDataGetBytePtr(tableDataRef), tableSize);

@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <CoreText/CoreText.h>
 #include "VROTypeface.h"
 #include <string>
 #include <ft2build.h>
@@ -40,7 +41,8 @@ private:
     
     // Font data must not be deallocated until the typeface is destroyed
     NSData *_fontData;
-    NSData *getFontData(CGFontRef cgFont);
+    NSData *getFontData(CTFontRef font);
+    CTFontRef createFont(NSString *family, int size, VROFontStyle style, VROFontWeight weight);
   
 };
 
