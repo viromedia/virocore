@@ -698,8 +698,8 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     getJNIEnv(&env);
 
     jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
-    jmethodID jmethod = env->GetStaticMethodID(cls, "dispatchAsyncBackground", "(I)V");
-    env->CallStaticVoidMethod(cls, jmethod, task);
+    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsyncBackground", "(I)V");
+    env->CallVoidMethod(sPlatformUtil, jmethod, task);
 
     env->DeleteLocalRef(cls);
 }
@@ -730,8 +730,8 @@ void VROPlatformFlushTaskQueues() {
         getJNIEnv(&env);
 
         jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
-        jmethodID jmethod = env->GetStaticMethodID(cls, "dispatchAsyncBackground", "(I)V");
-        env->CallStaticVoidMethod(cls, jmethod, task);
+        jmethodID jmethod = env->GetMethodID(cls, "dispatchAsyncBackground", "(I)V");
+        env->CallVoidMethod(sPlatformUtil, jmethod, task);
 
         env->DeleteLocalRef(cls);
     }

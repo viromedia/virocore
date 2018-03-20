@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Methods accessed by JNI to perform platform-dependent
@@ -56,6 +58,7 @@ public class PlatformUtil {
     private Map<Integer, VideoSink> mVideoSinks = new HashMap();
     private Handler mApplicationHandler;
     private RandomString mRandomStringGenerator = new RandomString();
+    private ExecutorService mExecutorService = Executors.newCachedThreadPool();
 
     public PlatformUtil(RenderCommandQueue queue, List<FrameListener> frameListeners,
                         Context context, AssetManager assetManager) {
@@ -340,8 +343,8 @@ public class PlatformUtil {
      * Run the the native function identified by the given task ID
      * asynchronously on a background thread
      */
-    public static void dispatchAsyncBackground(final int taskId) {
-        AsyncTask.execute(new Runnable() {
+    public void dispatchAsyncBackground(final int taskId) {
+        mExecutorService.execute(new Runnable() {
             @Override
             public void run() {
                 runTask(taskId);
