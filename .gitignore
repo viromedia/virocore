@@ -1,6 +1,7 @@
 /ios/ViroRenderer.xcodeproj/xcuserdata/*
 /ios/ViroRenderer.xcodeproj/project.xcworkspace/xcuserdata/**
 /ios/ViroRenderer.xcworkspace/xcuserdata/**
+/ios/ViroRenderer.xcworkspace/xcshareddata/**
 /ios/Pods/Pods.xcodeproj/xcuserdata/**
 /ios/Pods/
 .DS_Store
