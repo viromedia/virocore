@@ -78,6 +78,11 @@ public class ViroARNodeTest extends ViroBaseTest {
             }
 
             @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
+            }
+
+            @Override
             public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
                 if(mAnchorFoundTestStarted) {
                     Text text  = new Text(mViroView.getViroContext(),

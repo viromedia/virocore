@@ -73,6 +73,11 @@ public class ViroARSceneTest extends ViroBaseTest {
             }
 
             @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
+            }
+
+            @Override
             public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
                 if(mAmbientLightUpdateTestStarted) {
                     mTestText.setText("Ambient light intensity:" + lightIntensity + ", colorTemp: " + colorTemperature);

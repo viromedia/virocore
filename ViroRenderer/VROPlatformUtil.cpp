@@ -333,12 +333,12 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
     else {
         *success = true;
     }
-    
+
     const char *path = env->GetStringUTFChars(jpath, 0);
     std::string spath(path);
-    
-    pinfo("Downloaded URL [%s] to file [%s]", path);
-    
+
+    pinfo("Downloaded URL [%s] to file [%s]", url.c_str(), spath.c_str());
+
     env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
     
