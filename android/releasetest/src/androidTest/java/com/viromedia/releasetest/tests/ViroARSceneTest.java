@@ -94,6 +94,12 @@ public class ViroARSceneTest extends ViroBaseTest {
             public void onAnchorRemoved(ARAnchor anchor, ARNode node) {
 
             }
+
+            @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
+            }
+
         });
     }
 

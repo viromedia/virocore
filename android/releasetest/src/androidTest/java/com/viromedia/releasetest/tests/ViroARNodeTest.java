@@ -142,6 +142,11 @@ public class ViroARNodeTest extends ViroBaseTest {
             public void onAnchorRemoved(ARAnchor anchor, ARNode arNode) {
                mTestText.setText("An anchor has been removed!");
             }
+
+            @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
+            }
         });
     }
 
