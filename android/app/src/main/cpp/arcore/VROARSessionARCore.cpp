@@ -386,14 +386,15 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
     VROMatrix4f oldTransform = plane->getTransform();
     VROVector3f oldTranslation = oldTransform.extractTranslation();
 
-    // If the old translation is NOT the zero vector, then we want to preserve the old translation
-    // and set the "center" instead.
+    // Update our plane's transform if it has been previously set.
     if (!oldTranslation.isEqual(VROVector3f())) {
-        // set the center to (Position(new) - Position(old).
-        plane->setCenter(newTranslation - oldTranslation);
-        // translate the newTransform by the difference of (Position(old) - Position(new)) to
-        // keep the same oldTranslation.
-        newTransform.translate(oldTranslation - newTranslation);
+        // Calculate our new center.
+        VROVector3f offsetRelativeToPlane = newTranslation - oldTranslation;
+        VROVector3f localCenter = VROVector3f(offsetRelativeToPlane.x, 0.0f, offsetRelativeToPlane.z);
+        plane->setCenter(localCenter);
+
+        // Calculate the plane's new transform.
+        newTransform.translate(localCenter.scale(-1.0));
     }
 
     plane->setTransform(newTransform);
@@ -408,10 +409,6 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
         default:
             plane->setAlignment(VROARPlaneAlignment::Horizontal);
     }
-
-    // the center is 0, because in ARCore, planes only have a position (at their center) vs
-    // ARKit's (initial) position & center.
-    plane->setCenter(VROVector3f());
 
     float extentX = planeAR->getExtentX();
     float extentZ = planeAR->getExtentZ();
