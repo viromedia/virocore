@@ -593,6 +593,21 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
     return safeData;
 }
 
+void VROPlatformSaveRGBAImage(void *data, int length, int width, int height, std::string filename) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+
+    jobject jbuffer = env->NewDirectByteBuffer(data, length);
+    jstring jpath = env->NewStringUTF(filename.c_str());
+    jmethodID jsaveRGBAImageToFile = env->GetMethodID(cls, "saveRGBAImageToFile", "(Ljava/nio/ByteBuffer;IILjava/lang/String;)V");
+
+    env->CallVoidMethod(sPlatformUtil, jsaveRGBAImageToFile, jbuffer, width, height, jpath);
+    env->DeleteLocalRef(jpath);
+    env->DeleteLocalRef(jbuffer);
+}
+
 jobject VROPlatformCreateVideoSink(int textureId) {
     JNIEnv *env;
     getJNIEnv(&env);

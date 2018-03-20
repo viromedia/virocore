@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.view.Surface;
 import com.viro.core.internal.font.FontFamily;
 import com.viro.core.internal.font.SystemFontLoader;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -394,6 +397,53 @@ public class PlatformUtil {
         }
 
         return total;
+    }
+
+    /**
+     * Helper function to convert the given RGBA data to a PNG image and persist it to
+     * disk. Used to debug image output algorithms.
+     *
+     * @param buffer The buffer containing the RGBA data to save.
+     * @param file Persist the file as a PNG at this path.
+     */
+    public void saveRGBAImageToFile(ByteBuffer buffer, int width, int height, String file) {
+        File storage = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String path = new File(storage, file + ".png").getAbsolutePath();
+        Log.i(TAG, "Saving test image [width " + width + ", height: " + height + "] to path " + path);
+
+        BufferedOutputStream bos = null;
+        Bitmap bitmap;
+        try {
+            ByteBuffer pixelBuffer = ByteBuffer.allocate(buffer.capacity());
+            pixelBuffer.put(buffer);
+            pixelBuffer.rewind();
+
+            bos = new BufferedOutputStream(new FileOutputStream(path));
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            flipVertical(pixelBuffer, width, height);
+            bitmap.copyPixelsFromBuffer(pixelBuffer);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        } finally {
+            if (bos != null) try {
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void flipVertical(ByteBuffer buf, int width, int height) {
+        int i = 0;
+        byte[] tmp = new byte[width * 4];
+        while (i++ < height / 2) {
+            buf.get(tmp);
+            System.arraycopy(buf.array(), buf.limit() - buf.position(), buf.array(), buf.position() - width * 4, width * 4);
+            System.arraycopy(tmp, 0, buf.array(), buf.limit() - buf.position(), width * 4);
+        }
+        buf.rewind();
     }
 
 }
