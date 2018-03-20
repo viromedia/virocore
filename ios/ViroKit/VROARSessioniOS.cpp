@@ -372,7 +372,10 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
             for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i ++) {
                 vector_float3 vertex = planeAnchor.geometry.boundaryVertices[i];
                 SCNVector3 vector3 = SCNVector3FromFloat3(vertex);
-                points.push_back(VROVector3f(vector3.x, vector3.y, vector3.z));
+
+                VROVector3f boundaryVertexFromAnchor = VROVector3f(vector3.x, vector3.y, vector3.z);
+                VROVector3f boundaryVertexFromCenter = boundaryVertexFromAnchor - pAnchor->getCenter();
+                points.push_back(boundaryVertexFromCenter);
             }
 
             pAnchor->setBoundaryVertices(points);
