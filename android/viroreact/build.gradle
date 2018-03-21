@@ -79,13 +79,13 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.7.1'
     implementation project(':libs:gvr')
     implementation project(':libs:arcore')
+    implementation project(path: ':virometricsclient')
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
-
 }
 
 task copyReleaseAAR(type: Copy) {

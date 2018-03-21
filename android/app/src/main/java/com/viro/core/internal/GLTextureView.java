@@ -401,7 +401,7 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
     }
 
     /**
-     * Request that the renderer render a frame.
+     * ViroRequest that the renderer render a frame.
      * This method is typically used when the render mode has been set to
      * {@link #RENDERMODE_WHEN_DIRTY}, so that frames are only rendered on demand.
      * May be called
