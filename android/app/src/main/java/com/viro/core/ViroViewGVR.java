@@ -94,6 +94,7 @@ public class ViroViewGVR extends ViroView {
     private PlatformUtil mPlatformUtil;
     private GvrLayout mGVRLayout;
     private StartupListener mStartupListener;
+    private boolean mVRModeEnabled;
 
     // Activity state to restore to before being modified by the renderer.
 
@@ -325,6 +326,20 @@ public class ViroViewGVR extends ViroView {
         }
     }
 
+    @Override
+    protected int getSystemUiVisibilityFlags() {
+        if(mVRModeEnabled) {
+            return (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * Used by release tests.
      * @hide
@@ -385,6 +400,7 @@ public class ViroViewGVR extends ViroView {
 
     @Override
     public void setVRModeEnabled(boolean vrModeEnabled) {
+        mVRModeEnabled = vrModeEnabled;
         Activity activity = mWeakActivity.get();
         if (activity != null) {
             activity.setRequestedOrientation(vrModeEnabled ?
@@ -447,7 +463,7 @@ public class ViroViewGVR extends ViroView {
         mNativeRenderer.onResume();
 
         // Ensure fullscreen immersion.
-        setImmersiveSticky();
+        changeSystemUiVisibility();
         mGVRLayout.onResume();
     }
 

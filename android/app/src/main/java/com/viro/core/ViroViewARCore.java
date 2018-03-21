@@ -521,6 +521,11 @@ public class ViroViewARCore extends ViroView {
         // setOnTouchListener(new ViroGvrLayout.ViroOnTouchListener(this));
     }
 
+    @Override
+    protected int getSystemUiVisibilityFlags() {
+        return 0;
+    }
+
     /**
      * @hide
      */
@@ -621,7 +626,7 @@ public class ViroViewARCore extends ViroView {
             return;
         }
 
-        setImmersiveSticky();
+        changeSystemUiVisibility();
         boolean arcoreInstalled = requestARCoreInstall(activity);
         if (!arcoreInstalled) {
             return;

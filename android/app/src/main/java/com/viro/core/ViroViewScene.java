@@ -296,6 +296,11 @@ public class ViroViewScene extends ViroView {
         mNativeRenderer.setClearColor(color);
     }
 
+    @Override
+    protected int getSystemUiVisibilityFlags() {
+        return 0;
+    }
+
     /**
      * @hide
      */
@@ -369,7 +374,7 @@ public class ViroViewScene extends ViroView {
         }
 
         mActivityPaused = false;
-        setImmersiveSticky();
+        changeSystemUiVisibility();
         mNativeRenderer.onResume();
         mSurfaceView.onResume();
     }
