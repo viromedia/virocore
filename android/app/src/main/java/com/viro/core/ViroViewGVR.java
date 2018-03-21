@@ -401,6 +401,7 @@ public class ViroViewGVR extends ViroView {
     @Override
     public void setVRModeEnabled(boolean vrModeEnabled) {
         mVRModeEnabled = vrModeEnabled;
+        changeSystemUiVisibility();
         Activity activity = mWeakActivity.get();
         if (activity != null) {
             activity.setRequestedOrientation(vrModeEnabled ?
