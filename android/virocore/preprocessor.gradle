@@ -122,10 +122,10 @@ class Preprocessor {
 task preprocessSourceCodeRelease {
     Gradle gradle = getGradle()
     String  tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
-    if (tskReqStr.contains("assembleRelease")) {
+    if (tskReqStr.contains("virocore") && tskReqStr.contains("assembleRelease")) {
         description("preprocess free code after //#IFDEF 'debug' to //#ENDIF");
         println ("Preprocessor: running [release build]");
-        Preprocessor.preprocessSourceCode(javaFiles, "Release", "viro_core");
+        Preprocessor.preprocessSourceCode(javaFiles, "Release", "virocore");
     } else {
         println ("Preprocessor: debug release detected, will not run preprocessor");
     }
