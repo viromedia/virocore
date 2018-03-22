@@ -87,6 +87,12 @@ public:
      Initialize the camera background texture and install it on the ARCore session.
      */
     void initCameraTexture(std::shared_ptr<VRODriverOpenGL> driver);
+
+    std::shared_ptr<VROFrameSynchronizer> _synchronizer;
+    void setFrameSynchronizer(std::shared_ptr<VROFrameSynchronizer> synchronizer) {
+        _synchronizer = synchronizer;
+    }
+
     std::shared_ptr<VROARAnchor> getAnchorForNative(arcore::Anchor *anchor);
 
     arcore::Session *getSessionInternal() {
@@ -167,6 +173,8 @@ private:
      */
     int _width;
     int _height;
+
+    bool _haveCreatedARTrackingSession;
 
     bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);

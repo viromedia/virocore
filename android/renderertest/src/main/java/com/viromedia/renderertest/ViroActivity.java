@@ -263,7 +263,7 @@ public class ViroActivity extends AppCompatActivity {
         }
 
         // Uncomment to run a test screenshot through the OpenCV target tracking code
-        testFindInScreenshot();
+        //testFindInScreenshot();
     }
 
     private void onRendererFailed(String error, String errorMessage) {
@@ -334,7 +334,7 @@ public class ViroActivity extends AppCompatActivity {
 
         // Updating the scene.
         mViroView.setScene(scene);
-        scene.displayPointCloud(true);
+        //scene.displayPointCloud(true);
     }
 
     private void testEdgeDetect() {

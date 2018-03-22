@@ -76,6 +76,7 @@ GLuint VROSceneRendererARCore::getCameraTextureId() const {
 void VROSceneRendererARCore::setARCoreSession(arcore::Session *session) {
     _arcoreInstalled = true;
     _session->setARCoreSession(session);
+    _session->setFrameSynchronizer(getFrameSynchronizer());
 }
 
 void VROSceneRendererARCore::onDrawFrame() {

@@ -14,6 +14,8 @@
 #include "VROARImageTarget.h"
 #include "VROARImageAnchor.h"
 #include "VROARImageTracker.h"
+#include <VROTextureReader.h>
+#include <arcore/VROARFrameARCore.h>
 
 /*
  Listener interface for the VROARTrackingSession
@@ -35,6 +37,11 @@ public:
     
     VROARTrackingSession();
     virtual ~VROARTrackingSession();
+
+    void createTextureReader(VROARFrameARCore *frame, GLuint cameraTextureId,
+                             int width, int height);
+
+    void startTextureReader(std::shared_ptr<VROFrameSynchronizer> synchronizer);
 
     /*
      Notifies the tracking session that a new frame has been found.
@@ -74,7 +81,7 @@ private:
      that we may not need this map, because we have targets and we want the anchor they're attached
      to, but we'll need to test ARKit targets/anchors to make sure nothing blows up in our faces
      */
-    std::map<std::shared_ptr<VROARImageTarget>, std::shared_ptr<VROARAnchor>> _targetAnchorMap;
+    std::map<std::shared_ptr<VROARImageTarget>, std::shared_ptr<VROARImageAnchor>> _targetAnchorMap;
 
 #if ENABLE_OPENCV
     /*
@@ -83,6 +90,13 @@ private:
      */
     std::shared_ptr<VROARImageTracker> _tracker;
 #endif
+
+    std::atomic_bool _readyForTracking;
+    std::atomic_bool _haveActiveTargets;
+
+    std::shared_ptr<VROTextureReader> _cameraTextureReader;
+
+    std::shared_ptr<VROARCamera> _lastCamera;
 
     /*
      TODO: remove this when we actually get tracking working/integrated

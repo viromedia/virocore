@@ -10,13 +10,21 @@
 #include <sys/time.h>
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/imgcodecs/imgcodecs.hpp"
 #include <iostream>
 #include "VROMath.h"
 #include "VROTriangle.h"
 #include "VROLineSegment.h"
+#include "VROPlatformUtil.h"
 
 
 #define ENABLE_DETECT_LOGGING 1
+
+#if VRO_PLATFORM_ANDROID
+#define DRAW_OUTPUT_CORNERS 1
+#else
+#define DRAW_OUTPUT_CORNERS 1 // on iOS we want to draw the output corners
+#endif
 
 #if ENABLE_DETECT_LOGGING && VRO_PLATFORM_IOS
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, @#message);
@@ -60,30 +68,26 @@ void VROARImageTracker::setType(VROARImageTrackerType type) {
 void VROARImageTracker::updateType() {
     switch(_type) {
         case VROARImageTrackerType::ORB4:
-            
-            _numberFeaturePoints = 3000;
-            _minGoodMatches = 20;
-            pinfo("[Viro] minGoodMatches: %f - average", _minGoodMatches);
-            
+
             // original feature property:
             //_feature = cv::ORB::create(500, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
 
-            
-            // absurdly high, but accurate IIRC:
-            //_feature = cv::ORB::create(5000, 1.1f, 20, 0, 0, 4, cv::ORB::HARRIS_SCORE);
-
-            // current testing iPhone SE
+            // current values on iPhone
+            _numberFeaturePoints = 2000;
+            _minGoodMatches = 10;
             _feature = cv::ORB::create(_numberFeaturePoints, 1.1f, 12, 0, 0, 4, cv::ORB::HARRIS_SCORE);
-            _targetFeature = cv::ORB::create(700, 1.2f, 12, 31, 0, 4, cv::ORB::HARRIS_SCORE);
+            _targetFeature = cv::ORB::create(700, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
+
+            // current testing on Android
+//            _numberFeaturePoints = 4000;
+//            _minGoodMatches = 20;
+//            _feature = cv::ORB::create(_numberFeaturePoints, 1.1f, 9, 0, 0, 4, cv::ORB::HARRIS_SCORE);
+//            _targetFeature = cv::ORB::create(700, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
 
             // current iPad Testing
             //_feature = cv::ORB::create(3000, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
             //_targetFeature = cv::ORB::create(1000, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
             
-            _matcherType = cv::NORM_HAMMING2;
-            break;
-        case VROARImageTrackerType::ORB3:
-            _feature = cv::ORB::create(500, 1.2f, 8, 31, 0, 3, cv::ORB::FAST_SCORE, 31);
             _matcherType = cv::NORM_HAMMING2;
             break;
         case VROARImageTrackerType::ORB:
@@ -115,7 +119,6 @@ VROARImageTargetOpenCV VROARImageTracker::updateTargetInfo(std::shared_ptr<VROAR
     cv::Mat targetDescriptors;
     
     // automatically run keypoint and descriptor extraction on the target image.
-    // TODO: we can scale the target image lower to speed up processing, but that'll throw off the translation matrix (by the same factor)
     detectKeypointsAndDescriptors(arImageTarget->getTargetMat(), targetKeyPoints, targetDescriptors, true);
 
     return {arImageTarget, targetKeyPoints, targetDescriptors, cv::Mat(), cv::Mat(), {}, createFalseOutput(), false};
@@ -139,36 +142,23 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     // create empty mat for processing output
     cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_8UC1);
 
-    switch(_type) {
-        case VROARImageTrackerType::ORB:
-            // convert the image to gray scale
-            cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
-            break;
-        case VROARImageTrackerType::BRISK:
-        default:
-            // convert the image to gray scale
-            cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
-    }
-
-    if (isTarget) {
-        LOG_DETECT_TIME("start detect keypoints");
-        _targetFeature->detect(processedImage, keypoints);
-        LOG_DETECT_TIME("start compute descriptors");
-        _targetFeature->compute(processedImage, keypoints, descriptors);
-    } else {
-        LOG_DETECT_TIME("start detect keypoints");
-        _feature->detect(processedImage, keypoints);
-        LOG_DETECT_TIME("start compute descriptors");
-        _feature->compute(processedImage, keypoints, descriptors);
-    }
+    // convert to gray-scale
+    cv::cvtColor(inputImage, processedImage, cv::COLOR_RGB2GRAY);
 
     // Compute keypoints and descriptors all together.
-//    LOG_DETECT_TIME("start detect and compute descriptors")
-//    _feature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
+    LOG_DETECT_TIME("start detect and compute descriptors")
+    if (isTarget) {
+        _targetFeature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
+
+    } else {
+        _feature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
+
+    }
     LOG_DETECT_TIME("finish detect keypoints & descriptors");
 }
 
-std::vector<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics, std::shared_ptr<VROARCamera> camera) {
+std::vector<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics,
+                                                                   std::shared_ptr<VROARCamera> camera) {
     _intrinsics = intrinsics;
     _currentCamera = camera;
     std::vector<VROARImageTrackerOutput> outputs = findTargetInternal(inputImage);
@@ -205,6 +195,16 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
 
         inputImage = resizedInput;
     }
+
+    // TODO: consider sharpening image (esp since ARCore doesn't turn on autofocus). Don't forget to
+    // replace the imageImage below with sharpImage or sharperImage then.
+//    cv::Mat sharpImage;
+//    cv::GaussianBlur(inputImage, sharpImage, cv::Size(0, 0), 3);
+//    cv::addWeighted(inputImage, 1.5, sharpImage, -0.5, 0, sharpImage);
+//
+//    cv::Mat sharperImage;
+//    cv::GaussianBlur(inputImage, sharperImage, cv::Size(0, 0), 6);
+//    cv::addWeighted(inputImage, 1.5, sharperImage, -0.5, 0, sharperImage);
     
     // process the input image to extract keypoints and descriptors
     std::vector<cv::KeyPoint> inputKeyPoints;
@@ -228,6 +228,17 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
             }
         }
     }
+
+#if VRO_PLATFORM_ANDROID
+    if (outputs.size() > 0 && outputs[0].found) {
+        std::ostringstream s;
+        s << "/storage/emulated/0/Android/data/com.viromedia.renderertest.arcore/files/Pictures/output.png";
+        std::string filepath(s.str());
+        bool success = cv::imwrite(filepath, outputs[0].outputImage);
+
+        VROPlatformSetTrackingImageView(filepath);
+    }
+#endif
 
    return outputs;
 }
@@ -272,11 +283,10 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
     
     cv::Mat distCoeffs = cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
     
-    
     // Start the loop over all the targets!
     for (int i = 0; i < _arImageTargets.size(); i++) {
         pinfo("[Viro] processing target #%d", i);
-        
+
         currentTarget = _targetToTargetMap.find(_arImageTargets[i])->second;
         
         if (currentTarget.disableTracking) {
@@ -286,8 +296,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         
         LOG_DETECT_TIME("start matching keypoints");
         
-        // use the new calculate _minGoodMatches instead now.
-        int minGoodMatches = _minGoodMatches; // used to be hard-coded to 15
         std::vector<cv::DMatch> goodMatches;
         
         pinfo("[Viro] processing %d target descriptors and %d input descriptors", currentTarget.descriptors.rows, inputDescriptors.rows);
@@ -326,18 +334,20 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
             LOG_DETECT_TIME("start filtering good matches");
             
             for (int i = 0; i < matches.size(); i++) {
+                // the higher the constant, the looser the criteria is for a "match"
                 if (matches[i][0].distance < (.80 * matches[i][1].distance)) {
                     goodMatches.push_back(matches[i][0]);
                 }
             }
         }
         
-        if (goodMatches.size() < minGoodMatches) {
-            pinfo("[Viro] Could not find enough good matching points. %lu of %d", goodMatches.size(), minGoodMatches);
+        if (goodMatches.size() < _minGoodMatches) {
+            pinfo("[Viro] Could not find enough good matching points. %lu of %d", goodMatches.size(), _minGoodMatches);
             
             _totalFailedIteration++;
             _totalFailedTime+=(getCurrentTimeMs() - _startTime);
-            pinfo("[Viro] average failed run time %f for %f runs", _totalFailedTime / _totalFailedIteration, _totalFailedIteration);
+            pinfo("[Viro] average failed run time %f for %f runs - not enough matching pts",
+                  _totalFailedTime / _totalFailedIteration, _totalFailedIteration);
             
             continue;
         }
@@ -352,14 +362,14 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         
         LOG_DETECT_TIME("start finding homography matrix");
         
-        cv::Mat homographyMat = findHomography(cv::Mat(objectPoints), cv::Mat(inputPoints), CV_RANSAC, 5.0);
+        cv::Mat homographyMat = findHomography(cv::Mat(objectPoints), cv::Mat(inputPoints), CV_RANSAC, 3);
         
         if (homographyMat.cols == 0) {
             pinfo("[Viro] Could not find a homography matrix.");
             continue;
         }
         
-        LOG_DETECT_TIME("start finding perspective transform");
+        LOG_DETECT_TIME("start finding corners");
         
         std::vector<cv::Point2f> objectCorners(4);
         objectCorners[0] = cvPoint(0,0);
@@ -420,17 +430,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         
         // whether or not to use the (previous) values in _rotation/_translation to help with extracting the next set of them.
         bool useExtrinsicGuess = true;
-        
-        //cv::solvePnP(targetCorners, inputCorners, cameraMatrix, distCoeffs, currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
-        
-        /*
-         InputArray objectPoints, InputArray imagePoints,
-         InputArray cameraMatrix, InputArray distCoeffs,
-         OutputArray rvec, OutputArray tvec,
-         bool useExtrinsicGuess = false, int iterationsCount = 100,
-         float reprojectionError = 8.0, double confidence = 0.99,
-         OutputArray inliers = noArray(), int flags = SOLVEPNP_ITERATIVE
-         */
+
         cv::solvePnPRansac(targetCorners, inputCorners, cameraMatrix, distCoeffs, currentTarget.rotation, currentTarget.translation, useExtrinsicGuess, 100, 8.0, .99, {}, cv::SOLVEPNP_ITERATIVE);
 
         LOG_DETECT_TIME("finished detection & pose extraction");
@@ -474,20 +474,17 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         pinfo("[Viro] translation: %f, %f, %f", tempTrans.x, tempTrans.y, tempTrans.z);
         pinfo("[Viro] rotation: %f, %f, %f", toDegrees(tempRot.x), toDegrees(tempRot.y), toDegrees(tempRot.z));
 #endif
-        
-        // draw lines between the corners of the target in the input image
-        // TODO: remove this when not debugging.
-        cv::line(inputImage, inputCorners[0], inputCorners[1], cv::Scalar(0, 255, 0), 5);
-        cv::line(inputImage, inputCorners[1], inputCorners[2], cv::Scalar(0, 255, 0), 5);
-        cv::line(inputImage, inputCorners[2], inputCorners[3], cv::Scalar(0, 255, 0), 5);
-        cv::line(inputImage, inputCorners[3], inputCorners[0], cv::Scalar(0, 255, 0), 5);
-        
-        cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_32F);
-        cv::cvtColor(inputImage, processedImage, cv::COLOR_BGRA2RGBA);
 
         VROARImageTrackerOutput output = {true, inputCorners, scaledTranslation, currentTarget.rotation, worldTransform, currentTarget.arImageTarget};
-        output.outputImage = processedImage;
-
+        
+// Whether or not we should draw corners on the output image.
+#if DRAW_OUTPUT_CORNERS
+        output.outputImage = drawCorners(inputImage, inputCorners);
+#else
+        output.outputImage = inputImage;
+#endif
+        
+        // finally add the output to the list of outputs to return
         outputs.push_back(output);
     }
     
@@ -511,7 +508,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::processOutputs(std::vect
 }
 
 VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdate(VROARImageTrackerOutput output) {
-    return determineFoundOrUpdateV3(output);
+    return determineFoundOrUpdateV2(output);
 }
 
 /*
@@ -529,7 +526,8 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV1(VROARImageTr
         targetOpenCV->lastOutput = rawOutput;
         
         targetOpenCV->rawOutputs.push_back(rawOutput);
-        if (targetOpenCV->rawOutputs.size() >= 5) {
+        // stop tracking the target once we find it 10 times.
+        if (targetOpenCV->rawOutputs.size() >= 10) {
             targetOpenCV->disableTracking = true;
         }
         
@@ -539,75 +537,10 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV1(VROARImageTr
 }
 
 /*
- This version of determineFoundOrUpdate waits until we find at least 2 rawOutputs with "similar" transforms
- before returning a "found" and then it throws away all other rawOutputs except the ones that match. Then it
- looks for more outputs that match the first two until we get 5.
- 
- This runs quickly because it's a N^2 comparison until we find 2 similar outputs, and then it's a constant
- check ("is similar"), but if the original 2 outputs are "wrong" then we'll never correct ourselves.
- */
-VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTrackerOutput rawOutput) {
-    int minimumQuorum = 2;
-    int maximumQuorum = 5;
-
-    VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
-    
-    //if target has already been found
-    if (targetOpenCV->lastOutput.found) {
-        // if new rawOutput is similar to existing
-        if (areOutputsSimilar(rawOutput, targetOpenCV->lastOutput)) {
-            // add to the rawOutputs array
-            targetOpenCV->rawOutputs.push_back(rawOutput);
-            // if rawOutputs >= maximumQuorum
-            if (targetOpenCV->rawOutputs.size() > maximumQuorum) {
-                // disable target (we don't want to waste cycles to look for it anymore since it's stable.)
-                targetOpenCV->disableTracking = true;
-            }
-            // update target // TODO: compute a better output rather than the last output.
-            rawOutput.isUpdate = true;
-            targetOpenCV->lastOutput = rawOutput;
-            return rawOutput;
-        // if not similar to existing
-        } else {
-            // throw away rawOutput(?)
-        }
-    // if target hasn't been found
-    } else {
-        // add rawOutput to array
-        targetOpenCV->rawOutputs.push_back(rawOutput);
-        // if we get a minimumQuorum of matched rawOutputs - v1: truly n^2 runtime, but this is only until we find a quorum...
-        for (int i = 0; i < targetOpenCV->rawOutputs.size(); i++) {
-            std::vector<VROARImageTrackerOutput> tempVector;
-            for (int j = 0; j < targetOpenCV->rawOutputs.size(); j++) {
-                if (i == j) {
-                    continue;
-                }
-                
-                if (areOutputsSimilar(targetOpenCV->rawOutputs[i], targetOpenCV->rawOutputs[j])) {
-                    tempVector.push_back(targetOpenCV->rawOutputs[j]);
-                }
-            }
-            
-            // don't forget to add the output we're comparing to the others to the vector!
-            tempVector.push_back(targetOpenCV->rawOutputs[i]);
-            
-            if (tempVector.size() >= minimumQuorum) {
-                // throw away bad rawOutputs(?)
-                targetOpenCV->lastOutput = targetOpenCV->rawOutputs[i]; // choose the output that matched with everything else (grab it first before overriding rawOutputs)
-                targetOpenCV->rawOutputs = tempVector; // by overwriting rawOutputs, we've "deleted" all the bad outputs
-                // return the last target (assuming it's the most recent, and so it's the most accurate)
-                return targetOpenCV->lastOutput;
-            }
-        }
-    }
-    return createFalseOutput();
-}
-
-/*
  This version of determineFoundOrUpdate tries to return as fast as possible while trying to use all the
  information it has to make the best decision by constantly reevaluating which output is the best.
  */
-VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTrackerOutput rawOutput) {
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTrackerOutput rawOutput) {
     int maximumQuorum = 5;
     
     VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
@@ -692,6 +625,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     
     // if we have less than 4 corners, we definitely did not find a rectangular object!
     if (corners.size() != 4) {
+        pinfo("[Viro] corner check - fail test 0");
         return false;
     }
     
@@ -708,8 +642,9 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
         sumX += std::abs(corners[i].x - corners[i + 1].x);
         sumY += std::abs(corners[i].y - corners[i + 1].y);
     }
-    
+
     if (sumX < minCornerDistance || sumY < minCornerDistance) {
+        pinfo("[Viro] corner check - fail test 1");
         return false;
     }
 
@@ -727,22 +662,24 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     for (int i = 0; i < 4; i++) {
         VROTriangle triangle = {vectorCorners[i], vectorCorners[(i + 1) % 4], vectorCorners[(i + 2) % 4]};
         if (triangle.containsPoint(vectorCorners[(i + 3) % 4])) {
+            pinfo("[Viro] corner check - fail test 2");
             return false;
         }
     }
-    
+
     /*
      Check that the lines forming the boundaries of the rectangle don't cross.
      */
-    
+
     // the line segments are named assuming 1st corner is top left while moving clockwise.
     VROLineSegment lineSegmentTop(vectorCorners[0], vectorCorners[1]);
     VROLineSegment lineSegmentBottom(vectorCorners[2], vectorCorners[3]);
-    
+
     VROLineSegment lineSegmentLeft(vectorCorners[3], vectorCorners[0]);
     VROLineSegment lineSegmentRight(vectorCorners[1], vectorCorners[2]);
-    
+
     if (lineSegmentTop.intersectsSegment2D(lineSegmentBottom) || lineSegmentLeft.intersectsSegment2D(lineSegmentRight)) {
+        pinfo("[Viro] corner check - fail test 3");
         return false;
     }
     
@@ -775,6 +712,19 @@ VROMatrix4f VROARImageTracker::convertToWorldCoordinates(std::shared_ptr<VROARCa
     inputTransform.rotate(rotation);
 
     return camMatrix.multiply(inputTransform);
+}
+
+cv::Mat VROARImageTracker::drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners) {
+    // draw lines between the inputCorners on the input image
+    cv::line(inputImage, inputCorners[0], inputCorners[1], cv::Scalar(0, 255, 0, 255), 5);
+    cv::line(inputImage, inputCorners[1], inputCorners[2], cv::Scalar(0, 255, 0, 255), 5);
+    cv::line(inputImage, inputCorners[2], inputCorners[3], cv::Scalar(0, 255, 0, 255), 5);
+    cv::line(inputImage, inputCorners[3], inputCorners[0], cv::Scalar(0, 255, 0, 255), 5);
+
+    cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_32F);
+    cv::cvtColor(inputImage, processedImage, cv::COLOR_BGRA2RGBA);
+
+    return processedImage;
 }
 
 long VROARImageTracker::getCurrentTimeMs() {

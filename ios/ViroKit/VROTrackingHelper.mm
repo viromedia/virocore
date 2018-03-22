@@ -87,13 +87,13 @@
         std::vector<cv::Point2f> corners = output.corners;
         for (int i = 0; i < corners.size(); i++) {
             cv::Point2f point = corners[i];
-            pinfo("TrackingHelper output corner %f", point.x);
-            pinfo("TrackingHelper output corner %f", point.y);
+            pinfo("findInScreenshot output corner %f", point.x);
+            pinfo("findInScreenshot output corner %f", point.y);
         }
-        pinfo("TrackingHelper output position %f, %f, %f", output.translation.at<double>(0,0), - output.translation.at<double>(1,0), - output.translation.at<double>(2,0));
-        pinfo("TrackingHelper output rotation %f, %f, %f", output.rotation.at<double>(0,0), - output.rotation.at<double>(1,0), - output.rotation.at<double>(2,0));
+        pinfo("findInScreenshot output position %f, %f, %f", output.translation.at<double>(0,0), - output.translation.at<double>(1,0), - output.translation.at<double>(2,0));
+        pinfo("findInScreenshot output rotation %f, %f, %f", output.rotation.at<double>(0,0), - output.rotation.at<double>(1,0), - output.rotation.at<double>(2,0));
     } else {
-        pinfo("TrackingHelper findInScreenshot not found");
+        pinfo("findInScreenshot output not found");
     }
 }
 

@@ -527,6 +527,23 @@ std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isIta
     return std::make_pair(path, index);
 }
 
+void VROPlatformSetTrackingImageView(std::string filepath) {
+
+    VROPlatformDispatchAsyncApplication([filepath]() {
+        JNIEnv *env;
+        getJNIEnv(&env);
+
+        jclass cls = env->FindClass("com/viro/core/ViroViewARCore");
+        jmethodID jmethod = env->GetStaticMethodID(cls, "setImageOnTrackingImageView", "(Ljava/lang/String;)Z");
+
+        jstring string = env->NewStringUTF(filepath.c_str());
+
+        env->CallStaticBooleanMethod(cls, jmethod, string);
+
+        env->DeleteLocalRef(cls);
+    });
+}
+
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
     jobject bitmap = VROPlatformLoadBitmapFromFile(filename, format);

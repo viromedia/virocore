@@ -11,18 +11,17 @@
 #define VROARImageTracker_h
 
 #include "VROLog.h"
-//#include "VROARImageTrackerOutput.h"
 #include "opencv2/core/core.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "VROARImageTarget.h"
 #include <memory>
 #include <map>
 #include "VROARCamera.h"
+#include "VROVector3f.h"
 
 enum class VROARImageTrackerType {
     BRISK,
     ORB,
-    ORB3,
     ORB4,
 };
 
@@ -47,6 +46,7 @@ struct VROARImageTargetOpenCV {
     cv::Mat rotation; // the most recent found rotation for this target in the last input image
     cv::Mat translation; // the most recent found translation for this target in the last input image
 
+    // TODO: hold onto shared_ptr<VROARImageTrackerOutput> not just the value!
     std::vector<VROARImageTrackerOutput> rawOutputs; // the raw outputs that we've found so far.
     VROARImageTrackerOutput lastOutput; // the most recent output that was returned to the caller for this target.
 
@@ -116,8 +116,6 @@ private:
     // Different versions of determineFoundOrUpdate
     VROARImageTrackerOutput determineFoundOrUpdateV1(VROARImageTrackerOutput output);
     VROARImageTrackerOutput determineFoundOrUpdateV2(VROARImageTrackerOutput output);
-    VROARImageTrackerOutput determineFoundOrUpdateV3(VROARImageTrackerOutput output);
-    VROARImageTrackerOutput determineFoundOrUpdateV4(VROARImageTrackerOutput output);
 
     /*
      This function takes two outputs and determines if they are similar
@@ -140,7 +138,13 @@ private:
      returns the identity matrix if camera is null, otherwise returns a transformation matrix.
      */
     VROMatrix4f convertToWorldCoordinates(std::shared_ptr<VROARCamera> camera, VROVector3f translation, VROVector3f rotation);
-    
+
+    /*
+     This function takes an inputImage and a vector of 4 points (in OpenCV) coordinate space
+     and draws lines between the corners (for debugging).
+     */
+    cv::Mat drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners);
+
     long getCurrentTimeMs();
     long _startTime;
 
@@ -165,7 +169,7 @@ private:
     // total time and iteration counts for failed runs (unable to find target)
     double _totalFailedTime;
     double _totalFailedIteration;
-    
+
     std::vector<std::shared_ptr<VROARImageTarget>> _arImageTargets;
     std::map<std::shared_ptr<VROARImageTarget>, VROARImageTargetOpenCV> _targetToTargetMap;
     

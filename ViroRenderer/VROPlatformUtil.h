@@ -98,6 +98,12 @@ void *VROPlatformLoadFile(std::string filename, int *outLength);
  */
 std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isItalic, int weight);
 
+/*
+ This function calls setImageOnTrackingImageView on ViroViewARCore in order to debug
+ Image Tracking/Detection
+ */
+void VROPlatformSetTrackingImageView(std::string filepath);
+
 #pragma mark - Image Loading
 
 // Returns empty shared_ptr on failure
@@ -188,7 +194,6 @@ std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap
  * location.
  */
 std::map<std::string, std::string> VROPlatformCopyObjResourcesToFile(jobject resourceMap);
-
 
 #pragma mark - JNI Utilities
 

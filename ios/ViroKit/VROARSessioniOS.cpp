@@ -82,7 +82,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     _trackingHelper = [[VROTrackingHelper alloc] init];
       
     // Uncomment to run a test screenshot through the OpenCV tracking code.
-    // [_trackingHelper findInScreenshot];
+    [_trackingHelper findInScreenshot];
         
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);

@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
@@ -19,10 +21,12 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Session;
@@ -38,6 +42,9 @@ import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.renderer.BuildConfig;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -65,6 +72,10 @@ import javax.microedition.khronos.opengles.GL10;
 public class ViroViewARCore extends ViroView {
 
     private static final String TAG = "Viro";
+
+    // Determines whether we add an ImageView for debugging Image Tracking
+    private static final boolean ENABLE_TRACKING_DEBUG_VIEW = true;
+    private static ImageView sTrackingImageView;
 
     /**
      * Callback interface for responding to {@link ViroViewARCore} startup success or failure.
@@ -381,6 +392,22 @@ public class ViroViewARCore extends ViroView {
         mSurfaceView = new GLSurfaceView(context);
         addView(mSurfaceView);
 
+        // Add a globally accessible ImageView used to display the tracking output for debugging
+        if (ENABLE_TRACKING_DEBUG_VIEW) {
+            sTrackingImageView = new ImageView(context);
+            addView(sTrackingImageView);
+            sTrackingImageView.setAlpha(.7f);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) getContext()).getWindowManager()
+                    .getDefaultDisplay()
+                    .getMetrics(displayMetrics);
+
+            sTrackingImageView.setLayoutParams(
+                    new LayoutParams((int) (displayMetrics.widthPixels * .33),
+                            (int) (displayMetrics.heightPixels * .33)));
+        }
+
         final Context activityContext = getContext();
         final Activity activity = (Activity) getContext();
 
@@ -525,6 +552,27 @@ public class ViroViewARCore extends ViroView {
     protected int getSystemUiVisibilityFlags() {
         return (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
+    /*
+     This function is called by native to load the given filepath into the
+     sTrackingImageView to help debug image tracking/detection
+     */
+    private static boolean setImageOnTrackingImageView(String filepath) {
+        if (sTrackingImageView == null) {
+            return false;
+        }
+
+        Bitmap bitmap = BitmapFactory.decodeFile(filepath);
+        if (bitmap == null) {
+            return false;
+        }
+        try {
+            sTrackingImageView.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     /**
