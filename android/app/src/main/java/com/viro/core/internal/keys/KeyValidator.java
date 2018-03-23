@@ -29,6 +29,10 @@ public class KeyValidator {
 
     private static int MAX_WAIT_INTERVAL_MILLIS = 64000;
 
+    // If we compute exponential falloff with a number greater than 53, we end up overflowing
+    // We can set to a lower number since we max out the wait after only a few tries anyway
+    private static int MAX_FALLOFF_EXP = 10;
+
     public KeyValidator(Context context) {
         mContextWeakRef = new WeakReference<Context>(context);
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
@@ -81,7 +85,7 @@ public class KeyValidator {
                     if (retry == true) {
                         retries++;
                         long waitTime = getWaitTimeExp(retries);
-                        Log.d(TAG, "Attempt #" + retries + " to fetch api keys failed." +
+                        Log.i(TAG, "Attempt #" + retries + " to fetch api keys failed." +
                                 " Retrying in " + waitTime + " milliseconds");
                         try {
                             Thread.sleep(waitTime);
@@ -101,7 +105,8 @@ public class KeyValidator {
      * backoff algorithm.
      */
     private long getWaitTimeExp(int retryCount) {
-        long waitTime = ((long) Math.pow(2, retryCount) * 1000L);
+        int falloffExp = Math.min(retryCount, MAX_FALLOFF_EXP);
+        long waitTime = ((long) Math.pow(2, falloffExp) * 1000L);
         return Math.min(waitTime, MAX_WAIT_INTERVAL_MILLIS);
     }
 }
