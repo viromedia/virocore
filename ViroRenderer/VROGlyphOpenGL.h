@@ -22,8 +22,8 @@ public:
     VROGlyphOpenGL();
     virtual ~VROGlyphOpenGL();
     
-    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering,
-                      std::shared_ptr<VRODriver> driver);
+    virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                      bool forRendering, std::shared_ptr<VRODriver> driver);
     
 private:
     

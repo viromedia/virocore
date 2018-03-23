@@ -9,6 +9,7 @@
 #include <memory>
 #include "PersistentRef.h"
 #include <VROTypefaceAndroid.h>
+#include "VROTypefaceCollection.h"
 #include <VROStringUtil.h>
 #include "VROText.h"
 #include "Node_JNI.h"
@@ -132,8 +133,9 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
     std::shared_ptr<VRODriver> driver = context->getDriver();
     std::shared_ptr<VROTypeface> typeface = driver.get()->newTypeface(fontFamily, size,
                                                                       (VROFontStyle) style, (VROFontWeight) weight);
+    std::shared_ptr<VROTypefaceCollection> typefaces = std::make_shared<VROTypefaceCollection>(typeface);
 
-    std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, typeface, vecColor, width,
+    std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, typefaces, vecColor, width,
                                                                  height, horizontalAlignment,
                                                                  verticalAlignment,
                                                                  lineBreakMode,
@@ -195,7 +197,9 @@ JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
         if (!text) {
             return;
         }
-        text->setTypeface(typeface);
+
+        std::shared_ptr<VROTypefaceCollection> typefaces = std::make_shared<VROTypefaceCollection>(typeface);
+        text->setTypefaceCollection(typefaces);
     });
 }
 

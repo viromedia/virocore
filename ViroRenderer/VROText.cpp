@@ -11,6 +11,7 @@
 #include "VROGeometryElement.h"
 #include "VROMaterial.h"
 #include "VROTypeface.h"
+#include "VROTypefaceCollection.h"
 #include "VROGlyph.h"
 #include "VROLog.h"
 #include <cstddef>
@@ -27,68 +28,88 @@ static const std::wstring kWhitespaceDelimeters = L" \t\v\r";
 static const int kJustificationToleranceStart = 2;
 static const int kJustificationToleranceEnd = 4;
 
-std::shared_ptr<VROText> VROText::createText(std::wstring text, std::shared_ptr<VROTypeface> typeface, VROVector4f color,
-                                             float width, float height,
+std::shared_ptr<VROText> VROText::createText(std::wstring text,
+                                             std::shared_ptr<VROTypefaceCollection> typefaces,
+                                             VROVector4f color, float width, float height,
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
                                              VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) {
     
-    std::shared_ptr<VROText> model = std::make_shared<VROText>(text, typeface, color, width, height, horizontalAlignment,
+    std::shared_ptr<VROText> model = std::make_shared<VROText>(text, typefaces, color, width, height, horizontalAlignment,
                                                                verticalAlignment, lineBreakMode, clipMode, maxLines);
     model->update();
     return model;
 }
 
-std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text, std::shared_ptr<VROTypeface> typeface, VROVector4f color,
+std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text,
+                                                       std::shared_ptr<VROTypefaceCollection> typefaces,
+                                                       VROVector4f color,
                                                        float width, VROTextHorizontalAlignment alignment, VROTextClipMode clipMode) {
-    return createText(text, typeface, color, width, std::numeric_limits<float>::max(), alignment, VROTextVerticalAlignment::Center,
+    return createText(text, typefaces, color, width, std::numeric_limits<float>::max(), alignment, VROTextVerticalAlignment::Center,
                       VROLineBreakMode::None, clipMode);
 }
 
-std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text, std::shared_ptr<VROTypeface> typeface, VROVector4f color) {
-    return createSingleLineText(text, typeface, color, std::numeric_limits<float>::max(), VROTextHorizontalAlignment::Center,
+std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text, std::shared_ptr<VROTypefaceCollection> typefaces,
+                                                       VROVector4f color) {
+    return createSingleLineText(text, typefaces, color, std::numeric_limits<float>::max(), VROTextHorizontalAlignment::Center,
                                 VROTextClipMode::None);
 }
 
-VROVector3f VROText::getTextSize(std::wstring text, std::shared_ptr<VROTypeface> typeface,
+VROVector3f VROText::getTextSize(std::wstring text,
+                                 std::shared_ptr<VROTypefaceCollection> typefaces,
                                  float maxWidth, float maxHeight, VROLineBreakMode lineBreakMode,
                                  VROTextClipMode clipMode, int maxLines) {
     
     VROVector3f size;
-    std::map<FT_ULong, std::shared_ptr<VROGlyph>> glyphMap;
+    std::map<uint32_t, std::shared_ptr<VROGlyph>> glyphMap;
+    
+    // Split the text into runs, eached mapped to a typeface
+    std::vector<VROFontRun> fontRuns = typefaces->computeRuns(text);
     
     // Always add the space ' ' to the glyphMap (used by justification)
+    std::shared_ptr<VROTypeface> &firstTypeface = fontRuns.front().typeface;
     std::wstring space = L" ";
-    FT_ULong spaceCode = *space.begin();
-    glyphMap[spaceCode] = typeface->getGlyph(spaceCode, false);
+    uint32_t spaceCode = *space.begin();
+    glyphMap[spaceCode] = firstTypeface->getGlyph(spaceCode, 0, false);
     
-    for (std::wstring::const_iterator c = text.begin(); c != text.end(); ++c) {
-        FT_ULong charCode = *c;
-        if (glyphMap.find(charCode) == glyphMap.end()) {
-            std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(charCode, false);
-            glyphMap[charCode] = glyph;
+    // Now add all the remaining glyphs. For line height we will use
+    // the maximum found in any run.
+    float maxLineHeight = 0;
+    
+    for (VROFontRun &fontRun : fontRuns) {
+        std::shared_ptr<VROTypeface> &typeface = fontRun.typeface;
+        if (typeface->getLineHeight() > maxLineHeight) {
+            maxLineHeight = typeface->getLineHeight();
+        }
+        
+        for (int i = fontRun.start; i < fontRun.end; i++) {
+            uint32_t codePoint = text.at(i);
+            if (glyphMap.find(codePoint) == glyphMap.end()) {
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, false);
+                glyphMap[codePoint] = glyph;
+            }
         }
     }
     
     std::vector<VROTextLine> lines;
     switch (lineBreakMode) {
         case VROLineBreakMode::WordWrap:
-            lines = wrapByWords(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
+            lines = wrapByWords(text, maxWidth, maxHeight, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         case VROLineBreakMode::CharWrap:
-            lines = wrapByChars(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
+            lines = wrapByChars(text, maxWidth, maxHeight, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         case VROLineBreakMode::None:
-            lines = wrapByNewlines(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
+            lines = wrapByNewlines(text, maxWidth, maxHeight, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         case VROLineBreakMode::Justify:
-            lines = justify(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
+            lines = justify(text, maxWidth, maxHeight, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         default:
             pabort("Invalid linebreak mode found for VROText");
             break;
     }
     
-    float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
+    float lineHeight = maxLineHeight * kTextPointToWorldScale;
     size.y = lines.size() * lineHeight;
     
     std::vector<VROShapeVertexLayout> var;
@@ -97,7 +118,7 @@ VROVector3f VROText::getTextSize(std::wstring text, std::shared_ptr<VROTypeface>
         
         float lineWidth = 0;
         for (std::wstring::const_iterator c = line.begin(); c != line.end(); ++c) {
-            FT_ULong charCode = *c;
+            uint32_t charCode = *c;
             std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             lineWidth += glyph->getAdvance() * kTextPointToWorldScale;
@@ -109,13 +130,15 @@ VROVector3f VROText::getTextSize(std::wstring text, std::shared_ptr<VROTypeface>
     return size;
 }
 
-VROText::VROText(std::wstring text, std::shared_ptr<VROTypeface> typeface, VROVector4f color,
+VROText::VROText(std::wstring text,
+                 std::shared_ptr<VROTypefaceCollection> typefaces,
+                 VROVector4f color,
                  float width, float height,
                  VROTextHorizontalAlignment horizontalAlignment,
                  VROTextVerticalAlignment verticalAlignment,
                  VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) :
     _text(text),
-    _typeface(typeface),
+    _typefaces(typefaces),
     _color(color),
     _width(width),
     _height(height),
@@ -133,7 +156,7 @@ void VROText::update() {
     std::vector<std::shared_ptr<VROMaterial>> materials;
 
     float realizedWidth, realizedHeight;
-    buildText(_text, _typeface, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
+    buildText(_text, _typefaces, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
               _lineBreakMode, _clipMode, _maxLines, sources, elements, materials,
               &realizedWidth, &realizedHeight);
 
@@ -151,8 +174,8 @@ void VROText::setText(std::wstring text) {
     update();
 }
 
-void VROText::setTypeface(std::shared_ptr<VROTypeface> typeface) {
-    _typeface = typeface;
+void VROText::setTypefaceCollection(std::shared_ptr<VROTypefaceCollection> typefaces) {
+    _typefaces = typefaces;
     update();
 }
 
@@ -197,7 +220,7 @@ void VROText::setMaxLines(int maxLines) {
 }
 
 void VROText::buildText(std::wstring &text,
-                        std::shared_ptr<VROTypeface> &typeface,
+                        std::shared_ptr<VROTypefaceCollection> &typefaces,
                         VROVector4f color,
                         float width,
                         float height,
@@ -217,27 +240,58 @@ void VROText::buildText(std::wstring &text,
      we can share the same glyph, material, and indices vector across them
      all.
      */
-    std::map<FT_ULong, std::shared_ptr<VROGlyph>> glyphMap;
-    std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
+    std::map<uint32_t, std::shared_ptr<VROGlyph>> glyphMap;
+    std::map<uint32_t, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
     
-    // Ensure the space character is always generated (used by justification)
-    std::wstring charsToGenerate = L" " + text;
+    // Split the text into runs, eached mapped to a typeface
+    std::vector<VROFontRun> fontRuns = typefaces->computeRuns(text);
     
-    for (std::wstring::const_iterator c = charsToGenerate.begin(); c != charsToGenerate.end(); ++c) {
-        FT_ULong charCode = *c;
-        if (glyphMap.find(charCode) == glyphMap.end()) {
-            std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(charCode, true);
-            
-            std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-            material->getDiffuse().setColor(color);
-            material->getDiffuse().setTexture(glyph->getTexture());
-            
-            char name[2] = { (char)charCode, 0 };
-            material->setName(name);
-            
-            std::vector<int> indices;
-            materialMap[charCode] = {material, indices};
-            glyphMap[charCode] = glyph;
+    // Always add the space ' ' to the glyphMap (used by justification)
+    {
+        std::shared_ptr<VROTypeface> &firstTypeface = fontRuns.front().typeface;
+        std::wstring space = L" ";
+        uint32_t spaceCode = *space.begin();
+        
+        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, true);
+        
+        std::shared_ptr<VROMaterial> whitespaceMaterial = std::make_shared<VROMaterial>();
+        whitespaceMaterial->getDiffuse().setColor(color);
+        whitespaceMaterial->getDiffuse().setTexture(whitespaceGlyph->getTexture());
+        
+        char whitespaceName[2] = { (char)spaceCode, 0 };
+        whitespaceMaterial->setName(whitespaceName);
+        
+        std::vector<int> indices;
+        materialMap[spaceCode] = { whitespaceMaterial, indices };
+        glyphMap[spaceCode] = whitespaceGlyph;
+    }
+    
+    // Now add all the remaining glyphs. For line height we will use
+    // the maximum found in any run.
+    float maxLineHeight = 0;
+    
+    for (VROFontRun &fontRun : fontRuns) {
+        std::shared_ptr<VROTypeface> &typeface = fontRun.typeface;
+        if (typeface->getLineHeight() > maxLineHeight) {
+            maxLineHeight = typeface->getLineHeight();
+        }
+        
+        for (int i = fontRun.start; i < fontRun.end; i++) {
+            uint32_t codePoint = text.at(i);
+            if (glyphMap.find(codePoint) == glyphMap.end()) {
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, true);
+                
+                std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+                material->getDiffuse().setColor(color);
+                material->getDiffuse().setTexture(glyph->getTexture());
+                
+                char name[2] = { (char)codePoint, 0 };
+                material->setName(name);
+                
+                std::vector<int> indices;
+                materialMap[codePoint] = { material, indices };
+                glyphMap[codePoint] = glyph;
+            }
         }
     }
     
@@ -247,23 +301,23 @@ void VROText::buildText(std::wstring &text,
     std::vector<VROTextLine> lines;
     switch (lineBreakMode) {
         case VROLineBreakMode::WordWrap:
-            lines = wrapByWords(text, width, height, maxLines, typeface, clipMode, glyphMap);
+            lines = wrapByWords(text, width, height, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         case VROLineBreakMode::CharWrap:
-            lines = wrapByChars(text, width, height, maxLines, typeface, clipMode, glyphMap);
+            lines = wrapByChars(text, width, height, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         case VROLineBreakMode::None:
-            lines = wrapByNewlines(text, width, height, maxLines, typeface, clipMode, glyphMap);
+            lines = wrapByNewlines(text, width, height, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         case VROLineBreakMode::Justify:
-            lines = justify(text, width, height, maxLines, typeface, clipMode, glyphMap);
+            lines = justify(text, width, height, maxLines, maxLineHeight, clipMode, glyphMap);
             break;
         default:
             pabort("Invalid linebreak mode found for VROText");
             break;
     }
     
-    float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
+    float lineHeight = maxLineHeight * kTextPointToWorldScale;
     float totalHeight = lines.size() * lineHeight;
 
     /*
@@ -294,7 +348,7 @@ void VROText::buildText(std::wstring &text,
          */
         float lineWidth = 0;
         for (std::wstring::const_iterator c = line.begin(); c != line.end(); ++c) {
-            FT_ULong charCode = *c;
+            uint32_t charCode = *c;
             std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             lineWidth += glyph->getAdvance() * kTextPointToWorldScale;
@@ -316,7 +370,7 @@ void VROText::buildText(std::wstring &text,
         }
         
         for (std::wstring::const_iterator c = line.begin(); c != line.end(); ++c) {
-            FT_ULong charCode = *c;
+            uint32_t charCode = *c;
             std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             buildChar(glyph, x, y, var, materialMap[charCode].second);
@@ -368,7 +422,7 @@ void VROText::buildChar(std::shared_ptr<VROGlyph> &glyph,
 }
 
 void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
-                            std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
+                            std::map<uint32_t, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                             std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                             std::vector<std::shared_ptr<VROMaterial>> &materials) {
@@ -395,10 +449,10 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
     }
 }
 
-std::vector<VROTextLine> VROText::wrapByWords(std::wstring &text, float maxWidth, float maxHeight, int maxLines,
-                                              std::shared_ptr<VROTypeface> &typeface,
+std::vector<VROTextLine> VROText::wrapByWords(std::wstring &text,
+                                              float maxWidth, float maxHeight, int maxLines, float lineHeight,
                                               VROTextClipMode clipMode,
-                                              std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
+                                              std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap) {
     
     /*
      NOTE: the greedy algorithm used here combines hard breaks with soft breaks, which
@@ -426,7 +480,7 @@ std::vector<VROTextLine> VROText::wrapByWords(std::wstring &text, float maxWidth
             lineWidth = 0;
             currentLine.clear();
             
-            if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+            if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
                 break;
             }
             
@@ -482,7 +536,7 @@ std::vector<VROTextLine> VROText::wrapByWords(std::wstring &text, float maxWidth
                     currentLine.clear();
                 }
                 
-                if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+                if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
                     break;
                 }
             }
@@ -498,30 +552,30 @@ std::vector<VROTextLine> VROText::wrapByWords(std::wstring &text, float maxWidth
         }
     }
     
-    if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+    if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
         lines.push_back({currentLine});
     }
 
     return lines;
 }
 
-std::vector<VROTextLine> VROText::wrapByChars(std::wstring &text, float maxWidth, float maxHeight, int maxLines,
-                                              std::shared_ptr<VROTypeface> &typeface,
+std::vector<VROTextLine> VROText::wrapByChars(std::wstring &text,
+                                              float maxWidth, float maxHeight, int maxLines, float lineHeight,
                                               VROTextClipMode clipMode,
-                                              std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
+                                              std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap) {
     
     std::vector<VROTextLine> lines;
     float lineWidth = 0;
     std::wstring currentLine;
     
     for (std::wstring::const_iterator c = text.begin(); c != text.end(); ++c) {
-        FT_ULong charCode = *c;
+        uint32_t charCode = *c;
         std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
         if (lineWidth + charWidth > maxWidth || charCode == '\n') {
             lines.push_back({currentLine});
-            if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+            if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
                 break;
             }
             
@@ -538,24 +592,24 @@ std::vector<VROTextLine> VROText::wrapByChars(std::wstring &text, float maxWidth
         }
     }
     
-    if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+    if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
         lines.push_back({currentLine});
     }
     
     return lines;
 }
 
-std::vector<VROTextLine> VROText::wrapByNewlines(std::wstring &text, float maxWidth, float maxHeight, int maxLines,
-                                                 std::shared_ptr<VROTypeface> &typeface,
+std::vector<VROTextLine> VROText::wrapByNewlines(std::wstring &text,
+                                                 float maxWidth, float maxHeight, int maxLines, float lineHeight,
                                                  VROTextClipMode clipMode,
-                                                 std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
+                                                 std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap) {
  
     std::vector<VROTextLine> lines;
     float lineWidth = 0;
     std::wstring currentLine;
     
     for (std::wstring::const_iterator c = text.begin(); c != text.end(); ++c) {
-        FT_ULong charCode = *c;
+        uint32_t charCode = *c;
         std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
@@ -565,7 +619,7 @@ std::vector<VROTextLine> VROText::wrapByNewlines(std::wstring &text, float maxWi
          */
         if (charCode == '\n') {
             lines.push_back({currentLine});
-            if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+            if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
                 break;
             }
             
@@ -585,17 +639,17 @@ std::vector<VROTextLine> VROText::wrapByNewlines(std::wstring &text, float maxWi
         }
     }
     
-    if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
+    if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, lineHeight, clipMode)) {
         lines.push_back({currentLine});
     }
     
     return lines;
 }
 
-std::vector<VROTextLine> VROText::justify(std::wstring &text, float maxWidth, float maxHeight, int maxLines,
-                                          std::shared_ptr<VROTypeface> &typeface,
+std::vector<VROTextLine> VROText::justify(std::wstring &text,
+                                          float maxWidth, float maxHeight, int maxLines, float lineHeight,
                                           VROTextClipMode clipMode,
-                                          std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
+                                          std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap) {
     std::vector<VROTextLine> lines;
     
     std::wstring space = L" ";
@@ -652,7 +706,7 @@ std::vector<VROTextLine> VROText::justify(std::wstring &text, float maxWidth, fl
             pinfo("Failed to justify paragraph using tolerances %d through %d, falling back to greedy word wrapping",
                   kJustificationToleranceStart, kJustificationToleranceEnd);
             std::vector<VROTextLine> paragraphLines = wrapByWords(paragraph, maxWidth, maxHeight, maxLines,
-                                                                  typeface, clipMode, glyphMap);
+                                                                  lineHeight, clipMode, glyphMap);
             lines.insert(lines.end(), paragraphLines.begin(), paragraphLines.end());
         }
         
@@ -718,8 +772,8 @@ std::vector<VROTextLine> VROText::justify(std::wstring &text, float maxWidth, fl
      */
     int maxLinesByClipping = std::numeric_limits<int>::max();
     if (clipMode == VROTextClipMode::ClipToBounds) {
-        float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
-        maxLinesByClipping = floorf(maxHeight / lineHeight);
+        float lineHeightWorld = lineHeight * kTextPointToWorldScale;
+        maxLinesByClipping = floorf(maxHeight / lineHeightWorld);
     }
 
     int maxLinesByLimit = std::numeric_limits<int>::max();
@@ -743,10 +797,10 @@ std::vector<std::wstring> VROText::divideIntoParagraphs(std::wstring &text) {
     return VROStringUtil::split(text, delimeters, true);
 }
 
-float VROText::getLengthOfWord(const std::wstring &word, std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
+float VROText::getLengthOfWord(const std::wstring &word, std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap) {
     float wordWidth = 0;
     for (std::wstring::const_iterator c = word.begin(); c != word.end(); ++c) {
-        FT_ULong charCode = *c;
+        uint32_t charCode = *c;
         std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         wordWidth += glyph->getAdvance() * kTextPointToWorldScale;
@@ -756,10 +810,10 @@ float VROText::getLengthOfWord(const std::wstring &word, std::map<FT_ULong, std:
 }
 
 bool VROText::isAnotherLineAvailable(size_t numLinesNow, float maxHeight, int maxLines,
-                                     std::shared_ptr<VROTypeface> &typeface, VROTextClipMode clipMode) {
+                                     float lineHeight, VROTextClipMode clipMode) {
     // Checks both the maxLines condition and the clipping condition
     return (maxLines <= 0 || numLinesNow < maxLines) &&
-           (clipMode == VROTextClipMode::None || (numLinesNow + 1) * typeface->getLineHeight() * kTextPointToWorldScale < maxHeight);
+           (clipMode == VROTextClipMode::None || (numLinesNow + 1) * lineHeight * kTextPointToWorldScale < maxHeight);
 }
 
 

@@ -9,6 +9,10 @@
 #include "VROTypeface.h"
 #include <ft2build.h>
 #include "VROByteBuffer.h"
+#include "VROCharmapCoverage.h"
+#include "VROFontUtil.h"
+#include "VROStringUtil.h"
+
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
 
@@ -44,69 +48,109 @@ void VROTypeface::loadFace() {
     loadFace(_name, _size);
 }
 
+bool VROTypeface::hasCharacter(uint32_t codepoint, uint32_t variationSelector) const {
+    if (variationSelector == 0) {
+        return _coverage.get(codepoint);
+    }
+    
+    // If we're looking for a variation but we don't have a variation cmap table
+    // (table 14), then return false
+    if (_variationCoverage.empty()) {
+        return false;
+    }
+    
+    const uint16_t vsIndex = VROFontUtil::getVsIndex(variationSelector);
+    if (vsIndex >= _variationCoverage.size()) {
+        // Note that kInvalidVSIndex also reaches here
+        return false;
+    }
+    
+    const std::unique_ptr<VROSparseBitSet> &bitset = _variationCoverage[vsIndex];
+    if (bitset.get() == nullptr) {
+        return false;
+    }
+    return bitset->get(codepoint);
+}
+
+void VROTypeface::computeCoverage(FT_FaceRec_* face) {
+    FT_ULong cmapTag = FT_MAKE_TAG('c', 'm', 'a', 'p');
+    FT_ULong cmapLength = 0;
+    FT_Error error = FT_Load_Sfnt_Table(face, cmapTag, 0, NULL, &cmapLength );
+    if (error) {
+        pinfo("Cmap table does not exist, no coverage computed");
+        return;
+    }
+    
+    VROByteBuffer buffer(cmapLength);
+    error = FT_Load_Sfnt_Table(face, cmapTag, 0, (FT_Byte *)buffer.getData(), &cmapLength);
+    if (error) {
+        pinfo("Failed to load 'meta' table");
+    }
+    _coverage = VROCharmapCoverage::getCoverage((uint8_t *) buffer.getData(), buffer.capacity(), &_variationCoverage);
+}
+
 std::pair<std::string, std::string> VROTypeface::getLanguages(FT_FaceRec_* face) {
     std::string slng, dlng;
     FT_ULong metaTag = FT_MAKE_TAG('m', 'e', 't', 'a');
-    
-    FT_ULong  metaLength = 0;
-    
+    FT_ULong metaLength = 0;
     FT_Error error = FT_Load_Sfnt_Table(face, metaTag, 0, NULL, &metaLength );
     if (error) {
         pinfo("Meta table does not exist");
+        std::make_pair(dlng, slng);
     }
-    else {
-        VROByteBuffer buffer(metaLength);
-        error = FT_Load_Sfnt_Table(face, metaTag, 0, (FT_Byte *)buffer.getData(), &metaLength);
-        if (error) {
-            pinfo("Failed to load 'meta' table");
-        }
+    
+    VROByteBuffer buffer(metaLength);
+    error = FT_Load_Sfnt_Table(face, metaTag, 0, (FT_Byte *)buffer.getData(), &metaLength);
+    if (error) {
+        pinfo("Failed to load 'meta' table");
+    }
+    
+    buffer.readInt(); // Version
+    buffer.readInt(); // Flags
+    buffer.readInt(); // Data offset
+    
+    int numDataMaps = swap_endian<uint32_t>(buffer.readInt());
+    
+    for (int i = 0; i < numDataMaps; i++) {
+        int tag = swap_endian<uint32_t>(buffer.readInt());
+        int mapOffset = swap_endian<uint32_t>(buffer.readInt());
+        int mapLength = swap_endian<uint32_t>(buffer.readInt());
         
-        buffer.readInt(); // Version
-        buffer.readInt(); // Flags
-        buffer.readInt(); // Data offset
+        size_t savedPos = buffer.getPosition();
+        buffer.setPosition(mapOffset);
         
-        int numDataMaps = swap_endian<uint32_t>(buffer.readInt());
+        char lng[mapLength + 1];
+        buffer.copyBytes(lng, mapLength);
+        lng[mapLength] = '\0';
+        buffer.setPosition(savedPos);
         
-        for (int i = 0; i < numDataMaps; i++) {
-            int tag = swap_endian<uint32_t>(buffer.readInt());
-            int mapOffset = swap_endian<uint32_t>(buffer.readInt());
-            int mapLength = swap_endian<uint32_t>(buffer.readInt());
-            
-            size_t savedPos = buffer.getPosition();
-            buffer.setPosition(mapOffset);
-            
-            char lng[mapLength + 1];
-            buffer.copyBytes(lng, mapLength);
-            lng[mapLength] = '\0';
-            buffer.setPosition(savedPos);
-            
-            if (tag == 'dlng') {
-                pinfo("Designed for languages: %s", lng);
-                dlng = lng;
-            } else if (tag == 'slng') {
-                pinfo("Supports languages %s", lng);
-                slng = lng;
-            }
+        if (tag == 'dlng') {
+            pinfo("Designed for languages: %s", lng);
+            dlng = lng;
+        } else if (tag == 'slng') {
+            pinfo("Supports languages %s", lng);
+            slng = lng;
         }
     }
     return std::make_pair(dlng, slng);
 }
 
-std::shared_ptr<VROGlyph> VROTypeface::getGlyph(FT_ULong charCode, bool forRendering) {
-    auto kv = _glyphCache.find(charCode);
+std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t variantSelector, bool forRendering) {
+    std::string key = VROStringUtil::toString(codePoint) + "_V" + VROStringUtil::toString(variantSelector);
+    auto kv = _glyphCache.find(key);
     if (kv != _glyphCache.end()) {
         return kv->second;
     }
     
-    std::shared_ptr<VROGlyph> glyph = loadGlyph(charCode, forRendering);
+    std::shared_ptr<VROGlyph> glyph = loadGlyph(codePoint, variantSelector, forRendering);
     if (forRendering) {
-        _glyphCache.insert(std::make_pair(charCode, glyph));
+        _glyphCache.insert(std::make_pair(key, glyph));
     }
     return glyph;
 }
 
 void VROTypeface::preloadGlyphs(std::string chars) {
     for (std::string::const_iterator c = chars.begin(); c != chars.end(); ++c) {
-        getGlyph(*c, true);
+        getGlyph(*c, 0, true);
     }
 }

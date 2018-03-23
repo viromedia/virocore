@@ -317,6 +317,13 @@
 		8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEAD1C50278C0089C31A /* VROSphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB01C503EDF0089C31A /* beach.jpg */; };
 		8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB21C5042240089C31A /* surfing.mp4 */; };
+		8F8751892062C816002D9BF8 /* VROCharmapCoverage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F87516A206298AA002D9BF8 /* VROCharmapCoverage.cpp */; };
+		8F87518E2062C816002D9BF8 /* VROFontUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F875173206298AB002D9BF8 /* VROFontUtil.cpp */; };
+		8F87518F2062C853002D9BF8 /* VROSparseBitSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F87517C206298C2002D9BF8 /* VROSparseBitSet.cpp */; };
+		8F8751902062C86E002D9BF8 /* VROJenkinsHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F87517E20629F45002D9BF8 /* VROJenkinsHash.cpp */; };
+		8F87549920630241002D9BF8 /* ucdn.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F87549620630235002D9BF8 /* ucdn.c */; };
+		8F8754BA20632DF7002D9BF8 /* VROTypefaceCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */; };
+		8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */; };
 		8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */; };
 		8F9209151F3CAF72003305C8 /* VROImageShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */; };
 		8F9209191F3CCF9D003305C8 /* VROImagePostProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */; };
@@ -1213,6 +1220,19 @@
 		8F83DEAD1C50278C0089C31A /* VROSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSphere.h; sourceTree = "<group>"; };
 		8F83DEB01C503EDF0089C31A /* beach.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = beach.jpg; path = ViroSample/beach.jpg; sourceTree = "<group>"; };
 		8F83DEB21C5042240089C31A /* surfing.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = surfing.mp4; path = ViroSample/surfing.mp4; sourceTree = "<group>"; };
+		8F875169206298AA002D9BF8 /* VROCharmapCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCharmapCoverage.h; sourceTree = "<group>"; };
+		8F87516A206298AA002D9BF8 /* VROCharmapCoverage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCharmapCoverage.cpp; sourceTree = "<group>"; };
+		8F87516C206298AA002D9BF8 /* VROFontUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFontUtil.h; sourceTree = "<group>"; };
+		8F875173206298AB002D9BF8 /* VROFontUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFontUtil.cpp; sourceTree = "<group>"; };
+		8F87517B206298C2002D9BF8 /* VROSparseBitSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSparseBitSet.h; sourceTree = "<group>"; };
+		8F87517C206298C2002D9BF8 /* VROSparseBitSet.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSparseBitSet.cpp; sourceTree = "<group>"; };
+		8F87517E20629F45002D9BF8 /* VROJenkinsHash.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROJenkinsHash.cpp; sourceTree = "<group>"; };
+		8F87517F20629F45002D9BF8 /* VROJenkinsHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROJenkinsHash.h; sourceTree = "<group>"; };
+		8F87549520630235002D9BF8 /* ucdn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ucdn.h; path = ucdn/ucdn.h; sourceTree = "<group>"; };
+		8F87549620630235002D9BF8 /* ucdn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ucdn.c; path = ucdn/ucdn.c; sourceTree = "<group>"; };
+		8F87549720630235002D9BF8 /* ucdn_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ucdn_db.h; path = ucdn/ucdn_db.h; sourceTree = "<group>"; };
+		8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTypefaceCollection.cpp; sourceTree = "<group>"; };
+		8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTypefaceCollection.h; sourceTree = "<group>"; };
 		8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROImageShaderProgram.cpp; sourceTree = "<group>"; };
 		8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImageShaderProgram.h; sourceTree = "<group>"; };
 		8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImagePostProcess.h; sourceTree = "<group>"; };
@@ -2156,9 +2176,8 @@
 		8F56AE9A1DE67BCF00DD65B6 /* Text */ = {
 			isa = PBXGroup;
 			children = (
-				8F56AE9F1DE7619000DD65B6 /* VROGlyph.h */,
-				8F56AEAC1DE77B2700DD65B6 /* VROTypeface.h */,
-				8F951F9C20587D6E000DC58F /* VROTypeface.cpp */,
+				8F875494206301DA002D9BF8 /* Unicode */,
+				8F87516820629846002D9BF8 /* Font */,
 				8F56AEA81DE76E1D00DD65B6 /* VROText.h */,
 				8F56AEA71DE76E1D00DD65B6 /* VROText.cpp */,
 				8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */,
@@ -2170,6 +2189,10 @@
 		8F5C414B1BD825A9006D7A77 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				8F87517F20629F45002D9BF8 /* VROJenkinsHash.h */,
+				8F87517E20629F45002D9BF8 /* VROJenkinsHash.cpp */,
+				8F87517B206298C2002D9BF8 /* VROSparseBitSet.h */,
+				8F87517C206298C2002D9BF8 /* VROSparseBitSet.cpp */,
 				8F17701A1E74C01900235C21 /* VROGVRUtil.h */,
 				8F1770191E74C01900235C21 /* VROGVRUtil.cpp */,
 				8FB2B58B1E143F7900EDB629 /* optional.hpp */,
@@ -2273,6 +2296,32 @@
 				8FA2E1611C460C600070DB26 /* VROAction.cpp */,
 			);
 			name = Animation;
+			sourceTree = "<group>";
+		};
+		8F87516820629846002D9BF8 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				8F56AE9F1DE7619000DD65B6 /* VROGlyph.h */,
+				8F875169206298AA002D9BF8 /* VROCharmapCoverage.h */,
+				8F87516A206298AA002D9BF8 /* VROCharmapCoverage.cpp */,
+				8F87516C206298AA002D9BF8 /* VROFontUtil.h */,
+				8F875173206298AB002D9BF8 /* VROFontUtil.cpp */,
+				8F56AEAC1DE77B2700DD65B6 /* VROTypeface.h */,
+				8F951F9C20587D6E000DC58F /* VROTypeface.cpp */,
+				8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */,
+				8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */,
+			);
+			name = Font;
+			sourceTree = "<group>";
+		};
+		8F875494206301DA002D9BF8 /* Unicode */ = {
+			isa = PBXGroup;
+			children = (
+				8F87549720630235002D9BF8 /* ucdn_db.h */,
+				8F87549620630235002D9BF8 /* ucdn.c */,
+				8F87549520630235002D9BF8 /* ucdn.h */,
+			);
+			name = Unicode;
 			sourceTree = "<group>";
 		};
 		8FAE18BB1EE79C5B0021C7BB /* ARKit */ = {
@@ -3073,6 +3122,7 @@
 				8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
 				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
+				8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */,
 				8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */,
 				8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */,
 				8FFA8A0620485A9500C4D99B /* VROViewScene.h in Headers */,
@@ -3663,6 +3713,7 @@
 				8F31CCB21F2FA8CA003EFB4B /* VROPortal.cpp in Sources */,
 				A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */,
 				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
+				8F87518F2062C853002D9BF8 /* VROSparseBitSet.cpp in Sources */,
 				8FD2A54C1F813C4100E831A6 /* VROPerfTest.cpp in Sources */,
 				8FEACF0020181DDF0082D18B /* VRODiffuseIrradianceTest.cpp in Sources */,
 				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
@@ -3807,6 +3858,7 @@
 				8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */,
 				8FD2A5551F813C4100E831A6 /* VROFBXTest.cpp in Sources */,
 				8FD2A5391F813C4100E831A6 /* VROARPlaneTest.cpp in Sources */,
+				8F8751902062C86E002D9BF8 /* VROJenkinsHash.cpp in Sources */,
 				8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */,
 				8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */,
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
@@ -3818,7 +3870,9 @@
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
 				8FEACF1020191F000082D18B /* VROMaterialShaderBinding.cpp in Sources */,
+				8F8754BA20632DF7002D9BF8 /* VROTypefaceCollection.cpp in Sources */,
 				8AE44CA22021551600CE8394 /* VROARImageTargetiOS.cpp in Sources */,
+				8F87549920630241002D9BF8 /* ucdn.c in Sources */,
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FD2A53C1F813C4100E831A6 /* VRONormalMapTest.cpp in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,
@@ -3833,6 +3887,7 @@
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
 				A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */,
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,
+				8F87518E2062C816002D9BF8 /* VROFontUtil.cpp in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8F56AEB11DE7873E00DD65B6 /* VROTypefaceiOS.cpp in Sources */,
 				8FEACEF82018073D0082D18B /* VROIBLPreprocess.cpp in Sources */,
@@ -3853,6 +3908,7 @@
 				8F129F951ECB41EE00341D83 /* VROSkeletalAnimation.cpp in Sources */,
 				8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */,
 				8FEACEE1201262EE0082D18B /* VROPBRTexturedTest.cpp in Sources */,
+				8F8751892062C816002D9BF8 /* VROCharmapCoverage.cpp in Sources */,
 				8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */,
 				8FD2A5541F813C4100E831A6 /* VROParticleTest.cpp in Sources */,
 				8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */,

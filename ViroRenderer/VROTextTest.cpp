@@ -10,6 +10,7 @@
 #include "VROTestUtil.h"
 #include "VRODefines.h"
 #include "VROTypeface.h"
+#include "VROTypefaceCollection.h"
 
 VROTextTest::VROTextTest() :
     VRORendererTest(VRORendererTestType::Text) {
@@ -27,18 +28,39 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     std::wstring englishText = L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     
 #if VRO_PLATFORM_IOS
-    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Bold));
-    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::UltraLight));
-    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ", driver->newTypeface("Apple SD Gothic Neo", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ", driver->newTypeface("Apple SD Gothic Neo", 32, VROFontStyle::Normal, VROFontWeight::Heavy));
-    _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ", driver->newTypeface("Heiti TC", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ", driver->newTypeface("Devanagari Sangam MN", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض", driver->newTypeface("Geeza Pro", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(englishText, driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::Regular));
-    _textSamples.emplace_back(englishText, driver->newTypeface("", 32, VROFontStyle::Italic, VROFontWeight::Regular));
-    _textSamples.emplace_back(englishText, driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::ExtraBlack));
-
+    /*
+    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。",
+                              driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。",
+                              driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Bold));
+    _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。",
+                              driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::UltraLight));
+    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ",
+                              driver->newTypeface("Apple SD Gothic Neo", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㅊ, ㅋ, ㅌ, ㅍ, ㅎ",
+                              driver->newTypeface("Apple SD Gothic Neo", 32, VROFontStyle::Normal, VROFontWeight::Heavy));
+    _textSamples.emplace_back(L"あ い う え お か き く け こ さ し す せ そ が ぎ ぐ げ ご ぱ ぴ ぷ ぺ ぽ",
+                              driver->newTypeface("Heiti TC", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"अ आ इ ई उ ऊ ए ऐ ओ औ अं अः क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ",
+                              driver->newTypeface("Devanagari Sangam MN", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(L"ان عدة الشهور عند الله اثنا عشر شهرا في كتاب الله يوم خلق السماوات والارض",
+                              driver->newTypeface("Geeza Pro", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(englishText,
+                              driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::Regular));
+    _textSamples.emplace_back(englishText,
+                              driver->newTypeface("", 32, VROFontStyle::Italic, VROFontWeight::Regular));
+    _textSamples.emplace_back(englishText,
+                              driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::ExtraBlack));
+     */
+    
+    std::shared_ptr<VROTypeface> system  = driver->newTypeface("", 32, VROFontStyle::Normal, VROFontWeight::Bold);
+    std::shared_ptr<VROTypeface> chinese = driver->newTypeface("PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Bold);
+    std::vector<std::shared_ptr<VROTypeface>> mixed = { system, chinese };
+    
+    //_textSamples.emplace_back(L"This is an example of text that is not mixed at all", system);
+    //_textSamples.emplace_back(L"This is an example of mixed text 他们赋 有理性和良心 that changes between 而自由 (Chinese) and English using two typefaces. 的精神互相对!!!", mixed);
+    _textSamples.emplace_back(L"Variation sequence test: 葛 (U+845B) may also be represented as 󠄀葛 (U+845B; VS17/U+E0100)", mixed);
+    
 #elif VRO_PLATFORM_ANDROID
     _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("NotoSansCJK", 32, VROFontStyle::Normal, VROFontWeight::Regular));
     _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。", driver->newTypeface("NotoSansCJK", 32, VROFontStyle::Normal, VROFontWeight::Bold));
@@ -51,6 +73,14 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     _textSamples.emplace_back(englishText, driver->newTypeface("Roboto", 32, VROFontStyle::Normal, VROFontWeight::Regular));
     _textSamples.emplace_back(englishText, driver->newTypeface("Roboto", 32, VROFontStyle::Italic, VROFontWeight::Regular));
     _textSamples.emplace_back(englishText, driver->newTypeface("Roboto", 32, VROFontStyle::Normal, VROFontWeight::ExtraBlack));
+
+    std::shared_ptr<VROTypeface> system  = driver->newTypeface("Roboto", 32, VROFontStyle::Normal, VROFontWeight::Bold);
+    std::shared_ptr<VROTypeface> chinese = driver->newTypeface("NotoSansCJK", 32, VROFontStyle::Normal, VROFontWeight::Bold);
+    std::vector<std::shared_ptr<VROTypeface>> mixed = { system, chinese };
+
+    _textSamples.emplace_back(L"This is an example of text that is not mixed at all", system);
+    _textSamples.emplace_back(L"This is an example of mixed text 他们赋 有理性和良心 that changes between 而自由 (Chinese) and English using two typefaces. 的精神互相对!!!", mixed);
+    _textSamples.emplace_back(L"Variation sequence test: 葛 (U+845B) may also be represented as 󠄀葛 (U+845B; VS17/U+E0100)", mixed);
 #endif
 
     _sceneController = std::make_shared<VROSceneController>();
@@ -90,14 +120,14 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     surfaceNode->setGeometry(surface);
     surfaceNode->setPosition({0, -10, -10.01});
     
-    rootNode->addChildNode(surfaceNode);
+    //rootNode->addChildNode(surfaceNode);
     free (fileData);
     
     /*
      Actual text.
      */
     _textNode = std::make_shared<VRONode>();
-    _textNode->setPosition({0, 0, -5});
+    _textNode->setPosition({0, 0, -6});
     rootNode->addChildNode(_textNode);
     rotateText();
     
@@ -110,10 +140,11 @@ void VROTextTest::rotateText() {
     int width = 5;
     int height = 5;
     std::wstring &string = _textSamples[_textIndex].sample;
-    std::shared_ptr<VROTypeface> typeface = _textSamples[_textIndex].typeface;
+    std::shared_ptr<VROTypefaceCollection> typefaceCollection = std::make_shared<VROTypefaceCollection>(_textSamples[_textIndex].typefaces);
+
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
-    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 1.0, 1.0, 1.0}, width, height,
+    std::shared_ptr<VROText> text = VROText::createText(string, typefaceCollection, {1.0, 1.0, 1.0, 1.0}, width, height,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
                                                         linebreakMode, clipMode);
     _textNode->setGeometry(text);

@@ -95,7 +95,9 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
     }
     
     FT_Set_Pixel_Sizes(_face, 0, size);
-    CFRelease(font);
+    computeCoverage(_face);
+
+    CFRelease(font);    
 }
 
 CTFontRef VROTypefaceiOS::createFont(NSString *family, int size, VROFontStyle style, VROFontWeight weight) {
@@ -125,9 +127,10 @@ CTFontRef VROTypefaceiOS::createFont(NSString *family, int size, VROFontStyle st
     return font;
 }
 
-std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forRendering) {
+std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(uint32_t charCode, uint32_t variantSelector,
+                                                    bool forRendering) {
     std::shared_ptr<VROGlyph> glyph = std::make_shared<VROGlyphOpenGL>();
-    glyph->load(_face, charCode, forRendering, _driver.lock());
+    glyph->load(_face, charCode, variantSelector, forRendering, _driver.lock());
     
     return glyph;
 }

@@ -30,12 +30,14 @@ public:
     }
     
     /*
-     If forRendering is false, then the texture and all bitmap
-     fields will not be loaded, and only getAdvance() will be
-     available.
+     If forRendering is false, then the texture and all bitmap fields will
+     not be loaded, and only getAdvance() will be available.
+     
+     If the variant selector is 0, then we assume this is not a variation
+     sequence.
      */
-    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering,
-                      std::shared_ptr<VRODriver> driver) = 0;
+    virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                      bool forRendering, std::shared_ptr<VRODriver> driver) = 0;
     
     std::shared_ptr<VROTexture> getTexture() const {
         return _texture;

@@ -54,11 +54,13 @@ void VROTypefaceAndroid::loadFace(std::string name, int size) {
         }
     }
     FT_Set_Pixel_Sizes(_face, 0, size);
+    computeCoverage(_face);
 }
 
-std::shared_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(FT_ULong charCode, bool forRendering) {
+std::shared_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(uint32_t charCode, uint32_t variantSelector,
+                                                        bool forRendering) {
     std::shared_ptr<VROGlyph> glyph = std::make_shared<VROGlyphOpenGL>();
-    glyph->load(_face, charCode, forRendering, _driver.lock());
+    glyph->load(_face, charCode, variantSelector, forRendering, _driver.lock());
 
     return glyph;
 }

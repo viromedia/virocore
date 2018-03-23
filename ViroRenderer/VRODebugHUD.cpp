@@ -15,6 +15,7 @@
 #include "VROTypeface.h"
 #include "VROStringUtil.h"
 #include "VRORenderMetadata.h"
+#include "VROTypefaceCollection.h"
 
 // Frames between FPS text refresh
 static const int kFPSRefreshRate = 60;
@@ -50,8 +51,9 @@ void VRODebugHUD::prepare(const VRORenderContext &context) {
         return;
     }
     if (context.getFrame() % kFPSRefreshRate == 0 || !_text) {
+        std::shared_ptr<VROTypefaceCollection> typefaces = std::make_shared<VROTypefaceCollection>(_typeface);
         _text = VROText::createSingleLineText(VROStringUtil::toWString(context.getFPS(), 2),
-                                              _typeface,
+                                              typefaces,
                                               { 0.6, 1.0, 0.6, 1.0 });
         _node->setGeometry(_text);
     }

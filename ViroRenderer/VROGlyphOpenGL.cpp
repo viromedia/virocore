@@ -21,16 +21,32 @@ VROGlyphOpenGL::~VROGlyphOpenGL() {
     
 }
 
-bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode, bool forRendering,
-                          std::shared_ptr<VRODriver> driver) {
+bool VROGlyphOpenGL::load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                          bool forRendering, std::shared_ptr<VRODriver> driver) {
     /*
      Load the glyph from freetype.
      */
-    if (FT_Load_Char(face, charCode, FT_LOAD_DEFAULT)) {
-        pinfo("Failed to load glyph %lu", charCode);
+    if (variantSelector != 0) {
+        FT_UInt glyphIndex = FT_Face_GetCharVariantIndex(face, charCode, variantSelector);
+        if (glyphIndex == 0) {
+            // Undefined character code, just attempt to load without the selector
+            if (FT_Load_Char(face, charCode, FT_LOAD_DEFAULT)) {
+                pinfo("Failed to load glyph %d (dropped variant selector %d)", charCode, variantSelector);
+                return false;
+            }
+        }
+        else {
+            if (FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT)) {
+                pinfo("Failed to load glyph %d with variant selector %d", charCode, variantSelector);
+                return false;
+            }
+        }
+    }
+    else if (FT_Load_Char(face, charCode, FT_LOAD_DEFAULT)) {
+        pinfo("Failed to load glyph %d", charCode);
         return false;
     }
- 
+    
     FT_GlyphSlot &glyph = face->glyph;
     
     /*

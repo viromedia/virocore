@@ -137,6 +137,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROCompress.cpp
              ${VIRO_RENDERER_SRC}/VRORenderUtil.cpp
              ${VIRO_RENDERER_SRC}/VROTaskQueue.cpp
+             ${VIRO_RENDERER_SRC}/VROSparseBitSet.cpp
              ${VIRO_RENDERER_SRC}/Nodes.pb.cc
 
              # Renderer
@@ -241,6 +242,9 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROReticle.cpp
              ${VIRO_RENDERER_SRC}/VROText.cpp
              ${VIRO_RENDERER_SRC}/VROTypeface.cpp
+             ${VIRO_RENDERER_SRC}/VROTypefaceCollection.cpp
+             ${VIRO_RENDERER_SRC}/VROFontUtil.cpp
+             ${VIRO_RENDERER_SRC}/VROCharmapCoverage.cpp
              ${VIRO_RENDERER_SRC}/VROKnuthPlassFormatter.cpp
              ${VIRO_RENDERER_SRC}/VRODebugHUD.cpp
 
