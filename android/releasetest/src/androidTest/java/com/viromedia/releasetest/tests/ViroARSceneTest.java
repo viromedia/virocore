@@ -57,7 +57,7 @@ public class ViroARSceneTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(mBoxNode);
 
         mTestText = new Text(mViroView.getViroContext(),
-                "No input yet.", "Roboto", 12, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "No input yet.", "Roboto", 12,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 
@@ -145,7 +145,7 @@ public class ViroARSceneTest extends ViroBaseTest {
     private void testPointCloudUpdateCallback() {
 
         final Text pointCloudText = new Text(mViroView.getViroContext(),
-                "Waiting for cloud updates.", "Roboto", 12, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Waiting for cloud updates.", "Roboto", 12,
                 Color.WHITE, 4f, 4f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 

@@ -57,7 +57,7 @@ public class ViroARNodeTest extends ViroBaseTest {
         //mScene.getRootNode().addChildNode(mBoxNode);
 
         mTestText = new Text(mViroView.getViroContext(),
-                "No input yet.", "Roboto", 12, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "No input yet.", "Roboto", 12,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 
@@ -81,7 +81,7 @@ public class ViroARNodeTest extends ViroBaseTest {
             public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
                 if(mAnchorFoundTestStarted) {
                     Text text  = new Text(mViroView.getViroContext(),
-                            "Text attached to ARNODE!", "Roboto", 12, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                            "Text attached to ARNODE!", "Roboto", 12,
                             Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                             Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
                     Node textNode = new Node();

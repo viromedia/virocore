@@ -296,6 +296,48 @@ public class Text extends Geometry {
      * The maxLines parameter, if set, caps the number of lines; when zero, there is no
      * limit to the number of lines generated.
      *
+     * @deprecated Use the {@link TextBuilder} instead, which also allows you to specify font
+     * style and weight.
+     *
+     * @param viroContext         The ViroContext is required to render Text.
+     * @param text                The text string to display.
+     * @param fontFamilyName      The name of the font's family name (e.g. 'Roboto' or
+     *                            'Roboto-Italic').
+     * @param size                The point size of the font.
+     * @param color               The color of the text.
+     * @param width               The width of the bounds within which to display the text.
+     * @param height              The height of the bounds within which to display the text.
+     * @param horizontalAlignment The horizontal alignment of the text.
+     * @param verticalAlignment   The vertical alignment of the text.
+     * @param lineBreakMode       The line-break mode to use when the text breaches the maximum
+     *                            width of the bounds.
+     * @param clipMode            The clipping mode, which determines behavior when the text
+     *                            breaches the maximum width of the bounds (when word-wrapping is
+     *                            disabled), and the behavior when the text breaches the maximum
+     *                            height of the bounds.
+     * @param maxLines            If non-zero, will cap the number of lines. If set to zero, there
+     *                            is no limit to the number of lines generated.
+     */
+    public Text(ViroContext viroContext, String text, String fontFamilyName,
+                int size, long color, float width, float height,
+                HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
+                LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
+
+        this(viroContext, text, fontFamilyName, size, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, color,
+                width, height, horizontalAlignment, verticalAlignment, lineBreakMode, clipMode,
+                maxLines);
+    }
+
+    /**
+     * Create a new fully specified Text. The the given string will be displayed given typeface,
+     * constrained to the bounds defined by the provided width and height, and aligned
+     * according to the given alignment parameters and linebreak mode.
+     * <p>
+     * The clip mode determines whether the text is clipped to the given bounds.
+     * <p>
+     * The maxLines parameter, if set, caps the number of lines; when zero, there is no
+     * limit to the number of lines generated.
+     *
      * @param viroContext         The ViroContext is required to render Text.
      * @param text                The text string to display.
      * @param fontFamilyName      The name of the font's family name (e.g. 'Roboto' or
@@ -317,7 +359,7 @@ public class Text extends Geometry {
      * @param maxLines            If non-zero, will cap the number of lines. If set to zero, there
      *                            is no limit to the number of lines generated.
      */
-    public Text(ViroContext viroContext, String text, String fontFamilyName,
+    private Text(ViroContext viroContext, String text, String fontFamilyName,
                 int size, FontStyle fontStyle, FontWeight fontWeight, long color, float width, float height,
                 HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {

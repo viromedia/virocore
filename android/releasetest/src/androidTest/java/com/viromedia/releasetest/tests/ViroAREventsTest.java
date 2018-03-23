@@ -63,7 +63,7 @@ public class ViroAREventsTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(objectNode);
         mScene.getRootNode().addChildNode(sphereNode);
         eventText = new Text(mViroView.getViroContext(),
-                "Event not registered.", "Roboto", 12, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Event not registered.", "Roboto", 12,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 

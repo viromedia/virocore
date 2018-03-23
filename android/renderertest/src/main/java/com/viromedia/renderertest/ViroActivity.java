@@ -387,7 +387,7 @@ public class ViroActivity extends AppCompatActivity {
         final Node node = new Node();
         // Create text
         final Text text = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular, Color.WHITE, 1f,
+                "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
                 1f, Text.HorizontalAlignment.LEFT, Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         final float[] position = {0, -0.5f, -0.5f};
         node.setPosition(new Vector(position));
@@ -553,7 +553,7 @@ public class ViroActivity extends AppCompatActivity {
         final Node node2 = new Node();
 
         final Node node3 = new Node();
-        final Text textJni = new Text(mViroView.getViroContext(), "Test text 1 2 3", "Roboto", 24, Text.FontStyle.Normal, Text.FontWeight.Regular,
+        final Text textJni = new Text(mViroView.getViroContext(), "Test text 1 2 3", "Roboto", 24,
                 Color.WHITE, 10, 4, Text.HorizontalAlignment.CENTER, Text.VerticalAlignment.CENTER, Text.LineBreakMode.NONE,
                 Text.ClipMode.CLIP_TO_BOUNDS, 1);
 

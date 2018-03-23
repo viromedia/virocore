@@ -134,7 +134,7 @@ public abstract class ViroBaseTest {
         // Add class name
         mTestClassNameNode = new Node();
         final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
-                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         final float[] classNamePosition = {0f, 3f, -3.3f};
         mTestClassNameNode.setPosition(new Vector(classNamePosition));
@@ -145,7 +145,7 @@ public abstract class ViroBaseTest {
         mTestMethodNameNode = new Node();
         final Text testMethodNameText = new Text(mViroView.getViroContext(),
                 Thread.currentThread().getStackTrace()[1].getMethodName(),
-                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         final float[] methodNamePosition = {0f, 2.5f, -3.3f};
         mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
@@ -155,7 +155,7 @@ public abstract class ViroBaseTest {
         // Add expected message card
         mExpectedMessageNode = new Node();
         final Text instructionCardText = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Test Text Here", "Roboto", 25,
                 Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         final float[] position = {0f, 2f, -3.3f};

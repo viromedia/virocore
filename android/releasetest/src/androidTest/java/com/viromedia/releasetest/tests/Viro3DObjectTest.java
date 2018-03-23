@@ -129,7 +129,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage5_testLoadModelFBXError() {
         Node node = new Node();
         final Text text = new Text(mViroView.getViroContext(), "Awaiting fbx load.....",
-                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Roboto", 25,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
 
@@ -158,7 +158,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage5_testLoadModelError() {
         Node node = new Node();
         final Text text = new Text(mViroView.getViroContext(), "Awaiting obj load.....",
-                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Roboto", 25,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
 
@@ -188,7 +188,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage6_testLoadModelOBJMaterials() {
         Node mTextNode1 = new Node();
         Text text1 = new Text(mViroView.getViroContext(), "Toggle BLoom",
-                "Roboto", 15, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Roboto", 15,
                 Color.WHITE, 5f, 5f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.BOTTOM, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 50);
         mTextNode1.setGeometry(text1);
@@ -196,7 +196,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         Node mTextNode2 = new Node();
         Text text2 = new Text(mViroView.getViroContext(), "Toggle BLoom",
-                "Roboto", 15, Text.FontStyle.Normal, Text.FontWeight.Regular,
+                "Roboto", 15,
                 Color.WHITE, 5f, 5f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.BOTTOM, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 50);
         mTextNode2.setGeometry(text2);

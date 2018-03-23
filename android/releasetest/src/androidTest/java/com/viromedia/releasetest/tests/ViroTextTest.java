@@ -39,7 +39,7 @@ public class ViroTextTest extends ViroBaseTest {
         mScene.getRootNode().addLight(ambientLight);
 
         mText = new Text(mViroView.getViroContext(), TEST_STRING,
-                "Roboto", 25, Text.FontStyle.Normal, Text.FontWeight.Regular, Color.WHITE,
+                "Roboto", 25, Color.WHITE,
                 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         mTextNode = new Node();

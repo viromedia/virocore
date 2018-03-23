@@ -37,7 +37,6 @@ public class ViroSoundTest extends ViroBaseTest {
     @Override
     void configureTestScene() {
         mDelegateText = new Text(mViroView.getViroContext(), "Delegate text", "Roboto", 25,
-                Text.FontStyle.Normal, Text.FontWeight.Regular,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         final Node textNode = new Node();
