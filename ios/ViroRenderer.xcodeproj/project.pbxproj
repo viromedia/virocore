@@ -323,7 +323,8 @@
 		8F8751902062C86E002D9BF8 /* VROJenkinsHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F87517E20629F45002D9BF8 /* VROJenkinsHash.cpp */; };
 		8F87549920630241002D9BF8 /* ucdn.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F87549620630235002D9BF8 /* ucdn.c */; };
 		8F8754BA20632DF7002D9BF8 /* VROTypefaceCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */; };
-		8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */; };
+		8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F8755372064B353002D9BF8 /* VROSparseBitSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F87517B206298C2002D9BF8 /* VROSparseBitSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */; };
 		8F9209151F3CAF72003305C8 /* VROImageShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */; };
 		8F9209191F3CCF9D003305C8 /* VROImagePostProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */; };
@@ -2921,6 +2922,7 @@
 				8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */,
 				8FEACEE0201260C80082D18B /* VROPBRTexturedTest.h in Headers */,
 				8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */,
+				8F8755372064B353002D9BF8 /* VROSparseBitSet.h in Headers */,
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
 				8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */,
 				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
