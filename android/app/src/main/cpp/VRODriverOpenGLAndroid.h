@@ -119,14 +119,45 @@ protected:
                 pabort("Could not initialize freetype library");
             }
         }
+
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
 
         std::vector<std::shared_ptr<VROTypeface>> typefaces;
         std::vector<std::string> typefaceNamesSplit = VROStringUtil::split(typefaceNames, ",", true);
+
         for (std::string typefaceName : typefaceNamesSplit) {
-            std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(VROStringUtil::trim(typefaceName), size, style, weight, driver);
-            typeface->loadFace();
-            typefaces.push_back(typeface);
+            typefaceName = VROStringUtil::trim(typefaceName);
+
+            std::pair<std::string, int> fileAndIndex = VROPlatformFindFont(typefaceName, style == VROFontStyle::Italic, (int) weight);
+            std::string file = fileAndIndex.first;
+            int index = fileAndIndex.second;
+
+            // If we encounter a TTC file, load all the files in the collection
+            if (VROStringUtil::endsWith(file, "ttc")) {
+                // We have to load the first face in order to derive how many faces there are total
+                std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(
+                        typefaceName, file, 0, size, style, weight, driver);
+                typeface->loadFace();
+                typefaces.push_back(typeface);
+
+                int numFaces = std::dynamic_pointer_cast<VROTypefaceAndroid>(typeface)->getNumFaces();
+                pinfo("Loaded typeface %s from font collection, total %d faces", typefaceName.c_str(), numFaces);
+
+                for (int i = 1; i < numFaces; i++) {
+                    std::shared_ptr<VROTypeface> ttcTypeface = std::make_shared<VROTypefaceAndroid>(
+                            typefaceName, file, i, size, style, weight, driver);
+                    ttcTypeface->loadFace();
+                    typefaces.push_back(ttcTypeface);
+                }
+
+            }
+            // Otherwise just load the font we received
+            else {
+                std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(
+                        typefaceName, file, index, size, style, weight, driver);
+                typeface->loadFace();
+                typefaces.push_back(typeface);
+            }
         }
 
         return std::make_shared<VROTypefaceCollection>(typefaces);

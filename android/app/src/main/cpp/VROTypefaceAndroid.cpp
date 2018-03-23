@@ -13,11 +13,14 @@
 
 static const std::string kSystemFont = "Roboto-Regular";
 
-VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size, VROFontStyle style,
-                                       VROFontWeight weight, std::shared_ptr<VRODriver> driver) :
+VROTypefaceAndroid::VROTypefaceAndroid(std::string name, std::string file, int index, int size,
+                                       VROFontStyle style, VROFontWeight weight, std::shared_ptr<VRODriver> driver) :
     VROTypeface(name, size, style, weight),
     _driver(driver),
-    _face(nullptr) {
+    _face(nullptr),
+    _file(file),
+    _index(index),
+    _numFaces(1) {
 
 }
 
@@ -33,11 +36,9 @@ void VROTypefaceAndroid::loadFace(std::string name, int size) {
         return;
     }
     FT_Library ft = std::dynamic_pointer_cast<VRODriverOpenGLAndroid>(driver)->getFreetype();
-    pinfo("Loading font face [%s]", name.c_str());
+    pinfo("Loading font face [name: %s, index: %d]", name.c_str(), _index);
 
-    std::pair<std::string, int> fileAndIndex = VROPlatformFindFont(name, getStyle() == VROFontStyle::Italic,
-                                                                   (int) getWeight());
-    if (fileAndIndex.second == -1) {
+    if (_index == -1) {
         pinfo("Failed to find suitable face matching [%s], defaulting to system font", name.c_str());
         if (FT_New_Face(ft, getFontPath(kSystemFont, "ttf").c_str(), 0, &_face)) {
             pabort("Failed to load system font %s", kSystemFont.c_str());
@@ -46,7 +47,7 @@ void VROTypefaceAndroid::loadFace(std::string name, int size) {
     else {
         //pinfo("Found path %s and index %d for desired typeface %s with style %d and weight %d",
         //        fileAndIndex.first.c_str(), fileAndIndex.second, name.c_str(), (int) getStyle(), (int) getWeight());
-        if (FT_New_Face(ft, fileAndIndex.first.c_str(), fileAndIndex.second, &_face)) {
+        if (FT_New_Face(ft, _file.c_str(), _index, &_face)) {
             pinfo("Failed to load font face [%s], defaulting to system font", name.c_str());
             if (FT_New_Face(ft, getFontPath(kSystemFont, "ttf").c_str(), 0, &_face)) {
                 pabort("Failed to load system font %s", kSystemFont.c_str());
@@ -54,6 +55,8 @@ void VROTypefaceAndroid::loadFace(std::string name, int size) {
         }
     }
     FT_Set_Pixel_Sizes(_face, 0, size);
+    _numFaces = _face->num_faces;
+
     computeCoverage(_face);
 }
 
