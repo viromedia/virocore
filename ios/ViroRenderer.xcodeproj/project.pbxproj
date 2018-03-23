@@ -1233,6 +1233,7 @@
 		8F87549720630235002D9BF8 /* ucdn_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ucdn_db.h; path = ucdn/ucdn_db.h; sourceTree = "<group>"; };
 		8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTypefaceCollection.cpp; sourceTree = "<group>"; };
 		8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTypefaceCollection.h; sourceTree = "<group>"; };
+		8F87553520646267002D9BF8 /* harfbuzz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = harfbuzz.a; path = Libraries/harfbuzz/armv7_arm64/harfbuzz.a; sourceTree = "<group>"; };
 		8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROImageShaderProgram.cpp; sourceTree = "<group>"; };
 		8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImageShaderProgram.h; sourceTree = "<group>"; };
 		8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImagePostProcess.h; sourceTree = "<group>"; };
@@ -2808,6 +2809,7 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F87553520646267002D9BF8 /* harfbuzz.a */,
 				8F951F9220583790000DC58F /* libfreetype.a */,
 				8FFA8A222057903700C4D99B /* libbz2.tbd */,
 				8AF39AB51F2295F700229AC0 /* Photos.framework */,
@@ -4011,6 +4013,7 @@
 					"$(SRCROOT)/Libraries/freetype/include",
 					"$(SRCROOT)/Libraries/protobuf/include",
 					"$(SRCROOT)/Libraries/bullet/include",
+					"$(SRCROOT)/Libraries/harfbuzz/include",
 					"$(SRCROOT)/../ViroRenderer/",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -4061,6 +4064,7 @@
 					"$(SRCROOT)/Libraries/freetype/include",
 					"$(SRCROOT)/Libraries/protobuf/include",
 					"$(SRCROOT)/Libraries/bullet/include",
+					"$(SRCROOT)/Libraries/harfbuzz/include",
 					"$(SRCROOT)/../ViroRenderer/",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -4271,6 +4275,15 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/opencv",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4289,14 +4302,71 @@
 					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
 					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
 					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
 				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
 					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
 					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
 				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-iquote",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/AWSCore/AWSCore.framework/Headers\"",
+					"-iquote",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/AWSDynamoDB/AWSDynamoDB.framework/Headers\"",
+					"-iquote",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GTMSessionFetcher/GTMSessionFetcher.framework/Headers\"",
+					"-iquote",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GoogleToolboxForMac/GoogleToolboxForMac.framework/Headers\"",
+					"-isystem",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"-isystem",
+					"\"${PODS_ROOT}/Headers/Public/GVRAudioSDK\"",
+					"-isystem",
+					"\"${PODS_ROOT}/Headers/Public/GVRSDK\"",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"GVRAudioSDK\"",
+					"-l\"GVRSDK\"",
+					"-l\"c++\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"AWSCore\"",
+					"-framework",
+					"\"AWSDynamoDB\"",
+					"-framework",
+					"\"AudioToolbox\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"CoreVideo\"",
+					"-framework",
+					"\"GLKit\"",
+					"-framework",
+					"\"GTMSessionFetcher\"",
+					"-framework",
+					"\"GoogleToolboxForMac\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"OpenGLES\"",
+					"-framework",
+					"\"QuartzCore\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -4321,6 +4391,15 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/opencv",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4333,18 +4412,61 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
 				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
 					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
 					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
 				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
 					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
 					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"GVRAudioSDK\"",
+					"-l\"GVRSDK\"",
+					"-l\"c++\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"AWSCore\"",
+					"-framework",
+					"\"AWSDynamoDB\"",
+					"-framework",
+					"\"AudioToolbox\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"CoreVideo\"",
+					"-framework",
+					"\"GLKit\"",
+					"-framework",
+					"\"GTMSessionFetcher\"",
+					"-framework",
+					"\"GoogleToolboxForMac\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"OpenGLES\"",
+					"-framework",
+					"\"QuartzCore\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
