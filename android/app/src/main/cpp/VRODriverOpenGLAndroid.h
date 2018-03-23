@@ -17,6 +17,8 @@
 #include "VROTypefaceAndroid.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROPlatformUtil.h"
+#include "VROStringUtil.h"
+#include "VROTypefaceCollection.h"
 
 class VRODriverOpenGLAndroid : public VRODriverOpenGL {
 
@@ -110,18 +112,24 @@ public:
 
 protected:
 
-    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size, VROFontStyle style,
-                                                VROFontWeight weight) {
+    std::shared_ptr<VROTypefaceCollection> createTypefaceCollection(std::string typefaceNames, int size, VROFontStyle style,
+                                                                    VROFontWeight weight) {
         if (_ft == nullptr) {
             if (FT_Init_FreeType(&_ft)) {
                 pabort("Could not initialize freetype library");
             }
         }
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size, style,
-                                                                                     weight, driver);
-        typeface->loadFace();
-        return typeface;
+
+        std::vector<std::shared_ptr<VROTypeface>> typefaces;
+        std::vector<std::string> typefaceNamesSplit = VROStringUtil::split(typefaceNames, ",", true);
+        for (std::string typefaceName : typefaceNamesSplit) {
+            std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(VROStringUtil::trim(typefaceName), size, style, weight, driver);
+            typeface->loadFace();
+            typefaces.push_back(typeface);
+        }
+
+        return std::make_shared<VROTypefaceCollection>(typefaces);
     }
 
 private:

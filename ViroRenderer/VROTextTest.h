@@ -10,6 +10,7 @@
 #define VROTextTest_h
 
 #include "VRORendererTest.h"
+#include "VROTypefaceCollection.h"
 
 class VROTextTest;
 
@@ -25,9 +26,8 @@ private:
 class VROTextSample {
 public:
     std::wstring sample;
-    std::vector<std::shared_ptr<VROTypeface>> typefaces;
-    VROTextSample(std::wstring sample, std::shared_ptr<VROTypeface> typeface) : sample(sample), typefaces({ typeface }) {}
-    VROTextSample(std::wstring sample, std::vector<std::shared_ptr<VROTypeface>> typefaces) : sample(sample), typefaces(typefaces) {}
+    std::shared_ptr<VROTypefaceCollection> typefaces;
+    VROTextSample(std::wstring sample, std::shared_ptr<VROTypefaceCollection> typefaces) : sample(sample), typefaces(typefaces) {}
     ~VROTextSample() {}
 };
 

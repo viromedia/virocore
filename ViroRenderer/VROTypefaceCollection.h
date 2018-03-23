@@ -54,6 +54,11 @@ public:
      */
     std::vector<VROFontRun> computeRuns(std::wstring text);
     
+    /*
+     Get all the typefaces in this collection.
+     */
+    const std::vector<std::shared_ptr<VROTypeface>> &getTypefaces() { return _typefaces; }
+    
 private:
     
     /*

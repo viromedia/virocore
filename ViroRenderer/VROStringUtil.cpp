@@ -14,6 +14,8 @@
 #include <stdexcept>
 #include <regex>
 #include <iomanip>
+#include <cctype>
+#include <locale>
 #include "VRODefines.h"
 #include "VROLog.h"
 
@@ -260,5 +262,31 @@ void VROStringUtil::printCode(std::string &code) {
         ++lineNumber;
         pinfo("%d: %s", lineNumber, line.c_str());
     }
+}
+
+// trim from start (in place)
+static void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+// trim from end (in place)
+static void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+// trim from both ends (in place)
+static void trim_inplace(std::string &s) {
+    ltrim(s);
+    rtrim(s);
+}
+
+// trim from both ends (copying)
+std::string VROStringUtil::trim(std::string s) {
+    trim_inplace(s);
+    return s;
 }
 

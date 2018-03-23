@@ -14,9 +14,11 @@
 #include "VROAudioPlayeriOS.h"
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROTypefaceiOS.h"
+#include "VROTypefaceCollection.h"
 #include "VRODisplayOpenGLiOS.h"
 #include "VROPlatformUtil.h"
 #include "VROGVRUtil.h"
+#include "VROStringUtil.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
@@ -129,17 +131,23 @@ protected:
     std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
     FT_Library _ft;
     
-    std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size, VROFontStyle style, VROFontWeight weight) {
+    std::shared_ptr<VROTypefaceCollection> createTypefaceCollection(std::string typefaceNames, int size, VROFontStyle style, VROFontWeight weight) {
         if (_ft == nullptr) {
             if (FT_Init_FreeType(&_ft)) {
                 pabort("Could not initialize freetype library");
             }
         }
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size, style, weight, driver);
         
-        typeface->loadFace();
-        return typeface;
+        std::vector<std::shared_ptr<VROTypeface>> typefaces;
+        std::vector<std::string> typefaceNamesSplit = VROStringUtil::split(typefaceNames, ",", true);
+        for (std::string typefaceName : typefaceNamesSplit) {
+            std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(VROStringUtil::trim(typefaceName), size, style, weight, driver);
+            typeface->loadFace();
+            typefaces.push_back(typeface);
+        }
+        
+        return std::make_shared<VROTypefaceCollection>(typefaces);
     }
     
 };

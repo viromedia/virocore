@@ -15,7 +15,7 @@ class VRONode;
 class VRORenderContext;
 class VRODriver;
 class VROText;
-class VROTypeface;
+class VROTypefaceCollection;
 enum class VROEyeType;
 
 class VRODebugHUD {
@@ -44,7 +44,7 @@ public:
 private:
     
     bool _enabled;
-    std::shared_ptr<VROTypeface> _typeface;
+    std::shared_ptr<VROTypefaceCollection> _typefaceCollection;
     std::shared_ptr<VROText> _text;
     std::shared_ptr<VRONode> _node;
     

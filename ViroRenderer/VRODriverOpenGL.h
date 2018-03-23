@@ -364,26 +364,26 @@ public:
         return _shaderFactory;
     }
 
-    std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size, VROFontStyle style,
-                                             VROFontWeight weight) {
-        std::string key = typefaceName + "_" + VROStringUtil::toString(size) + "_" +
-                                               VROStringUtil::toString((int) style) + "_" +
-                                               VROStringUtil::toString((int) weight);
+    std::shared_ptr<VROTypefaceCollection> newTypefaceCollection(std::string typefaces, int size, VROFontStyle style,
+                                                                 VROFontWeight weight) {
+        std::string key = typefaces + "_" + VROStringUtil::toString(size) + "_" +
+                                            VROStringUtil::toString((int) style) + "_" +
+                                            VROStringUtil::toString((int) weight);
         auto it = _typefaces.find(key);
         if (it == _typefaces.end()) {
-            std::shared_ptr<VROTypeface> typeface = createTypeface(typefaceName, size, style, weight);
-            _typefaces[key] = typeface;
-            return typeface;
+            std::shared_ptr<VROTypefaceCollection> typefaceCollection = createTypefaceCollection(typefaces, size, style, weight);
+            _typefaces[key] = typefaceCollection;
+            return typefaceCollection;
         }
         else {
-            std::shared_ptr<VROTypeface> typeface = it->second.lock();
-            if (typeface) {
-                return typeface;
+            std::shared_ptr<VROTypefaceCollection> typefaceCollection = it->second.lock();
+            if (typefaceCollection) {
+                return typefaceCollection;
             }
             else {
-                typeface = createTypeface(typefaceName, size, style, weight);
-                _typefaces[key] = typeface;
-                return typeface;
+                typefaceCollection = createTypefaceCollection(typefaces, size, style, weight);
+                _typefaces[key] = typefaceCollection;
+                return typefaceCollection;
             }
         }
     }
@@ -396,10 +396,11 @@ protected:
     std::shared_ptr<VRORenderTarget> _display;
 
     /*
-     Create the typeface with the given name, size, style, and weight.
+     Create a typeface collection out of the given comma-separated typeface names. Each typeface will have
+     the given size, style, and weight.
      */
-    virtual std::shared_ptr<VROTypeface> createTypeface(std::string typefaceName, int size, VROFontStyle style,
-                                                        VROFontWeight weight) = 0;
+    virtual std::shared_ptr<VROTypefaceCollection> createTypefaceCollection(std::string typefaces, int size, VROFontStyle style,
+                                                                            VROFontWeight weight) = 0;
 
 private:
 
@@ -433,9 +434,9 @@ private:
     std::shared_ptr<VROShaderProgram> _boundShader;
 
     /*
-     Caches typefaces.
+     Caches typeface collections.
      */
-    std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
+    std::map<std::string, std::weak_ptr<VROTypefaceCollection>> _typefaces;
 
     /*
      ID of the backbuffer.
