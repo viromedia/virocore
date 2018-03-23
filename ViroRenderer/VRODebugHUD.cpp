@@ -37,8 +37,10 @@ void VRODebugHUD::initRenderer(std::shared_ptr<VRODriver> driver) {
      because VROTypeface cannot load new glyphs in the midst of a render-cycle
      (loading glyphs modifies the OpenGL context).
      */
-    _typefaceCollection = driver->newTypefaceCollection("Helvetica", 26, VROFontStyle::Normal, VROFontWeight::Regular);
-    for (const std::shared_ptr<VROTypeface> &typeface : _typefaceCollection->getTypefaces()) {
+    _text = VROText::createSingleLineText(L"0.0",
+                                          "Helvetica", 26, VROFontStyle::Normal, VROFontWeight::Regular,
+                                          { 0.6, 1.0, 0.6, 1.0 }, driver);
+    for (const std::shared_ptr<VROTypeface> &typeface : _text->getTypefaceCollection()->getTypefaces()) {
         typeface->preloadGlyphs("0123456789.");
     }
     _node->setPosition({-.5, .5, -2.5});
@@ -52,9 +54,8 @@ void VRODebugHUD::prepare(const VRORenderContext &context) {
     if (!_enabled) {
         return;
     }
-    if (context.getFrame() % kFPSRefreshRate == 0 || !_text) {
-        _text = VROText::createSingleLineText(VROStringUtil::toWString(context.getFPS(), 2), _typefaceCollection,
-                                              { 0.6, 1.0, 0.6, 1.0 });
+    if (context.getFrame() % kFPSRefreshRate == 0) {
+        _text->setText(VROStringUtil::toWString(context.getFPS(), 2));
         _node->setGeometry(_text);
     }
 }

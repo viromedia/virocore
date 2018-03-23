@@ -41,16 +41,22 @@ VROTypefaceiOS::VROTypefaceiOS(std::string name, int size, VROFontStyle style, V
 }
 
 VROTypefaceiOS::~VROTypefaceiOS() {
-    if (_face != nullptr) {
-        FT_Done_Face(_face);
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver && _face != nullptr) {
+        // FT crashes if we delete a face after the freetype library has been deleted
+        if (std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getFreetype() != nullptr) {
+            FT_Done_Face(_face);
+        }
     }
 }
 
-void VROTypefaceiOS::loadFace(std::string name, int size) {
+FT_FaceRec_ *VROTypefaceiOS::loadFTFace() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (!driver) {
-        return;
+        return nullptr;
     }
+    
+    std::string name = getName();
 
     NSString *requestedFamily;
     if (!name.empty()) {
@@ -66,7 +72,7 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
     }
 
     // Try to create the requested font
-    CTFontRef font = createFont(requestedFamily, size, getStyle(), getWeight());
+    CTFontRef font = createFont(requestedFamily, getSize(), getStyle(), getWeight());
     
     NSString *realizedFamily = (__bridge NSString *) CTFontCopyFamilyName(font);
     pinfo("Realized font [name: %@, family: %@] for requested family [%@]",
@@ -80,7 +86,7 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
         NSLog(@"Realized family [%@] does not match requested family [%@], recreating with requested attributes",
               realizedFamily, requestedFamily);
         
-        CTFontRef newFont = createFont(realizedFamily, size, getStyle(), getWeight());
+        CTFontRef newFont = createFont(realizedFamily, getSize(), getStyle(), getWeight());
         CFRelease(font);
         font = newFont;
     }
@@ -94,10 +100,9 @@ void VROTypefaceiOS::loadFace(std::string name, int size) {
         pabort("Failed to load font");
     }
     
-    FT_Set_Pixel_Sizes(_face, 0, size);
-    computeCoverage(_face);
-
-    CFRelease(font);    
+    FT_Set_Pixel_Sizes(_face, 0, getSize());
+    CFRelease(font);
+    return _face;
 }
 
 CTFontRef VROTypefaceiOS::createFont(NSString *family, int size, VROFontStyle style, VROFontWeight weight) {

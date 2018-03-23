@@ -29,29 +29,39 @@ static const int kJustificationToleranceStart = 2;
 static const int kJustificationToleranceEnd = 4;
 
 std::shared_ptr<VROText> VROText::createText(std::wstring text,
-                                             std::shared_ptr<VROTypefaceCollection> typefaces,
+                                             std::string typefaceNames,
+                                             int fontSize, VROFontStyle fontStyle, VROFontWeight fontWeight,
                                              VROVector4f color, float width, float height,
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
-                                             VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) {
+                                             VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines,
+                                             std::shared_ptr<VRODriver> driver) {
     
-    std::shared_ptr<VROText> model = std::make_shared<VROText>(text, typefaces, color, width, height, horizontalAlignment,
-                                                               verticalAlignment, lineBreakMode, clipMode, maxLines);
+    std::shared_ptr<VROText> model = std::make_shared<VROText>(text, typefaceNames, fontSize, fontStyle, fontWeight,
+                                                               color, width, height, horizontalAlignment,
+                                                               verticalAlignment, lineBreakMode, clipMode, maxLines,
+                                                               driver);
     model->update();
     return model;
 }
 
 std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text,
-                                                       std::shared_ptr<VROTypefaceCollection> typefaces,
+                                                       std::string typefaceNames,
+                                                       int fontSize, VROFontStyle fontStyle, VROFontWeight fontWeight,
                                                        VROVector4f color,
-                                                       float width, VROTextHorizontalAlignment alignment, VROTextClipMode clipMode) {
-    return createText(text, typefaces, color, width, std::numeric_limits<float>::max(), alignment, VROTextVerticalAlignment::Center,
-                      VROLineBreakMode::None, clipMode);
+                                                       float width, VROTextHorizontalAlignment alignment, VROTextClipMode clipMode,
+                                                       std::shared_ptr<VRODriver> driver) {
+    return createText(text, typefaceNames, fontSize, fontStyle, fontWeight, color, width,
+                      std::numeric_limits<float>::max(), alignment, VROTextVerticalAlignment::Center,
+                      VROLineBreakMode::None, clipMode, 0, driver);
 }
 
-std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text, std::shared_ptr<VROTypefaceCollection> typefaces,
-                                                       VROVector4f color) {
-    return createSingleLineText(text, typefaces, color, std::numeric_limits<float>::max(), VROTextHorizontalAlignment::Center,
-                                VROTextClipMode::None);
+std::shared_ptr<VROText> VROText::createSingleLineText(std::wstring text,
+                                                       std::string typefaceNames,
+                                                       int fontSize, VROFontStyle fontStyle, VROFontWeight fontWeight,
+                                                       VROVector4f color, std::shared_ptr<VRODriver> driver) {
+    return createSingleLineText(text, typefaceNames, fontSize, fontStyle, fontWeight, color,
+                                std::numeric_limits<float>::max(), VROTextHorizontalAlignment::Center,
+                                VROTextClipMode::None, driver);
 }
 
 VROVector3f VROText::getTextSize(std::wstring text,
@@ -131,14 +141,19 @@ VROVector3f VROText::getTextSize(std::wstring text,
 }
 
 VROText::VROText(std::wstring text,
-                 std::shared_ptr<VROTypefaceCollection> typefaces,
+                 std::string typefaceNames,
+                 int fontSize, VROFontStyle fontStyle, VROFontWeight fontWeight,
                  VROVector4f color,
                  float width, float height,
                  VROTextHorizontalAlignment horizontalAlignment,
                  VROTextVerticalAlignment verticalAlignment,
-                 VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) :
+                 VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines,
+                 std::shared_ptr<VRODriver> driver) :
     _text(text),
-    _typefaces(typefaces),
+    _typefaceNames(typefaceNames),
+    _size(fontSize),
+    _fontStyle(fontStyle),
+    _fontWeight(fontWeight),
     _color(color),
     _width(width),
     _height(height),
@@ -146,17 +161,25 @@ VROText::VROText(std::wstring text,
     _verticalAlignment(verticalAlignment),
     _lineBreakMode(lineBreakMode),
     _clipMode(clipMode),
-    _maxLines(maxLines) {
+    _maxLines(maxLines),
+    _driver(driver) {
 
 }
 
 void VROText::update() {
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (!driver) {
+        return;
+    }
+
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     std::vector<std::shared_ptr<VROMaterial>> materials;
 
+    _typefaceCollection = driver->newTypefaceCollection(_typefaceNames, _size, _fontStyle, _fontWeight);
+
     float realizedWidth, realizedHeight;
-    buildText(_text, _typefaces, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
+    buildText(_text, _typefaceCollection, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
               _lineBreakMode, _clipMode, _maxLines, sources, elements, materials,
               &realizedWidth, &realizedHeight);
 
@@ -174,8 +197,11 @@ void VROText::setText(std::wstring text) {
     update();
 }
 
-void VROText::setTypefaceCollection(std::shared_ptr<VROTypefaceCollection> typefaces) {
-    _typefaces = typefaces;
+void VROText::setTypefaces(std::string typefaceNames, int size, VROFontStyle style, VROFontWeight weight) {
+    _typefaceNames = typefaceNames;
+    _size = size;
+    _fontStyle = style;
+    _fontWeight = weight;
     update();
 }
 

@@ -33,7 +33,7 @@ public:
 
 protected:
     
-    void loadFace(std::string name, int size);
+    FT_FaceRec_ *loadFTFace();
     
 private:
 

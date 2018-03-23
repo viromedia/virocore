@@ -44,7 +44,6 @@ public:
 private:
     
     bool _enabled;
-    std::shared_ptr<VROTypefaceCollection> _typefaceCollection;
     std::shared_ptr<VROText> _text;
     std::shared_ptr<VRONode> _node;
     

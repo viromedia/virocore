@@ -26,8 +26,18 @@ private:
 class VROTextSample {
 public:
     std::wstring sample;
-    std::shared_ptr<VROTypefaceCollection> typefaces;
-    VROTextSample(std::wstring sample, std::shared_ptr<VROTypefaceCollection> typefaces) : sample(sample), typefaces(typefaces) {}
+    std::string typefaceNames;
+    int fontSize;
+    VROFontStyle fontStyle;
+    VROFontWeight fontWeight;
+
+    VROTextSample(std::wstring sample, std::string typefaceNames, int fontSize,
+                  VROFontStyle fontStyle, VROFontWeight fontWeight) :
+            sample(sample),
+            typefaceNames(typefaceNames),
+            fontSize(fontSize),
+            fontStyle(fontStyle),
+            fontWeight(fontWeight) {}
     ~VROTextSample() {}
 };
 
@@ -52,6 +62,7 @@ public:
 private:
 
     int _textIndex;
+    std::shared_ptr<VRODriver> _driver;
     std::vector<VROTextSample> _textSamples;
     std::shared_ptr<VRONode> _textNode;
     std::shared_ptr<VRONode> _pointOfView;

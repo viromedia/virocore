@@ -25,16 +25,22 @@ VROTypefaceAndroid::VROTypefaceAndroid(std::string name, std::string file, int i
 }
 
 VROTypefaceAndroid::~VROTypefaceAndroid() {
-    if (_face != nullptr) {
-        FT_Done_Face(_face);
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver && _face != nullptr) {
+        // FT crashes if we delete a face after the freetype library has been deleted
+        if (std::dynamic_pointer_cast<VRODriverOpenGLAndroid>(driver)->getFreetype() != nullptr) {
+            FT_Done_Face(_face);
+        }
     }
 }
 
-void VROTypefaceAndroid::loadFace(std::string name, int size) {
+FT_FaceRec_ *VROTypefaceAndroid::loadFTFace() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (!driver) {
-        return;
+        return nullptr;
     }
+    std::string name = getName();
+
     FT_Library ft = std::dynamic_pointer_cast<VRODriverOpenGLAndroid>(driver)->getFreetype();
     pinfo("Loading font face [name: %s, index: %d]", name.c_str(), _index);
 
@@ -54,10 +60,10 @@ void VROTypefaceAndroid::loadFace(std::string name, int size) {
             }
         }
     }
-    FT_Set_Pixel_Sizes(_face, 0, size);
+    FT_Set_Pixel_Sizes(_face, 0, getSize());
     _numFaces = _face->num_faces;
 
-    computeCoverage(_face);
+    return _face;
 }
 
 std::shared_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(uint32_t charCode, uint32_t variantSelector,

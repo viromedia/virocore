@@ -39,6 +39,7 @@ public:
     virtual ~VRODriverOpenGLiOS() {
         if (_ft != nullptr) {
             FT_Done_FreeType(_ft);
+            _ft = nullptr;
         }
     }
     

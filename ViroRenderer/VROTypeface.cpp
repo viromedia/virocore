@@ -45,7 +45,8 @@ VROTypeface::~VROTypeface() {
 }
 
 void VROTypeface::loadFace() {
-    loadFace(_name, _size);
+    FT_FaceRec_ *face = loadFTFace();
+    computeCoverage(face);
 }
 
 bool VROTypeface::hasCharacter(uint32_t codepoint, uint32_t variationSelector) const {

@@ -131,14 +131,15 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
     std::string fontFamily = VROPlatformGetString(fontFamily_j, env);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
-    std::shared_ptr<VROTypefaceCollection> typefaces = driver.get()->newTypefaceCollection(fontFamily, size,
-                                                                      (VROFontStyle) style, (VROFontWeight) weight);
 
-    std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, typefaces, vecColor, width,
-                                                                 height, horizontalAlignment,
+    std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, fontFamily, size,
+                                                                 (VROFontStyle) style,
+                                                                 (VROFontWeight) weight,
+                                                                 vecColor, width, height,
+                                                                 horizontalAlignment,
                                                                  verticalAlignment,
                                                                  lineBreakMode,
-                                                                 clipMode, maxLines);
+                                                                 clipMode, maxLines, driver);
 
     // Update text on renderer thread (glyph creation requires this)
     VROPlatformDispatchAsyncRenderer([vroText] {
@@ -186,18 +187,15 @@ JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
                                 jint weight) {
     std::string family = VROPlatformGetString(family_j, env);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-    std::shared_ptr<VROTypefaceCollection> typefaces = context->getDriver()->newTypefaceCollection(family, size,
-                                                                              (VROFontStyle) style,
-                                                                              (VROFontWeight) weight);
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
-    VROPlatformDispatchAsyncRenderer([text_w, typefaces] {
+    VROPlatformDispatchAsyncRenderer([text_w, family, size, style, weight] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
             return;
         }
 
-        text->setTypefaceCollection(typefaces);
+        text->setTypefaces(family, size, (VROFontStyle) style, (VROFontWeight)weight);
     });
 }
 
