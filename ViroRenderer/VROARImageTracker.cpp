@@ -53,6 +53,8 @@ VROARImageTracker::VROARImageTracker(VROARImageTrackerType type) :
     _totalFailedTime = 0;
     _totalFailedIteration = 0;
 
+    _distortionCoeffs = getDistortionCoeffs();
+
     // Calibration properties
     _needsCalibration = false;
     _numCalibrationSamples = 20;
@@ -68,6 +70,10 @@ void VROARImageTracker::setType(VROARImageTrackerType type) {
     updateType();
 }
 
+void VROARImageTracker::computeIntrinsicMatrix(int width, int height) {
+    _intrinsicMatrix = getIntrinsicMatrix(width, height);
+}
+
 void VROARImageTracker::updateType() {
     switch(_type) {
         case VROARImageTrackerType::ORB4:
@@ -75,8 +81,8 @@ void VROARImageTracker::updateType() {
             // original feature property:
             //_feature = cv::ORB::create(500, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
 
-            // current values on iPhone
 #if VRO_PLATFORM_IOS
+            // current values on iPhone
             _numberFeaturePoints = 2500;
             _minGoodMatches = 15;
             _feature = cv::ORB::create(_numberFeaturePoints, 1.1f, 12, 0, 0, 4, cv::ORB::HARRIS_SCORE);
@@ -176,6 +182,12 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
 std::vector<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics,
                                                                    std::shared_ptr<VROARCamera> camera) {
     _intrinsics = intrinsics;
+#if VRO_PLATFORM_IOS
+    // on iOS, we need to extract the intrinsic matrix from the array set above, so call it here. We also
+    // don't care about width/height because we don't need to compute, just convert from array to cv::Mat
+    computeIntrinsicMatrix(0, 0);
+#endif
+    
     _currentCamera = camera;
     std::vector<VROARImageTrackerOutput> outputs = findTargetInternal(inputImage);
 
@@ -215,8 +227,9 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
         inputImage = resizedInput;
     }
 
-    // TODO: consider sharpening image (esp since ARCore doesn't turn on autofocus). Don't forget to
-    // replace the imageImage below with sharpImage or sharperImage then.
+    // TODO: consider sharpening image w/ Gaussian blur (b/c ARCore doesn't have autofocus). Don't
+    // forget to replace the imageImage below with sharpImage or sharperImage then.
+    // TODO: consider performing basic edge detection to outline edges?
 //    cv::Mat sharpImage;
 //    cv::GaussianBlur(inputImage, sharpImage, cv::Size(0, 0), 3);
 //    cv::addWeighted(inputImage, 1.5, sharpImage, -0.5, 0, sharpImage);
@@ -270,10 +283,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
     
     VROARImageTargetOpenCV currentTarget;
 
-    // TODO: these two only changes when the orientation change (I think)
-    cv::Mat intrinsicsMatrix = getIntrinsics(inputImage.cols, inputImage.rows);
-    cv::Mat distortionCoeffs = getDistortionCoeffs();
-
     // Start the loop over all the targets!
     for (int targetIndex = 0; targetIndex < _arImageTargets.size(); targetIndex++) {
         pinfo("[Viro] processing target #%d", targetIndex);
@@ -309,8 +318,9 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
                     maxDist = dist;
                 }
             }
-            
-            double goodMatchThreshold = 3 * minDist; // TODO: make sure this is a legitimate value.
+
+            // TODO: make sure this is a legitimate value. (this is for BRISK which we dont use)
+            double goodMatchThreshold = 3 * minDist;
             
             for (int i = 0; i < matches.size(); i++) {
                 if (matches[i].distance < goodMatchThreshold) {
@@ -428,7 +438,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         // whether or not to use the (previous) values in _rotation/_translation to help with extracting the next set of them.
         bool useExtrinsicGuess = false;
 
-        cv::solvePnPRansac(targetCorners, inputCorners, intrinsicsMatrix, distortionCoeffs,
+        cv::solvePnPRansac(targetCorners, inputCorners, _intrinsicMatrix, _distortionCoeffs,
                            currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
 
         LOG_DETECT_TIME("finished detection & pose extraction");
@@ -463,7 +473,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
 
         // OpenCV targets are assumed to be in the X-Y plane whereas ARKit returns in the X-Z plane
         // so apply a -90 degree rotation about the X-axis. (we need to apply the transform).
-        // TODO: maybe we can account for this by changing how we define the CvPoint3D32f corner
+        // TODO: maybe we can account for this by changing how we define the CvPoint3D32f corners
         // points in the lines above.
         VROMatrix4f rotMatrix;
         rotMatrix.rotateX(-M_PI_2);
@@ -593,7 +603,8 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTr
 }
 
 bool VROARImageTracker::areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second) {
-    float similarDistanceThreshold = .015; // 1.5 cm <- TODO: should it be dependent on the physical width of the target? probably.
+    // TODO: this should be dependent on the physical width of the target.
+    float similarDistanceThreshold = .015; // 1.5 cm
     
     // if either outputs aren't a "found" output, return false
     if (!first.found || !second.found) {
@@ -732,7 +743,7 @@ cv::Mat VROARImageTracker::drawCorners(cv::Mat inputImage, std::vector<cv::Point
     return processedImage;
 }
 
-cv::Mat VROARImageTracker::getIntrinsics(int inputCols, int inputRows) {
+cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
     cv::Mat cameraMatrix;
     if (_intrinsics == NULL) { // this is the Android case (ARCore doesn't provide intrinsics yet)
         std::string model = VROPlatformGetDeviceModel();
@@ -755,7 +766,7 @@ cv::Mat VROARImageTracker::getIntrinsics(int inputCols, int inputRows) {
     } else { // on iOS, the _intrinsics array is set!
         // There are intrinsics set, so don't calculate/estimate them!
         // actually, the intrinsics assume the texture/coordinates are in landscape, so we'll need to flip mat[0][2] and mat[1][2] for portrait.
-        // TODO: dynamically handle screen rotation.
+        // TODO: dynamically handle screen rotation - for iOS
         cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
         cameraMatrix = cameraMatrix.t(); // we need to transpose the matrix
         float temp = cameraMatrix.at<float>(0, 2);
@@ -773,7 +784,7 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
     return cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
 #else
     std::string model = VROPlatformGetDeviceModel();
-    if (VROStringUtil::strcmpinsensitive(model, "Pixel 32")) {
+    if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
         // Pixel 2 distCoeffs
         double distCoeffsArr[5] = {0.3071814282190861, -1.406069924010113, -0.001143236436618327,
                                    -0.003115266690240281, 2.134291153514535};

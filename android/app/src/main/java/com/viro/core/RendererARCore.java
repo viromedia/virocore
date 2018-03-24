@@ -65,6 +65,10 @@ public class RendererARCore extends Renderer {
         nativePerformARHitTestWithPoint(mNativeRef, x, y, callback);
     }
 
+    public void enableTracking(boolean shouldTrack) {
+        nativeEnableTracking(mNativeRef, shouldTrack);
+    }
+
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
                                                    AssetManager assets, PlatformUtil platformUtil,
                                                    boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
@@ -76,5 +80,6 @@ public class RendererARCore extends Renderer {
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
+    private native void nativeEnableTracking(long nativeRenderer, boolean shouldTrack);
 
 }

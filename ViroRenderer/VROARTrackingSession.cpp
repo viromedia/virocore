@@ -23,17 +23,23 @@ VROARTrackingSession::VROARTrackingSession() {
 #endif // ENABLE_OPENCV
     _readyForTracking = true;
     _haveActiveTargets = false;
+    _isTextureReaderStarted = false;
+    _shouldTrack = true;
 }
 
 VROARTrackingSession::~VROARTrackingSession() {
     
 }
 
-void VROARTrackingSession::createTextureReader(VROARFrameARCore *frame,
-                                               GLuint cameraTextureId,
-                                               int width, int height) {
-    VROVector3f BL, BR, TL, TR;
-    frame->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
+void VROARTrackingSession::init(VROARFrameARCore *frame,
+                                std::shared_ptr<VROFrameSynchronizer> synchronizer,
+                                GLuint cameraTextureId, int width, int height) {
+    // if we are reinitializing, stop the previous texture reader!
+    stopTextureReader();
+
+    _frameSynchronizer = synchronizer;
+
+    _tracker->computeIntrinsicMatrix(width, height);
 
     _cameraTextureReader = std::make_shared<VROTextureReader>(cameraTextureId,
                                                               width, height,
@@ -41,7 +47,8 @@ void VROARTrackingSession::createTextureReader(VROARFrameARCore *frame,
                                                               1, // check every frame if we're ready
                                                               VROTextureReaderOutputFormat::RGBA8,
             [width, height, this](std::shared_ptr<VROData> data) {
-                if (!_readyForTracking || !_haveActiveTargets) {
+                // check whether or not we should start a new tracking task
+                if (!_readyForTracking) {
                     return;
                 }
 
@@ -110,30 +117,20 @@ void VROARTrackingSession::createTextureReader(VROARFrameARCore *frame,
                 });
             });
 
+    VROVector3f BL, BR, TL, TR;
+    frame->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
     _cameraTextureReader->setTextureCoordinates(BL, BR, TL, TR);
     _cameraTextureReader->init();
-}
 
-void VROARTrackingSession::startTextureReader(std::shared_ptr<VROFrameSynchronizer> synchronizer) {
-    _cameraTextureReader->start(synchronizer);
+    if (_shouldTrack && _haveActiveTargets) {
+        startTextureReader();
+    }
 }
 
 void VROARTrackingSession::updateFrame(VROARFrame *frame) {
-    if (_imageTargets.size() == 0) {
-        return;
-    }
-
-    // TODO: we're storing this camera, hopefully it's in sync with the callback we get from
+    // we're storing this camera, hopefully it's in sync with the callback we get from
     // the texture reader...
     _lastCamera = frame->getCamera();
-
-    bool shouldMock = false;
-    // TODO: below code is for mocking this class
-    if (shouldMock) {
-        mockTracking();
-    } else {
-        return;
-    }
 }
 
 void VROARTrackingSession::setListener(std::shared_ptr<VROARTrackingListener> listener) {
@@ -143,14 +140,18 @@ void VROARTrackingSession::setListener(std::shared_ptr<VROARTrackingListener> li
 void VROARTrackingSession::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
     _imageTargets.push_back(target);
 
-    if (_imageTargets.size() > 0) {
-        _haveActiveTargets = true;
-    }
-
 #if ENABLE_OPENCV
     // also add the target to the _tracker
     _tracker->addARImageTarget(target);
 #endif
+
+    if (_imageTargets.size() > 0) {
+        _haveActiveTargets = true;
+    }
+
+    if (_shouldTrack && _haveActiveTargets) {
+        startTextureReader();
+    }
 }
 
 void VROARTrackingSession::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
@@ -179,6 +180,30 @@ void VROARTrackingSession::removeARImageTarget(std::shared_ptr<VROARImageTarget>
 
     if (_imageTargets.size() == 0) {
         _haveActiveTargets = false;
+        stopTextureReader();
+    }
+}
+
+void VROARTrackingSession::startTextureReader() {
+    if (!_isTextureReaderStarted && _frameSynchronizer && _cameraTextureReader) {
+        _cameraTextureReader->start(_frameSynchronizer);
+        _isTextureReaderStarted = true;
+    }
+}
+
+void VROARTrackingSession::stopTextureReader() {
+    if (_isTextureReaderStarted && _frameSynchronizer && _cameraTextureReader) {
+        _cameraTextureReader->stop(_frameSynchronizer);
+        _isTextureReaderStarted = false;
+    }
+}
+
+void VROARTrackingSession::enableTracking(bool shouldTrack) {
+    _shouldTrack = shouldTrack;
+    if (_shouldTrack && _haveActiveTargets) {
+        startTextureReader();
+    } else {
+        stopTextureReader();
     }
 }
 
@@ -195,44 +220,4 @@ void VROARTrackingSession::flushTargetsToRemove() {
 #endif
 
     _targetsToRemove.clear();
-}
-
-void VROARTrackingSession::mockTracking() {
-    _count++;
-    if (_count == 180) { // 3 seconds at 60 fps, 6 seconds at 30 fps
-        std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
-        if (listener) {
-            pinfo("VROARTrackingSession - mock found");
-            // create a new ImageAnchor!
-            _imageAnchor = std::make_shared<VROARImageAnchor>(_imageTargets[0]);
-            std::shared_ptr<VROARImageTargetAndroid> imageTargetAndroid =
-            std::dynamic_pointer_cast<VROARImageTargetAndroid>(_imageTargets[0]);
-            _imageAnchor->setId(imageTargetAndroid->getId());
-            
-            VROMatrix4f mat;
-            mat.rotateZ(-90); // rotate clockwise 90 WRT to initial camera position
-            mat.translate({0, 0, -.5}); // start 1/2 a meter from the intial camera position
-            
-            _imageAnchor->setTransform(mat);
-            
-            listener->onTrackedAnchorFound(_imageAnchor);
-        }
-    } else if(_count > 180 && _count % 60 == 0 && _count < 600) { // every 60 frames after that...
-        std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
-        if (listener) {
-            pinfo("VROARTrackingSession - mock updated");
-            // update the ImageAnchor!
-            VROMatrix4f mat = _imageAnchor->getTransform();
-            mat.translate({0,0,-.15f});
-            _imageAnchor->setTransform(mat);
-            listener->onTrackedAnchorUpdated(_imageAnchor);
-        }
-    } else if (_count == 600) {
-        std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
-        if (listener) {
-            pinfo("VROARTrackingSession - mock removed");
-            // remove the ImageAnchor!
-            listener->onTrackedAnchorRemoved(_imageAnchor);
-        }
-    }
 }

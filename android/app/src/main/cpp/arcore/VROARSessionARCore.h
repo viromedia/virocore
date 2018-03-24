@@ -104,6 +104,11 @@ public:
     int getWidth() const { return _width; }
     int getHeight() const { return _height; }
 
+    /*
+     This enables/disables image tracking (for debug only!)
+     */
+    void enableTracking(bool shouldTrack);
+
     // VROARTrackingListener Implementation
     virtual void onTrackedAnchorFound(std::shared_ptr<VROARAnchor> anchor);
     virtual void onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
@@ -174,7 +179,7 @@ private:
     int _width;
     int _height;
 
-    bool _haveCreatedARTrackingSession;
+    bool _shouldResetARTrackingSession;
 
     bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);

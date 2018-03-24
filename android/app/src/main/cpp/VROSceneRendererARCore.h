@@ -110,6 +110,11 @@ public:
      */
     bool setPlaneFindingMode(bool enabled);
 
+    /*
+     This is a function that enables/disables tracking (for debug purposes!)
+     */
+    void enableTracking(bool shouldTrack);
+
 private:
 
     void renderFrame();

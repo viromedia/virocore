@@ -398,6 +398,8 @@ bool VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
     return true;
 }
 
-
+void VROSceneRendererARCore::enableTracking(bool shouldTrack) {
+    _session->enableTracking(shouldTrack);
+}
 
 

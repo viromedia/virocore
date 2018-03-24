@@ -76,6 +76,7 @@ public class ViroViewARCore extends ViroView {
     // Determines whether we add an ImageView for debugging Image Tracking
     private static final boolean ENABLE_TRACKING_DEBUG_VIEW = true;
     private static ImageView sTrackingImageView;
+    private static boolean sShouldTrack = true;
 
     /**
      * Callback interface for responding to {@link ViroViewARCore} startup success or failure.
@@ -406,6 +407,14 @@ public class ViroViewARCore extends ViroView {
             sTrackingImageView.setLayoutParams(
                     new LayoutParams((int) (displayMetrics.widthPixels * .5),
                             (int) (displayMetrics.heightPixels * .5)));
+
+            sTrackingImageView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sShouldTrack = !sShouldTrack;
+                    ((RendererARCore) mNativeRenderer).enableTracking(sShouldTrack);
+                }
+            });
         }
 
         final Context activityContext = getContext();

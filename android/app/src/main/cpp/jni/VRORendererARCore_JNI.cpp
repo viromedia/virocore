@@ -192,6 +192,21 @@ JNI_METHOD(void, nativePerformARHitTestWithPoint) (JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeEnableTracking) (JNIEnv *env,
+                                        jobject object,
+                                        jlong nativeRenderer,
+                                        jboolean shouldTrack) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(nativeRenderer);
+    std::weak_ptr<VROSceneRendererARCore> arRenderer_w = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+
+    VROPlatformDispatchAsyncRenderer([arRenderer_w, shouldTrack]{
+        std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
+        if (arRenderer) {
+            arRenderer->enableTracking(shouldTrack);
+        }
+    });
+}
+
 }
 
 

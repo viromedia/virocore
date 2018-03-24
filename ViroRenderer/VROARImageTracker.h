@@ -82,6 +82,11 @@ public:
                                        bool isTarget);
 
     /*
+     Computes and set the _intrinsicMatrix. This should be called when the screen res/orientation changes.
+     */
+    void computeIntrinsicMatrix(int width, int height);
+
+    /*
      This version accepts a camera used to track and process
      */
     std::vector<VROARImageTrackerOutput> findTarget(cv::Mat inputImage, float* intrinsics, std::shared_ptr<VROARCamera> camera);
@@ -157,7 +162,7 @@ private:
      */
     cv::Mat drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners);
 
-    cv::Mat getIntrinsics(int inputCols, int inputRows);
+    cv::Mat getIntrinsicMatrix(int inputCols, int inputRows);
     cv::Mat getDistortionCoeffs();
 
     /*
@@ -215,6 +220,16 @@ private:
      An array of intrinsic values set by the caller (currently only iOS provides this).
      */
     float *_intrinsics;
+
+    /*
+     The computed/set distortion coefficients. These remain static and only have to be computed once.
+     */
+    cv::Mat _distortionCoeffs;
+
+    /*
+     The current intrinsic matrix to use. This needs to be recomputed if screen res or orientation changes.
+     */
+    cv::Mat _intrinsicMatrix;
 
     /*
      Calibration props - used to enable/tune calibration

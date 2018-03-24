@@ -159,6 +159,7 @@
     // find the target in the given cameraInput (should already be in RGB format).
     VROARImageTrackerOutput output = {false, };
     std::vector<VROARImageTrackerOutput> outputs = _tracker->findTarget(cameraInput, _intrinsics, camera);
+    
     if (outputs.size() > 0) {
         output = outputs[0]; // grab the first one because we only have 1 target here
     }

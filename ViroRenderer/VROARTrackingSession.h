@@ -38,10 +38,12 @@ public:
     VROARTrackingSession();
     virtual ~VROARTrackingSession();
 
-    void createTextureReader(VROARFrameARCore *frame, GLuint cameraTextureId,
-                             int width, int height);
-
-    void startTextureReader(std::shared_ptr<VROFrameSynchronizer> synchronizer);
+    /*
+     This function initializes the VROARTrackingSession and creates the underlying texture reader
+     and should be called whenever any of its configuration changes.
+     */
+    void init(VROARFrameARCore *frame, std::shared_ptr<VROFrameSynchronizer> synchronizer,
+              GLuint cameraTextureId, int width, int height);
 
     /*
      Notifies the tracking session that a new frame has been found.
@@ -63,7 +65,23 @@ public:
      */
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
 
+    /*
+     Whether or not to track at all (used for debugging)
+     */
+    void enableTracking(bool shouldTrack);
+
 private:
+
+    /*
+    Starts the underlying texture reader (which begins tracking). Calling this is idempotent.
+    */
+    void startTextureReader();
+
+    /*
+     Stops the underlying texture reader (which stops tracking). Calling this is idempotent.
+     */
+    void stopTextureReader();
+
     /*
      The listener that should be notified when a tracking target is
      found, updated or removed.
@@ -98,7 +116,12 @@ private:
 #endif
 
     /*
-     Whether or not we're ready to run tracking (there isn't already a tracking task running).
+     Keeps tracking of whether or not the underlying camera texture reader is running.
+     */
+    bool _isTextureReaderStarted;
+
+    /*
+     Whether or not we're ready to start the next tracking task (there isn't already a tracking task running).
      */
     std::atomic_bool _readyForTracking;
 
@@ -108,9 +131,19 @@ private:
     std::atomic_bool _haveActiveTargets;
 
     /*
+     Master toggle that determines whether or not to perform tracking.
+     */
+    bool _shouldTrack;
+
+    /*
      The camera texture reader.
      */
     std::shared_ptr<VROTextureReader> _cameraTextureReader;
+
+    /*_frameSynchronizer
+     The frame synchronizer that the camera texture reader is attached to.
+     */
+    std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
 
     /*
      The last camera that we were given.

@@ -25,7 +25,7 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _lightingMode(arcore::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
-    _haveCreatedARTrackingSession(false),
+    _shouldResetARTrackingSession(true),
     _cameraTextureId(0),
     _displayRotation(VROARDisplayRotation::R0) {
 
@@ -136,6 +136,11 @@ void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int w
     if (_session) {
         _session->setDisplayGeometry((int) rotation, width, height);
     }
+    _shouldResetARTrackingSession = true;
+}
+
+void VROARSessionARCore::enableTracking(bool shouldTrack) {
+    _arTrackingSession->enableTracking(shouldTrack);
 }
 
 bool VROARSessionARCore::configure(arcore::LightingMode lightingMode, arcore::PlaneFindingMode planeFindingMode,
@@ -259,13 +264,12 @@ std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
     VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
     processUpdatedAnchors(arFrame);
 
-    _arTrackingSession->updateFrame(arFrame);
-    if (!_haveCreatedARTrackingSession) {
-        _arTrackingSession->createTextureReader(arFrame, getCameraTextureId(), _width, _height);
-
-        _arTrackingSession->startTextureReader(_synchronizer);
-        _haveCreatedARTrackingSession = true;
+    if (_shouldResetARTrackingSession) {
+        _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
+        _shouldResetARTrackingSession = false;
     }
+
+    _arTrackingSession->updateFrame(arFrame);
 
     return _currentFrame;
 }
