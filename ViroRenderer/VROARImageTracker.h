@@ -50,7 +50,8 @@ struct VROARImageTargetOpenCV {
     std::vector<VROARImageTrackerOutput> rawOutputs; // the raw outputs that we've found so far.
     VROARImageTrackerOutput lastOutput; // the most recent output that was returned to the caller for this target.
 
-    bool disableTracking; // disable this once we've found enough rawOutputs // TODO: actually disable
+    bool disableTracking; // disable this once we've found enough rawOutputs
+    std::vector<std::vector<VROARImageTrackerOutput>> targetToSimilarOutputs;
 };
 
 // TODO: merge this class into VROARTrackingSession
@@ -94,12 +95,23 @@ public:
 private:
     
     void updateType();
+    /*
+     This function goes through and re-creates/re-runs feature detection on the targets
+     */
     VROARImageTargetOpenCV updateTargetInfo(std::shared_ptr<VROARImageTarget> arImageTarget);
 
+    /*
+     An internal helper method called by findTarget()
+     */
     std::vector<VROARImageTrackerOutput> findTargetInternal(cv::Mat inputImage);
-    
+
+    /*
+     A bloated function that compares all the targets w/ the input image w/ BF (brute force) matching
+     and also performs pose estimation
+     TODO: probably pull out pose estimation into its own function.
+     */
     std::vector<VROARImageTrackerOutput> findMultipleTargetsBF(std::vector<cv::KeyPoint> inputKeypoints,
-                                                                                cv::Mat inputDescriptors,  cv::Mat inputImage);
+                                                               cv::Mat inputDescriptors,  cv::Mat inputImage);
     
     /*
      This function takes a list of raw outputs and adds them to the _targetOutputsMap before invoking findUpdates on
@@ -113,7 +125,7 @@ private:
      */
     VROARImageTrackerOutput determineFoundOrUpdate(VROARImageTrackerOutput output);
     
-    // Different versions of determineFoundOrUpdate
+    // Different implementations/versions of determineFoundOrUpdate (look at implementation)
     VROARImageTrackerOutput determineFoundOrUpdateV1(VROARImageTrackerOutput output);
     VROARImageTrackerOutput determineFoundOrUpdateV2(VROARImageTrackerOutput output);
 
@@ -145,6 +157,20 @@ private:
      */
     cv::Mat drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners);
 
+    cv::Mat getIntrinsics(int inputCols, int inputRows);
+    cv::Mat getDistortionCoeffs();
+
+    /*
+     -- Camera Calibration Functions --
+     To enable this, set _needsCalibration = true in the contructor and
+     _numCalibrationSamples = (however many samples you want before processing).
+
+     This function calibrates the camera using an input image containing a 7x10 chessboard
+     pattern within it (6x9 corners).
+     */
+    void findChessboardForCalibration(cv::Mat inputImage);
+    void calculateIntrinsicProperties();
+
     long getCurrentTimeMs();
     long _startTime;
 
@@ -152,14 +178,24 @@ private:
     
     std::shared_ptr<VROARCamera> _currentCamera;
 
+    // The number of feature points we should extract from the input image
     int _numberFeaturePoints;
-    double _minGoodMatches;
+    // The minimum number of "good" matches we need before going onto pose estimation
+    int _minGoodMatches;
+    // The ratio used for BF Knn matching, a higher value is more relaxed.
+    double _matchRatio;
 
+    // The type of image tracker to use (not really meant to be set by the user)
     VROARImageTrackerType _type;
+    // The feature (detector) to use to process each input image
     cv::Ptr<cv::Feature2D> _feature;
+    // The feature (detector) to use to process the targets
     cv::Ptr<cv::Feature2D> _targetFeature;
+    // The type of matcher to use for matching
     int _matcherType;
+    // The BruteForce matcher to match feature descriptors
     cv::Ptr<cv::BFMatcher> _matcher;
+    // Whether or not we should use a K-nearest-neighbor (or normal) BruteForce matcher
     bool _useBfKnnMatcher;
     
     // total time and iteration counts for successful runs
@@ -170,15 +206,31 @@ private:
     double _totalFailedTime;
     double _totalFailedIteration;
 
+    // List if ARImageTargets to search for
     std::vector<std::shared_ptr<VROARImageTarget>> _arImageTargets;
+    // Map between VROARImageTargets and VROARImageTargetOpenCVs (contianing more info).
     std::map<std::shared_ptr<VROARImageTarget>, VROARImageTargetOpenCV> _targetToTargetMap;
-    
-    // testing for determineFoundOrUpdateV3... this is a 1 to 1 index map between the
-    // rawOutputs in a VROARImageTargetOpenCV and a list of outputs that are similar to it.
-    // TODO: move this into VROARImageTargetOpenCV (this will bug out for 2+ targets!)
-    std::vector<std::vector<VROARImageTrackerOutput>> _targetToSimilarOutputs;
 
+    /*
+     An array of intrinsic values set by the caller (currently only iOS provides this).
+     */
     float *_intrinsics;
+
+    /*
+     Calibration props - used to enable/tune calibration
+     */
+    // Whether or not we should run calibration (runs alongside tracking)
+    bool _needsCalibration;
+    // Number of successful calibration images to use for calibration.
+    int _numCalibrationSamples;
+    // Keeps track of how many times calibration has been called with a new frame.
+    int _calibrationFrameCount;
+    // Keeps track of how many successful calibration images have been captured.
+    int _calibrationFoundCount;
+    // Vector of each calibration image's found points.
+    std::vector<std::vector<cv::Point2f>> _foundPoints;
+    // The size of the input image.
+    cv::Size _inputSize;
 };
 
 #endif /* VROARImageTracker_h */

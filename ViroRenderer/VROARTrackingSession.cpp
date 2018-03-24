@@ -54,26 +54,33 @@ void VROARTrackingSession::createTextureReader(VROARFrameARCore *frame,
                 cv::rotate(tmpFrame, tmpFrame, cv::ROTATE_90_COUNTERCLOCKWISE);
 
                 VROPlatformDispatchAsyncBackground([tmpFrame, this]() {
-                    // TODO: get intrinsics matrix.
+                    // TODO: get intrinsics matrix (ARCore doesn't have this yet!)
                     std::vector<VROARImageTrackerOutput> outputs = _tracker->findTarget(tmpFrame, NULL, _lastCamera);
 
                     for (int i = 0; i < outputs.size(); i++) {
                         VROARImageTrackerOutput output = outputs[i];
+                        // if the output wasn't a "found" output, ignore it.
                         if (!output.found) {
+                            continue;
+                        }
+
+                        // if the target is one we're going to remove, also ignore it.
+                        auto targetIt = _targetsToRemove.find(output.target);
+                        if (targetIt != _targetsToRemove.end()) {
                             continue;
                         }
 
                         bool isUpdate;
                         std::shared_ptr<VROARImageAnchor> imageAnchor;
-                        auto it = _targetAnchorMap.find(output.target);
-                        if (it == _targetAnchorMap.end()) {
+                        auto targetAnchorIt = _targetAnchorMap.find(output.target);
+                        if (targetAnchorIt == _targetAnchorMap.end()) {
                             // call the _listener.onAnchorFound w/ the anchor for output.target
                             imageAnchor = std::make_shared<VROARImageAnchor>(output.target);
                             _targetAnchorMap[output.target] = imageAnchor;
                             isUpdate = false;
                         } else {
                             // call the _listener.onAnchorUpdated w/ the anchor for output.target
-                            imageAnchor = it->second;
+                            imageAnchor = targetAnchorIt->second;
                             isUpdate = true;
                         }
 
@@ -93,7 +100,13 @@ void VROARTrackingSession::createTextureReader(VROARFrameARCore *frame,
                             });
                         }
                     }
-                    _readyForTracking = true;
+                    // Now that we're done, go back to the renderer thread call flushTargetsToRemove
+                    // set the _readyForTracking back to true (we need to make sure that the function
+                    // is called before the next tracking task is run!
+                    VROPlatformDispatchAsyncRenderer([this](){
+                        flushTargetsToRemove();
+                        _readyForTracking = true;
+                    });
                 });
             });
 
@@ -161,14 +174,27 @@ void VROARTrackingSession::removeARImageTarget(std::shared_ptr<VROARImageTarget>
         _targetAnchorMap.erase(it);
     }
 
-#if ENABLE_OPENCV
-    // also remove the target from the _tracker
-    _tracker->removeARImageTarget(target);
-#endif
+    // Add this target to the set of targets we need to remove (eventually)
+    _targetsToRemove.insert(target);
 
     if (_imageTargets.size() == 0) {
         _haveActiveTargets = false;
     }
+}
+
+void VROARTrackingSession::flushTargetsToRemove() {
+#if ENABLE_OPENCV
+    if (!_tracker) {
+        return;
+    }
+
+    auto it = _targetsToRemove.begin();
+    for (; it != _targetsToRemove.end(); it++) {
+        _tracker->removeARImageTarget(*it);
+    }
+#endif
+
+    _targetsToRemove.clear();
 }
 
 void VROARTrackingSession::mockTracking() {

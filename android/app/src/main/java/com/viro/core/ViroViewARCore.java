@@ -404,8 +404,8 @@ public class ViroViewARCore extends ViroView {
                     .getMetrics(displayMetrics);
 
             sTrackingImageView.setLayoutParams(
-                    new LayoutParams((int) (displayMetrics.widthPixels * .33),
-                            (int) (displayMetrics.heightPixels * .33)));
+                    new LayoutParams((int) (displayMetrics.widthPixels * .5),
+                            (int) (displayMetrics.heightPixels * .5)));
         }
 
         final Context activityContext = getContext();

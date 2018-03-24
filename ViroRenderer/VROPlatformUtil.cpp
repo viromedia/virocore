@@ -213,6 +213,10 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
     return "";
 }
 
+std::string VROPlatformGetDeviceModel() {
+    return ""; // TODO: do this for iOS if required
+}
+
 #pragma mark - Android
 #elif VRO_PLATFORM_ANDROID
 
@@ -525,23 +529,6 @@ std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isIta
     env->DeleteLocalRef(cls);
 
     return std::make_pair(path, index);
-}
-
-void VROPlatformSetTrackingImageView(std::string filepath) {
-
-    VROPlatformDispatchAsyncApplication([filepath]() {
-        JNIEnv *env;
-        getJNIEnv(&env);
-
-        jclass cls = env->FindClass("com/viro/core/ViroViewARCore");
-        jmethodID jmethod = env->GetStaticMethodID(cls, "setImageOnTrackingImageView", "(Ljava/lang/String;)Z");
-
-        jstring string = env->NewStringUTF(filepath.c_str());
-
-        env->CallStaticBooleanMethod(cls, jmethod, string);
-
-        env->DeleteLocalRef(cls);
-    });
 }
 
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
@@ -972,6 +959,34 @@ std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){
     env->ReleaseStringUTFChars(jInputString, inputString_c);
 
     return sInputString;
+}
+
+std::string VROPlatformGetDeviceModel() {
+    JNIEnv *env;
+    getJNIEnv(&env);
+    jclass cls = env->FindClass("android/os/Build");
+    jfieldID modelFieldID = env->GetStaticFieldID(cls, "MODEL", "Ljava/lang/String;");
+
+    jstring jModelString = (jstring) env->GetStaticObjectField(cls, modelFieldID);
+
+    return VROPlatformGetString(jModelString, env);
+}
+
+void VROPlatformSetTrackingImageView(std::string filepath) {
+
+    VROPlatformDispatchAsyncApplication([filepath]() {
+        JNIEnv *env;
+        getJNIEnv(&env);
+
+        jclass cls = env->FindClass("com/viro/core/ViroViewARCore");
+        jmethodID jmethod = env->GetStaticMethodID(cls, "setImageOnTrackingImageView", "(Ljava/lang/String;)Z");
+
+        jstring string = env->NewStringUTF(filepath.c_str());
+
+        env->CallStaticBooleanMethod(cls, jmethod, string);
+
+        env->DeleteLocalRef(cls);
+    });
 }
 
 void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {

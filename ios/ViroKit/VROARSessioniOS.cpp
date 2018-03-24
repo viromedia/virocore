@@ -85,9 +85,10 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     [_trackingHelper findInScreenshot];
         
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
-    std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);
+    // dollar sized
+    //std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);
+    std::shared_ptr<VROBox> box = VROBox::createBox(.1905f, .001f, 0.24511f);
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, 0, 0});
 
     _imageTrackingResultNode = std::make_shared<VRONode>();
     _imageTrackingResultNode->addChildNode(boxNode);

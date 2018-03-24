@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -918,9 +919,9 @@ public class ViroActivity extends AppCompatActivity {
 
     private List<Node> testARImageTarget(final ARScene arScene) {
 
-        targetImage = getBitmapFromAssets("ben.jpg");
+        targetImage = getBitmapFromAssets("variety_magazine.jpg");
         // store this in a field so it doesn't get destroyed before we can use it!
-        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .1f);
+        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, 0.1905f);
         arScene.addARImageTarget(mARImageTarget);
 
         mImageMarkerTestNode = new Node();
@@ -970,9 +971,9 @@ public class ViroActivity extends AppCompatActivity {
         });
 
         Node boxNode = new Node();
-        Box box = new Box(0.157f, .07f, 0.066294f);
+        // Box box = new Box(.155956f, .001f, .066294f); // dollar size
+        Box box = new Box(.1905f, .001f, 0.24511f); // vanity fair magazine sized
         boxNode.setGeometry(box);
-        boxNode.setPosition(new Vector(0f, .35f, 0f));
 
         mImageMarkerTestNode.addChildNode(boxNode);
         mImageMarkerTestNode.setVisible(false);

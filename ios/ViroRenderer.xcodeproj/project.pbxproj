@@ -29,6 +29,7 @@
 		8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517301EE0A50A00B6E786 /* screenshot.png */; };
 		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
 		8A35CEFB2060711300ADD393 /* george.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A35CEFA2060711200ADD393 /* george.jpg */; };
+		8A35CF1F206461D000ADD393 /* variety_magazine.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A35CF1E206461CF00ADD393 /* variety_magazine.jpg */; };
 		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
 		8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
@@ -869,6 +870,7 @@
 		8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARTrackingSession.h; sourceTree = "<group>"; };
 		8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARTrackingSession.cpp; sourceTree = "<group>"; };
 		8A35CEFA2060711200ADD393 /* george.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = george.jpg; path = ViroSample/george.jpg; sourceTree = "<group>"; };
+		8A35CF1E206461CF00ADD393 /* variety_magazine.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = variety_magazine.jpg; path = ViroSample/variety_magazine.jpg; sourceTree = "<group>"; };
 		8A39B1A820181A36007E41E2 /* wikipedia_qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wikipedia_qr.png; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A5C05581EF6416900F94CB9 /* VROARNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNode.h; sourceTree = "<group>"; };
@@ -2660,6 +2662,7 @@
 				8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */,
 				8FA9A243207E81040022C55D /* lamborghini_v2.vrx */,
 				8FA9A23F207DB56E0022C55D /* transparent.png */,
+				8A35CF1E206461CF00ADD393 /* variety_magazine.jpg */,
 				8A35CEFA2060711200ADD393 /* george.jpg */,
 				8FFA8A082048702B00C4D99B /* check.png */,
 				8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */,
@@ -3402,6 +3405,7 @@
 				8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */,
 				8F660AB31E931C6F006D063F /* 4096_night_lights.jpg in Resources */,
 				8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */,
+				8A35CF1F206461D000ADD393 /* variety_magazine.jpg in Resources */,
 				8F1B4A211F64B61E00156809 /* portal_wood_frame_diffuse.png in Resources */,
 				8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */,
 				8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */,

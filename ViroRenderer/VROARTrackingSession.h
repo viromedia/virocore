@@ -76,6 +76,12 @@ private:
     std::vector<std::shared_ptr<VROARImageTarget>> _imageTargets;
 
     /*
+     Contains a set of targets that we need to remove once we're not tracking
+     since tracking happens on a separate thread, we cant remove whenever we want.
+     */
+    std::set<std::shared_ptr<VROARImageTarget>> _targetsToRemove;
+
+    /*
      Maps each VROARImageTarget to the VROARAnchor that it will update if the image is found
      TODO: anchor has a shared_ptr to target, but target has a weak_ptr to anchor, if we reversed
      that we may not need this map, because we have targets and we want the anchor they're attached
@@ -91,16 +97,35 @@ private:
     std::shared_ptr<VROARImageTracker> _tracker;
 #endif
 
+    /*
+     Whether or not we're ready to run tracking (there isn't already a tracking task running).
+     */
     std::atomic_bool _readyForTracking;
+
+    /*
+     Whether or not we have active targets.
+     */
     std::atomic_bool _haveActiveTargets;
 
+    /*
+     The camera texture reader.
+     */
     std::shared_ptr<VROTextureReader> _cameraTextureReader;
 
+    /*
+     The last camera that we were given.
+     */
     std::shared_ptr<VROARCamera> _lastCamera;
 
     /*
-     TODO: remove this when we actually get tracking working/integrated
+     This functions clears out the _targetsToRemove vector and actually removes them
+     from the tracker. This should be called on the renderer thread!
+     */
+    void flushTargetsToRemove();
+
+    /*
      The below fields/functions are just used for mocking
+     TODO: remove this when we actually get tracking working/integrated
      */
     long _count = 0;
     std::shared_ptr<VROARImageAnchor> _imageAnchor;

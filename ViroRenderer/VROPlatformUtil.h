@@ -98,11 +98,12 @@ void *VROPlatformLoadFile(std::string filename, int *outLength);
  */
 std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isItalic, int weight);
 
+#pragma mark - Device Information
+
 /*
- This function calls setImageOnTrackingImageView on ViroViewARCore in order to debug
- Image Tracking/Detection
+ Returns the device's model name
  */
-void VROPlatformSetTrackingImageView(std::string filepath);
+std::string VROPlatformGetDeviceModel();
 
 #pragma mark - Image Loading
 
@@ -230,6 +231,13 @@ void VROPlatformSetEnumValue(JNIEnv *env, jclass cls, jobject jObj, const char *
 
 // Safely converts the given string with the provided jni environment.
 std::string VROPlatformGetString(jstring string, JNIEnv *env);
+
+#pragma mark - Android Image Tracking Debugging
+/*
+ This function calls setImageOnTrackingImageView on ViroViewARCore in order to debug
+ Image Tracking/Detection
+ */
+void VROPlatformSetTrackingImageView(std::string filepath);
 
 #pragma mark - Android A/V
 

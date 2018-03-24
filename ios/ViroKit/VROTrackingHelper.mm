@@ -109,6 +109,17 @@
     return arImageTarget;
 }
 
+- (std::shared_ptr<VROARImageTarget>)getVarietyTarget {
+    UIImage *targetImage = [UIImage imageNamed:@"variety_magazine.jpg"];
+    cv::Mat targetMat = cv::Mat();
+    UIImageToMat(targetImage, targetMat); // should give us a RGB Mat.
+    
+    std::shared_ptr<VROARImageTarget> arImageTarget = std::make_shared<VROARImageTarget>(VROImageOrientation::Up, .19);
+    arImageTarget->setTargetMat(targetMat);
+    
+    return arImageTarget;
+}
+
 - (std::shared_ptr<VROARImageTarget>)getQRCodeTarget {
     UIImage *targetImage = [UIImage imageNamed:@"wikipedia_qr.jpg"];
     cv::Mat targetMat = cv::Mat();
@@ -141,7 +152,7 @@
 
     if (!_tracker) {
         // initialize the tracker
-        _tracker = VROARImageTracker::createARImageTracker([self getBenTarget]);
+        _tracker = VROARImageTracker::createARImageTracker([self getVarietyTarget]);
         //_tracker = VROARImageTracker::createARImageTracker([self getQRCodeTarget]);
     }
 
