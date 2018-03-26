@@ -146,8 +146,19 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
             std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
             material->bindShader(_computedLightsHash, _computedLights, context, driver);
             material->bindProperties(driver);
-            
-            if (!_computedLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
+
+            // We render the material if at least one of the following is true:
+            //
+            // 1. There are lights in the scene that haven't been culled (if there are no lights, then
+            //    nothing will be visible! Or,
+            // 2. The material is Constant. Constant materials do not need light to be visible. Or,
+            // 3. The material is PBR, and we have an active lighting environment. Lighting environments
+            //    provide ambient light for PBR materials
+            if (!_computedLights.empty() ||
+                 material->getLightingModel() == VROLightingModel::Constant ||
+                (material->getLightingModel() == VROLightingModel::PhysicallyBased && context.getIrradianceMap() != nullptr)) {
+
+
                 render(i, material, context, driver);
             }
         }

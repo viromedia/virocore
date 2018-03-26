@@ -144,10 +144,17 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
             boundLights = node->getComputedLights();
         }
         
-        // Only render the material if there are lights, or if the material uses
-        // constant lighting. Non-constant materials do not render unless we have
-        // at least one light.
-        if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
+        // We render the material if at least one of the following is true:
+        //
+        // 1. There are lights in the scene that haven't been culled (if there are no lights, then
+        //    nothing will be visible! Or,
+        // 2. The material is Constant. Constant materials do not need light to be visible. Or,
+        // 3. The material is PBR, and we have an active lighting environment. Lighting environments
+        //    provide ambient light for PBR materials
+        if (!boundLights.empty() ||
+            material->getLightingModel() == VROLightingModel::Constant ||
+            (material->getLightingModel() == VROLightingModel::PhysicallyBased && context.getIrradianceMap() != nullptr)) {
+
             if (kDebugSortOrder) {
                 if (node->getGeometry() && elementIndex == 0) {
                     pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);

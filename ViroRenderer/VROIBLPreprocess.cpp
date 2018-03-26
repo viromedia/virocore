@@ -47,7 +47,7 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
             pinfo("Lighting environment removed");
             context->setIrradianceMap(nullptr);
             context->setBRDFMap(nullptr);
-            context->setPreFilteredMap(nullptr);
+            context->setPrefilteredMap(nullptr);
             
             _currentLightingEnvironment = nullptr;
         }
@@ -66,7 +66,7 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
 
     else if (_phase == VROIBLPhase::PrefilterConvolution) {
         doPrefilterConvolutionPhase(scene, context, driver);
-        context->setPreFilteredMap(_prefilterMap);
+        context->setPrefilteredMap(_prefilterMap);
         _phase = VROIBLPhase::BRDFConvolution;
     }
 

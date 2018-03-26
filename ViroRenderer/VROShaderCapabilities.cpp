@@ -148,8 +148,7 @@ VROLightingShaderCapabilities VROShaderCapabilities::deriveLightingCapabilitiesK
     if (context.getIrradianceMap() != nullptr) {
         cap.diffuseIrradiance = true;
     }
-
-    if (context.getBRDFMap() != nullptr && context.getPreFilteredMap() != nullptr){
+    if (context.getBRDFMap() != nullptr && context.getPrefilteredMap() != nullptr) {
         cap.specularIrradiance = true;
     }
 

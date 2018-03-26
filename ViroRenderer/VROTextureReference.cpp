@@ -17,7 +17,7 @@ std::shared_ptr<VROTexture> VROTextureReference::getGlobalTexture(const VRORende
         case VROGlobalTextureType::IrradianceMap:
             return context.getIrradianceMap();
         case VROGlobalTextureType::PrefilteredMap:
-            return context.getPreFilteredMap();
+            return context.getPrefilteredMap();
         case VROGlobalTextureType::BrdfMap:
             return context.getBRDFMap();
         default:
