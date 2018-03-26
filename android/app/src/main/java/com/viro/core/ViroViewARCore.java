@@ -852,7 +852,10 @@ public class ViroViewARCore extends ViroView {
     public static boolean isDeviceCompatible(Context context) {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
         Log.i(TAG, "ARCore availability check returned [" + availability   + "]");
-        if (availability == ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE) {
+        if (availability == ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE ||
+            availability == ArCoreApk.Availability.UNKNOWN_CHECKING ||
+            availability == ArCoreApk.Availability.UNKNOWN_ERROR ||
+            availability == ArCoreApk.Availability.UNKNOWN_TIMED_OUT) {
             return false;
         }
         else {
