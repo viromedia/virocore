@@ -14,6 +14,7 @@
 #include "VROShaderModifier.h"
 #include "VROOpenGL.h"
 #include "VRORenderTarget.h"
+#include "VROMaterial.h"
 
 VROGaussianBlurRenderPass::VROGaussianBlurRenderPass() :
     _numBlurIterations(4),
@@ -36,24 +37,54 @@ void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> drive
         
         "ivec2 tex_size = textureSize(image, 0);",
         "highp vec2 tex_offset = vec2(1.0 / float(tex_size.x), 1.0 / float(tex_size.y));",
+       
+        // To blend correctly with Gaussian blur, we have to use premultiplied alpha. Therefore on
+        // texture lookup multiply the pixel's rgb by its alpha. In addition, prior to running this
+        // code we set our blend mode to VROBlendMode::PremultiplyAlpha, so that OpenGL correctly
+        // blends each successive blur to the blur target. Note that the final output of the blur
+        // is *also* premultiplied.
+        "highp vec4 result = texture(image, v_texcoord);",
+        "result.rgb *= result.a;",
+        "result *= weight[0];",
         
-        "highp vec4 center = texture(image, v_texcoord);"
-        "highp vec3 result = center.rgb * weight[0];",
         "if (horizontal)",
         "{",
-        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[1], 0.0)).rgb * weight[1];",
-        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[1], 0.0)).rgb * weight[1];",
-        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[2], 0.0)).rgb * weight[2];",
-        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[2], 0.0)).rgb * weight[2];",
+        "   highp vec4 p0 = texture(image, v_texcoord + vec2(tex_offset.x * offset[1], 0.0));",
+        "   p0.rgb *= p0.a;",
+        "   result += (p0 * weight[1]);",
+        
+        "   highp vec4 p1 = texture(image, v_texcoord - vec2(tex_offset.x * offset[1], 0.0));",
+        "   p1.rgb *= p1.a;",
+        "   result += (p1 * weight[1]);",
+        
+        "   highp vec4 p2 = texture(image, v_texcoord + vec2(tex_offset.x * offset[2], 0.0));",
+        "   p2.rgb *= p2.a;",
+        "   result += (p2 * weight[2]);",
+        
+        "   highp vec4 p3 = texture(image, v_texcoord - vec2(tex_offset.x * offset[2], 0.0));",
+        "   p3.rgb *= p3.a;",
+        "   result += (p3 * weight[2]);",
         "}",
         "else",
         "{",
-        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[1])).rgb * weight[1];",
-        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[1])).rgb * weight[1];",
-        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[2])).rgb * weight[2];",
-        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[2])).rgb * weight[2];",
+        "   highp vec4 p0 = texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[1]));",
+        "   p0.rgb *= p0.a;",
+        "   result += (p0 * weight[1]);",
+        
+        "   highp vec4 p1 = texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[1]));",
+        "   p1.rgb *= p1.a;",
+        "   result += (p1 * weight[1]);",
+        
+        "   highp vec4 p2 = texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[2]));",
+        "   p2.rgb *= p2.a;",
+        "   result += (p2 * weight[2]);",
+        
+        "   highp vec4 p3 = texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[2]));",
+        "   p3.rgb *= p3.a;",
+        "   result += (p3 * weight[2]);",
         "}",
-        "frag_color = vec4(result, center.a);",
+        
+        "frag_color = result;",
     };
     
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
@@ -98,6 +129,8 @@ void VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
     
     pglpush("Bloom");
     _gaussianBlur->begin(driver);
+    driver->setBlendingMode(VROBlendMode::PremultiplyAlpha);
+    
     for (int i = 0; i < _numBlurIterations; i++) {
         if (i == 0) {
             _gaussianBlur->blitOpt({ input->getTexture(1) }, bufferA, driver);

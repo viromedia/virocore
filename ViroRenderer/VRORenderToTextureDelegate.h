@@ -15,8 +15,9 @@ class VRODriver;
 class VROViewport;
 
 /*
- The VRORenderToTextureDelegate is set on, and notified by the VROChoreographer with a
- rendered texture target, produced at the end of the render pass, containing the rendered scene.
+ The VRORenderToTextureDelegate is notified at the end of each frame with a VRORenderTarget
+ that contains the fully rendered scene. This can be used to pass the rendered scene on to
+ other processes.
  */
 class VRORenderToTextureDelegate : public std::enable_shared_from_this<VRORenderToTextureDelegate> {
 public:

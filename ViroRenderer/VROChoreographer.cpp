@@ -119,9 +119,14 @@ void VROChoreographer::createRenderTargets() {
             std::vector<std::string> code = {
                 "uniform sampler2D hdr_texture;",
                 "uniform sampler2D bloom_texture;",
-                "highp vec4 hdr_rgba = texture(hdr_texture, v_texcoord).rgba;",
-                "highp vec4 bloom_rbga = texture(bloom_texture, v_texcoord).rgba;",
-                "frag_color = vec4(hdr_rgba + bloom_rbga);",
+                
+                // The HDR input is not premultiplied, so multiply its RGB by its alpha
+                "highp vec4 base = texture(hdr_texture, v_texcoord);",
+                "base.rgb *= base.a;",
+                
+                // The bloom input is already premultiplied (see VROGaussianBlurRenderPass)
+                "highp vec4 bloom = texture(bloom_texture, v_texcoord);",
+                "frag_color = base + bloom;",
             };
             _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
         }
@@ -220,6 +225,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Additively blend the bloom back into the image, store in _postProcessTarget
+            driver->setBlendingMode(VROBlendMode::PremultiplyAlpha);
             _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), _blurTargetB->getTexture(0) }, _postProcessTarget, driver);
             
             // Run additional post-processing on the normal HDR image

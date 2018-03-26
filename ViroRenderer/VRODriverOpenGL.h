@@ -181,6 +181,10 @@ public:
                 glBlendEquation(GL_FUNC_ADD);
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
             }
+            else if (mode == VROBlendMode::PremultiplyAlpha) {
+                glBlendEquation(GL_FUNC_ADD);
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            }
             else {
                 pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");
             }

@@ -109,7 +109,7 @@ void VROBloomTest::build(std::shared_ptr<VRORenderer> renderer,
         std::shared_ptr<VROMaterial> boxMaterial = box->getMaterials()[0];
         boxMaterial->setLightingModel(VROLightingModel::Constant);
         boxMaterial->getDiffuse().setColor({lightColors[i].x, lightColors[i].y, lightColors[i].z, 1});
-        boxMaterial->setBloomThreshold(0.5);
+        boxMaterial->setBloomThreshold(0.2);
         
         std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
         boxNode->setGeometry(box);
