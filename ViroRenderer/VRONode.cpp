@@ -185,17 +185,20 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
 }
 
 void VRONode::recomputeUmbrellaBoundingBox() {
+    VROMatrix4f parentTransform;
+    VROMatrix4f parentRotation;
+    
     std::shared_ptr<VRONode> parent = getParentNode();
-    if (!parent) {
-        return;
+    if (parent) {
+        parentTransform = parent->getComputedTransform();
+        parentRotation = parent->getComputedRotation();
     }
+    
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
-    computeTransforms(parent->getComputedTransform(), parent->getComputedRotation());
-    
+    computeTransforms(parentTransform, parentRotation);
     _umbrellaBoundingBox = VROBoundingBox(_computedPosition.x, _computedPosition.x, _computedPosition.y,
                                           _computedPosition.y, _computedPosition.z, _computedPosition.z);
-    
     computeUmbrellaBounds(&_umbrellaBoundingBox);
 }
 
@@ -503,7 +506,8 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
 void VRONode::updateVisibility(const VRORenderContext &context) {
     const VROFrustum &frustum = context.getCamera().getFrustum();
     
-    // the umbrellaBoundingBox should be positioned at the node's position not at [0,0,0] b/c bounding boxes are in world coordinates
+    // The umbrellaBoundingBox should be positioned at the node's position, not at [0,0,0],
+    // because bounding boxes are in world coordinates
     _umbrellaBoundingBox = VROBoundingBox(_computedPosition.x, _computedPosition.x, _computedPosition.y,
                                           _computedPosition.y, _computedPosition.z, _computedPosition.z);
     computeUmbrellaBounds(&_umbrellaBoundingBox);

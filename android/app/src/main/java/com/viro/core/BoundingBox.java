@@ -66,4 +66,11 @@ public class BoundingBox {
     public BoundingBox(float[] bounds) {
         this(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
     }
+
+    @Override
+    public String toString() {
+        return "[minX: " + minX + ", maxX: " + maxX +
+              ", minY: " + minY + ", maxY: " + maxY +
+              ", minZ: " + minZ + ", maxZ: " + maxZ + "]";
+    }
 }

@@ -147,7 +147,6 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
 
 void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<VRONode> node,
                              std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
-    
     if (fbxNode) {
         // The top-level fbxNode is a dummy; all of the data is stored in the children, so we
         // simply transfer those children over to the destination node
@@ -155,10 +154,10 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
             node->addChildNode(child);
         }
         
-        // recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
+        // Recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
         // we notify the user that their FBX has finished loading
-        fbxNode->recomputeUmbrellaBoundingBox();
-        fbxNode->setAtomicRenderProperties();
+        node->recomputeUmbrellaBoundingBox();
+        node->setAtomicRenderProperties();
         node->setIgnoreEventHandling(node->getIgnoreEventHandling());
         
         if (onFinish) {
