@@ -269,9 +269,14 @@ public class PlatformUtil {
         FileOutputStream out = null;
         try {
             in = mAssetManager.open(asset);
+            if (file.getParentFile() != null) {
+                file.getParentFile().mkdirs();
+            }
             out = new FileOutputStream(file);
 
             transfer(in, out);
+        } catch (Exception e) {
+            Log.e("Viro", "Failed to copy asset [" + asset + "] to local file", e);
         } finally {
             if (in != null) {
                 in.close();
