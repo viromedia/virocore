@@ -15,6 +15,8 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
@@ -29,7 +31,7 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
@@ -38,8 +40,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
-
-import java.io.IOException;
 
 /**
  * Wraps the Android ExoPlayer and can be controlled via JNI.
@@ -76,11 +76,11 @@ public class AVPlayer {
         mState = State.IDLE;
         mMute = false;
 
-        TrackSelection.Factory trackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
+        TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
+        mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
-        mExoPlayer.setAudioDebugListener(new AudioRendererEventListener() {
+        mExoPlayer.addAudioDebugListener(new AudioRendererEventListener() {
             @Override
             public void onAudioEnabled(DecoderCounters counters) {
             }
@@ -95,17 +95,22 @@ public class AVPlayer {
             public void onAudioInputFormatChanged(Format format) {
                 Log.i(TAG, "AVPlayer audio input format changed to " + format);
             }
+
             @Override
-            public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
+            public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
             }
+
             @Override
             public void onAudioDisabled(DecoderCounters counters) {
             }
         });
-        mExoPlayer.addListener(new ExoPlayer.EventListener() {
+        mExoPlayer.addListener(new Player.EventListener() {
+
             @Override
-            public void onTimelineChanged(Timeline timeline, Object manifest) {
+            public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+
             }
+
             @Override
             public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
             }
@@ -121,25 +126,35 @@ public class AVPlayer {
                 }
                 mPrevExoPlayerState = playbackState;
                 switch (playbackState) {
-                    case ExoPlayer.STATE_BUFFERING:
+                    case Player.STATE_BUFFERING:
                         if (!mWasBuffering) {
                             nativeWillBuffer(mNativeReference);
                             mWasBuffering = true;
                         }
                         break;
-                    case ExoPlayer.STATE_READY:
+                    case Player.STATE_READY:
                         if (mWasBuffering) {
                             nativeDidBuffer(mNativeReference);
                             mWasBuffering = false;
                         }
                         break;
-                    case ExoPlayer.STATE_ENDED:
+                    case Player.STATE_ENDED:
                         if (mLoop) {
                             mExoPlayer.seekToDefaultPosition();
                         }
                         nativeOnFinished(mNativeReference);
                         break;
                 }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
             }
 
             @Override
@@ -158,9 +173,22 @@ public class AVPlayer {
                 }
                 nativeOnError(mNativeReference, message);
             }
+
             @Override
-            public void onPositionDiscontinuity() {
+            public void onPositionDiscontinuity(int reason) {
+
             }
+
+            @Override
+            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+            }
+
+            @Override
+            public void onSeekProcessed() {
+
+            }
+
         });
     }
 
