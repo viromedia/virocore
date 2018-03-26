@@ -53,7 +53,7 @@ public class KeyValidator {
      * @param apiKey
      * @param listener
      */
-    public void validateKey(final String apiKey, final String vrPlatform, final KeyValidationListener listener) {
+    public void validateKey(final String apiKey, final String viewType, final String platform, final KeyValidationListener listener) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -69,7 +69,7 @@ public class KeyValidator {
                             Context context = mContextWeakRef.get();
                             if(context != null) {
                                 KeyMetricsRecorder recorder = new KeyMetricsRecorder(mDynamoClient, context);
-                                recorder.record(apiKey, vrPlatform);
+                                recorder.record(apiKey, viewType, platform);
                             }
                         } else {
                             listener.onResponse(false);

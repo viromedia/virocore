@@ -447,7 +447,7 @@ public class ViroViewARCore extends ViroView {
         setOnTouchListener(mViroTouchGestureListener);
 
         if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest();
+            validateAPIKeyFromManifest("AR", "arcore");
         }
     }
 

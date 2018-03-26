@@ -47,12 +47,12 @@ public class ViroViewARCoreTest {
              */
             assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isDeviceCompatible(mActivity));
             return;
-        }
-
-        if (session.isSupported(config)) {
-            assertTrue("Expected ViroViewARCore to be supported", ViroViewARCore.isDeviceCompatible(mActivity));
-        } else {
-            assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isDeviceCompatible(mActivity));
+        } catch (UnavailableArcoreNotInstalledException e) {
+            e.printStackTrace();
+        } catch (UnavailableSdkTooOldException e) {
+            e.printStackTrace();
+        } catch (UnavailableApkTooOldException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -256,7 +256,7 @@ public class ViroViewScene extends ViroView {
         setOnTouchListener(mViroTouchGestureListener);
 
         if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest();
+            validateAPIKeyFromManifest("3DScene", "none");
         }
     }
 

@@ -32,6 +32,7 @@
 #include "VROToneMappingRenderPass.h"
 #include "VRODebugHUD.h"
 
+
 // Target frames-per-second. Eventually this will be platform dependent,
 // but for now all of our platforms target 60.
 static const double kFPSTarget = 60;

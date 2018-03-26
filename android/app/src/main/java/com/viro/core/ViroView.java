@@ -28,13 +28,6 @@ import com.viro.core.internal.keys.KeyValidationListener;
 import com.viro.core.internal.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.viro.metrics.android.ViroAndroidKeenClientBuilder;
-import com.viro.metrics.java.ViroKeenClient;
-import com.viro.metrics.java.ViroKeenLogging;
-import com.viro.metrics.java.ViroKeenProject;
 
 /**
  * ViroView is the entrypoint for Viro applications, it enables the rendering of 3D AR and VR
@@ -110,17 +103,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
 
     private void init(RendererConfiguration config) {
         final Activity activity = (Activity) getContext();
-        // This client instance can now be referenced throughout the libary with ViroMetricsClient.client()
-        ViroKeenClient client = new ViroAndroidKeenClientBuilder(activity).build();
-        ViroKeenClient.initialize(client);
-        ViroKeenProject project = new ViroKeenProject("5ab1966bc9e77c0001b45ba0", "715EDB702D9AD29A56E127F08864DBCED277F35D946AA4DD2D4BD712B2356CA9E2E17276E74A8B69E44A720D0F92AF3A0D81CAF61404ABA069EE794C3FBFC19F5D66CB32B192B0B43AEA6CA61CED029E564237DB7452DDDC6955103CFAC11320", null);
-        client.setDefaultProject(project);
-
-        ViroKeenLogging.enableLogging();
-        client.setDebugMode(true);
-        Map<String, Object> event = new HashMap<>();
-        event.put("metricEvent", "Metrics Recorded!");
-        client.addEventAsync("ViroViewInit", event);
         mRendererConfig = config;
         mWeakActivity = new WeakReference<>(activity);
         mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
@@ -327,10 +309,10 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      *
      * @hide
      */
-     final void validateAPIKeyFromManifest() {
+     final void validateAPIKeyFromManifest(String viewType, String platform) {
          mNativeRenderer.setSuspended(false);
          // we actually care more about the headset than platform in this case.
-         validateAPIKey(mApiKey);
+         validateAPIKey(mApiKey, viewType, platform);
     }
 
     /**
@@ -340,11 +322,11 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      *
      * @hide
      */
-    public final void validateAPIKey(String apiKey) {
+    public final void validateAPIKey(String apiKey, String viewType, String platform) {
         mNativeRenderer.setSuspended(false);
         // we actually care more about the headset than platform in this case.
         final WeakReference<Renderer> weakRenderer = new WeakReference<>(mNativeRenderer);
-        mKeyValidator.validateKey(apiKey, getHeadset(), new KeyValidationListener() {
+        mKeyValidator.validateKey(apiKey, viewType, platform, new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
                 if (!mDestroyed) {

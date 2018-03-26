@@ -24,6 +24,7 @@
 #import "VROChoreographer.h"
 #import "GVROverlayView.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
+#include "VROMetricsRecorder.h"
 
 @interface VROOverlayViewDelegate : NSObject <GVROverlayViewDelegate>
 
@@ -317,6 +318,9 @@
         NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
     };
     [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
+    
+  // Record keen_io metrics
+  [[VROMetricsRecorder sharedClientWithViewType:@"VR" platform:@"cardboard"] recordEvent:@"renderer_init"];
 }
 
 - (void)recenterTracking {

@@ -202,7 +202,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest();
+            validateAPIKeyFromManifest("VR", getHeadset());
         }
     }
 

@@ -22,6 +22,7 @@
 #import "VROInputControllerAR.h"
 #import "VROWeakProxy.h"
 #import "VROViewRecorder.h"
+#import "VROMetricsRecorder.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 
@@ -348,6 +349,9 @@ static VROVector3f const kZeroVector = VROVector3f();
         NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
     };
     [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
+  
+  [[VROMetricsRecorder sharedClientWithViewType:@"3DScene" platform:@"none"] recordEvent:@"renderer_init"];
+
 }
 
 #pragma mark - Camera

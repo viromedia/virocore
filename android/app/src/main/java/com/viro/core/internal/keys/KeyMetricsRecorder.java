@@ -15,6 +15,11 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.viro.core.ViroView;
 import com.viro.core.internal.BuildInfo;
+import com.viro.metrics.android.UniqueID;
+import com.viro.metrics.android.ViroAndroidKeenClientBuilder;
+import com.viro.metrics.java.ViroKeenClient;
+import com.viro.metrics.java.ViroKeenLogging;
+import com.viro.metrics.java.ViroKeenProject;
 import com.viro.renderer.BuildConfig;
 
 import java.text.SimpleDateFormat;
@@ -23,6 +28,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KeyMetricsRecorder {
     private static final String DELIMITER = "_";
@@ -38,6 +44,7 @@ public class KeyMetricsRecorder {
     private final AmazonDynamoDBClient mDynamoClient;
     private String mPackageName;
     private boolean isDebug;
+    private Context mContext;
     private static final String TEST_BED_PACKAGE_NAME = "com.viromedia.viromedia";
 
     // Play Store (And Galaxy App Store) installer package names
@@ -53,6 +60,7 @@ public class KeyMetricsRecorder {
         mDynamoClient = client;
         mPackageName = BuildInfo.getPackageName(context);
         isDebug = isDebugMetrics(context);
+        mContext = context;
     }
 
     private static boolean isDebugMetrics(Context context) {
@@ -67,10 +75,35 @@ public class KeyMetricsRecorder {
                 !(installer != null && APP_STORES.contains(installer));
     }
 
-    public void record(String key, String vrPlatform) {
+    public void record(String key, String viewType, String platform) {
+        /**
+         * Keen IO Metrics recording
+         */
+
+        ViroKeenClient client = new ViroAndroidKeenClientBuilder(mContext).build();
+        ViroKeenClient.initialize(client);
+        ViroKeenProject project = new ViroKeenProject("5ab1966bc9e77c0001b45ba0", "715EDB702D9AD29A56E127F08864DBCED277F35D946AA4DD2D4BD712B2356CA9E2E17276E74A8B69E44A720D0F92AF3A0D81CAF61404ABA069EE794C3FBFC19F5D66CB32B192B0B43AEA6CA61CED029E564237DB7452DDDC6955103CFAC11320", null);
+        client.setDefaultProject(project);
+
+//        ViroKeenLogging.enableLogging();
+//        client.setDebugMode(true);
+        Map<String, Object> event = new HashMap<>();
+        event.put("event", "renderer_init");
+        event.put("app_id", mPackageName);
+        event.put("os", "android");
+        event.put("instance_id", UniqueID.id(mContext));
+        event.put("build_type", isDebugMetrics(mContext) ? "debug" : "release");
+        event.put("viro_product", BuildConfig.VIRO_PLATFORM);
+        event.put("platform", platform);
+        event.put("view_type", viewType);
+        client.addEventAsync("ViroViewInit", event);
+
+        /**
+         * DynamoDB Metrics recording below
+         */
         HashMap<String, AttributeValue> keyMap = new HashMap<>();
         // Add the primary key
-        AttributeValue primaryKeyValue = new AttributeValue().withS(getDynamoKey(key, vrPlatform));
+        AttributeValue primaryKeyValue = new AttributeValue().withS(getDynamoKey(key, viewType));
         keyMap.put(METRICS_TABLE_PRIMARY_KEY, primaryKeyValue);
         // Add the sort key (date)
         AttributeValue sortKeyValue = new AttributeValue().withS(getDate());
