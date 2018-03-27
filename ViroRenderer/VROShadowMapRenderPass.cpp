@@ -151,7 +151,7 @@ VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightViewMatrix() const {
-    VROVector3f lightForward = _light->getDirection().normalize();
+    VROVector3f lightForward = _light->getTransformedDirection().normalize();
     
     VROMatrix4f rotateX;
     rotateX.rotateX(M_PI_2);

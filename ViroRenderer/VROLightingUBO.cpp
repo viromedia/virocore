@@ -84,7 +84,7 @@ void VROLightingUBO::updateLightsFragment() {
             data.lights[index].shadow_bias = light->getShadowBias();
             data.lights[index].shadow_opacity = light->getShadowOpacity();
             light->getTransformedPosition().toArray(data.lights[index].position);
-            light->getDirection().toArray(data.lights[index].direction);
+            light->getTransformedDirection().toArray(data.lights[index].direction);
             color.toArray(data.lights[index].color);
             data.lights[index].intensity = light->getIntensity();
             data.lights[index].attenuation_start_distance = light->getAttenuationStartDistance();

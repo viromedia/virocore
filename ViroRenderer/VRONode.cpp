@@ -222,6 +222,7 @@ void VRONode::resetDebugSortIndex() {
 void VRONode::collectLights(std::vector<std::shared_ptr<VROLight>> *outLights) {
     for (std::shared_ptr<VROLight> &light : _lights) {
         light->setTransformedPosition(_computedTransform.multiply(light->getPosition()));
+        light->setTransformedDirection(_computedRotation.multiply(light->getDirection()));
         outLights->push_back(light);
     }
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
