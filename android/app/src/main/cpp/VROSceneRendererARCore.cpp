@@ -240,7 +240,6 @@ void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr
 
     _session->setScene(scene);
     _session->setViewport(viewport);
-    _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
     _session->setDelegate(arScene->getSessionDelegate());
     _session->run();
 
@@ -327,6 +326,11 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
     passert_msg(arScene != nullptr, "[Viro] AR requires using ARScene");
 
+    // Detection types default to empty. This way we can use the default specified by VROARScene,
+    // and only override that value is detectionTypes are explicitly set here in the VROARSceneRenderer
+    if (!_detectionTypes.empty()) {
+        arScene->setAnchorDetectionTypes(_detectionTypes);
+    }
     VROSceneRenderer::setSceneController(sceneController);
 
     // Reset the camera background for the new scene
@@ -340,6 +344,11 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
     passert_msg(arScene != nullptr, "[Viro] AR requires using ARScene");
 
+    // Detection types default to empty. This way we can use the default specified by VROARScene,
+    // and only override that value is detectionTypes are explicitly set here in the VROARSceneRenderer
+    if (!_detectionTypes.empty()) {
+        arScene->setAnchorDetectionTypes(_detectionTypes);
+    }
     VROSceneRenderer::setSceneController(sceneController, seconds, timingFunction);
 
     // Reset the camera background for the new scene
@@ -378,11 +387,18 @@ void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int hei
 
 bool VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
     if (enabled) {
-        return _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
+        _detectionTypes = {VROAnchorDetection::PlanesHorizontal};
+    } else {
+        _detectionTypes = {VROAnchorDetection::None};
     }
-    else {
-        return _session->setAnchorDetection({VROAnchorDetection::None});
+
+    if (_sceneController) {
+        std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+        if (scene) {
+            scene->setAnchorDetectionTypes(_detectionTypes);
+        }
     }
+    return true;
 }
 
 

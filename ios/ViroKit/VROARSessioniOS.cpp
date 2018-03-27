@@ -42,6 +42,9 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
         _sessionConfiguration.lightEstimationEnabled = YES;
     }
     else { // DOF6
+        // Note that default anchor detection gets overwritten by VROARScene when the
+        // session is injected into the scene (the scene will propagate whatever anchor
+        // detection setting it has over to this session).
         ARWorldTrackingConfiguration *config = [[ARWorldTrackingConfiguration alloc] init];
         config.planeDetection = ARPlaneDetectionNone;
         config.lightEstimationEnabled = YES;

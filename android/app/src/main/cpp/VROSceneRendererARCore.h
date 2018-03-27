@@ -126,6 +126,10 @@ private:
     double _suspendedNotificationTime;
     bool _arcoreInstalled;
 
+    // Detection types are only stored here so that they can be pushed to the ARScene when that
+    // is injected into the scene renderer (from there they are pushed into the VROARSession).
+    std::set<VROAnchorDetection> _detectionTypes;
+
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROSceneController> _sceneController;
