@@ -35,12 +35,10 @@
     self = [super init];
     if (self) {
         NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
-#if DEBUG
-        NSString *buildType = @"debug";
-#else
-        NSString *buildType = @"release";
-#endif
-        // we care more about the actual headset than the platform
+        BOOL isDebug = [[[[NSBundle mainBundle] appStoreReceiptURL] lastPathComponent] isEqualToString:@"sandboxReceipt"];
+        NSString *buildType = isDebug ? @"debug" : @"release";
+
+      // we care more about the actual headset than the platform
         _ApiKey_BundleId_BuildType = [NSString stringWithFormat:kVROApiKeyMetricsFormat, apiKey, @"ios", platform, bundleId, buildType];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyyMMdd"];
