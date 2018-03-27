@@ -3645,7 +3645,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo $SDK_VERSION_ACTUAL\nif [ \"$SDK_VERSION_ACTUAL\" -eq 110300 ]; then\n  echo \"On Xcode Beta w/ Base iOS Version 11.3, framework copied to react-viro/ios/dist/beta/\"\n  # CODESIGNING_FOLDER_PATH for ViroKit points to ViroKit.framework which is what we want.\n  cp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/beta/ViroRenderer\n  cp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/beta/ViroRenderer\nelse\n  echo \"Not on Base SDK == iOS 11.3, copying framework to react-viro/ios/dist/\"\n  cp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n  cp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\nfi";
+			shellScript = "\ncp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n";
 		};
 		C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
