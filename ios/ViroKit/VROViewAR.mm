@@ -180,8 +180,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
-    
-    // set session on input controller!
     _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
     
     /*
@@ -444,6 +442,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node {
     pabort("May not set POV in AR mode");
 }
+
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController {
@@ -511,28 +510,35 @@ static VROVector3f const kZeroVector = VROVector3f();
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
     
-    // Attempt to initialize the ARSession if we have not yet done so.
+    /*
+     Attempt to initialize the ARSession if we have not yet done so.
+     */
     if (_sceneController) {
         if (!_cameraBackground) {
             [self initARSessionWithViewport:viewport scene:_sceneController->getScene()];
         }
     }
 
-    // The viewport can be 0, if say in React Native, the user accidentally messes up their
-    // styles and React Native lays the view out with 0 width or height. No use rendering
-    // in this case.
+    /*
+     The viewport can be 0, if say in React Native, the user accidentally messes up their
+     styles and React Native lays the view out with 0 width or height. No use rendering
+     in this case.
+     */
     if (viewport.getWidth() == 0 || viewport.getHeight() == 0) {
         return;
     }
 
-    // If the ARSession is not yet ready, we renderWaitingForTracking.
+    /*
+     If the ARSession is not yet ready, render black.
+     */
     if (!_arSession->isReady()) {
         [self renderWithoutTracking:viewport];
         return;
     }
     
-    // Else, the ARSession is ready, update our scenes as usual.
-    // TODO Only on viewport change (and scene change!)
+    /*
+     ARSession is ready (meaning at least one frame has been produced).
+     */
     _arSession->setViewport(viewport);
     if (!_sceneController->getScene()->getRootNode()->getBackground()) {
         _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
@@ -544,19 +550,24 @@ static VROVector3f const kZeroVector = VROVector3f();
     const std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
     const std::shared_ptr<VROARCamera> camera = frame->getCamera();
     
-    // Update Background
-    // TODO Only on orientation change
+    /*
+     Update the AR camera background transform (maps the camera background to our scene).
+     */
     VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();
     _cameraBackground->setTexcoordTransform(backgroundTransform);
 
-    // Notify the current ARScene with the ARCamera's tracking state.
+    /*
+     Notify the current ARScene with the ARCamera's tracking state.
+     */
     if (_sceneController) {
         std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
         passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
         arScene->setTrackingState(camera->getTrackingState(), camera->getLimitedTrackingStateReason(), false);
     }
 
-    // Finally render our scene. 
+    /*
+     Render the scene.
+     */
     [self renderWithTracking:camera withFrame:frame withViewport:viewport];
 
     /*

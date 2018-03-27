@@ -147,7 +147,7 @@ JNI_METHOD(void, nativeSetAnchorDetectionTypes) (JNIEnv *env, jlong sceneRef, jo
     std::set<VROAnchorDetection> types;
 
     int stringCount = env->GetArrayLength(typeStrArray);
-    for (int i=0; i<stringCount; i++) {
+    for (int i = 0; i < stringCount; i++) {
         std::string typeString = VROPlatformGetString((jstring) env->GetObjectArrayElement(typeStrArray, i), env);
         if (VROStringUtil::strcmpinsensitive(typeString, "None")) {
             types.insert(VROAnchorDetection::None);
