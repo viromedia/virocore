@@ -224,10 +224,14 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.outputTarget = _blurTargetB;
             _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
             
-            // Additively blend the bloom back into the image, store in _postProcessTarget
+            // Additively blend the bloom back into the image, store in _postProcessTarget. Note we
+            // have to set the blend mode to PremultiplyAlpha because the input texture (the blur
+            // texture, has alpha premultiplied -- so we don't want OpenGL to multiply its colors
+            // by alpha *again*.
             driver->setBlendingMode(VROBlendMode::PremultiplyAlpha);
             _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), _blurTargetB->getTexture(0) }, _postProcessTarget, driver);
-            
+            driver->setBlendingMode(VROBlendMode::Alpha);
+
             // Run additional post-processing on the normal HDR image
             bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_postProcessTarget, _hdrTarget, driver);
             
