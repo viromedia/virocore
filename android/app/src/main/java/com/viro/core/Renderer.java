@@ -195,11 +195,10 @@ public class Renderer {
         mCameraListener = listener;
     }
 
-    private void onCameraTransformationUpdate(float[] pos, float[] rotEuler, float[] forward) {
+    public void onCameraTransformationUpdate(float[] pos, float[] rotEuler, float[] forward) {
         if (mCameraListener == null) {
             return;
         }
-
         Vector vPos = new Vector(pos);
         Vector vRotEuler = new Vector(rotEuler);
         Vector vForward = new Vector(forward);
