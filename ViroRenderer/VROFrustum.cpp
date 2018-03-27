@@ -9,6 +9,7 @@
 #include "VROFrustum.h"
 #include "VROFrustumPlane.h"
 #include "VROMath.h"
+#include <limits>
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -101,6 +102,10 @@ void VROFrustum::fitToModelView(const float *view, const float *projection,
     _planes[(int)VROFrustumSide::Bottom].d += bufferSides;
     _planes[(int)VROFrustumSide::Near].d += bufferNear;
     _planes[(int)VROFrustumSide::Far].d += bufferFar;
+}
+
+void VROFrustum::removeFCP() {
+    _planes[(int)VROFrustumSide::Far].d = std::numeric_limits<float>::max();
 }
 
 /////////////////////////////////////////////////////////////////////////////////

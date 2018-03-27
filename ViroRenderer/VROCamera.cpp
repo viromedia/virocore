@@ -45,7 +45,12 @@ void VROCamera::computeLookAtMatrix() {
 }
 
 void VROCamera::computeFrustum() {
+    /*
+     The frustum does not have a far clipping plane, because we auto-adjust our
+     FCP to fit all objects regardless of distance.
+     */
     _frustum.fitToModelView(_lookAtMatrix.getArray(), _projection.getArray(), 0, 0, 0);
+    _frustum.removeFCP();
 }
 
 void VROCamera::setViewport(VROViewport viewport) {
