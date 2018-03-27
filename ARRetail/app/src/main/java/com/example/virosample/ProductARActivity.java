@@ -319,6 +319,9 @@ public class ProductARActivity extends Activity {
         shadowNode.setLightReceivingBitMask(1);
         shadowNode.setPosition(new Vector(0,-0.01,0));
         shadowNode.setRotation(new Vector(-1.5708,0,0));
+        // We want the shadow node to ignore all events because it contains a surface of size 20x20
+        // meters and causes this to capture events which will bubble up to the mProductModelGroup node.
+        shadowNode.setIgnoreEventHandling(true);
         mProductModelGroup.addChildNode(shadowNode);
 
         // Load the model from the given mSelected Product
