@@ -58,39 +58,39 @@ public class Text extends Geometry {
      */
     public enum FontWeight {
         /**
-         * Ultra light font weight. Numerical value 100.
+         * Ultra light font weight (numerical value 100).
          */
         UltraLight(100),
         /**
-         * Thin font weight. Numerical value 200.
+         * Thin font weight (numerical value 200).
          */
         Thin(200),
         /**
-         * Light font weight. Numerical value 300.
+         * Light font weight (numerical value 300).
          */
         Light(300),
         /**
-         * Regular font weight. Numerical value 400.
+         * Regular font weight (numerical value 400).
          */
         Regular(400),
         /**
-         * Medium font weight. Numerical value 500.
+         * Medium font weight (numerical value 500).
          */
         Medium (500),
         /**
-         * Semibold font weight. Numerical value 600.
+         * Semibold font weight (numerical value 600).
          */
         Semibold(600),
         /**
-         * Bold font weight. Numerical value 700.
+         * Bold font weight (numerical value 700).
          */
         Bold(700),
         /**
-         * Heavy font weight. Numerical value 800.
+         * Heavy font weight (numerical value 800).
          */
         Heavy(800),
         /**
-         * Extra black font weight. Numerical value 900.
+         * Extra black font weight (numerical value 900).
          */
         ExtraBlack(900);
 
@@ -297,9 +297,9 @@ public class Text extends Geometry {
      * number of lines generated.
      * <p>
      * The fontFamilies string may contain a comma-separated list of typefaces. If so, the best
-     * typeface in the list will be chosen for each glyph in the Text. For example, if fontFamilies
-     * is set to <tt>"Roboto, NotoSansCJK"</tt>, then Roboto will be used for all English
-     * glyphs and NotoSansCJK will be used for all Chinese, Japanese, and Korean glyphs.
+     * typeface in the list will be chosen for each glyph in the Text. For example, if <tt>fontFamilies</tt>
+     * is set to <tt>"Roboto, NotoSansCJK"</tt>, then <tt>Roboto</tt> will be used for all English
+     * glyphs and <tt>NotoSansCJK</tt> will be used for all Chinese, Japanese, and Korean glyphs.
      * <p>
      *
      * @param viroContext         The ViroContext is required to render Text.
@@ -441,9 +441,9 @@ public class Text extends Geometry {
      * font size, weight, and style, fully specify the font used for each glyph of the Text.
      * <p>
      * The fontFamilies string may contain a comma-separated list of typefaces. If so, the best
-     * typeface in the list will be chosen for each glyph in the Text. For example, if fontFamilies
-     * is set to <tt>"Roboto, NotoSansCJK"</tt>, then Roboto will be used for all English
-     * glyphs and NotoSansCJK will be used for all Chinese, Japanese, and Korean glyphs.
+     * typeface in the list will be chosen for each glyph in the Text. For example, if <tt>fontFamilies</tt>
+     * is set to <tt>"Roboto, NotoSansCJK"</tt>, then <tt>Roboto</tt> will be used for all English
+     * glyphs and <tt>NotoSansCJK</tt> will be used for all Chinese, Japanese, and Korean glyphs.
      * <p>
      * If a font family cannot be found, the default system typeface will be used in its place.
      *
