@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARPlaneAnchor | Android Developers
+  <title>Polygon | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -249,7 +249,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
@@ -286,7 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.html">PhysicsWorld</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
@@ -554,7 +554,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARPlaneAnchor</h1>
+<h1 class="api-title">Polygon</h1>
 <p>
 <code class="api-signature">
   public
@@ -562,7 +562,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  ARPlaneAnchor
+  Polygon
 </code>
 <br>
 
@@ -575,7 +575,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a>
+    extends <a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a>
   
   
   
@@ -601,7 +601,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/ARAnchor.html">com.viro.core.ARAnchor</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Geometry.html">com.viro.core.Geometry</a>
     </td>
   </tr>
   
@@ -612,7 +612,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARPlaneAnchor
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Polygon
     </td>
   </tr>
   
@@ -625,9 +625,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARPlaneAnchor is a specialized <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> that represents a detected plane in the
- real-world. You can use the <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> corresponding to an ARPlane as a real-world surface
- on which to place virtual content.
+  <p>Polygon represents a one-sided plane whose boundary is defined by a list of vertices.
 </p>
 
 
@@ -642,50 +640,53 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="responsive constructors">
+<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
+
 
 
   
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code>
-        <p>Specifies the alignment of the ARPlaneAnchor with respect to gravity.&nbsp;
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Polygon.html#Polygon(java.util.List<com.viro.core.Vector>, float, float, float, float)">Polygon</a>(<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt; vertices, float u0, float v0, float u1, float v1)
+      </code>
+      
+        <p>Given a list of 2D points on the XY plane representing a convex boundary, construct a flat
+ polygon.
         
     
 </p>
-      </td>
-    </tr>
-    
-    
+      
+    </td>
+  </tr>
+  
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</table>
 
 
 
@@ -708,96 +709,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        <a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARPlaneAnchor.html#getAlignment()">getAlignment</a>()
+      <a href="../../../../reference/com/viro/core/Polygon.html#dispose()">dispose</a>()
       </code>
       
-        <p>Get the <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code> of the plane with respect to gravity.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARPlaneAnchor.html#getCenter()">getCenter</a>()
-      </code>
-      
-        <p>Get the center of this plane, in world coordinates.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARPlaneAnchor.html#getExtent()">getExtent</a>()
-      </code>
-      
-        <p>Get the extent of the plane in the X, Y, and Z directions.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt;</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARPlaneAnchor.html#getVertices()">getVertices</a>()
-      </code>
-      
-        <p>Get the vertices composing the boundary of this polygonal plane.
+        <p>Release native resources associated with this Polygon.
         
     
 </p>
@@ -831,6 +751,84 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2 class="api-section">Public constructors</h2>
+
+
+
+<A NAME="Polygon(java.util.List<com.viro.core.Vector>, float, float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Polygon</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Polygon (<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt; vertices, 
+                float u0, 
+                float v0, 
+                float u1, 
+                float v1)</pre>
+    
+    
+
+    
+  <p>Given a list of 2D points on the XY plane representing a convex boundary, construct a flat
+ polygon. <i>Concave polygonal shapes are not supported.</i>
+ <p>
+ Texture coordinates are represented on 2D U and V axes (essentially the X and Y axes of the
+ texture). The left edge of the texture is U = 0.0 and the right edge of the texture is U =
+ 1.0. Similarly, the top edge of a texture is V = 0.0 and the bottom edge of the texture is V
+ = 1.0.
+ <p>
+ Specifying greater than 1.0 on either the U or V axis will cause the texture to either tile
+ and repeat itself or clamp, depending on the Texture's <code><a href="../../../../reference/com/viro/core/Texture.html#setWrapS(com.viro.core.Texture.WrapMode)">setWrapS(Texture.WrapMode)</a></code>.
+ Specifying less than 1.0 on the U or V axis will render that texture partially over the
+ surface.
+ <p>
+ For example, specifying u0,v0 as (0,0) and (u1,v2) as (2,2) will tile the Texture twice over
+ the width and height of the polygon, effectively displaying 4 textures on the polygon.
+ Alternatively, setting (u1,v1) as (0.5, 0.5) will display a quarter of the texture over the
+ polygon.
+ <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vertices</code></td>
+        <td width="100%">
+          <code>List</code>: The list of boundary vertex positions in local model space.</p></td>
+      </tr>
+      <tr>
+        <td><code>u0</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the start <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> left edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>v0</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the start <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> top edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>u1</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the end <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> left edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>v1</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the end <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> top edge.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+
+
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -844,10 +842,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="getAlignment()"></A>
+<A NAME="dispose()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getAlignment</h3>
+    <h3 class="api-name">dispose</h3>
     <div class="api-level">
       <div></div>
       
@@ -855,108 +853,13 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a> getAlignment ()</pre>
+void dispose ()</pre>
     
     
 
     
-  <p>Get the <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code> of the plane with respect to gravity.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></code></td>
-        <td width="100%">The Alignment of the plane.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getCenter()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getCenter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getCenter ()</pre>
-    
-    
-
-    
-  <p>Get the center of this plane, in world coordinates.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
-        <td width="100%">The center as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getExtent()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getExtent</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getExtent ()</pre>
-    
-    
-
-    
-  <p>Get the extent of the plane in the X, Y, and Z directions. This is the plane's estimated
- size.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
-        <td width="100%">The extent of the plane as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getVertices()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getVertices</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt; getVertices ()</pre>
-    
-    
-
-    
-  <p>Get the vertices composing the boundary of this polygonal plane.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt;</code></td>
-        <td width="100%">The boundary vertices in a <code><a href="http://d.android.com/reference/java/util/List.html">List</a></code>, which each vertex represented as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
+  <p>Release native resources associated with this Polygon.
+</p></p>
 
 </div>
 

@@ -259,6 +259,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
           <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
@@ -285,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
@@ -323,6 +325,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.Type.html">ARAnchor.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.Type.html">ARHitTestResult.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingState.html">ARScene.TrackingState</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingStateReason.html">ARScene.TrackingStateReason</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
@@ -342,6 +346,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/SpatialSound.Rolloff.html">SpatialSound.Rolloff</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/SwipeState.html">SwipeState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
@@ -602,7 +608,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           
   <div id="subclasses-direct">
     <div id="subclasses-direct-list" class="jd-inheritedlinks"
-         style="display: none;" > <a href="../../../../reference/com/viro/core/Box.html">Box</a>,<a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a>,<a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a>,<a href="../../../../reference/com/viro/core/Surface.html">Surface</a>,<a href="../../../../reference/com/viro/core/Text.html">Text</a>
+         style="display: none;" > <a href="../../../../reference/com/viro/core/Box.html">Box</a>,<a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a>,<a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a>,<a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a>,<a href="../../../../reference/com/viro/core/Surface.html">Surface</a>,<a href="../../../../reference/com/viro/core/Text.html">Text</a>
     </div>
     <div id="subclasses-direct-summary" >
       
@@ -621,6 +627,17 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       
     
       <tr class=" api apilevel-" >
+        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></td>
+        <td class="jd-descrcol" width="100%">
+          Polygon represents a one-sided plane whose boundary is defined by a list of vertices.&nbsp;
+          
+    
+
+        </td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></td>
         <td class="jd-descrcol" width="100%">
           Polyline defines a multi-point line.&nbsp;
@@ -631,7 +648,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a></td>
         <td class="jd-descrcol" width="100%">
           Sphere defines a spherical shape, e.g.&nbsp;
@@ -642,7 +659,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></td>
         <td class="jd-descrcol" width="100%">
           Surface represents a one-sided plane defined by a width and height.&nbsp;
@@ -653,7 +670,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.html">Text</a></td>
         <td class="jd-descrcol" width="100%">
           Text is a Geometry that renders strings of text.&nbsp;

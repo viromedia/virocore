@@ -126,8 +126,10 @@ public class ARPlaneAnchor extends ARAnchor {
     }
 
     /**
-     * Returns a {@link List} of the vertices composing the boundary of this polygonal plane.
-     * @return The boundary vertices, each as a {@link Vector}.
+     * Get the vertices composing the boundary of this polygonal plane.
+     *
+     * @return The boundary vertices in a {@link List}, which each vertex represented as a {@link
+     * Vector}.
      */
     public List<Vector> getVertices() {
         return mVertices;
