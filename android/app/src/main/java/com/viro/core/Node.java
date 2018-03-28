@@ -744,10 +744,12 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Set the {@link FixedParticleEmitter} to use for this Node. This will remove any {@link Geometry}
-     * currently attached to the Node.
+     * Set the {@link FixedParticleEmitter} to use for this Node. FixedParticleEmitters are used for
+     * rendering large numbers of identical objects, like point clouds. Setting a FixedParticleEmitter
+     * will remove any {@link Geometry} currently attached to the Node, as well any other ParticleEmitter
+     * or FixedParticleEmitter.
      *
-     * @param emitter The emitter to use for this Node. Null to remove any {@link ParticleEmitter}
+     * @param emitter The emitter to use for this Node. Null to remove any {@link FixedParticleEmitter}
      *                from this Node.
      */
     public void setFixedParticleEmitter(FixedParticleEmitter emitter) {
@@ -767,8 +769,10 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Set the {@link ParticleEmitter} to use for this Node. This will remove any {@link Geometry}
-     * currently attached to the Node.
+     * Set the {@link ParticleEmitter} to use for this Node. ParticleEmitters are used for rendering
+     * smoke, rain, confetti, and other particle effects. Setting a ParticleEmitter will remove any
+     * {@link Geometry} currently attached to the Node, as well as any other ParticleEmitter or
+     * FixedParticleEmitter.
      *
      * @param emitter The emitter to use for this Node. Null to remove any {@link ParticleEmitter}
      *                from this Node.
@@ -812,7 +816,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void removeParticleEmitter() {
         mParticleEmitter = null;
-        nativeRemoveFixedParticleEmitter(mNativeRef);
+        nativeRemoveParticleEmitter(mNativeRef);
     }
 
     /**
@@ -1528,7 +1532,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetParticleEmitter(long nodeRef, long particleRef);
     private native void nativeSetFixedParticleEmitter(long nodeRef, long particleRef);
     private native void nativeRemoveParticleEmitter(long nodeRef);
-    private native void nativeRemoveFixedParticleEmitter(long nodeRef);
     private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeGetWorldTransform(long nodeReference);

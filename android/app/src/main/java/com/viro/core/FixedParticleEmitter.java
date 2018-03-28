@@ -15,20 +15,27 @@ package com.viro.core;
 import java.util.List;
 
 /**
- * FixedParticleEmitter enables developers to create easily and configure a group of static
- * particle effects, where the particles themselves are fixed in world space.
+ * FixedParticleEmitter enables you to render groups of fixed particles. The particles do not
+ * naturally move: they stay fixed in place until you manually change their position. This is useful
+ * for rendering large numbers of identical small objects, like point clouds.
  */
 public class FixedParticleEmitter {
     long mNativeRef;
 
     /**
-     * Create a new FixedParticleEmitter with individual particles that resemble the provided {@link
-     * Surface}. To be used, the FixedParticleEmitter needs to be added to a {@link Node} through {@link
-     * Node#setFixedParticleEmitter(FixedParticleEmitter)}. Note that a node can only contain either
-     * a FixedParticleEmitter or a ParticleEmitter at any given point in time, not both (any existing
-     * emitters will be unset before a new emitter is set on the node). Finally, the FixedParticleEmitter
-     * will also conform to all the transforms of its parent Node, meaning it can be moved and oriented
-     * with the scene graph.
+     * Create a new FixedParticleEmitter where each particle is modeled after the provided {@link
+     * Surface}. To be used, the positions of each particle must be set with {@link
+     * #setParticles(List)}, and the FixedParticleEmitter must be added to a {@link Node} through
+     * {@link Node#setFixedParticleEmitter(FixedParticleEmitter)}.
+     * <p>
+     * <p>
+     * Note that a node can only contain either a FixedParticleEmitter or a ParticleEmitter at any
+     * given point in time, not both (any existing emitters will be unset before a new emitter
+     * becomes active).
+     * <p>
+     * The FixedParticleEmitter will conform to all the transforms of its parent Node, meaning it
+     * can be moved and oriented with the scene graph.
+     * <p>
      *
      * @param viroContext The ViroContext is required to generate particles.
      * @param surface     {@link Surface} representing how each individual particle should appear.
@@ -37,7 +44,7 @@ public class FixedParticleEmitter {
      */
     public FixedParticleEmitter(ViroContext viroContext, Surface surface) {
         long surfaceRef = 0;
-        if (surface != null){
+        if (surface != null) {
             surfaceRef = surface.mNativeRef;
         }
         mNativeRef = nativeCreateEmitter(viroContext.mNativeRef, surfaceRef);
@@ -53,7 +60,7 @@ public class FixedParticleEmitter {
     }
 
     /**
-     * Release native resources associated with this ParticleEmitter.
+     * Release native resources associated with this FixedParticleEmitter.
      */
     public void dispose() {
         if (mNativeRef != 0) {
@@ -63,7 +70,7 @@ public class FixedParticleEmitter {
     }
 
     /**
-     * Set a new surface to be associated and spawned with this particle emitter.
+     * Set a new {@link Surface} to redefine the appearance of each particle in this emitter.
      */
     public void setSurface(Surface surface){
         if (surface == null || surface.mNativeRef == 0){
@@ -74,16 +81,19 @@ public class FixedParticleEmitter {
     }
 
     /**
-     * Sets a vector list of positional values representing the particles to be rendered
-     * by this emitter in world space.
+     * Set the list of positions at which to render particles. Each particle will appear identical
+     * to the {@link Surface} used by this FixedParticleEmitter. Any existing particles rendered by
+     * this FixedParticleEmitter will be removed and replaced by these new particles.
+     *
+     * @param positions {@link List} of positions at which to render particles.
      */
-    public void setParticles(List<Vector> positions){
-        if (positions == null){
+    public void setParticles(List<Vector> positions) {
+        if (positions == null) {
             return;
         }
 
         float[][] nativePosition = new float[positions.size()][3];
-        for (int i = 0; i < positions.size(); i ++ ) {
+        for (int i = 0; i < positions.size(); i++) {
             float[] vec = new float[3];
             Vector pos = positions.get(i);
             vec[0] = pos.x;

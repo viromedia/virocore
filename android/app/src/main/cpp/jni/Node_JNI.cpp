@@ -174,18 +174,6 @@ JNI_METHOD(void, nativeSetParticleEmitter)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveFixedParticleEmitter)(JNIEnv *env,
-                                                   jclass clazz,
-                                                   jlong node_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
-    VROPlatformDispatchAsyncRenderer([node_w] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            node->removeParticleEmitter();
-        }
-    });
-}
-
 JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
                                               jclass clazz,
                                               jlong node_j) {
