@@ -259,6 +259,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
@@ -285,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
@@ -323,6 +325,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.Type.html">ARAnchor.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.Type.html">ARHitTestResult.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingState.html">ARScene.TrackingState</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingStateReason.html">ARScene.TrackingStateReason</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
@@ -342,6 +346,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/SpatialSound.Rolloff.html">SpatialSound.Rolloff</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/SwipeState.html">SwipeState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
@@ -779,6 +785,42 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <tr><th colspan="2"><h3>Public constructors</h3></th></tr>
 
 
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Texture.html#Texture(android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, com.viro.core.Texture.Format)">Texture</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> px, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nx, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> py, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> ny, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> pz, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nz, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat)
+      </code>
+      
+        <p>Construct a new cube map Texture out of the given images.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Texture.html#Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean)">Texture</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, boolean sRGB, boolean generateMipmaps)
+      </code>
+      
+        <p>Construct a new 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
 
   
   <tr class="api apilevel-" >
@@ -1337,6 +1379,129 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <h2 class="api-section">Public constructors</h2>
 
+
+
+<A NAME="Texture(android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, com.viro.core.Texture.Format)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Texture</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> px, 
+                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nx, 
+                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> py, 
+                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> ny, 
+                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> pz, 
+                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nz, 
+                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat)</pre>
+    
+    
+
+    
+  <p>Construct a new cube map Texture out of the given images. Cube maps are a group of six
+ images. They are commonly used either as skyboxes (backgrounds that enclose the user), via
+ <code><a href="../../../../reference/com/viro/core/Scene.html#setBackgroundCubeTexture(com.viro.core.Texture)">setBackgroundCubeTexture(Texture)</a></code>, or as reflective or environment
+ maps.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>px</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the right side of the cube.</p></td>
+      </tr>
+      <tr>
+        <td><code>nx</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the left side of the cube.</p></td>
+      </tr>
+      <tr>
+        <td><code>py</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the top side of the cube.</p></td>
+      </tr>
+      <tr>
+        <td><code>ny</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the bottom side of the cube.</p></td>
+      </tr>
+      <tr>
+        <td><code>pz</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the far side of the cube.</p></td>
+      </tr>
+      <tr>
+        <td><code>nz</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the near side of the cube.</p></td>
+      </tr>
+      <tr>
+        <td><code>storageFormat</code></td>
+        <td width="100%">
+          <code>Texture.Format</code>: The format in which to store the texture in memory.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Texture</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, 
+                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, 
+                boolean sRGB, 
+                boolean generateMipmaps)</pre>
+    
+    
+
+    
+  <p>Construct a new 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>image</code></td>
+        <td width="100%">
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to turn into a Texture.</p></td>
+      </tr>
+      <tr>
+        <td><code>storageFormat</code></td>
+        <td width="100%">
+          <code>Texture.Format</code>: The format in which to store the Texture in memory. Bitmaps can be
+                        stored as either <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGBA8">RGBA8</a></code> or <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGB565">RGB565</a></code>.</p></td>
+      </tr>
+      <tr>
+        <td><code>sRGB</code></td>
+        <td width="100%">
+          <code>boolean</code>: True if the image is in a gamma-corrected (sRGB) format. If true, Viro
+                        will linearize the texture during shading computations. This option
+                        should generally be set to true for diffuse and specular images, and
+                        false for non-visual images like normal maps.</p></td>
+      </tr>
+      <tr>
+        <td><code>generateMipmaps</code></td>
+        <td width="100%">
+          <code>boolean</code>: True if Viro should generate mipmaps for the image and store them in
+                        the Texture. Mipmapping dramatically improves the visual quality and
+                        performance of Textures when they are rendered onto small surfaces.
+</p></td>
+      </tr>
+    </table>
+
+</div>
 
 
 <A NAME="Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
