@@ -188,7 +188,9 @@ public class ViroActivity extends AppCompatActivity {
             setContentView(mViroView);
         }
 
-
+        ViroViewARCore arView = (ViroViewARCore) mViroView;
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        arView.setCameraRotation(display.getRotation());
     }
 
     @Override
