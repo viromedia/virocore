@@ -49,6 +49,7 @@ add_library( viro_renderer
              ../ViroRenderer/VROTaskQueue.cpp
              ../ViroRenderer/VROFBXLoader.cpp
              ../ViroRenderer/VROCompress.cpp
+             ../ViroRenderer/VROSparseBitSet.cpp
              ../ViroRenderer/Nodes.pb.cc
 
 	     # Renderer
@@ -103,6 +104,9 @@ add_library( viro_renderer
              ../ViroRenderer/VROReticle.cpp
              ../ViroRenderer/VROText.cpp
              ../ViroRenderer/VROTypeface.cpp
+             ../ViroRenderer/VROTypefaceCollection.cpp
+             ../ViroRenderer/VROFontUtil.cpp
+             ../ViroRenderer/VROCharmapCoverage.cpp
              ../ViroRenderer/VROKnuthPlassFormatter.cpp
              ../ViroRenderer/VRODebugHUD.cpp
              ../ViroRenderer/VROGlyphOpenGL.cpp

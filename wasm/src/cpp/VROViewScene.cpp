@@ -101,7 +101,7 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotBlue);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
-    /*
+    
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
     VROOBJLoader::loadOBJFromResource("test/male02.obj", VROResourceType::URL, objNode,
                                       [](std::shared_ptr<VRONode> node, bool success) {
@@ -124,7 +124,6 @@ void VROViewScene::buildTestScene() {
     VROTransaction::commit();
     
     // Text test
-    std::shared_ptr<VROTypeface> typeface = _driver->newTypeface("Helvetica", 28);
     VROLineBreakMode linebreakMode = VROLineBreakMode::WordWrap;
     VROTextClipMode clipMode = VROTextClipMode::None;
     int width = 5;
@@ -132,12 +131,10 @@ void VROViewScene::buildTestScene() {
     
     std::wstring string = L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     
-    VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode, 0);
-    pinfo("Estimated size %f, %f", size.x, size.y);
-    
-    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {0.0, 0.0, 1.0, 1.0}, width, height,
+    std::shared_ptr<VROText> text = VROText::createText(string, "Helvetica", 28, VROFontStyle::Normal, VROFontWeight::Regular,
+                                                        {0.0, 0.0, 1.0, 1.0}, width, height,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
-                                                        linebreakMode, clipMode);
+                                                        linebreakMode, clipMode, 0, _driver);
     
     text->setName("Text");
     pinfo("Realized size %f, %f", text->getRealizedWidth(), text->getRealizedHeight());
@@ -152,7 +149,7 @@ void VROViewScene::buildTestScene() {
     particleNode->setPosition({0, -10, -15});
     particleNode->setTag("Particles");
     
-    std::shared_ptr<VROTexture> imgTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
+    std::shared_ptr<VROTexture> imgTexture = std::make_shared<VROTexture>(true, VROMipmapMode::Runtime,
                                                                            VROPlatformLoadImageFromFile("cloud.png", format));
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1,1);
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>(_driver, surface);
@@ -178,15 +175,14 @@ void VROViewScene::buildTestScene() {
     particleNode->setParticleEmitter(particleEmitter);
     rootNode->addChildNode(particleNode);
     particleEmitter->setRun(true);
-    */
     
-    std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
     //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
     //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
     //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/portal_archway", { 0, 0, -3 }, { 1, 1, 1 }, 1, "02");
 
 
-    rootNode->addChildNode(fbxNode);
+    //rootNode->addChildNode(fbxNode);
     
     /*
     std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,

@@ -21,20 +21,21 @@ class VROTypefaceWasm : public VROTypeface {
 
 public:
 
-    VROTypefaceWasm(std::string name, int size, std::shared_ptr<VRODriver> driver);
+    VROTypefaceWasm(std::string name, int size, VROFontStyle style, VROFontWeight weight,
+                    std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceWasm();
 
     float getLineHeight() const;
-    std::shared_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
+    std::shared_ptr<VROGlyph> loadGlyph(uint32_t charCode, uint32_t variantSelector,
+                                        bool forRendering);
 
 protected:
 
-    void loadFace(std::string name, int size);
+    FT_FaceRec_ *loadFTFace();
 
 private:
 
     std::weak_ptr<VRODriver> _driver;
-    FT_Library _ft;
     FT_Face _face;
     
     std::string getFontPath(std::string fontName);
