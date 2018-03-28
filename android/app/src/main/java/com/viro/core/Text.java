@@ -288,20 +288,23 @@ public class Text extends Geometry {
 
     /**
      * Create a new fully specified Text. The the given string will be displayed given typeface,
-     * constrained to the bounds defined by the provided width and height, and aligned
-     * according to the given alignment parameters and linebreak mode.
+     * constrained to the bounds defined by the provided width and height, and aligned according to
+     * the given alignment parameters and linebreak mode.
      * <p>
      * The clip mode determines whether the text is clipped to the given bounds.
      * <p>
-     * The maxLines parameter, if set, caps the number of lines; when zero, there is no
-     * limit to the number of lines generated.
-     *
-     * @deprecated Use the {@link TextBuilder} instead, which also allows you to specify font
-     * style and weight.
+     * The maxLines parameter, if set, caps the number of lines; when zero, there is no limit to the
+     * number of lines generated.
+     * <p>
+     * The fontFamilies string may contain a comma-separated list of typefaces. If so, the best
+     * typeface in the list will be chosen for each glyph in the Text. For example, if fontFamilies
+     * is set to <tt>"Roboto, NotoSansCJK"</tt>, then Roboto will be used for all English
+     * glyphs and NotoSansCJK will be used for all Chinese, Japanese, and Korean glyphs.
+     * <p>
      *
      * @param viroContext         The ViroContext is required to render Text.
      * @param text                The text string to display.
-     * @param fontFamilyName      The name of the font's family name (e.g. 'Roboto' or
+     * @param fontFamilies        The name of the font's family name (e.g. 'Roboto' or
      *                            'Roboto-Italic').
      * @param size                The point size of the font.
      * @param color               The color of the text.
@@ -317,55 +320,27 @@ public class Text extends Geometry {
      *                            height of the bounds.
      * @param maxLines            If non-zero, will cap the number of lines. If set to zero, there
      *                            is no limit to the number of lines generated.
+     * @deprecated Use the {@link TextBuilder} instead, which also allows you to specify font style
+     * and weight.
      */
-    public Text(ViroContext viroContext, String text, String fontFamilyName,
+    @Deprecated
+    public Text(ViroContext viroContext, String text, String fontFamilies,
                 int size, long color, float width, float height,
                 HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
 
-        this(viroContext, text, fontFamilyName, size, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, color,
+        this(viroContext, text, fontFamilies, size, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, color,
                 width, height, horizontalAlignment, verticalAlignment, lineBreakMode, clipMode,
                 maxLines);
     }
 
-    /**
-     * Create a new fully specified Text. The the given string will be displayed given typeface,
-     * constrained to the bounds defined by the provided width and height, and aligned
-     * according to the given alignment parameters and linebreak mode.
-     * <p>
-     * The clip mode determines whether the text is clipped to the given bounds.
-     * <p>
-     * The maxLines parameter, if set, caps the number of lines; when zero, there is no
-     * limit to the number of lines generated.
-     *
-     * @param viroContext         The ViroContext is required to render Text.
-     * @param text                The text string to display.
-     * @param fontFamilyName      The name of the font's family name (e.g. 'Roboto' or
-     *                            'Roboto-Italic').
-     * @param size                The point size of the font.
-     * @param fontStyle           The style of the font (e.g., Italic).
-     * @param fontWeight          The weigh to the font.
-     * @param color               The color of the text.
-     * @param width               The width of the bounds within which to display the text.
-     * @param height              The height of the bounds within which to display the text.
-     * @param horizontalAlignment The horizontal alignment of the text.
-     * @param verticalAlignment   The vertical alignment of the text.
-     * @param lineBreakMode       The line-break mode to use when the text breaches the maximum
-     *                            width of the bounds.
-     * @param clipMode            The clipping mode, which determines behavior when the text
-     *                            breaches the maximum width of the bounds (when word-wrapping is
-     *                            disabled), and the behavior when the text breaches the maximum
-     *                            height of the bounds.
-     * @param maxLines            If non-zero, will cap the number of lines. If set to zero, there
-     *                            is no limit to the number of lines generated.
-     */
-    private Text(ViroContext viroContext, String text, String fontFamilyName,
+    private Text(ViroContext viroContext, String text, String fontFamilies,
                 int size, FontStyle fontStyle, FontWeight fontWeight, long color, float width, float height,
                 HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
         mViroContext = viroContext;
         mText = text;
-        mFontFamilyName = fontFamilyName;
+        mFontFamilyName = fontFamilies;
         mFontSize = size;
         mFontStyle = fontStyle;
         mFontWeight = fontWeight;
@@ -423,25 +398,59 @@ public class Text extends Geometry {
     }
 
     /**
-     * Get the name of the font family used by this Text. For example, 'Roboto' or 'Roboto-Italic'.
-     * The font family, in conjunction with the font size, determines the typeface used when
-     * rendering the text.
+     * Get the name of the font family used by this Text. The name can be a specific font family
+     * like 'Roboto' or a generic group name like 'sans-serif-smallcaps' or 'monospace'.
      *
      * @return The name of the font family.
+     * @deprecated Use {@link #getFontFamilies()}
      */
+    @Deprecated
     public String getFontFamilyName() {
         return mFontFamilyName;
     }
 
     /**
+     * Get the names of the font families used to render this Text. The names can be specific font
+     * families like 'Roboto' or generic group names like 'sans-serif-smallcaps' or 'monospace'.
+     *
+     * @return The comma-separated names of the font families.
+     */
+    public String getFontFamilies() {
+        return mFontFamilyName;
+    }
+
+    /**
      * Set the name of the font family to use to render this Text. For example, 'Roboto' or
-     * 'Roboto-Italic'. The font family, in conjunction with the font size, determines the typeface
-     * used when rendering the text.
+     * 'monospace'. The font family, in conjunction with the font size, weight, and style,
+     * fully specifies the font used when rendering the text.
      *
      * @param fontFamily The name of the font family.
+     * @deprecated Use {@link #setFontFamilies(String)}
      */
+    @Deprecated
     public void setFontFamilyName(String fontFamily) {
         this.mFontFamilyName = fontFamily;
+        nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, mFontSize,
+                mFontStyle.getIntValue(), mFontWeight.getIntValue());
+    }
+
+    /**
+     * Set the comma-separated names of the font families that should be used to render this Text.
+     * The names can refer to specific font families like 'Roboto' or generic group names like
+     * 'sans-serif-smallcaps', 'monospace', or 'cursive'. The font families, in conjunction with the
+     * font size, weight, and style, fully specify the font used for each glyph of the Text.
+     * <p>
+     * The fontFamilies string may contain a comma-separated list of typefaces. If so, the best
+     * typeface in the list will be chosen for each glyph in the Text. For example, if fontFamilies
+     * is set to <tt>"Roboto, NotoSansCJK"</tt>, then Roboto will be used for all English
+     * glyphs and NotoSansCJK will be used for all Chinese, Japanese, and Korean glyphs.
+     * <p>
+     * If a font family cannot be found, the default system typeface will be used in its place.
+     *
+     * @param fontFamilies Comma-separated list of font families to use when rendering this Text.
+     */
+    public void setFontFamilies(String fontFamilies) {
+        this.mFontFamilyName = fontFamilies;
         nativeSetFont(mViroContext.mNativeRef, mNativeRef, mFontFamilyName, mFontSize,
                 mFontStyle.getIntValue(), mFontWeight.getIntValue());
     }
@@ -729,8 +738,20 @@ public class Text extends Geometry {
          * Refer to {@link Text#setFontFamilyName(String)}.
          *
          * @return This builder.
+         * @deprecated Use {@link #fontFamilies(String)}
          */
+        @Deprecated
         public TextBuilder fontFamilyName(String mFontFamilyName) {
+            this.mFontFamilyName = mFontFamilyName;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setFontFamilies(String)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder fontFamilies(String mFontFamilyName) {
             this.mFontFamilyName = mFontFamilyName;
             return this;
         }

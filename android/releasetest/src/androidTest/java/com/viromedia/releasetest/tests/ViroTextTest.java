@@ -50,10 +50,12 @@ public class ViroTextTest extends ViroBaseTest {
 
     @Test
     public void testText() {
-
         testSetText();
         testSetFontFamily();
         testSetFontSize();
+        testSetFontStyle();
+        testSetFontWeight();
+        testInternationalization();
         testSetColor();
         testSetWidth();
         testSetHeight();
@@ -65,6 +67,8 @@ public class ViroTextTest extends ViroBaseTest {
     }
 
     private void testSetLineBreakMode() {
+        mText.setText(TEST_STRING);
+
         final Iterator<Text.LineBreakMode> itr = Iterables.cycle(Text.LineBreakMode.values()).iterator();
         mMutableTestMethod = () -> {
             mText.setLineBreakMode(itr.next());
@@ -153,14 +157,45 @@ public class ViroTextTest extends ViroBaseTest {
     }
 
     private void testSetFontFamily() {
-        final List<String> strings = Arrays.asList("Roboto",
-                "Roboto-Italic", "Noto", "Noto-Italic");
+        final List<String> strings = Arrays.asList("Roboto", "DroidSansMono", "CutiveMono", "sans-serif-smallcaps", "monospace", "cursive");
         final Iterator<String> itr = Iterables.cycle(strings).iterator();
         mMutableTestMethod = () -> {
-            mText.setFontFamilyName(itr.next());
+            mText.setFontFamilies(itr.next());
         };
         assertPass("Cycling through font families", () -> {
-            mText.setFontFamilyName("Roboto");
+            mText.setFontFamilies("Roboto");
+        });
+    }
+
+    private void testSetFontStyle() {
+        final List<Text.FontStyle> styles = Arrays.asList(Text.FontStyle.Normal, Text.FontStyle.Italic);
+        final Iterator<Text.FontStyle> itr = Iterables.cycle(styles).iterator();
+        mMutableTestMethod = () -> {
+            mText.setFontStyle(itr.next());
+        };
+        assertPass("Cycling through font styles", () -> {
+            mText.setFontStyle(Text.FontStyle.Normal);
+        });
+    }
+
+    private void testSetFontWeight() {
+        final List<Text.FontWeight> styles = Arrays.asList(Text.FontWeight.values());
+        final Iterator<Text.FontWeight> itr = Iterables.cycle(styles).iterator();
+        mMutableTestMethod = () -> {
+            mText.setFontWeight(itr.next());
+        };
+        assertPass("Cycling through font weights", () -> {
+            mText.setFontWeight(Text.FontWeight.Regular);
+        });
+    }
+
+    private void testInternationalization() {
+        mText.setText("This is an example of mixed text 他们赋 有理性和良心");
+        mText.setFontFamilies("Roboto, NotoSansCJK");
+
+        assertPass("Displaying mixed English and Chinese text", () -> {
+            mText.setFontFamilies("Roboto");
+            mText.setText(TEST_STRING);
         });
     }
 
