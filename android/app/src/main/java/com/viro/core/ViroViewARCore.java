@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
+import android.view.View;
 
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Session;
@@ -523,7 +524,8 @@ public class ViroViewARCore extends ViroView {
 
     @Override
     protected int getSystemUiVisibilityFlags() {
-        return 0;
+        return (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     /**
@@ -721,7 +723,7 @@ public class ViroViewARCore extends ViroView {
     public ViroMediaRecorder getRecorder() {
         if (mMediaRecorder == null) {
             mMediaRecorder = new ViroMediaRecorder(getContext(), mNativeRenderer,
-                    getWidth(), getHeight());
+                    mWidth, mHeight);
         }
         return mMediaRecorder;
     }
