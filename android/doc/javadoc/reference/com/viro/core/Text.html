@@ -259,6 +259,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
@@ -285,6 +286,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
@@ -323,6 +325,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.Type.html">ARAnchor.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.Type.html">ARHitTestResult.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingState.html">ARScene.TrackingState</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingStateReason.html">ARScene.TrackingStateReason</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.RotationType.html">Camera.RotationType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
@@ -342,6 +346,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/SpatialSound.Rolloff.html">SpatialSound.Rolloff</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/SwipeState.html">SwipeState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
@@ -669,6 +675,40 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         enum</code></td>
       <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></code>
+        <p>The style of the font used to render <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code>.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></code>
+        <p>The weight of the font used to render <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code>.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
         <code><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></code>
         <p>Controls the horizontal alignment of Text within its bounds.&nbsp;
         
@@ -783,10 +823,14 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Text.html#Text(com.viro.core.ViroContext, java.lang.String, java.lang.String, int, long, float, float, com.viro.core.Text.HorizontalAlignment, com.viro.core.Text.VerticalAlignment, com.viro.core.Text.LineBreakMode, com.viro.core.Text.ClipMode, int)">Text</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/java/lang/String.html">String</a> text, <a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamilyName, int size, long color, float width, float height, <a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a> horizontalAlignment, <a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a> verticalAlignment, <a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a> lineBreakMode, <a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a> clipMode, int maxLines)
+      <a href="../../../../reference/com/viro/core/Text.html#Text(com.viro.core.ViroContext, java.lang.String, java.lang.String, int, long, float, float, com.viro.core.Text.HorizontalAlignment, com.viro.core.Text.VerticalAlignment, com.viro.core.Text.LineBreakMode, com.viro.core.Text.ClipMode, int)">Text</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/java/lang/String.html">String</a> text, <a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamilies, int size, long color, float width, float height, <a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a> horizontalAlignment, <a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a> verticalAlignment, <a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a> lineBreakMode, <a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a> clipMode, int maxLines)
       </code>
       
-        <p>Create a new fully specified Text.
+        <p><em>
+      This constructor is deprecated.
+    Use the <code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code> instead, which also allows you to specify font style
+ and weight.
+</em>
         
     
 </p>
@@ -927,10 +971,40 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getFontFamilies()">getFontFamilies</a>()
+      </code>
+      
+        <p>Get the names of the font families used to render this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="http://d.android.com/reference/java/lang/String.html">String</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Text.html#getFontFamilyName()">getFontFamilyName</a>()
       </code>
       
-        <p>Get the name of the font family used by this Text.
+        <p><em>
+      This method is deprecated.
+    Use <code><a href="../../../../reference/com/viro/core/Text.html#getFontFamilies()">getFontFamilies()</a></code>
+</em>
         
     
 </p>
@@ -958,6 +1032,60 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Get the font size used when rendering this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getFontStyle()">getFontStyle</a>()
+      </code>
+      
+        <p>Get the font style used when rendering this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getFontWeight()">getFontWeight</a>()
+      </code>
+      
+        <p>Get the font weight used when rendering this Text.
         
     
 </p>
@@ -1219,10 +1347,40 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Text.html#setFontFamilies(java.lang.String)">setFontFamilies</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamilies)
+      </code>
+      
+        <p>Set the comma-separated names of the font families that should be used to render this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Text.html#setFontFamilyName(java.lang.String)">setFontFamilyName</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamily)
       </code>
       
-        <p>Set the name of the font family to use to render this Text.
+        <p><em>
+      This method is deprecated.
+    Use <code><a href="../../../../reference/com/viro/core/Text.html#setFontFamilies(java.lang.String)">setFontFamilies(String)</a></code>
+</em>
         
     
 </p>
@@ -1250,6 +1408,60 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Set the point size of the font to use when rendering this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#setFontStyle(com.viro.core.Text.FontStyle)">setFontStyle</a>(<a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a> fontStyle)
+      </code>
+      
+        <p>Set the style of the font to use when rendering this Text (e.g., italic).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#setFontWeight(com.viro.core.Text.FontWeight)">setFontWeight</a>(<a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a> fontWeight)
+      </code>
+      
+        <p>Set the weight of the font to use when rendering this Text.
         
     
 </p>
@@ -1540,7 +1752,7 @@ Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext
 <pre class="api-signature no-pretty-print">
 Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
                 <a href="http://d.android.com/reference/java/lang/String.html">String</a> text, 
-                <a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamilyName, 
+                <a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamilies, 
                 int size, 
                 long color, 
                 float width, 
@@ -1553,15 +1765,27 @@ Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This constructor is deprecated.</strong><br/>
+    Use the <code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code> instead, which also allows you to specify font style
+ and weight.
+
+  </p>
   <p>Create a new fully specified Text. The the given string will be displayed given typeface,
- constrained to the bounds defined by the provided width and height, and aligned
- according to the given alignment parameters and linebreak mode.
+ constrained to the bounds defined by the provided width and height, and aligned according to
+ the given alignment parameters and linebreak mode.
  <p>
  The clip mode determines whether the text is clipped to the given bounds.
  <p>
- The maxLines parameter, if set, caps the number of lines; when zero, there is no
- limit to the number of lines generated.</p></p>
+ The maxLines parameter, if set, caps the number of lines; when zero, there is no limit to the
+ number of lines generated.
+ <p>
+ The fontFamilies string may contain a comma-separated list of typefaces. If so, the best
+ typeface in the list will be chosen for each glyph in the Text. For example, if fontFamilies
+ is set to <tt>"Roboto, NotoSansCJK"</tt>, then Roboto will be used for all English
+ glyphs and NotoSansCJK will be used for all Chinese, Japanese, and Korean glyphs.
+ <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
@@ -1575,7 +1799,7 @@ Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext
           <code>String</code>: The text string to display.</p></td>
       </tr>
       <tr>
-        <td><code>fontFamilyName</code></td>
+        <td><code>fontFamilies</code></td>
         <td width="100%">
           <code>String</code>: The name of the font's family name (e.g. 'Roboto' or
                             'Roboto-Italic').</p></td>
@@ -1628,8 +1852,7 @@ Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext
         <td><code>maxLines</code></td>
         <td width="100%">
           <code>int</code>: If non-zero, will cap the number of lines. If set to zero, there
-                            is no limit to the number of lines generated.
-</p></td>
+                            is no limit to the number of lines generated.</p></td>
       </tr>
     </table>
 
@@ -1759,6 +1982,36 @@ long getColor ()</pre>
 </div>
 
 
+<A NAME="getFontFamilies()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getFontFamilies</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/lang/String.html">String</a> getFontFamilies ()</pre>
+    
+    
+
+    
+  <p>Get the names of the font families used to render this Text. The names can be specific font
+ families like 'Roboto' or generic group names like 'sans-serif-smallcaps' or 'monospace'.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
+        <td width="100%">The comma-separated names of the font families.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getFontFamilyName()"></A>
 
 <div class="api apilevel-">
@@ -1774,16 +2027,19 @@ long getColor ()</pre>
     
     
 
-    
-  <p>Get the name of the font family used by this Text. For example, 'Roboto' or 'Roboto-Italic'.
- The font family, in conjunction with the font size, determines the typeface used when
- rendering the text.</p></p>
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    Use <code><a href="../../../../reference/com/viro/core/Text.html#getFontFamilies()">getFontFamilies()</a></code>
+
+  </p>
+  <p>Get the name of the font family used by this Text. The name can be a specific font family
+ like 'Roboto' or a generic group name like 'sans-serif-smallcaps' or 'monospace'.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
-        <td width="100%">The name of the font family.
-</p></td>
+        <td width="100%">The name of the font family.</p></td>
       </tr>
     </table>
 
@@ -1812,6 +2068,64 @@ int getFontSize ()</pre>
       <tr>
         <td><code>int</code></td>
         <td width="100%">The font size of the Text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getFontStyle()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getFontStyle</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a> getFontStyle ()</pre>
+    
+    
+
+    
+  <p>Get the font style used when rendering this Text.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></code></td>
+        <td width="100%">The font style of the Text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getFontWeight()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getFontWeight</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a> getFontWeight ()</pre>
+    
+    
+
+    
+  <p>Get the font weight used when rendering this Text.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></code> of the Text.
 </p></td>
       </tr>
     </table>
@@ -2083,6 +2397,46 @@ void setColor (long color)</pre>
 </div>
 
 
+<A NAME="setFontFamilies(java.lang.String)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setFontFamilies</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setFontFamilies (<a href="http://d.android.com/reference/java/lang/String.html">String</a> fontFamilies)</pre>
+    
+    
+
+    
+  <p>Set the comma-separated names of the font families that should be used to render this Text.
+ The names can refer to specific font families like 'Roboto' or generic group names like
+ 'sans-serif-smallcaps', 'monospace', or 'cursive'. The font families, in conjunction with the
+ font size, weight, and style, fully specify the font used for each glyph of the Text.
+ <p>
+ The fontFamilies string may contain a comma-separated list of typefaces. If so, the best
+ typeface in the list will be chosen for each glyph in the Text. For example, if fontFamilies
+ is set to <tt>"Roboto, NotoSansCJK"</tt>, then Roboto will be used for all English
+ glyphs and NotoSansCJK will be used for all Chinese, Japanese, and Korean glyphs.
+ <p>
+ If a font family cannot be found, the default system typeface will be used in its place.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>fontFamilies</code></td>
+        <td width="100%">
+          <code>String</code>: Comma-separated list of font families to use when rendering this Text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setFontFamilyName(java.lang.String)"></A>
 
 <div class="api apilevel-">
@@ -2098,17 +2452,21 @@ void setFontFamilyName (<a href="http://d.android.com/reference/java/lang/String
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    Use <code><a href="../../../../reference/com/viro/core/Text.html#setFontFamilies(java.lang.String)">setFontFamilies(String)</a></code>
+
+  </p>
   <p>Set the name of the font family to use to render this Text. For example, 'Roboto' or
- 'Roboto-Italic'. The font family, in conjunction with the font size, determines the typeface
- used when rendering the text.</p></p>
+ 'monospace'. The font family, in conjunction with the font size, weight, and style,
+ fully specifies the font used when rendering the text.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>fontFamily</code></td>
         <td width="100%">
-          <code>String</code>: The name of the font family.
-</p></td>
+          <code>String</code>: The name of the font family.</p></td>
       </tr>
     </table>
 
@@ -2139,6 +2497,67 @@ void setFontSize (int fontSize)</pre>
         <td><code>fontSize</code></td>
         <td width="100%">
           <code>int</code>: The font size.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setFontStyle(com.viro.core.Text.FontStyle)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setFontStyle</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setFontStyle (<a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a> fontStyle)</pre>
+    
+    
+
+    
+  <p>Set the style of the font to use when rendering this Text (e.g., italic).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>fontStyle</code></td>
+        <td width="100%">
+          <code>Text.FontStyle</code>: The <code><a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a></code> to use.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setFontWeight(com.viro.core.Text.FontWeight)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setFontWeight</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setFontWeight (<a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a> fontWeight)</pre>
+    
+    
+
+    
+  <p>Set the weight of the font to use when rendering this Text. The values of the <code><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></code>
+ enum all map to standard font weight numerical values (100 to 900).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>fontWeight</code></td>
+        <td width="100%">
+          <code>Text.FontWeight</code>: The <code><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></code> to use.
 </p></td>
       </tr>
     </table>
