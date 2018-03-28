@@ -765,7 +765,7 @@ public class ViroMediaRecorder {
      Called by the renderer to indicate that it has stopped swapping egl surfaces to the
      egl display as a part of the recording; it has stopped recording.
      */
-    private void onNativeEnableFrameRecording(boolean isRecording) {
+    public void onNativeEnableFrameRecording(boolean isRecording) {
         if (mStopVideoRecordingRunnable != null && !isRecording) {
             mUIHandler.post(mStopVideoRecordingRunnable);
         }
@@ -774,7 +774,7 @@ public class ViroMediaRecorder {
     /*
      Called by the renderer to bind to the eglsurface to push frames required for recording.
      */
-    private void onNativeBindToEGLSurface() {
+    public void onNativeBindToEGLSurface() {
         if (mInputSurface == null) {
             mInputSurface = new MediaRecorderSurface(mRecorder.getSurface());
 
@@ -792,7 +792,7 @@ public class ViroMediaRecorder {
      Called by the renderer to unbind from the egl surface to restore the original rendering state,
      and is usually called after recording a frame.
      */
-    private void onNativeUnBindEGLSurface() {
+    public void onNativeUnBindEGLSurface() {
         if(!mInputSurface.restoreRenderState()) {
             stopVideoRecordingAsyncWithError(Error.WRITE_TO_FILE, mVideoRecordingErrorDelegate);
         }
@@ -801,7 +801,7 @@ public class ViroMediaRecorder {
     /*
      Called by the renderer to render a frame into the recorder.
      */
-    private void onNativeSwapEGLSurface() {
+    public void onNativeSwapEGLSurface() {
         if (!mInputSurface.setPresentationTime(System.nanoTime())) {
             stopVideoRecordingAsyncWithError(Error.WRITE_TO_FILE, mVideoRecordingErrorDelegate);
         }
@@ -815,7 +815,7 @@ public class ViroMediaRecorder {
      Called by the renderer to inform ViroMediaRecorder to grab a screen shot from the latest
      rendered frame (thereby fuflling all pending queued screenshot pending request.
      */
-    private void onNativeTakeScreenshot() {
+    public void onNativeTakeScreenshot() {
         synchronized (mQueuedScreenShotLock) {
             if (mQueuedScreenShots.size() < 0) {
                 return;
