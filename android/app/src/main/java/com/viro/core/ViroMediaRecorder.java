@@ -761,9 +761,10 @@ public class ViroMediaRecorder {
         }
     }
 
-    /*
-     Called by the renderer to indicate that it has stopped swapping egl surfaces to the
-     egl display as a part of the recording; it has stopped recording.
+    /**
+     * Called by the renderer to indicate that it has stopped swapping egl surfaces to the
+     * egl display as a part of the recording; it has stopped recording.
+     * @hide
      */
     public void onNativeEnableFrameRecording(boolean isRecording) {
         if (mStopVideoRecordingRunnable != null && !isRecording) {
@@ -771,8 +772,9 @@ public class ViroMediaRecorder {
         }
     }
 
-    /*
-     Called by the renderer to bind to the eglsurface to push frames required for recording.
+    /**
+     * Called by the renderer to bind to the eglsurface to push frames required for recording.
+     * @hide
      */
     public void onNativeBindToEGLSurface() {
         if (mInputSurface == null) {
@@ -788,9 +790,10 @@ public class ViroMediaRecorder {
         }
     }
 
-    /*
-     Called by the renderer to unbind from the egl surface to restore the original rendering state,
-     and is usually called after recording a frame.
+    /**
+     * Called by the renderer to unbind from the egl surface to restore the original rendering state,
+     * and is usually called after recording a frame.
+     * @hide
      */
     public void onNativeUnBindEGLSurface() {
         if(!mInputSurface.restoreRenderState()) {
@@ -798,8 +801,9 @@ public class ViroMediaRecorder {
         }
     }
 
-    /*
-     Called by the renderer to render a frame into the recorder.
+    /**
+     * Called by the renderer to render a frame into the recorder.
+     * @hide
      */
     public void onNativeSwapEGLSurface() {
         if (!mInputSurface.setPresentationTime(System.nanoTime())) {
@@ -811,9 +815,10 @@ public class ViroMediaRecorder {
         }
     }
 
-    /*
-     Called by the renderer to inform ViroMediaRecorder to grab a screen shot from the latest
-     rendered frame (thereby fuflling all pending queued screenshot pending request.
+    /**
+     * Called by the renderer to inform ViroMediaRecorder to grab a screen shot from the latest
+     * rendered frame (thereby fuflling all pending queued screenshot pending request.
+     * @hide
      */
     public void onNativeTakeScreenshot() {
         synchronized (mQueuedScreenShotLock) {

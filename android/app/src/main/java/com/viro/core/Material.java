@@ -1118,6 +1118,7 @@ public class Material {
         /**
          * Refer to {@link Material#setDiffuseIntensity(float)}.
          *
+         * @hide
          * @return This builder.
          */
         //#IFDEF 'viro_react'
@@ -1209,6 +1210,7 @@ public class Material {
         /**
          * Refer to {@link Material#setFresnelExponent(float)}.
          *
+         * @hide
          * @return This builder.
          */
         //#IFDEF 'viro_react'
