@@ -35,18 +35,25 @@ public class ARScene extends Scene {
      * tracking of real-world features.
      */
     public interface Listener {
+
         /**
          * Invoked when tracking is initialized and functional.
+         *
+         * @deprecated Use {@link #onTrackingUpdated(TrackingState, TrackingStateReason)}.
          */
         // TODO VIRO-3172: Remove deprecated onTrackingInitialized callback in future releases.
         @Deprecated
         void onTrackingInitialized();
 
         /**
-         * Invoked when the tracking state of the ARCamera within this ARSession changes.
-         * @param state The {@link TrackingState} of the current ARCamera in this scene.
-         * @param reason The {@link TrackingStateReason} should the tracking state of this ARCamera
-         *               fail with limited or unavailable states.
+         * Invoked when the tracking state of the device changes. {@link TrackingState}
+         * indicates how well the device is able to track its position within the real world.
+         * Tracking state is subject to lighting conditions, the speed at which the device is
+         * moving, and other environmental factors.
+         *
+         * @param state  The {@link TrackingState} of the device.
+         * @param reason Should the tracking state be sub-optimal, the {@link TrackingStateReason}
+         *               indicates why.
          */
         void onTrackingUpdated(TrackingState state, TrackingStateReason reason);
 
@@ -95,17 +102,18 @@ public class ARScene extends Scene {
     }
 
     /**
-     * Possible values for position tracking quality.
+     * Values representing position tracking quality. You can respond to changes in AR tracking
+     * quality through {@link Listener#onTrackingUpdated(TrackingState, TrackingStateReason)}.
      */
     public enum TrackingState {
         /**
-         * Camera position is not available.
+         * Tracking is unavailable: the camera's position in the world is not known.
          */
         UNAVAILABLE(1),
 
         /**
-         * Tracking is available but quality of results can be may be wildly inaccurate
-         * and should generally not be used
+         * Tracking is available, but the camera's position in the world may be inaccurate and
+         * should not be used with confidence.
          */
         LIMITED(2),
 
@@ -124,23 +132,22 @@ public class ARScene extends Scene {
     };
 
     /**
-     * A possible diagnosis for limited position tracking quality as of when the camera
-     * captured a frame.
+     * Diagnoses to explain cases where we have limited position tracking quality in AR.
      */
     public enum TrackingStateReason {
         /**
-         * The current tracking state is not limited.
+         * Camera position tracking is working optimally.
          */
         NONE(1),
 
         /**
-         * The device is moving too fast for accurate image-based position tracking.
+         * The device is moving too fast for accurate position tracking.
          */
         EXCESSIVE_MOTION(2),
 
         /**
          * The scene visible to the camera does not contain enough distinguishable features for
-         * image-based position tracking.
+         * optimal position tracking.
          */
         INSUFFICIENT_FEATURES(3);
 
