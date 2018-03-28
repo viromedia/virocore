@@ -232,9 +232,19 @@ public class MemoryLeakTest extends AppCompatActivity {
         final Node node2 = new Node();
 
         final Node node3 = new Node();
-        final Text textJni = new Text(mViroView.getViroContext(), "Test text 1 2 3", "Roboto", 24,
-                Text.FontStyle.Normal, Text.FontWeight.Regular, Color.WHITE, 10, 4, Text.HorizontalAlignment.CENTER, Text.VerticalAlignment.CENTER, Text.LineBreakMode.NONE,
-                Text.ClipMode.CLIP_TO_BOUNDS, 1);
+        final Text textJni = new Text.TextBuilder()
+                .viroContext(mViroView.getViroContext())
+                .textString("Test text 1 2 3")
+                .fontFamilyName("Roboto")
+                .fontSize(24)
+                .color(Color.WHITE)
+                .width(10)
+                .height(4)
+                .horizontalAlignment(Text.HorizontalAlignment.CENTER)
+                .verticalAlignment(Text.VerticalAlignment.CENTER)
+                .clipMode(Text.ClipMode.CLIP_TO_BOUNDS)
+                .maxLines(1)
+                .build();
 
         final float[] position = {0, -1, -2};
         node3.setPosition(new Vector(position));
@@ -598,6 +608,11 @@ public class MemoryLeakTest extends AppCompatActivity {
             @Override
             public void onTrackingInitialized() {
                 arSceneText.setText("AR Initialized callback received!");
+            }
+
+            @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
             }
 
             @Override
