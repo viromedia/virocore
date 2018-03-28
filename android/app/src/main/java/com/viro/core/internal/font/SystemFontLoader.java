@@ -58,9 +58,14 @@ public class SystemFontLoader {
         }
         FontFamily family = sTypefaceFontMap.get(typeface);
         if (family == null) {
-            // TODO Return a fallback for the desired language
-            Log.w(TAG, "Font [" + typeface + "] not found, using default font instead");
-            family = sDefaultFamily;
+            // Try searching the 'family name' map in case they specified a group like 'sans-serif-smallcaps'
+            family = sNameFontMap.get(typeface);
+
+            if (family == null) {
+                // TODO Return a fallback for the desired language
+                Log.w(TAG, "Font [" + typeface + "] not found, using default font instead");
+                family = sDefaultFamily;
+            }
         }
 
         FontFamily.Font font = family.getFont(isItalic, weight);
@@ -117,7 +122,12 @@ public class SystemFontLoader {
                 if (i == 0) {
                     sDefaultFamily = fontFamily;
                 }
-                fontsByTypeface.put(fontFamily.getTypeface(), fontFamily);
+
+                String typefaceName = fontFamily.getTypeface();
+                if (typefaceName.endsWith(".ttf") || typefaceName.endsWith(".ttc")) {
+                    typefaceName = typefaceName.substring(0, typefaceName.indexOf("."));
+                }
+                fontsByTypeface.put(typefaceName, fontFamily);
 
                 // The default font for each language has no name
                 if (f.getName() != null) {
