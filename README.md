@@ -1,3 +1,6 @@
+### Releases
+ViroCore downloads are available on our [Releases](https://virocore.viromedia.com/docs/releases) page.
+
 ViroCore
 =====================
 
@@ -10,7 +13,7 @@ Android, ARCore, Google Daydream, Samsung GearVR, Google Cardboard VR
 
 To report bugs/issues with the Viro platform, please file new issues on this repository.
 
-## Instructions for running sample code:
+### Instructions for running sample code:
 
 1. Follow the prerequisite directions on our [Quick start guide](https://virocore.viromedia.com/docs/getting-started) to setup dependencies for trying these sample projects with the Viro Media App.
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
@@ -20,7 +23,7 @@ To report bugs/issues with the Viro platform, please file new issues on this rep
 6. Build and deploy.
 7. You should now be in the application! Enjoy!
 
-## More Information
+### More Information
 
 Viro Media Website: https://viromedia.com/
 
@@ -32,7 +35,7 @@ Join our Slack group [here](https://join.slack.com/t/virodevelopers/shared_invit
 
 Check out our [blog](https://blog.viromedia.com/) for tutorials, news, and updates.
 
-## Sample Code List
+## Sample Code
 
 ### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroARHelloWorldActivity.java)
 
