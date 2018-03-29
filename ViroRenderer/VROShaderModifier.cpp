@@ -33,6 +33,7 @@ std::string VROShaderModifier::getShaderModifierKey(const std::vector<std::share
 
 VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector<std::string> input) :
     _shaderModifierId(++sShaderModifierId),
+    _attributes(0),
     _entryPoint(entryPoint) {
     
     for (std::string source : input) {

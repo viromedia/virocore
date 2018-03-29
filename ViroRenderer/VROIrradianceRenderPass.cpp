@@ -36,8 +36,7 @@ void VROIrradianceRenderPass::init(std::shared_ptr<VRODriver> driver) {
     std::vector<std::string> samplers = { "environment_map" };
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     std::vector<VROGeometrySourceSemantic> attributes;
-    _shader = std::make_shared<VROShaderProgram>("irradiance_convolution_vsh", "irradiance_convolution_fsh", samplers, modifiers,
-                                                 attributes,
+    _shader = std::make_shared<VROShaderProgram>("irradiance_convolution_vsh", "irradiance_convolution_fsh", samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     
     _irradianceRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false);

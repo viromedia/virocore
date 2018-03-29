@@ -35,8 +35,7 @@ void VROEquirectangularToCubeRenderPass::init(std::shared_ptr<VRODriver> driver)
     std::vector<std::string> samplers = { "equirectangular_map" };
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     std::vector<VROGeometrySourceSemantic> attributes;
-    _shader = std::make_shared<VROShaderProgram>("equirect_to_cube_vsh", "equirect_to_cube_fsh", samplers, modifiers,
-                                                 attributes,
+    _shader = std::make_shared<VROShaderProgram>("equirect_to_cube_vsh", "equirect_to_cube_fsh", samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     
     _cubeRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false);

@@ -246,13 +246,14 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     // so that they can build off the standard modifiers.
     modifiers.insert(modifiers.end(), modifiers_in.begin(), modifiers_in.end());
     
-    const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
-        VROGeometrySourceSemantic::Normal,
-        VROGeometrySourceSemantic::Tangent,
-        VROGeometrySourceSemantic::BoneIndices,
-        VROGeometrySourceSemantic::BoneWeights};
-    return std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
-                                              samplers, modifiers, attributes,
+    // All shaders use these three base attributes. Add additional attributes from the
+    // modifiers.
+    int attributes = (int)(VROShaderMask::Tex) | (int)(VROShaderMask::Norm) | (int)(VROShaderMask::Tangent);
+    for (std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
+        attributes |= modifier->getAttributes();
+    }
+    
+    return std::make_shared<VROShaderProgram>(vertexShader, fragmentShader, samplers, modifiers, attributes,
                                               driver);
 }
 

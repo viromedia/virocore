@@ -24,7 +24,7 @@ std::shared_ptr<VROShaderProgram> VROImageShaderProgram::create(const std::vecto
 VROImageShaderProgram::VROImageShaderProgram(const std::vector<std::string> &samplers,
                                              const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
                                              std::shared_ptr<VRODriver> driver) :
-    VROShaderProgram("image_vsh", "image_fsh", samplers, modifiers, { VROGeometrySourceSemantic::Texcoord },
+VROShaderProgram("image_vsh", "image_fsh", samplers, modifiers, (int) VROShaderMask::Tex,
                      std::dynamic_pointer_cast<VRODriverOpenGL>(driver)) {
 }
 

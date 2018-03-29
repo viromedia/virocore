@@ -33,10 +33,9 @@ VROBRDFRenderPass::~VROBRDFRenderPass() {
 void VROBRDFRenderPass::init(std::shared_ptr<VRODriver> driver) {
     std::vector<std::string> samplers;
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
-    std::vector<VROGeometrySourceSemantic> attributes;
     _shader = std::make_shared<VROShaderProgram>("brdf_vsh",
                                                  "brdf_fsh",
-                                                 samplers, modifiers, attributes,
+                                                 samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     _BRDFRenderTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureRG16, 1, 1, false);
     _BRDFRenderTarget->setViewport({ 0, 0, 512, 512 });

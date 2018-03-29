@@ -42,7 +42,7 @@ std::string loadTextAsset(std::string resource) {
 VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader,
                                    const std::vector<std::string> &samplers,
                                    const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                   const std::vector<VROGeometrySourceSemantic> attributes,
+                                   int attributes,
                                    std::shared_ptr<VRODriverOpenGL> driver) :
     _shaderId(sMaterialId++),
     _lightingFragmentBlockIndex(GL_INVALID_INDEX),
@@ -50,7 +50,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     _bonesBlockIndex(GL_INVALID_INDEX),
     _particlesVertexBlockIndex(GL_INVALID_INDEX),
     _particlesFragmentBlockIndex(GL_INVALID_INDEX),
-    _attributes(0),
+    _attributes(attributes),
     _uniformsNeedRebind(true),
     _shaderName(fragmentShader),
     _program(0),
@@ -70,53 +70,44 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
 
     inflateFragmentShaderModifiers(modifiers, _fragmentSource);
     inflateIncludes(_fragmentSource);
-
+       
+    std::string vertexAssignments = "_geometry.position = position;\n";
+    if ((_attributes & (int)VROShaderMask::Tex) != 0) {
+        vertexAssignments += "_geometry.texcoord = texcoord;\n";
+    }
+    if ((_attributes & (int)VROShaderMask::Color) != 0) {
+        // Color is not currently supported in the shaders
+    }
+    if ((_attributes & (int)VROShaderMask::Norm) != 0) {
+        vertexAssignments += "_geometry.normal = normal;\n";
+    }
+    if ((_attributes & (int)VROShaderMask::Tangent) != 0) {
+        vertexAssignments += "_geometry.tangent = tangent;\n";
+    }
+    if ((_attributes & (int)VROShaderMask::BoneIndex) != 0) {
+        vertexAssignments += "_geometry.bone_indices = bone_indices;\n";
+    }
+    if ((_attributes & (int)VROShaderMask::BoneWeight) != 0) {
+        vertexAssignments += "_geometry.bone_weights = bone_weights;\n";
+    }
+    inject("#inject vertex_assignments", vertexAssignments, _vertexSource);
+        
     if (driver->getGPUType() == VROGPUType::Adreno330OrOlder) {
         std::map<std::string, std::string> adrenoReplacements;
         adrenoReplacements["_surface."] = "_surface_";
         adrenoReplacements["_vertex."] = "_vertex_";
         adrenoReplacements["_geometry."] = "_geometry_";
         adrenoReplacements["_transforms."] = "_transforms_";
-
+        
         for (auto kv : adrenoReplacements) {
             VROStringUtil::replaceAll(_vertexSource, kv.first, kv.second);
             VROStringUtil::replaceAll(_fragmentSource, kv.first, kv.second);
         }
         pinfo("Inflated Adreno 330 replacements for shader source");
     }
-        
+    
     passert (!_vertexSource.empty() && !_fragmentSource.empty());
-       
-    for (VROGeometrySourceSemantic attr : attributes) {
-        switch (attr) {
-            case VROGeometrySourceSemantic::Texcoord:
-                _attributes |= (int)VROShaderMask::Tex;
-                break;
-                
-            case VROGeometrySourceSemantic::Normal:
-                _attributes |= (int)VROShaderMask::Norm;
-                break;
-                
-            case VROGeometrySourceSemantic::Color:
-                _attributes |= (int)VROShaderMask::Color;
-                break;
-                
-            case VROGeometrySourceSemantic::Tangent:
-                _attributes |= (int)VROShaderMask::Tangent;
-                break;
-                
-            case VROGeometrySourceSemantic::BoneIndices:
-                _attributes |= (int)VROShaderMask::BoneIndex;
-                break;
-                
-            case VROGeometrySourceSemantic::BoneWeights:
-                _attributes |= (int)VROShaderMask::BoneWeight;
-                break;
-                
-            default:
-                break;
-        }
-    }
+        
     _modifiers = modifiers;
     addStandardUniforms();
     addModifierUniforms();
@@ -540,6 +531,15 @@ void VROShaderProgram::inflateIncludes(std::string &source) const {
     
     // Support recursive includes by invoking this again with the result
     inflateIncludes(source);
+}
+
+void VROShaderProgram::inject(const std::string &directive, const std::string &code, std::string &source) const {
+    size_t directiveStart = source.find(directive);
+    if (directiveStart == std::string::npos) {
+        return;
+    }
+    size_t directiveEnd = source.find("\n", directiveStart);
+    source.replace(directiveStart, directiveEnd - directiveStart, code);
 }
 
 void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,

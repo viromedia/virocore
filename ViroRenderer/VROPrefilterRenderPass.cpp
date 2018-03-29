@@ -33,10 +33,8 @@ VROPrefilterRenderPass::~VROPrefilterRenderPass() {
 void VROPrefilterRenderPass::init(std::shared_ptr<VRODriver> driver) {
     std::vector<std::string> samplers = { "environment_map" };
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
-    std::vector<VROGeometrySourceSemantic> attributes;
     _shader = std::make_shared<VROShaderProgram>("prefilter_convolution_vsh",
-                                                 "prefilter_convolution_fsh", samplers, modifiers,
-                                                 attributes,
+                                                 "prefilter_convolution_fsh", samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     _prefilterRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, true);
     _prefilterRenderTarget->setViewport( { 0, 0, 128, 128 });
