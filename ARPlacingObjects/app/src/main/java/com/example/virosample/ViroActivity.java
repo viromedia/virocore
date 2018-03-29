@@ -242,20 +242,30 @@ public class ViroActivity extends Activity {
      */
     private static class ARSceneListener implements ARScene.Listener {
         private WeakReference<Activity> mCurrentActivityWeak;
-
+        private boolean mInitialized;
         public ARSceneListener(Activity activity, View rootView) {
             mCurrentActivityWeak = new WeakReference<Activity>(activity);
+            mInitialized = false;
+        }
+
+        @Override
+        public void onTrackingUpdated(ARScene.TrackingState trackingState,
+                                      ARScene.TrackingStateReason trackingStateReason) {
+            if (!mInitialized && trackingState == ARScene.TrackingState.NORMAL) {
+                Activity activity = mCurrentActivityWeak.get();
+                if (activity == null) {
+                    return;
+                }
+
+                TextView initText = (TextView) activity.findViewById(R.id.initText);
+                initText.setText("AR is initialized");
+                mInitialized = true;
+            }
         }
 
         @Override
         public void onTrackingInitialized() {
-            Activity activity = mCurrentActivityWeak.get();
-            if (activity == null) {
-                return;
-            }
-
-            TextView initText = (TextView) activity.findViewById(R.id.initText);
-            initText.setText("AR is initialized");
+            // This method is deprecated.
         }
 
         @Override

@@ -521,13 +521,25 @@ public class ProductARActivity extends Activity {
     }
 
     protected class ARSceneListener implements ARScene.Listener {
+        private boolean mInitialized;
+
+        public ARSceneListener() {
+            mInitialized = false;
+        }
         @Override
         public void onTrackingInitialized() {
-            // The Renderer is ready - turn everything visible.
-            mHudGroupView.setVisibility(View.VISIBLE);
+          // This method is deprecated.
+        }
 
-            // Update our UI views to the finding surface state.
-            setTrackingStatus(TRACK_STATUS.FINDING_SURFACE);
+        public void onTrackingUpdated(ARScene.TrackingState trackingState, ARScene.TrackingStateReason trackingStateReason){
+            if (trackingState == ARScene.TrackingState.NORMAL && !mInitialized) {
+                // The Renderer is ready - turn everything visible.
+                mHudGroupView.setVisibility(View.VISIBLE);
+
+                // Update our UI views to the finding surface state.
+                setTrackingStatus(TRACK_STATUS.FINDING_SURFACE);
+                mInitialized = true;
+            }
         }
 
         @Override

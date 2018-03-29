@@ -197,17 +197,21 @@ public class ViroActivity extends Activity {
         private HashMap<String, Node> surfaces = new HashMap<String, Node>();
         private Set<ClickListener> mPlaneClickListeners = new HashSet<ClickListener>();
 
-        public TrackedPlanesController(Activity activity, View rootView){
+        public void onTrackingUpdated(ARScene.TrackingState trackingState, ARScene.TrackingStateReason trackingStateReason) {
+            //no-op
+        }
+
+        public TrackedPlanesController(Activity activity, View rootView) {
             mCurrentActivityWeak = new WeakReference<Activity>(activity);
             // Inflate viro_view_hud.xml layout to display a "Searching for surfaces" text view.
             View.inflate(activity, R.layout.viro_view_hud, ((ViewGroup) rootView));
         }
 
-        public void addOnPlaneClickListener(ClickListener listener){
+        public void addOnPlaneClickListener(ClickListener listener) {
             mPlaneClickListeners.add(listener);
         }
 
-        public void removeOnPlaneClickListener(ClickListener listener){
+        public void removeOnPlaneClickListener(ClickListener listener) {
             if (mPlaneClickListeners.contains(listener)){
                 mPlaneClickListeners.remove(listener);
             }
