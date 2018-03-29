@@ -17,9 +17,13 @@ JNI_METHOD(jlong, nativeCreateNativeRecorder)(JNIEnv *env,
                                             jobject obj,
                                             jlong rendererRef) {
     std::shared_ptr<MediaRecorder_JNI> recorder = std::make_shared<MediaRecorder_JNI>(obj, env);
-    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(rendererRef);
-    VROPlatformDispatchAsyncRenderer([renderer, recorder] {
-        recorder->nativeCreateRecorder(renderer);
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(rendererRef);
+
+    VROPlatformDispatchAsyncRenderer([renderer_w, recorder] {
+        std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+        if (renderer) {
+            recorder->nativeCreateRecorder(renderer);
+        }
     });
     return MediaRecorder::jptr(recorder);
 }

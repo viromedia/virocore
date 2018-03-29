@@ -20,6 +20,7 @@
  */
 class ViroContext {
 public:
+
     ViroContext(std::shared_ptr<VROSceneRenderer> renderer) {
         _renderer = renderer;
     }
@@ -50,7 +51,7 @@ public:
 
 private:
 
-    std::shared_ptr<VROSceneRenderer>_renderer;
+    std::shared_ptr<VROSceneRenderer> _renderer;
 
 };
 
