@@ -76,7 +76,7 @@ void VROViewScene::buildTestScene() {
     rootNode->setPosition({0, 0, 0});
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.6, 0.6, 0.6 });
+    ambient->setColor({ 1.0, 1.0, 1.0 });
     
     std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
     spotRed->setColor({ 1.0, 0.0, 0.0 });

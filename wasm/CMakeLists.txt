@@ -18,6 +18,7 @@ include_directories(../ViroRenderer
                     libs/protobuf/include
                     libs/bullet/include
                     libs/zlib/include
+                    libs/jpeg/include
 		    )
 
 add_library( viro_renderer
@@ -28,6 +29,7 @@ add_library( viro_renderer
              src/cpp/VROInputControllerWasm.cpp
              src/cpp/VROImageWasm.cpp
              src/cpp/VROTypefaceWasm.cpp
+             src/cpp/VROJpegReader.cpp
 
              # Util
              ../ViroRenderer/VROAllocationTracker.cpp
@@ -188,6 +190,7 @@ add_subdirectory(libs/bullet/src/BulletSoftBody)
 add_subdirectory(libs/bullet/src/BulletDynamics)
 add_subdirectory(libs/bullet/src/BulletCollision)
 add_subdirectory(libs/protobuf/src)
+add_subdirectory(libs/jpeg/src)
 
 add_executable( viro_test
 	        hello.cpp)
@@ -198,6 +201,7 @@ set_target_properties( viro_test PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_ZLIB=1 
 target_link_libraries ( viro_test 
                         viro_renderer 
                         protobuf-lite
+                        jpeg
                         bullet_linearmath
                         bullet_softbody
                         bullet_dynamics

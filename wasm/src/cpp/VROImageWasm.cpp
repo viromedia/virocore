@@ -9,10 +9,32 @@
 #include "VROImageWasm.h"
 #include "VROLog.h"
 #include "VROTime.h"
+#include "VROJpegReader.h"
+#include "VROPlatformUtil.h"
 
 VROImageWasm::VROImageWasm(std::string file, VROTextureInternalFormat internalFormat) {
-    _surface = IMG_Load(file.c_str());
+    int length;
+    void *data = VROPlatformLoadFile(file, &length);
     
+    char *ext = (char *)strrchr(file.c_str(), '.');
+    if (ext) {
+        ext++;
+    }
+
+    _surface = NULL;
+    if (VROJpegReader::isJPG(data, length)) {
+        _surface = VROJpegReader::loadJPG(data, length);
+    } else {
+        SDL_RWops *src = SDL_RWFromMem(data, length);
+        _surface = IMG_LoadTyped_RW(src, 1, ext);
+    }
+    free (data);
+    
+    if (_surface == NULL) {
+        pinfo("Failed to load image at path [%s], error [%s]", file.c_str(), SDL_GetError());
+        return;
+    }
+ 
     // We always convert to RGBA8 because sRGB8 is not compatible with automatic mipmap
     // generation in OpenGL 3.0).
     int bytesPerPixel = _surface->format->BytesPerPixel;
@@ -26,35 +48,39 @@ VROImageWasm::VROImageWasm(std::string file, VROTextureInternalFormat internalFo
         }
     }
     
-    if (_surface == NULL) {
-        pinfo("Failed to load image at path [%s]", file.c_str());
-    }
-    
     _format = VROTextureFormat::RGBA8;
     _internalFormat = VROTextureInternalFormat::RGBA8;
 }
 
 VROImageWasm::~VROImageWasm() {
-    SDL_FreeSurface(_surface);
+    if (_surface != NULL) {
+        SDL_FreeSurface(_surface);
+    }
 }
 
 int VROImageWasm::getHeight() const {
+    if (_surface == NULL) { return 0; }
     return _surface->h;
 }
 
 int VROImageWasm::getWidth() const {
+    if (_surface == NULL) { return 0; }
     return _surface->w;
 }
 
 void VROImageWasm::lock() {
+    if (_surface == NULL) { return; }
     SDL_LockSurface(_surface);
 }
 
 void VROImageWasm::unlock() {
+    if (_surface == NULL) { return; }
     SDL_UnlockSurface(_surface);
 }
 
 unsigned char *VROImageWasm::getData(size_t *length) {
+    if (_surface == NULL) { return NULL; }
+    
     if (_format == VROTextureFormat::RGB8) {
         *length = getHeight() * getWidth() * 3;
     } else {
