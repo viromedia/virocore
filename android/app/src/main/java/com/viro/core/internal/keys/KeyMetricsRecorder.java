@@ -18,8 +18,11 @@ import com.viro.core.internal.BuildInfo;
 import com.viro.renderer.BuildConfig;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class KeyMetricsRecorder {
     private static final String DELIMITER = "_";
@@ -35,11 +38,33 @@ public class KeyMetricsRecorder {
     private final AmazonDynamoDBClient mDynamoClient;
     private String mPackageName;
     private boolean isDebug;
+    private static final String TEST_BED_PACKAGE_NAME = "com.viromedia.viromedia";
+
+    // Play Store (And Galaxy App Store) installer package names
+    private static final String GOOGLE_PLAY_1 = "com.android.vending";
+    private static final String GOOGLE_PLAY_2 = "com.google.android.feedback";
+    private static final String GALAXY_STORE = "com.sec.android.app.samsungapps";
+    private static final List<String> APP_STORES = new ArrayList<>(Arrays.asList(
+            GOOGLE_PLAY_1,GOOGLE_PLAY_2,GALAXY_STORE));
+
+
 
     public KeyMetricsRecorder(AmazonDynamoDBClient client, Context context) {
         mDynamoClient = client;
         mPackageName = BuildInfo.getPackageName(context);
-        isDebug = BuildInfo.isDebug(context);
+        isDebug = isDebugMetrics(context);
+    }
+
+    private static boolean isDebugMetrics(Context context) {
+        // The package name of the app that installed this app
+        final String installer = context.getPackageManager()
+                .getInstallerPackageName(context.getPackageName());
+        final String appPackageName = context.getPackageName();
+
+        // Return true if the app is our own testbed or
+        // negation -(if the installer has been downloaded from Play Store)
+        return appPackageName.equalsIgnoreCase(TEST_BED_PACKAGE_NAME) ||
+                !(installer != null && APP_STORES.contains(installer));
     }
 
     public void record(String key, String vrPlatform) {
