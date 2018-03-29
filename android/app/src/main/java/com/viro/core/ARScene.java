@@ -363,7 +363,6 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
-    //#IFDEF 'viro_react'
     private static TrackingState getTrackingState(int stateInt){
         switch(stateInt){
             case 1:
@@ -376,12 +375,10 @@ public class ARScene extends Scene {
 
         return TrackingState.UNAVAILABLE;
     }
-    //#ENDIF
 
     /**
      * @hide
      */
-    //#IFDEF 'viro_react'
     private static TrackingStateReason getTrackingStateReason(int stateInt){
         switch(stateInt){
             case 1:
@@ -394,7 +391,6 @@ public class ARScene extends Scene {
 
         return TrackingStateReason.NONE;
     }
-    //#ENDIF
 
     /**
      * @hide
