@@ -36,6 +36,10 @@
     if (self) {
         NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
         BOOL isDebug = [[[[NSBundle mainBundle] appStoreReceiptURL] lastPathComponent] isEqualToString:@"sandboxReceipt"];
+        // Override the above value if the bundle id is our own testbed app
+        if ([bundleId caseInsensitiveCompare:@"com.viromedia.ViroMedia"] == NSOrderedSame) {
+          isDebug = false;
+        }
         NSString *buildType = isDebug ? @"debug" : @"release";
 
       // we care more about the actual headset than the platform
