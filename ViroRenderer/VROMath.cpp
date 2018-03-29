@@ -676,7 +676,7 @@ void invert4x4(const float *src, float *inverse) {
          */
         swap = i;
         for (j = i + 1; j < 4; j++) {
-            if (std::abs((int)temp[(j << 2) + i]) > std::abs((int)temp[(i << 2) + i])) {
+            if (std::abs(temp[(j << 2) + i]) > std::abs(temp[(i << 2) + i])) {
                 swap = j;
             }
         }
@@ -748,7 +748,7 @@ bool VROMathInvertMatrix_d(const double *src, double *inverse) {
          */
         swap = i;
         for (j = i + 1; j < 4; j++) {
-            if (std::abs((int)temp[(j << 2) + i]) > std::abs((int)temp[(i << 2) + i])) {
+            if (std::abs(temp[(j << 2) + i]) > std::abs(temp[(i << 2) + i])) {
                 swap = j;
             }
         }
