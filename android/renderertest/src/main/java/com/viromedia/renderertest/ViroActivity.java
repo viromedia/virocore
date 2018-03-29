@@ -186,11 +186,11 @@ public class ViroActivity extends AppCompatActivity {
                 }
             }, config);
             setContentView(mViroView);
-        }
 
-        ViroViewARCore arView = (ViroViewARCore) mViroView;
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        arView.setCameraRotation(display.getRotation());
+            ViroViewARCore arView = (ViroViewARCore) mViroView;
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            arView.setCameraRotation(display.getRotation());
+        }
     }
 
     @Override
@@ -576,7 +576,7 @@ public class ViroActivity extends AppCompatActivity {
         material.setDiffuseTexture(bobaTexture);
         material.setSpecularTexture(specTexture);
         material.setLightingModel(Material.LightingModel.PHYSICALLY_BASED);
-        material.setBloomThreshold(0.2f);
+        //material.setBloomThreshold(0.2f);
 
         // Creation of ViroBox to the right and billboarded
         final Box boxGeometry = new Box(2, 4, 2);
