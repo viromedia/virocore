@@ -319,6 +319,10 @@ public class PlatformUtil {
         return file.getAbsolutePath();
     }
 
+    public String getCacheDirectory() {
+        return mContext.getCacheDir().getAbsolutePath();
+    }
+
     // Accessed by Native code (VROPlatformUtil.cpp)
     public void deleteFile(String path) throws IOException {
         File file = new File(path);

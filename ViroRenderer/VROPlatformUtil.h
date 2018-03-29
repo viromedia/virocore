@@ -105,6 +105,8 @@ std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isIta
  */
 std::string VROPlatformGetDeviceModel();
 
+std::string VROPlatformGetCacheDirectory();
+
 #pragma mark - Image Loading
 
 // Returns empty shared_ptr on failure

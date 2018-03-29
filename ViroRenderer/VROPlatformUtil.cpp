@@ -972,6 +972,17 @@ std::string VROPlatformGetDeviceModel() {
     return VROPlatformGetString(jModelString, env);
 }
 
+std::string VROPlatformGetCacheDirectory() {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
+    jmethodID jmethod = env->GetMethodID(cls, "getCacheDirectory", "()Ljava/lang/String;");
+    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod);
+
+    return VROPlatformGetString(jpath, env);
+}
+
 void VROPlatformSetTrackingImageView(std::string filepath) {
 
     VROPlatformDispatchAsyncApplication([filepath]() {

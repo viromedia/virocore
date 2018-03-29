@@ -87,15 +87,15 @@ void VROARImageTracker::updateType() {
             _minGoodMatches = 15;
             _feature = cv::ORB::create(_numberFeaturePoints, 1.1f, 12, 0, 0, 4, cv::ORB::HARRIS_SCORE);
             _targetFeature = cv::ORB::create(700, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
-            // used for BruteForce knnMatching w/ ORB descriptors
+            // used for BruteForce knnMatching w/ ORB descriptors (higher means looser)
             _matchRatio = .80;
 #else // VRO_PLATFORM_ANDROID
             // current testing on Android
             _numberFeaturePoints = 3000;
             _minGoodMatches = 15;
-            _feature = cv::ORB::create(_numberFeaturePoints, 1.2f, 11, 0, 0, 4, cv::ORB::HARRIS_SCORE);
-            _targetFeature = cv::ORB::create(400, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
-            // used for BruteForce knnMatching w/ ORB descriptors
+            _feature = cv::ORB::create(_numberFeaturePoints, 1.2f, 12, 0, 0, 4, cv::ORB::HARRIS_SCORE);
+            _targetFeature = cv::ORB::create(500, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
+            // used for BruteForce knnMatching w/ ORB descriptors (higher means looser)
             _matchRatio = .80;
 #endif
             // current iPad Testing
@@ -262,12 +262,12 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
     }
 
 #if VRO_PLATFORM_ANDROID
+    // Write the file to disk on Android (we'll pass the filepath later).
     if (outputs.size() > 0 && outputs[0].found) {
         std::ostringstream s;
-        s << "/storage/emulated/0/Android/data/com.viromedia.renderertest.arcore/files/Pictures/output.png";
+        s << VROPlatformGetCacheDirectory() << "/viro_tracking_output.png";
         std::string filepath(s.str());
         bool success = cv::imwrite(filepath, outputs[0].outputImage);
-
         VROPlatformSetTrackingImageView(filepath);
     }
 #endif
@@ -401,12 +401,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         //    CvPoint3D32f topRight = cvPoint3D32f(currentTarget.arImageTarget.cols, 0, 0);
         //    CvPoint3D32f bottomRight = cvPoint3D32f(currentTarget.arImageTarget.cols, currentTarget.arImageTarget.rows, 0);
         //    CvPoint3D32f bottomLeft = cvPoint3D32f(0, currentTarget.arImageTarget.rows, 0);
-        
-//        // define corners starting from the top left of the image
-//        CvPoint3D32f topLeft = cvPoint3D32f(- currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
-//        CvPoint3D32f topRight = cvPoint3D32f(currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
-//        CvPoint3D32f bottomRight = cvPoint3D32f(currentTarget.arImageTarget->getTargetMat().cols / 2, currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
-//        CvPoint3D32f bottomLeft = cvPoint3D32f(- currentTarget.arImageTarget->getTargetMat().cols / 2, currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
 
         // define corners starting from the top left of the image
         CvPoint3D32f topLeft = cvPoint3D32f(- currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
@@ -650,7 +644,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
      throw away the result! This is true because in a 1920x1080 or 1280x720 our algorithm
      can't be that accurate!
      */
-    int minCornerDistance = 50;
+    int minCornerDistance = 0;
     double sumX = 0;
     double sumY = 0;
     for (int i = 0; i < corners.size() - 1; i++) {
@@ -754,6 +748,11 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                    0, 1512, inputRows * .49,
                                    0, 0, 1};
             cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) {
+            double cameraArr[9] = {1968.576136225911, 0, 750.1587322564731,
+                                   0, 1969.571959636029, 1241.737542197816,
+                                   0, 0, 1};
+            cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
         } else {
             // Unknown device, so estimate/approx the intrinsic matrix
             // http://ksimek.github.io/2013/08/13/intrinsic/
@@ -788,6 +787,12 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
         // Pixel 2 distCoeffs
         double distCoeffsArr[5] = {0.3071814282190861, -1.406069924010113, -0.001143236436618327,
                                    -0.003115266690240281, 2.134291153514535};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        // clone before returning because the double array will be dealloced upon leaving the func scope.
+        return distCoeffs.clone();
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) {
+        double distCoeffsArr[5] = {0.2002071849855901, -0.53184357316432, -0.0006957436145446316,
+                                   0.001534589560177446, 0.3570205104814043};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         // clone before returning because the double array will be dealloced upon leaving the func scope.
         return distCoeffs.clone();
