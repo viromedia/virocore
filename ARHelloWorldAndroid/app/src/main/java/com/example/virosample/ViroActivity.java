@@ -197,6 +197,7 @@ public class ViroActivity extends Activity {
         private HashMap<String, Node> surfaces = new HashMap<String, Node>();
         private Set<ClickListener> mPlaneClickListeners = new HashSet<ClickListener>();
 
+        @Override
         public void onTrackingUpdated(ARScene.TrackingState trackingState, ARScene.TrackingStateReason trackingStateReason) {
             //no-op
         }

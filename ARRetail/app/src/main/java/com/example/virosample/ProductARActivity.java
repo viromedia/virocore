@@ -531,6 +531,7 @@ public class ProductARActivity extends Activity {
           // This method is deprecated.
         }
 
+        @Override
         public void onTrackingUpdated(ARScene.TrackingState trackingState, ARScene.TrackingStateReason trackingStateReason){
             if (trackingState == ARScene.TrackingState.NORMAL && !mInitialized) {
                 // The Renderer is ready - turn everything visible.
