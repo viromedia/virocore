@@ -139,6 +139,8 @@ std::shared_ptr<VROTexture> VROTestUtil::loadRadianceHDRTexture(std::string text
     path = std::string([fbxPath UTF8String]);
 #elif VRO_PLATFORM_ANDROID
     path = VROPlatformCopyAssetToFile(texture + ".hdr");
+#else
+    path = "/" + texture + ".hdr";
 #endif
     return VROHDRLoader::loadRadianceHDRTexture(path);
 }
@@ -222,7 +224,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     url = "file:///android_asset/" + model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
 #else
-    url = model + ".vrx";
+    url = "test/" + model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
 #endif
 

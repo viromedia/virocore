@@ -33,6 +33,8 @@ private:
     int _width, _height;
     float _suspendedNotificationTime;
     
+    float _angle;
+    
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROInputControllerWasm> _inputController;
     std::shared_ptr<VRODriverOpenGLWasm> _driver;

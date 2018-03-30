@@ -39,6 +39,8 @@ private:
      Full screen quad for compositing operations.
      */
     float _quadFSVAR[24];
+    unsigned int _quadVBO;
+    unsigned int _quadVAO;
     
     /*
      The shader that will run on the input texture to produce the
@@ -68,14 +70,9 @@ private:
     void buildQuadFSVAR(bool flipped);
     
     /*
-     Bind the vertex array.
-     */
-    void bindScreenSpaceVAR() const;
-    
-    /*
      Draw the vertex array.
      */
-    void drawScreenSpaceVAR() const;
+    void drawScreenSpaceVAR();
     
 };
 

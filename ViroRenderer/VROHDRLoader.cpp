@@ -30,7 +30,7 @@ std::shared_ptr<VROTexture> VROHDRLoader::loadRadianceHDRTexture(std::string hdr
         return nullptr;
     }
     
-    pinfo("Load successful [width: %d, height %d", width, height);
+    pinfo("Load successful [width: %d, height %d]", width, height);
     std::shared_ptr<VROTexture> texture = loadTexture(data, width, height, n);
     free (data);
     

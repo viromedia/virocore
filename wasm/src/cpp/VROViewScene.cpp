@@ -22,6 +22,7 @@
 #include "VROOBJLoader.h"
 #include "VROParticleEmitter.h"
 #include "VROTestUtil.h"
+#include "VROAction.h"
 
 static VROViewScene *sInstance = nullptr;
 
@@ -58,8 +59,8 @@ VROViewScene::VROViewScene() {
     VRORendererConfiguration config;
     config.enableShadows = false;
     config.enableBloom = false;
-    config.enableHDR = false;
-    config.enablePBR = false;
+    config.enableHDR = true;
+    config.enablePBR = true;
     _renderer = std::make_shared<VRORenderer>(config, std::dynamic_pointer_cast<VROInputControllerBase>(_inputController));
     
     update();
@@ -77,6 +78,7 @@ void VROViewScene::buildTestScene() {
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
+    ambient->setIntensity(500);
     
     std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
     spotRed->setColor({ 1.0, 0.0, 0.0 });
@@ -101,7 +103,7 @@ void VROViewScene::buildTestScene() {
     rootNode->addLight(spotBlue);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
-    
+    /*
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
     VROOBJLoader::loadOBJFromResource("test/male02.obj", VROResourceType::URL, objNode,
                                       [](std::shared_ptr<VRONode> node, bool success) {
@@ -175,14 +177,28 @@ void VROViewScene::buildTestScene() {
     particleNode->setParticleEmitter(particleEmitter);
     rootNode->addChildNode(particleNode);
     particleEmitter->setRun(true);
+     
+    */
+    std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("dragon", { 0, -1.5, -8 }, { 0.2, 0.2, 0.2 }, 1, "01");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
+    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("portal_archway", { 0, 0, -3 }, { 1, 1, 1 }, 1, "02");
+
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this] (VRONode *const node, float seconds) {
+        _angle += .0015;
+        node->setRotation({ 0, _angle, _angle });
+        return true;
+    });
+    fbxNode->runAction(action);
     
-    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
-    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
-    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
-    //std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel("test/portal_archway", { 0, 0, -3 }, { 1, 1, 1 }, 1, "02");
+    std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
+    //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");
+    //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_wooden_door");
+    
+    rootNode->setLightingEnvironment(environment);
+    rootNode->setBackgroundSphere(environment);
 
-
-    //rootNode->addChildNode(fbxNode);
+    rootNode->addChildNode(fbxNode);
     
     /*
     std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
