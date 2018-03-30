@@ -204,8 +204,8 @@ static bool getCoverageFormat4(vector<uint32_t>& coverage, const uint8_t* data, 
             }
         } else {
             for (uint32_t j = start; j < end + 1; j++) {
-                uint32_t actualRangeOffset = kHeaderSize + 6 * segCount + rangeOffset +
-                    (i + j - start) * 2;
+                uint32_t actualRangeOffset = (uint32_t) (kHeaderSize + 6 * segCount + rangeOffset +
+                    (i + j - start) * 2);
                 if (actualRangeOffset + 2 > size) {
                     // invalid rangeOffset is considered a "warning" by OpenType Sanitizer
                     continue;
