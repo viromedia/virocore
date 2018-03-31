@@ -1,4 +1,6 @@
-set(protobuf_src ${CMAKE_SOURCE_DIR}/libs/protobuf/src/google/protobuf)
+set(protobuf_src google/protobuf)
+
+include_directories(.)
 
 set(libprotobuf_lite_files
    ${protobuf_src}/arena.cc

@@ -40,6 +40,11 @@ std::string VROPlatformLoadFileAsString(std::string path) {
 
 void *VROPlatformLoadFile(std::string filename, int *outLength) {
     FILE *fl = fopen(filename.c_str(), "r");
+    if (fl == NULL) {
+        pinfo("Failed to open file %s", filename.c_str());
+        return NULL;
+    }
+    
     fseek(fl, 0, SEEK_END);
     *outLength = (int) ftell(fl);
     

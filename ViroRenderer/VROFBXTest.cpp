@@ -27,9 +27,9 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
     VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
     
-    _models.push_back(lamborghini);
     _models.push_back(cylinder);
     _models.push_back(dragon);
+    _models.push_back(lamborghini);
     _models.push_back(pumpkin);
     
     _sceneController = std::make_shared<VROARSceneController>();

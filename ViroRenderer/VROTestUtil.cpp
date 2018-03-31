@@ -210,6 +210,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
                                                    int lightMask, std::string animation) {
     std::string url;
     std::string base;
+    VROResourceType resourceType = VROResourceType::URL;
     
 #if VRO_PLATFORM_IOS
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:model.c_str()]
@@ -224,12 +225,13 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     url = "file:///android_asset/" + model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
 #else
-    url = "test/" + model + ".vrx";
+    url = "/" + model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
+    resourceType = VROResourceType::LocalFile;
 #endif
 
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node,
+    VROFBXLoader::loadFBXFromResource(url, resourceType, node,
                                         [scale, position, lightMask, animation](std::shared_ptr<VRONode> node, bool success) {
                                             if (!success) {
                                                 return;
