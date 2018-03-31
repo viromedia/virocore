@@ -38,7 +38,8 @@ public:
     }
     
     virtual VROColorRenderingMode getColorRenderingMode() {
-        return VROColorRenderingMode::Linear;
+        // sRGB framebuffers are not supported on WebGL, so we gamma-correct in software
+        return VROColorRenderingMode::LinearSoftware;
     }
 
     std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() {
