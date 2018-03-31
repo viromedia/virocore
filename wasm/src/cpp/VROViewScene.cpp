@@ -78,29 +78,8 @@ void VROViewScene::buildTestScene() {
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(500);
-    
-    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
-    spotRed->setColor({ 1.0, 0.0, 0.0 });
-    spotRed->setPosition( { -5, 0, 0 });
-    spotRed->setDirection( { 1.0, 0, -1.0 });
-    spotRed->setAttenuationStartDistance(20);
-    spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(5);
-    spotRed->setSpotOuterAngle(15);
-    
-    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
-    spotBlue->setColor({ 0.0, 0.0, 1.0 });
-    spotBlue->setPosition( { 5, 0, 0 });
-    spotBlue->setDirection( { -1.0, 0, -1.0 });
-    spotBlue->setAttenuationStartDistance(20);
-    spotBlue->setAttenuationEndDistance(30);
-    spotBlue->setSpotInnerAngle(5);
-    spotBlue->setSpotOuterAngle(15);
-    
+    ambient->setIntensity(50);
     rootNode->addLight(ambient);
-    rootNode->addLight(spotRed);
-    rootNode->addLight(spotBlue);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     /*

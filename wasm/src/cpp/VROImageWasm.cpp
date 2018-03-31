@@ -38,7 +38,7 @@ VROImageWasm::VROImageWasm(std::string file, VROTextureInternalFormat internalFo
     // We always convert to RGBA8 because sRGB8 is not compatible with automatic mipmap
     // generation in OpenGL 3.0).
     int bytesPerPixel = _surface->format->BytesPerPixel;
-    if (bytesPerPixel == 3) {
+    if (bytesPerPixel <= 3) {
         SDL_Surface *rgbaSurface = convertToRGBA8(_surface);
         SDL_FreeSurface(_surface);
         _surface = rgbaSurface;
