@@ -8,6 +8,7 @@
 
 # WASM
 /wasm/products/
+/wasm/test/products/
 
 # Gradle
 android/.idea/
