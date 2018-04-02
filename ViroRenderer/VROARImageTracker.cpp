@@ -21,7 +21,7 @@
 
 #define ENABLE_DETECT_LOGGING 1
 // whether or not to draw output corners for debugging
-#define DRAW_OUTPUT_CORNERS 1
+#define DRAW_OUTPUT_CORNERS 0
 
 #if ENABLE_DETECT_LOGGING && VRO_PLATFORM_IOS
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, @#message);
@@ -91,10 +91,13 @@ void VROARImageTracker::updateType() {
             _matchRatio = .80;
 #else // VRO_PLATFORM_ANDROID
             // current testing on Android
-            _numberFeaturePoints = 3000;
+            _numberFeaturePoints = 3000; // 2k is enough for S8+
             _minGoodMatches = 15;
-            _feature = cv::ORB::create(_numberFeaturePoints, 1.2f, 12, 0, 0, 4, cv::ORB::HARRIS_SCORE);
-            _targetFeature = cv::ORB::create(500, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
+            // TODO: the feature extractor for the input image should adapt to target image size
+            // the thing is we limit it to 1920x1080 pixels, but the input could be smaller too...
+            _feature = cv::ORB::create(_numberFeaturePoints, 1.2f, 10, 0, 0, 4, cv::ORB::HARRIS_SCORE);
+            // TODO: the feature extractor for target image should adapt to target image size.
+            _targetFeature = cv::ORB::create(500, 1.2f, 8, 0, 0, 4, cv::ORB::HARRIS_SCORE);
             // used for BruteForce knnMatching w/ ORB descriptors (higher means looser)
             _matchRatio = .80;
 #endif
@@ -210,19 +213,20 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
     _startTime = getCurrentTimeMs();
 
     pinfo("[Viro] raw input size is %d x %d", inputImage.rows, inputImage.cols);
+    cv::Size size = inputImage.size();
+    pinfo("raw input size is %d %d", size.height, size.width);
 
-    // TODO: scale input image for performance, not sure if we need this now, but the option is there.
-    // you *might* need to also account for the scaling in the calculations later to extract position
-    // although you may be fine because we overwrite inputImage w/ the scale image...
-    bool shouldScaleInput = false;
-    float xScale = 1; float yScale = 1;
-    
+    // Scale image for performance (esp on devices w/ larger screens)
+    float scaleFactor = getScaleFactor(inputImage.rows, inputImage.cols);
+    bool shouldScaleInput = scaleFactor != 1.0;
+
+
     if (shouldScaleInput) {
         _startTime = getCurrentTimeMs();
-        cv::Size newSize(inputImage.cols * xScale, inputImage.rows * yScale);
+        cv::Size newSize(inputImage.cols * scaleFactor, inputImage.rows * scaleFactor);
+
         cv::Mat resizedInput;
         cv::resize(inputImage, resizedInput, newSize);
-        pinfo("[Viro] resized image size is %d x %d", resizedInput.rows, resizedInput.cols);
 
         inputImage = resizedInput;
     }
@@ -249,14 +253,15 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
         return {};
     }
 
-    std::vector<VROARImageTrackerOutput> outputs = findMultipleTargetsBF(inputKeyPoints, inputDescriptors, inputImage);
+    std::vector<VROARImageTrackerOutput> outputs = findMultipleTargetsBF(inputKeyPoints, inputDescriptors,
+                                                                         inputImage, scaleFactor);
 
     for (int i = 0; i < outputs.size(); i++) {
         VROARImageTrackerOutput output = outputs[i];
         // Since we scaled the input image, we need to revert that scale when we return the corners!
         if (output.found && shouldScaleInput) {
             for (int i = 0; i < output.corners.size(); i++) {
-                output.corners[i] = cv::Point2f(output.corners[i].x / xScale, output.corners[i].y / yScale);
+                output.corners[i] = cv::Point2f(output.corners[i].x / scaleFactor, output.corners[i].y / scaleFactor);
             }
         }
     }
@@ -276,7 +281,8 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
 }
 
 std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(std::vector<cv::KeyPoint> inputKeypoints,
-                                                                              cv::Mat inputDescriptors,  cv::Mat inputImage) {
+                                                                              cv::Mat inputDescriptors,  cv::Mat inputImage,
+                                                                              float scaleFactor) {
     LOG_DETECT_TIME("Starting findMultipleTargetsBF.");
     
     std::vector<VROARImageTrackerOutput> outputs;
@@ -336,7 +342,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
 
             for (int i = 0; i < matches.size(); i++) {
                 // the higher the constant, the looser the criteria is for a "match"
-                if (matches[i][0].distance < (_matchRatio * matches[i][1].distance)) {
+                if ( (matches[i][0].distance / matches[i][1].distance) < _matchRatio) {
                     goodMatches.push_back(matches[i][0]);
                 }
             }
@@ -390,6 +396,13 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
             
             continue;
         }
+
+        if (scaleFactor != 1.0) {
+            inputCorners[0] /= scaleFactor ;
+            inputCorners[1] /= scaleFactor;
+            inputCorners[2] /= scaleFactor;
+            inputCorners[3] /= scaleFactor;
+        }
         
         LOG_DETECT_TIME("start finding object pose");
         
@@ -423,20 +436,21 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
                 break;
         }
         
-        
         // -- Solve for pose --
-        
-        // TODO: if we've scaled the input, then inverse the scaling on the corner values before using solvePnP.
-        // actually i dont think we need this as long as we overrode the inputImage?
-        
-        // whether or not to use the (previous) values in _rotation/_translation to help with extracting the next set of them.
-        bool useExtrinsicGuess = false;
 
-        cv::solvePnPRansac(targetCorners, inputCorners, _intrinsicMatrix, _distortionCoeffs,
-                           currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
+        // whether or not to use the (previous) values in _rotation/_translation to help with extracting the next set of them.
+        bool useExtrinsicGuess = currentTarget.rotation.rows != 0; // the first run rotation would be empty
+
+        cv::solvePnP(targetCorners, inputCorners,
+                     _intrinsicMatrix, _distortionCoeffs,
+                     currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
+
+        //cv::solvePnPRansac(targetCorners, inputCorners, _intrinsicMatrix, _distortionCoeffs,
+        //                   currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
 
         LOG_DETECT_TIME("finished detection & pose extraction");
-        
+
+        // TODO: remove this average run time logic
         _totalIteration++;
         _totalTime+=(getCurrentTimeMs() - _startTime);
         pinfo("[Viro] average run time %f for %f runs", _totalTime / _totalIteration, _totalIteration);
@@ -472,7 +486,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         VROMatrix4f rotMatrix;
         rotMatrix.rotateX(-M_PI_2);
         worldTransform = worldTransform.multiply(rotMatrix);
-        
+
 #if ENABLE_DETECT_LOGGING
         for (int i = 0; i < inputCorners.size(); i++) {
             pinfo("[Viro] found corner %d point (before re-scaling): %f, %f", i, inputCorners[i].x, inputCorners[i].y);
@@ -489,7 +503,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         
 // Whether or not we should draw corners on the output image. (for debugging)
 #if DRAW_OUTPUT_CORNERS
-        output.outputImage = drawCorners(inputImage, inputCorners);
+        output.outputImage = drawCorners(inputImage, inputCorners, scaleFactor);
 #endif
         
         // finally add the output to the list of outputs to return
@@ -500,6 +514,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
 }
 
 std::vector<VROARImageTrackerOutput> VROARImageTracker::processOutputs(std::vector<VROARImageTrackerOutput> rawOutputs) {
+    LOG_DETECT_TIME("begin process outputs!");
     std::vector<VROARImageTrackerOutput> newOutputs;
     
     for (int i = 0; i < rawOutputs.size(); i++) {
@@ -516,7 +531,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::processOutputs(std::vect
 }
 
 VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdate(VROARImageTrackerOutput output) {
-    return determineFoundOrUpdateV1(output);
+    return determineFoundOrUpdateV2(output);
 }
 
 /*
@@ -538,7 +553,7 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV1(VROARImageTr
         if (targetOpenCV->rawOutputs.size() >= 100) {
             targetOpenCV->disableTracking = true;
         }
-        
+        LOG_DETECT_TIME("finish determineFoundOrUpdateV1");
         return rawOutput;
     }
     return createFalseOutput();
@@ -548,56 +563,77 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV1(VROARImageTr
  This version of determineFoundOrUpdate tries to return as fast as possible while trying to use all the
  information it has to make the best decision by constantly reevaluating which output is the best.
  */
-VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTrackerOutput rawOutput) {
-    int maximumQuorum = 5;
-    
-    VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
-    
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTrackerOutput latestOutput) {
+    // when we have 5 "similar" outputs, then we know we're done looking for the target.
+    int quorum = 10;
+
+    // grab the target that this output matched.
+    VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(latestOutput.target)->second;
+
+    // grab all the previous outputs for this target.
     std::vector<VROARImageTrackerOutput> rawOutputs = targetOpenCV->rawOutputs;
     
     // this will be the new list for this output.
-    std::vector<VROARImageTrackerOutput> newList = {rawOutput};
+    std::vector<VROARImageTrackerOutput> newSimilarOutputList = {latestOutput};
 
     long max = 0;
     int maxIndex = 0;
     
     for (int i = 0; i < rawOutputs.size(); i++) {
-        if (areOutputsSimilar(rawOutput, rawOutputs[i])) {
-            targetOpenCV->targetToSimilarOutputs[i].push_back(rawOutput);
-            newList.push_back(rawOutputs[i]);
+        // see if the i-th output is similar to the latestOutput
+        if (areOutputsSimilar(latestOutput, rawOutputs[i])) {
+            // if they're similar, then add each output to each others list
+            targetOpenCV->similarOutputsList[i].push_back(latestOutput);
+            newSimilarOutputList.push_back(rawOutputs[i]);
         }
 
-        // we want >= because the rawOutputs are in order, hopefully the "later" outputs are more accurate than
-        // earlier ones?
-        if (targetOpenCV->targetToSimilarOutputs[i].size() >= max) {
-            max = targetOpenCV->targetToSimilarOutputs[i].size();
+        // check if the ith raw output has the longest list so far.
+        if (targetOpenCV->similarOutputsList[i].size() >= max) {
+            max = targetOpenCV->similarOutputsList[i].size();
             maxIndex = i;
         }
     }
 
-    targetOpenCV->targetToSimilarOutputs.push_back(newList);
-    
+    // add the newSimilarOutputList to our list of similar outputs
+    targetOpenCV->similarOutputsList.push_back(newSimilarOutputList);
+
+    // Now check if this list beats all the other ones!
     VROARImageTrackerOutput toReturn;
-    if (newList.size() >= max) {
-        max = newList.size();
-        toReturn = newList[0];
+    if (newSimilarOutputList.size() >= max) {
+        max = newSimilarOutputList.size();
+        toReturn = newSimilarOutputList[0];
     } else {
-        toReturn = targetOpenCV->targetToSimilarOutputs[maxIndex][0];
+        toReturn = targetOpenCV->similarOutputsList[maxIndex][0];
     }
 
     // if there was a lastOutput, then this is now an update!
     toReturn.isUpdate = targetOpenCV->lastOutput.found;
     targetOpenCV->lastOutput = toReturn;
-    // disableTracking once we have maximumQuorum of points that 'agree'
-    targetOpenCV->disableTracking = max >= maximumQuorum;
+    // disableTracking once we have a quorum of points that 'agree'
+    targetOpenCV->disableTracking = max >= quorum;
     // add the rawOutput to the list of rawOutputs
-    targetOpenCV->rawOutputs.push_back(rawOutput);
-    
+    targetOpenCV->rawOutputs.push_back(latestOutput);
+
+    LOG_DETECT_TIME("finish determineFoundOrUpdateV2");
     return toReturn;
 }
 
+VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTrackerOutput rawOutput) {
+
+    LOG_DETECT_TIME("finish determineFoundOrUpdateV3");
+}
+
+float VROARImageTracker::getScaleFactor(int rows, int cols) {
+    if (rows * cols <= kMaxInputImageSize) {
+        return 1.0; // don't scale
+    } else {
+        // return the sqrt of the ratio b/t max and rows * cols because the rows and columns
+        // are scaled independently (thus applying whatever scale we return twice - squaring it).
+        return (float) sqrt(((float) kMaxInputImageSize) / (rows * cols));
+    }
+}
+
 bool VROARImageTracker::areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second) {
-    // TODO: this should be dependent on the physical width of the target.
     float similarDistanceThreshold = .015; // 1.5 cm
     
     // if either outputs aren't a "found" output, return false
@@ -696,14 +732,42 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     return true;
 }
 
+VROVector3f VROARImageTracker::eulerFromRodriguesVector(cv::Mat rodrigues) {
+    cv::Mat outMat;
+    cv::Rodrigues(rodrigues, outMat);
+
+
+    // The following logic comes from: https://www.learnopencv.com/rotation-matrix-to-euler-angles/
+    float sy = sqrt(outMat.at<double>(0,0) * outMat.at<double>(0,0)
+                    + outMat.at<double>(1,0) * outMat.at<double>(1,0));
+
+    bool singular = sy < 1e-6; // effectively zero
+
+    float x, y, z;
+    if (!singular)
+    {
+        x = atan2(outMat.at<double>(2,1) , outMat.at<double>(2,2));
+        y = atan2(-outMat.at<double>(2,0), sy);
+        z = atan2(outMat.at<double>(1,0), outMat.at<double>(0,0));
+    }
+    else
+    {
+        x = atan2(-outMat.at<double>(1,2), outMat.at<double>(1,1));
+        y = atan2(-outMat.at<double>(2,0), sy);
+        z = 0;
+    }
+    return VROVector3f(x, y, z);
+}
+
 void VROARImageTracker::convertFromCVToViroAxes(cv::Mat inputTranslation, cv::Mat inputRotation, VROVector3f &outTranslation, VROVector3f &outRotation) {
     outTranslation.x = inputTranslation.at<double>(0, 0);
     outTranslation.y = - inputTranslation.at<double>(1, 0);
     outTranslation.z = - inputTranslation.at<double>(2, 0);
-    
-    outRotation.x = inputRotation.at<double>(0, 0);
-    outRotation.y = - inputRotation.at<double>(1, 0);
-    outRotation.z = - inputRotation.at<double>(2, 0);
+
+    outRotation = eulerFromRodriguesVector(inputRotation);
+
+    outRotation.y = - outRotation.y;
+    outRotation.z = - outRotation.z;
 }
 
 VROMatrix4f VROARImageTracker::convertToWorldCoordinates(std::shared_ptr<VROARCamera> camera, VROVector3f translation, VROVector3f rotation) {
@@ -723,13 +787,14 @@ VROMatrix4f VROARImageTracker::convertToWorldCoordinates(std::shared_ptr<VROARCa
     return camMatrix.multiply(inputTransform);
 }
 
-cv::Mat VROARImageTracker::drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners) {
+cv::Mat VROARImageTracker::drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners,
+                                       float scaleFactor) {
     // draw lines between the inputCorners on the input image
     // neon blue - 70, 102, 255, 255
-    cv::line(inputImage, inputCorners[0], inputCorners[1], cv::Scalar(0, 255, 255, 255), 5);
-    cv::line(inputImage, inputCorners[1], inputCorners[2], cv::Scalar(0, 255, 255, 255), 5);
-    cv::line(inputImage, inputCorners[2], inputCorners[3], cv::Scalar(0, 255, 255, 255), 5);
-    cv::line(inputImage, inputCorners[3], inputCorners[0], cv::Scalar(0, 255, 255, 255), 5);
+    cv::line(inputImage, inputCorners[0] * scaleFactor, inputCorners[1] * scaleFactor, cv::Scalar(0, 255, 255, 255), 5);
+    cv::line(inputImage, inputCorners[1] * scaleFactor, inputCorners[2] * scaleFactor, cv::Scalar(0, 255, 255, 255), 5);
+    cv::line(inputImage, inputCorners[2] * scaleFactor, inputCorners[3] * scaleFactor, cv::Scalar(0, 255, 255, 255), 5);
+    cv::line(inputImage, inputCorners[3] * scaleFactor, inputCorners[0] * scaleFactor, cv::Scalar(0, 255, 255, 255), 5);
 
     cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_32F);
     cv::cvtColor(inputImage, processedImage, cv::COLOR_BGRA2RGBA);
@@ -741,6 +806,8 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
     cv::Mat cameraMatrix;
     if (_intrinsics == NULL) { // this is the Android case (ARCore doesn't provide intrinsics yet)
         std::string model = VROPlatformGetDeviceModel();
+        double cols;
+        double rows;
         if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
             // the focal distance is fixed regardless of screen resolution, the center X and Y stays
             // relatively fixed (but the actual pixel location depends on the screen resolution).
@@ -749,8 +816,29 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                    0, 0, 1};
             cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
         } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) {
-            double cameraArr[9] = {1968.576136225911, 0, 750.1587322564731,
-                                   0, 1969.571959636029, 1241.737542197816,
+            if (inputCols < inputRows) {
+                cols = inputCols * .5318;
+                rows = inputRows * .491;
+            } else {
+                cols = inputCols * .491;
+                rows = inputRows * .5318;
+            }
+            double cameraArr[9] = {2191.487412971218, 0, cols,
+                                   0, 2190.428443008615, rows,
+                                   0, 0, 1};
+            cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) {
+
+            if (inputCols < inputRows) {
+                cols = inputCols * .5215;
+                rows = inputRows * .5022;
+            } else {
+                cols = inputCols * .5022;
+                rows = inputRows * .5215;
+            }
+
+            double cameraArr[9] = {2129.987076073671, 0, cols,
+                                   0, 2127.653050656804, rows,
                                    0, 0, 1};
             cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
         } else {
@@ -791,10 +879,15 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
         // clone before returning because the double array will be dealloced upon leaving the func scope.
         return distCoeffs.clone();
     } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) {
-        double distCoeffsArr[5] = {0.2002071849855901, -0.53184357316432, -0.0006957436145446316,
-                                   0.001534589560177446, 0.3570205104814043};
+        double distCoeffsArr[5] = {0.2140704096247754, -0.5619697252678999, -0.001414139193934611,
+                                   0.002719229177220327, 0.4081823444503178};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         // clone before returning because the double array will be dealloced upon leaving the func scope.
+        return distCoeffs.clone();
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) {
+        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
+                                   -0.001190136151737745, 0.03055129101581667};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         return distCoeffs.clone();
     } else {
         // Unknown device, return no distortion

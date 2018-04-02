@@ -74,7 +74,7 @@ public class ViroViewARCore extends ViroView {
     private static final String TAG = "Viro";
 
     // Determines whether we add an ImageView for debugging Image Tracking
-    private static final boolean ENABLE_TRACKING_DEBUG_VIEW = true;
+    private static final boolean ENABLE_TRACKING_DEBUG_VIEW = false;
     private static ImageView sTrackingImageView;
     private static boolean sShouldTrack = true;
 
@@ -397,7 +397,7 @@ public class ViroViewARCore extends ViroView {
         if (ENABLE_TRACKING_DEBUG_VIEW) {
             sTrackingImageView = new ImageView(context);
             addView(sTrackingImageView);
-            sTrackingImageView.setAlpha(.7f);
+            sTrackingImageView.setAlpha(.5f);
 
             DisplayMetrics displayMetrics = new DisplayMetrics();
             ((Activity) getContext()).getWindowManager()
@@ -407,6 +407,8 @@ public class ViroViewARCore extends ViroView {
             sTrackingImageView.setLayoutParams(
                     new LayoutParams((int) (displayMetrics.widthPixels * .5),
                             (int) (displayMetrics.heightPixels * .5)));
+
+            sTrackingImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
             sTrackingImageView.setOnClickListener(new OnClickListener() {
                 @Override

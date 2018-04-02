@@ -918,8 +918,12 @@ public class ViroActivity extends AppCompatActivity {
     private Bitmap targetImage;
 
     private List<Node> testARImageTarget(final ARScene arScene) {
+        Node boxNode = new Node();
+        //Box box = new Box(.155956f, .001f, .066294f); // dollar size
+        Box box = new Box(.1905f, .001f, 0.244475f); // variety magazine sized
+        boxNode.setGeometry(box);
 
-        targetImage = getBitmapFromAssets("variety_magazine.jpg");
+        targetImage = getBitmapFromAssets("tracker_assets/variety_magazine.jpg");
         // store this in a field so it doesn't get destroyed before we can use it!
         mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, 0.1905f);
         arScene.addARImageTarget(mARImageTarget);
@@ -969,11 +973,6 @@ public class ViroActivity extends AppCompatActivity {
                 }
             }
         });
-
-        Node boxNode = new Node();
-        // Box box = new Box(.155956f, .001f, .066294f); // dollar size
-        Box box = new Box(.1905f, .001f, 0.24511f); // vanity fair magazine sized
-        boxNode.setGeometry(box);
 
         mImageMarkerTestNode.addChildNode(boxNode);
         mImageMarkerTestNode.setVisible(false);

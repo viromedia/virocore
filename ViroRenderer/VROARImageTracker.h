@@ -19,6 +19,8 @@
 #include "VROARCamera.h"
 #include "VROVector3f.h"
 
+static const int kMaxInputImageSize = 2073600; // 1920 x 1080
+
 enum class VROARImageTrackerType {
     BRISK,
     ORB,
@@ -51,7 +53,7 @@ struct VROARImageTargetOpenCV {
     VROARImageTrackerOutput lastOutput; // the most recent output that was returned to the caller for this target.
 
     bool disableTracking; // disable this once we've found enough rawOutputs
-    std::vector<std::vector<VROARImageTrackerOutput>> targetToSimilarOutputs;
+    std::vector<std::vector<VROARImageTrackerOutput>> similarOutputsList;
 };
 
 // TODO: merge this class into VROARTrackingSession
@@ -116,7 +118,8 @@ private:
      TODO: probably pull out pose estimation into its own function.
      */
     std::vector<VROARImageTrackerOutput> findMultipleTargetsBF(std::vector<cv::KeyPoint> inputKeypoints,
-                                                               cv::Mat inputDescriptors,  cv::Mat inputImage);
+                                                               cv::Mat inputDescriptors,  cv::Mat inputImage,
+                                                               float scaleFactor);
     
     /*
      This function takes a list of raw outputs and adds them to the _targetOutputsMap before invoking findUpdates on
@@ -133,6 +136,13 @@ private:
     // Different implementations/versions of determineFoundOrUpdate (look at implementation)
     VROARImageTrackerOutput determineFoundOrUpdateV1(VROARImageTrackerOutput output);
     VROARImageTrackerOutput determineFoundOrUpdateV2(VROARImageTrackerOutput output);
+    VROARImageTrackerOutput determineFoundOrUpdateV3(VROARImageTrackerOutput output);
+
+    /*
+     This function takes the input image and returns the factor that we should scale the input by
+     in order to maintain performance
+     */
+    float getScaleFactor(int rows, int cols);
 
     /*
      This function takes two outputs and determines if they are similar
@@ -140,6 +150,12 @@ private:
     bool areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second);
 
     bool areCornersValid(std::vector<cv::Point2f> corners);
+
+    /*
+     This function takes a Rodrigues rotation vector and converts it to a rotation vector (still in
+     OpenCV axis though).
+     */
+    VROVector3f eulerFromRodriguesVector(cv::Mat rodrigues);
 
     /*
      This function converts from OpenCV axes to Viro axes.
@@ -160,7 +176,7 @@ private:
      This function takes an inputImage and a vector of 4 points (in OpenCV) coordinate space
      and draws lines between the corners (for debugging).
      */
-    cv::Mat drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners);
+    cv::Mat drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners, float scaleFactor);
 
     cv::Mat getIntrinsicMatrix(int inputCols, int inputRows);
     cv::Mat getDistortionCoeffs();
