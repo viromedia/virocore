@@ -23,7 +23,8 @@ void VROMainLoop() {
     sInstance->drawFrame();
 }
 
-VROViewScene::VROViewScene() {
+VROViewScene::VROViewScene(VRORendererTestType test) :
+    _testType(test) {
     sInstance = this;
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     
@@ -63,7 +64,7 @@ VROViewScene::VROViewScene() {
 
 void VROViewScene::buildTestScene() {
     _harness = std::make_shared<VRORendererTestHarness>(_renderer, _renderer->getFrameSynchronizer(), _driver);
-    std::shared_ptr<VRORendererTest> test = _harness->loadTest(VRORendererTestType::FBX);
+    std::shared_ptr<VRORendererTest> test = _harness->loadTest(_testType);
     
     _renderer->setSceneController(test->getSceneController(), _driver);
     if (test->getPointOfView()) {

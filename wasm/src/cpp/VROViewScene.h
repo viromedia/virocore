@@ -14,10 +14,11 @@ class VRORenderer;
 class VROInputControllerWasm;
 class VRODriverOpenGLWasm;
 class VRORendererTestHarness;
+enum class VRORendererTestType;
 
 class VROViewScene {
 public:
-    VROViewScene();
+    VROViewScene(VRORendererTestType test);
     virtual ~VROViewScene();
     
     void drawFrame();
@@ -39,6 +40,7 @@ private:
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROInputControllerWasm> _inputController;
     std::shared_ptr<VRODriverOpenGLWasm> _driver;
+    VRORendererTestType _testType;
     std::shared_ptr<VRORendererTestHarness> _harness;
     
     EMSCRIPTEN_WEBGL_CONTEXT_HANDLE _context;

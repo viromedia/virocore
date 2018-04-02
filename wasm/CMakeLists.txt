@@ -180,7 +180,7 @@ add_library( viro_renderer
              ${VIRO_RENDERER_SRC}/VROVector4f.cpp 
 
              # Renderer Test
-                          ${VIRO_RENDERER_SRC}/VRORendererTestHarness.cpp
+             ${VIRO_RENDERER_SRC}/VRORendererTestHarness.cpp
              ${VIRO_RENDERER_SRC}/VROTestUtil.cpp
              ${VIRO_RENDERER_SRC}/VROPhysicsTest.cpp
              ${VIRO_RENDERER_SRC}/VROARDraggableNodeTest.cpp
