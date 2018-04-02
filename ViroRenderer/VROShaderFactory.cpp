@@ -315,7 +315,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createRoughnessTextureModif
     if (!sRoughnessTextureModifier) {
         std::vector<std::string> modifierCode =  {
             "uniform sampler2D roughness_map;",
-            "_surface.roughness = texture(roughness_map, _surface.diffuse_texcoord).r;"
+            "_surface.roughness = max(0.04, texture(roughness_map, _surface.diffuse_texcoord).r);"
         };
         sRoughnessTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                         modifierCode);
