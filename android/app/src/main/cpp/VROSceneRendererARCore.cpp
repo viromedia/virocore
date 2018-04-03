@@ -107,13 +107,12 @@ void VROSceneRendererARCore::renderFrame() {
         }
     }
 
-    // If the ARSession is not yet ready, we renderWaitingForTracking.
+    // If the ARSession is not yet ready, render black
     if (!_session->isReady()){
         renderWaitingForTracking(viewport);
         return;
     }
 
-    // Else, the ARSession is ready, update our scenes as usual.
     _session->setViewport(viewport);
     std::unique_ptr<VROARFrame> &frame = _session->updateFrame();
     updateARBackground(frame, backgroundNeedsReset);
@@ -121,23 +120,19 @@ void VROSceneRendererARCore::renderFrame() {
     // Notify the current ARScene with the ARCamera's tracking state.
     const std::shared_ptr<VROARCamera> camera = frame->getCamera();
     if (_sceneController) {
-        std::shared_ptr<VROARScene> arScene
-                = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+        std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
         passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
         arScene->setTrackingState(camera->getTrackingState(),
                                   camera->getLimitedTrackingStateReason(), false);
     }
 
     /*
-     * Finally, retrieve transforms from the AR session and render the scene
-     * if we have proper tracking. If we attempt to get the projection matrix
-     * from the session before tracking has resumed (even if the session itself
-     * has been resumed) we'll get a SessionPausedException. Protect against this
-     * by not accessing the session until tracking is operational.
+     If we attempt to get the projection matrix from the session before tracking has
+     resumed (even if the session itself has been resumed) we'll get a SessionPausedException.
+     Protect against this by not accessing the session until tracking is operational.
      */
-    if (camera->getTrackingState() == VROARTrackingState::Normal){
+    if (camera->getTrackingState() == VROARTrackingState::Normal) {
         renderWithTracking(camera, frame, viewport);
-        return;
     } else {
         renderWaitingForTracking(viewport);
     }

@@ -306,7 +306,6 @@ namespace arcore {
     void FrameNative::getBackgroundTexcoords(float *outTexcoords) {
         // BL, TL, BR, TR
         const float source[8] = {0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0};
-        float dest[8] = {0, 0, 0, 0, 0, 0, 0, 0};
         ArFrame_transformDisplayUvCoords(_session, _frame, 8, source, outTexcoords);
     }
 

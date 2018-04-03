@@ -9,12 +9,16 @@
 
 package com.viromedia.releasetest;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.viro.core.RendererCloseListener;
@@ -102,6 +106,11 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
 
                 }
             });
+
+            ViroViewARCore arView = (ViroViewARCore) mViroView;
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            arView.setCameraRotation(display.getRotation());
+
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
             ((ViroViewScene) mViroView).setStartupListener(new ViroViewScene.StartupListener() {
                 @Override
@@ -185,5 +194,16 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
     public void onRendererClosed() {
         Log.d(TAG, "On GVR userRequested exit");
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (mViroView instanceof ViroViewARCore) {
+            ViroViewARCore arView = (ViroViewARCore) mViroView;
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            arView.setCameraRotation(display.getRotation());
+        }
     }
 }
