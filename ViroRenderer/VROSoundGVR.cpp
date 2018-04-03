@@ -63,6 +63,9 @@ VROSoundGVR::~VROSoundGVR() {
 
 void VROSoundGVR::setup() {
     _data->setDelegate(shared_from_this());
+    if (_ready) {
+        _gvrAudio.lock()->PreloadSoundfile(_data->getLocalFilePath());
+    }
 }
 
 void VROSoundGVR::play() {
