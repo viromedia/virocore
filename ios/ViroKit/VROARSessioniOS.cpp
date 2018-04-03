@@ -370,7 +370,7 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
             pAnchor->setAlignment(VROARPlaneAlignment::Vertical);
         }
 
-        if (planeAnchor.geometry && planeAnchor.geometry.boundaryVertices && planeAnchor.geometry.boundaryVertexCount > 0) {
+        if (@available(iOS 11.3, *) && planeAnchor.geometry && planeAnchor.geometry.boundaryVertices && planeAnchor.geometry.boundaryVertexCount > 0) {
             std::vector<VROVector3f> points;
             for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i ++) {
                 vector_float3 vertex = planeAnchor.geometry.boundaryVertices[i];
