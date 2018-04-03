@@ -41,6 +41,7 @@ extern "C" {
                                          jobject object,
                                          jstring filename,
                                          jlong context_j) {
+        VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
         std::string file = VROPlatformGetString(filename, env);
@@ -61,6 +62,7 @@ extern "C" {
                                                  jobject object,
                                                  jlong dataRef,
                                                  jlong context_j) {
+        VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 

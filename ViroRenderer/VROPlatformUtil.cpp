@@ -248,6 +248,7 @@ static std::vector<int> sAsyncQueue;
 // Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
 // current thread, attach it
 void getJNIEnv(JNIEnv **jenv) {
+    passert (sVM != nullptr);
     if (sVM->GetEnv((void **) jenv, JNI_VERSION_1_6) == JNI_EDETACHED) {
         sVM->AttachCurrentThread(jenv, nullptr);
     }
