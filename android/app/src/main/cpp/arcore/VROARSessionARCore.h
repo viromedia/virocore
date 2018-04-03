@@ -179,8 +179,10 @@ private:
     int _width;
     int _height;
 
-    bool _shouldResetARTrackingSession;
+    int _frameCount;
+    bool _hasTrackingSessionInitialized;
 
+    void initTrackingSession();
     bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);
     void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);

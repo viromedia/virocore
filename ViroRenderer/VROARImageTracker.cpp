@@ -21,7 +21,7 @@
 
 #define ENABLE_DETECT_LOGGING 1
 // whether or not to draw output corners for debugging
-#define DRAW_OUTPUT_CORNERS 0
+#define DRAW_OUTPUT_CORNERS 1
 
 #if ENABLE_DETECT_LOGGING && VRO_PLATFORM_IOS
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, @#message);
@@ -531,7 +531,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::processOutputs(std::vect
 }
 
 VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdate(VROARImageTrackerOutput output) {
-    return determineFoundOrUpdateV2(output);
+    return determineFoundOrUpdateV1(output);
 }
 
 /*
@@ -804,6 +804,9 @@ cv::Mat VROARImageTracker::drawCorners(cv::Mat inputImage, std::vector<cv::Point
 
 cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
     cv::Mat cameraMatrix;
+
+    // the factors on the inputCols|Rows pushes the found position towards the top left of screen/marker
+    // the focal distance pushes the found position further away
     if (_intrinsics == NULL) { // this is the Android case (ARCore doesn't provide intrinsics yet)
         std::string model = VROPlatformGetDeviceModel();
         double cols;
@@ -811,11 +814,11 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
         if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
             // the focal distance is fixed regardless of screen resolution, the center X and Y stays
             // relatively fixed (but the actual pixel location depends on the screen resolution).
-            double cameraArr[9] = {1512, 0, inputCols * .48,
-                                   0, 1512, inputRows * .49,
+            double cameraArr[9] = {1450, 0, inputCols * .49,
+                                   0, 1450, inputRows * .5,
                                    0, 0, 1};
             cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) {
+        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
             if (inputCols < inputRows) {
                 cols = inputCols * .5318;
                 rows = inputRows * .491;
@@ -827,7 +830,7 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                    0, 2190.428443008615, rows,
                                    0, 0, 1};
             cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) {
+        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
 
             if (inputCols < inputRows) {
                 cols = inputCols * .5215;
@@ -878,13 +881,13 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         // clone before returning because the double array will be dealloced upon leaving the func scope.
         return distCoeffs.clone();
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) {
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
         double distCoeffsArr[5] = {0.2140704096247754, -0.5619697252678999, -0.001414139193934611,
                                    0.002719229177220327, 0.4081823444503178};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         // clone before returning because the double array will be dealloced upon leaving the func scope.
         return distCoeffs.clone();
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) {
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
         double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
                                    -0.001190136151737745, 0.03055129101581667};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);

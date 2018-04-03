@@ -53,14 +53,17 @@ void VROARTrackingSession::init(VROARFrameARCore *frame,
                 }
 
                 _readyForTracking = false;
-                // convert to cv::Mat now (TODO: should we do this on the background? don't forget to
-                // copy the VROData object in that case!)
-                cv::Mat tmpFrame(height, width, CV_8UC4, data->getData());
-                // transpose the matrix...
-                tmpFrame = tmpFrame.t();
-                cv::rotate(tmpFrame, tmpFrame, cv::ROTATE_90_COUNTERCLOCKWISE);
+                std::shared_ptr<VROData> copiedData =
+                        std::make_shared<VROData>(data->getData(), data->getDataLength(), VRODataOwnership::Copy);
 
-                VROPlatformDispatchAsyncBackground([tmpFrame, this]() {
+                VROPlatformDispatchAsyncBackground([width, height, copiedData, this]() {
+
+                    // convert to cv::Mat now
+                    cv::Mat tmpFrame(height, width, CV_8UC4, copiedData->getData());
+                    // transpose the matrix...
+                    tmpFrame = tmpFrame.t();
+                    cv::rotate(tmpFrame, tmpFrame, cv::ROTATE_90_COUNTERCLOCKWISE);
+
                     // TODO: get intrinsics matrix (ARCore doesn't have this yet!)
                     std::vector<VROARImageTrackerOutput> outputs = _tracker->findTarget(tmpFrame, NULL, _lastCamera);
 

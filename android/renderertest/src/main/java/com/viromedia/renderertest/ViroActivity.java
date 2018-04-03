@@ -922,6 +922,9 @@ public class ViroActivity extends AppCompatActivity {
         //Box box = new Box(.155956f, .001f, .066294f); // dollar size
         Box box = new Box(.1905f, .001f, 0.244475f); // variety magazine sized
         boxNode.setGeometry(box);
+        Material whiteTransparent = new Material();
+        whiteTransparent.setDiffuseColor(0xaaffffff);
+        box.setMaterials(Arrays.asList(whiteTransparent));
 
         targetImage = getBitmapFromAssets("tracker_assets/variety_magazine.jpg");
         // store this in a field so it doesn't get destroyed before we can use it!

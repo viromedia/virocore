@@ -74,7 +74,7 @@ public class ViroViewARCore extends ViroView {
     private static final String TAG = "Viro";
 
     // Determines whether we add an ImageView for debugging Image Tracking
-    private static final boolean ENABLE_TRACKING_DEBUG_VIEW = false;
+    private static final boolean ENABLE_TRACKING_DEBUG_VIEW = true;
     private static ImageView sTrackingImageView;
     private static boolean sShouldTrack = true;
 

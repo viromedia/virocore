@@ -25,7 +25,6 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _lightingMode(arcore::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
-    _shouldResetARTrackingSession(true),
     _cameraTextureId(0),
     _displayRotation(VROARDisplayRotation::R0) {
 
@@ -33,6 +32,8 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _frame = nullptr;
 
     _arTrackingSession = std::make_shared<VROARTrackingSession>();
+    _frameCount = 0;
+    _hasTrackingSessionInitialized = false;
 }
 
 void VROARSessionARCore::setARCoreSession(arcore::Session *session) {
@@ -61,8 +62,8 @@ void VROARSessionARCore::initCameraTexture(std::shared_ptr<VRODriverOpenGL> driv
     passert_msg(_session != nullptr, "ARCore must be installed before setting camera texture");
     _session->setCameraTextureName(_cameraTextureId);
 
-    // This is a good place to set "this" as the listener. We can't do it in the constructor.
-    _arTrackingSession->setListener(shared_from_this());
+    // (re)initialize the tracking session if the camera texture is (re)created
+    initTrackingSession();
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
@@ -136,7 +137,9 @@ void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int w
     if (_session) {
         _session->setDisplayGeometry((int) rotation, width, height);
     }
-    _shouldResetARTrackingSession = true;
+
+    // re-initialize the tracking session if the display geometry resets
+    initTrackingSession();
 }
 
 void VROARSessionARCore::enableTracking(bool shouldTrack) {
@@ -264,11 +267,12 @@ std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
     VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
     processUpdatedAnchors(arFrame);
 
-    if (_shouldResetARTrackingSession) {
-        _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
-        _shouldResetARTrackingSession = false;
+    // TODO: VIRO-3283 we have a bug where we need to wait a few frames before initializing
+    _frameCount++;
+    if (!_hasTrackingSessionInitialized && _frameCount == 10) {
+        // we need at least 1 frame to initialize the tracking session!
+        initTrackingSession();
     }
-
     _arTrackingSession->updateFrame(arFrame);
 
     return _currentFrame;
@@ -305,6 +309,16 @@ void VROARSessionARCore::onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anc
 }
 
 #pragma mark - Internal Methods
+
+void VROARSessionARCore::initTrackingSession() {
+    pinfo("kirby initTracking session %d %d %d", (_currentFrame == nullptr), _synchronizer ==
+            nullptr, _arTrackingSession == nullptr);
+    if (_currentFrame && _synchronizer && _arTrackingSession) {
+        VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
+        _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
+        _arTrackingSession->setListener(shared_from_this());
+    }
+}
 
 std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(arcore::Anchor *anchor) {
     std::string key = VROStringUtil::toString(anchor->getHashCode());
