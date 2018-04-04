@@ -1,27 +1,24 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(VIRO_RENDERER_SRC ../ViroRenderer)
+MESSAGE(STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+SET(VIRO_RENDERER_SRC ../ViroRenderer)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+SET(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_EXECUTABLE_SUFFIX ".html")
 SET(GCC_COVERAGE_COMPILE_FLAGS "-DWASM_PLATFORM")
-add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
+ADD_DEFINITIONS(${GCC_COVERAGE_COMPILE_FLAGS})
 
-find_package(OPENGL REQUIRED)
-
-include_directories(${VIRO_RENDERER_SRC}
+INCLUDE_DIRECTORIES(${VIRO_RENDERER_SRC}
                     src/cpp
-	            ${OPENGL_INCLUDE_DIR}
                     libs/freetype/include
                     libs/protobuf/include
                     libs/bullet/include
                     libs/zlib/include
-                    libs/jpeg/include
-		    )
+                    libs/jpeg/include)
 
-add_library( viro_renderer
+ADD_LIBRARY( viro_renderer
              STATIC
 
              # Web Platform
@@ -54,7 +51,7 @@ add_library( viro_renderer
              ${VIRO_RENDERER_SRC}/VROSparseBitSet.cpp
              ${VIRO_RENDERER_SRC}/Nodes.pb.cc
 
-	     # Renderer
+	         # Renderer
              ${VIRO_RENDERER_SRC}/VROScene.cpp
              ${VIRO_RENDERER_SRC}/VROSceneController.cpp
              ${VIRO_RENDERER_SRC}/VROCamera.cpp
@@ -163,8 +160,8 @@ add_library( viro_renderer
              ${VIRO_RENDERER_SRC}/VROShaderModifier.cpp
              ${VIRO_RENDERER_SRC}/VROLightingUBO.cpp
 	     
-	     # Math
-	     ${VIRO_RENDERER_SRC}/VROLineSegment.cpp
+	         # Math
+	         ${VIRO_RENDERER_SRC}/VROLineSegment.cpp
              ${VIRO_RENDERER_SRC}/VROTriangle.cpp
              ${VIRO_RENDERER_SRC}/VROQuaternion.cpp
              ${VIRO_RENDERER_SRC}/VROPlane.cpp
@@ -206,14 +203,34 @@ add_library( viro_renderer
              ${VIRO_RENDERER_SRC}/VROPBRTexturedTest.cpp
              ${VIRO_RENDERER_SRC}/VRODiffuseIrradianceTest.cpp
              ${VIRO_RENDERER_SRC}/VROPhotometricLightTest.cpp
-             ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
-)    
+             ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp)
 
-add_subdirectory(libs/bullet/src/LinearMath)
-add_subdirectory(libs/bullet/src/BulletSoftBody)
-add_subdirectory(libs/bullet/src/BulletDynamics)
-add_subdirectory(libs/bullet/src/BulletCollision)
-add_subdirectory(libs/protobuf/src)
-add_subdirectory(libs/jpeg/src)
+ADD_SUBDIRECTORY(libs/bullet/src/LinearMath)
+ADD_SUBDIRECTORY(libs/bullet/src/BulletSoftBody)
+ADD_SUBDIRECTORY(libs/bullet/src/BulletDynamics)
+ADD_SUBDIRECTORY(libs/bullet/src/BulletCollision)
+ADD_SUBDIRECTORY(libs/protobuf/src)
+ADD_SUBDIRECTORY(libs/jpeg/src)
 
-MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
+SET (VIRO_LINK_LIBS        viro_renderer)
+LIST(APPEND VIRO_LINK_LIBS protobuf-lite)
+LIST(APPEND VIRO_LINK_LIBS jpeg)
+LIST(APPEND VIRO_LINK_LIBS bullet_linearmath)
+LIST(APPEND VIRO_LINK_LIBS bullet_softbody)
+LIST(APPEND VIRO_LINK_LIBS bullet_dynamics)
+LIST(APPEND VIRO_LINK_LIBS bullet_collision)
+
+SET(VIRO_LINK_FLAGS "-s WASM=1 -s USE_ZLIB=1 -s USE_FREETYPE=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_WEBGL2=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/products/preload@/ --shell-file ${CMAKE_SOURCE_DIR}/test/viro_shell.html --emrun")
+
+# Build executables for each test
+ADD_EXECUTABLE       (viro_fbx_test test/fbx/bootstrap.cpp)
+SET_TARGET_PROPERTIES(viro_fbx_test PROPERTIES LINK_FLAGS ${VIRO_LINK_FLAGS})
+TARGET_LINK_LIBRARIES(viro_fbx_test ${VIRO_LINK_LIBS})
+ADD_CUSTOM_COMMAND(TARGET viro_fbx_test
+				   PRE_BUILD
+		           COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/copy_preload.sh fbx
+                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+ADD_EXECUTABLE       (viro_pbr_test test/pbr/bootstrap.cpp)
+SET_TARGET_PROPERTIES(viro_pbr_test PROPERTIES LINK_FLAGS ${VIRO_LINK_FLAGS})
+TARGET_LINK_LIBRARIES(viro_pbr_test ${VIRO_LINK_LIBS})

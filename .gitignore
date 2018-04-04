@@ -9,6 +9,8 @@
 # WASM
 /wasm/products/
 /wasm/test/products/
+cmake-build-debug/
+cmake-build-release/
 
 # Gradle
 android/.idea/
