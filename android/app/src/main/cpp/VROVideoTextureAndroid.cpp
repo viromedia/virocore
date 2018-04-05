@@ -334,7 +334,7 @@ void VROVideoLooper::handle(int what, void *obj) {
                 post(kMsgCodecBuffer, d);
             }
 
-            pinfo("[video] seeked to %llu", seek->seekTime);
+            pinfo("[video] seeked to %" PRId64, seek->seekTime);
             free(seek);
         }
             break;
@@ -649,7 +649,7 @@ int64_t VROVideoLooper::computeDelayToRender(VROCodecOutputBuffer buffer, int64_
     int64_t currentTime = systemnanotime();
     if (*renderStart < 0) {
         *renderStart = currentTime - presentationNano;
-        pinfo("[video] render start reset to %lld", (*renderStart / 1000));
+        pinfo("[video] render start reset to %" PRId64, (*renderStart / 1000));
     }
 
     /*
