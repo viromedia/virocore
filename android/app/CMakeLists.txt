@@ -317,7 +317,7 @@ add_library( lib-arcore
              IMPORTED )
 set_target_properties( lib-arcore
                        PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libarcore_sdk.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libarcore_sdk_c.so )
 
 add_library( lib-gvr
              SHARED

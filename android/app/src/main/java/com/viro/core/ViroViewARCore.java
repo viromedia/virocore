@@ -28,7 +28,6 @@ import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Session;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
-import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.vr.cardboard.ContextUtils;
@@ -278,9 +277,9 @@ public class ViroViewARCore extends ViroView {
 
     /**
      * Create a new ViroViewARCore with the default {@link RendererConfiguration}. This constructor
-     * will immediately throw an <code><a href="https://developers.google.com/ar/reference/java/com/google/ar/core/exceptions/UnavailableDeviceNotCompatibleException">UnavailableDeviceNotCompatibleException</a></code>
-     * if ARCore is not compatible with this device. You can also check for this condition with the
-     * static {@link #isDeviceCompatible(Context)} method.
+     * will immediately throw a {@link DeviceNotCompatibleException} if ARCore is not compatible with
+     * this device. You can also check for this condition with the static {@link #isDeviceCompatible(Context)}
+     * method.
      * <p>
      * If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
      * prompt the user to install it if it isn't. Any error encountered during this process will be
@@ -302,9 +301,9 @@ public class ViroViewARCore extends ViroView {
     /**
      * Create a new ViroViewARCore with the given {@link RendererConfiguration}, which determines
      * the rendering techniques and rendering fidelity to use for this View. This constructor will
-     * immediately throw an <code><a href="https://developers.google.com/ar/reference/java/com/google/ar/core/exceptions/UnavailableDeviceNotCompatibleException">UnavailableDeviceNotCompatibleException</a></code>
-     * if ARCore is not compatible with this device. You can also check for this condition with the
-     * static {@link #isDeviceCompatible(Context)} method.
+     * immediately throw a {@link DeviceNotCompatibleException} if ARCore is not compatible with this
+     * device. You can also check for this condition with the static {@link #isDeviceCompatible(Context)}
+     * method.
      * <p>
      * If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
      * prompt the user to install it if it isn't. Any error encountered during this process will be
@@ -368,7 +367,7 @@ public class ViroViewARCore extends ViroView {
         if (!isDeviceCompatible(context)) {
             notifyRendererFailed(StartupError.ARCORE_NOT_SUPPORTED,
                     "This device is not compatible with ARCore");
-            throw new UnavailableDeviceNotCompatibleException();
+            throw new DeviceNotCompatibleException();
         }
 
         // We wait to load libraries until after the ARCore check, otherwise UnsatisfiedLinkErrors
