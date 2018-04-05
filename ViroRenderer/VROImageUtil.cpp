@@ -93,4 +93,24 @@ void initPointCloudTexture() {
     
 }
 
+#elif VRO_PLATFORM_MACOS
+
+#include "VROImageMacOS.h"
+
+void initBlankTexture(const VRORenderContext &context) {
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
+    NSString *path = [bundle pathForResource:@"blank" ofType:@"png"];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+    
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageMacOS>(image, VROTextureInternalFormat::RGBA8);
+    staticBlankTexture = std::make_shared<VROTexture>(true, VROMipmapMode::None, wrapper);
+    
+    std::vector<std::shared_ptr<VROImage>> cubeImages = { wrapper, wrapper, wrapper, wrapper, wrapper, wrapper };
+    staticBlankCubeTexture = std::make_shared<VROTexture>(true, cubeImages);
+}
+
+void initPointCloudTexture() {
+    
+}
+
 #endif

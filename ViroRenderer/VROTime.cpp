@@ -12,7 +12,7 @@
 #include <sys/time.h>
 #include <math.h>
 
-#if VRO_PLATFORM_IOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
 #include <QuartzCore/QuartzCore.h>
 #include <mach/mach_time.h>
 #endif
@@ -24,7 +24,7 @@ uint64_t VROTimeGetCalendarTime() {
 double VROTimeCurrentSeconds() {
 #if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
     return VROTimeCurrentMillis() / 1000.0;
-#elif VRO_PLATFORM_IOS
+#elif VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     return CACurrentMediaTime();
 #endif
 }
@@ -35,7 +35,7 @@ double VROTimeCurrentMillis() {
     clock_gettime(CLOCK_MONOTONIC, &time);
 
     return time.tv_sec * 1000.0 + time.tv_nsec / 1000000.0;
-#elif VRO_PLATFORM_IOS
+#elif VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     return CACurrentMediaTime() * 1000.0;
 #endif
 }
@@ -45,7 +45,7 @@ uint64_t VRONanoTime() {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return ((uint64_t)ts.tv_sec * 1000000000ULL) + (uint64_t)ts.tv_nsec;
-#elif VRO_PLATFORM_IOS
+#elif VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     mach_timebase_info_data_t info;
     mach_timebase_info(&info);
     return ((mach_absolute_time() * info.numer) / info.denom);

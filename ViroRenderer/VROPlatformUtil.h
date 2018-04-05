@@ -160,8 +160,8 @@ void VROPlatformDispatchAsyncApplication(std::function<void()> fcn);
  */
 void VROPlatformFlushTaskQueues();
 
-#if VRO_PLATFORM_IOS
-#import <UIKit/UIKit.h>
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
+#import <Foundation/Foundation.h>
 
 NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error));
 

@@ -6,7 +6,7 @@
 
 #include <string>
 #include "VRODefines.h"
-#if VRO_PLATFORM_IOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
 #define google google_public
 #endif
 

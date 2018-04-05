@@ -26,6 +26,11 @@
 #include "VROVideoTextureiOS.h"
 #endif
 
+#if VRO_PLATFORM_MACOS
+#include <AppKit/AppKit.h>
+#include "VROImageMacOS.h"
+#endif
+
 #if VRO_PLATFORM_ANDROID
 #include "VROPlatformUtil.h"
 #include "VROImageAndroid.h"
@@ -35,7 +40,7 @@
 #endif
 
 std::string VROTestUtil::getURLForResource(std::string resource, std::string type) {
-#if VRO_PLATFORM_IOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     NSString *objPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:resource.c_str()]
                                                         ofType:[NSString stringWithUTF8String:type.c_str()]];
     NSURL *objURL = [NSURL fileURLWithPath:objPath];
@@ -46,7 +51,7 @@ std::string VROTestUtil::getURLForResource(std::string resource, std::string typ
 }
 
 void *VROTestUtil::loadDataForResource(std::string resource, std::string type, int *outLength) {
-#if VRO_PLATFORM_IOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     NSString *path = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:resource.c_str()]
                                                         ofType:[NSString stringWithUTF8String:type.c_str()]];
     NSURL *url = [NSURL fileURLWithPath:path];
@@ -88,6 +93,11 @@ std::shared_ptr<VROTexture> VROTestUtil::loadCloudBackground() {
     };
 
     return std::make_shared<VROTexture>(true, cubeImages);
+#elif VRO_PLATFORM_WASM
+    
+    
+#elif VRO_PLATFORM_MACOS
+    return nullptr;
 #endif
 }
 
@@ -116,6 +126,11 @@ std::shared_ptr<VROTexture> VROTestUtil::loadNiagaraBackground() {
     };
 
     return std::make_shared<VROTexture>(true, cubeImages);
+#elif VRO_PLATFORM_WASM
+    
+    
+#elif VRO_PLATFORM_MACOS
+    return nullptr;
 #endif
 }
 
@@ -128,18 +143,23 @@ std::shared_ptr<VROTexture> VROTestUtil::loadWestlakeBackground() {
     return std::make_shared<VROTexture>(true, VROMipmapMode::None,
                                         std::make_shared<VROImageAndroid>("360_westlake.jpg",
                                                                           VROTextureInternalFormat::RGBA8));
+#elif VRO_PLATFORM_WASM
+    
+    
+#elif VRO_PLATFORM_MACOS
+    return nullptr;
 #endif
 }
 
 std::shared_ptr<VROTexture> VROTestUtil::loadRadianceHDRTexture(std::string texture) {
     std::string path;
-#if VRO_PLATFORM_IOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:texture.c_str()]
                                                         ofType:@"hdr"];
     path = std::string([fbxPath UTF8String]);
 #elif VRO_PLATFORM_ANDROID
     path = VROPlatformCopyAssetToFile(texture + ".hdr");
-#else
+#elif VRO_PLATFORM_WASM
     path = "/" + texture + ".hdr";
 #endif
     return VROHDRLoader::loadRadianceHDRTexture(path);
@@ -180,6 +200,12 @@ std::shared_ptr<VROTexture> VROTestUtil::loadDiffuseTexture(std::string texture,
     }
     return std::make_shared<VROTexture>(true, mipmap,
                                         std::make_shared<VROImageAndroid>(texture.c_str(), format), stereo);
+#elif VRO_PLATFORM_WASM
+    
+    
+#elif VRO_PLATFORM_MACOS
+    return std::make_shared<VROTexture>(true, mipmap,
+                                        std::make_shared<VROImageMacOS>([NSImage imageNamed:[NSString stringWithUTF8String:texture.c_str()]], format), stereo);
 #endif
 }
 
@@ -203,6 +229,11 @@ std::shared_ptr<VROTexture> VROTestUtil::loadTexture(std::string texture, bool s
     }
     return std::make_shared<VROTexture>(sRGB, VROMipmapMode::Runtime,
                                         std::make_shared<VROImageAndroid>(texture.c_str(), format));
+#elif VRO_PLATFORM_WASM
+    
+    
+#elif VRO_PLATFORM_MACOS
+    return nullptr;
 #endif
 }
 
@@ -212,7 +243,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     std::string base;
     VROResourceType resourceType = VROResourceType::URL;
     
-#if VRO_PLATFORM_IOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:model.c_str()]
                                                         ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
@@ -298,6 +329,11 @@ std::shared_ptr<VROVideoTexture> VROTestUtil::loadVideoTexture(std::shared_ptr<V
     });
 
     return videoTexture;
+#elif VRO_PLATFORM_WASM
+    
+    
+#elif VRO_PLATFORM_MACOS
+    return nullptr;
 #endif
 }
 

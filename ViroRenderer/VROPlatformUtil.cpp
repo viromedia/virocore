@@ -56,11 +56,10 @@ void *VROPlatformLoadFile(std::string filename, int *outLength) {
     return ret;
 }
 
-#pragma mark - iOS
-#if VRO_PLATFORM_IOS
+#pragma mark - iOS and MacOS
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
 
-#import <UIKit/UIKit.h>
-#import "VROImageiOS.h"
+#import <Foundation/Foundation.h>
 
 std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
@@ -191,11 +190,7 @@ void VROPlatformDeleteFile(std::string filename) {
                                                error:&deleteError];
 }
 
-std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
-                                                       VROTextureInternalFormat format) {
-    UIImage *image = [UIImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
-    return std::make_shared<VROImageiOS>(image, format);
-}
+
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -214,12 +209,36 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
 }
 
 std::string VROPlatformGetDeviceModel() {
-    return ""; // TODO: do this for iOS if required
+    return ""; // TODO: do this for iOS/MacOS if required
 }
 
 std::string VROPlatformGetDeviceBrand() {
-    return ""; // TODO: do this for iOS if required
+    return ""; // TODO: do this for iOS/MacOS if required
 }
+
+#pragma mark - iOS
+
+#if VRO_PLATFORM_IOS
+#import "VROImageiOS.h"
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
+                                                       VROTextureInternalFormat format) {
+    UIImage *image = [UIImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
+    return std::make_shared<VROImageiOS>(image, format);
+}
+
+#pragma mark - MacOS
+
+#elif VRO_PLATFORM_MACOS
+#import "VROImageMacOS.h"
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
+                                                       VROTextureInternalFormat format) {
+    NSImage *image = [NSImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
+    return std::make_shared<VROImageMacOS>(image, format);
+}
+
+#endif
 
 #pragma mark - Android
 #elif VRO_PLATFORM_ANDROID

@@ -23,45 +23,24 @@
 #pragma mark -
 #pragma mark Android Logging
 
-#elif VRO_PLATFORM_IOS
-
-#import <UIKit/UIKit.h>
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//  iOS: Logging
-//
-/////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark iOS Logging
-
-// All iOS logging implemented in header
-
-#endif
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//  Common: Stack Trace
-//
-/////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark (Common) Stack Trace
-
 void pstack(const char *fmt, ...) {
-#if VRO_PLATFORM_ANDROID
     va_list args;
     va_start(args, fmt);
     va_end(args);
     pwarn(fmt, args);
     pstack();
-#endif
 }
 
 void pstack() {
-#if VRO_PLATFORM_ANDROID
     DebugStacktrace::getInstance().logStacktrace(2);
-#endif
 }
+
+#else
+
+void pstack(const char *fmt, ...) {}
+void pstack() {}
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////
 //

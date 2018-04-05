@@ -723,7 +723,7 @@ void invert4x4(const float *src, float *inverse) {
 }
 
 bool VROMathInvertMatrix(const float *src, float *inverse) {
-#if TARGET_OS_SIMULATOR || VRO_PLATFORM_WASM
+#if TARGET_OS_SIMULATOR || VRO_PLATFORM_WASM || VRO_PLATFORM_MACOS
     invert4x4(src, inverse);
 #else
     invert4x4_simd(src, inverse);

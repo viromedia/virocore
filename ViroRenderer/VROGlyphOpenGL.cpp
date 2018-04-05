@@ -12,6 +12,7 @@
 #include "VROTextureSubstrateOpenGL.h"
 #include "VROMath.h"
 #include "VRODriverOpenGL.h"
+#include "VRODefines.h"
 
 VROGlyphOpenGL::VROGlyphOpenGL() {
     
@@ -109,8 +110,14 @@ void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph,
     GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
     GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
 
+    // TODO All platforms should switch to using GL_RG, as it's more efficient
+#if VRO_PLATFORM_MACOS
+    GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, texWidth, texHeight, 0,
+                     GL_RG, GL_UNSIGNED_BYTE, luminanceAlphaBitmap) );
+#else
     GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, texWidth, texHeight, 0,
                      GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, luminanceAlphaBitmap) );
+#endif
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
         new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, driver, true));

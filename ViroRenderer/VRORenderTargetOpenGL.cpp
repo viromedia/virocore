@@ -13,6 +13,7 @@
 #include "VRODriverOpenGL.h"
 #include "VROMaterial.h"
 #include "VROViewport.h"
+#include "VRODefines.h"
 
 #ifdef VRO_PLATFORM_ANDROID
 #define GL_COMPARE_REF_TO_TEXTURE                        0x884E
@@ -77,7 +78,9 @@ void VRORenderTargetOpenGL::unbind() {
             GLenum attachments[2];
             attachments[0] = GL_DEPTH_ATTACHMENT;
             attachments[1] = GL_STENCIL_ATTACHMENT;
+#if !VRO_PLATFORM_MACOS
             glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments);
+#endif
             break;
             
         case VRORenderTargetType::DepthTexture:
