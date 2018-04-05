@@ -138,11 +138,24 @@ private:
     VROARImageTrackerOutput determineFoundOrUpdateV2(VROARImageTrackerOutput output);
     VROARImageTrackerOutput determineFoundOrUpdateV3(VROARImageTrackerOutput output);
 
+#pragma mark - Utility Functions
+
     /*
      This function takes the input image and returns the factor that we should scale the input by
      in order to maintain performance
      */
     float getScaleFactor(int rows, int cols);
+
+    /*
+     This function takes the given inputCols and inputRows and returns the intrinsic matrix
+     for this device.
+     */
+    cv::Mat getIntrinsicMatrix(int inputCols, int inputRows);
+
+    /*
+     This function returns the distortion coefficients for this device.
+     */
+    cv::Mat getDistortionCoeffs();
 
     /*
      This function takes two outputs and determines if they are similar
@@ -172,17 +185,39 @@ private:
      */
     VROMatrix4f convertToWorldCoordinates(std::shared_ptr<VROARCamera> camera, VROVector3f translation, VROVector3f rotation);
 
+
+#pragma mark - Debug Drawing Functions
+    /*
+     On Android, the following functions automatically draw to the screen whereas on iOS the debug
+     Mats should be returned to the end user!
+     */
+
     /*
      This function takes an inputImage and a vector of 4 points (in OpenCV) coordinate space
      and draws lines between the corners (for debugging).
      */
     cv::Mat drawCorners(cv::Mat inputImage, std::vector<cv::Point2f> inputCorners, float scaleFactor);
 
-    cv::Mat getIntrinsicMatrix(int inputCols, int inputRows);
-    cv::Mat getDistortionCoeffs();
+    /*
+     This function draws the matches between image1 and image2, the images are assumed to be in full
+     RGB color (they'll get grayscaled within the functions).
+     */
+    cv::Mat drawMatches(cv::Mat image1, std::vector<cv::KeyPoint> keypoints1,
+                        cv::Mat image2, std::vector<cv::KeyPoint> keypoints2,
+                        std::vector<cv::DMatch> matches);
 
     /*
-     -- Camera Calibration Functions --
+     This function draws the given keypoints on the given image
+     */
+    cv::Mat drawKeypoints(cv::Mat image, std::vector<cv::KeyPoint> keypoints);
+
+    /*
+     This function attempts to draw the given Mat to the screen (for debugging)
+     */
+    void drawMatToScreen(cv::Mat image);
+
+#pragma mark - Camera Calibration Functions
+    /*
      To enable this, set _needsCalibration = true in the contructor and
      _numCalibrationSamples = (however many samples you want before processing).
 
@@ -192,8 +227,12 @@ private:
     void findChessboardForCalibration(cv::Mat inputImage);
     void calculateIntrinsicProperties();
 
+#pragma mark - Timing Functions
+
     long getCurrentTimeMs();
     long _startTime;
+
+#pragma mark - Private Fields
 
     std::shared_ptr<VROARImageTarget> _arImageTarget;
     
@@ -216,6 +255,9 @@ private:
     int _matcherType;
     // The BruteForce matcher to match feature descriptors
     cv::Ptr<cv::BFMatcher> _matcher;
+
+    cv::Ptr<cv::FlannBasedMatcher> _flannMatcher;
+
     // Whether or not we should use a K-nearest-neighbor (or normal) BruteForce matcher
     bool _useBfKnnMatcher;
     

@@ -397,15 +397,16 @@ public class ViroViewARCore extends ViroView {
         if (ENABLE_TRACKING_DEBUG_VIEW) {
             sTrackingImageView = new ImageView(context);
             addView(sTrackingImageView);
-            sTrackingImageView.setAlpha(.5f);
+            sTrackingImageView.setAlpha(.7f);
 
             DisplayMetrics displayMetrics = new DisplayMetrics();
             ((Activity) getContext()).getWindowManager()
                     .getDefaultDisplay()
                     .getMetrics(displayMetrics);
 
+            sTrackingImageView.setPadding(0, 200, 0, 0);
             sTrackingImageView.setLayoutParams(
-                    new LayoutParams((int) (displayMetrics.widthPixels * .5),
+                    new LayoutParams((int) (displayMetrics.widthPixels * .5f),
                             (int) (displayMetrics.heightPixels * .5)));
 
             sTrackingImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

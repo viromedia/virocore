@@ -20,8 +20,8 @@
 
 
 #define ENABLE_DETECT_LOGGING 1
-// whether or not to draw output corners for debugging
-#define DRAW_OUTPUT_CORNERS 1
+// whether or not to draw tracking debug output to the screen
+#define DRAW_TRACKING_DEBUG_OUTPUT 1
 
 #if ENABLE_DETECT_LOGGING && VRO_PLATFORM_IOS
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, @#message);
@@ -91,9 +91,9 @@ void VROARImageTracker::updateType() {
             _matchRatio = .80;
 #else // VRO_PLATFORM_ANDROID
             // current testing on Android
-            _numberFeaturePoints = 3000; // 2k is enough for S8+
+            _numberFeaturePoints = 3000;
             _minGoodMatches = 15;
-            // TODO: the feature extractor for the input image should adapt to target image size
+            // TODO: the feature extractor for the input image should adapt to size
             // the thing is we limit it to 1920x1080 pixels, but the input could be smaller too...
             _feature = cv::ORB::create(_numberFeaturePoints, 1.2f, 10, 0, 0, 4, cv::ORB::HARRIS_SCORE);
             // TODO: the feature extractor for target image should adapt to target image size.
@@ -101,10 +101,6 @@ void VROARImageTracker::updateType() {
             // used for BruteForce knnMatching w/ ORB descriptors (higher means looser)
             _matchRatio = .80;
 #endif
-            // current iPad Testing
-            //_feature = cv::ORB::create(3000, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
-            //_targetFeature = cv::ORB::create(1000, 1.2f, 8, 31, 0, 4, cv::ORB::HARRIS_SCORE);
-            
             _matcherType = cv::NORM_HAMMING2;
             break;
         case VROARImageTrackerType::ORB:
@@ -113,15 +109,17 @@ void VROARImageTracker::updateType() {
             break;
         case VROARImageTrackerType::BRISK:
             _feature = cv::BRISK::create();
-            _matcherType = cv::NORM_HAMMING;
+            _matcherType = cv::NORM_L2;
             break;
     }
-    
-    _useBfKnnMatcher = _type != VROARImageTrackerType::BRISK;
+
+    _useBfKnnMatcher = false; // set this to false to use the FlannBasedMatcher
+
     if (_useBfKnnMatcher) {
-        _matcher = cv::BFMatcher::create();
-    } else {
         _matcher = cv::BFMatcher::create(_matcherType, false);
+    } else {
+        _flannMatcher = cv::makePtr<cv::FlannBasedMatcher>(cv::FlannBasedMatcher(
+                cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2)));
     }
 
     // Since we may have changed the _feature/_matcherType, we need to recreate all the
@@ -266,17 +264,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
         }
     }
 
-#if VRO_PLATFORM_ANDROID
-    // Write the file to disk on Android (we'll pass the filepath later).
-    if (outputs.size() > 0 && outputs[0].found) {
-        std::ostringstream s;
-        s << VROPlatformGetCacheDirectory() << "/viro_tracking_output.png";
-        std::string filepath(s.str());
-        bool success = cv::imwrite(filepath, outputs[0].outputImage);
-        VROPlatformSetTrackingImageView(filepath);
-    }
-#endif
-
    return outputs;
 }
 
@@ -307,9 +294,9 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         pinfo("[Viro] processing %d target descriptors and %d input descriptors", currentTarget.descriptors.rows, inputDescriptors.rows);
         
         if (!_useBfKnnMatcher) {
-            // BRISK logic
             std::vector<cv::DMatch> matches;
-            _matcher->match(currentTarget.descriptors, inputDescriptors, matches);
+
+            _flannMatcher->match(currentTarget.descriptors, inputDescriptors, matches);
             LOG_DETECT_TIME("start filtering good matches");
             
             double maxDist = 0;
@@ -325,24 +312,21 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
                 }
             }
 
-            // TODO: make sure this is a legitimate value. (this is for BRISK which we dont use)
-            double goodMatchThreshold = 3 * minDist;
+            double goodMatchThreshold = 2 * minDist;
             
             for (int i = 0; i < matches.size(); i++) {
                 if (matches[i].distance < goodMatchThreshold) {
                     goodMatches.push_back(matches[i]);
                 }
             }
-            
         } else {
-            // ORB logic
             std::vector<std::vector<cv::DMatch>> matches;
             _matcher->knnMatch(currentTarget.descriptors, inputDescriptors, matches, 2);
-            LOG_DETECT_TIME("start filtering good matches");
+            LOG_DETECT_TIME("start filtering good matches - knnMatches");
 
             for (int i = 0; i < matches.size(); i++) {
                 // the higher the constant, the looser the criteria is for a "match"
-                if ( (matches[i][0].distance / matches[i][1].distance) < _matchRatio) {
+                if ( (matches[i][0].distance < _matchRatio *  matches[i][1].distance)) {
                     goodMatches.push_back(matches[i][0]);
                 }
             }
@@ -357,6 +341,8 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
                   _totalFailedTime / _totalFailedIteration, _totalFailedIteration);
             
             continue;
+        } else {
+            pinfo("[Viro] Found %ld good matches", goodMatches.size());
         }
         
         std::vector<cv::Point2f> objectPoints;
@@ -386,14 +372,14 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         
         std::vector<cv::Point2f> inputCorners;
         perspectiveTransform(objectCorners, inputCorners, homographyMat);
-        
+
         if (!areCornersValid(inputCorners)) {
             pinfo("[Viro] Could not find corners of target in input image.");
-            
+
             _totalFailedIteration++;
             _totalFailedTime+=(getCurrentTimeMs() - _startTime);
             pinfo("[Viro] average failed run time %f for %f runs - bad corners", _totalFailedTime / _totalFailedIteration, _totalFailedIteration);
-            
+
             continue;
         }
 
@@ -403,7 +389,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
             inputCorners[2] /= scaleFactor;
             inputCorners[3] /= scaleFactor;
         }
-        
+
         LOG_DETECT_TIME("start finding object pose");
         
         // Output rotation and translation
@@ -500,11 +486,27 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
 #endif
 
         VROARImageTrackerOutput output = {true, inputCorners, scaledTranslation, currentTarget.rotation, worldTransform, currentTarget.arImageTarget};
-        
-// Whether or not we should draw corners on the output image. (for debugging)
-#if DRAW_OUTPUT_CORNERS
-        output.outputImage = drawCorners(inputImage, inputCorners, scaleFactor);
-#endif
+
+// Whether or not we should draw corners on the output image (for debugging). Note that if tracking
+// fails earlier in this function, we usually return before we get here!
+#if DRAW_TRACKING_DEBUG_OUTPUT
+
+        // draw the corners on the input image
+        //cv::Mat outputImage = drawCorners(inputImage, inputCorners, scaleFactor);
+
+        // draw the keypoint matches between target and input
+        //cv::Mat outputImage = drawMatches(currentTarget.arImageTarget->getTargetMat(), currentTarget.keyPoints, inputImage, inputKeypoints, goodMatches);
+
+        // draw the keypoints on the input image
+        cv::Mat outputImage = drawKeypoints(inputImage, inputKeypoints);
+
+// we only need to add the image to the output on iOS (the draw* function on Android automatically
+// draw the output to the screen already.
+#if VRO_PLATFORM_IOS
+        output.outputImage = outputImage;
+#endif // VRO_PLATFORM_IOS
+
+#endif // DRAW_TRACKING_DEBUG_OUTPUT
         
         // finally add the output to the list of outputs to return
         outputs.push_back(output);
@@ -619,8 +621,8 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV2(VROARImageTr
 }
 
 VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTrackerOutput rawOutput) {
-
     LOG_DETECT_TIME("finish determineFoundOrUpdateV3");
+    // TODO: implement a 3rd version
 }
 
 float VROARImageTracker::getScaleFactor(int rows, int cols) {
@@ -631,6 +633,104 @@ float VROARImageTracker::getScaleFactor(int rows, int cols) {
         // are scaled independently (thus applying whatever scale we return twice - squaring it).
         return (float) sqrt(((float) kMaxInputImageSize) / (rows * cols));
     }
+}
+
+
+cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
+    cv::Mat cameraMatrix;
+
+#if VRO_PLATFORM_ANDROID
+    // the factors on the inputCols|Rows pushes the found position towards the top left of screen/marker
+    // the focal distance pushes the found position further away
+    std::string model = VROPlatformGetDeviceModel();
+    double cols;
+    double rows;
+    if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
+        // the focal distance is fixed regardless of screen resolution, the center X and Y stays
+        // relatively fixed (but the actual pixel location depends on the screen resolution).
+        double cameraArr[9] = {1450, 0, inputCols * .49,
+                               0, 1450, inputRows * .5,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
+        if (inputCols < inputRows) {
+            cols = inputCols * .5318;
+            rows = inputRows * .491;
+        } else {
+            cols = inputCols * .491;
+            rows = inputRows * .5318;
+        }
+        double cameraArr[9] = {2191.487412971218, 0, cols,
+                               0, 2190.428443008615, rows,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
+
+        if (inputCols < inputRows) {
+            cols = inputCols * .5215;
+            rows = inputRows * .5022;
+        } else {
+            cols = inputCols * .5022;
+            rows = inputRows * .5215;
+        }
+
+        double cameraArr[9] = {2129.987076073671, 0, cols,
+                               0, 2127.653050656804, rows,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else {
+        // Unknown device, so estimate/approx the intrinsic matrix
+        // http://ksimek.github.io/2013/08/13/intrinsic/
+        double focalLength = inputCols; // Approximate focal length.
+        cv::Point2d center = cv::Point2d(inputCols / 2, inputRows / 2);
+
+        double cameraArr[9] = {focalLength, 0, center.x, 0, focalLength, center.y, 0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    }
+#else // VRO_PLATFORM_IOS
+    // There are intrinsics set, so don't calculate/estimate them!
+    // actually, the intrinsics assume the texture/coordinates are in landscape, so we'll need to flip mat[0][2] and mat[1][2] for portrait.
+    // TODO: dynamically handle screen rotation - for iOS
+    cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
+    cameraMatrix = cameraMatrix.t(); // we need to transpose the matrix
+    float temp = cameraMatrix.at<float>(0, 2);
+    cameraMatrix.at<float>(0, 2) = cameraMatrix.at<float>(1, 2);
+    cameraMatrix.at<float>(1, 2) = temp;
+#endif
+
+    // clone before returning to ensure the array-backed matrices aren't dealloc-ed by leaving
+    // this function's scope
+    return cameraMatrix.clone();
+}
+
+cv::Mat VROARImageTracker::getDistortionCoeffs() {
+#if VRO_PLATFORM_IOS
+    return cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
+#else
+    std::string model = VROPlatformGetDeviceModel();
+    if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
+        // Pixel 2 distCoeffs
+        double distCoeffsArr[5] = {0.3071814282190861, -1.406069924010113, -0.001143236436618327,
+                                   -0.003115266690240281, 2.134291153514535};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        // clone before returning because the double array will be dealloced upon leaving the func scope.
+        return distCoeffs.clone();
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
+        double distCoeffsArr[5] = {0.2140704096247754, -0.5619697252678999, -0.001414139193934611,
+                                   0.002719229177220327, 0.4081823444503178};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        // clone before returning because the double array will be dealloced upon leaving the func scope.
+        return distCoeffs.clone();
+    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
+        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
+                                   -0.001190136151737745, 0.03055129101581667};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        return distCoeffs.clone();
+    } else {
+        // Unknown device, return no distortion
+        return cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
+    }
+#endif
 }
 
 bool VROARImageTracker::areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second) {
@@ -727,7 +827,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
         pinfo("[Viro] corner check - fail test 3");
         return false;
     }
-    
+
     // the corners passed all our checks!
     return true;
 }
@@ -799,102 +899,56 @@ cv::Mat VROARImageTracker::drawCorners(cv::Mat inputImage, std::vector<cv::Point
     cv::Mat processedImage = cv::Mat(inputImage.rows, inputImage.cols, CV_32F);
     cv::cvtColor(inputImage, processedImage, cv::COLOR_BGRA2RGBA);
 
+    // for Android, we'll draw the debug image now!
+    drawMatToScreen(processedImage);
+
     return processedImage;
 }
 
-cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
-    cv::Mat cameraMatrix;
+cv::Mat VROARImageTracker::drawMatches(cv::Mat image1, std::vector<cv::KeyPoint> keypoints1,
+                                       cv::Mat image2, std::vector<cv::KeyPoint> keypoints2,
+                                       std::vector<cv::DMatch> matches) {
+    // the below code draws the matches rather than the corners.
+    cv::Mat grayImage1;
+    cv::cvtColor(image1, grayImage1, CV_RGB2GRAY);
 
-    // the factors on the inputCols|Rows pushes the found position towards the top left of screen/marker
-    // the focal distance pushes the found position further away
-    if (_intrinsics == NULL) { // this is the Android case (ARCore doesn't provide intrinsics yet)
-        std::string model = VROPlatformGetDeviceModel();
-        double cols;
-        double rows;
-        if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
-            // the focal distance is fixed regardless of screen resolution, the center X and Y stays
-            // relatively fixed (but the actual pixel location depends on the screen resolution).
-            double cameraArr[9] = {1450, 0, inputCols * .49,
-                                   0, 1450, inputRows * .5,
-                                   0, 0, 1};
-            cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
-            if (inputCols < inputRows) {
-                cols = inputCols * .5318;
-                rows = inputRows * .491;
-            } else {
-                cols = inputCols * .491;
-                rows = inputRows * .5318;
-            }
-            double cameraArr[9] = {2191.487412971218, 0, cols,
-                                   0, 2190.428443008615, rows,
-                                   0, 0, 1};
-            cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-        } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
+    cv::Mat grayImage2;
+    cv::cvtColor(image2, grayImage2, CV_RGB2GRAY);
 
-            if (inputCols < inputRows) {
-                cols = inputCols * .5215;
-                rows = inputRows * .5022;
-            } else {
-                cols = inputCols * .5022;
-                rows = inputRows * .5215;
-            }
+    cv::Mat outputImage;
+    cv::drawMatches(grayImage1, keypoints1, grayImage2, keypoints2,
+                    matches, outputImage, cv::Scalar::all(-1), cv::Scalar::all(-1),
+                    std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 
-            double cameraArr[9] = {2129.987076073671, 0, cols,
-                                   0, 2127.653050656804, rows,
-                                   0, 0, 1};
-            cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-        } else {
-            // Unknown device, so estimate/approx the intrinsic matrix
-            // http://ksimek.github.io/2013/08/13/intrinsic/
-            double focalLength = inputCols; // Approximate focal length.
-            cv::Point2d center = cv::Point2d(inputCols / 2, inputRows / 2);
+    // for Android, we'll draw the debug image now!
+    drawMatToScreen(outputImage);
 
-            double cameraArr[9] = {focalLength, 0, center.x, 0, focalLength, center.y, 0, 0, 1};
-            cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-        }
-    } else { // on iOS, the _intrinsics array is set!
-        // There are intrinsics set, so don't calculate/estimate them!
-        // actually, the intrinsics assume the texture/coordinates are in landscape, so we'll need to flip mat[0][2] and mat[1][2] for portrait.
-        // TODO: dynamically handle screen rotation - for iOS
-        cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
-        cameraMatrix = cameraMatrix.t(); // we need to transpose the matrix
-        float temp = cameraMatrix.at<float>(0, 2);
-        cameraMatrix.at<float>(0, 2) = cameraMatrix.at<float>(1, 2);
-        cameraMatrix.at<float>(1, 2) = temp;
-    }
-
-    // clone before returning to ensure the array-backed matrices aren't dealloc-ed by leaving
-    // this function's scope
-    return cameraMatrix.clone();
+    return outputImage;
 }
 
-cv::Mat VROARImageTracker::getDistortionCoeffs() {
-#if VRO_PLATFORM_IOS
-    return cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
-#else
-    std::string model = VROPlatformGetDeviceModel();
-    if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
-        // Pixel 2 distCoeffs
-        double distCoeffsArr[5] = {0.3071814282190861, -1.406069924010113, -0.001143236436618327,
-                                   -0.003115266690240281, 2.134291153514535};
-        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
-        // clone before returning because the double array will be dealloced upon leaving the func scope.
-        return distCoeffs.clone();
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
-        double distCoeffsArr[5] = {0.2140704096247754, -0.5619697252678999, -0.001414139193934611,
-                                   0.002719229177220327, 0.4081823444503178};
-        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
-        // clone before returning because the double array will be dealloced upon leaving the func scope.
-        return distCoeffs.clone();
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
-        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
-                                   -0.001190136151737745, 0.03055129101581667};
-        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
-        return distCoeffs.clone();
+cv::Mat VROARImageTracker::drawKeypoints(cv::Mat image, std::vector<cv::KeyPoint> keypoints) {
+    cv::Mat grayImage;
+    cv::cvtColor(image, grayImage, CV_RGB2GRAY);
+
+    cv::Mat outputImage;
+    cv::drawKeypoints(grayImage, keypoints, outputImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    // for Android, we'll draw the debug image now!
+    drawMatToScreen(outputImage);
+
+    return outputImage;
+}
+
+void VROARImageTracker::drawMatToScreen(cv::Mat image) {
+#if VRO_PLATFORM_ANDROID
+    std::ostringstream s;
+    s << VROPlatformGetCacheDirectory() << "/viro_tracking_output.png";
+    std::string filepath(s.str());
+    bool success = cv::imwrite(filepath, image);
+    if (success) {
+        VROPlatformSetTrackingImageView(filepath);
     } else {
-        // Unknown device, return no distortion
-        return cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
+        pinfo("[Viro] Writing debug Mat to disk failed!");
     }
 #endif
 }
