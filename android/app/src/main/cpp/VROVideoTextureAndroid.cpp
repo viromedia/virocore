@@ -15,6 +15,9 @@
 #include "VROPCMAudioPlayer.h"
 #include "VRODriverOpenGL.h"
 
+#include <stdint.h>
+#include <inttypes.h>
+
 enum {
     kMsgCodecBuffer,
     kMsgPause,
