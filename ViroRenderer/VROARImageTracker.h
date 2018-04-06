@@ -50,9 +50,10 @@ struct VROARImageTargetOpenCV {
 
     // TODO: hold onto shared_ptr<VROARImageTrackerOutput> not just the value!
     std::vector<VROARImageTrackerOutput> rawOutputs; // the raw outputs that we've found so far.
-    VROARImageTrackerOutput lastOutput; // the most recent output that was returned to the caller for this target.
+    VROARImageTrackerOutput lastResult; // the most recent output that was returned to the caller for this target.
 
-    bool disableTracking; // disable this once we've found enough rawOutputs
+    // disable tracking once we've found enough rawOutputs - we shouldnt do this anymore (but it's available)
+    bool disableTracking;
     std::vector<std::vector<VROARImageTrackerOutput>> similarOutputsList;
 };
 
@@ -137,6 +138,7 @@ private:
     VROARImageTrackerOutput determineFoundOrUpdateV1(VROARImageTrackerOutput output);
     VROARImageTrackerOutput determineFoundOrUpdateV2(VROARImageTrackerOutput output);
     VROARImageTrackerOutput determineFoundOrUpdateV3(VROARImageTrackerOutput output);
+    VROARImageTrackerOutput determineFoundOrUpdateV4(VROARImageTrackerOutput output);
 
 #pragma mark - Utility Functions
 
@@ -162,6 +164,16 @@ private:
      */
     bool areOutputsSimilar(VROARImageTrackerOutput first, VROARImageTrackerOutput second);
 
+    /*
+     This function takes two outputs and determines if they are similar using the given distance as
+     well as other heuristics.
+     */
+    bool areOutputsSimilarWithDistance(VROARImageTrackerOutput first, VROARImageTrackerOutput second, double distance);
+
+    /*
+     This function takes a vector of points representing the corners and performs sanity checks
+     on the corners to determine if they make sense for a rectangular surface
+     */
     bool areCornersValid(std::vector<cv::Point2f> corners);
 
     /*

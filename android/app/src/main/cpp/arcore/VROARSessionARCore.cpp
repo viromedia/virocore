@@ -311,8 +311,6 @@ void VROARSessionARCore::onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anc
 #pragma mark - Internal Methods
 
 void VROARSessionARCore::initTrackingSession() {
-    pinfo("kirby initTracking session %d %d %d", (_currentFrame == nullptr), _synchronizer ==
-            nullptr, _arTrackingSession == nullptr);
     if (_currentFrame && _synchronizer && _arTrackingSession) {
         VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
         _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
