@@ -40,8 +40,6 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/VROSceneRendererSceneView.cpp
              ${VIRO_ANDROID_SRC}/VROSample.cpp
              ${VIRO_ANDROID_SRC}/VROImageAndroid.cpp
-             ${VIRO_ANDROID_SRC}/VROPCMAudioPlayer.cpp
-             ${VIRO_ANDROID_SRC}/VROVideoTextureAndroid.cpp
              ${VIRO_ANDROID_SRC}/VROAudioPlayerAndroid.cpp
              ${VIRO_ANDROID_SRC}/VROAVPlayer.cpp
              ${VIRO_ANDROID_SRC}/VROVideoTextureAVP.cpp
@@ -304,21 +302,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
              )
 
-add_library( viro_arcore
-             SHARED
-
-             ${VIRO_ANDROID_SRC}/arcore/ARCore_Native.cpp
-             ${VIRO_ANDROID_SRC}/arcore/VRORendererARCoreNative_JNI.cpp
-           )
-
 # Add pre-built libraries
-add_library( lib-arcore
-             SHARED
-             IMPORTED )
-set_target_properties( lib-arcore
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libarcore_sdk_c.so )
-
 add_library( lib-gvr
              SHARED
              IMPORTED )
@@ -494,9 +478,6 @@ set_target_properties (lib-OpenCV-TP-Tegra-Hal
 find_library( lib-log log )
 find_library( lib-android android )
 find_library( lib-jnigraphics jnigraphics )
-find_library( lib-mediandk mediandk )
-find_library( lib-openmax OpenMAXAL )
-find_library( lib-opensles OpenSLES )
 find_library( lib-egl EGL )
 find_library( lib-GLESv3 GLESv3 )
 find_library( lib-z z )
@@ -512,9 +493,6 @@ target_link_libraries( # Specifies the target library.
                        ${lib-log}
                        ${lib-android}
                        ${lib-jnigraphics}
-                       ${lib-mediandk}
-                       ${lib-openmax}
-                       ${lib-opensles}
                        ${lib-egl}
                        ${lib-GLESv3}
                        ${lib-z}
@@ -547,9 +525,3 @@ target_link_libraries( # Specifies the target library.
                        lib-OpenCV-TP-WebP
                        lib-OpenCV-TP-TBB
                        lib-OpenCV-TP-Tegra-Hal)
-
-target_link_libraries( # Specifies the target library.
-                       viro_arcore
-
-                       # Libraries linked with target
-                       lib-arcore)

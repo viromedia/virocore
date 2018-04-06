@@ -105,6 +105,22 @@ namespace arcore {
         ArSession *_session;
     };
 
+    class ImageNative : public Image {
+    public:
+        ImageNative(ArImage *image);
+        virtual ~ImageNative();
+        virtual int32_t getWidth();
+        virtual int32_t getHeight();
+        virtual int32_t getFormat();
+        virtual int32_t getNumberOfPlanes();
+        virtual int32_t getPlanePixelStride(int planeIdx);
+        virtual int32_t getPlaneRowStride(int planeIdx);
+        virtual void getPlaneData(const AImage *image, int planeIdx, uint8_t **outData, int *outDataLength);
+    private:
+        ArImage *_arImage;
+        const AImage *_image;
+    };
+
     class FrameNative : public Frame {
     public:
         FrameNative(ArFrame *frame, ArSession *session) : _frame(frame), _session(session) {}
@@ -120,6 +136,7 @@ namespace arcore {
         virtual void getUpdatedPlanes(TrackableList *outList);
         virtual void getBackgroundTexcoords(float *outTexcoords);
         virtual PointCloud *acquirePointCloud();
+        virtual ImageRetrievalStatus acquireCameraImage(Image **outImage);
 
         ArFrame *_frame;
         ArSession *_session;

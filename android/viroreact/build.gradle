@@ -20,7 +20,7 @@ android {
         // (thereby avoiding conflicts with React Android's shared STL)
         externalNativeBuild {
             cmake {
-                targets "viro_renderer", "viro_arcore"
+                targets "viro_renderer"
                 cppFlags "-std=c++14 -frtti -fcxx-exceptions"
             }
         }
@@ -29,13 +29,15 @@ android {
         buildConfigField "String", "VIRO_PLATFORM", "\"VIRO_REACT\""
     }
 
-    // Use the /app directory for the source
     sourceSets {
         main {
+            // Use the /app directory for the source, resources, and assets
             java.srcDirs = ['../app/src/main/java']
             res.srcDirs = ['../app/src/main/res']
             assets.srcDirs = ['../app/src/main/assets']
-            jniLibs.srcDirs = ['../app/src/main/jniLibs']
+
+            // Package both the /app jniLibs viroar's build/natives libs into the AAR
+            jniLibs.srcDirs = ['../app/src/main/jniLibs', '../viroar/build/natives/jni']
             manifest.srcFile '../app/src/main/AndroidManifest.xml'
         }
     }
@@ -88,15 +90,23 @@ dependencies {
 
 task copyReleaseAAR(type: Copy) {
     from('build/outputs/aar')
-    // Change the next line to reflect the path to your react-viro repo, this
-    // script is run from ViroRenderer/android/app/
+
+    // Change the next line to reflect the path to your react-viro repo
     into('../../../react-viro/android/viro_renderer/')
     include('viroreact-release.aar')
     rename('viroreact-release.aar', 'viro_renderer-release.aar')
 }
 
+// We have to add dependencies to Android tasks in this deferred way because these tasks
+// are dynamically generated.
+//
+// Before assembling release, compile :viroar:assembleRelease, which will place its .so
+// products in its build/natives folder. The jniLibs source set above will ensure these
+// .so files are included in our final AAR.
 tasks.whenTaskAdded { task ->
     if (task.name == 'assembleRelease') {
+        task.dependsOn ':viroar:assembleRelease'
         task.finalizedBy 'copyReleaseAAR'
     }
 }
+

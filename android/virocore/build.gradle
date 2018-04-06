@@ -15,12 +15,9 @@ android {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
 
-        // ViroCore exports two shared libraries, viro-native and viro-arcore. This way we can
-        // load Viro without the AR, for devices that can't support the newer libs required by
-        // AR.
         externalNativeBuild {
             cmake {
-                targets "viro_renderer", "viro_arcore"
+                targets "viro_renderer"
                 cppFlags "-std=c++14 -frtti -fcxx-exceptions"
             }
         }
@@ -29,13 +26,15 @@ android {
         buildConfigField "String", "VIRO_PLATFORM", "\"VIRO_CORE\""
     }
 
-    // Use the /app directory for the source
     sourceSets {
         main {
+            // Use the /app directory for the source, resources, and assets
             java.srcDirs = ['../app/src/main/java']
             res.srcDirs = ['../app/src/main/res']
             assets.srcDirs = ['../app/src/main/assets']
-            jniLibs.srcDirs = ['../app/src/main/jniLibs']
+
+            // Package both the /app jniLibs viroar's build/natives libs into the AAR
+            jniLibs.srcDirs = ['../app/src/main/jniLibs', '../viroar/build/natives/jni']
             manifest.srcFile '../app/src/main/AndroidManifest.xml'
         }
     }
@@ -80,4 +79,16 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
+}
+
+// We have to add dependencies to Android tasks in this deferred way because these tasks
+// are dynamically generated.
+//
+// Before assembling release, compile :viroar:assembleRelease, which will place its .so
+// products in its build/natives folder. The jniLibs source set above will ensure these
+// .so files are included in our final AAR.
+tasks.whenTaskAdded {
+    task-> if (task.name.contains("external") && !task.name.contains("Clean")) {
+        task.dependsOn ':viroar:assembleRelease'
+    }
 }

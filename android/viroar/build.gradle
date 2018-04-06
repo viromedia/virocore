@@ -1,0 +1,61 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+        externalNativeBuild {
+            cmake {
+                targets "viro_arcore"
+                cppFlags "-std=c++14 -frtti -fcxx-exceptions"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:25.0.0'
+}
+
+// Extract the .so files (libviro_arcore.so) for each architecture and place them in the build/natives
+// directory
+task extractNativeLibraries() {
+    doFirst {
+        copy {
+            from zipTree('build/outputs/aar/viroar-release.aar')
+            into('build/natives')
+            include 'jni/**/*'
+        }
+    }
+}
+
+// We have to add dependencies to Android tasks in this deferred way because these tasks
+// are dynamically generated.
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleRelease') {
+        task.finalizedBy 'extractNativeLibraries'
+    }
+}

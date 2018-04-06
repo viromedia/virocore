@@ -11,6 +11,8 @@
 
 #include <stdint.h>
 
+typedef struct AImage AImage;
+
 namespace arcore {
 
     class Anchor;
@@ -23,6 +25,15 @@ namespace arcore {
         Success,
         UnsupportedConfiguration,
         SessionNotPaused,
+    };
+
+    enum class ImageRetrievalStatus {
+        Success,
+        InvalidArgument,
+        DeadlineExceeded,
+        ResourceExhausted,
+        NotYetAvailable,
+        UnknownError
     };
 
     enum class TrackingState {
@@ -119,6 +130,18 @@ namespace arcore {
         virtual bool isValid() = 0;
     };
 
+    class Image {
+    public:
+        virtual ~Image() {}
+        virtual int32_t getWidth() = 0;
+        virtual int32_t getHeight() = 0;
+        virtual int32_t getFormat() = 0;
+        virtual int32_t getNumberOfPlanes() = 0;
+        virtual int32_t getPlanePixelStride(int planeIdx) = 0;
+        virtual int32_t getPlaneRowStride(int planeIdx) = 0;
+        virtual void getPlaneData(const AImage *image, int planeIdx, uint8_t **outData, int *outDataLength) = 0;
+    };
+
     class Frame {
     public:
         virtual ~Frame() {}
@@ -133,6 +156,7 @@ namespace arcore {
         virtual void getUpdatedPlanes(TrackableList *outList) = 0;
         virtual void getBackgroundTexcoords(float *outTexcoords) = 0;
         virtual PointCloud *acquirePointCloud() = 0;
+        virtual ImageRetrievalStatus acquireCameraImage(Image **outImage) = 0;
     };
 
     class PointCloud {
