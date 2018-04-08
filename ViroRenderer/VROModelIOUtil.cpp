@@ -14,6 +14,8 @@
 #include "VROTextureUtil.h"
 #include "VROStringUtil.h"
 
+const std::string kAssetURLPrefix = "file:///android_asset";
+
 void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string &base, VROResourceType type, bool sRGB,
                                       const std::map<std::string, std::string> *resourceMap,
                                       std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
@@ -98,7 +100,10 @@ void VROModelIOUtil::retrieveResourceAsync(std::string resource, VROResourceType
         onSuccess(path, temp);
     }
     else if (type == VROResourceType::URL) {
-        VROPlatformDownloadURLToFileAsync(VROStringUtil::encodeURL(resource), onSuccess, onFailure);
+        if (!VROStringUtil::startsWith(resource, kAssetURLPrefix)) {
+            resource = VROStringUtil::encodeURL(resource);
+        }
+        VROPlatformDownloadURLToFileAsync(resource, onSuccess, onFailure);
     }
     else {
         onSuccess(resource, false);
@@ -119,7 +124,10 @@ std::string VROModelIOUtil::retrieveResource(std::string resource, VROResourceTy
         *success = true;
     }
     else if (type == VROResourceType::URL) {
-        path = VROPlatformDownloadURLToFile(VROStringUtil::encodeURL(resource), isTemp, success);
+        if (!VROStringUtil::startsWith(resource, kAssetURLPrefix)) {
+            resource = VROStringUtil::encodeURL(resource);
+        }
+        path = VROPlatformDownloadURLToFile(resource, isTemp, success);
     }
     else {
         path = resource;
