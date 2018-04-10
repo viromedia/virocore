@@ -82,9 +82,8 @@ std::string VROCompress::decompress(const std::string &str) {
     inflateEnd(&zs);
     
     if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-        std::ostringstream oss;
-        oss << "Exception during zlib decompression: (" << ret << ") " << zs.msg;
-        pabort();
+        pinfo("Error during zlib decompression [ret: %d, message: %s]", ret, zs.msg);
+        pabort("Error during zlib decompression, see above for error log");
     }
     
     return outstring;
