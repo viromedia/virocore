@@ -415,13 +415,8 @@ public class ViroActivity extends AppCompatActivity {
         node.addLight(directional);
 
         final float[] omniLightPosition = {1, 0, 0};
-        final OmniLight omni = new OmniLight(Color.RED, 1000.0f, 1, 10, new Vector(omniLightPosition));
+        final OmniLight omni = new OmniLight(Color.WHITE, 1000.0f, 1, 10, new Vector(omniLightPosition));
         node.addLight(omni);
-
-        final float[] spotLightPosition = {-2, 0, 3};
-        final Spotlight spot = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
-                new Vector(lightDirection), (float) Math.toRadians(2), (float) Math.toRadians(10));
-        node.addLight(spot);
     }
 
     private List<Node> testSurfaceVideo(final Context context) {

@@ -122,6 +122,15 @@ public class PlatformUtil {
 
             in = mAssetManager.open(assetPath);
             bitmap = BitmapFactory.decodeStream(in, null, options);
+        } catch(FileNotFoundException e) {
+            Log.w(TAG, "File not found for bitmap at asset path [" + assetPath + "]");
+            return null;
+        } catch(IOException e) {
+            Log.w(TAG, "IO error loading bitmap at asset path [" + assetPath + "]");
+            return null;
+        } catch(Exception e) {
+            Log.w(TAG, "Unknown error loading bitmap at asset path [" + assetPath + "]", e);
+            return null;
         } finally {
             if (in != null) {
                 in.close();
@@ -141,6 +150,15 @@ public class PlatformUtil {
 
             in = new FileInputStream(path);
             bitmap = BitmapFactory.decodeStream(in, null, options);
+        } catch(FileNotFoundException e) {
+            Log.w(TAG, "File not found for bitmap at path [" + path + "]");
+            return null;
+        } catch(IOException e) {
+            Log.w(TAG, "IO error loading bitmap at path [" + path + "]");
+            return null;
+        } catch(Exception e) {
+            Log.w(TAG, "Unknown error loading bitmap at path [" + path + "]", e);
+            return null;
         } finally {
             if (in != null) {
                 in.close();
@@ -268,6 +286,13 @@ public class PlatformUtil {
         InputStream in = null;
         FileOutputStream out = null;
         try {
+            // If the asset begins with `./`, remove that. Assets can be in subdirectories but
+            // same directory syntax does not work. `../` will not work either, but we have nothing
+            // to correct that to, so leave it as is.
+            if (asset.startsWith("./")) {
+                asset = asset.substring(2);
+            }
+
             in = mAssetManager.open(asset);
             if (file.getParentFile() != null) {
                 file.getParentFile().mkdirs();

@@ -25,7 +25,8 @@ public:
                                 int compressionlevel = Z_BEST_COMPRESSION);
     
     /*
-     Decompress an STL string using zlib and return the original data. 
+     Decompress an STL string using zlib and return the original data. Returns
+     an empty string on error.
      */
     static std::string decompress(const std::string &str);
     

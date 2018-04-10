@@ -104,6 +104,8 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename, VRO
 
 #if VRO_PLATFORM_ANDROID
 std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset, VROTextureInternalFormat format);
+
+// These methods return null on error (e.g. if file or asset is not found).
 jobject VROPlatformLoadBitmapFromAsset(std::string resource, VROTextureInternalFormat format);
 jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat format);
 

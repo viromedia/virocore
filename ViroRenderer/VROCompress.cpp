@@ -56,7 +56,8 @@ std::string VROCompress::decompress(const std::string &str) {
     memset(&zs, 0, sizeof(zs));
     
     if (inflateInit(&zs) != Z_OK) {
-        pabort("inflateInit failed while decompressing.");
+        pwarn("inflateInit failed while decompressing");
+        return "";
     }
     
     zs.next_in = (Bytef*)str.data();
@@ -82,8 +83,8 @@ std::string VROCompress::decompress(const std::string &str) {
     inflateEnd(&zs);
     
     if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-        pinfo("Error during zlib decompression [ret: %d, message: %s]", ret, zs.msg);
-        pabort("Error during zlib decompression, see above for error log");
+        pwarn("Error during zlib decompression [ret: %d, message: %s]", ret, zs.msg);
+        return "";
     }
     
     return outstring;
