@@ -71,7 +71,7 @@ public:
      Get the image size (width, height) for the camera. Stored in the
      vector's x and y components.
      */
-    virtual VROVector3f getImageSize() const = 0;
+    virtual VROVector3f getImageSize() = 0;
     
 };
 

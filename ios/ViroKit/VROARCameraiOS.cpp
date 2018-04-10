@@ -95,7 +95,7 @@ VROMatrix4f VROARCameraiOS::getProjection(VROViewport viewport, float near, floa
     return projection;
 }
 
-VROVector3f VROARCameraiOS::getImageSize() const {
+VROVector3f VROARCameraiOS::getImageSize() {
     CGSize size = _camera.imageResolution;
     return { (float) size.width, (float) size.height, 0 };
 }

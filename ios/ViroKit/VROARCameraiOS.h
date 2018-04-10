@@ -28,7 +28,7 @@ public:
     VROVector3f getPosition() const;
     VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const;
     
-    VROVector3f getImageSize() const;
+    VROVector3f getImageSize();
     
 private:
     

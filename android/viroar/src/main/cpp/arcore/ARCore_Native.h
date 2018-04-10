@@ -112,10 +112,11 @@ namespace arcore {
         virtual int32_t getWidth();
         virtual int32_t getHeight();
         virtual int32_t getFormat();
+        virtual void getCropRect(int *outLeft, int *outRight, int *outBottom, int *outTop);
         virtual int32_t getNumberOfPlanes();
         virtual int32_t getPlanePixelStride(int planeIdx);
         virtual int32_t getPlaneRowStride(int planeIdx);
-        virtual void getPlaneData(const AImage *image, int planeIdx, uint8_t **outData, int *outDataLength);
+        virtual void getPlaneData(int planeIdx, uint8_t **outData, int *outDataLength);
     private:
         ArImage *_arImage;
         const AImage *_image;

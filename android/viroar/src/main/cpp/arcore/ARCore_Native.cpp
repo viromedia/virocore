@@ -258,16 +258,29 @@ namespace arcore {
         media_status_t status = AImage_getHeight(_image, &height);
         return status == AMEDIA_OK ? height : 0;
     }
+
     int32_t ImageNative::getFormat() {
         int32_t format;
         media_status_t status = AImage_getFormat(_image, &format);
         return status == AMEDIA_OK ? format : 0;
     }
+
+    void ImageNative::getCropRect(int *outLeft, int *outRight, int *outBottom, int *outTop) {
+        AImageCropRect rect;
+        AImage_getCropRect(_image, &rect);
+
+        *outLeft = rect.left;
+        *outRight = rect.right;
+        *outBottom = rect.bottom;
+        *outTop = rect.top;
+    }
+
     int32_t ImageNative::getNumberOfPlanes() {
         int32_t numPlanes;
         media_status_t status = AImage_getNumberOfPlanes(_image, &numPlanes);
         return status == AMEDIA_OK ? numPlanes : 0;
     }
+
     int32_t ImageNative::getPlanePixelStride(int planeIdx) {
         int32_t planePixelStride;
         media_status_t status = AImage_getPlanePixelStride(_image, planeIdx, &planePixelStride);
@@ -280,7 +293,7 @@ namespace arcore {
         return status == AMEDIA_OK ? planeRowStride : 0;
     }
 
-    void ImageNative::getPlaneData(const AImage *image, int planeIdx, uint8_t **outData, int *outDataLength) {
+    void ImageNative::getPlaneData(int planeIdx, uint8_t **outData, int *outDataLength) {
         AImage_getPlaneData(_image, planeIdx, outData, outDataLength);
     }
 

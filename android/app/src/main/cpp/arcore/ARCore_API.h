@@ -136,10 +136,11 @@ namespace arcore {
         virtual int32_t getWidth() = 0;
         virtual int32_t getHeight() = 0;
         virtual int32_t getFormat() = 0;
+        virtual void getCropRect(int *outLeft, int *outRight, int *outBottom, int *outTop) = 0;
         virtual int32_t getNumberOfPlanes() = 0;
         virtual int32_t getPlanePixelStride(int planeIdx) = 0;
         virtual int32_t getPlaneRowStride(int planeIdx) = 0;
-        virtual void getPlaneData(const AImage *image, int planeIdx, uint8_t **outData, int *outDataLength) = 0;
+        virtual void getPlaneData(int planeIdx, uint8_t **outData, int *outDataLength) = 0;
     };
 
     class Frame {

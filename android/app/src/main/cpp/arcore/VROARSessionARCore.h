@@ -19,6 +19,14 @@
 #include <VROCameraTexture.h>
 #include <VROARPlaneAnchor.h>
 
+
+enum class VROARDisplayRotation {
+    R0,
+    R90,
+    R180,
+    R270
+};
+
 class VRODriverOpenGL;
 
 class VROARSessionARCore : public VROARSession, public std::enable_shared_from_this<VROARSessionARCore> {
@@ -84,7 +92,10 @@ public:
         return _session;
     }
 
-    void setDisplayGeometry(int rotation, int width, int height);
+    void setDisplayGeometry(VROARDisplayRotation rotation, int width, int height);
+    VROARDisplayRotation getDisplayRotation() const {  return _displayRotation; }
+    int getWidth() const { return _width; }
+    int getHeight() const { return _height; }
 
 private:
 
@@ -134,6 +145,17 @@ private:
      The GL_TEXTURE_EXTERNAL_OES texture used for the camera background.
      */
     GLuint _cameraTextureId;
+
+    /*
+     The display rotation used by ARCore.
+     */
+    VROARDisplayRotation _displayRotation;
+
+    /*
+     The width and height used by the viewport (and corresponding camera texture).
+     */
+    int _width;
+    int _height;
 
     bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);

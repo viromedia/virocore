@@ -279,6 +279,7 @@ void VROSceneRendererARCore::onPinchEvent(int pinchState, float scaleFactor,
             = std::dynamic_pointer_cast<VROInputControllerARAndroid>(baseController);
     arTouchController->onPinchEvent(pinchState, scaleFactor, viewportX, viewportY);
 }
+
 void VROSceneRendererARCore::onRotateEvent(int rotateState, float rotateRadians, float viewportX,
                                            float viewportY) {
     std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
@@ -377,7 +378,7 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVect
 }
 
 void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int height) {
-    _session->setDisplayGeometry(rotation, width, height);
+    _session->setDisplayGeometry((VROARDisplayRotation) rotation, width, height);
 }
 
 bool VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {

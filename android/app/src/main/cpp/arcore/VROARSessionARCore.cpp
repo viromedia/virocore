@@ -25,7 +25,8 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _lightingMode(arcore::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
-    _cameraTextureId(0) {
+    _cameraTextureId(0),
+    _displayRotation(VROARDisplayRotation::R0) {
 
     _session = nullptr;
     _frame = nullptr;
@@ -122,9 +123,13 @@ bool VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
     return updateARCoreConfig();
 }
 
-void VROARSessionARCore::setDisplayGeometry(int rotation, int width, int height) {
+void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int width, int height) {
+    _width = width;
+    _height = height;
+    _displayRotation = rotation;
+
     if (_session != nullptr) {
-        _session->setDisplayGeometry(rotation, width, height);
+        _session->setDisplayGeometry((int) rotation, width, height);
     }
 }
 
