@@ -172,7 +172,7 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     LOG_DETECT_TIME("start detect and compute descriptors")
     if (isTarget) {
         _targetFeature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
-
+        pinfo("[Viro] detected %ld features for target", descriptors.rows);
     } else {
         _feature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
 
@@ -289,7 +289,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
         
         LOG_DETECT_TIME("start matching keypoints");
         
-        std::vector<cv::DMatch> goodMatches;
+        std::vector<VROMatch> goodMatches;
         
         pinfo("[Viro] processing %d target descriptors and %d input descriptors", currentTarget.descriptors.rows, inputDescriptors.rows);
         
@@ -316,7 +316,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
             
             for (int i = 0; i < matches.size(); i++) {
                 if (matches[i].distance < goodMatchThreshold) {
-                    goodMatches.push_back(matches[i]);
+                    goodMatches.push_back({matches[i].distance, matches[i]});
                 }
             }
         } else {
@@ -325,9 +325,10 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
             LOG_DETECT_TIME("start filtering good matches - knnMatches");
 
             for (int i = 0; i < matches.size(); i++) {
-                // the higher the constant, the looser the criteria is for a "match"
-                if ( (matches[i][0].distance < _matchRatio *  matches[i][1].distance)) {
-                    goodMatches.push_back(matches[i][0]);
+                // the smaller the ratio, the more we're sure the match is correct (higher ratio = looser filtering)
+                float distanceRatio = matches[i][0].distance / matches[i][1].distance;
+                if (distanceRatio < _matchRatio) {
+                    goodMatches.push_back({distanceRatio, matches[i][0]});
                 }
             }
         }
@@ -345,16 +346,24 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
             pinfo("[Viro] Found %ld good matches", goodMatches.size());
         }
 
-        std::vector<cv::Point2f> objectPoints;
-        std::vector<cv::Point2f> inputPoints;
-        
-        for( int i = 0; i < goodMatches.size(); i++ ) {
-            objectPoints.push_back(currentTarget.keyPoints[goodMatches[i].queryIdx].pt);
-            inputPoints.push_back(inputKeypoints[goodMatches[i].trainIdx].pt);
-        }
+        // only take the top _minGoodMatches # of matches (in case our goodMatches threshold is too loose)
+        // the hope is that by throwing out the "looser" matches, we reduce our noise.
+        std::sort(goodMatches.begin(), goodMatches.end(), [](const VROMatch& lhs, const VROMatch& rhs) {
+            return lhs.distanceRatio < rhs.distanceRatio;
+        });
+        // this keeps the first _minGoodMatches # of matches (throws everything else away)
+        goodMatches.resize(_minGoodMatches);
         
         LOG_DETECT_TIME("start finding homography matrix");
-        
+
+        std::vector<cv::Point2f> objectPoints;
+        std::vector<cv::Point2f> inputPoints;
+
+        for( int i = 0; i < goodMatches.size(); i++ ) {
+            objectPoints.push_back(currentTarget.keyPoints[goodMatches[i].match.queryIdx].pt);
+            inputPoints.push_back(inputKeypoints[goodMatches[i].match.trainIdx].pt);
+        }
+
         cv::Mat homographyMat = findHomography(cv::Mat(objectPoints), cv::Mat(inputPoints), CV_RANSAC, 3);
         
         if (homographyMat.cols == 0) {

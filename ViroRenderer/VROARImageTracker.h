@@ -57,6 +57,18 @@ struct VROARImageTargetOpenCV {
     std::vector<std::vector<VROARImageTrackerOutput>> similarOutputsList;
 };
 
+/*
+ For BF-KnnBasedMatching:
+ This simple struct relates a match with the ratio of its distance to the next closest match. (it's
+ the same ratio that we measure when calculating whether or not it's a good match).
+
+ For FlannBasedMatching: distanceRatio = match.distance
+ */
+struct VROMatch {
+    double distanceRatio;
+    cv::DMatch match;
+};
+
 // TODO: merge this class into VROARTrackingSession
 class VROARImageTracker {
 public:
