@@ -51,11 +51,9 @@
 		8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */; };
 		8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F531DB957C900BD9C83 /* VROCredentials.h */; };
 		8ABEDD3620115EA8003E8AFF /* VROARImageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A35172D1EE09E3F00B6E786 /* VROARImageTracker.cpp */; };
-		8ABEDD3720115EB1003E8AFF /* VROARImageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8ABEDD3720115EB1003E8AFF /* VROARImageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */; };
 		8ABEDD3820115EC7003E8AFF /* VROTrackingHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */; };
-		8ABEDD3920115ECA003E8AFF /* VROTrackingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8ABEDD3C20115F29003E8AFF /* VROOpenCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A3517281EDE035300B6E786 /* VROOpenCV.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8ABEDD3D20115F2F003E8AFF /* VROOpenCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3517271EDE035300B6E786 /* VROOpenCV.cpp */; };
+		8ABEDD3920115ECA003E8AFF /* VROTrackingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */; };
 		8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
 		8ADC38D51F0AFAF2006DD653 /* VROARDeclarativeNodeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D41F0AFAF2006DD653 /* VROARDeclarativeNodeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3105,7 +3103,6 @@
 				8FD06F221E832760003D3BC4 /* VROCameraTextureiOS.h in Headers */,
 				8F2657471F0E808C0031DE17 /* VROCompress.h in Headers */,
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
-				8ABEDD3C20115F29003E8AFF /* VROOpenCV.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */,
 				8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */,
@@ -3934,7 +3931,6 @@
 				8FD2A5551F813C4100E831A6 /* VROFBXTest.cpp in Sources */,
 				8FD2A5391F813C4100E831A6 /* VROARPlaneTest.cpp in Sources */,
 				8F8751902062C86E002D9BF8 /* VROJenkinsHash.cpp in Sources */,
-				8ABEDD3D20115F2F003E8AFF /* VROOpenCV.cpp in Sources */,
 				8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */,
 				8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */,
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
