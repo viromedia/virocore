@@ -32,7 +32,6 @@
 		8A35CF1F206461D000ADD393 /* variety_magazine.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A35CF1E206461CF00ADD393 /* variety_magazine.jpg */; };
 		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
-		8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
 		8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A5C05581EF6416900F94CB9 /* VROARNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A5CDD741F636C300093F43B /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A99E6C41EF1B7B300712D79 /* ARKit.framework */; };
 		8A99E6C31EF1B76F00712D79 /* VROARSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1672,7 +1671,6 @@
 				A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */,
 				A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */,
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
-				8A497A9F204E31B0004EBC33 /* opencv2.framework in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
 				8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */,
 				8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */,
@@ -4363,7 +4361,7 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"ENABLE_OPENCV=1",
+					"ENABLE_OPENCV=0",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4483,7 +4481,7 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"ENABLE_OPENCV=1",
+					"ENABLE_OPENCV=0",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
