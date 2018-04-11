@@ -65,7 +65,7 @@ public:
      This function should also output the field of view in the provided output
      variable.
      */
-    virtual VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const = 0;
+    virtual VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) = 0;
     
     /*
      Get the image size (width, height) for the camera. Stored in the

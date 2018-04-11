@@ -72,7 +72,7 @@ VROVector3f VROARCameraARCore::getPosition() const {
     return _position;
 }
 
-VROMatrix4f VROARCameraARCore::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
+VROMatrix4f VROARCameraARCore::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) {
     std::shared_ptr<VROARSessionARCore> session = _session.lock();
     if (!session) {
         return {};

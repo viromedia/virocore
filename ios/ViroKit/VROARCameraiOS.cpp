@@ -81,7 +81,7 @@ VROVector3f VROARCameraiOS::getPosition() const {
     return { matrix[12], matrix[13], matrix[14] };
 }
 
-VROMatrix4f VROARCameraiOS::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
+VROMatrix4f VROARCameraiOS::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) {
     
   VROMatrix4f projection = VROConvert::toMatrix4f([_camera projectionMatrixForOrientation:VROConvert::toDeviceOrientation(_orientation)
                                                                              viewportSize:CGSizeMake(viewport.getWidth() / viewport.getContentScaleFactor(), viewport.getHeight() / viewport.getContentScaleFactor())

@@ -32,7 +32,7 @@ public:
     
     VROMatrix4f getRotation() const;
     VROVector3f getPosition() const;
-    VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const;
+    VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV);
 
     /*
      Get the image data in RGBA8888 format. The passed in data buffer must be large enough to
