@@ -278,3 +278,13 @@ void VROMaterial::bindShader(int lightsHash,
                              std::shared_ptr<VRODriver> &driver) {
     getSubstrate(driver)->bindShader(lightsHash, lights, context, driver);
 }
+
+bool VROMaterial::hasDiffuseAlpha() const {
+    if (_diffuse->getTextureType() == VROTextureType::None) {
+        return _diffuse->getColor().w < (1.0 - kEpsilon);
+    }
+    else {
+        return _diffuse->getColor().w < (1.0 - kEpsilon) ||
+               _diffuse->getTexture()->hasAlpha();
+    }
+}

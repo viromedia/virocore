@@ -360,6 +360,14 @@
 		8FA81D5B2023773700B04790 /* VRORendererSettingsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */; };
 		8FA81D5C2023773C00B04790 /* VRORendererSettingsTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA81D582023771900B04790 /* VRORendererSettingsTest.h */; };
 		8FA81D602023EE7100B04790 /* VRORendererConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FA9A240207DB56E0022C55D /* transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A23F207DB56E0022C55D /* transparent.png */; };
+		8FA9A246207E81040022C55D /* lamborghini_v2.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A243207E81040022C55D /* lamborghini_v2.vrx */; };
+		8FA9A24E207E83980022C55D /* Lamborginhi_base_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A247207E83970022C55D /* Lamborginhi_base_Base_Color.png */; };
+		8FA9A24F207E83980022C55D /* Lamborginhi_glass_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A248207E83970022C55D /* Lamborginhi_glass_Metallic.png */; };
+		8FA9A251207E83980022C55D /* Lamborginhi_glass_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24A207E83970022C55D /* Lamborginhi_glass_Base_Color.png */; };
+		8FA9A252207E83980022C55D /* Lamborginhi_base_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24B207E83980022C55D /* Lamborginhi_base_Roughness.png */; };
+		8FA9A253207E83980022C55D /* Lamborginhi_base_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24C207E83980022C55D /* Lamborginhi_base_Metallic.png */; };
+		8FA9A254207E83980022C55D /* Lamborginhi_glass_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
@@ -675,10 +683,6 @@
 		8FFA8A0A2048703500C4D99B /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A082048702B00C4D99B /* check.png */; };
 		8FFA8A1520504E7D00C4D99B /* VROTaskQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */; };
 		8FFA8A1620504E7D00C4D99B /* VROTaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FFA8A1B20571E7C00C4D99B /* Lamborginhi Aventador_gloss.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1720571E7B00C4D99B /* Lamborginhi Aventador_gloss.jpeg */; };
-		8FFA8A1C20571E7C00C4D99B /* Lamborginhi Aventador_spec.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */; };
-		8FFA8A1D20571E7C00C4D99B /* Lamborginhi Aventador_diffuse.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */; };
-		8FFA8A1E20571E7C00C4D99B /* lamborghini.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */; };
 		8FFA8A232057903800C4D99B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFA8A222057903700C4D99B /* libbz2.tbd */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1270,6 +1274,14 @@
 		8FA81D582023771900B04790 /* VRORendererSettingsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORendererSettingsTest.h; sourceTree = "<group>"; };
 		8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORendererSettingsTest.cpp; sourceTree = "<group>"; };
 		8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORendererConfiguration.h; sourceTree = "<group>"; };
+		8FA9A23F207DB56E0022C55D /* transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = transparent.png; path = ViroSample/transparent.png; sourceTree = "<group>"; };
+		8FA9A243207E81040022C55D /* lamborghini_v2.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = lamborghini_v2.vrx; path = ViroSample/lamborghini_v2.vrx; sourceTree = "<group>"; };
+		8FA9A247207E83970022C55D /* Lamborginhi_base_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_base_Base_Color.png; path = ViroSample/Lamborginhi_base_Base_Color.png; sourceTree = "<group>"; };
+		8FA9A248207E83970022C55D /* Lamborginhi_glass_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_glass_Metallic.png; path = ViroSample/Lamborginhi_glass_Metallic.png; sourceTree = "<group>"; };
+		8FA9A24A207E83970022C55D /* Lamborginhi_glass_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_glass_Base_Color.png; path = ViroSample/Lamborginhi_glass_Base_Color.png; sourceTree = "<group>"; };
+		8FA9A24B207E83980022C55D /* Lamborginhi_base_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_base_Roughness.png; path = ViroSample/Lamborginhi_base_Roughness.png; sourceTree = "<group>"; };
+		8FA9A24C207E83980022C55D /* Lamborginhi_base_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_base_Metallic.png; path = ViroSample/Lamborginhi_base_Metallic.png; sourceTree = "<group>"; };
+		8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_glass_Roughness.png; path = ViroSample/Lamborginhi_glass_Roughness.png; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
 		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
 		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
@@ -1534,10 +1546,6 @@
 		8FFA8A082048702B00C4D99B /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check.png; path = ViroSample/check.png; sourceTree = "<group>"; };
 		8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTaskQueue.cpp; sourceTree = "<group>"; };
 		8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTaskQueue.h; sourceTree = "<group>"; };
-		8FFA8A1720571E7B00C4D99B /* Lamborginhi Aventador_gloss.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_gloss.jpeg"; path = "ViroSample/Lamborginhi Aventador_gloss.jpeg"; sourceTree = "<group>"; };
-		8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_spec.jpeg"; path = "ViroSample/Lamborginhi Aventador_spec.jpeg"; sourceTree = "<group>"; };
-		8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "Lamborginhi Aventador_diffuse.jpeg"; path = "ViroSample/Lamborginhi Aventador_diffuse.jpeg"; sourceTree = "<group>"; };
-		8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = lamborghini.vrx; path = ViroSample/lamborghini.vrx; sourceTree = "<group>"; };
 		8FFA8A222057903700C4D99B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
@@ -2606,10 +2614,14 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8FFA8A1A20571E7C00C4D99B /* lamborghini.vrx */,
-				8FFA8A1920571E7B00C4D99B /* Lamborginhi Aventador_diffuse.jpeg */,
-				8FFA8A1720571E7B00C4D99B /* Lamborginhi Aventador_gloss.jpeg */,
-				8FFA8A1820571E7B00C4D99B /* Lamborginhi Aventador_spec.jpeg */,
+				8FA9A247207E83970022C55D /* Lamborginhi_base_Base_Color.png */,
+				8FA9A24C207E83980022C55D /* Lamborginhi_base_Metallic.png */,
+				8FA9A24B207E83980022C55D /* Lamborginhi_base_Roughness.png */,
+				8FA9A24A207E83970022C55D /* Lamborginhi_glass_Base_Color.png */,
+				8FA9A248207E83970022C55D /* Lamborginhi_glass_Metallic.png */,
+				8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */,
+				8FA9A243207E81040022C55D /* lamborghini_v2.vrx */,
+				8FA9A23F207DB56E0022C55D /* transparent.png */,
 				8FFA8A082048702B00C4D99B /* check.png */,
 				8F5EEEA420329C9B0059C9E7 /* cupcake_vanilla_1001_AO.png */,
 				8F5EEEA020329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png */,
@@ -3370,8 +3382,11 @@
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
+				8FA9A253207E83980022C55D /* Lamborginhi_base_Metallic.png in Resources */,
 				8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */,
+				8FA9A246207E81040022C55D /* lamborghini_v2.vrx in Resources */,
 				8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */,
+				8FA9A24E207E83980022C55D /* Lamborginhi_base_Base_Color.png in Resources */,
 				8F1B4A131F64B61E00156809 /* portal_ship.vrx in Resources */,
 				8F043723201A43B800D98D26 /* ibl_wooden_door.hdr in Resources */,
 				8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */,
@@ -3382,10 +3397,13 @@
 				8F1B4A161F64B61E00156809 /* portal_entry.png in Resources */,
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
 				8F5EEEA620329C9B0059C9E7 /* cupcake_vanilla_1001_Normal.png in Resources */,
+				8FA9A251207E83980022C55D /* Lamborginhi_glass_Base_Color.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
 				8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
+				8FA9A240207DB56E0022C55D /* transparent.png in Resources */,
+				8FA9A252207E83980022C55D /* Lamborginhi_base_Roughness.png in Resources */,
 				8FD2A5001F809AD800E831A6 /* object_star_diffuse.png in Resources */,
 				8FCED05C1EBBCFCF00C19BCA /* Reflection.png in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
@@ -3409,6 +3427,7 @@
 				A547DB6B2022EC8900C8FE67 /* brdf_fsh.glsl in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
+				8FA9A24F207E83980022C55D /* Lamborginhi_glass_Metallic.png in Resources */,
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
@@ -3435,6 +3454,7 @@
 				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
 				8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */,
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
+				8FA9A254207E83980022C55D /* Lamborginhi_glass_Roughness.png in Resources */,
 				8F5EEEA920329C9B0059C9E7 /* cupcake.obj in Resources */,
 				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
@@ -3444,12 +3464,9 @@
 				8F129FBC1ED603BE00341D83 /* heart.vrx in Resources */,
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
 				8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */,
-				8FFA8A1D20571E7C00C4D99B /* Lamborginhi Aventador_diffuse.jpeg in Resources */,
 				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F129FBB1ED603BA00341D83 /* fox.vrx in Resources */,
-				8FFA8A1B20571E7C00C4D99B /* Lamborginhi Aventador_gloss.jpeg in Resources */,
-				8FFA8A1E20571E7C00C4D99B /* lamborghini.vrx in Resources */,
 				8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */,
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
@@ -3465,7 +3482,6 @@
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
-				8FFA8A1C20571E7C00C4D99B /* Lamborginhi Aventador_spec.jpeg in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
 				8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */,

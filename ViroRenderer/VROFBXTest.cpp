@@ -22,7 +22,7 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                        std::shared_ptr<VRODriver> driver) {
     
-    VROFBXModel lamborghini("lamborghini", { 0, -1.5, -6 }, { .01, .01, .01 }, 1, "02");
+    VROFBXModel lamborghini("lamborghini_v2", { 0, -1.5, -6 }, { .015, .015, .015 }, 1, "02");
     VROFBXModel cylinder("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
     VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
     VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
@@ -43,7 +43,7 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     light->setAttenuationEndDistance(50);
     light->setSpotInnerAngle(35);
     light->setSpotOuterAngle(60);
-    light->setCastsShadow(true);
+    light->setCastsShadow(false);
     light->setIntensity(1000);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
@@ -58,7 +58,7 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->addLight(ambient);
-    //rootNode->setLightingEnvironment(environment);
+    rootNode->setLightingEnvironment(environment);
     rootNode->setBackgroundSphere(environment);
     
     _fbxContainerNode = std::make_shared<VRONode>();

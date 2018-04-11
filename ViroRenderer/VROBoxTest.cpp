@@ -68,6 +68,13 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     bobaTexture->setMipFilter(VROFilterMode::Linear);
     
     /*
+     Create the transparent box test node.
+     */
+    std::shared_ptr<VRONode> transparentBoxNode = buildTransparentFrontBox();
+    transparentBoxNode->setPosition({ -3, 0, -2 });
+    rootNode->addChildNode(transparentBoxNode);
+    
+    /*
      Create the box node.
      */
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 2, 2);
@@ -130,7 +137,6 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     
     boxParentNode->addChildNode(boxNode);
     rootNode->addChildNode(boxParentNode);
-    //boxParentNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();    
     std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
@@ -156,6 +162,43 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
     boxParentNode->setEventDelegate(_eventDelegate);
+}
+
+std::shared_ptr<VRONode> VROBoxTest::buildTransparentFrontBox() {
+    std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
+
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
+    boxNode->setGeometry(box);
+    boxNode->setRotation({ toRadians(25.0), toRadians(25.0), 0.0 });
+    
+    std::shared_ptr<VROMaterial> boxMaterial = std::make_shared<VROMaterial>();
+    boxMaterial->getDiffuse().setTexture(VROTestUtil::loadDiffuseTexture("transparent"));
+    boxMaterial->setLightingModel(VROLightingModel::Phong);
+    boxMaterial->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> mat1 = std::make_shared<VROMaterial>();
+    mat1->getDiffuse().setColor({ 0, 1, 0, 1 });
+    mat1->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> mat2 = std::make_shared<VROMaterial>();
+    mat2->getDiffuse().setColor({ 1, 1, 0, 1 });
+    mat2->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> mat3 = std::make_shared<VROMaterial>();
+    mat3->getDiffuse().setColor({ 1, 0, 1, 1});
+    mat3->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> mat4 = std::make_shared<VROMaterial>();
+    mat4->getDiffuse().setColor({ 1, 0, 0, 1 });
+    mat4->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> mat5 = std::make_shared<VROMaterial>();
+    mat5->getDiffuse().setColor({ 0, 1, 0, 1 });
+    mat5->setCullMode(VROCullMode::None);
+    
+    std::vector<std::shared_ptr<VROMaterial>> materials = { boxMaterial, mat1, mat2, mat3, mat4, mat5 };
+    box->setMaterials(materials);
+    return boxNode;
 }
 
 void VROBoxEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,

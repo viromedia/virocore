@@ -578,7 +578,7 @@ jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat
     return jbitmap;
 }
 
-void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height) {
+void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height, bool *hasAlpha) {
     JNIEnv *env;
     getJNIEnv(&env);
 
@@ -588,6 +588,10 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
     *width = bitmapInfo.width;
     *height = bitmapInfo.height;
     *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jbitmapHasAlpha = env->GetMethodID(cls, "bitmapHasAlpha", "(Landroid/graphics/Bitmap;)Z");
+    *hasAlpha = env->CallBooleanMethod(sPlatformUtil, jbitmapHasAlpha, jbitmap);
 
     void *bitmapData;
     AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);

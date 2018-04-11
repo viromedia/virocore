@@ -157,7 +157,8 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
 
             if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
                 if (node->getGeometry() && elementIndex == 0) {
-                    pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
+                    pinfo("   Rendering node [%s], element %d [transparent %d, distance from far plane %f]",
+                          node->getName().c_str(), elementIndex, key.transparent, key.distanceFromCamera);
                 }
             }
             node->render(elementIndex, material, context, driver);

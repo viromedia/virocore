@@ -155,7 +155,7 @@ public abstract class ViroBaseTest {
         // Add expected message card
         mExpectedMessageNode = new Node();
         final Text instructionCardText = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 18,
+                "Test Text Here", "Roboto", 16,
                 Color.GREEN, 2.55f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         mExpectedMessageNode.setPosition(new Vector(0.025f, -3.06f, textZ)); //1.0, -3.0

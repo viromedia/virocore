@@ -43,6 +43,7 @@ private:
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROEventDelegate> _eventDelegate;
     
+    std::shared_ptr<VRONode> buildTransparentFrontBox();
 };
 
 #endif /* VROBoxTest_h */

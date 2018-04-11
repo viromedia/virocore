@@ -95,6 +95,10 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
         material->updateSortKey(key, lights, context, driver);
+
+        key.transparent = (node->getOpacity() < (1 - kEpsilon) ||
+                           material->getTransparency() < (1 - kEpsilon) ||
+                           material->hasDiffuseAlpha());
         key.incoming = true;
         
         _sortKeys.push_back(key);

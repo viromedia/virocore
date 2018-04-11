@@ -15,8 +15,8 @@ enum class VROTestSceneType {
     Scene,
 };
 
-static const VROTestSceneType kTestType = VROTestSceneType::Scene;
-static const VRORendererTestType kRendererTest = VRORendererTestType::Box;
+static const VROTestSceneType kTestType = VROTestSceneType::VR;
+static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 @interface VROTestViewController ()
 

@@ -110,7 +110,7 @@ jobject VROPlatformLoadBitmapFromAsset(std::string resource, VROTextureInternalF
 jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat format);
 
 // Note the returned buffer *must* be freed by the caller!
-void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);
+void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height, bool *hasAlpha);
 
 // Test function to save RGBA8 data as PNG files
 void VROPlatformSaveRGBAImage(void *data, int length, int width, int height, std::string path);

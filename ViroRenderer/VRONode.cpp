@@ -320,7 +320,7 @@ void VRONode::updateSortKeys(uint32_t depth,
      */
     if (_geometry) {
         if (!isHierarchical || isTopOfHierarchy) {
-            distanceFromCamera = _computedPosition.distance(context.getCamera().getPosition());
+            distanceFromCamera = _computedBoundingBox.getCenter().distance(context.getCamera().getPosition());
             
             // TODO Using the bounding box may be preferred but currently leads to more
             //      artifacts
