@@ -96,6 +96,7 @@ NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
                                             dispatch_semaphore_signal(semaphore);
                                           }];
     [downloadTask resume];
+    [downloadSession finishTasksAndInvalidate];
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
     return downloadTask;
@@ -118,6 +119,7 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
                                             }
                                           }];
     [downloadTask resume];
+    [downloadSession finishTasksAndInvalidate];
     return downloadTask;
 }
 
