@@ -143,10 +143,9 @@ public abstract class ViroBaseTest {
         mTestClassNameNode.setGeometry(testClassNameText);
         rootNode.addChildNode(mTestClassNameNode);
 
-        // Add method name
         mTestMethodNameNode = new Node();
         final Text testMethodNameText = new Text(mViroView.getViroContext(),
-                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                "Loading...",
                 "Roboto", 16, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         mTestMethodNameNode.setPosition(new Vector(textX, 2.57f, textZ));
@@ -157,9 +156,9 @@ public abstract class ViroBaseTest {
         mExpectedMessageNode = new Node();
         final Text instructionCardText = new Text(mViroView.getViroContext(),
                 "Test Text Here", "Roboto", 18,
-                Color.GREEN, 3f, 1f, Text.HorizontalAlignment.LEFT,
+                Color.GREEN, 2.55f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        mExpectedMessageNode.setPosition(new Vector(0.22f, -3.06f, textZ)); //1.0, -3.0
+        mExpectedMessageNode.setPosition(new Vector(0.025f, -3.06f, textZ)); //1.0, -3.0
         mExpectedMessageNode.setGeometry(instructionCardText);
         rootNode.addChildNode(mExpectedMessageNode);
     }
@@ -222,12 +221,17 @@ public abstract class ViroBaseTest {
     }
 
     protected void assertPass(final String expectedMessage) {
-
         mTestButtonsClicked.set(false);
         mTestResult.set(-1);
 
+        String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
+        if (methodName.equalsIgnoreCase("assertPass")) {
+            methodName = Thread.currentThread().getStackTrace()[4].getMethodName();
+        }
+
         final Text methodNameText = (Text) mTestMethodNameNode.getGeometry();
-        methodNameText.setText(Thread.currentThread().getStackTrace()[3].getMethodName());
+        methodNameText.setText(methodName);
+
         final Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
         instructionCardText.setText(expectedMessage);
 
