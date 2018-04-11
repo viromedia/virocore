@@ -108,12 +108,16 @@ VROFilterMode convert(viro::Node_Geometry_Material_Visual_FilterMode filterMode)
     }
 }
 
-void setTextureProperties(const viro::Node::Geometry::Material::Visual &pb, std::shared_ptr<VROTexture> &texture) {
-    texture->setMinificationFilter(convert(pb.minification_filter()));
-    texture->setMagnificationFilter(convert(pb.magnification_filter()));
-    texture->setMipFilter(convert(pb.mip_filter()));
-    texture->setWrapS(convert(pb.wrap_mode_s()));
-    texture->setWrapT(convert(pb.wrap_mode_t()));
+void setTextureProperties(VROLightingModel lightingModel, const viro::Node::Geometry::Material::Visual &pb, std::shared_ptr<VROTexture> &texture) {
+    // Temporary check: there is no way to set wrap modes and filters in FBX with PBR currently,
+    // so force PBR materials to use the default (linear, linear, linear, clamp, clamp).
+    if (lightingModel != VROLightingModel::PhysicallyBased) {
+        texture->setMinificationFilter(convert(pb.minification_filter()));
+        texture->setMagnificationFilter(convert(pb.magnification_filter()));
+        texture->setMipFilter(convert(pb.mip_filter()));
+        texture->setWrapS(convert(pb.wrap_mode_s()));
+        texture->setWrapT(convert(pb.wrap_mode_t()));
+    }
 }
 
 void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType type,
@@ -404,6 +408,8 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
         material->setReadsFromDepthBuffer(true);
         material->setWritesToDepthBuffer(true);
         
+        VROLightingModel lightingModel = material->getLightingModel();
+        
         if (material_pb.has_diffuse()) {
             const viro::Node::Geometry::Material::Visual &diffuse_pb = material_pb.diffuse();
             VROMaterialVisual &diffuse = material->getDiffuse();
@@ -414,12 +420,12 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             diffuse.setIntensity(diffuse_pb.intensity());
             
             if (!diffuse_pb.texture().empty()) {
-                taskQueue->addTask([&diffuse, &diffuse_pb, base, type, resourceMap, &textureCache, taskQueue] {
+                taskQueue->addTask([&diffuse, &diffuse_pb, lightingModel, base, type, resourceMap, &textureCache, taskQueue] {
                     VROModelIOUtil::loadTextureAsync(diffuse_pb.texture(), base, type, true, resourceMap, textureCache,
-                       [&diffuse, &diffuse_pb, taskQueue](std::shared_ptr<VROTexture> texture) {
+                       [&diffuse, &diffuse_pb, lightingModel, taskQueue](std::shared_ptr<VROTexture> texture) {
                            if (texture) {
                                diffuse.setTexture(texture);
-                               setTextureProperties(diffuse_pb, texture);
+                               setTextureProperties(lightingModel, diffuse_pb, texture);
                            }
                            else {
                                pinfo("FBX failed to load diffuse texture [%s]", diffuse_pb.texture().c_str());
@@ -435,12 +441,12 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             specular.setIntensity(specular_pb.intensity());
             
             if (!specular_pb.texture().empty()) {
-                taskQueue->addTask([&specular, &specular_pb, base, type, resourceMap, &textureCache, taskQueue] {
+                taskQueue->addTask([&specular, &specular_pb, lightingModel, base, type, resourceMap, &textureCache, taskQueue] {
                     VROModelIOUtil::loadTextureAsync(specular_pb.texture(), base, type, false, resourceMap, textureCache,
-                        [&specular, &specular_pb, taskQueue](std::shared_ptr<VROTexture> texture) {
+                        [&specular, &specular_pb, lightingModel, taskQueue](std::shared_ptr<VROTexture> texture) {
                             if (texture) {
                                 specular.setTexture(texture);
-                                setTextureProperties(specular_pb, texture);
+                                setTextureProperties(lightingModel, specular_pb, texture);
                             }
                             else {
                                 pinfo("FBX failed to load specular texture [%s]", specular_pb.texture().c_str());
@@ -456,12 +462,12 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             normal.setIntensity(normal_pb.intensity());
             
             if (!normal_pb.texture().empty()) {
-                taskQueue->addTask([&normal, &normal_pb, base, type, resourceMap, &textureCache, taskQueue] {
+                taskQueue->addTask([&normal, &normal_pb, lightingModel, base, type, resourceMap, &textureCache, taskQueue] {
                     VROModelIOUtil::loadTextureAsync(normal_pb.texture(), base, type, false, resourceMap, textureCache,
-                         [&normal, &normal_pb, taskQueue](std::shared_ptr<VROTexture> texture) {
+                         [&normal, &normal_pb, lightingModel, taskQueue](std::shared_ptr<VROTexture> texture) {
                              if (texture) {
                                  normal.setTexture(texture);
-                                 setTextureProperties(normal_pb, texture);
+                                 setTextureProperties(lightingModel, normal_pb, texture);
                              }
                              else {
                                  pinfo("FBX failed to load normal texture [%s]", normal_pb.texture().c_str());
@@ -477,12 +483,12 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             roughness.setIntensity(roughness_pb.intensity());
             
             if (!roughness_pb.texture().empty()) {
-                taskQueue->addTask([&roughness, &roughness_pb, base, type, resourceMap, &textureCache, taskQueue] {
+                taskQueue->addTask([&roughness, &roughness_pb, lightingModel, base, type, resourceMap, &textureCache, taskQueue] {
                     VROModelIOUtil::loadTextureAsync(roughness_pb.texture(), base, type, false, resourceMap, textureCache,
-                        [&roughness, &roughness_pb, taskQueue](std::shared_ptr<VROTexture> texture) {
+                        [&roughness, &roughness_pb, lightingModel, taskQueue](std::shared_ptr<VROTexture> texture) {
                             if (texture) {
                                 roughness.setTexture(texture);
-                                setTextureProperties(roughness_pb, texture);
+                                setTextureProperties(lightingModel, roughness_pb, texture);
                             }
                             else {
                                 pinfo("FBX failed to load roughness texture [%s]", roughness_pb.texture().c_str());
@@ -501,12 +507,12 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             metalness.setIntensity(metalness_pb.intensity());
             
             if (!metalness_pb.texture().empty()) {
-                taskQueue->addTask([&metalness, &metalness_pb, base, type, resourceMap, &textureCache, taskQueue] {
+                taskQueue->addTask([&metalness, &metalness_pb, lightingModel, base, type, resourceMap, &textureCache, taskQueue] {
                     VROModelIOUtil::loadTextureAsync(metalness_pb.texture(), base, type, false, resourceMap, textureCache,
-                         [&metalness, &metalness_pb, taskQueue](std::shared_ptr<VROTexture> texture) {
+                         [&metalness, &metalness_pb, lightingModel, taskQueue](std::shared_ptr<VROTexture> texture) {
                              if (texture) {
                                  metalness.setTexture(texture);
-                                 setTextureProperties(metalness_pb, texture);
+                                 setTextureProperties(lightingModel, metalness_pb, texture);
                              }
                              else {
                                  pinfo("FBX failed to load metalness texture [%s]", metalness_pb.texture().c_str());
@@ -525,12 +531,12 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             ao.setIntensity(ao_pb.intensity());
             
             if (!ao_pb.texture().empty()) {
-                taskQueue->addTask([&ao, &ao_pb, base, type, resourceMap, &textureCache, taskQueue] {
+                taskQueue->addTask([&ao, &ao_pb, lightingModel, base, type, resourceMap, &textureCache, taskQueue] {
                     VROModelIOUtil::loadTextureAsync(ao_pb.texture(), base, type, true, resourceMap, textureCache,
-                         [&ao, &ao_pb, taskQueue](std::shared_ptr<VROTexture> texture) {;
+                         [&ao, &ao_pb, lightingModel, taskQueue](std::shared_ptr<VROTexture> texture) {;
                              if (texture) {
                                  ao.setTexture(texture);
-                                 setTextureProperties(ao_pb, texture);
+                                 setTextureProperties(lightingModel, ao_pb, texture);
                              }
                              else {
                                  pinfo("FBX failed to load AO texture [%s]", ao_pb.texture().c_str());

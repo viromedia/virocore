@@ -368,6 +368,12 @@
 		8FA9A252207E83980022C55D /* Lamborginhi_base_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24B207E83980022C55D /* Lamborginhi_base_Roughness.png */; };
 		8FA9A253207E83980022C55D /* Lamborginhi_base_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24C207E83980022C55D /* Lamborginhi_base_Metallic.png */; };
 		8FA9A254207E83980022C55D /* Lamborginhi_glass_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */; };
+		8FA9A263207E96240022C55D /* object_bpanther_anim.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A25D207E96230022C55D /* object_bpanther_anim.vrx */; };
+		8FA9A264207E96240022C55D /* object_bpanther_Normal_OpenGL.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A25E207E96230022C55D /* object_bpanther_Normal_OpenGL.png */; };
+		8FA9A265207E96240022C55D /* object_bpanther_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A25F207E96230022C55D /* object_bpanther_Base_Color.png */; };
+		8FA9A266207E96240022C55D /* object_bpanther_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A260207E96240022C55D /* object_bpanther_Metallic.png */; };
+		8FA9A267207E96240022C55D /* object_bpanther_Mixed_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */; };
+		8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
@@ -1282,6 +1288,12 @@
 		8FA9A24B207E83980022C55D /* Lamborginhi_base_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_base_Roughness.png; path = ViroSample/Lamborginhi_base_Roughness.png; sourceTree = "<group>"; };
 		8FA9A24C207E83980022C55D /* Lamborginhi_base_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_base_Metallic.png; path = ViroSample/Lamborginhi_base_Metallic.png; sourceTree = "<group>"; };
 		8FA9A24D207E83980022C55D /* Lamborginhi_glass_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Lamborginhi_glass_Roughness.png; path = ViroSample/Lamborginhi_glass_Roughness.png; sourceTree = "<group>"; };
+		8FA9A25D207E96230022C55D /* object_bpanther_anim.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = object_bpanther_anim.vrx; path = ViroSample/object_bpanther_anim.vrx; sourceTree = "<group>"; };
+		8FA9A25E207E96230022C55D /* object_bpanther_Normal_OpenGL.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Normal_OpenGL.png; path = ViroSample/object_bpanther_Normal_OpenGL.png; sourceTree = "<group>"; };
+		8FA9A25F207E96230022C55D /* object_bpanther_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Base_Color.png; path = ViroSample/object_bpanther_Base_Color.png; sourceTree = "<group>"; };
+		8FA9A260207E96240022C55D /* object_bpanther_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Metallic.png; path = ViroSample/object_bpanther_Metallic.png; sourceTree = "<group>"; };
+		8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Mixed_AO.png; path = ViroSample/object_bpanther_Mixed_AO.png; sourceTree = "<group>"; };
+		8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Roughness.png; path = ViroSample/object_bpanther_Roughness.png; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
 		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
 		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
@@ -2614,6 +2626,12 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FA9A25D207E96230022C55D /* object_bpanther_anim.vrx */,
+				8FA9A25F207E96230022C55D /* object_bpanther_Base_Color.png */,
+				8FA9A260207E96240022C55D /* object_bpanther_Metallic.png */,
+				8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */,
+				8FA9A25E207E96230022C55D /* object_bpanther_Normal_OpenGL.png */,
+				8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */,
 				8FA9A247207E83970022C55D /* Lamborginhi_base_Base_Color.png */,
 				8FA9A24C207E83980022C55D /* Lamborginhi_base_Metallic.png */,
 				8FA9A24B207E83980022C55D /* Lamborginhi_base_Roughness.png */,
@@ -3331,7 +3349,9 @@
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
+				8FA9A263207E96240022C55D /* object_bpanther_anim.vrx in Resources */,
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
+				8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */,
 				8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */,
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
 				8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */,
@@ -3343,6 +3363,7 @@
 				8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8FFA8A0A2048703500C4D99B /* check.png in Resources */,
+				8FA9A264207E96240022C55D /* object_bpanther_Normal_OpenGL.png in Resources */,
 				8F5EEE9D20325C310059C9E7 /* object_pumpkin_inside_diffuse.png in Resources */,
 				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
@@ -3381,6 +3402,7 @@
 				8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */,
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
+				8FA9A266207E96240022C55D /* object_bpanther_Metallic.png in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
 				8FA9A253207E83980022C55D /* Lamborginhi_base_Metallic.png in Resources */,
 				8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */,
@@ -3397,6 +3419,7 @@
 				8F1B4A161F64B61E00156809 /* portal_entry.png in Resources */,
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
 				8F5EEEA620329C9B0059C9E7 /* cupcake_vanilla_1001_Normal.png in Resources */,
+				8FA9A265207E96240022C55D /* object_bpanther_Base_Color.png in Resources */,
 				8FA9A251207E83980022C55D /* Lamborginhi_glass_Base_Color.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
@@ -3494,6 +3517,7 @@
 				8F1B4A191F64B61E00156809 /* portal_archway_diffuse.png in Resources */,
 				8FD2A5681F848E2900E831A6 /* interior_viro.jpg in Resources */,
 				8FCED05B1EBBCFCF00C19BCA /* MinionSuitA_Spec.png in Resources */,
+				8FA9A267207E96240022C55D /* object_bpanther_Mixed_AO.png in Resources */,
 				A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
 				8FCED0811EBBD35200C19BCA /* Sven_Hair_Specular.png in Resources */,
