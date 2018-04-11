@@ -402,7 +402,7 @@ public class ViroActivity extends AppCompatActivity {
             istr = getAssets().open(assetName);
             bitmap = BitmapFactory.decodeStream(istr);
         } catch (final IOException e) {
-            return null;
+            throw new IllegalArgumentException("Loading bitmap failed!", e);
         }
         return bitmap;
     }
@@ -919,19 +919,27 @@ public class ViroActivity extends AppCompatActivity {
 
     private List<Node> testARImageTarget(final ARScene arScene) {
         Node boxNode = new Node();
-        //Box box = new Box(.155956f, .001f, .066294f); // dollar size
-        Box box = new Box(.1905f, .001f, 0.244475f); // variety magazine sized
+        //Box box = new Box(.155956f, .001f, .066294f); // ben.jpg
+        //Box box = new Box(.1905f, .001f, 0.244475f); // variety mag - tracker_assets/variety_magazine.jpg
+        Box box = new Box(.19f, .001f, 0.28f); // black panther - tracker_assets/poster_computer.jpg
         boxNode.setGeometry(box);
         Material whiteTransparent = new Material();
         whiteTransparent.setDiffuseColor(0xaaffffff);
         box.setMaterials(Arrays.asList(whiteTransparent));
 
-        targetImage = getBitmapFromAssets("tracker_assets/variety_magazine.jpg");
+        targetImage = getBitmapFromAssets("tracker_assets/poster_computer.jpg");
         // store this in a field so it doesn't get destroyed before we can use it!
-        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, 0.1905f);
+        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .1905f);
         arScene.addARImageTarget(mARImageTarget);
 
+        // Add a 2nd tracker to test threading
+        Bitmap tempImage = getBitmapFromAssets("tracker_assets/variety_magazine.jpg");
+        final ARImageTarget varietyTarget = new ARImageTarget(tempImage, ARImageTarget.Orientation.Up, 0.244475f);
+        arScene.addARImageTarget(varietyTarget);
+
         mImageMarkerTestNode = new Node();
+        mImageMarkerTestNode.addChildNode(boxNode);
+        mImageMarkerTestNode.setVisible(false);
 
         arScene.setListener(new ARScene.Listener() {
             @Override
@@ -951,34 +959,35 @@ public class ViroActivity extends AppCompatActivity {
 
             @Override
             public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
-                if (anchor instanceof ARImageAnchor) {
+                if (anchor.getAnchorId().equals(String.valueOf(mARImageTarget.hashCode()))) {
                     Log.d("ViroActivity", "onAnchorFound - testARImageTarget - id: " + anchor.getAnchorId() + ", " + anchor.getPosition());
                     mImageMarkerTestNode.setVisible(true);
                     mImageMarkerTestNode.setPosition(anchor.getPosition());
                     mImageMarkerTestNode.setRotation(anchor.getRotation());
+                } else if (anchor.getAnchorId().equals(String.valueOf(varietyTarget.hashCode()))) {
+                    Log.d("ViroActivity", "onAnchorFound the variety target!");
                 }
             }
 
             @Override
             public void onAnchorUpdated(final ARAnchor anchor, final ARNode node) {
-                if (anchor instanceof ARImageAnchor) {
+                if (anchor.getAnchorId().equals(String.valueOf(mARImageTarget.hashCode()))) {
                     Log.d("ViroActivity", "onAnchorUpdated - testARImageTarget - id: " + anchor.getAnchorId() + ", " + anchor.getPosition());
                     mImageMarkerTestNode.setPosition(anchor.getPosition());
                     mImageMarkerTestNode.setRotation(anchor.getRotation());
+                } else if (anchor.getAnchorId().equals(String.valueOf(varietyTarget.hashCode()))) {
+                    Log.d("ViroActivity", "onAnchorUpdated the variety target!");
                 }
             }
 
             @Override
             public void onAnchorRemoved(final ARAnchor anchor, final ARNode node) {
-                if (anchor instanceof ARImageAnchor) {
+                if (anchor.getAnchorId().equals(String.valueOf(mARImageTarget.hashCode()))) {
                     Log.d("ViroActivity", "onAnchorRemoved - testARImageTarget - id: " + anchor.getAnchorId() + ", " + anchor.getPosition());
                     mImageMarkerTestNode.setVisible(false);
                 }
             }
         });
-
-        mImageMarkerTestNode.addChildNode(boxNode);
-        mImageMarkerTestNode.setVisible(false);
 
         final ArrayList<Node> list = new ArrayList<>();
         list.add(mImageMarkerTestNode);

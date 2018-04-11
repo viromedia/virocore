@@ -32,7 +32,8 @@ public:
 /*
  This class contains the logic and manages the lifecycle for tracking images, objects, etc.
  */
-class VROARTrackingSession {
+class VROARTrackingSession : public VROARImageTrackerListener,
+                             public std::enable_shared_from_this<VROARTrackingSession> {
 public:
     
     VROARTrackingSession();
@@ -69,6 +70,11 @@ public:
      Whether or not to track at all (used for debugging)
      */
     void enableTracking(bool shouldTrack);
+
+
+    // -- VROARImageTrackerListener Functions --
+    void onImageFound(VROARImageTrackerOutput output);
+    void onFindTargetFinished();
 
 private:
 

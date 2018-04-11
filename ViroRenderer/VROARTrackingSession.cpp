@@ -34,6 +34,10 @@ VROARTrackingSession::~VROARTrackingSession() {
 void VROARTrackingSession::init(VROARFrameARCore *frame,
                                 std::shared_ptr<VROFrameSynchronizer> synchronizer,
                                 GLuint cameraTextureId, int width, int height) {
+#if ENABLE_OPENCV
+    _tracker->setListener(shared_from_this());
+#endif // ENABLE_OPENCV
+
     // if we are reinitializing, stop the previous texture reader!
     stopTextureReader();
 
@@ -64,59 +68,7 @@ void VROARTrackingSession::init(VROARFrameARCore *frame,
                     tmpFrame = tmpFrame.t();
                     cv::rotate(tmpFrame, tmpFrame, cv::ROTATE_90_COUNTERCLOCKWISE);
 
-                    // TODO: get intrinsics matrix (ARCore doesn't have this yet!)
-                    std::vector<VROARImageTrackerOutput> outputs = _tracker->findTarget(tmpFrame, NULL, _lastCamera);
-
-                    for (int i = 0; i < outputs.size(); i++) {
-                        VROARImageTrackerOutput output = outputs[i];
-                        // if the output wasn't a "found" output, ignore it.
-                        if (!output.found) {
-                            continue;
-                        }
-
-                        // if the target is one we're going to remove, also ignore it.
-                        auto targetIt = _targetsToRemove.find(output.target);
-                        if (targetIt != _targetsToRemove.end()) {
-                            continue;
-                        }
-
-                        bool isUpdate;
-                        std::shared_ptr<VROARImageAnchor> imageAnchor;
-                        auto targetAnchorIt = _targetAnchorMap.find(output.target);
-                        if (targetAnchorIt == _targetAnchorMap.end()) {
-                            // call the _listener.onAnchorFound w/ the anchor for output.target
-                            imageAnchor = std::make_shared<VROARImageAnchor>(output.target);
-                            _targetAnchorMap[output.target] = imageAnchor;
-                            isUpdate = false;
-                        } else {
-                            // call the _listener.onAnchorUpdated w/ the anchor for output.target
-                            imageAnchor = targetAnchorIt->second;
-                            isUpdate = true;
-                        }
-
-                        std::shared_ptr<VROARImageTargetAndroid> imageTargetAndroid =
-                                std::dynamic_pointer_cast<VROARImageTargetAndroid>(output.target);
-                        imageAnchor->setId(imageTargetAndroid->getId());
-                        imageAnchor->setTransform(output.worldTransform);
-
-                        std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
-                        if (listener) {
-                            VROPlatformDispatchAsyncRenderer([isUpdate, listener, imageAnchor](){
-                                if (isUpdate) {
-                                    listener->onTrackedAnchorUpdated(imageAnchor);
-                                } else {
-                                    listener->onTrackedAnchorFound(imageAnchor);
-                                }
-                            });
-                        }
-                    }
-                    // Now that we're done, go back to the renderer thread call flushTargetsToRemove
-                    // set the _readyForTracking back to true (we need to make sure that the function
-                    // is called before the next tracking task is run!
-                    VROPlatformDispatchAsyncRenderer([this](){
-                        flushTargetsToRemove();
-                        _readyForTracking = true;
-                    });
+                    _tracker->findTargetAsync(tmpFrame, NULL, _lastCamera);
                 });
             });
 
@@ -185,6 +137,64 @@ void VROARTrackingSession::removeARImageTarget(std::shared_ptr<VROARImageTarget>
         _haveActiveTargets = false;
         stopTextureReader();
     }
+}
+
+#pragma mark - VROARImageTrackerListener
+void VROARTrackingSession::onImageFound(VROARImageTrackerOutput output) {
+    // assume we're on a background thread!
+
+    // if the output wasn't a "found" output, ignore it.
+    // TODO: we could update our contract to always return a "found" output and remove this check.
+    if (!output.found) {
+        return;
+    }
+
+    // if the target is one we're going to remove, also ignore it.
+    auto targetIt = _targetsToRemove.find(output.target);
+    if (targetIt != _targetsToRemove.end()) {
+        return;
+    }
+
+    bool isUpdate;
+    std::shared_ptr<VROARImageAnchor> imageAnchor;
+    auto targetAnchorIt = _targetAnchorMap.find(output.target);
+    if (targetAnchorIt == _targetAnchorMap.end()) {
+        // call the _listener.onAnchorFound w/ the anchor for output.target
+        imageAnchor = std::make_shared<VROARImageAnchor>(output.target);
+        _targetAnchorMap[output.target] = imageAnchor;
+        isUpdate = false;
+    } else {
+        // call the _listener.onAnchorUpdated w/ the anchor for output.target
+        imageAnchor = targetAnchorIt->second;
+        isUpdate = true;
+    }
+
+    std::shared_ptr<VROARImageTargetAndroid> imageTargetAndroid =
+            std::dynamic_pointer_cast<VROARImageTargetAndroid>(output.target);
+    imageAnchor->setId(imageTargetAndroid->getId());
+    imageAnchor->setTransform(output.worldTransform);
+
+    std::shared_ptr<VROARTrackingListener> listener = _weakListener.lock();
+    if (listener) {
+        VROPlatformDispatchAsyncRenderer([isUpdate, listener, imageAnchor](){
+            if (isUpdate) {
+                listener->onTrackedAnchorUpdated(imageAnchor);
+            } else {
+                listener->onTrackedAnchorFound(imageAnchor);
+            }
+        });
+    }
+}
+
+void VROARTrackingSession::onFindTargetFinished() {
+    // assume we're on a background thread!
+    // Now that we're done, go back to the renderer thread call flushTargetsToRemove
+    // set the _readyForTracking back to true (we need to make sure that the function
+    // is called before the next tracking task is run!
+    VROPlatformDispatchAsyncRenderer([this](){
+        flushTargetsToRemove();
+        _readyForTracking = true;
+    });
 }
 
 void VROARTrackingSession::startTextureReader() {

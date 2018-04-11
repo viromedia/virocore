@@ -16,6 +16,7 @@
 #include "VROARImageTarget.h"
 #include <memory>
 #include <map>
+#include <atomic>
 #include "VROARCamera.h"
 #include "VROVector3f.h"
 
@@ -69,6 +70,14 @@ struct VROMatch {
     cv::DMatch match;
 };
 
+class VROARImageTrackerListener {
+public:
+    virtual ~VROARImageTrackerListener() {}
+
+    virtual void onImageFound(VROARImageTrackerOutput output) = 0;
+    virtual void onFindTargetFinished() = 0;
+};
+
 // TODO: merge this class into VROARTrackingSession
 class VROARImageTracker {
 public:
@@ -81,6 +90,10 @@ public:
     // creates an empty, false output
     static VROARImageTrackerOutput createFalseOutput();
 
+    /*
+     Constructor - users should use the static constructors to have the type defaulted to
+     the optimal version
+     */
     VROARImageTracker(VROARImageTrackerType type);
 
     // Adds/Removes ARImageTarget from tracking
@@ -112,6 +125,17 @@ public:
      */
     std::vector<VROARImageTrackerOutput> findTarget(cv::Mat inputImage, float* intrinsics);
 
+    /*
+     Finds all the _arImageTargets in the given inputImage asynchronously. Make sure to set the _listener.
+     */
+    void findTargetAsync(cv::Mat inputImage, float* intrinsics, std::shared_ptr<VROARCamera> camera);
+
+    /*
+     Set the listener
+     */
+    void setListener(std::shared_ptr<VROARImageTrackerListener> listener) {
+        _listener = listener;
+    }
 private:
     
     void updateType();
@@ -123,7 +147,7 @@ private:
     /*
      An internal helper method called by findTarget()
      */
-    std::vector<VROARImageTrackerOutput> findTargetInternal(cv::Mat inputImage);
+    std::vector<VROARImageTrackerOutput> findTargetInternal(cv::Mat inputImage, bool async);
 
     /*
      A bloated function that compares all the targets w/ the input image w/ BF (brute force) matching
@@ -133,7 +157,12 @@ private:
     std::vector<VROARImageTrackerOutput> findMultipleTargetsBF(std::vector<cv::KeyPoint> inputKeypoints,
                                                                cv::Mat inputDescriptors,  cv::Mat inputImage,
                                                                float scaleFactor);
-    
+
+    VROARImageTrackerOutput findSingleTargetBF(VROARImageTargetOpenCV target,
+                                               std::vector<cv::KeyPoint> inputKeypoints,
+                                               cv::Mat inputDescriptors,  cv::Mat inputImage,
+                                               float scaleFactor);
+
     /*
      This function takes a list of raw outputs and adds them to the _targetOutputsMap before invoking findUpdates on
      each updated outputs vector.
@@ -261,6 +290,9 @@ private:
     std::shared_ptr<VROARImageTarget> _arImageTarget;
     
     std::shared_ptr<VROARCamera> _currentCamera;
+
+    std::weak_ptr<VROARImageTrackerListener> _listener;
+    std::atomic_int _runningThreads;
 
     // The number of feature points we should extract from the input image
     int _numberFeaturePoints;
