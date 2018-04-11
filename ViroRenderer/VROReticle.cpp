@@ -177,7 +177,7 @@ bool VROReticle::isHeadlocked() {
 }
 
 void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver) {
-    if (kDebugSortOrder) {
+    if (kDebugSortOrder && renderContext.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("Updating reticle key");
     }
 

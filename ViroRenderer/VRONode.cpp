@@ -42,6 +42,7 @@ static const bool kEnableVisibilityFrustumTest = true;
 
 // Set to true to debut the sort order
 bool kDebugSortOrder = false;
+int  kDebugSortOrderFrameFrequency = 60;
 static int sDebugSortIndex = 0;
 const std::string kDefaultNodeTag = "undefined";
 
@@ -330,13 +331,13 @@ void VRONode::updateSortKeys(uint32_t depth,
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedLights, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), metadata, context, driver);
         
-        if (kDebugSortOrder) {
+        if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
             pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",
                   sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z, _renderingOrder, hierarchyDepth, depth, distanceFromCamera, hierarchyId, _computedLightsHash);
             _geometry->setName(VROStringUtil::toString(sDebugSortIndex));
         }
     }
-    else if (kDebugSortOrder) {
+    else if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("   [%d] Ignored empty node with position [%f, %f, %f] hierarchy depth %d, distance to camera %f, actual depth %d, hierarchy ID %d",
               sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z,
               hierarchyDepth, 0.0, depth, hierarchyId);

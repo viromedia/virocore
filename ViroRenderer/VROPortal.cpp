@@ -109,7 +109,7 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
     uint32_t boundMaterialId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;
     
-    if (kDebugSortOrder) {
+    if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("Rendering");
     }
     
@@ -155,7 +155,7 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
             material->getLightingModel() == VROLightingModel::Constant ||
             (material->getLightingModel() == VROLightingModel::PhysicallyBased && context.getIrradianceMap() != nullptr)) {
 
-            if (kDebugSortOrder) {
+            if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
                 if (node->getGeometry() && elementIndex == 0) {
                     pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
                 }

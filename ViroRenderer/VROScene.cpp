@@ -66,7 +66,7 @@ void VROScene::updateSortKeys(std::shared_ptr<VRORenderMetadata> &metadata,
                               const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     
-    if (kDebugSortOrder) {
+    if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("Updating sort keys");
         VRONode::resetDebugSortIndex();
     }

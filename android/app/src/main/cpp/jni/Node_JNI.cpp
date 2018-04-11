@@ -690,4 +690,17 @@ JNI_METHOD(jfloatArray, nativeGetWorldTransform)(JNIEnv *env,
     return ARUtilsCreateFloatArrayFromMatrix(node->getLastWorldTransform());
 }
 
+JNI_METHOD(void, nativeSetName(JNIEnv *env, jobject obj, jlong node_j, jstring name_j)) {
+    std::string name = VROPlatformGetString(name_j, env);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+
+    VROPlatformDispatchAsyncRenderer([node_w, name] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (!node) {
+            return;
+        }
+        node->setName(name);
+    });
+}
+
 }  // extern "C"

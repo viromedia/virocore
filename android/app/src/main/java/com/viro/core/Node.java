@@ -176,6 +176,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     protected long mNativeRef;
 
     protected boolean mDestroyed = false;
+    private String mName;
     private Geometry mGeometry;
     private ParticleEmitter mParticleEmitter;
     private FixedParticleEmitter mFixedParticleEmitter;
@@ -218,7 +219,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
         mNativeRef = nativeCreateNode();
         initWithNativeRef(mNativeRef);
     }
-
 
     /**
      * @hide
@@ -274,6 +274,27 @@ public class Node implements EventDelegate.EventDelegateCallback {
         if (mEventDelegate != null) {
             mEventDelegate.dispose();
         }
+    }
+
+    /**
+     * Set a name to represent this Node. Names are user-specified and are not used internally by
+     * Viro.
+     *
+     * @param name The name to set for this Node.
+     */
+    public void setName(String name){
+        mName = name;
+        nativeSetName(mNativeRef, mName);
+    }
+
+    /**
+     * Get the name that can be optionally used to represent this Node. Names are user-specified
+     * and are not used internally by Viro.
+     *
+     * @return name The name used by this Node.
+     */
+    public String getName(){
+        return mName;
     }
 
     /**
@@ -1496,6 +1517,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeRemoveFromParent(long nodeReference);
     private native void nativeRemoveAllChildNodes(long nodeReference);
     private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
+    private native void nativeSetName(long nodeReference, String name);
     private native void nativeSetGeometry(long nodeReference, long geoReference);
     private native void nativeClearGeometry(long nodeReference);
     private native void nativeSetPosition(long nodeReference, float x, float y, float z);
@@ -1622,6 +1644,16 @@ public class Node implements EventDelegate.EventDelegateCallback {
          */
         public NodeBuilder() {
             this.node = (R) new Node();
+        }
+
+        /**
+         * Refer to {@link Node#setName(String)}.
+         *
+         * @return This builder.
+         */
+        public NodeBuilder name(String name) {
+            node.setName(name);
+            return (B) this;
         }
 
         /**

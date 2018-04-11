@@ -64,7 +64,7 @@ void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std
     if (!_enabled || !_node->getGeometry()) {
         return;
     }
-    if (kDebugSortOrder) {
+    if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("Updating Debug HUD");
     }
     
