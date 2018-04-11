@@ -131,13 +131,15 @@ public abstract class ViroBaseTest {
             addThumbButtonsOnGlass();
         }
 
+        final float textX = 0.58f;
+        final float textZ = -3.3f;
+
         // Add class name
         mTestClassNameNode = new Node();
         final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
-                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 18, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] classNamePosition = {0f, 3f, -3.3f};
-        mTestClassNameNode.setPosition(new Vector(classNamePosition));
+        mTestClassNameNode.setPosition(new Vector(textX, 2.82f, textZ));
         mTestClassNameNode.setGeometry(testClassNameText);
         rootNode.addChildNode(mTestClassNameNode);
 
@@ -145,21 +147,19 @@ public abstract class ViroBaseTest {
         mTestMethodNameNode = new Node();
         final Text testMethodNameText = new Text(mViroView.getViroContext(),
                 Thread.currentThread().getStackTrace()[1].getMethodName(),
-                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 16, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] methodNamePosition = {0f, 2.5f, -3.3f};
-        mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
+        mTestMethodNameNode.setPosition(new Vector(textX, 2.57f, textZ));
         mTestMethodNameNode.setGeometry(testMethodNameText);
         rootNode.addChildNode(mTestMethodNameNode);
 
         // Add expected message card
         mExpectedMessageNode = new Node();
         final Text instructionCardText = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 25,
-                Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Test Text Here", "Roboto", 18,
+                Color.GREEN, 3f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] position = {0f, 2f, -3.3f};
-        mExpectedMessageNode.setPosition(new Vector(position));
+        mExpectedMessageNode.setPosition(new Vector(0.22f, -3.06f, textZ)); //1.0, -3.0
         mExpectedMessageNode.setGeometry(instructionCardText);
         rootNode.addChildNode(mExpectedMessageNode);
     }

@@ -2,6 +2,8 @@ package com.viromedia.releasetest.tests;
 
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
+import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
+import com.google.ar.core.exceptions.UnavailableException;
 import com.viro.core.ViroViewARCore;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
@@ -33,6 +35,9 @@ public class ViroViewARCoreTest {
         try {
             session = new Session(mActivity);
             config = new Config(session);
+        } catch (UnavailableException ue) {
+            assertFalse("UnavailableException: AR sessino could not be created", true);
+            return;
         } catch (UnsatisfiedLinkError error) {
             /**
              * TODO Need to catch this error due to
