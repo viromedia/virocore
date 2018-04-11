@@ -136,7 +136,7 @@ VROARImageTargetOpenCV VROARImageTracker::updateTargetInfo(std::shared_ptr<VROAR
     
     // automatically run keypoint and descriptor extraction on the target image.
     detectKeypointsAndDescriptors(arImageTarget->getTargetMat(), targetKeyPoints, targetDescriptors, true);
-
+    
     return {arImageTarget, targetKeyPoints, targetDescriptors, cv::Mat(), cv::Mat(), {}, createFalseOutput(), false};
 }
 
@@ -183,6 +183,7 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
 
 std::vector<VROARImageTrackerOutput> VROARImageTracker::findTarget(cv::Mat inputImage, float* intrinsics,
                                                                    std::shared_ptr<VROARCamera> camera) {
+
     _intrinsics = intrinsics;
 #if VRO_PLATFORM_IOS
     // on iOS, we need to extract the intrinsic matrix from the array set above, so call it here. We also
@@ -588,15 +589,16 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
 // Whether or not we should draw corners on the output image (for debugging). Note that if tracking
 // fails earlier in this function, we usually return before we get here!
 #if DRAW_TRACKING_DEBUG_OUTPUT
+    cv::Mat outputImage;
 
     // draw the corners on the input image
-    //cv::Mat outputImage = drawCorners(inputImage, inputCorners, scaleFactor);
+    //outputImage = drawCorners(inputImage, inputCorners, scaleFactor);
 
     // draw the keypoint matches between target and input
-    //cv::Mat outputImage = drawMatches(currentTarget.arImageTarget->getTargetMat(), currentTarget.keyPoints, inputImage, inputKeypoints, goodMatches);
+    //outputImage = drawMatches(currentTarget.arImageTarget->getTargetMat(), currentTarget.keyPoints, inputImage, inputKeypoints, goodMatches);
 
     // draw the keypoints on the input image
-    //cv::Mat outputImage = drawKeypoints(inputImage, inputKeypoints);
+    //outputImage = drawKeypoints(inputImage, inputKeypoints);
 
 // we only need to add the image to the output on iOS (the draw* function on Android automatically
 // draw the output to the screen already.
@@ -1051,25 +1053,30 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                0, 2127.653050656804, rows,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-    } else {
+    }
+#else // VRO_PLATFORM_IOS
+    if (_intrinsics != NULL) {
+        // There are intrinsics set, so don't calculate/estimate them!
+        // actually, the intrinsics assume the texture/coordinates are in landscape, so we'll need to flip mat[0][2] and mat[1][2] for portrait.
+        // TODO: dynamically handle screen rotation - for iOS
+        cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
+        cameraMatrix = cameraMatrix.t(); // we need to transpose the matrix
+        float temp = cameraMatrix.at<float>(0, 2);
+        cameraMatrix.at<float>(0, 2) = cameraMatrix.at<float>(1, 2);
+        cameraMatrix.at<float>(1, 2) = temp;
+    }
+#endif
+
+    // This is the else case for both iOS and Android!
+    else {
         // Unknown device, so estimate/approx the intrinsic matrix
         // http://ksimek.github.io/2013/08/13/intrinsic/
         double focalLength = inputCols; // Approximate focal length.
         cv::Point2d center = cv::Point2d(inputCols / 2, inputRows / 2);
-
+        
         double cameraArr[9] = {focalLength, 0, center.x, 0, focalLength, center.y, 0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     }
-#else // VRO_PLATFORM_IOS
-    // There are intrinsics set, so don't calculate/estimate them!
-    // actually, the intrinsics assume the texture/coordinates are in landscape, so we'll need to flip mat[0][2] and mat[1][2] for portrait.
-    // TODO: dynamically handle screen rotation - for iOS
-    cameraMatrix = cv::Mat(3, 3, CV_32F, _intrinsics);
-    cameraMatrix = cameraMatrix.t(); // we need to transpose the matrix
-    float temp = cameraMatrix.at<float>(0, 2);
-    cameraMatrix.at<float>(0, 2) = cameraMatrix.at<float>(1, 2);
-    cameraMatrix.at<float>(1, 2) = temp;
-#endif
 
     // clone before returning to ensure the array-backed matrices aren't dealloc-ed by leaving
     // this function's scope
