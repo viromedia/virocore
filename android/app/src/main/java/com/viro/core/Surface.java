@@ -12,6 +12,8 @@
  */
 package com.viro.core;
 
+import java.util.Arrays;
+
 /**
  * Surface represents a one-sided plane defined by a width and height.
  */
@@ -137,7 +139,6 @@ public class Surface extends Geometry {
     private native void nativeSetHeight(long surfaceRef, float height);
     private native void nativeSetVideoTexture(long surfaceRef, long textureRef);
     private native void nativeSetImageTexture(long surfaceRef, long textureRef);
-    private native void nativeSetMaterial(long surfaceRef, long materialRef);
     private native void nativeClearMaterial(long surfaceRef);
 
     /**
@@ -164,7 +165,7 @@ public class Surface extends Geometry {
      */
     //#IFDEF 'viro_react'
     public void setMaterial(Material material) {
-        nativeSetMaterial(mNativeRef, material.mNativeRef);
+        super.setMaterials(Arrays.asList(material));
     }
     //#ENDIF
     /**

@@ -130,28 +130,6 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetMaterial)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong surfaceRef,
-                                    jlong materialRef) {
-    std::weak_ptr<VROMaterial> mat_w = Material::native(materialRef);
-    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
-
-    VROPlatformDispatchAsyncRenderer([surface_w, mat_w] {
-        std::shared_ptr<VROSurface> surface = surface_w.lock();
-        if (!surface) {
-            return;
-        }
-        std::shared_ptr<VROMaterial> mat = mat_w.lock();
-        if (!mat) {
-            return;
-        }
-
-        // Copy the defined material into the surface material
-        surface->getMaterials().front()->copyFrom(mat);
-    });
-}
-
 JNI_METHOD(void, nativeClearMaterial)(JNIEnv *env,
                                       jobject obj,
                                       jlong surfaceRef) {
