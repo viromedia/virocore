@@ -168,11 +168,6 @@ public class PlatformUtil {
         return bitmap;
     }
 
-    // Accessed by Native code
-    public boolean bitmapHasAlpha(Bitmap bitmap) {
-        return bitmap.hasAlpha();
-    }
-
     // Accessed by Native code (VROPlatformUtil.cpp)
     public Surface createVideoSink(int textureId) {
         VideoSink videoSink = new VideoSink(textureId);

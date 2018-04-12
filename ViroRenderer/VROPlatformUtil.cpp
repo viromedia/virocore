@@ -610,9 +610,9 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
     *height = bitmapInfo.height;
     *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
 
-    jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jbitmapHasAlpha = env->GetMethodID(cls, "bitmapHasAlpha", "(Landroid/graphics/Bitmap;)Z");
-    *hasAlpha = env->CallBooleanMethod(sPlatformUtil, jbitmapHasAlpha, jbitmap);
+    jclass cls = env->GetObjectClass(jbitmap);
+    jmethodID jbitmapHasAlpha = env->GetMethodID(cls, "hasAlpha", "()Z");
+    *hasAlpha = env->CallBooleanMethod(jbitmap, jbitmapHasAlpha, jbitmap);
 
     void *bitmapData;
     AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);
