@@ -68,7 +68,8 @@ public class KeyValidator {
                             listener.onResponse(true);
                             Context context = mContextWeakRef.get();
                             if(context != null) {
-                                KeyMetricsRecorder recorder = new KeyMetricsRecorder(mDynamoClient, context);
+                                // Create KeyMetricsRecorder with Application Context so we don't hold onto activity as Keen Metrics client is a singleton.
+                                KeyMetricsRecorder recorder = new KeyMetricsRecorder(mDynamoClient, context.getApplicationContext());
                                 recorder.record(apiKey, viewType, platform);
                             }
                         } else {
