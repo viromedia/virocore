@@ -254,7 +254,7 @@ public class ViroActivity extends AppCompatActivity {
 
         mViroView.setVRModeEnabled(true);
         mViroView.setDebugHUDEnabled(true);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
+        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792", "none", "none");
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             initializeArScene();
