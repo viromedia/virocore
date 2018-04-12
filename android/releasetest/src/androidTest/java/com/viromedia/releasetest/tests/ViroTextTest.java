@@ -40,7 +40,7 @@ public class ViroTextTest extends ViroBaseTest {
 
         mText = new Text(mViroView.getViroContext(), TEST_STRING,
                 "Roboto", 25, Color.WHITE,
-                5f, 1f, Text.HorizontalAlignment.LEFT,
+                3.5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         mTextNode = new Node();
         mTextNode.setPosition(new Vector(0f, 0f, -3.3f));
@@ -140,7 +140,7 @@ public class ViroTextTest extends ViroBaseTest {
             mText.setWidth(itr.next());
         };
         assertPass("Cycling through increasing widths", () -> {
-            mText.setWidth(5);
+            mText.setWidth(3.5f);
         });
     }
 

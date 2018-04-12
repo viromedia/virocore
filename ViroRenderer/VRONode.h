@@ -821,8 +821,11 @@ private:
     
     /*
      True indicates that this node's descendants (children, grand-children, and so on)
-     should be rendered by order of their scene graph depth. Useful when rendering
-     2D layouts like flexbox views. Defaults to false.
+     should be rendered by order of their scene graph depth, with depth reading disabled.
+     Useful when rendering 2D layouts like flexbox views, where the parent components and
+     their children have depths so close together that reverting to the painter's algorithm
+     instead of depth testing produces better results (minimal z-fighting). Defaults to
+     false.
      */
     bool _hierarchicalRendering;
 

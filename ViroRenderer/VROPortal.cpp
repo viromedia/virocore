@@ -107,6 +107,8 @@ void VROPortal::renderBackground(const VRORenderContext &context,
 
 void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     uint32_t boundMaterialId = UINT32_MAX;
+    uint32_t boundHierarchyId = kMaxHierarchyId; // kMaxHierarchyId == Not a hierarchy
+    VROSortKey *boundHierarchyParent = nullptr;
     std::vector<std::shared_ptr<VROLight>> boundLights;
     
     if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
@@ -140,6 +142,37 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
             material->bindShader(key.lights, node->getComputedLights(), context, driver);
             material->bindProperties(driver);
 
+            // If we're rendering a hierarchical object -- meaning, an object that's part of a close-knit
+            // 2D unit like a flex-view -- then the entire hierarchy of these 2D objects will appear
+            // consecutively in the sort order. In order to ensure there is no Z-fighting between the
+            // objects in the hierarchy (as they share the same 2D plane), we do not render the any object
+            // in the hierarchy to the depth buffer. Then, when we're done rendering the entire hierarchy
+            // we go back and re-render the parent of the hierarchy to the depth buffer, so that the
+            // hierarchy as a whole plays well in the depth buffer with other 3D objects.
+
+            // When the active hierarchy changes (to a new hierarchy, or to none)
+            if (key.hierarchyId != boundHierarchyId) {
+                // Finish the last hierarchy by writing the parent to the depth buffer
+                if (boundHierarchyId < kMaxHierarchyId) {
+                    passert (boundHierarchyParent != nullptr);
+                    writeHierarchyParentToDepthBuffer(*boundHierarchyParent, context, driver);
+                    boundHierarchyId = kMaxHierarchyId;
+                }
+
+                // Set the parent of the new hierarchy
+                if (key.hierarchyId < kMaxHierarchyId) {
+                    boundHierarchyParent = &key;
+                } else {
+                    boundHierarchyParent = nullptr;
+                }
+            }
+
+            // When rendering a hierarchy, ensure nothing is written to the depth buffer
+            if (key.hierarchyId < kMaxHierarchyId) {
+                driver->setDepthWritingEnabled(false);
+                boundHierarchyId = key.hierarchyId;
+            }
+
             boundMaterialId = key.material;
             boundLights = node->getComputedLights();
         }
@@ -157,13 +190,29 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
 
             if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
                 if (node->getGeometry() && elementIndex == 0) {
-                    pinfo("   Rendering node [%s], element %d [transparent %d, distance from far plane %f]",
-                          node->getName().c_str(), elementIndex, key.transparent, key.distanceFromCamera);
+                    pinfo("   Rendering node [%s], element %d [transparent %d, distance from far plane %f, hierarchy [%d-%d]",
+                          node->getName().c_str(), elementIndex, key.transparent, key.distanceFromCamera, key.hierarchyId, key.hierarchyDepth);
                 }
             }
+
             node->render(elementIndex, material, context, driver);
         }
     }
+}
+
+void VROPortal::writeHierarchyParentToDepthBuffer(VROSortKey &hierarchyParent,
+                                                  const VRORenderContext &context,
+                                                  std::shared_ptr<VRODriver> &driver) {
+    driver->setDepthWritingEnabled(true);
+    driver->setDepthReadingEnabled(true);
+    driver->setColorWritingEnabled(false);
+
+    VRONode *hParentNode = (VRONode *)hierarchyParent.node;
+    if (hParentNode->getGeometry()) {
+        std::shared_ptr<VROMaterial> hParentMaterial = hParentNode->getGeometry()->getMaterialForElement(hierarchyParent.elementIndex);
+        hParentNode->render(hierarchyParent.elementIndex, hParentMaterial, context, driver);
+    }
+    driver->setColorWritingEnabled(true);
 }
 
 #pragma mark - Portal Entrance

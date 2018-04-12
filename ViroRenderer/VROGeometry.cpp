@@ -86,7 +86,7 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
         
         VROSortKey key;
         key.renderingOrder = node->getRenderingOrder();
-        key.hierarchyId = hierarchyId;
+        key.hierarchyId = kMaxHierarchyId - hierarchyId;
         key.hierarchyDepth = hierarchyDepth;
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
