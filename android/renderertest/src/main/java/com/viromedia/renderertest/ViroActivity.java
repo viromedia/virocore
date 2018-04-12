@@ -934,7 +934,7 @@ public class ViroActivity extends AppCompatActivity {
 
         // Add a 2nd tracker to test threading
         Bitmap tempImage = getBitmapFromAssets("tracker_assets/variety_magazine.jpg");
-        final ARImageTarget varietyTarget = new ARImageTarget(tempImage, ARImageTarget.Orientation.Up, 0.244475f);
+        final ARImageTarget varietyTarget = new ARImageTarget(tempImage, ARImageTarget.Orientation.Up, .19f);
         arScene.addARImageTarget(varietyTarget);
 
         mImageMarkerTestNode = new Node();
