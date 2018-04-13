@@ -1395,9 +1395,10 @@ public class Node implements EventDelegate.EventDelegateCallback {
     @Override
     public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
         if (mClickListener != null) {
-            mClickListener.onClickState(source, node, clickState, new Vector(hitLoc));
+            Vector hitLocVec = hitLoc != null ? new Vector(hitLoc) : null;
+            mClickListener.onClickState(source, node, clickState, hitLocVec);
             if (clickState == ClickState.CLICKED) {
-                mClickListener.onClick(source, node, new Vector(hitLoc));
+                mClickListener.onClick(source, node, hitLocVec);
             }
         }
     }

@@ -55,6 +55,7 @@ public class Controller implements EventDelegate.EventDelegateCallback {
         mViroContext = viroContext;
         mEventDelegate = new EventDelegate();
         mEventDelegate.setEventDelegateCallback(this);
+        nativeSetEventDelegate(mViroContext.mNativeRef, mEventDelegate.mNativeRef);
     }
 
     @Override
@@ -394,9 +395,10 @@ public class Controller implements EventDelegate.EventDelegateCallback {
     @Override
     public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
         if (mClickListener != null) {
-            mClickListener.onClickState(source, node, clickState, new Vector(hitLoc));
+            Vector hitLocVec = hitLoc != null ? new Vector(hitLoc) : null;
+            mClickListener.onClickState(source, node, clickState, hitLocVec);
             if (clickState == ClickState.CLICKED) {
-                mClickListener.onClick(source, node, new Vector(hitLoc));
+                mClickListener.onClick(source, node, hitLocVec);
             }
         }
     }
@@ -406,7 +408,8 @@ public class Controller implements EventDelegate.EventDelegateCallback {
     @Override
     public void onHover(int source, Node node, boolean isHovering, float[] hitLoc) {
         if (mHoverListener != null) {
-            mHoverListener.onHover(source, node, isHovering, new Vector(hitLoc));
+            Vector hitLocVec = hitLoc != null ? new Vector(hitLoc) : null;
+            mHoverListener.onHover(source, node, isHovering, hitLocVec);
         }
     }
     /**
