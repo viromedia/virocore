@@ -19,16 +19,46 @@
 #include "VROStringUtil.h"
 
 
-#define ENABLE_DETECT_LOGGING 1
+#define ENABLE_DETECT_LOGGING 0
 // whether or not to draw tracking debug output to the screen
-#define DRAW_TRACKING_DEBUG_OUTPUT 1
+#define DRAW_TRACKING_DEBUG_OUTPUT 0
+
+#define USE_FOUND_OR_UPDATE_V3 1
+
+#if ENABLE_DETECT_LOGGING
+
+    #define TIME_SUCCESS() \
+    {\
+        _totalIteration++;\
+        _totalTime+=(getCurrentTimeMs()- _startTime);\
+        pinfo("[Viro] average success run time %f for %f runs", _totalTime / _totalIteration, _totalIteration);\
+    }
+#else
+    #define TIME_SUCCESS() ((void)0);
+#endif
 
 #if ENABLE_DETECT_LOGGING && VRO_PLATFORM_IOS
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, @#message);
+    #define TIME_ERROR(error) \
+    {\
+        _totalFailedIteration++;\
+        _totalFailedTime+=(getCurrentTimeMs() - _startTime);\
+        pinfo("[Viro] average failed run time %f for %f runs - %@", _totalFailedTime / _totalFailedIteration, _totalFailedIteration, @error);\
+    }
+    #define LOG_DEBUG(message,...) pinfo("[Viro] %@", @#message, ##__VA_ARGS__);
 #elif ENABLE_DETECT_LOGGING && VRO_PLATFORM_ANDROID
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %s", getCurrentTimeMs() - _startTime, #message);
+    #define TIME_ERROR(error) \
+    {\
+        _totalFailedIteration++;\
+        _totalFailedTime+=(getCurrentTimeMs() - _startTime);\
+        pinfo("[Viro] average failed run time %f for %f runs - %s", _totalFailedTime / _totalFailedIteration, _totalFailedIteration, error);\
+    }
+    #define LOG_DEBUG(...) pinfo("[Viro] %s", __VA_ARGS__);
 #else
     #define LOG_DETECT_TIME(message) ((void)0);
+    #define TIME_ERROR(error) ((void)0);
+    #define LOG_DEBUG(...) ((void)0);
 #endif
 
 std::shared_ptr<VROARImageTracker> VROARImageTracker::createARImageTracker(std::shared_ptr<VROARImageTarget> arImageTarget) {
@@ -173,7 +203,7 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     LOG_DETECT_TIME("start detect and compute descriptors")
     if (isTarget) {
         _targetFeature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
-        pinfo("[Viro] detected %ld features for target", descriptors.rows);
+        LOG_DEBUG("detected %ld features for target", descriptors.rows);
     } else {
         _feature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
 
@@ -224,7 +254,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
     // start the timer...
     _startTime = getCurrentTimeMs();
 
-    pinfo("[Viro] raw input size is %d x %d", inputImage.rows, inputImage.cols);
+    LOG_DEBUG("[Viro] raw input size is %d x %d", inputImage.rows, inputImage.cols);
     cv::Size size = inputImage.size();
 
     // Scale image for performance (esp on devices w/ larger screens)
@@ -278,7 +308,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
                                                                              inputImage,
                                                                              scaleFactor);
 
-        // TODO: remove this (only used for testFindInScreenshot).
+        // TODO: remove this (only used for testFindInScreenshot), it's okay b/c in normal tracking async = true
         for (int i = 0; i < outputs.size(); i++) {
             VROARImageTrackerOutput output = outputs[i];
             // Since we scaled the input image, we need to revert that scale when we return the corners!
@@ -296,7 +326,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
     } else {
         // somehow we got in here with threads running! do nothing!
         if (_runningThreads != 0) {
-            pinfo("[Viro] ImageTracker - non-zero # of runningThreads!");
             return {};
         }
 
@@ -354,8 +383,6 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findMultipleTargetsBF(st
 
     // Start the loop over all the targets!
     for (int targetIndex = 0; targetIndex < _arImageTargets.size(); targetIndex++) {
-        pinfo("[Viro] processing target #%d", targetIndex);
-
         VROARImageTrackerOutput output = findSingleTargetBF(_targetToTargetMap.find(_arImageTargets[targetIndex])->second,
                                                             inputKeypoints, inputDescriptors, inputImage, scaleFactor);
 
@@ -372,16 +399,18 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
                                                               cv::Mat inputDescriptors,  cv::Mat inputImage,
                                                               float scaleFactor) {
 
+#if USE_FOUND_OR_UPDATE_V1 || USE_FOUND_OR_UPDATE_V2
     if (currentTarget.disableTracking) {
-        pinfo("[Viro] target is disabled, skipping this target");
+        LOG_DEBUG("[Viro] target is disabled, skipping this target");
         return {};
     }
+#endif
 
     LOG_DETECT_TIME("start matching keypoints");
 
     std::vector<VROMatch> goodMatches;
 
-    pinfo("[Viro] processing %d target descriptors and %d input descriptors", currentTarget.descriptors.rows, inputDescriptors.rows);
+    LOG_DEBUG("[Viro] processing %d target descriptors and %d input descriptors", currentTarget.descriptors.rows, inputDescriptors.rows);
 
     if (!_useBfKnnMatcher) {
         std::vector<cv::DMatch> matches;
@@ -423,17 +452,11 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
         }
     }
 
+    LOG_DEBUG("[Viro] Found %lu of %d matches!", goodMatches.size(),_minGoodMatches);
+
     if (goodMatches.size() < _minGoodMatches) {
-        pinfo("[Viro] Could not find enough good matching points. %lu of %d", goodMatches.size(),_minGoodMatches);
-
-        _totalFailedIteration++;
-        _totalFailedTime+=(getCurrentTimeMs() - _startTime);
-        pinfo("[Viro] average failed run time %f for %f runs - not enough matching pts",
-              _totalFailedTime / _totalFailedIteration, _totalFailedIteration);
-
+        TIME_ERROR("Could not find enough good matching points");
         return {};
-    } else {
-        pinfo("[Viro] Found %ld good matches", goodMatches.size());
     }
 
     // only take the top _minGoodMatches # of matches (in case our goodMatches threshold is too loose)
@@ -457,7 +480,7 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
     cv::Mat homographyMat = findHomography(cv::Mat(objectPoints), cv::Mat(inputPoints), CV_RANSAC, 3);
 
     if (homographyMat.cols == 0) {
-        pinfo("[Viro] Could not find a homography matrix.");
+        TIME_ERROR("Could not find a homography matrix.")
         return {};
     }
 
@@ -473,17 +496,12 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
     perspectiveTransform(objectCorners, inputCorners, homographyMat);
 
     if (!areCornersValid(inputCorners)) {
-        pinfo("[Viro] Could not find corners of target in input image.");
-
-        _totalFailedIteration++;
-        _totalFailedTime+=(getCurrentTimeMs() - _startTime);
-        pinfo("[Viro] average failed run time %f for %f runs - bad corners", _totalFailedTime / _totalFailedIteration, _totalFailedIteration);
-
+        TIME_ERROR("Could not find corners of target in input.");
         return {};
     }
 
     if (scaleFactor != 1.0) {
-        inputCorners[0] /= scaleFactor ;
+        inputCorners[0] /= scaleFactor;
         inputCorners[1] /= scaleFactor;
         inputCorners[2] /= scaleFactor;
         inputCorners[3] /= scaleFactor;
@@ -500,7 +518,7 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
     //    CvPoint3D32f bottomRight = cvPoint3D32f(currentTarget.arImageTarget.cols, currentTarget.arImageTarget.rows, 0);
     //    CvPoint3D32f bottomLeft = cvPoint3D32f(0, currentTarget.arImageTarget.rows, 0);
 
-    // define corners starting from the top left of the image
+    // use the below corners to find the "center" of the target image
     CvPoint3D32f topLeft = cvPoint3D32f(- currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
     CvPoint3D32f topRight = cvPoint3D32f(currentTarget.arImageTarget->getTargetMat().cols / 2, - currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
     CvPoint3D32f bottomRight = cvPoint3D32f(currentTarget.arImageTarget->getTargetMat().cols / 2, currentTarget.arImageTarget->getTargetMat().rows / 2, 0);
@@ -534,11 +552,7 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
     //                   currentTarget.rotation, currentTarget.translation, useExtrinsicGuess);
 
     LOG_DETECT_TIME("finished detection & pose extraction");
-
-    // TODO: remove this average run time logic
-    _totalIteration++;
-    _totalTime+=(getCurrentTimeMs() - _startTime);
-    pinfo("[Viro] average run time %f for %f runs", _totalTime / _totalIteration, _totalIteration);
+    TIME_SUCCESS();
 
     // Calculate the pixels per meter based on the orientation, size of the target image (in pixels) and the given physical width.
     double pixPerMeter;
@@ -629,7 +643,15 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::processOutputs(std::vect
 }
 
 VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdate(VROARImageTrackerOutput output) {
+#if USE_FOUND_OR_UPDATE_V1
+    return determineFoundOrUpdateV1(output);
+#elif USE_FOUND_OR_UPDATE_V2
+    return determineFoundOrUpdateV2(output);
+#elif USE_FOUND_OR_UPDATE_V3
     return determineFoundOrUpdateV3(output);
+#elif USE_FOUND_OR_UPDATE_V4
+    return determineFoundOrUpdateV4(output);
+#endif
 }
 
 /*
@@ -735,24 +757,24 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTr
     VROARImageTrackerOutput toReturn = createFalseOutput();
 
     if (rawOutputs.size() > 0) {
-        pinfo("[DetermineFoundOrUpdated] size is not zero!");
+        LOG_DEBUG("[DetermineFoundOrUpdated] size is not zero!");
         if (!targetOpenCV->lastResult.found) {
-            pinfo("\t[DetermineFoundOrUpdated] no last output!");
+            LOG_DEBUG("\t[DetermineFoundOrUpdated] no last output!");
             // compare the most recent (0th element) with the raw output!
             if (areOutputsSimilarWithDistance(rawOutputs[0], rawOutput, .03)) {
-                pinfo("\t\t[DetermineFoundOrUpdated] output similar as previous result");
+                LOG_DEBUG("\t\t[DetermineFoundOrUpdated] output similar as previous result");
                 rawOutput.isUpdate = false;
                 targetOpenCV->lastResult = rawOutput;
                 toReturn = rawOutput;
             } else {
-                pinfo("\tt[DetermineFoundOrUpdated] output NOT similar to previous result ");
+                LOG_DEBUG("\tt[DetermineFoundOrUpdated] output NOT similar to previous result ");
             }
         } else {
-            pinfo("[DetermineFoundOrUpdated] there has been an output");
+            LOG_DEBUG("[DetermineFoundOrUpdated] there has been an output");
             // If the current output is similar to the lastResult then that means that it the marker
             // probably didn't move (user moved)
             if (!areOutputsSimilarWithDistance(rawOutput, targetOpenCV->lastResult, .02)) {
-                pinfo("\t[DetermineFoundOrUpdated] new output not similar to last output, size %ld", rawOutputs.size());
+                LOG_DEBUG("\t[DetermineFoundOrUpdated] new output not similar to last output, size %ld", rawOutputs.size());
                 // if the new output is not similar to the last one, then we need to evaluate whether
                 // or not it is different enough
                 double score = 0;
@@ -771,17 +793,17 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTr
                     case 1:
                         score += (areOutputsSimilarWithDistance(rawOutputs[0], rawOutput, .025) ? 4 : 0);
                 }
-                pinfo("\t[DetermineFoundOrUpdated] the score is %f", score);
+                LOG_DEBUG("\t[DetermineFoundOrUpdated] the score is %f", score);
 
                 // if the score is 4.4 or higher, then consider that an update!
                 if (score >= 4.4) {
-                    pinfo("\t\t[DetermineFoundOrUpdated] the score is higher than the threshold!");
+                    LOG_DEBUG("\t\t[DetermineFoundOrUpdated] the score is higher than the threshold!");
                     rawOutput.isUpdate = true;
                     targetOpenCV->lastResult = rawOutput;
                     toReturn = rawOutput;
                 }
             } else {
-                pinfo("\t[DetermineFoundOrUpdated] checking if we need to update");
+                LOG_DEBUG("\t[DetermineFoundOrUpdated] checking if we need to update");
                 // since the output is close to the last result, lets see if we can use this information
                 // to update the given marker transform
 
@@ -804,14 +826,14 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTr
 
                 // check the latest output we got!
                 if (areOutputsSimilarWithDistance(targetOpenCV->lastResult, rawOutput, .02)) {
-                    pinfo("\t[DetermineFoundOrUpdated] there was a similar output!");
+                    LOG_DEBUG("\t[DetermineFoundOrUpdated] there was a similar output!");
                     VROMatrix4f worldTransform = rawOutput.worldTransform;
                     averageTranslation.add(worldTransform.extractTranslation());
                     numberOfSimilarOutputs++;
                     similarOutputs.push_back(rawOutput);
                 }
 
-                pinfo("\t[DetermineFoundOrUpdated] total similar outputs %ld of %ld", similarOutputs.size(), rawOutputs.size());
+                LOG_DEBUG("\t[DetermineFoundOrUpdated] total similar outputs %ld of %ld", similarOutputs.size(), rawOutputs.size());
 
                 averageTranslation.x = averageTranslation.x / numberOfSimilarOutputs;
                 averageTranslation.y = averageTranslation.y / numberOfSimilarOutputs;
@@ -832,7 +854,7 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTr
                 // don't update if the updated position is < 1cm away from the result!
                 if (similarOutputs[minIndex].worldTransform.extractTranslation().distance(
                         targetOpenCV->lastResult.worldTransform.extractTranslation()) > .015) {
-                    pinfo("\t[DetermineFoundOrUpdated] we need to make a minor update");
+                    LOG_DEBUG("\t[DetermineFoundOrUpdated] we need to make a minor update");
                     similarOutputs[minIndex].isUpdate = true;
                     targetOpenCV->lastResult = similarOutputs[minIndex];
                     toReturn = similarOutputs[minIndex];
@@ -853,151 +875,13 @@ VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV3(VROARImageTr
         targetOpenCV->rawOutputs.insert(targetOpenCV->rawOutputs.begin(), rawOutput);
     }
 
-    pinfo("[DetermineFoundOrUpdated] add output to list");
+    LOG_DEBUG("[DetermineFoundOrUpdated] add output to list");
     LOG_DETECT_TIME("finish determineFoundOrUpdateV3");
     return toReturn;
 }
 
 VROARImageTrackerOutput VROARImageTracker::determineFoundOrUpdateV4(VROARImageTrackerOutput rawOutput) {
-    /*
-     This function attempts to do 3 things:
-     - find a stable marker transform (less updates when target isn't moving)
-     - ignore jumps in the marker transform (ignores artifacts/obviously incorrect transforms)
-     - responds relatively quickly to a moving target
-     */
-
-
-    // grab the target that this output matched.
-    VROARImageTargetOpenCV *targetOpenCV = &_targetToTargetMap.find(rawOutput.target)->second;
-
-    // grab all the previous outputs for this target. The most recent output is at the beginning
-    // of the list!
-    std::vector<VROARImageTrackerOutput> rawOutputs = targetOpenCV->rawOutputs;
-
-    VROARImageTrackerOutput toReturn = createFalseOutput();
-
-    if (rawOutputs.size() > 0) {
-        pinfo("[DetermineFoundOrUpdated] size is not zero!");
-        if (!targetOpenCV->lastResult.found) {
-            pinfo("\t[DetermineFoundOrUpdated] no last output!");
-            // compare the most recent (0th element) with the raw output!
-            if (areOutputsSimilarWithDistance(rawOutputs[0], rawOutput, .03)) {
-                pinfo("\t\t[DetermineFoundOrUpdated] output similar as previous result");
-                rawOutput.isUpdate = false;
-                targetOpenCV->lastResult = rawOutput;
-                toReturn = rawOutput;
-            } else {
-                pinfo("\tt[DetermineFoundOrUpdated] output NOT similar to previous result ");
-            }
-        } else {
-            pinfo("[DetermineFoundOrUpdated] there has been an output");
-            // If the current output is similar to the lastResult then that means that it the marker
-            // probably didn't move (user moved)
-            if (!areOutputsSimilarWithDistance(rawOutput, targetOpenCV->lastResult, .02)) {
-                pinfo("\t[DetermineFoundOrUpdated] new output not similar to last output, size %ld", rawOutputs.size());
-                // if the new output is not similar to the last one, then we need to evaluate whether
-                // or not it is different enough
-                double score = 0;
-                // If we have at least 5 results, then we want to compare the rawOutput with at most
-                // the last 5 results. We do store up to 10 old results, for other computations.
-                int size = (int) MIN(5, rawOutputs.size());
-                switch (size) {
-                    case 5:
-                        score += (areOutputsSimilarWithDistance(rawOutputs[4], rawOutput, .025) ? 1 : 0);
-                    case 4:
-                        score += (areOutputsSimilarWithDistance(rawOutputs[3], rawOutput, .025) ? 1.5 : 0);
-                    case 3:
-                        score += (areOutputsSimilarWithDistance(rawOutputs[2], rawOutput, .025) ? 2 : 0);
-                    case 2:
-                        score += (areOutputsSimilarWithDistance(rawOutputs[1], rawOutput, .025) ? 2.5 : 0);
-                    case 1:
-                        score += (areOutputsSimilarWithDistance(rawOutputs[0], rawOutput, .025) ? 4 : 0);
-                }
-                pinfo("\t[DetermineFoundOrUpdated] the score is %f", score);
-
-                // if the score is 4.4 or higher, then consider that an update!
-                if (score >= 4.4) {
-                    pinfo("\t\t[DetermineFoundOrUpdated] the score is higher than the threshold!");
-                    rawOutput.isUpdate = true;
-                    targetOpenCV->lastResult = rawOutput;
-                    toReturn = rawOutput;
-                }
-            } else {
-                pinfo("\t[DetermineFoundOrUpdated] checking if we need to update");
-                // since the output is close to the last result, lets see if we can use this information
-                // to update the given marker transform
-
-                // initialize w/ the last result!
-                std::vector<VROARImageTrackerOutput> similarOutputs = {targetOpenCV->lastResult};
-                int numberOfSimilarOutputs = 1;
-                VROVector3f averageTranslation(targetOpenCV->lastResult.worldTransform.extractTranslation());
-
-                auto it = rawOutputs.begin();
-                while (it != rawOutputs.end()) {
-                    // if the output is similar to the last result, then include it in the average
-                    if (areOutputsSimilarWithDistance(targetOpenCV->lastResult, *it, .02)) {
-                        VROMatrix4f worldTransform = it->worldTransform;
-                        averageTranslation.add(worldTransform.extractTranslation());
-                        numberOfSimilarOutputs++;
-                        similarOutputs.push_back(*it);
-                    }
-                    it++;
-                }
-
-                // check the latest output we got!
-                if (areOutputsSimilarWithDistance(targetOpenCV->lastResult, rawOutput, .02)) {
-                    pinfo("\t[DetermineFoundOrUpdated] there was a similar output!");
-                    VROMatrix4f worldTransform = rawOutput.worldTransform;
-                    averageTranslation.add(worldTransform.extractTranslation());
-                    numberOfSimilarOutputs++;
-                    similarOutputs.push_back(rawOutput);
-                }
-
-                pinfo("\t[DetermineFoundOrUpdated] total similar outputs %ld of %ld", similarOutputs.size(), rawOutputs.size());
-
-                averageTranslation.x = averageTranslation.x / numberOfSimilarOutputs;
-                averageTranslation.y = averageTranslation.y / numberOfSimilarOutputs;
-                averageTranslation.z = averageTranslation.z / numberOfSimilarOutputs;
-
-                float minDistance = averageTranslation.distance(
-                        similarOutputs[0].worldTransform.extractTranslation());
-                int minIndex = 0;
-
-                for (int i = 1; i < similarOutputs.size(); i++) {
-                    float tempDist = averageTranslation.distance(similarOutputs[i].worldTransform.extractTranslation());
-                    if (tempDist < minDistance) {
-                        minDistance = tempDist;
-                        minIndex = i;
-                    }
-                }
-
-                // don't update if the updated position is < 1cm away from the result!
-                if (similarOutputs[minIndex].worldTransform.extractTranslation().distance(
-                        targetOpenCV->lastResult.worldTransform.extractTranslation()) > .015) {
-                    pinfo("\t[DetermineFoundOrUpdated] we need to make a minor update");
-                    similarOutputs[minIndex].isUpdate = true;
-                    targetOpenCV->lastResult = similarOutputs[minIndex];
-                    toReturn = similarOutputs[minIndex];
-                }
-            }
-        }
-    }
-
-    // remove the oldest element (from the back).
-    if (rawOutputs.size() == 10) {
-        targetOpenCV->rawOutputs.pop_back();
-    }
-
-    // add the output to the front of the vector
-    if (rawOutputs.size() == 0) {
-        targetOpenCV->rawOutputs.push_back(rawOutput);
-    } else {
-        targetOpenCV->rawOutputs.insert(targetOpenCV->rawOutputs.begin(), rawOutput);
-    }
-
-    pinfo("[DetermineFoundOrUpdated] add output to list");
-    LOG_DETECT_TIME("finish determineFoundOrUpdateV4");
-    return toReturn;
+    // TODO: add a test implementation and make sure to #define USE_FOUND_OR_UPDATE_4 at the top.
 }
 
 float VROARImageTracker::getScaleFactor(int rows, int cols) {
@@ -1084,6 +968,9 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
             cols = inputCols * .49;
             rows = inputRows * .47777;
         }
+
+        cols = inputCols * .5;
+        rows = inputRows * .5;
 
         double cameraArr[9] = {1508, 0, cols,
                                0, 1508, rows,
@@ -1177,37 +1064,36 @@ bool VROARImageTracker::areOutputsSimilarWithDistance(VROARImageTrackerOutput fi
 
     // if either outputs aren't a "found" output, return false
     if (!first.found || !second.found) {
-        pinfo("[Viro] areOutputsSimilar - first or second arent found!");
+        LOG_DEBUG("[Viro] areOutputsSimilar - first or second arent found!");
         return false;
     }
 
     // Check if the cartesian distance are within a similarDistanceThreshold
     float distanceDiff = first.worldTransform.extractTranslation().distance(second.worldTransform.extractTranslation());
     if (distanceDiff > similarDistanceThreshold) {
-        pinfo("[Viro] areOutputsSimilar - distance too far! %f", distanceDiff);
+        LOG_DEBUG("[Viro] areOutputsSimilar - distance too far! %f", distanceDiff);
         VROVector3f firstTrans = first.worldTransform.extractTranslation();
         VROVector3f secondTrans = second.worldTransform.extractTranslation();
-        pinfo("[Viro] areOutputsSimilar - [%f, %f, %f] vs. [%f, %f, %f]", firstTrans.x, firstTrans.y, firstTrans.z, secondTrans.x, secondTrans.y, secondTrans.z);
         return false;
     }
 
     // Check if the rotations are similar...
 
-    // try comparing rotations? TODO: dtermine if we still want to do this?
-    VROVector3f firstRotation = first.worldTransform.extractRotation(first.worldTransform.extractScale()).toEuler();
-    VROVector3f secondRotation = second.worldTransform.extractRotation(second.worldTransform.extractScale()).toEuler();
-
-    float xDiff = fabs(firstRotation.x - secondRotation.x);
-    float yDiff = fabs(firstRotation.y - secondRotation.y);
-    float zDiff = fabs(firstRotation.z - secondRotation.z);
-
-    float maxAxisDiff = 7 * M_PI / 180; // 5 degrees
-    float maxTotalDiff = 12 * M_PI / 180; // 10 degrees
-
-    if (xDiff > maxAxisDiff || yDiff > maxAxisDiff || zDiff > maxAxisDiff || (xDiff + yDiff + zDiff) > maxTotalDiff) {
-        pinfo("[Viro] areOutputsSimilar - rotation too different!");
-        //return false;
-    }
+    // try comparing rotations? TODO: determine if we still want to do this?
+//    VROVector3f firstRotation = first.worldTransform.extractRotation(first.worldTransform.extractScale()).toEuler();
+//    VROVector3f secondRotation = second.worldTransform.extractRotation(second.worldTransform.extractScale()).toEuler();
+//
+//    float xDiff = fabs(firstRotation.x - secondRotation.x);
+//    float yDiff = fabs(firstRotation.y - secondRotation.y);
+//    float zDiff = fabs(firstRotation.z - secondRotation.z);
+//
+//    float maxAxisDiff = 7 * M_PI / 180; // 5 degrees
+//    float maxTotalDiff = 12 * M_PI / 180; // 10 degrees
+//
+//    if (xDiff > maxAxisDiff || yDiff > maxAxisDiff || zDiff > maxAxisDiff || (xDiff + yDiff + zDiff) > maxTotalDiff) {
+//        LOG_DEBUG("[Viro] areOutputsSimilar - rotation too different!");
+//        return false;
+//    }
 
     return true;
 }
@@ -1216,7 +1102,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     
     // if we have less than 4 corners, we definitely did not find a rectangular object!
     if (corners.size() != 4) {
-        pinfo("[Viro] corner check - fail test 0");
+        LOG_DEBUG("corner check - fail test 0");
         return false;
     }
     
@@ -1235,7 +1121,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     }
 
     if (sumX < minCornerDistance || sumY < minCornerDistance) {
-        pinfo("[Viro] corner check - fail test 1");
+        LOG_DEBUG("corner check - fail test 1");
         return false;
     }
 
@@ -1253,7 +1139,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     for (int i = 0; i < 4; i++) {
         VROTriangle triangle = {vectorCorners[i], vectorCorners[(i + 1) % 4], vectorCorners[(i + 2) % 4]};
         if (triangle.containsPoint(vectorCorners[(i + 3) % 4])) {
-            pinfo("[Viro] corner check - fail test 2");
+            LOG_DEBUG("corner check - fail test - point in triangle");
             return false;
         }
     }
@@ -1270,7 +1156,7 @@ bool VROARImageTracker::areCornersValid(std::vector<cv::Point2f> corners) {
     VROLineSegment lineSegmentRight(vectorCorners[1], vectorCorners[2]);
 
     if (lineSegmentTop.intersectsSegment2D(lineSegmentBottom) || lineSegmentLeft.intersectsSegment2D(lineSegmentRight)) {
-        pinfo("[Viro] corner check - fail test 3");
+        LOG_DEBUG("[Viro] corner check - fail test - hourglass");
         return false;
     }
 
@@ -1318,7 +1204,7 @@ void VROARImageTracker::convertFromCVToViroAxes(cv::Mat inputTranslation, cv::Ma
 
 VROMatrix4f VROARImageTracker::convertToWorldCoordinates(std::shared_ptr<VROARCamera> camera, VROVector3f translation, VROVector3f rotation) {
     if (!camera) {
-        pinfo("[Viro] ARImageTracker - unable to convert to world coordinates with missing camera.");
+        LOG_DEBUG("[Viro] ARImageTracker - unable to convert to world coordinates with missing camera.");
         return VROMatrix4f();
     }
 
