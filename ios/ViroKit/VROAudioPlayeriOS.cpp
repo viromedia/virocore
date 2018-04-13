@@ -11,6 +11,7 @@
 #include "VROLog.h"
 #include "VROPlatformUtil.h"
 #include "VROMath.h"
+#include "VROStringUtil.h"
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _playVolume(1.0),
@@ -19,7 +20,6 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _loop(false),
     _isLocal(isLocalUrl),
     _url(url) {
-        
 }
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
@@ -38,7 +38,6 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
     _muted(false),
     _paused(false),
     _loop(false) {
-        
     _data = data;
 }
 
@@ -51,21 +50,39 @@ void VROAudioPlayeriOS::setup() {
         _data->setDelegate(shared_from_this());
     }
     else if (!_url.empty()) {
+
         if (_isLocal) {
-            NSURL *localUrlObj =[NSURL fileURLWithPath:[NSString stringWithUTF8String:_url.c_str()]];
-            _player = [[AVAudioPlayer alloc] initWithContentsOfURL:localUrlObj error:NULL];
+            NSError *error = nil;
+            NSURL *localUrlObj;
+            bool hasFilePrefix = VROStringUtil::startsWith(_url, "file:/");
+            if (hasFilePrefix) {
+                localUrlObj = [NSURL URLWithString:[NSString stringWithUTF8String:_url.c_str()]];
+            } else {
+                localUrlObj = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_url.c_str()]];
+            }
+
+            _player = [[AVAudioPlayer alloc] initWithContentsOfURL:localUrlObj error:&error];
+            if (error || !_player){
+                _delegate->soundDidFail("Failed to load sound");
+                return;
+            }
+
             [_player prepareToPlay];
         }
         else {
             // Need shared pointer to prevent this object from deleted underneath us
             std::shared_ptr<VROAudioPlayeriOS> shared = shared_from_this();
-            
             NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:_url.c_str()]];
             VROPlatformDownloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
                 if (data && !error) {
-                    shared->_player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+                    NSError *errorCode = nil;
+                    shared->_player = [[AVAudioPlayer alloc] initWithData:data error:&errorCode];
                     shared->updatePlayerProperties();
-                    
+                    if (errorCode || !shared->_player){
+                        shared->_delegate->soundDidFail("Failed to load sound");
+                        return;
+                    }
+
                     shared->_audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
                     shared->_player.delegate = _audioDelegate;
                     shared->_delegate->soundIsReady();
