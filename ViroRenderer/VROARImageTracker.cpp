@@ -329,7 +329,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
                 // if this thread is the last one, then atomically set it to 0 and notify
                 // this cycle of tracking has finished!
                 int one = 1;
-                if (_runningThreads.compare_exchange_weak(one, 0)) {
+                if (_runningThreads.compare_exchange_strong(one, 0)) {
                     if (sListener) {
                         sListener->onFindTargetFinished();
                     }
@@ -1020,14 +1020,19 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
     std::string model = VROPlatformGetDeviceModel();
     double cols;
     double rows;
-    if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
+    if (kPixel2Devices.find(model) != kPixel2Devices.end()) { // Pixel 2 (and Pixel 2 XL)
         // the focal distance is fixed regardless of screen resolution, the center X and Y stays
         // relatively fixed (but the actual pixel location depends on the screen resolution).
         double cameraArr[9] = {1450, 0, inputCols * .49,
                                0, 1450, inputRows * .5,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
+    } else if (kPixelDevices.find(model) != kPixelDevices.end()) { // Pixel and Pixel XL devices
+        double cameraArr[9] = {1440, 0, inputCols * .49,
+                               0, 1440, inputRows * .49,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else if (kSamsungS8PlusDevices.find(model) != kSamsungS8PlusDevices.end()) { // Samsung S8+
         if (inputCols < inputRows) {
             cols = inputCols * .5318;
             rows = inputRows * .491;
@@ -1039,8 +1044,7 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                0, 2190.428443008615, rows,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
-
+    } else if (kSamsungS8Devices.find(model) != kSamsungS8Devices.end()) { // Samsung S8
         if (inputCols < inputRows) {
             cols = inputCols * .5215;
             rows = inputRows * .5022;
@@ -1051,6 +1055,51 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
 
         double cameraArr[9] = {2129.987076073671, 0, cols,
                                0, 2127.653050656804, rows,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else if (kSamsungNote8Devices.find(model) != kSamsungNote8Devices.end()) { // Samsung Note 8
+        // TODO: add Note 8 intrinsics (below copied from s8)
+        if (inputCols < inputRows) {
+            cols = inputCols * .5215;
+            rows = inputRows * .5022;
+        } else {
+            cols = inputCols * .5022;
+            rows = inputRows * .5215;
+        }
+
+        double cameraArr[9] = {2129.987076073671, 0, cols,
+                               0, 2127.653050656804, rows,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else if (kSamsungS7Devices.find(model) != kSamsungS7Devices.end() // Samsung S7
+               || kSamsungS7EdgeDevices.find(model) != kSamsungS7EdgeDevices.end()) { // Samsung S7 Edge
+        // TODO: add Samsung S7 intrinsics (below copied from s8)
+        if (inputCols < inputRows) {
+            cols = inputCols * .5215;
+            rows = inputRows * .5022;
+        } else {
+            cols = inputCols * .5022;
+            rows = inputRows * .5215;
+        }
+
+        double cameraArr[9] = {2129.987076073671, 0, cols,
+                               0, 2127.653050656804, rows,
+                               0, 0, 1};
+        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
+    } else if (kSamsungA5Devices.find(model) != kSamsungA5Devices.end() // Samsung A5
+               || kSamsungA7Devices.find(model) != kSamsungA7Devices.end() // Samsung A7
+               || kSamsungA8Devices.find(model) != kSamsungA8Devices.end() // Samsung A8
+               || kSamsungA8PlusDevices.find(model) != kSamsungA8PlusDevices.end()) { // Samsung A8+
+        if (inputCols < inputRows) {
+            cols = inputCols * .47777;
+            rows = inputRows * .49;
+        } else {
+            cols = inputCols * .49;
+            rows = inputRows * .47777;
+        }
+
+        double cameraArr[9] = {1508, 0, cols,
+                               0, 1508, rows,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     }
@@ -1088,22 +1137,45 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
     return cv::Mat::zeros(4,1,cv::DataType<double>::type); // Assume no lens distortion
 #else
     std::string model = VROPlatformGetDeviceModel();
-    if (VROStringUtil::strcmpinsensitive(model, "Pixel 2")) {
-        // Pixel 2 distCoeffs
+    if (kPixel2Devices.find(model) != kPixel2Devices.end()) { // Pixel 2 (and Pixel 2 XL)
         double distCoeffsArr[5] = {0.3071814282190861, -1.406069924010113, -0.001143236436618327,
                                    -0.003115266690240281, 2.134291153514535};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
-        // clone before returning because the double array will be dealloced upon leaving the func scope.
         return distCoeffs.clone();
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G955U")) { // Samsung S8+
+    } else if (kPixelDevices.find(model) != kPixelDevices.end()) { // Pixel and Pixel XL devices
+        double distCoeffsArr[5] = {0.2003780207887317, -1.220083933805833, 0.002639685904466275,
+                                   0.001936295758289953, 2.240472974456543};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        return distCoeffs.clone();
+    } else if (kSamsungS8PlusDevices.find(model) != kSamsungS8PlusDevices.end()) { // Samsung S8+
         double distCoeffsArr[5] = {0.2140704096247754, -0.5619697252678999, -0.001414139193934611,
                                    0.002719229177220327, 0.4081823444503178};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
-        // clone before returning because the double array will be dealloced upon leaving the func scope.
         return distCoeffs.clone();
-    } else if (VROStringUtil::strcmpinsensitive(model, "SM-G950U")) { // Samsung S8
+    } else if (kSamsungS8Devices.find(model) != kSamsungS8Devices.end()) { // Samsung S8
         double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
                                    -0.001190136151737745, 0.03055129101581667};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        return distCoeffs.clone();
+    } else if (kSamsungNote8Devices.find(model) != kSamsungNote8Devices.end()) { // Samsung Note 8
+        // TODO: add Note 8 dist coeffs (below is copied from S8)
+        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
+                                   -0.001190136151737745, 0.03055129101581667};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        return distCoeffs.clone();
+    } else if (kSamsungS7Devices.find(model) != kSamsungS7Devices.end() // Samsung S7
+               || kSamsungS7EdgeDevices.find(model) != kSamsungS7EdgeDevices.end()) { // Samsung S7 Edge
+        // TODO: add S7 dist coeffs (below is copied from S8
+        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
+                                   -0.001190136151737745, 0.03055129101581667};
+        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
+        return distCoeffs.clone();
+    } else if (kSamsungA5Devices.find(model) != kSamsungA5Devices.end() // Samsung A5
+               || kSamsungA7Devices.find(model) != kSamsungA7Devices.end() // Samsung A7
+               || kSamsungA8Devices.find(model) != kSamsungA8Devices.end() // Samsung A8
+               || kSamsungA8PlusDevices.find(model) != kSamsungA8PlusDevices.end()) { // Samsung A8+
+        double distCoeffsArr[5] = {0.293903362938712, -1.328654502202449, 0.0002344292446113044,
+                                   0.001398050898645976, 1.965517224133459};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         return distCoeffs.clone();
     } else {

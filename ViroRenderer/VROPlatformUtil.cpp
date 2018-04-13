@@ -217,6 +217,10 @@ std::string VROPlatformGetDeviceModel() {
     return ""; // TODO: do this for iOS if required
 }
 
+std::string VROPlatformGetDeviceBrand() {
+    return ""; // TODO: do this for iOS if required
+}
+
 #pragma mark - Android
 #elif VRO_PLATFORM_ANDROID
 
@@ -970,6 +974,17 @@ std::string VROPlatformGetDeviceModel() {
     jstring jModelString = (jstring) env->GetStaticObjectField(cls, modelFieldID);
 
     return VROPlatformGetString(jModelString, env);
+}
+
+std::string VROPlatformGetDeviceBrand() {
+    JNIEnv *env;
+    getJNIEnv(&env);
+    jclass cls = env->FindClass("android/os/Build");
+    jfieldID brandFieldID = env->GetStaticFieldID(cls, "BRAND", "Ljava/lang/String;");
+
+    jstring jBrandString = (jstring) env->GetStaticObjectField(cls, brandFieldID);
+
+    return VROPlatformGetString(jBrandString, env);
 }
 
 std::string VROPlatformGetCacheDirectory() {

@@ -22,6 +22,18 @@
 
 static const int kMaxInputImageSize = 2073600; // 1920 x 1080
 
+static const std::set<std::string> kPixelDevices = {"Pixel", "Pixel XL"};
+static const std::set<std::string> kPixel2Devices = {"Pixel 2", "Pixel 2 XL"};
+static const std::set<std::string> kSamsungS8PlusDevices = {"SM-G955F", "SM-G955N", "SM-G955U", "SM-G955W", "SM-SC03J", "SM-SCV35"};
+static const std::set<std::string> kSamsungS8Devices = {"SM-G950U", "SM-G950N", "SM-G950F", "SM-G950W", "SM-SCV36", "SM-SC02J"};
+static const std::set<std::string> kSamsungNote8Devices = {"SM-N9508", "SM-N950F", "SM-N950N", "SM-N950U", "SM-N950W", "SM-SC01K", "SM-SCV37"};
+static const std::set<std::string> kSamsungS7EdgeDevices = {"SM-G935A", "SM-G935F", "SM-G935K", "SM-G935L", "SM-G935P", "SM-G935R", "SM-G935S", "SM-G935T", "SM-G935U", "SM-G935V", "SM-G935W", "SM-SCV33", "SM-SC02H"};
+static const std::set<std::string> kSamsungS7Devices = {"SM-G930A", "SM-G930F", "SM-G930K", "SM-G930L", "SM-G930P", "SM-G930R", "SM-G930S", "SM-G930T", "SM-G930U", "SM-G930V", "SM-G930W"};
+static const std::set<std::string> kSamsungA5Devices = {"SM-A520F", "SM-A520X", "SM-A520W", "SM-A520K", "SM-A520L", "SM-A520S"};
+static const std::set<std::string> kSamsungA7Devices = {"SM-A720F", "SM-A720X", "SM-A720S"};
+static const std::set<std::string> kSamsungA8Devices = {"SM-A530W", "SM-A530X", "SM-A530F", "SM-A530N"};
+static const std::set<std::string> kSamsungA8PlusDevices = {"SM-A730F", "SM-A730X"};
+
 enum class VROARImageTrackerType {
     BRISK,
     ORB,
