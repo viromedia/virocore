@@ -1032,7 +1032,8 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                0, 1440, inputRows * .49,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-    } else if (kSamsungS8PlusDevices.find(model) != kSamsungS8PlusDevices.end()) { // Samsung S8+
+    } else if (kSamsungS8PlusDevices.find(model) != kSamsungS8PlusDevices.end() // Samsung S8+
+               || kSamsungNote8Devices.find(model) != kSamsungNote8Devices.end()) { // Samsung Note 8
         if (inputCols < inputRows) {
             cols = inputCols * .5318;
             rows = inputRows * .491;
@@ -1045,20 +1046,6 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else if (kSamsungS8Devices.find(model) != kSamsungS8Devices.end()) { // Samsung S8
-        if (inputCols < inputRows) {
-            cols = inputCols * .5215;
-            rows = inputRows * .5022;
-        } else {
-            cols = inputCols * .5022;
-            rows = inputRows * .5215;
-        }
-
-        double cameraArr[9] = {2129.987076073671, 0, cols,
-                               0, 2127.653050656804, rows,
-                               0, 0, 1};
-        cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
-    } else if (kSamsungNote8Devices.find(model) != kSamsungNote8Devices.end()) { // Samsung Note 8
-        // TODO: add Note 8 intrinsics (below copied from s8)
         if (inputCols < inputRows) {
             cols = inputCols * .5215;
             rows = inputRows * .5022;
@@ -1147,18 +1134,13 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
                                    0.001936295758289953, 2.240472974456543};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         return distCoeffs.clone();
-    } else if (kSamsungS8PlusDevices.find(model) != kSamsungS8PlusDevices.end()) { // Samsung S8+
+    } else if (kSamsungS8PlusDevices.find(model) != kSamsungS8PlusDevices.end() // Samsung S8+
+               || kSamsungNote8Devices.find(model) != kSamsungNote8Devices.end()) {  // Samsung Note 8
         double distCoeffsArr[5] = {0.2140704096247754, -0.5619697252678999, -0.001414139193934611,
                                    0.002719229177220327, 0.4081823444503178};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         return distCoeffs.clone();
     } else if (kSamsungS8Devices.find(model) != kSamsungS8Devices.end()) { // Samsung S8
-        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
-                                   -0.001190136151737745, 0.03055129101581667};
-        cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
-        return distCoeffs.clone();
-    } else if (kSamsungNote8Devices.find(model) != kSamsungNote8Devices.end()) { // Samsung Note 8
-        // TODO: add Note 8 dist coeffs (below is copied from S8)
         double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
                                    -0.001190136151737745, 0.03055129101581667};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
