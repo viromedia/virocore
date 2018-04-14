@@ -322,7 +322,7 @@ public class ViroViewGVR extends ViroView {
         setVRModeEnabled(true);
 
         if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest("VR", getHeadset());
+            validateAPIKeyFromManifest();
         }
     }
 

@@ -309,10 +309,10 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      *
      * @hide
      */
-     final void validateAPIKeyFromManifest(String viewType, String platform) {
+     final void validateAPIKeyFromManifest() {
          mNativeRenderer.setSuspended(false);
          // we actually care more about the headset than platform in this case.
-         validateAPIKey(mApiKey, viewType, platform);
+         validateAPIKey(mApiKey);
     }
 
     /**
@@ -322,10 +322,23 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      *
      * @hide
      */
-    public final void validateAPIKey(String apiKey, String viewType, String platform) {
+    public final void validateAPIKey(String apiKey) {
         mNativeRenderer.setSuspended(false);
         // we actually care more about the headset than platform in this case.
         final WeakReference<Renderer> weakRenderer = new WeakReference<>(mNativeRenderer);
+        // set defaults
+        String viewType = "VR";
+        String platform = "cardboard";
+        if (this instanceof ViroViewARCore) {
+            viewType = "AR";
+            platform = "arcore";
+        } else if (this instanceof ViroViewGVR || this instanceof ViroViewOVR) {
+            viewType = "VR";
+            platform = getHeadset();
+        } else if (this instanceof ViroViewScene) {
+            viewType = "3DScene";
+            platform = "none";
+        }
         mKeyValidator.validateKey(apiKey, viewType, platform, new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
