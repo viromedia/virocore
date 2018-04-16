@@ -203,10 +203,10 @@ void VROARImageTracker::detectKeypointsAndDescriptors(cv::Mat inputImage,
     LOG_DETECT_TIME("start detect and compute descriptors")
     if (isTarget) {
         _targetFeature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
-        LOG_DEBUG("detected %ld features for target", descriptors.rows);
+        pinfo("[Viro] ImageTracker - detected %ld features for target", descriptors.rows);
     } else {
         _feature->detectAndCompute(processedImage, cv::noArray(), keypoints, descriptors);
-
+        pinfo("[Viro] ImageTracker - detected %ld features for inputImage", descriptors.rows);
     }
     LOG_DETECT_TIME("finish detect keypoints & descriptors");
 }
@@ -290,7 +290,7 @@ std::vector<VROARImageTrackerOutput> VROARImageTracker::findTargetInternal(cv::M
 
     // make sure we have some keypoints/descriptors.
     if (inputKeyPoints.size() == 0 || inputDescriptors.cols == 0) {
-        pwarn("[Viro] Could not find keypoints and/or descriptors for the input image.");
+        LOG_DEBUG("[Viro] Could not find keypoints and/or descriptors for the input image.");
 
         // If we're running in async mode, then we should call onFindTargetFinished if we abort early
         if (async) {
@@ -452,7 +452,7 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
         }
     }
 
-    LOG_DEBUG("[Viro] Found %lu of %d matches!", goodMatches.size(),_minGoodMatches);
+    pinfo("[Viro] Found %lu of %d matches!", goodMatches.size(),_minGoodMatches);
 
     if (goodMatches.size() < _minGoodMatches) {
         TIME_ERROR("Could not find enough good matching points");
