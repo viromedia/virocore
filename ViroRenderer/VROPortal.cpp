@@ -279,7 +279,7 @@ void VROPortal::installBackgroundShaderModifier() {
 }
 
 void VROPortal::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
-    passert_thread();
+    passert_thread(__func__);
     _background = VROSkybox::createSkybox(textureCube);
     _background->setName("Background");
     
@@ -287,7 +287,7 @@ void VROPortal::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
 }
 
 void VROPortal::setBackgroundCube(VROVector4f color) {
-    passert_thread();
+    passert_thread(__func__);
     _background = VROSkybox::createSkybox(color);
     _background->setName("Background");
     
@@ -295,7 +295,7 @@ void VROPortal::setBackgroundCube(VROVector4f color) {
 }
 
 void VROPortal::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
-    passert_thread();
+    passert_thread(__func__);
     _background = VROSphere::createSphere(kSphereBackgroundRadius,
                                           kSphereBackgroundNumSegments,
                                           kSphereBackgroundNumSegments,
@@ -312,7 +312,7 @@ void VROPortal::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
 }
 
 void VROPortal::setBackground(std::shared_ptr<VROGeometry> background) {
-    passert_thread();
+    passert_thread(__func__);
     _background = background;
     
     installBackgroundShaderModifier();
@@ -323,12 +323,12 @@ void VROPortal::setBackgroundTransform(VROMatrix4f transform) {
 }
 
 void VROPortal::setBackgroundRotation(VROQuaternion rotation) {
-    passert_thread();
+    passert_thread(__func__);
     _backgroundTransform = rotation.getMatrix();
 }
 
 void VROPortal::removeBackground() {
-    passert_thread();
+    passert_thread(__func__);
     _background->getMaterials().front()->removeShaderModifier(sBackgroundShaderModifier);
     _background.reset();
 }

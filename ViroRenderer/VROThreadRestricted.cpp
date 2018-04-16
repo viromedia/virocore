@@ -54,13 +54,24 @@ VROThreadRestricted::~VROThreadRestricted() {
     
 }
 
-void VROThreadRestricted::passert_thread() {
+void VROThreadRestricted::passert_thread(std::string method) {
     if (!sRenderingThreadSet || !_enabled) {
         return;
     }
-    passert_msg(tThreadName == _restricted_thread_name,
-                "For object %p, current thread [%d] does not match object's thread restriction [%d]",
-                this,
-                tThreadName,
-                _restricted_thread_name);
+
+// TODO: VIRO-3320 made us change this from a passert_msg to a pwarn so we don't immediately crash
+//    passert_msg(tThreadName == _restricted_thread_name,
+//                "For object %p, current thread [%d] does not match object's thread restriction [%d]. Method: %s",
+//                this,
+//                tThreadName,
+//                _restricted_thread_name,
+//                method.c_str());
+
+    if (tThreadName != _restricted_thread_name) {
+        pwarn("For object %p, current thread [%d] does not match object's thread restriction [%d]. Method: %s",
+              this,
+              tThreadName,
+              _restricted_thread_name,
+              method.c_str());
+    }
 }

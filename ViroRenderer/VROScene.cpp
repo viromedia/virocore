@@ -64,7 +64,7 @@ void VROScene::updateParticles(const VRORenderContext &context) {
 
 void VROScene::updateSortKeys(std::shared_ptr<VRORenderMetadata> &metadata,
                               const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    passert_thread();
+    passert_thread(__func__);
     
     if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("Updating sort keys");
@@ -165,7 +165,7 @@ void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::sh
 #pragma mark - Input Controllers
 
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller) {
-    passert_thread();
+    passert_thread(__func__);
     if (!_controllerPresenter){
         return;
     }
@@ -178,7 +178,7 @@ void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> con
 }
 
 void VROScene::attachInputController(std::shared_ptr<VROInputControllerBase> controller) {
-    passert_thread();
+    passert_thread(__func__);
 
     std::shared_ptr<VROInputPresenter> presenter = controller->getPresenter();
     if (_controllerPresenter == presenter) {

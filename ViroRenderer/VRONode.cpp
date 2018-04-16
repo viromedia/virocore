@@ -132,7 +132,7 @@ void VRONode::render(int elementIndex,
                      std::shared_ptr<VROMaterial> &material,
                      const VRORenderContext &context,
                      std::shared_ptr<VRODriver> &driver) {
-    passert_thread();
+    passert_thread(__func__);
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         _geometry->render(elementIndex, material,
@@ -236,7 +236,7 @@ void VRONode::updateSortKeys(uint32_t depth,
                              std::shared_ptr<VRORenderMetadata> &metadata,
                              const VRORenderContext &context,
                              std::shared_ptr<VRODriver> &driver) {
-    passert_thread();
+    passert_thread(__func__);
     processActions();
 
     /*
@@ -360,7 +360,7 @@ void VRONode::updateSortKeys(uint32_t depth,
 }
 
 void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
-    passert_thread();
+    passert_thread(__func__);
     
     // Add the geometry of this node, if available
     if (_visible && _geometry && getType() == VRONodeType::Normal) {
@@ -377,7 +377,7 @@ void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
 }
 
 void VRONode::computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
-    passert_thread();
+    passert_thread(__func__);
     
     /*
      Compute the transform for this node.
@@ -602,7 +602,7 @@ VROBoundingBox VRONode::getLastUmbrellaBoundingBox() const {
 #pragma mark - Scene Graph
 
 void VRONode::addChildNode(std::shared_ptr<VRONode> node) {
-    passert_thread();
+    passert_thread(__func__);
     passert (node);
     
     _subnodes.push_back(node);
@@ -619,7 +619,7 @@ void VRONode::addChildNode(std::shared_ptr<VRONode> node) {
 }
 
 void VRONode::removeFromParentNode() {
-    passert_thread();
+    passert_thread(__func__);
     
     std::shared_ptr<VRONode> supernode = _supernode.lock();
     if (supernode) {
@@ -706,7 +706,7 @@ void VRONode::getChildPortals(std::vector<std::shared_ptr<VROPortal>> *outPortal
 #pragma mark - Setters
 
 void VRONode::setRotation(VROQuaternion rotation) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationQuaternion>([](VROAnimatable *const animatable, VROQuaternion r) {
                                                          ((VRONode *)animatable)->_rotation = r;
                                                          ((VRONode *)animatable)->_euler = r.toEuler();
@@ -714,7 +714,7 @@ void VRONode::setRotation(VROQuaternion rotation) {
 }
 
 void VRONode::setRotationEuler(VROVector3f euler) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f r) {
                                                         ((VRONode *)animatable)->_euler = VROMathNormalizeAngles2PI(r);
                                                         ((VRONode *)animatable)->_rotation = { r.x, r.y, r.z };
@@ -722,7 +722,7 @@ void VRONode::setRotationEuler(VROVector3f euler) {
 }
 
 void VRONode::setPosition(VROVector3f position) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f p) {
                                                         VRONode *node = ((VRONode *)animatable);
                                                         node->_position = p;
@@ -731,7 +731,7 @@ void VRONode::setPosition(VROVector3f position) {
 }
 
 void VRONode::setScale(VROVector3f scale) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
                                                        ((VRONode *)animatable)->_scale = s;
                                                    }, _scale, scale));
@@ -752,7 +752,7 @@ void VRONode::notifyTransformUpdate(bool forced) {
 }
 
 void VRONode::setPositionX(float x) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
         VRONode *node = ((VRONode *)animatable);
         node->_position.x = p;
@@ -761,7 +761,7 @@ void VRONode::setPositionX(float x) {
 }
 
 void VRONode::setPositionY(float y) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
         VRONode *node = ((VRONode *)animatable);
         node->_position.y = p;
@@ -770,7 +770,7 @@ void VRONode::setPositionY(float y) {
 }
 
 void VRONode::setPositionZ(float z) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
         VRONode *node = ((VRONode *)animatable);
         node->_position.z = p;
@@ -779,28 +779,28 @@ void VRONode::setPositionZ(float z) {
 }
 
 void VRONode::setScaleX(float x) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
         ((VRONode *)animatable)->_scale.x = s;
     }, _scale.x, x));
 }
 
 void VRONode::setScaleY(float y) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
         ((VRONode *)animatable)->_scale.y = s;
     }, _scale.y, y));
 }
 
 void VRONode::setScaleZ(float z) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
         ((VRONode *)animatable)->_scale.z = s;
     }, _scale.z, z));
 }
 
 void VRONode::setRotationEulerX(float radians) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float r) {
         VROVector3f &euler = ((VRONode *) animatable)->_euler;
         euler.x = VROMathNormalizeAngle2PI(r);
@@ -809,7 +809,7 @@ void VRONode::setRotationEulerX(float radians) {
 }
 
 void VRONode::setRotationEulerY(float radians) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float r) {
         VROVector3f &euler = ((VRONode *) animatable)->_euler;
         euler.y = VROMathNormalizeAngle2PI(r);
@@ -818,7 +818,7 @@ void VRONode::setRotationEulerY(float radians) {
 }
 
 void VRONode::setRotationEulerZ(float radians) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float r) {
         VROVector3f &euler = ((VRONode *) animatable)->_euler;
         euler.z = VROMathNormalizeAngle2PI(r);
@@ -827,26 +827,26 @@ void VRONode::setRotationEulerZ(float radians) {
 }
 
 void VRONode::setRotationPivot(VROMatrix4f pivot) {
-    passert_thread();
+    passert_thread(__func__);
     _rotationPivot = pivot;
     _rotationPivotInverse = pivot.invert();
 }
 
 void VRONode::setScalePivot(VROMatrix4f pivot) {
-    passert_thread();
+    passert_thread(__func__);
     _scalePivot = pivot;
     _scalePivotInverse = pivot.invert();
 }
 
 void VRONode::setOpacity(float opacity) {
-    passert_thread();
+    passert_thread(__func__);
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
         ((VRONode *)animatable)->_opacity = s;
     }, _opacity, opacity));
 }
 
 void VRONode::setHidden(bool hidden) {
-    passert_thread();
+    passert_thread(__func__);
     _hidden = hidden;
     
     float opacity = hidden ? 0.0 : 1.0;
@@ -856,7 +856,7 @@ void VRONode::setHidden(bool hidden) {
 }
 
 void VRONode::setHighAccuracyGaze(bool enabled) {
-    passert_thread();
+    passert_thread(__func__);
     _highAccuracyGaze = enabled;
 }
 
@@ -878,7 +878,7 @@ void VRONode::setAtomicRenderProperties() {
 #pragma mark - Actions and Animations
 
 void VRONode::processActions() {
-    passert_thread();
+    passert_thread(__func__);
     
     std::vector<std::shared_ptr<VROAction>>::iterator it;
     for (it = _actions.begin(); it != _actions.end(); ++it) {
@@ -904,12 +904,12 @@ void VRONode::processActions() {
 }
 
 void VRONode::runAction(std::shared_ptr<VROAction> action) {
-    passert_thread();
+    passert_thread(__func__);
     _actions.push_back(action);
 }
 
 void VRONode::removeAction(std::shared_ptr<VROAction> action) {
-    passert_thread();
+    passert_thread(__func__);
     _actions.erase(std::remove_if(_actions.begin(), _actions.end(),
                                   [action](std::shared_ptr<VROAction> candidate) {
                                       return candidate == action;
@@ -917,18 +917,18 @@ void VRONode::removeAction(std::shared_ptr<VROAction> action) {
 }
 
 void VRONode::removeAllActions() {
-    passert_thread();
+    passert_thread(__func__);
     _actions.clear();
 }
 
 void VRONode::addAnimation(std::string key, std::shared_ptr<VROExecutableAnimation> animation) {
-    passert_thread();
+    passert_thread(__func__);
     std::shared_ptr<VRONode> shared = std::dynamic_pointer_cast<VRONode>(shared_from_this());
     _animations[key].push_back(std::make_shared<VROExecutableNodeAnimation>(shared, animation));
 }
 
 void VRONode::removeAnimation(std::string key) {
-    passert_thread();
+    passert_thread(__func__);
     auto kv = _animations.find(key);
     if (kv == _animations.end()) {
         return;
@@ -982,7 +982,7 @@ void VRONode::getAnimationKeys(std::set<std::string> &keys, bool recursive) {
 }
 
 void VRONode::removeAllAnimations() {
-    passert_thread();
+    passert_thread(__func__);
     for (auto kv : _animations) {
         for (std::shared_ptr<VROExecutableAnimation> &animation : kv.second) {
             animation->terminate(true);
@@ -1016,7 +1016,7 @@ VROBoundingBox VRONode::getUmbrellaBoundingBox() const {
 
 std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
                                                bool boundsOnly) {
-    passert_thread();
+    passert_thread(__func__);
     std::vector<VROHitTestResult> results;
 
     VROMatrix4f identity;
@@ -1026,7 +1026,7 @@ std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVecto
 
 void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly,
                       std::vector<VROHitTestResult> &results) {
-    passert_thread();
+    passert_thread(__func__);
     if (!_selectable) {
         return;
     }
@@ -1052,7 +1052,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
 }
 
 bool VRONode::hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f transform) {
-    passert_thread();
+    passert_thread(__func__);
     std::shared_ptr<VROGeometrySource> vertexSource = _geometry->getGeometrySourcesForSemantic(VROGeometrySourceSemantic::Vertex).front();
     
     bool hit = false;
@@ -1074,12 +1074,12 @@ bool VRONode::hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f t
 #pragma mark - Constraints
 
 void VRONode::addConstraint(std::shared_ptr<VROConstraint> constraint) {
-    passert_thread();
+    passert_thread(__func__);
     _constraints.push_back(constraint);
 }
 
 void VRONode::removeConstraint(std::shared_ptr<VROConstraint> constraint) {
-    passert_thread();
+    passert_thread(__func__);
     _constraints.erase(std::remove_if(_constraints.begin(), _constraints.end(),
                                   [constraint](std::shared_ptr<VROConstraint> candidate) {
                                       return candidate == constraint;
@@ -1087,7 +1087,7 @@ void VRONode::removeConstraint(std::shared_ptr<VROConstraint> constraint) {
 }
 
 void VRONode::removeAllConstraints() {
-    passert_thread();
+    passert_thread(__func__);
     _constraints.clear();
 }
 
@@ -1139,14 +1139,14 @@ void VRONode::updateParticles(const VRORenderContext &context) {
 }
 
 void VRONode::setParticleEmitter(std::shared_ptr<VROParticleEmitter> emitter) {
-    passert_thread();
+    passert_thread(__func__);
     _particleEmitter = emitter;
     _geometry = emitter->getParticleSurface();
     setIgnoreEventHandling(true);
 }
 
 void VRONode::removeParticleEmitter() {
-    passert_thread();
+    passert_thread(__func__);
     _particleEmitter.reset();
     _geometry.reset();
     setIgnoreEventHandling(false);
