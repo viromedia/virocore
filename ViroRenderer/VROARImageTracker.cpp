@@ -925,8 +925,8 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
             cols = inputCols * .491;
             rows = inputRows * .5318;
         }
-        double cameraArr[9] = {2191.487412971218, 0, cols,
-                               0, 2190.428443008615, rows,
+        double cameraArr[9] = {2050, 0, cols,
+                               0, 2050, rows,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else if (kSamsungS8Devices.find(model) != kSamsungS8Devices.end()) { // Samsung S8
@@ -938,8 +938,8 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
             rows = inputRows * .5215;
         }
 
-        double cameraArr[9] = {2129.987076073671, 0, cols,
-                               0, 2127.653050656804, rows,
+        double cameraArr[9] = {2050, 0, cols,
+                               0, 2050, rows,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else if (kSamsungS7Devices.find(model) != kSamsungS7Devices.end() // Samsung S7
