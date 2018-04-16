@@ -138,8 +138,11 @@ void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int w
         _session->setDisplayGeometry((int) rotation, width, height);
     }
 
-    // re-initialize the tracking session if the display geometry resets
-    initTrackingSession();
+    // Post to the renderer thread because this function is likely called on the Android Main thread.
+    VROPlatformDispatchAsyncRenderer([this](){
+        // re-initialize the tracking session if the display geometry resets
+        initTrackingSession();
+    });
 }
 
 void VROARSessionARCore::enableTracking(bool shouldTrack) {
