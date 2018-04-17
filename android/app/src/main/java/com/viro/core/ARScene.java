@@ -329,20 +329,30 @@ public class ARScene extends Scene {
     //#ENDIF
 
     public void addARImageTarget(ARImageTarget target) {
-        nativeAddARImageTarget(mNativeRef, target.mNativeRef);
+        nativeAddARImageTarget(mNativeRef, target.getNativeRef());
     }
 
     public void removeARImageTarget(ARImageTarget target) {
-        nativeRemoveARImageTarget(mNativeRef, target.mNativeRef);
+        nativeRemoveARImageTarget(mNativeRef, target.getNativeRef());
     }
 
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
     public void addARImageTargetDeclarative(ARImageTarget target) {
-        nativeAddARImageTargetDeclarative(mNativeRef, target.mNativeRef);
+        nativeAddARImageTargetDeclarative(mNativeRef, target.getNativeRef());
     }
+    //#ENDIF
 
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
     public void removeARImageTargetDeclarative(ARImageTarget target) {
-        nativeRemoveARImageTargetDeclarative(mNativeRef, target.mNativeRef);
+        nativeRemoveARImageTargetDeclarative(mNativeRef, target.getNativeRef());
     }
+    //#ENDIF
 
     private native long nativeCreateARSceneController();
     private native long nativeCreateARSceneControllerDeclarative();

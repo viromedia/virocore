@@ -22,7 +22,7 @@ public class ARDeclarativeImageNode extends ARDeclarativeNode {
 
     public void setARImageTarget(ARImageTarget arImageTarget) {
         mARImageTarget = arImageTarget;
-        nativeSetARImageTarget(mNativeRef, arImageTarget.mNativeRef);
+        nativeSetARImageTarget(mNativeRef, arImageTarget.getNativeRef());
     }
 
     public ARImageTarget getARImageTarget() {

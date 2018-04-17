@@ -23,7 +23,7 @@ public class ImageTracker {
 
     public ImageTracker(ARImageTarget imageTarget) {
         mImageTarget = imageTarget;
-        mNativeRef = nativeCreateImageTracker(imageTarget.mNativeRef);
+        mNativeRef = nativeCreateImageTracker(imageTarget.getNativeRef());
     }
 
     public ImageTrackerOutput findTarget(Bitmap image) {
