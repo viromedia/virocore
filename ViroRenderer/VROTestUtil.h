@@ -50,7 +50,7 @@ public:
 
 private:
     
-    static void animateTake(std::shared_ptr<VRONode> node, std::string name);
+    static void animateTake(std::weak_ptr<VRONode> node_w, std::string name);
     
 };
 

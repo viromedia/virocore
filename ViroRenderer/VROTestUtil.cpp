@@ -259,9 +259,14 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     return node;
 }
 
-void VROTestUtil::animateTake(std::shared_ptr<VRONode> node, std::string name) {
-    node->getAnimation(name.c_str(), true)->execute(node, [node, name] {
-        animateTake(node, name);
+void VROTestUtil::animateTake(std::weak_ptr<VRONode> node_w, std::string name) {
+    std::shared_ptr<VRONode> node = node_w.lock();
+    if (!node) {
+        return;
+    }
+    
+    node->getAnimation(name.c_str(), true)->execute(node, [node_w, name] {
+        animateTake(node_w, name);
     });
 }
 

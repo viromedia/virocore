@@ -69,13 +69,6 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     _fbxIndex = 0;
     rotateFBX();
     
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this] (VRONode *const node, float seconds) {
-        _angle += .0015;
-        node->setRotation({ 0, _angle, _angle });
-        return true;
-    });
-    //fbxNode->runAction(action);
-    
     /*
      Shadow surface.
      */
