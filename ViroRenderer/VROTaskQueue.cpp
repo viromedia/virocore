@@ -10,14 +10,17 @@
 #include "VROLog.h"
 #include "VROPlatformUtil.h"
 #include "VRODefines.h"
+#include "VROAllocationTracker.h"
 
 VROTaskQueue::VROTaskQueue(VROTaskExecutionOrder executionOrder) :
     _started(false),
     _executionOrder(executionOrder) {
+        
+    ALLOCATION_TRACKER_ADD(TaskQueues, 1);
 }
 
 VROTaskQueue::~VROTaskQueue() {
-    
+    ALLOCATION_TRACKER_SUB(TaskQueues, 1);
 }
 
 void VROTaskQueue::addTask(std::function<void()> task) {

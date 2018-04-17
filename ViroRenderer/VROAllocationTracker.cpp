@@ -67,4 +67,5 @@ void VROAllocationTracker::printNow() {
     pinfo("    Typefaces:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Typefaces)].load()));
     pinfo("    Glyphs:              %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Glyphs)].load()));
     pinfo("    Render Targets:      %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::RenderTargets)].load()));
+    pinfo("    Task Queues:         %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TaskQueues)].load()));
 }
