@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARNode | Android Developers
+  <title>ARImageAnchor | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -248,9 +248,9 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
@@ -562,7 +562,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARNode</h1>
+<h1 class="api-title">ARImageAnchor</h1>
 <p>
 <code class="api-signature">
   public
@@ -570,7 +570,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  ARNode
+  ARImageAnchor
 </code>
 <br>
 
@@ -583,7 +583,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/Node.html">Node</a>
+    extends <a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a>
   
   
   
@@ -609,7 +609,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Node.html">com.viro.core.Node</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/ARAnchor.html">com.viro.core.ARAnchor</a>
     </td>
   </tr>
   
@@ -620,7 +620,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARNode
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARImageAnchor
     </td>
   </tr>
   
@@ -633,146 +633,12 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>. ARNodes are
- automatically created by Viro and added to the <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> as they are detected, and by default
- hold no content and have no children. Each ARNode is continually updated to stay in sync with its
- corresponding ARAnchor: if the anchor's position, orientation, or other detected properties
- change, the ARNode will be changed as well.
- <p>
- ARNode is the mechanism through which you can attach virtual content to real-world objects. For
- example, if an <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is detected, you can add a 3D model to that plane by loading
- the <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code> and making it a child of the ARNode.
- <p>
- To get an ARNode, attach a <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> to the <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code>,
- and listen for <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorFound(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorFound(ARAnchor, ARNode)</a></code>,
- which is invoked each time a new <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> is found, with its corresponding <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code>.
+  <p>ARImageAnchor is a specialized <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> that represents a detected <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code>
+ in the real world. To determine what <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> this anchor is tracking, compare
+ <code><a href="../../../../reference/com/viro/core/ARAnchor.html#getAnchorId()">getAnchorId()</a></code> with each image target's <code><a href="../../../../reference/com/viro/core/ARImageTarget.html#getId()">getId()</a></code>.
 </p>
 
 
-
-
-
-
-
-
-
-<h2 class="api-section">Summary</h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ========== METHOD SUMMARY =========== -->
-<table id="pubmethods" class="responsive methods">
-<tr><th colspan="2"><h3>Public methods</h3></th></tr>
-
-
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARNode.html#setPauseUpdates(boolean)">setPauseUpdates</a>(boolean pauseUpdates)
-      </code>
-      
-        <p>Set to true to pause automatic synchronization between this ARNode and its <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARNode.html#setPosition(com.viro.core.Vector)">setPosition</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> position)
-      </code>
-      
-        <p>This operation is not valid for ARNodes.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARNode.html#setRotation(com.viro.core.Vector)">setRotation</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> rotation)
-      </code>
-      
-        <p>This operation is not valid for ARNodes.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-
-</table>
 
 
 
@@ -804,114 +670,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ========= METHOD DETAIL ======== -->
 <!-- Public methdos -->
-
-<h2 class="api-section">Public methods</h2>
-
-
-
-<A NAME="setPauseUpdates(boolean)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPauseUpdates</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPauseUpdates (boolean pauseUpdates)</pre>
-    
-    
-
-    
-  <p>Set to true to pause automatic synchronization between this ARNode and its <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.
- ARAnchors are periodically updated by the AR tracking system as its estimates of the anchor's
- properties are refined. By default, updates to the ARAnchor are synchronized to the ARNode;
- for example, if the tracking system determines that an ARAnchor has moved, the ARNode will
- move as well.
- <p>
- It may be useful to pause updates if you wish to ensure the stability of your <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code>
- for a period of time. The ARNode will be immediately updated to its anchor's latest position
- when pause updates is turned off.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>pauseUpdates</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to pause updates, false to resume updating. When set to false, the
-                     ARNode will immediately be updated to match its <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPosition(com.viro.core.Vector)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPosition</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPosition (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> position)</pre>
-    
-    
-
-    
-  <p>This operation is not valid for ARNodes. This is because their transforms are constantly
- updated by the underlying AR tracking system. Calling this function will throw an IllegalAccessError.
-</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>position</code></td>
-        <td width="100%">
-          <code>Vector</code>: The position as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setRotation(com.viro.core.Vector)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setRotation</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setRotation (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> rotation)</pre>
-    
-    
-
-    
-  <p>This operation is not valid for ARNodes. This is because their transforms are constantly
- updated by the underlying AR tracking system. Calling this function will throw an IllegalAccessError.
-</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>rotation</code></td>
-        <td width="100%">
-          <code>Vector</code>: <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> containing the rotation as three Euler angles in radians.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
 
 
 

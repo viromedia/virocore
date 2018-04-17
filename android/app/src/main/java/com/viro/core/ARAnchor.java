@@ -32,7 +32,7 @@ public class ARAnchor {
         PLANE("plane"),
 
         /**
-         * Image type for an {@link ARAnchor}, representing a detect {@link ARImageTarget}.
+         * Image type for an {@link ARAnchor}, representing a detected {@link ARImageTarget}.
          */
         IMAGE("image");
 

@@ -5,9 +5,9 @@
 package com.viro.core;
 
 /**
- * ARImageAnchor is an {@link ARAnchor} that represents a detect {@link ARImageTarget} in the real
- * world. You can use {@link ARAnchor#getAnchorId()} to compare with {@link ARImageTarget#getId()}
- * to determine which {@link ARImageTarget} this ARAnchor is tracking.
+ * ARImageAnchor is a specialized {@link ARAnchor} that represents a detected {@link ARImageTarget}
+ * in the real world. To determine what {@link ARImageTarget} this anchor is tracking, compare
+ * {@link ARAnchor#getAnchorId()} with each image target's {@link ARImageTarget#getId()}.
  */
 public class ARImageAnchor extends ARAnchor {
 
