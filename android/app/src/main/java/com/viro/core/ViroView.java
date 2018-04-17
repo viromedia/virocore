@@ -123,6 +123,24 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         }
     }
 
+    private static class SystemVisibilityListenerImpl implements OnSystemUiVisibilityChangeListener {
+
+        private WeakReference<ViroView> mSystemVisViroView;
+        public SystemVisibilityListenerImpl(ViroView viroView) {
+            mSystemVisViroView = new WeakReference<ViroView>(viroView);
+        }
+
+        @Override
+        public void onSystemUiVisibilityChange(final int visibility) {
+            if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                ViroView viroView = mSystemVisViroView.get();
+                if (viroView != null) {
+                    viroView.changeSystemUiVisibility();
+                }
+            }
+        }
+    }
+
     /**
      * @hide
      */
@@ -149,14 +167,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         mWeakActivity = new WeakReference<>(activity);
         mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
         mSavedOrientation = activity.getRequestedOrientation();
-        mSystemVisibilityListener = new OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(final int visibility) {
-                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                    changeSystemUiVisibility();
-                }
-            }
-        };
+        mSystemVisibilityListener = new SystemVisibilityListenerImpl(this);
        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
 
         final Context activityContext = getContext();
