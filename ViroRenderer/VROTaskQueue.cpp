@@ -52,6 +52,12 @@ void VROTaskQueue::onTaskComplete() {
     _numOpenTasks--;
     if (_numOpenTasks == 0) {
         _onFinished();
+        
+        // Clear the tasks after we're done: this is important because tasks will often
+        // hold a reference back to their parent task queue, so that they can invoke
+        // onTaskComplete(). Because of this we have to explicitly clear the tasks out
+        // to ensure any strong ref cycles are removed.
+        _tasks.clear();
     }
     else if (_executionOrder == VROTaskExecutionOrder::Serial) {
         // Fire off the next task
