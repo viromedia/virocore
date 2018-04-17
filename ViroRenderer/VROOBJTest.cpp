@@ -27,9 +27,6 @@ void VROOBJTest::build(std::shared_ptr<VRORenderer> renderer,
     _sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
-    std::string url = VROTestUtil::getURLForResource("cupcake", "obj");
-    std::string base = url.substr(0, url.find_last_of('/'));
-    
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 1.0, 1.0 });
     light->setPosition( { 0, 0, 0 });
@@ -46,22 +43,7 @@ void VROOBJTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->addLight(light);
     rootNode->setBackgroundCube(VROTestUtil::loadNiagaraBackground());
 
-    std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode,
-                                                                    [](std::shared_ptr<VRONode> node, bool success) {
-                                                                        if (!success) {
-                                                                            return;
-                                                                        }
-                                                                        
-                                                                        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-                                                                        material->setLightingModel(VROLightingModel::PhysicallyBased);
-                                                                        material->getAmbientOcclusion().setTexture(VROTestUtil::loadTexture("cupcake_vanilla_1001_AO", true));
-                                                                        
-                                                                        node->setPosition({0, -0.35, -1.5});
-                                                                        node->setScale({ 5, 5, 5 });
-                                                                    });
-    
-    
+    std::shared_ptr<VRONode> objNode = loadOBJ();
     rootNode->addChildNode(objNode);
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this](VRONode *const node, float seconds) {
@@ -72,4 +54,25 @@ void VROOBJTest::build(std::shared_ptr<VRORenderer> renderer,
     });
     
     objNode->runAction(action);
+}
+
+std::shared_ptr<VRONode> VROOBJTest::loadOBJ() {
+    std::string url = VROTestUtil::getURLForResource("cupcake", "obj");
+    std::string base = url.substr(0, url.find_last_of('/'));
+    
+    std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode,
+                                      [](std::shared_ptr<VRONode> node, bool success) {
+                                          if (!success) {
+                                              return;
+                                          }
+                                          
+                                          std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+                                          material->setLightingModel(VROLightingModel::PhysicallyBased);
+                                          material->getAmbientOcclusion().setTexture(VROTestUtil::loadTexture("cupcake_vanilla_1001_AO", true));
+                                          
+                                          node->setPosition({0, -0.35, -1.5});
+                                          node->setScale({ 5, 5, 5 });
+                                      });
+    return objNode;
 }

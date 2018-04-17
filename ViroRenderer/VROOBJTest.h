@@ -27,6 +27,8 @@ public:
         return _sceneController;
     }
     
+    std::shared_ptr<VRONode> loadOBJ();
+    
 private:
 
     std::shared_ptr<VRONode> _pointOfView;
