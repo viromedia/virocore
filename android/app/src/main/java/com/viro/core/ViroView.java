@@ -81,6 +81,48 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     private boolean mPBREnabled = true;
     private boolean mBloomEnabled = true;
 
+    private static class KeyValidatorListenerImpl implements KeyValidationListener {
+        final WeakReference<Renderer> mWeakRenderer;
+        final WeakReference<ViroView> mWeakViroView;
+
+        public KeyValidatorListenerImpl(Renderer renderer, ViroView viroView) {
+            mWeakRenderer = new WeakReference<Renderer>(renderer);
+            mWeakViroView = new WeakReference<ViroView>(viroView);
+        }
+
+        public void onResponse(boolean success) {
+            ViroView viroView = mWeakViroView.get();
+            if (viroView == null) {
+                return;
+            }
+
+            if (!viroView.mDestroyed) {
+                Renderer renderer = mWeakRenderer.get();
+                if(renderer != null ) {
+                    renderer.setSuspended(!success);
+                }
+            }
+
+            // If the key was invalid in a debug build, then let's show a toast!
+            if (!success && BuildInfo.isDebug(viroView.getContext())) {
+
+                Handler mainHandler = new Handler(viroView.getContext().getMainLooper());
+                Runnable showToastRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        ViroView viroViewStrong = mWeakViroView.get();
+                        if (viroViewStrong != null) {
+                            Toast toast = Toast.makeText(viroViewStrong.getContext().getApplicationContext(),
+                                    INVALID_KEY_MESSAGE, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    }
+                };
+                mainHandler.post(showToastRunnable);
+            }
+        }
+    }
+
     /**
      * @hide
      */
@@ -115,7 +157,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
                 }
             }
         };
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
+       activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
 
         final Context activityContext = getContext();
         mKeyValidator = new KeyValidator(activityContext);
@@ -325,7 +367,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     public final void validateAPIKey(String apiKey) {
         mNativeRenderer.setSuspended(false);
         // we actually care more about the headset than platform in this case.
-        final WeakReference<Renderer> weakRenderer = new WeakReference<>(mNativeRenderer);
+;
         // set defaults
         String viewType = "VR";
         String platform = "cardboard";
@@ -339,32 +381,8 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
             viewType = "3DScene";
             platform = "none";
         }
-        mKeyValidator.validateKey(apiKey, viewType, platform, new KeyValidationListener() {
-            @Override
-            public void onResponse(boolean success) {
-                if (!mDestroyed) {
-                    Renderer renderer = weakRenderer.get();
-                    if(renderer != null ) {
-                        renderer.setSuspended(!success);
-                    }
-                }
 
-                // If the key was invalid in a debug build, then let's show a toast!
-                if (!success && BuildInfo.isDebug(getContext())) {
-
-                    Handler mainHandler = new Handler(getContext().getMainLooper());
-                    Runnable showToastRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast toast = Toast.makeText(getContext().getApplicationContext(),
-                                    INVALID_KEY_MESSAGE, Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                    };
-                    mainHandler.post(showToastRunnable);
-                }
-            }
-        });
+        mKeyValidator.validateKey(apiKey, viewType, platform, new KeyValidatorListenerImpl(mNativeRenderer, this));
     }
 
     /**
