@@ -68,7 +68,7 @@ import java.util.Arrays;
  * {@link ProductSelectionActivity} in AR.
  */
 public class ProductARActivity extends Activity {
-
+    private static final int RECORD_PERM_KEY = 50;
     private static final String TAG = ProductARActivity.class.getSimpleName();
     final public static String INTENT_PRODUCT_KEY = "product_key";
 
@@ -165,7 +165,7 @@ public class ProductARActivity extends Activity {
     private void requestPermissions(){
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                0);
+                RECORD_PERM_KEY);
     }
 
     private static boolean hasRecordingStoragePermissions(Context context) {
@@ -177,7 +177,7 @@ public class ProductARActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        if (!hasRecordingStoragePermissions(ProductARActivity.this)) {
+        if (requestCode == RECORD_PERM_KEY && !hasRecordingStoragePermissions(ProductARActivity.this)) {
             Toast toast = Toast.makeText(ProductARActivity.this, "User denied permissions", Toast.LENGTH_LONG);
             toast.show();
         }
