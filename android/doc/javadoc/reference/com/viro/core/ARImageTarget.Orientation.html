@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARScene | Android Developers
+  <title>ARImageTarget.Orientation | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -253,7 +253,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
@@ -326,7 +326,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTimingFunction.html">AnimationTimingFunction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.Type.html">ARAnchor.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.Type.html">ARHitTestResult.Type</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingState.html">ARScene.TrackingState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingStateReason.html">ARScene.TrackingStateReason</a></li>
@@ -562,15 +562,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARScene</h1>
+<h1 class="api-title">ARImageTarget.Orientation</h1>
 <p>
 <code class="api-signature">
   public
+  static
+  final
   
-  
-  
-  class
-  ARScene
+  enum
+  ARImageTarget.Orientation
 </code>
 <br>
 
@@ -583,7 +583,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/Scene.html">Scene</a>
+    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a>&gt;
   
   
   
@@ -609,7 +609,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Scene.html">com.viro.core.Scene</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">com.viro.core.ARImageTarget.Orientation</a>&gt;
     </td>
   </tr>
   
@@ -620,7 +620,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARScene
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARImageTarget.Orientation
     </td>
   </tr>
   
@@ -633,24 +633,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARScene blends virtual 3D content with the device camera's view of the real world. Similar to a
- normal <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code>, an ARScene contains a hierarchy of <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> objects representing the
- virtual 3D world. Behind these objects the camera's live video feed is rendered. ARScene ensures
- the two worlds -- real and virtual -- stay in sync with a unified coordinate system.
- <p>
- There are two ways to add virtual content to the ARScene. The first is to simply place content
- manually. The origin of the coordinate system is the <i>initial</i> position of the user, and the
- scale is meters. To add content you only need to set the position of the <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> within this
- coordinate system, and add it to the scene graph.
- <p>
- The second way to add virtual content is to use <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>. ARAnchors represent features
- detected in the real-world. You can associate (or "anchor") your content to these features by
- adding your content to the <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> that corresponds to each detected ARAnchor. To do this,
- implement the ARScene <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code>. The <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> callbacks are invoked whenever
- <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>s are found (or updated, or removed) in the real-world.
- <p>
- For a higher level guide on building AR in Viro, refer to the <a
- href="https://virocore.viromedia.com/docs/augmented-reality-ar">Augmented Reality Guide</a>.
+  <p>The orientation of the image to detect in the real world, with respect to the base orientation
+ of your input image. For example, if the input image is an upside-down dollar bill, you would set the
+ orientation to <code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html#Down">Down</a></code> to identify a right-side-up dollar bill. The various orientations
+ refer to where the <i>top</i> of the image is.
 </p>
 
 
@@ -665,80 +651,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
-
-
-  
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        class</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a>&lt;R&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a>,&nbsp;B&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARSceneBuilder</a>&lt;R,&nbsp;B&gt;&gt;</code>
-        <p>ARSceneBuilder for building <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code>.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        interface</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code>
-        <p>Callback interface for ARScene events.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ARScene.TrackingState.html">ARScene.TrackingState</a></code>
-        <p>Values representing position tracking quality.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ARScene.TrackingStateReason.html">ARScene.TrackingStateReason</a></code>
-        <p>Diagnoses to explain cases where we have limited position tracking quality in AR.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
 
 
 
@@ -747,47 +659,71 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<table id="pubctors" class="responsive constructors">
-<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
-
-
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+<table id="enumconstants" class="responsive constants">
+  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
 
   
   <tr class="api apilevel-" >
-  
-  
+    <td><code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></code>&nbsp;</td>
     <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#ARScene()">ARScene</a>()
-      </code>
+      <code>Down</code>
+      <p>The top of the image is at the bottom.&nbsp;
       
-        <p>Construct a new ARScene.
-        
     
 </p>
-      
     </td>
   </tr>
   
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>Left</code>
+      <p>The top of the image is on the left.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>Right</code>
+      <p>The top of the image is on the right.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>Up</code>
+      <p>The top of the image is at the top.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
 
 
-</table>
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -807,21 +743,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
         
         
-        
-        void</code>
+        <a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#addARImageTarget(com.viro.core.ARImageTarget)">addARImageTarget</a>(<a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a> target)
+      <a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
       </code>
-      
-        <p>Add an <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> to the Scene.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -835,265 +766,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         static
+        final
         
-        
-        <a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARSceneBuilder</a>&lt;?&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.html">Scene</a>,&nbsp;?&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">SceneBuilder</a>&gt;</code>
+        <a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">Orientation[]</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#builder()">builder</a>()
+      <a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html#values()">values</a>()
       </code>
-      
-        <p>Creates a builder for building complex <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code> objects.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#displayPointCloud(boolean)">displayPointCloud</a>(boolean displayPointCloud)
-      </code>
-      
-        <p>Set to true to display a point cloud representing the rough feature points that the AR
- tracking system is detecting.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#dispose()">dispose</a>()
-      </code>
-      
-        <p>Release native resources associated with this ARScene.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#removeARImageTarget(com.viro.core.ARImageTarget)">removeARImageTarget</a>(<a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a> target)
-      </code>
-      
-        <p>Remove an <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> from the Scene.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#resetPointCloudSurface()">resetPointCloudSurface</a>()
-      </code>
-      
-        <p>Reset the point cloud surface to the default values.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#setListener(com.viro.core.ARScene.Listener)">setListener</a>(<a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a> listener)
-      </code>
-      
-        <p>Set the <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> to use for responding to AR events.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudMaxPoints(int)">setPointCloudMaxPoints</a>(int maxPoints)
-      </code>
-      
-        <p>Set the maximum number of points to render when drawing the AR point cloud.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudSurface(com.viro.core.Surface)">setPointCloudSurface</a>(<a href="../../../../reference/com/viro/core/Surface.html">Surface</a> surface)
-      </code>
-      
-        <p>Set the <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that should be used to render each point in the rendered
- AR point cloud.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudSurfaceScale(com.viro.core.Vector)">setPointCloudSurfaceScale</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)
-      </code>
-      
-        <p>Set the scale factor to use when rendering each point in the AR point cloud.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudUpdateListener(com.viro.core.PointCloudUpdateListener)">setPointCloudUpdateListener</a>(<a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a> listener)
-      </code>
-      
-        <p>Set the <code><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></code> to use for receiving point cloud updates.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -1115,6 +796,111 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Enum Values -->
 
 
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
+<h2 class="api-section">Enum values</h2>
+
+
+
+
+<A NAME="Down"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Down</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a> Down</pre>
+    
+    
+
+    
+  <p>The top of the image is at the bottom. Represents 180 degree rotation of the image.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="Left"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Left</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a> Left</pre>
+    
+    
+
+    
+  <p>The top of the image is on the left. Represents 90 degree rotation of the image
+ counterclockwise.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="Right"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Right</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a> Right</pre>
+    
+    
+
+    
+  <p>The top of the image is on the right. Represents 90 degree rotation of the image
+ clockwise.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="Up"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Up</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a> Up</pre>
+    
+    
+
+    
+  <p>The top of the image is at the top. Represents no rotation of the image.
+</p></p>
+
+    
+</div>
+
+
+
+
 <!-- Constants -->
 
 
@@ -1122,35 +908,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Public ctors -->
-
-
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<h2 class="api-section">Public constructors</h2>
-
-
-
-<A NAME="ARScene()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">ARScene</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-ARScene ()</pre>
-    
-    
-
-    
-  <p>Construct a new ARScene.
-</p></p>
-
-</div>
-
-
 
 
 
@@ -1166,10 +923,10 @@ ARScene ()</pre>
 
 
 
-<A NAME="addARImageTarget(com.viro.core.ARImageTarget)"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">addARImageTarget</h3>
+    <h3 class="api-name">valueOf</h3>
     <div class="api-level">
       <div></div>
       
@@ -1177,64 +934,35 @@ ARScene ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void addARImageTarget (<a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a> target)</pre>
+<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
     
     
 
     
-  <p>Add an <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> to the Scene. Once added, Viro will search for this reference
- image in the real-world, and alert you when an instance is found by invoking
- <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorFound(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorFound(ARAnchor, ARNode)</a></code> with an <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> anchor.</p></p>
+  <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>target</code></td>
+        <td><code>name</code></td>
         <td width="100%">
-          <code>ARImageTarget</code>: The reference <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> you want to find in the real-world.</p></td>
+          <code>String</code> <!-- no parameter comment --></p></td>
       </tr>
     </table>
-  <div>
-      <p><b>See also:</b></p>
-      <ul class="nolist"><li><code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code></li>
-      </ul>
-  </div>
-
-</div>
-
-
-<A NAME="builder()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">builder</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARSceneBuilder</a>&lt;?&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.html">Scene</a>,&nbsp;?&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">SceneBuilder</a>&gt; builder ()</pre>
-    
-    
-
-    
-  <p>Creates a builder for building complex <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code> objects.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARSceneBuilder</a>&lt;?&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.html">Scene</a>,&nbsp;?&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">SceneBuilder</a>&gt;</code></td>
-        <td width="100%"><code><a href="../../../../reference/com/viro/core/ARScene.ARSceneBuilder.html">ARScene.ARSceneBuilder</a></code> object.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="displayPointCloud(boolean)"></A>
+<A NAME="values()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">displayPointCloud</h3>
+    <h3 class="api-name">values</h3>
     <div class="api-level">
       <div></div>
       
@@ -1242,251 +970,17 @@ void addARImageTarget (<a href="../../../../reference/com/viro/core/ARImageTarge
 
     </div>
 <pre class="api-signature no-pretty-print">
-void displayPointCloud (boolean displayPointCloud)</pre>
+<a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">Orientation[]</a> values ()</pre>
     
     
 
     
-  <p>Set to true to display a point cloud representing the rough feature points that the AR
- tracking system is detecting. This is useful for debugging and analysis, but can also be
- used for rendering effects.</p></p>
+  <p></p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>displayPointCloud</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to display the point cloud, false to remove.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="dispose()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">dispose</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void dispose ()</pre>
-    
-    
-
-    
-  <p>Release native resources associated with this ARScene.
-</p></p>
-
-</div>
-
-
-<A NAME="removeARImageTarget(com.viro.core.ARImageTarget)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">removeARImageTarget</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void removeARImageTarget (<a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a> target)</pre>
-    
-    
-
-    
-  <p>Remove an <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> from the Scene. Viro will stop searching for this image.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>target</code></td>
-        <td width="100%">
-          <code>ARImageTarget</code>: The target to stop searching for in the real-world.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="resetPointCloudSurface()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">resetPointCloudSurface</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void resetPointCloudSurface ()</pre>
-    
-    
-
-    
-  <p>Reset the point cloud surface to the default values. The point cloud surface is the
- <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that will be used to render each point in the point cloud.
-</p></p>
-
-</div>
-
-
-<A NAME="setListener(com.viro.core.ARScene.Listener)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setListener</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setListener (<a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a> listener)</pre>
-    
-    
-
-    
-  <p>Set the <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> to use for responding to AR events. This enables your application
- to receive <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> and <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> objects as they are detected by the AR
- tracking system.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>listener</code></td>
-        <td width="100%">
-          <code>ARScene.Listener</code>: The <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> to use for this ARScene.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPointCloudMaxPoints(int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPointCloudMaxPoints</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPointCloudMaxPoints (int maxPoints)</pre>
-    
-    
-
-    
-  <p>Set the maximum number of points to render when drawing the AR point cloud.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>maxPoints</code></td>
-        <td width="100%">
-          <code>int</code>: The maximum number of points to render.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPointCloudSurface(com.viro.core.Surface)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPointCloudSurface</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPointCloudSurface (<a href="../../../../reference/com/viro/core/Surface.html">Surface</a> surface)</pre>
-    
-    
-
-    
-  <p>Set the <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that should be used to render each point in the rendered
- AR point cloud. This allows you to customize the appearance of the cloud with a
- textured (or otherwise colored) Surface.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>surface</code></td>
-        <td width="100%">
-          <code>Surface</code>: The <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> to use for representing each point in the cloud.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPointCloudSurfaceScale(com.viro.core.Vector)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPointCloudSurfaceScale</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPointCloudSurfaceScale (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)</pre>
-    
-    
-
-    
-  <p>Set the scale factor to use when rendering each point in the AR point cloud.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>scale</code></td>
-        <td width="100%">
-          <code>Vector</code>: The scale as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> in X, Y, and Z dimensions.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPointCloudUpdateListener(com.viro.core.PointCloudUpdateListener)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPointCloudUpdateListener</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPointCloudUpdateListener (<a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a> listener)</pre>
-    
-    
-
-    
-  <p>Set the <code><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></code> to use for receiving point cloud updates. The
- provided listener will receive an updated <code><a href="../../../../reference/com/viro/core/ARPointCloud.html">ARPointCloud</a></code> as the point cloud updates.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>listener</code></td>
-        <td width="100%">
-          <code>PointCloudUpdateListener</code>: The <code><a href="../../../../reference/com/viro/core/PointCloudUpdateListener.html">PointCloudUpdateListener</a></code> to use to receive point cloud updates.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">Orientation[]</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 

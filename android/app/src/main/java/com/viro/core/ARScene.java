@@ -328,10 +328,23 @@ public class ARScene extends Scene {
     }
     //#ENDIF
 
+    /**
+     * Add an {@link ARImageTarget} to the Scene. Once added, Viro will search for this reference
+     * image in the real-world, and alert you when an instance is found by invoking
+     * {@link Listener#onAnchorFound(ARAnchor, ARNode)} with an {@link ARImageAnchor} anchor.
+     *
+     * @param target The reference {@link ARImageTarget} you want to find in the real-world.
+     * @see ARImageTarget
+     */
     public void addARImageTarget(ARImageTarget target) {
         nativeAddARImageTarget(mNativeRef, target.getNativeRef());
     }
 
+    /**
+     * Remove an {@link ARImageTarget} from the Scene. Viro will stop searching for this image.
+     *
+     * @param target The target to stop searching for in the real-world.
+     */
     public void removeARImageTarget(ARImageTarget target) {
         nativeRemoveARImageTarget(mNativeRef, target.getNativeRef());
     }
