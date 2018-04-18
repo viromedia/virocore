@@ -26,7 +26,9 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
     _cameraTextureId(0),
-    _displayRotation(VROARDisplayRotation::R0) {
+    _displayRotation(VROARDisplayRotation::R0),
+    _rotatedImageDataLength(0),
+    _rotatedImageData(nullptr) {
 
     _session = nullptr;
     _frame = nullptr;
@@ -74,6 +76,9 @@ VROARSessionARCore::~VROARSessionARCore() {
     if (_session != nullptr) {
         pinfo("Destroying ARCore session");
         delete (_session);
+    }
+    if (_rotatedImageData != nullptr) {
+        free (_rotatedImageData);
     }
 }
 
@@ -489,4 +494,13 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
     }
 
     plane->setBoundaryVertices(boundaryVertices);
+}
+
+uint8_t *VROARSessionARCore::getRotatedCameraImageData(int size) {
+    if (_rotatedImageData == nullptr || _rotatedImageDataLength != size) {
+        free (_rotatedImageData);
+        _rotatedImageData = (uint8_t *) malloc(size);
+        _rotatedImageDataLength = size;
+    }
+    return _rotatedImageData;
 }

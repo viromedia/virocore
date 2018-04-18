@@ -114,6 +114,12 @@ public:
     virtual void onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
     virtual void onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anchor);
 
+    /*
+     Retrieve the shared rotated camera image data array. The data must be of the
+     given size in bytes.
+     */
+    uint8_t *getRotatedCameraImageData(int size);
+
 private:
 
     /*
@@ -181,6 +187,16 @@ private:
 
     int _frameCount;
     bool _hasTrackingSessionInitialized;
+
+
+    /*
+     Stores the RGBA8 rotated camera image data, each frame. This is kept here instead of in
+     VROARCameraARCore so that it can be re-used each frame. VROARCameraARCore never exposes this
+     to external clients, it only exposes the 'cropped' image data, which matches what's visible
+     by the AR viewport.
+     */
+    int _rotatedImageDataLength;
+    uint8_t *_rotatedImageData;
 
     void initTrackingSession();
     bool updateARCoreConfig();

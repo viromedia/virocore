@@ -38,17 +38,13 @@ public:
      Get the image data in RGBA8888 format. The passed in data buffer must be large enough to
      fit the data (image width * image height * 4 bytes). These functions are only valid if
      isImageDataAvailable returns true.
+
+     Note these functions return the 'cropped' image data, which matches the dimensions and
+     rotation of the current AR viewport.
      */
     bool isImageDataAvailable();
     void getImageData(uint8_t *outImageData);
     VROVector3f getImageSize();
-
-    /*
-     Crop the AR image givne the current rotation, and store it in the given data buffer. The
-     buffer must be large enough to fit the data (cropped image width * cropped image height * 4 bytes).
-     */
-    void cropImage(const uint8_t *image, int imageStride, uint8_t *outImageData);
-    VROVector3f getCroppedImageSize();
     
 private:
 
@@ -59,9 +55,31 @@ private:
     VROVector3f _position;
     VROMatrix4f _rotation;
 
+    /*
+     Load the image data from ARCore, and stores it in _image.
+     */
     bool loadImageData();
+
+    /*
+     Retrieve the rotated camera image data in RGBA. The ARCore _image is converted from YCbCr to
+     RGBA and rotated to fit the current viewport. It is not cropped to fit the current viewport size.
+     */
+    void getRotatedImageData(uint8_t *outImageData);
+    VROVector3f getRotatedImageSize();
+
+    /*
+    Retrieve the cropping rectangle to use on the rotated image data to get the cropped image
+    rectangle.
+    */
     void getImageCropRectangle(VROARDisplayRotation rotation, int width, int height,
                                int *outLeft, int *outRight, int *outBottom, int *outTop);
+
+    /*
+     Crop the AR image given the current rotation, and store it in the given data buffer. The
+     buffer must be large enough to fit the data (cropped image width * cropped image height * 4 bytes).
+     */
+    void cropImage(const uint8_t *image, int imageStride, uint8_t *outImageData);
+    VROVector3f getCroppedImageSize();
 
 };
 

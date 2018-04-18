@@ -94,6 +94,30 @@ bool VROARCameraARCore::isImageDataAvailable() {
 }
 
 VROVector3f VROARCameraARCore::getImageSize() {
+    return getCroppedImageSize();
+}
+
+void VROARCameraARCore::getImageData(uint8_t *outImageData) {
+    if (!isImageDataAvailable()) {
+        return;
+    }
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return;
+    }
+
+    VROVector3f rotatedImageSize = getRotatedImageSize();
+    int rotatedImageDataLength = (int) rotatedImageSize.x * (int) rotatedImageSize.y * 4;
+    uint8_t *rotatedImageData = session->getRotatedCameraImageData(rotatedImageDataLength);
+
+    // Derive the rotated image data from the ARCore _image
+    getRotatedImageData(rotatedImageData);
+
+    // Crop the image to match the viewport
+    cropImage(rotatedImageData, (int) rotatedImageSize.x, outImageData);
+}
+
+VROVector3f VROARCameraARCore::getRotatedImageSize() {
     if (!loadImageData()) {
         return { 0, 0, 0 };
     }
@@ -116,6 +140,40 @@ VROVector3f VROARCameraARCore::getImageSize() {
 
 void VROARCameraARCore::getImageCropRectangle(VROARDisplayRotation rotation, int width, int height,
                                               int *outLeft, int *outRight, int *outBottom, int *outTop) {
+
+    /*
+     The original camera image is rotated 90 degrees (or 270 degrees) when the viewport is
+     at 0 degree or 180 degree rotation (in other words the camera image is always landscape,
+     while the viewport can vary). Capture the correct image width and height using the
+     postRotationWidth and postRotationHeight variables.
+     */
+    float postRotationWidth  = (float) _image->getWidth();
+    float postRotationHeight = (float) _image->getHeight();
+
+    if (rotation == VROARDisplayRotation::R0 || rotation == VROARDisplayRotation::R180) {
+        postRotationWidth  = (float) _image->getHeight();
+        postRotationHeight = (float) _image->getWidth();
+    }
+
+    /*
+     To map the camera image to the viewport, we have to scale and crop. First we scale the
+     camera image to fit the viewport. We scale the image such by the minimum amount that makes
+     both dimensions fit the viewport. Unless this scale is equal for both width and height, by
+     doing this we do end up scaling one dimension to be *larger* than the viewport. We crop that
+     part off: the excess pixels that we need to crop are captured in excessX and excessY, one of
+     which is always zero.
+     */
+    float scaleX = (float) width  / postRotationWidth;
+    float scaleY = (float) height / postRotationHeight;
+    float scale = std::max(scaleX, scaleY);
+    float excessX = postRotationWidth * (scale / scaleX) - postRotationWidth;
+    float excessY = postRotationHeight * (scale / scaleY) - postRotationHeight;
+
+    /*
+     Before applying the crop operation, we apply the additional crop that ARCore specifies
+     through its texture coordinates. The reason for these coordinates is internal to ARCore.
+     The coordinates apply differently depending on the surface rotation.
+     */
     float texcoords[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     _frame->getBackgroundTexcoords(texcoords);
 
@@ -129,9 +187,57 @@ void VROARCameraARCore::getImageCropRectangle(VROARDisplayRotation rotation, int
     TR.x = texcoords[6];
     TR.y = texcoords[7];
 
+    switch (rotation) {
+        case VROARDisplayRotation::R0:
+            // Image was rotated 90 degrees CC
+            *outLeft   = (int) (BR.y * postRotationWidth);
+            *outRight  = (int) (TL.y * postRotationWidth);
+            *outTop    = (int) (TR.x * postRotationHeight);
+            *outBottom = (int) (BL.x * postRotationHeight);
+
+            break;
+
+        case VROARDisplayRotation::R90:
+            // No rotation
+            *outLeft   = (int) (BL.x * postRotationWidth);
+            *outRight  = (int) (BR.x * postRotationWidth);
+            *outTop    = (int) (TL.y * postRotationHeight);
+            *outBottom = (int) (BL.y * postRotationHeight);
+
+            break;
+
+        case VROARDisplayRotation::R180:
+            // Image was rotated 270 degrees CC
+
+            // Note: the values below are unconfirmed, as we don't actually seem to support
+            // 180 degree rotation
+            *outLeft   = (int) (BR.y * postRotationWidth);
+            *outRight  = (int) (TL.y * postRotationWidth);
+            *outTop    = (int) (TR.x * postRotationHeight);
+            *outBottom = (int) (BL.x * postRotationHeight);
+
+            break;
+
+        case VROARDisplayRotation::R270:
+            // Image was rotated 180 degrees CC
+            *outLeft   = (int) (BR.x * postRotationWidth);
+            *outRight  = (int) (BL.x * postRotationWidth);
+            *outTop    = (int) (BL.y * postRotationHeight);
+            *outBottom = (int) (TL.y * postRotationHeight);
+
+            break;
+    }
+
+    /*
+     Finally, apply the cropping require by our single-dimension scale operation.
+     */
+    *outLeft   += excessX / 2.0;
+    *outRight  -= excessX / 2.0;
+    *outTop    += excessY / 2.0;
+    *outBottom -= excessY / 2.0;
 }
 
-void VROARCameraARCore::getImageData(uint8_t *data) {
+void VROARCameraARCore::getRotatedImageData(uint8_t *data) {
     if (!loadImageData()) {
         return;
     }
@@ -142,19 +248,15 @@ void VROARCameraARCore::getImageData(uint8_t *data) {
 
     switch (session->getDisplayRotation()) {
         case VROARDisplayRotation::R0:
-            pinfo("0 degree rotation");
             VROYuvImageConverter::convertImage90(_image, data);
             return;
         case VROARDisplayRotation::R90:
-            pinfo("90 degree rotation");
             VROYuvImageConverter::convertImage(_image, data);
             return;
         case VROARDisplayRotation::R180:
-            pinfo("180 degree rotation");
             VROYuvImageConverter::convertImage270(_image, data);
             return;
         case VROARDisplayRotation::R270:
-            pinfo("270 degree rotation");
             VROYuvImageConverter::convertImage180(_image, data);
             return;
     }
@@ -180,8 +282,6 @@ void VROARCameraARCore::cropImage(const uint8_t *image, int imageStride, uint8_t
     int left, right, bottom, top;
     getImageCropRectangle(session->getDisplayRotation(), session->getWidth(), session->getHeight(),
                           &left, &right, &bottom, &top);
-    pinfo("Cropping with left %d, right %d, top %d, bottom %d", left, right, top, bottom);
-
     const uint32_t *source = (const uint32_t *) image;
     uint32_t *dest   = (uint32_t *) outImageData;
 
