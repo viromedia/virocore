@@ -19,9 +19,10 @@ To report bugs/issues with the Viro platform, please file new issues on this rep
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
 3. Choose the code sample you wish to deploy, and open the root directory in Android studio. 
 4. Edit AndroidManifest.xml, and replace "API_KEY_HERE" with the key emailed to you with signup.
-5. (Optional) Clean and gradle sync.
-6. Build and deploy.
-7. You should now be in the application! Enjoy!
+5. Ensure that [Instant Run](https://developer.android.com/studio/run/index.html#instant-run) is disabled.
+6. (Optional) Clean and gradle sync.
+7. Build and deploy.
+8. You should now be in the application! Enjoy!
 
 ### More Information
 
