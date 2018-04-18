@@ -48,7 +48,7 @@ VROImageWasm::VROImageWasm(std::string file, VROTextureInternalFormat internalFo
         }
     }
     
-    _format = bytesPerPixel <= 3 ? VROTextureFormat::RGB : VROTextureFormat::RGBA8;
+    _format = bytesPerPixel <= 3 ? VROTextureFormat::RGB8 : VROTextureFormat::RGBA8;
     _internalFormat = VROTextureInternalFormat::RGBA8;
 }
 
