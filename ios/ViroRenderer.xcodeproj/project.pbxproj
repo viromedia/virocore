@@ -9,15 +9,8 @@
 /* Begin PBXBuildFile section */
 		13477941207EB78A002CE280 /* VROMetricsRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 13477940207EB78A002CE280 /* VROMetricsRecorder.h */; };
 		13477944207EB936002CE280 /* VROMetricsRecorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13477942207EB936002CE280 /* VROMetricsRecorder.mm */; };
-		13F631A02065BF8300A74EFC /* KeenProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F631962065BF8200A74EFC /* KeenProperties.m */; };
-		13F631A12065BF8300A74EFC /* KeenConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319B2065BF8300A74EFC /* KeenConstants.m */; };
-		13F631A22065BF8300A74EFC /* KeenClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319C2065BF8300A74EFC /* KeenClient.m */; };
-		13F631A32065BF8300A74EFC /* HTTPCodes.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319D2065BF8300A74EFC /* HTTPCodes.m */; };
-		13F631A42065BF8300A74EFC /* KIODBStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319E2065BF8300A74EFC /* KIODBStore.m */; };
-		13F631A52065BF8300A74EFC /* KIOQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319F2065BF8300A74EFC /* KIOQuery.m */; };
 		13F631AA2065C1EA00A74EFC /* keen_io_sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A72065C1EA00A74EFC /* keen_io_sqlite3ext.h */; };
-		13F631AB2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 13F631A82065C1EA00A74EFC /* keen_io_sqlite3.c */; };
-		13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 13F631A82065C1EA00A74EFC /* keen_io_sqlite3.c */; };
+		13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 13F631A82065C1EA00A74EFC /* keen_io_sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		13F631AD2065C1EA00A74EFC /* keen_io_sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A92065C1EA00A74EFC /* keen_io_sqlite3.h */; };
 		13F631AE2065C21B00A74EFC /* HTTPCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631952065BF8200A74EFC /* HTTPCodes.h */; };
 		13F631AF2065C21B00A74EFC /* HTTPCodes.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319D2065BF8300A74EFC /* HTTPCodes.m */; };
@@ -34,7 +27,6 @@
 		13F631BA2065C21B00A74EFC /* KIOQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631992065BF8200A74EFC /* KIOQuery.h */; };
 		13F631BB2065C21B00A74EFC /* KIOQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319F2065BF8300A74EFC /* KIOQuery.m */; };
 		13F631BF2065C26E00A74EFC /* KIOReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631BD2065C26D00A74EFC /* KIOReachability.h */; };
-		13F631C02065C26E00A74EFC /* KIOReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F631BE2065C26E00A74EFC /* KIOReachability.m */; };
 		13F631C12065C26E00A74EFC /* KIOReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F631BE2065C26E00A74EFC /* KIOReachability.m */; };
 		647A0F137242382CD008BE56 /* Pods_ViroSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7A7748CC8659A11C76D30F3 /* Pods_ViroSample.framework */; };
 		8A11C8F51EF5AB9D0003E829 /* VROARDeclarativePlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F41EF5A8E30003E829 /* VROARDeclarativePlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3853,18 +3845,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13F631A12065BF8300A74EFC /* KeenConstants.m in Sources */,
 				A597F8F0201ADD17007EE387 /* VROBRDFRenderPass.cpp in Sources */,
-				13F631AB2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */,
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				A5B433EC204E64A600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */,
-				13F631A02065BF8300A74EFC /* KeenProperties.m in Sources */,
-				13F631A42065BF8300A74EFC /* KIODBStore.m in Sources */,
-				13F631A32065BF8300A74EFC /* HTTPCodes.m in Sources */,
-				13F631A52065BF8300A74EFC /* KIOQuery.m in Sources */,
-				13F631A22065BF8300A74EFC /* KeenClient.m in Sources */,
 				8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */,
-				13F631C02065C26E00A74EFC /* KIOReachability.m in Sources */,
 				8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
