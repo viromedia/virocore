@@ -721,12 +721,8 @@
 		8A2DA3AB1F8B2C0F001FC3BA /* VROInputPresenterAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterAR.h; sourceTree = "<group>"; };
 		8A2DA3AC1F8B2C0F001FC3BA /* VROInputControllerAR.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROInputControllerAR.cpp; sourceTree = "<group>"; };
 		8A2DA3AD1F8B2C0F001FC3BA /* VROInputControllerAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerAR.h; sourceTree = "<group>"; };
-		8A35172D1EE09E3F00B6E786 /* VROImageTracker.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROImageTracker.cpp; sourceTree = "<group>"; };
-		8A35172E1EE09E3F00B6E786 /* VROImageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageTracker.h; sourceTree = "<group>"; };
 		8A3517301EE0A50A00B6E786 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = screenshot.png; path = ViroSample/screenshot.png; sourceTree = "<group>"; };
 		8A3517311EE0A50A00B6E786 /* ben.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = ben.jpg; path = ViroSample/ben.jpg; sourceTree = "<group>"; };
-		8A3517341EE0B55400B6E786 /* VROImageTrackerOutput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROImageTrackerOutput.cpp; sourceTree = "<group>"; };
-		8A3517351EE0B55400B6E786 /* VROImageTrackerOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageTrackerOutput.h; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A5C05581EF6416900F94CB9 /* VROARNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNode.h; sourceTree = "<group>"; };
 		8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSceneController.h; sourceTree = "<group>"; };
@@ -1534,10 +1530,6 @@
 				8F4DCE381BFBD19B00061DD7 /* VROMaterialVisual.cpp */,
 				8F4DCE361BFBCB8200061DD7 /* VROTexture.h */,
 				8F4DCE351BFBCB8200061DD7 /* VROTexture.cpp */,
-				8A35172E1EE09E3F00B6E786 /* VROImageTracker.h */,
-				8A35172D1EE09E3F00B6E786 /* VROImageTracker.cpp */,
-				8A3517351EE0B55400B6E786 /* VROImageTrackerOutput.h */,
-				8A3517341EE0B55400B6E786 /* VROImageTrackerOutput.cpp */,
 				8FD4DE9D1C16432B003DC425 /* VROLight.h */,
 				8FD4DE9C1C16432B003DC425 /* VROLight.cpp */,
 				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,

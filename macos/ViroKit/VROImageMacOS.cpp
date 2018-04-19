@@ -12,6 +12,8 @@
 #include "VROTime.h"
 
 VROImageMacOS::VROImageMacOS(NSImage *image, VROTextureInternalFormat internalFormat) {
+    passert (image != nullptr);
+    
     NSRect imageRect = NSMakeRect(0, 0, image.size.width, image.size.height);
     CGImageRef imageRef = [image CGImageForProposedRect:&imageRect context:NULL hints:nil];
     

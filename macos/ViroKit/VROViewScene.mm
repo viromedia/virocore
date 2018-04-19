@@ -27,7 +27,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
     std::shared_ptr<VROInputControllerAR> _inputController;
+    VRORendererConfiguration _rendererConfig;
     
+    NSTimer *_renderTimer;
     NSOpenGLContext *_openGLContext;
     NSOpenGLPixelFormat *_pixelFormat;
     
@@ -45,36 +47,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 #pragma mark - Initialization
 
-- (CVReturn) getFrameForTime:(const CVTimeStamp *)outputTime {
-    // Update the animation
-    // CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-    //[[controller scene] advanceTimeBy:(currentTime - [controller renderTime])];
-    // [controller setRenderTime:currentTime];
-    
-    [self drawView];
-    return kCVReturnSuccess;
-}
-
-static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
-                                       const CVTimeStamp *outputTime, CVOptionFlags flagsIn, CVOptionFlags *flagsOut,
-                                       void *displayLinkContext) {
-    CVReturn result = [(__bridge VROViewScene *)displayLinkContext getFrameForTime:outputTime];
-    return result;
-}
-
-- (void)setupDisplayLink {
-    // Create a display link capable of being used with all active displays
-    CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
-    
-    // Set the renderer output callback function
-    CVDisplayLinkSetOutputCallback(_displayLink, &VRODisplayLinkCallback, (__bridge void *)self);
-    
-    // Set the display link for the current renderer
-    CGLContextObj cglContext = [[self openGLContext] CGLContextObj];
-    CGLPixelFormatObj cglPixelFormat = [[self pixelFormat] CGLPixelFormatObj];
-    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, cglContext, cglPixelFormat);
-}
-
 - (id)initWithFrame:(NSRect)frameRect
              config:(VRORendererConfiguration)config
        shareContext:(NSOpenGLContext *)context {
@@ -85,10 +57,14 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
         kCGLPFADoubleBuffer,
         kCGLPFAColorSize, 24,
         kCGLPFADepthSize, 16,
+        NSOpenGLPFAMultisample,
+        NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute) 1,
+        NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute) 4,
         NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
         0
     };
     
+    _rendererConfig = config;
     _pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
     if (!_pixelFormat) {
         pabort("No OpenGL pixel format");
@@ -96,12 +72,11 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
     _openGLContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:context];
     
     if (self = [super initWithFrame:frameRect]) {
-        [[self openGLContext] makeCurrentContext];
+        [_openGLContext makeCurrentContext];
         
         // Synchronize buffer swaps with vertical refresh rate
         GLint swapInt = 1;
-        [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
-        [self setupDisplayLink];
+        [_openGLContext setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
         
         // Look for changes in view size
         // Note, -reshape will not be called automatically on size changes because NSView does not export it to override
@@ -109,17 +84,42 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
                                                  selector:@selector(reshape)
                                                      name:NSViewGlobalFrameDidChangeNotification
                                                    object:self];
-        [self initRenderer:config];
+        
+        _renderTimer = [NSTimer timerWithTimeInterval:0.001   //a 1ms time interval
+                                              target:self
+                                            selector:@selector(timerFired:)
+                                            userInfo:nil
+                                             repeats:YES];
+        
+        [[NSRunLoop currentRunLoop] addTimer:_renderTimer
+                                     forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop currentRunLoop] addTimer:_renderTimer
+                                     forMode:NSEventTrackingRunLoopMode]; //Ensure timer fires during resize
     }
     return self;
 }
 
-- (NSOpenGLContext *)openGLContext {
-    return _openGLContext;
+- (void)initRenderer:(VRORendererConfiguration)config {
+    VROPlatformSetType(VROPlatformType::iOSSceneView);
+    VROThreadRestricted::setThread(VROThreadName::Renderer);
+    
+    _driver = std::make_shared<VRODriverOpenGLMacOS>(_openGLContext, _pixelFormat);
+    _frame = 0;
+    _suspendedNotificationTime = VROTimeCurrentSeconds();
+    _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width,
+                                                              self.frame.size.height);
+    _renderer = std::make_shared<VRORenderer>(config, _inputController);
+    _renderer->setDelegate(_renderDelegateWrapper);
+    
+    glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
-- (NSOpenGLPixelFormat *)pixelFormat {
-    return _pixelFormat;
+- (void)timerFired:(id)sender
+{
+    // It is good practice in a Cocoa application to allow the system to send the -drawRect:
+    // message when it needs to draw, and not to invoke it directly from the timer.
+    // All we do here is tell the display it needs a refresh
+    [self setNeedsDisplay:YES];
 }
 
 - (void)surfaceNeedsUpdate:(NSNotification *)notification {
@@ -128,8 +128,8 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
 
 - (void)lockFocus {
     [super lockFocus];
-    if ([[self openGLContext] view] != self) {
-        [[self openGLContext] setView:self];
+    if ([_openGLContext view] != self) {
+        [_openGLContext setView:self];
     }
 }
 
@@ -137,23 +137,18 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
     
 }
 
-- (void)drawView {
-    // This method will be called on both the main thread (through -drawRect:) and a secondary thread (through the display link rendering loop)
-    // Also, when resizing the view, -reshape is called on the main thread, but we may be drawing on a secondary thread
-    // Add a mutex around to avoid the threads accessing the context simultaneously
-    CGLLockContext([[self openGLContext] CGLContextObj]);
-    
-    // Make sure we draw to the right context
-    [[self openGLContext] makeCurrentContext];
-    
+- (void)drawRect:(NSRect)dirtyRect {
+    [_openGLContext makeCurrentContext];
+    if (_frame == 0) {
+        [self initRenderer:_rendererConfig];
+    }
+
     @autoreleasepool {
         [self renderFrame];
     }
     ++_frame;
     ALLOCATION_TRACKER_PRINT();
-    [[self openGLContext] flushBuffer];
-    
-    CGLUnlockContext([[self openGLContext] CGLContextObj]);
+    [_openGLContext flushBuffer];
 }
 
 - (BOOL)acceptsFirstResponder {
@@ -197,24 +192,11 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
     
 }
 
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
+- (void)reshape {
     if (_inputController) {
         _inputController->setViewportSize(self.frame.size.width,
                                           self.frame.size.height);
     }
-}
-
-- (void)initRenderer:(VRORendererConfiguration)config {
-    VROPlatformSetType(VROPlatformType::iOSSceneView);
-    //VROThreadRestricted::setThread(VROThreadName::Renderer);
-    
-    _driver = std::make_shared<VRODriverOpenGLMacOS>(_openGLContext, _pixelFormat);
-    _frame = 0;
-    _suspendedNotificationTime = VROTimeCurrentSeconds();
-    _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width,
-                                                              self.frame.size.height);
-    _renderer = std::make_shared<VRORenderer>(config, _inputController);
 }
 
 - (void)setBackgroundColor:(NSColor *)color {
@@ -272,8 +254,6 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
     _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
-    _renderer->setDelegate(_renderDelegateWrapper);
-    
     [self startAnimation];
 }
 

@@ -14,8 +14,6 @@ class VRORendererConfiguration;
 
 @interface VROViewScene : NSView <VROView> 
 
-+ (NSOpenGLPixelFormat *)defaultPixelFormat;
-
 - (instancetype)initWithFrame:(NSRect)frameRect
                        config:(VRORendererConfiguration)config
                  shareContext:(NSOpenGLContext *)context;
@@ -23,13 +21,7 @@ class VRORendererConfiguration;
 /*
  Base OpenGL view implementation.
  */
-- (void)setOpenGLContext:(NSOpenGLContext *)context;
-- (NSOpenGLContext *)openGLContext;
-- (void)clearGLContext;
-- (void)prepareOpenGL;
 - (void)update;
-- (void)setPixelFormat:(NSOpenGLPixelFormat *)pixelFormat;
-- (NSOpenGLPixelFormat *)pixelFormat;
 
 /*
  Should be invoked before this object gets deallocated, to clean up GL

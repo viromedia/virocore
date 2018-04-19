@@ -707,7 +707,7 @@
                 <viewController id="XfG-lQ-9wD" customClass="VROTestViewController" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                     </view>
                     <connections>
                         <outlet property="renderDelegate" destination="8jc-VG-ZXb" id="idr-L8-uwP"/>
