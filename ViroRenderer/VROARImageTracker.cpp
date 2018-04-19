@@ -578,12 +578,12 @@ VROARImageTrackerOutput VROARImageTracker::findSingleTargetBF(VROARImageTargetOp
 
     VROMatrix4f worldTransform = convertToWorldCoordinates(_currentCamera, outTranslation, outRotation);
 
-    // OpenCV targets are assumed to be in the X-Y plane whereas ARKit returns in the X-Z plane
-    // so apply a -90 degree rotation about the X-axis. (we need to apply the transform).
+    // OpenCV targets are assumed to be in the X-Y plane w/ Z forward whereas ARKit returns in the
+    // X-Z plane with Y upwards so apply a 90 degree rotation about the X-axis.
     // TODO: maybe we can account for this by changing how we define the CvPoint3D32f corners
     // points in the lines above.
     VROMatrix4f rotMatrix;
-    rotMatrix.rotateX(-M_PI_2);
+    rotMatrix.rotateX(M_PI_2);
     worldTransform = worldTransform.multiply(rotMatrix);
 
 #if ENABLE_DETECT_LOGGING
