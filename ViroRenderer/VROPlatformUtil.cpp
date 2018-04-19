@@ -22,6 +22,15 @@ VROPlatformType VROPlatformGetType() {
     return sPlatformType;
 }
 
+std::string VROPlatformLastPathComponent(std::string url, std::string fallback) {
+    size_t lastIndex = url.find_last_of("/");
+    if (lastIndex == std::string::npos || (lastIndex + 1) >= url.size()) {
+        return fallback;
+    } else {
+        return url.substr(lastIndex + 1);
+    }
+}
+
 std::string VROPlatformLoadFileAsString(std::string path) {
     std::ifstream input(path, std::ios::in | std::ios::binary);
     if (input) {
@@ -61,6 +70,9 @@ void *VROPlatformLoadFile(std::string filename, int *outLength) {
 
 #import <Foundation/Foundation.h>
 
+NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
+                                                     void (^completionBlock)(NSData *data, NSError *error));
+
 std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
     NSString *path = [bundle pathForResource:[NSString stringWithUTF8String:resource.c_str()]
@@ -73,55 +85,6 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
     return VROPlatformLoadFileAsString(VROPlatformGetPathForResource(resource, type));
 }
 
-NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
-                                                     void (^completionBlock)(NSData *data, NSError *error)) {
-    
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    sessionConfig.timeoutIntervalForRequest = 30;
-    
-    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
-    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
-                                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                                            if (httpResponse.statusCode != 200) {
-                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
-                                                completionBlock(nil, error);
-                                            }
-                                            else {
-                                                completionBlock(data, error);
-                                            }
-                                            dispatch_semaphore_signal(semaphore);
-                                          }];
-    [downloadTask resume];
-    [downloadSession finishTasksAndInvalidate];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    
-    return downloadTask;
-}
-
-NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error)) {
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    sessionConfig.timeoutIntervalForRequest = 30;
-    
-    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
-    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
-                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
-                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                                            if (httpResponse.statusCode != 200) {
-                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
-                                                completionBlock(nil, error);
-                                            }
-                                            else {
-                                                completionBlock(data, error);
-                                            }
-                                          }];
-    [downloadTask resume];
-    [downloadSession finishTasksAndInvalidate];
-    return downloadTask;
-}
-
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     NSURL *URL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
     __block NSString *tempFilePath;
@@ -132,7 +95,9 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
         }
         
         if (data && !error) {
-            NSString *fileName = [NSString stringWithFormat:@"%@.tmp", [[NSProcessInfo processInfo] globallyUniqueString]];
+            NSString *fileName = [NSString stringWithFormat:@"%@_%s",
+                                  [[NSProcessInfo processInfo] globallyUniqueString],
+                                  VROPlatformLastPathComponent(url, "download.tmp").c_str()];
             NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
             [data writeToURL:fileURL atomically:NO];
             
@@ -161,7 +126,9 @@ void VROPlatformDownloadURLToFileAsync(std::string url,
         }
         
         if (data && !error) {
-            NSString *fileName = [NSString stringWithFormat:@"%@.tmp", [[NSProcessInfo processInfo] globallyUniqueString]];
+            NSString *fileName = [NSString stringWithFormat:@"%@_%s",
+                                  [[NSProcessInfo processInfo] globallyUniqueString],
+                                  VROPlatformLastPathComponent(url, "download.tmp").c_str()];
             NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
             [data writeToURL:fileURL atomically:NO];
             
@@ -189,8 +156,6 @@ void VROPlatformDeleteFile(std::string filename) {
     [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithUTF8String:filename.c_str()]
                                                error:&deleteError];
 }
-
-
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -221,6 +186,55 @@ std::string VROPlatformGetDeviceBrand() {
 #if VRO_PLATFORM_IOS
 #import "VROImageiOS.h"
 
+NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
+                                                     void (^completionBlock)(NSData *data, NSError *error)) {
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 30;
+    
+    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
+                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                                            if (httpResponse.statusCode != 200) {
+                                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
+                                                                completionBlock(nil, error);
+                                                            }
+                                                            else {
+                                                                completionBlock(data, error);
+                                                            }
+                                                            dispatch_semaphore_signal(semaphore);
+                                                        }];
+    [downloadTask resume];
+    [downloadSession finishTasksAndInvalidate];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    return downloadTask;
+}
+
+NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error)) {
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 30;
+    
+    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
+                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+                                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                                            if (httpResponse.statusCode != 200) {
+                                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
+                                                                completionBlock(nil, error);
+                                                            }
+                                                            else {
+                                                                completionBlock(data, error);
+                                                            }
+                                                        }];
+    [downloadTask resume];
+    [downloadSession finishTasksAndInvalidate];
+    return downloadTask;
+}
+
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
     UIImage *image = [UIImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
@@ -232,9 +246,44 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
 #elif VRO_PLATFORM_MACOS
 #import "VROImageMacOS.h"
 
+NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
+                                                     void (^completionBlock)(NSData *data, NSError *error)) {
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 30;
+    
+    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
+                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                            completionBlock(data, error);
+                                                            dispatch_semaphore_signal(semaphore);
+                                                        }];
+    [downloadTask resume];
+    [downloadSession finishTasksAndInvalidate];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    return downloadTask;
+}
+
+NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error)) {
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 30;
+    
+    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+    NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
+                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                            completionBlock(data, error);
+                                                        }];
+    [downloadTask resume];
+    [downloadSession finishTasksAndInvalidate];
+    return downloadTask;
+}
+
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
-    NSImage *image = [NSImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:filename.c_str()]];
     return std::make_shared<VROImageMacOS>(image, format);
 }
 
@@ -1101,13 +1150,7 @@ void VROPlatformDownloadURLToFileAsync(std::string url,
     context->onSuccess = onSuccess;
     context->onFailure = onFailure;
     
-    size_t lastIndex = url.find_last_of("/");
-    std::string prefix;
-    if (lastIndex == std::string::npos) {
-        prefix = "download";
-    } else {
-        prefix = url.substr(lastIndex);
-    }
+    std::string prefix = "/" + VROPlatformLastPathComponent(url, "download");
     std::string tempFile = prefix + "_" + VROPlatformRandomString(8);
     emscripten_async_wget2(url.c_str(), tempFile.c_str(), "GET", "", context,
                            &VROPlatformWGetDownloadCallback, &VROPlatformWGetErrorCallback, &VROPlatformWGetStatusCallback);
