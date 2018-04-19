@@ -61,28 +61,8 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
         }
         animation->execute(node, [obj_g] {
             VROPlatformDispatchAsyncApplication([obj_g] {
+                VROPlatformCallJavaFunction(obj_g, "animationDidFinish", "()V");
                 JNIEnv *env = VROPlatformGetJNIEnv();
-                jclass javaClass = VROPlatformFindClass(env, obj_g,
-                                                        "com/viro/core/internal/ExecutableAnimation");
-                if (javaClass == nullptr) {
-                    perr("Unable to find ExecutableAnimation class for onFinish callback.");
-                    env->DeleteGlobalRef(obj_g);
-                    return;
-                }
-
-                jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
-                if (method == nullptr) {
-                    perr("Unable to find animationDidFinish() method in ExecutableAnimation");
-                    env->DeleteGlobalRef(obj_g);
-                    return;
-                }
-
-                env->CallVoidMethod(obj_g, method);
-                if (env->ExceptionOccurred()) {
-                    perr("Exception encountered calling ExecutableAnimation::animationDidFinish");
-                    env->ExceptionDescribe();
-                }
-                env->DeleteLocalRef(javaClass);
                 env->DeleteGlobalRef(obj_g);
             });
         });
