@@ -38,9 +38,8 @@
 extern "C" {
 
 // The renderer test runs VROSample.cpp, for fast prototyping when working
-// on renderer features (no bridge integration). Do not check-in with this
-// flag true!
-static const bool kRunRendererTest = false;
+// on renderer features (no bridge integration).
+static bool kRunRendererTest = false;
 static std::shared_ptr<VROSample> sample;
 
 JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
@@ -141,7 +140,8 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
 JNI_METHOD(void, nativeInitializeGL)(JNIEnv *env,
                                      jobject obj,
                                      jlong native_renderer,
-                                     jboolean sRGBFramebuffer) {
+                                     jboolean sRGBFramebuffer,
+                                     jboolean testingMode) {
 
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
@@ -149,6 +149,7 @@ JNI_METHOD(void, nativeInitializeGL)(JNIEnv *env,
     std::shared_ptr<VRODriverOpenGLAndroid> driver = std::dynamic_pointer_cast<VRODriverOpenGLAndroid>(sceneRenderer->getDriver());
     driver->setSRGBFramebuffer(sRGBFramebuffer);
 
+    kRunRendererTest = testingMode;
     if (kRunRendererTest) {
         sample = std::make_shared<VROSample>();
         sceneRenderer->setRenderDelegate(sample);

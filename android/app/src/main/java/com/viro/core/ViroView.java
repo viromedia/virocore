@@ -63,6 +63,10 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      * @hide
      */
     public final static String PLATFORM_VIRO_CORE = "VIRO_CORE";
+    /**
+     * @hide
+     */
+    public static boolean NATIVE_TESTING_MODE = false;
 
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;

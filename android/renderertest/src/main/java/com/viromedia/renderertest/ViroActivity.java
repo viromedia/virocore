@@ -326,7 +326,7 @@ public class ViroActivity extends AppCompatActivity {
         //testBackgroundImage(scene);
 
         //nodes.addAll(testImperativePlane(scene));
-        nodes.addAll(testARImageTarget(scene));
+        //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
