@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('app-viro_core-release.aar'))
