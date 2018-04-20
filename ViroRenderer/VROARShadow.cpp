@@ -20,6 +20,9 @@ void VROARShadow::apply(std::shared_ptr<VROMaterial> material) {
     createFragmentModifier();
 
     material->setLightingModel(VROLightingModel::Lambert);
+    material->setWritesToDepthBuffer(false);
+    material->setCastsShadows(false);
+
     if (!material->hasShaderModifier(sShadowARSurfaceModifier)) {
         material->addShaderModifier(sShadowARSurfaceModifier);
     }
@@ -73,7 +76,7 @@ std::shared_ptr<VROShaderModifier> VROARShadow::createFragmentModifier() {
         // cover the softness that comes from other shadow-casting lights.
         std::vector<std::string> modifierCode = {
             "if (totalShadow != 0.0) {\n",
-            "  _output_color = vec4(0, 0, 0, totalShadow - _ambient.r);\n",
+            "  _output_color = vec4(0, 0, 0, max(min(1.0, totalShadow) - _ambient.r, 0.0));\n",
             "} else {\n",
             "  _output_color = vec4(0, 0, 0, 0);\n",
             "}",

@@ -83,16 +83,40 @@ void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
     _silhouetteStaticMaterial->bindShader(0, {}, *context, driver);
     _silhouetteStaticMaterial->bindProperties(driver);
     render(treeNodes, target, _silhouetteStaticMaterial, [this](const VRONode &node)->bool {
-        return (_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) != 0 &&
-                node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() == nullptr;
+        if ((_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) == 0) {
+            return false;
+        }
+        // Don't use this material for skeletal animation models; use the next one
+        if (node.getGeometry() == nullptr || node.getGeometry()->getSkinner().get() != nullptr) {
+            return false;
+        }
+        // If any material doesn't cast a shadow, don't cast for the whole node (technical limitation)
+        for (const std::shared_ptr<VROMaterial> &material : node.getGeometry()->getMaterials()) {
+            if (!material->getCastsShadows()) {
+                return false;
+            }
+        }
+        return true;
     }, *context, driver);
     
     // Render skeletal animation objects
     _silhouetteSkeletalMaterial->bindShader(0, {}, *context, driver);
     _silhouetteSkeletalMaterial->bindProperties(driver);
     render(treeNodes, target, _silhouetteSkeletalMaterial, [this](const VRONode &node)->bool {
-        return (_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) != 0 &&
-                node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() != nullptr;
+        if ((_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) == 0) {
+            return false;
+        }
+        // We should be using the previous material for non-skeletal models
+        if (node.getGeometry() == nullptr || node.getGeometry()->getSkinner().get() == nullptr) {
+            return false;
+        }
+        // If any material doesn't cast a shadow, don't cast for the whole node (technical limitation)
+        for (const std::shared_ptr<VROMaterial> &material : node.getGeometry()->getMaterials()) {
+            if (!material->getCastsShadows()) {
+                return false;
+            }
+        }
+        return true;
     }, *context, driver);
     
     // Store generated shadow map properties in the VROLight

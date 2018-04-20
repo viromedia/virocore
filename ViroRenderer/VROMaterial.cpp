@@ -34,6 +34,7 @@ VROMaterial::VROMaterial() :
     _readsFromDepthBuffer(true),
     _bloomThreshold(-1),
     _receivesShadows(true),
+    _castsShadows(true),
     _substrate(nullptr) {
     
     _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |
@@ -75,6 +76,7 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
  _readsFromDepthBuffer(material->_readsFromDepthBuffer),
  _bloomThreshold(material->_bloomThreshold),
  _receivesShadows(material->_receivesShadows),
+ _castsShadows(material->_castsShadows),
  _substrate(nullptr) {
  
      _diffuse = new VROMaterialVisual(*material->_diffuse);
@@ -134,6 +136,7 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _readsFromDepthBuffer = material->_readsFromDepthBuffer;
     _bloomThreshold = material->_bloomThreshold;
     _receivesShadows = material->_receivesShadows;
+    _castsShadows = material->_castsShadows;
     
     _substrate = nullptr;
     

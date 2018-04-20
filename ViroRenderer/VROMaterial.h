@@ -231,6 +231,14 @@ public:
         return _receivesShadows;
     }
 
+    void setCastsShadows(bool castsShadows) {
+        _castsShadows = castsShadows;
+        updateSubstrate();
+    }
+    bool getCastsShadows() const {
+        return _castsShadows;
+    }
+
     void addShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
     void removeShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
     bool hasShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
@@ -415,6 +423,14 @@ private:
      True if this material receives shadows. Defaults to true.
      */
     bool _receivesShadows;
+
+    /*
+     True if surfaces using this material cast shadows. Note: due to a technical limitation,
+     geometries either cast shadows as a whole (across all materials) or not at all. If
+     _castsShadows is false for at least one material in a Node, then no materials in that
+     Node will cast shadows.
+     */
+    bool _castsShadows;
     
     /*
      Representation of this material in the underlying graphics hardware.
