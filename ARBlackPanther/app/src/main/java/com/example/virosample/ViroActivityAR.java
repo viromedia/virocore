@@ -58,7 +58,6 @@ public class ViroActivityAR extends Activity {
     private ARScene mScene;
     private ARImageTarget mImageTarget;
     private Node mBlackPantherGroupNode;
-    private Node mSurfaceShadowNode;
     private AssetManager mAssetManager;
     private Object3D mblackPantherModel;
 
@@ -163,12 +162,11 @@ public class ViroActivityAR extends Activity {
         material.setShadowMode(Material.ShadowMode.TRANSPARENT);
         Surface surface = new Surface(3, 3);
         surface.setMaterials(Arrays.asList(material));
-        mSurfaceShadowNode = new Node();
-        mSurfaceShadowNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
-        mSurfaceShadowNode.setGeometry(surface);
-        mSurfaceShadowNode.setPosition(new Vector(0, 0, 0.0));
-        mSurfaceShadowNode.setVisible(false);
-        groupLightNode.addChildNode(mSurfaceShadowNode);
+        Node surfaceShadowNode = new Node();
+        surfaceShadowNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
+        surfaceShadowNode.setGeometry(surface);
+        surfaceShadowNode.setPosition(new Vector(0, 0, 0.0));
+        groupLightNode.addChildNode(surfaceShadowNode);
 
         groupLightNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
         return groupLightNode;
@@ -205,6 +203,7 @@ public class ViroActivityAR extends Activity {
                 Vector pos = new Vector(anchorPos.x, anchorPos.y - 0.4 , anchorPos.z - 0.15);
                 mBlackPantherGroupNode.setPosition(pos);
                 mBlackPantherGroupNode.setRotation(anchor.getRotation());
+                mblackPantherModel.setVisible(true);
                 mImageTargetFound = true;
                 startPantherExperience();
             }
@@ -230,13 +229,12 @@ public class ViroActivityAR extends Activity {
         if (!mObjLoaded || !mImageTargetFound){
             return;
         }
+
         // Animate the black panther's jump animation
         final Animation animationJump = mblackPantherModel.getAnimation("01");
         animationJump.setListener(new Animation.Listener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                mblackPantherModel.setVisible(true);
-                mSurfaceShadowNode.setVisible(true);
                 //No-op
             }
 
