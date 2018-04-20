@@ -380,10 +380,8 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
 
     private void animateColorPickerVisible(boolean isVisible, Node groupNode) {
         if (isVisible){
-            Log.e("Daniel"," Animat visible");
             animScale(groupNode, 500, new Vector(1,1,1), AnimationTimingFunction.Bounce, null);
         } else {
-            Log.e("Daniel"," Animat INVISIBLE");
             animScale(groupNode, 200, new Vector(0,0,0), AnimationTimingFunction.Bounce, null);
         }
     }

@@ -245,7 +245,6 @@ public class ViroActivityAR extends Activity {
                 // After jump animation is finished set the panther's idle animation
                 final Animation animationIdle = mblackPantherModel.getAnimation("02");
                 animationIdle.play();
-                Log.e("Daniel"," Animation FINALLY FINISHED");
             }
         });
         animationJump.play();
