@@ -8,23 +8,26 @@
 
 #ifndef Texture_JNI_h
 #define Texture_JNI_h
+
 #include <jni.h>
 #include <memory>
-
 #include "VROTexture.h"
 #include "PersistentRef.h"
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 namespace Texture {
 
     VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat);
     jobject createJTexture(std::shared_ptr<VROTexture> texture);
 
-    inline jlong jptr(std::shared_ptr<VROTexture> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROTexture> ptr) {
         PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROTexture> native(jlong ptr) {
+    inline std::shared_ptr<VROTexture> native(VRO_REF ptr) {
         PersistentRef<VROTexture> *persistentRef = reinterpret_cast<PersistentRef<VROTexture> *>(ptr);
         return persistentRef->get();
     }

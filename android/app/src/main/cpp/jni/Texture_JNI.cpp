@@ -18,9 +18,11 @@
 #include "VROModelIOUtil.h"
 #include "VROPlatformUtil.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Texture_##method_name
+#endif
 
 namespace Texture {
 
@@ -149,7 +151,7 @@ namespace Texture {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateRadianceHDRTexture)(JNIEnv *env, jclass cls,
+VRO_METHOD(jlong, nativeCreateRadianceHDRTexture)(VRO_ARGS_STATIC
                                                   jstring uri_j) {
     std::string uri = VROPlatformGetString(uri_j, env);
     bool isTemp, success;
@@ -168,10 +170,10 @@ JNI_METHOD(jlong, nativeCreateRadianceHDRTexture)(JNIEnv *env, jclass cls,
     return textureRef;
 }
 
-JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
-                                            jlong px, jlong nx,
-                                            jlong py, jlong ny,
-                                            jlong pz, jlong nz) {
+VRO_METHOD(jlong, nativeCreateCubeTexture)(VRO_ARGS
+                                           jlong px, jlong nx,
+                                           jlong py, jlong ny,
+                                           jlong pz, jlong nz) {
     std::vector<std::shared_ptr<VROImage>> cubeImages = {Image::native(px),
                                                          Image::native(nx),
                                                          Image::native(py),
@@ -182,7 +184,8 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
     return Texture::jptr(texturePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image,
+VRO_METHOD(jlong, nativeCreateImageTexture)(VRO_ARGS
+                                            jlong image,
                                             jboolean sRGB, jboolean mipmap, jstring stereoMode) {
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(sRGB,
@@ -192,7 +195,7 @@ JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong imag
     return Texture::jptr(texturePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateCubeTextureBitmap)(JNIEnv *env, jobject obj,
+VRO_METHOD(jlong, nativeCreateCubeTextureBitmap)(VRO_ARGS
                                                  jobject px, jobject nx,
                                                  jobject py, jobject ny,
                                                  jobject pz, jobject nz,
@@ -209,8 +212,10 @@ JNI_METHOD(jlong, nativeCreateCubeTextureBitmap)(JNIEnv *env, jobject obj,
     return Texture::jptr(texturePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImageTextureBitmap)(JNIEnv *env, jobject obj, jobject bitmap,
-                                                 jstring format_s, jboolean sRGB, jboolean mipmap, jstring stereoMode) {
+VRO_METHOD(jlong, nativeCreateImageTextureBitmap)(VRO_ARGS
+                                                  jobject bitmap,
+                                                  jstring format_s, jboolean sRGB,
+                                                  jboolean mipmap, jstring stereoMode) {
 
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
@@ -221,8 +226,10 @@ JNI_METHOD(jlong, nativeCreateImageTextureBitmap)(JNIEnv *env, jobject obj, jobj
     return Texture::jptr(texturePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImageTextureData)(JNIEnv *env, jobject obj, jobject jbuffer, jint width, jint height,
-                                                jstring inputFormat_s, jstring storageFormat_s, jboolean sRGB, jboolean mipmap,
+VRO_METHOD(jlong, nativeCreateImageTextureData)(VRO_ARGS
+                                                jobject jbuffer, jint width, jint height,
+                                                jstring inputFormat_s, jstring storageFormat_s,
+                                                jboolean sRGB, jboolean mipmap,
                                                 jstring stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
     jlong capacity = env->GetDirectBufferCapacity(jbuffer);
@@ -240,7 +247,8 @@ JNI_METHOD(jlong, nativeCreateImageTextureData)(JNIEnv *env, jobject obj, jobjec
     return Texture::jptr(texturePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImageTextureVHD)(JNIEnv *env, jobject obj, jobject jbuffer, jstring stereoMode_s) {
+VRO_METHOD(jlong, nativeCreateImageTextureVHD)(VRO_ARGS
+                                               jobject jbuffer, jstring stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
     jlong capacity = env->GetDirectBufferCapacity(jbuffer);
 
@@ -264,42 +272,50 @@ JNI_METHOD(jlong, nativeCreateImageTextureVHD)(JNIEnv *env, jobject obj, jobject
     return Texture::jptr(texture);
 }
 
-JNI_METHOD(jint, nativeGetTextureWidth)(JNIEnv *env, jobject obj, jlong texture_j) {
+VRO_METHOD(jint, nativeGetTextureWidth)(VRO_ARGS
+                                        jlong texture_j) {
     std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
     return texture->getWidth();
 }
 
-JNI_METHOD(jint, nativeGetTextureHeight)(JNIEnv *env, jobject obj, jlong texture_j) {
+VRO_METHOD(jint, nativeGetTextureHeight)(VRO_ARGS
+                                         jlong texture_j) {
     std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
     return texture->getHeight();
 }
 
-JNI_METHOD(void, nativeSetWrapS)(JNIEnv *env, jobject obj, jlong nativeRef, jstring wrapS) {
+VRO_METHOD(void, nativeSetWrapS)(VRO_ARGS
+                                 jlong nativeRef, jstring wrapS) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setWrapS(Texture::getWrapMode(env, wrapS));
 }
 
-JNI_METHOD(void, nativeSetWrapT)(JNIEnv *env, jobject obj, jlong nativeRef, jstring wrapT) {
+VRO_METHOD(void, nativeSetWrapT)(VRO_ARGS
+                                 jlong nativeRef, jstring wrapT) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setWrapT(Texture::getWrapMode(env, wrapT));
 }
 
-JNI_METHOD(void, nativeSetMinificationFilter)(JNIEnv *env, jobject obj, jlong nativeRef, jstring minFilter) {
+VRO_METHOD(void, nativeSetMinificationFilter)(VRO_ARGS
+                                              jlong nativeRef, jstring minFilter) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setMinificationFilter(Texture::getFilterMode(env, minFilter));
 }
 
-JNI_METHOD(void, nativeSetMagnificationFilter)(JNIEnv *env, jobject obj, jlong nativeRef, jstring magFilter) {
+VRO_METHOD(void, nativeSetMagnificationFilter)(VRO_ARGS
+                                               jlong nativeRef, jstring magFilter) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setMagnificationFilter(Texture::getFilterMode(env, magFilter));
 }
 
-JNI_METHOD(void, nativeSetMipFilter)(JNIEnv *env, jobject obj, jlong nativeRef, jstring mipFilter) {
+VRO_METHOD(void, nativeSetMipFilter)(VRO_ARGS
+                                     jlong nativeRef, jstring mipFilter) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setMipFilter(Texture::getFilterMode(env, mipFilter));
 }
 
-JNI_METHOD(void, nativeDestroyTexture)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(void, nativeDestroyTexture)(VRO_ARGS
+                                       jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROTexture> *>(nativeRef);
 }
 

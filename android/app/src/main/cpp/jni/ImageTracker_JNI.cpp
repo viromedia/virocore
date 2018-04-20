@@ -20,18 +20,20 @@
 
 #endif /* ENABLE_OPENCV */
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ImageTracker_##method_name
+#endif
 
 #if ENABLE_OPENCV
 namespace ImageTracker {
-        inline jlong jptr(std::shared_ptr<VROARImageTracker> tracker) {
+        inline VRO_REF jptr(std::shared_ptr<VROARImageTracker> tracker) {
             PersistentRef<VROARImageTracker> *nativeTracker = new PersistentRef<VROARImageTracker>(tracker);
             return reinterpret_cast<intptr_t>(nativeTracker);
         }
 
-        inline std::shared_ptr<VROARImageTracker> native(jlong ptr) {
+        inline std::shared_ptr<VROARImageTracker> native(VRO_REF ptr) {
             PersistentRef<VROARImageTracker> *persistentTracker = reinterpret_cast<PersistentRef<VROARImageTracker> *>(ptr);
             return persistentTracker->get();
         }
@@ -65,8 +67,7 @@ cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
 }
 #endif /* ENABLE_OPENCV */
 
-JNI_METHOD(jlong, nativeCreateImageTracker)(JNIEnv *env,
-                                            jclass clazz,
+VRO_METHOD(jlong, nativeCreateImageTracker)(VRO_ARGS
                                             jlong imageTargetRef) {
 #if ENABLE_OPENCV
     std::shared_ptr<VROARImageTargetAndroid> arImageTarget = ARImageTarget::native(imageTargetRef);
@@ -85,8 +86,7 @@ JNI_METHOD(jlong, nativeCreateImageTracker)(JNIEnv *env,
 #endif /* ENABLE_OPENCV */
 }
 
-JNI_METHOD(jlong, nativeFindTarget)(JNIEnv *env,
-                                    jclass clazz,
+VRO_METHOD(jlong, nativeFindTarget)(VRO_ARGS
                                     jlong nativeRef,
                                     jobject bitmapImage) {
 #if ENABLE_OPENCV

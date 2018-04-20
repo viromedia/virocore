@@ -20,14 +20,15 @@
 #include "VideoDelegate_JNI.h"
 #include "VRODriverOpenGL.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_VideoTexture_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
-                                            jobject object,
+VRO_METHOD(jlong, nativeCreateVideoTexture)(VRO_ARGS
                                             jlong context_j,
                                             jstring stereoMode) {
     VROStereoMode mode = VROTextureUtil::getStereoModeForString(VROPlatformGetString(stereoMode, env));
@@ -47,16 +48,14 @@ JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
     return VideoTexture::jptr(videoTexture);
 }
 
-JNI_METHOD(jlong, nativeCreateVideoDelegate)(JNIEnv *env,
-                                             jobject object) {
+VRO_METHOD(jlong, nativeCreateVideoDelegate)(VRO_NO_ARGS) {
 
-    std::shared_ptr<VideoDelegate> delegate = std::make_shared<VideoDelegate>(object);
+    std::shared_ptr<VideoDelegate> delegate = std::make_shared<VideoDelegate>(obj);
     return VideoDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeAttachDelegate)(JNIEnv *env,
-                                      jobject object,
-                                      jlong textureRef, jlong delegateRef) {
+VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
+                                       jlong textureRef, jlong delegateRef) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     std::weak_ptr<VideoDelegate> videoDelegate_w = VideoDelegate::native(delegateRef);
@@ -76,21 +75,18 @@ JNI_METHOD(void, nativeAttachDelegate)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeDeleteVideoTexture)(JNIEnv *env,
-                                            jclass clazz,
-                                            jlong textureRef) {
+VRO_METHOD(void, nativeDeleteVideoTexture)(VRO_ARGS
+                                           jlong textureRef) {
     delete reinterpret_cast<PersistentRef<VROVideoTextureAVP> *>(textureRef);
 }
 
-JNI_METHOD(void, nativeDeleteVideoDelegate)(JNIEnv *env,
-                                             jobject object,
-                                             jlong delegateRef) {
+VRO_METHOD(void, nativeDeleteVideoDelegate)(VRO_ARGS
+                                            jlong delegateRef) {
     delete reinterpret_cast<PersistentRef<VideoDelegate> *>(delegateRef);
 }
 
-JNI_METHOD(void, nativePause)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong textureRef) {
+VRO_METHOD(void, nativePause)(VRO_ARGS
+                              jlong textureRef) {
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w] {
         std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
@@ -101,9 +97,8 @@ JNI_METHOD(void, nativePause)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativePlay)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong textureRef) {
+VRO_METHOD(void, nativePlay)(VRO_ARGS
+                             jlong textureRef) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w] {
@@ -115,10 +110,9 @@ JNI_METHOD(void, nativePlay)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetMuted)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong textureRef,
-                                     jboolean muted) {
+VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
+                                 jlong textureRef,
+                                 jboolean muted) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, muted] {
@@ -130,10 +124,9 @@ JNI_METHOD(void, nativeSetMuted)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetVolume)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong textureRef,
-                                     jfloat volume) {
+VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
+                                  jlong textureRef,
+                                  jfloat volume) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, volume] {
@@ -145,10 +138,9 @@ JNI_METHOD(void, nativeSetVolume)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetLoop)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong textureRef,
-                                     jboolean loop) {
+VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
+                                jlong textureRef,
+                                jboolean loop) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, loop] {
@@ -160,10 +152,9 @@ JNI_METHOD(void, nativeSetLoop)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSeekToTime)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong textureRef,
-                                     jfloat seconds) {
+VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
+                                   jlong textureRef,
+                                   jfloat seconds) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, seconds] {
@@ -175,8 +166,7 @@ JNI_METHOD(void, nativeSeekToTime)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeLoadSource)(JNIEnv *env,
-                                   jclass clazz,
+VRO_METHOD(void, nativeLoadSource)(VRO_ARGS
                                    jlong textureRef,
                                    jstring source,
                                    jlong context_j) {

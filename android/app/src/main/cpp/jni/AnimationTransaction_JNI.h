@@ -5,18 +5,20 @@
 #ifndef ANDROID_ANIMATIONTRANSACTION_JNI_H
 #define ANDROID_ANIMATIONTRANSACTION_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <VROTransaction.h>
 #include "PersistentRef.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace AnimationTransaction {
-    inline jlong jptr(std::shared_ptr<VROTransaction> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROTransaction> ptr) {
         PersistentRef<VROTransaction> *pref = new PersistentRef<VROTransaction>(ptr);
         return reinterpret_cast<intptr_t>(pref);
     }
 
-    inline std::shared_ptr<VROTransaction> native(jlong ptr) {
+    inline std::shared_ptr<VROTransaction> native(VRO_REF ptr) {
         PersistentRef<VROTransaction> *pref = reinterpret_cast<PersistentRef<VROTransaction> *>(ptr);
         return pref->get();
     }

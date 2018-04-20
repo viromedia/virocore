@@ -17,17 +17,19 @@
 #include "VideoTexture_JNI.h"
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Sphere_##method_name
+#endif
 
 namespace Sphere{
-    inline jlong jptr(std::shared_ptr<VROSphere> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROSphere> ptr) {
         PersistentRef<VROSphere> *persistentRef = new PersistentRef<VROSphere>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROSphere> native(jlong ptr) {
+    inline std::shared_ptr<VROSphere> native(VRO_REF ptr) {
         PersistentRef<VROSphere> *persistentRef = reinterpret_cast<PersistentRef<VROSphere> *>(ptr);
         return persistentRef->get();
     }
@@ -35,15 +37,13 @@ namespace Sphere{
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateSphere)(JNIEnv *env,
-                                      jclass clazz,
+VRO_METHOD(jlong, nativeCreateSphere)(VRO_ARGS
                                       jfloat radius) {
     std::shared_ptr<VROSphere> sphere = std::make_shared<VROSphere>(radius);
     return Sphere::jptr(sphere);
 }
 
-JNI_METHOD(jlong, nativeCreateSphereParameterized)(JNIEnv *env,
-                                                   jclass clazz,
+VRO_METHOD(jlong, nativeCreateSphereParameterized)(VRO_ARGS
                                                    jfloat radius,
                                                    jint widthSegmentCount,
                                                    jint heightSegmentCount,
@@ -55,14 +55,12 @@ JNI_METHOD(jlong, nativeCreateSphereParameterized)(JNIEnv *env,
     return Sphere::jptr(sphere);
 }
 
-JNI_METHOD(void, nativeDestroySphere)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong nativeNode) {
+VRO_METHOD(void, nativeDestroySphere)(VRO_ARGS
+                                      jlong nativeNode) {
     delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
 }
 
-JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
                                         jlong sphereRef,
                                         jlong textureRef) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(sphereRef);
@@ -92,8 +90,7 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetWidthSegmentCount)(JNIEnv *env,
-                                             jobject obj,
+VRO_METHOD(void, nativeSetWidthSegmentCount)(VRO_ARGS
                                              jlong jsphere,
                                              jint widthSegmentCount) {
 
@@ -107,8 +104,7 @@ JNI_METHOD(void, nativeSetWidthSegmentCount)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHeightSegmentCount)(JNIEnv *env,
-                                              jobject obj,
+VRO_METHOD(void, nativeSetHeightSegmentCount)(VRO_ARGS
                                               jlong jsphere,
                                               jint heightSegmentCount) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
@@ -121,8 +117,7 @@ JNI_METHOD(void, nativeSetHeightSegmentCount)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRadius)(JNIEnv *env,
-                                  jobject obj,
+VRO_METHOD(void, nativeSetRadius)(VRO_ARGS
                                   jlong jsphere,
                                   jfloat radius) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
@@ -135,10 +130,9 @@ JNI_METHOD(void, nativeSetRadius)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetFacesOutward)(JNIEnv *env,
-                                       jobject obj,
-                                       jlong jsphere,
-                                       jboolean facesOutward) {
+VRO_METHOD(void, nativeSetFacesOutward)(VRO_ARGS
+                                        jlong jsphere,
+                                        jboolean facesOutward) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, facesOutward] {
         std::shared_ptr<VROSphere> sphere = sphere_w.lock();

@@ -8,17 +8,19 @@
 #ifndef ANDROID_VIDEO_TEXTURE_JNI_H
 #define ANDROID_VIDEO_TEXTURE_JNI_H
 
-#include <jni.h>
 #include "VROVideoDelegateInternal.h"
 #include "VROVideoTextureAVP.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace VideoTexture {
-    inline jlong jptr(std::shared_ptr<VROVideoTextureAVP> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROVideoTextureAVP> ptr) {
         PersistentRef<VROVideoTextureAVP> *persistentRef = new PersistentRef<VROVideoTextureAVP>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROVideoTextureAVP> native(jlong ptr) {
+    inline std::shared_ptr<VROVideoTextureAVP> native(VRO_REF ptr) {
         PersistentRef<VROVideoTextureAVP> *persistentRef = reinterpret_cast<PersistentRef<VROVideoTextureAVP> *>(ptr);
         return persistentRef->get();
     }

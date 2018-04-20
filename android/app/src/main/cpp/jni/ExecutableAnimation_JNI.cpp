@@ -10,16 +10,17 @@
 #include "LazyMaterial_JNI.h"
 #include <VROPlatformUtil.h>
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ExecutableAnimation_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeWrapNodeAnimation)(JNIEnv *env,
-                                             jobject obj,
-                                             jlong nodeRef,
-                                             jstring jkey) {
+VRO_METHOD(jlong, nativeWrapNodeAnimation)(VRO_ARGS
+                                           jlong nodeRef,
+                                           jstring jkey) {
 
     std::shared_ptr<VRONode> node = Node::native(nodeRef);
 
@@ -39,7 +40,8 @@ JNI_METHOD(jlong, nativeWrapNodeAnimation)(JNIEnv *env,
     }
 }
 
-JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jlong nodeRef) {
+VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
+                                         jlong nativeRef, jlong nodeRef) {
     // Hold a global reference to the object until the animation finishes, so that
     // we invoke its animationDidFinish callback
     jobject obj_g = env->NewGlobalRef(obj);
@@ -69,7 +71,8 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
     });
 }
 
-JNI_METHOD(void, nativePauseAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(void, nativePauseAnimation)(VRO_ARGS
+                                       jlong nativeRef) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
@@ -80,7 +83,8 @@ JNI_METHOD(void, nativePauseAnimation)(JNIEnv *env, jobject obj, jlong nativeRef
     });
 }
 
-JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(void, nativeResumeAnimation)(VRO_ARGS
+                                        jlong nativeRef) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
@@ -91,7 +95,8 @@ JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRe
     });
 }
 
-JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jboolean jumpToEnd) {
+VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
+                                           jlong nativeRef, jboolean jumpToEnd) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w, jumpToEnd] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
@@ -102,7 +107,8 @@ JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativ
     });
 }
 
-JNI_METHOD(void, nativeDestroyAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(void, nativeDestroyAnimation)(VRO_ARGS
+                                         jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROExecutableAnimation> *>(nativeRef);
 }
 

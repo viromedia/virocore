@@ -8,20 +8,22 @@
 #ifndef ANDROID_TEXTDELEGATE_JNI_H
 #define ANDROID_TEXTDELEGATE_JNI_H
 
-#include <jni.h>
 #include <PersistentRef.h>
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 class TextDelegate {
 public:
     TextDelegate(jobject textJavaObject, JNIEnv *env);
     ~TextDelegate();
 
-    static jlong jptr(std::shared_ptr<TextDelegate> shared_node) {
+    static VRO_REF jptr(std::shared_ptr<TextDelegate> shared_node) {
         PersistentRef<TextDelegate> *native_text = new PersistentRef<TextDelegate>(shared_node);
         return reinterpret_cast<intptr_t>(native_text);
     }
 
-    static std::shared_ptr<TextDelegate> native(jlong ptr) {
+    static std::shared_ptr<TextDelegate> native(VRO_REF ptr) {
         PersistentRef<TextDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<TextDelegate> *>(ptr);
         return persistentDelegate->get();
     }

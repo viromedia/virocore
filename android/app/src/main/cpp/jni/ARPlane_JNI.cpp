@@ -9,28 +9,27 @@
 #include "ARPlane_JNI.h"
 #include "ARUtils_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARPlane_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateARPlane) (JNIEnv *env,
-                                        jclass clazz,
-                                        jfloat minWidth,
-                                        jfloat minHeight) {
+VRO_METHOD(jlong, nativeCreateARPlane)(VRO_ARGS
+                                       jfloat minWidth,
+                                       jfloat minHeight) {
     std::shared_ptr<VROARPlaneNode> arPlane = std::make_shared<VROARPlaneNode>(minWidth, minHeight);
     return ARPlane::jptr(arPlane);
 }
 
-JNI_METHOD(void, nativeDestroyARPlane) (JNIEnv *env,
-                                        jobject object,
-                                        jlong nativeARPlane) {
+VRO_METHOD(void, nativeDestroyARPlane)(VRO_ARGS
+                                       jlong nativeARPlane) {
     delete reinterpret_cast<PersistentRef<VROARPlaneNode> *>(nativeARPlane);
 }
 
-JNI_METHOD(jlong, nativeCreateARPlaneDelegate) (JNIEnv *env,
-                                               jobject object,
+VRO_METHOD(jlong, nativeCreateARPlaneDelegate)(VRO_ARGS
                                                jlong nativeNodeRef) {
     std::shared_ptr<ARPlaneDelegate> delegate = std::make_shared<ARPlaneDelegate>(object, env);
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeNodeRef);
@@ -38,41 +37,36 @@ JNI_METHOD(jlong, nativeCreateARPlaneDelegate) (JNIEnv *env,
     return ARPlaneDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeDestroyARPlaneDelegate) (JNIEnv *env,
-                                                jobject object,
-                                                jlong delegateRef) {
+VRO_METHOD(void, nativeDestroyARPlaneDelegate)(VRO_ARGS
+                                               jlong delegateRef) {
     delete reinterpret_cast<PersistentRef<ARPlaneDelegate> *>(delegateRef);
 }
 
 
-JNI_METHOD(void, nativeSetMinWidth) (JNIEnv *env,
-                                     jobject object,
-                                     jlong nativeARPlane,
-                                     jfloat minWidth) {
+VRO_METHOD(void, nativeSetMinWidth)(VRO_ARGS
+                                    jlong nativeARPlane,
+                                    jfloat minWidth) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
     arPlane->setMinWidth(minWidth);
 }
 
-JNI_METHOD(void, nativeSetMinHeight) (JNIEnv *env,
-                                     jobject object,
+VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
                                      jlong nativeARPlane,
                                      jfloat minHeight) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
     arPlane->setMinHeight(minHeight);
 }
 
-JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
-                               jobject object,
-                               jlong nativeARPlane,
-                               jstring id) {
+VRO_METHOD(void, nativeSetAnchorId)(VRO_ARGS
+                                    jlong nativeARPlane,
+                                    jstring id) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
     arPlane->setId(VROPlatformGetString(id, env));
 }
 
-JNI_METHOD(void, nativeSetPauseUpdates) (JNIEnv *env,
-                                     jobject object,
-                                     jlong nativeARPlane,
-                                     jboolean pauseUpdates) {
+VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
+                                        jlong nativeARPlane,
+                                        jboolean pauseUpdates) {
     std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(nativeARPlane);
     VROPlatformDispatchAsyncRenderer([arPlane_w, pauseUpdates] {
         std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();

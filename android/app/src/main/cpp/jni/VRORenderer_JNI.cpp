@@ -31,9 +31,11 @@
 #include "VRORenderer.h"
 #include "VROChoreographer.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Renderer_##method_name
+#endif
 
 extern "C" {
 
@@ -42,7 +44,7 @@ extern "C" {
 static bool kRunRendererTest = false;
 static std::shared_ptr<VROSample> sample;
 
-JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
+VRO_METHOD(jlong, nativeCreateRendererGVR)(VRO_ARGS
                                            jobject class_loader,
                                            jobject android_context,
                                            jobject asset_mgr,
@@ -70,7 +72,7 @@ JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
     return Renderer::jptr(renderer);
 }
 
-JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
+VRO_METHOD(jlong, nativeCreateRendererOVR)(VRO_ARGS
                                            jobject class_loader,
                                            jobject android_context,
                                            jobject view,
@@ -98,7 +100,7 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
     return Renderer::jptr(renderer);
 }
 
-JNI_METHOD(jlong, nativeCreateRendererSceneView)(JNIEnv *env, jclass clazz,
+VRO_METHOD(jlong, nativeCreateRendererSceneView)(VRO_ARGS
                                                  jobject class_loader,
                                                  jobject android_context,
                                                  jobject view,
@@ -125,8 +127,7 @@ JNI_METHOD(jlong, nativeCreateRendererSceneView)(JNIEnv *env, jclass clazz,
     return Renderer::jptr(renderer);
 }
 
-JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
-                                        jclass clazz,
+VRO_METHOD(void, nativeDestroyRenderer)(VRO_ARGS
                                         jlong native_renderer) {
     Renderer::native(native_renderer)->onDestroy();
     VROThreadRestricted::unsetThread();
@@ -137,8 +138,7 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
     VROPlatformReleaseEnv();
 }
 
-JNI_METHOD(void, nativeInitializeGL)(JNIEnv *env,
-                                     jobject obj,
+VRO_METHOD(void, nativeInitializeGL)(VRO_ARGS
                                      jlong native_renderer,
                                      jboolean sRGBFramebuffer,
                                      jboolean testingMode) {
@@ -164,14 +164,12 @@ JNI_METHOD(void, nativeInitializeGL)(JNIEnv *env,
     sceneRenderer->initGL();
 }
 
-JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env,
-                                  jobject obj,
+VRO_METHOD(void, nativeDrawFrame)(VRO_ARGS
                                   jlong native_renderer) {
     Renderer::native(native_renderer)->onDrawFrame();
 }
 
-JNI_METHOD (void, nativeOnKeyEvent)(JNIEnv * env,
-                                    jobject obj,
+VRO_METHOD (void, nativeOnKeyEvent)(VRO_ARGS
                                     jlong native_renderer,
                                     int keyCode,
                                     int action ){
@@ -185,12 +183,11 @@ JNI_METHOD (void, nativeOnKeyEvent)(JNIEnv * env,
     });
 }
 
-JNI_METHOD(void, nativeOnTouchEvent)(JNIEnv *env,
-                                       jobject obj,
-                                       jlong native_renderer,
-                                       jint onTouchAction,
-                                           float xPos,
-                                           float yPos) {
+VRO_METHOD(void, nativeOnTouchEvent)(VRO_ARGS
+                                     jlong native_renderer,
+                                     jint onTouchAction,
+                                     float xPos,
+                                     float yPos) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, onTouchAction, xPos, yPos] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -201,8 +198,7 @@ JNI_METHOD(void, nativeOnTouchEvent)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeOnPinchEvent) (JNIEnv *env,
-                                      jobject object,
+VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
                                       jlong native_renderer,
                                       jint pinchState,
                                       jfloat scaleFactor,
@@ -218,8 +214,7 @@ JNI_METHOD(void, nativeOnPinchEvent) (JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeOnRotateEvent) (JNIEnv *env,
-                                       jobject object,
+VRO_METHOD(void, nativeOnRotateEvent) (VRO_ARGS
                                        jlong native_renderer,
                                        jint rotateState,
                                        jfloat rotateRadians,
@@ -235,8 +230,7 @@ JNI_METHOD(void, nativeOnRotateEvent) (JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeSetVRModeEnabled)(VRO_ARGS
                                          jlong nativeRenderer, jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(nativeRenderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, enabled] {
@@ -248,32 +242,27 @@ JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeOnStart)(JNIEnv *env,
-                                jobject obj,
+VRO_METHOD(void, nativeOnStart)(VRO_ARGS
                                 jlong native_renderer) {
         Renderer::native(native_renderer)->onStart();
 }
 
-JNI_METHOD(void, nativeOnPause)(JNIEnv *env,
-                                jobject obj,
+VRO_METHOD(void, nativeOnPause)(VRO_ARGS
                                 jlong native_renderer) {
         Renderer::native(native_renderer)->onPause();
 }
 
-JNI_METHOD(void, nativeOnResume)(JNIEnv *env,
-                                 jobject obj,
+VRO_METHOD(void, nativeOnResume)(VRO_ARGS
                                  jlong native_renderer) {
         Renderer::native(native_renderer)->onResume();
 }
 
-JNI_METHOD(void, nativeOnStop)(JNIEnv *env,
-                                jobject obj,
-                                jlong native_renderer) {
+VRO_METHOD(void, nativeOnStop)(VRO_ARGS
+                               jlong native_renderer) {
         Renderer::native(native_renderer)->onStop();
 }
 
-JNI_METHOD(void, nativeSetSceneController)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(void, nativeSetSceneController)(VRO_ARGS
                                            jlong native_renderer,
                                            jlong native_scene_controller_ref) {
     if (kRunRendererTest) {
@@ -296,8 +285,7 @@ JNI_METHOD(void, nativeSetSceneController)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetSceneControllerWithAnimation)(JNIEnv *env,
-                                                        jobject obj,
+VRO_METHOD(void, nativeSetSceneControllerWithAnimation)(VRO_ARGS
                                                         jlong native_renderer,
                                                         jlong native_scene_controller_ref,
                                                         jfloat duration) {
@@ -321,8 +309,7 @@ JNI_METHOD(void, nativeSetSceneControllerWithAnimation)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPointOfView)(JNIEnv *env,
-                                       jobject obj,
+VRO_METHOD(void, nativeSetPointOfView)(VRO_ARGS
                                        jlong native_renderer,
                                        jlong native_node_ref) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
@@ -346,16 +333,14 @@ JNI_METHOD(void, nativeSetPointOfView)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeOnSurfaceCreated)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeOnSurfaceCreated)(VRO_ARGS
                                          jobject surface,
                                          jlong native_renderer) {
 
     Renderer::native(native_renderer)->onSurfaceCreated(surface);
 }
 
-JNI_METHOD(void, nativeOnSurfaceChanged)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeOnSurfaceChanged)(VRO_ARGS
                                          jobject surface,
                                          jint width,
                                          jint height,
@@ -363,63 +348,62 @@ JNI_METHOD(void, nativeOnSurfaceChanged)(JNIEnv *env,
     Renderer::native(native_renderer)->onSurfaceChanged(surface, width, height);
 }
 
-JNI_METHOD(void, nativeOnSurfaceDestroyed)(JNIEnv *env,
-                                jobject obj,
-                                jlong native_renderer) {
+VRO_METHOD(void, nativeOnSurfaceDestroyed)(VRO_ARGS
+                                           jlong native_renderer) {
     Renderer::native(native_renderer)->onSurfaceDestroyed();
 }
 
-JNI_METHOD(jstring, nativeGetHeadset)(JNIEnv *env, jobject obj, jlong nativeRenderer) {
+VRO_METHOD(jstring, nativeGetHeadset)(VRO_ARGS
+                                      jlong nativeRenderer) {
     std::string headset = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getHeadset();
     return env->NewStringUTF(headset.c_str());
 }
 
-JNI_METHOD(jstring, nativeGetController)(JNIEnv *env, jobject obj, jlong nativeRenderer) {
+VRO_METHOD(jstring, nativeGetController)(VRO_ARGS
+                                         jlong nativeRenderer) {
     std::string controller = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getController();
     return env->NewStringUTF(controller.c_str());
 }
 
-JNI_METHOD(void, nativeSetDebugHUDEnabled)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(void, nativeSetDebugHUDEnabled)(VRO_ARGS
                                            jlong native_renderer,
                                            jboolean enabled) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     renderer->getRenderer()->setDebugHUDEnabled(enabled);
 }
 
-JNI_METHOD(void, nativeSetSuspended)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong native_renderer,
-                                        jboolean suspend_renderer) {
+VRO_METHOD(void, nativeSetSuspended)(VRO_ARGS
+                                     jlong native_renderer,
+                                     jboolean suspend_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     renderer->setSuspended(suspend_renderer);
 }
 
 // This function is OVR only!
-JNI_METHOD(void, nativeRecenterTracking)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeRecenterTracking)(VRO_ARGS
                                          jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     std::shared_ptr<VROSceneRendererOVR> ovrRenderer = std::dynamic_pointer_cast<VROSceneRendererOVR>(renderer);
     ovrRenderer->recenterTracking();
 }
 
-JNI_METHOD(jfloatArray, nativeProjectPoint)(JNIEnv *env, jobject object, jlong renderer_j,
+VRO_METHOD(jfloatArray, nativeProjectPoint)(VRO_ARGS
+                                            jlong renderer_j,
                                             jfloat x, jfloat y, jfloat z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->projectPoint({ x, y, z }));
 }
 
-JNI_METHOD(jfloatArray, nativeUnprojectPoint)(JNIEnv *env, jobject object, jlong renderer_j,
+VRO_METHOD(jfloatArray, nativeUnprojectPoint)(VRO_ARGS
+                                              jlong renderer_j,
                                               jfloat x, jfloat y, jfloat z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
 }
 
-JNI_METHOD(void, nativeSetClearColor)(JNIEnv *env,
-                                           jobject object,
-                                           jlong native_renderer,
-                                           jint color) {
+VRO_METHOD(void, nativeSetClearColor)(VRO_ARGS
+                                      jlong native_renderer,
+                                      jint color) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, color] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -437,7 +421,8 @@ JNI_METHOD(void, nativeSetClearColor)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeAddFrameListener)(JNIEnv *env, jobject obj, jlong native_renderer, jlong frame_listener) {
+VRO_METHOD(void, nativeAddFrameListener)(VRO_ARGS
+                                         jlong native_renderer, jlong frame_listener) {
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
@@ -456,7 +441,8 @@ JNI_METHOD(void, nativeAddFrameListener)(JNIEnv *env, jobject obj, jlong native_
     });
 }
 
-JNI_METHOD(void, nativeRemoveFrameListener)(JNIEnv *env, jobject obj, jlong native_renderer, jlong frame_listener) {
+VRO_METHOD(void, nativeRemoveFrameListener)(VRO_ARGS
+                                            jlong native_renderer, jlong frame_listener) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
 
@@ -475,41 +461,39 @@ JNI_METHOD(void, nativeRemoveFrameListener)(JNIEnv *env, jobject obj, jlong nati
     });
 }
 
-JNI_METHOD(jboolean, nativeIsReticlePointerFixed)(JNIEnv *env, jobject obj, jlong native_renderer) {
+VRO_METHOD(jboolean, nativeIsReticlePointerFixed)(VRO_ARGS
+                                                  jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
     return sceneRenderer->getRenderer()->getInputController()->getPresenter()->getReticle()->isHeadlocked();
 }
 
-JNI_METHOD(jfloatArray, nativeGetCameraPositionRealtime)(JNIEnv *env,
-                                             jobject obj,
-                                             jlong native_renderer) {
+VRO_METHOD(jfloatArray, nativeGetCameraPositionRealtime)(VRO_ARGS
+                                                         jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraPositionRealTime());
 }
 
-JNI_METHOD(jfloatArray, nativeGetCameraRotationRealtime)(JNIEnv *env,
-                                                         jobject obj,
+VRO_METHOD(jfloatArray, nativeGetCameraRotationRealtime)(VRO_ARGS
                                                          jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraRotationRealTime());
 }
 
-JNI_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(JNIEnv *env,
-                                                         jobject obj,
-                                                         jlong native_renderer) {
+VRO_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(VRO_ARGS
+                                                        jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
 }
 
-JNI_METHOD(jfloat, nativeGetFieldOfView)(JNIEnv *env, jobject obj, jlong native_ref) {
+VRO_METHOD(jfloat, nativeGetFieldOfView)(VRO_ARGS
+                                         jlong native_ref) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_ref);
     return renderer->getRenderer()->getActiveFieldOfView();
 }
 
-JNI_METHOD(void, nativeSetCameraListener)(JNIEnv *env,
-                                            jobject obj,
-                                            jlong native_renderer,
-                                            jboolean enabled) {
+VRO_METHOD(void, nativeSetCameraListener)(VRO_ARGS
+                                          jlong native_renderer,
+                                          jboolean enabled) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     if (enabled) {
         std::shared_ptr<CameraDelegateJNI> listener = std::make_shared<CameraDelegateJNI>(obj);
@@ -519,8 +503,7 @@ JNI_METHOD(void, nativeSetCameraListener)(JNIEnv *env,
     }
 }
 
-JNI_METHOD(void, nativeSetShadowsEnabled)(JNIEnv *env,
-                                          jobject obj,
+VRO_METHOD(void, nativeSetShadowsEnabled)(VRO_ARGS
                                           jlong native_renderer,
                                           jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
@@ -534,8 +517,7 @@ JNI_METHOD(void, nativeSetShadowsEnabled)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHDREnabled)(JNIEnv *env,
-                                      jobject obj,
+VRO_METHOD(void, nativeSetHDREnabled)(VRO_ARGS
                                       jlong native_renderer,
                                       jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
@@ -549,8 +531,7 @@ JNI_METHOD(void, nativeSetHDREnabled)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPBREnabled)(JNIEnv *env,
-                                      jobject obj,
+VRO_METHOD(void, nativeSetPBREnabled)(VRO_ARGS
                                       jlong native_renderer,
                                       jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
@@ -564,8 +545,7 @@ JNI_METHOD(void, nativeSetPBREnabled)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBloomEnabled)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeSetBloomEnabled)(VRO_ARGS
                                         jlong native_renderer,
                                         jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);

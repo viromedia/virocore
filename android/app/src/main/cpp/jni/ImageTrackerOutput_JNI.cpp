@@ -8,14 +8,15 @@
 #include "ImageTrackerOutput_JNI.h"
 #include "opencv2/core/core.hpp"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ImageTrackerOutput_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jboolean, nativeOutputFound)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(jboolean, nativeOutputFound)(VRO_ARGS
                                         jlong nativeRef) {
 #if ENABLE_OPENCV
     return ImageTrackerOutput::native(nativeRef)->found;
@@ -24,8 +25,7 @@ JNI_METHOD(jboolean, nativeOutputFound)(JNIEnv *env,
 #endif /* ENABLE_OPENCV */
 }
 
-JNI_METHOD(jfloatArray, nativeOutputCorners)(JNIEnv *env,
-                                             jobject obj,
+VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
                                              jlong nativeRef) {
 #if ENABLE_OPENCV
 
@@ -50,9 +50,8 @@ JNI_METHOD(jfloatArray, nativeOutputCorners)(JNIEnv *env,
 
 }
 
-JNI_METHOD(jfloatArray, nativeOutputPosition)(JNIEnv *env,
-                                             jobject obj,
-                                             jlong nativeRef) {
+VRO_METHOD(jfloatArray, nativeOutputPosition)(VRO_ARGS
+                                              jlong nativeRef) {
 
     jfloatArray returnPosition = env->NewFloatArray(3);
     jfloat tempArr[3];
@@ -71,9 +70,8 @@ JNI_METHOD(jfloatArray, nativeOutputPosition)(JNIEnv *env,
     return returnPosition;
 }
 
-JNI_METHOD(jfloatArray, nativeOutputRotation)(JNIEnv *env,
-                                             jobject obj,
-                                             jlong nativeRef) {
+VRO_METHOD(jfloatArray, nativeOutputRotation)(VRO_ARGS
+                                              jlong nativeRef) {
 
     jfloatArray returnRotation = env->NewFloatArray(3);
     jfloat tempArr[3];

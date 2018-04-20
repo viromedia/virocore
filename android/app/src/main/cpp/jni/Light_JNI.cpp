@@ -5,19 +5,20 @@
 #include "Light_JNI.h"
 #include "VROPlatformUtil.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Light_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeDestroyLight)(JNIEnv *env, jclass clazz,
+VRO_METHOD(void, nativeDestroyLight)(VRO_ARGS
                                      jlong native_light_ref) {
     delete reinterpret_cast<PersistentRef<VROLight> *>(native_light_ref);
 }
 
-JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
-                                 jclass clazz,
+VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  jlong native_light_ref,
                                  jlong color) {
     std::weak_ptr<VROLight> light_w = Light::native(native_light_ref);
@@ -37,8 +38,7 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
-                                     jclass clazz,
+VRO_METHOD(void, nativeSetIntensity)(VRO_ARGS
                                      jlong native_light_ref,
                                      jfloat intensity) {
     std::shared_ptr<VROLight> light = Light::native(native_light_ref);
@@ -47,8 +47,7 @@ JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetTemperature)(JNIEnv *env,
-                                       jclass clazz,
+VRO_METHOD(void, nativeSetTemperature)(VRO_ARGS
                                        jlong native_light_ref,
                                        jfloat temperature) {
     std::shared_ptr<VROLight> light = Light::native(native_light_ref);
@@ -57,8 +56,7 @@ JNI_METHOD(void, nativeSetTemperature)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
-                                            jclass clazz,
+VRO_METHOD(void, nativeSetInfluenceBitMask)(VRO_ARGS
                                             jlong native_light_ref,
                                             jint bitMask) {
     std::weak_ptr<VROLight> light_w = Light::native(native_light_ref);

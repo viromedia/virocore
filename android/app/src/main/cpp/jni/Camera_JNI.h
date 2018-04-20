@@ -8,7 +8,6 @@
 #ifndef ANDROID_CAMERA_JNI_H
 #define ANDROID_CAMERA_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <VRONodeCamera.h>
 #include <VROCamera.h>
@@ -17,13 +16,16 @@
 #include "PersistentRef.h"
 #include "ARUtils_JNI.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace Camera {
-    inline jlong jptr(std::shared_ptr<VRONodeCamera> shared_camera) {
+    inline VRO_REF jptr(std::shared_ptr<VRONodeCamera> shared_camera) {
         PersistentRef<VRONodeCamera> *native_camera = new PersistentRef<VRONodeCamera>(shared_camera);
         return reinterpret_cast<intptr_t>(native_camera);
     }
 
-    inline std::shared_ptr<VRONodeCamera> native(jlong ptr) {
+    inline std::shared_ptr<VRONodeCamera> native(VRO_REF ptr) {
         PersistentRef<VRONodeCamera> *persistentCamera = reinterpret_cast<PersistentRef<VRONodeCamera> *>(ptr);
         return persistentCamera->get();
     }

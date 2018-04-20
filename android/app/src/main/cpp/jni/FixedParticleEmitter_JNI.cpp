@@ -11,14 +11,15 @@
 #include "ARUtils_JNI.h"
 #include "ViroContext_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_FixedParticleEmitter_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateEmitter)(JNIEnv *env,
-                                       jobject obj,
+VRO_METHOD(jlong, nativeCreateEmitter)(VRO_ARGS
                                        jlong context_j,
                                        jlong native_surface_ref) {
     std::shared_ptr<VROFixedParticleEmitter> particleEmitter = std::make_shared<VROFixedParticleEmitter>();
@@ -35,16 +36,14 @@ JNI_METHOD(jlong, nativeCreateEmitter)(JNIEnv *env,
     return FixedParticleEmitter::jptr(particleEmitter);
 }
 
-JNI_METHOD(void, nativeDestroyEmitter)(JNIEnv *env,
-                                       jclass clazz,
+VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
                                        jlong nativeParticleEmitterRef) {
     delete reinterpret_cast<PersistentRef<VROFixedParticleEmitter> *>(nativeParticleEmitterRef);
 }
 
-JNI_METHOD(void, nativeSetParticles)(JNIEnv *env,
-                                        jobject object,
-                                        jlong emitter_j,
-                                        jobjectArray jPositions) {
+VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
+                                     jlong emitter_j,
+                                     jobjectArray jPositions) {
     std::vector<VROVector4f> initialValues;
     int numberOfValues = env->GetArrayLength(jPositions);
     for (int i = 0; i < numberOfValues; i++) {
@@ -62,9 +61,8 @@ JNI_METHOD(void, nativeSetParticles)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearParticles)(JNIEnv *env,
-                                     jobject object,
-                                     jlong emitter_j) {
+VRO_METHOD(void, nativeClearParticles)(VRO_ARGS
+                                       jlong emitter_j) {
     std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
     VROPlatformDispatchAsyncRenderer([emitter_w] {
         std::shared_ptr<VROFixedParticleEmitter> emitter = emitter_w.lock();
@@ -72,10 +70,9 @@ JNI_METHOD(void, nativeClearParticles)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetEmitterSurface)(JNIEnv *env,
-                                       jobject object,
-                                       jlong emitter_j,
-                                       jlong native_surface_ref) {
+VRO_METHOD(void, nativeSetEmitterSurface)(VRO_ARGS
+                                          jlong emitter_j,
+                                          jlong native_surface_ref) {
     std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
     std::weak_ptr<VROSurface> surface_w = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
 

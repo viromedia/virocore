@@ -5,14 +5,15 @@
 #include <VROStringUtil.h>
 #include "ARImageTarget_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARImageTarget_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateARImageTarget) (JNIEnv *env,
-                                             jclass clazz,
+VRO_METHOD(jlong, nativeCreateARImageTarget)(VRO_ARGS
                                              jobject bitmap,
                                              jstring orientation,
                                              jfloat physicalWidth,
@@ -41,7 +42,8 @@ JNI_METHOD(jlong, nativeCreateARImageTarget) (JNIEnv *env,
     return ARImageTarget::jptr(target);
 }
 
-JNI_METHOD(void, nativeDestroyARImageTarget)(JNIEnv *env, jclass clazz, jlong nativeRef) {
+VRO_METHOD(void, nativeDestroyARImageTarget)(VRO_ARGS
+                                             jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROARImageTargetAndroid> *>(nativeRef);
 }
 

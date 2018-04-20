@@ -11,17 +11,19 @@
 #include <VROPlatformUtil.h>
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Spotlight_##method_name
+#endif
 
 namespace SpotLight {
-    inline jlong jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(jlong ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -29,8 +31,7 @@ namespace SpotLight {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateSpotLight)(JNIEnv *env,
-                                         jclass clazz,
+VRO_METHOD(jlong, nativeCreateSpotLight)(VRO_ARGS
                                          jlong color,
                                          jfloat intensity,
                                          jfloat attenuationStartDistance,
@@ -71,8 +72,7 @@ JNI_METHOD(jlong, nativeCreateSpotLight)(JNIEnv *env,
 
 // Setters
 
-JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
-                                                    jclass clazz,
+VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
                                                     jlong native_light_ref,
                                                     jfloat attenuationStartDistance) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
@@ -85,10 +85,9 @@ JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetAttenuationEndDistance)(JNIEnv *env,
-                                                    jclass clazz,
-                                                    jlong native_light_ref,
-                                                    jfloat attenuationEndDistance) {
+VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
+                                                  jlong native_light_ref,
+                                                  jfloat attenuationEndDistance) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationEndDistance] {
         std::shared_ptr<VROLight> light = light_w.lock();
@@ -99,12 +98,11 @@ JNI_METHOD(void, nativeSetAttenuationEndDistance)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
-                                                  jclass clazz,
-                                                  jlong native_light_ref,
-                                                  jfloat positionX,
-                                                  jfloat positionY,
-                                                  jfloat positionZ) {
+VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
+                                    jlong native_light_ref,
+                                    jfloat positionX,
+                                    jfloat positionY,
+                                    jfloat positionZ) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, positionX, positionY, positionZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
@@ -116,12 +114,11 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
-                                    jclass clazz,
-                                    jlong native_light_ref,
-                                    jfloat directionX,
-                                    jfloat directionY,
-                                    jfloat directionZ) {
+VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
+                                     jlong native_light_ref,
+                                     jfloat directionX,
+                                     jfloat directionY,
+                                     jfloat directionZ) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, directionX, directionY, directionZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
@@ -133,10 +130,9 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetInnerAngle)(JNIEnv *env,
-                                                  jclass clazz,
-                                                  jlong native_light_ref,
-                                                  jfloat innerAngleRadians) {
+VRO_METHOD(void, nativeSetInnerAngle)(VRO_ARGS
+                                      jlong native_light_ref,
+                                      jfloat innerAngleRadians) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, innerAngleRadians] {
         std::shared_ptr<VROLight> light = light_w.lock();
@@ -147,10 +143,9 @@ JNI_METHOD(void, nativeSetInnerAngle)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetOuterAngle)(JNIEnv *env,
-                                                  jclass clazz,
-                                                  jlong native_light_ref,
-                                                  jfloat outerAngleRadians) {
+VRO_METHOD(void, nativeSetOuterAngle)(VRO_ARGS
+                                      jlong native_light_ref,
+                                      jfloat outerAngleRadians) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, outerAngleRadians] {
         std::shared_ptr<VROLight> light = light_w.lock();
@@ -161,8 +156,7 @@ JNI_METHOD(void, nativeSetOuterAngle)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
-                                       jclass clazz,
+VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
                                        jlong native_light_ref,
                                        jboolean castsShadow) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
@@ -175,10 +169,9 @@ JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowOpacity)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong native_light_ref,
-                                       jfloat shadowOpacity) {
+VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
+                                        jlong native_light_ref,
+                                        jfloat shadowOpacity) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, shadowOpacity] {
@@ -190,8 +183,7 @@ JNI_METHOD(void, nativeSetShadowOpacity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowMapSize)(JNIEnv *env,
-                                         jclass clazz,
+VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
                                          jlong native_light_ref,
                                          jint size) {
 
@@ -205,8 +197,7 @@ JNI_METHOD(void, nativeSetShadowMapSize)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowBias)(JNIEnv *env,
-                                      jclass clazz,
+VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
                                       jlong native_light_ref,
                                       jfloat bias) {
 
@@ -217,8 +208,7 @@ JNI_METHOD(void, nativeSetShadowBias)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowNearZ)(JNIEnv *env,
-                                       jclass clazz,
+VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
                                        jlong native_light_ref,
                                        jfloat shadowNearZ) {
 
@@ -229,8 +219,7 @@ JNI_METHOD(void, nativeSetShadowNearZ)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowFarZ)(JNIEnv *env,
-                                      jclass clazz,
+VRO_METHOD(void, nativeSetShadowFarZ)(VRO_ARGS
                                       jlong native_light_ref,
                                       jfloat shadowFarZ) {
 

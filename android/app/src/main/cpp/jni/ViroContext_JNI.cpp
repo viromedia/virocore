@@ -11,27 +11,26 @@
 #include "ViroContext_JNI.h"
 #include "VRORenderer_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ViroContext_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateViroContext)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(jlong, nativeCreateViroContext)(VRO_ARGS
                                            jlong renderer_j) {
     std::shared_ptr<ViroContext> context = std::make_shared<ViroContext>(Renderer::native(renderer_j));
     return ViroContext::jptr(context);
 }
 
-JNI_METHOD(void, nativeDeleteViroContext)(JNIEnv *env,
-                                          jobject obj,
+VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
                                           jlong context_j) {
     delete reinterpret_cast<PersistentRef<ViroContext> *>(context_j);
 }
 
-JNI_METHOD(void, nativeGetCameraOrientation)(JNIEnv *env,
-                                             jobject obj,
+VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
                                              jlong context_j,
                                              jobject callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);

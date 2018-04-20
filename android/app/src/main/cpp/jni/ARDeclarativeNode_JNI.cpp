@@ -2,14 +2,15 @@
 #include <VROPlatformUtil.h>
 #include "ARUtils_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ARDeclarativeNode_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
-                                     jobject object,
+VRO_METHOD(void, nativeSetAnchorId) (VRO_ARGS
                                      jlong node_j,
                                      jstring id_j) {
     std::string id_s = VROPlatformGetString(id_j, env);
@@ -17,17 +18,15 @@ JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
     node->setAnchorId(id_s);
 }
 
-JNI_METHOD(jlong, nativeCreateARNodeDelegate) (JNIEnv *env,
-                                               jobject object,
+VRO_METHOD(jlong, nativeCreateARNodeDelegate) (VRO_ARGS
                                                jlong node_j) {
-    std::shared_ptr<ARDeclarativeNodeDelegate> delegate = std::make_shared<ARDeclarativeNodeDelegate>(object, env);
+    std::shared_ptr<ARDeclarativeNodeDelegate> delegate = std::make_shared<ARDeclarativeNodeDelegate>(obj, env);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setARNodeDelegate(delegate);
     return ARDeclarativeNodeDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeDestroyARNodeDelegate) (JNIEnv *env,
-                                               jobject object,
+VRO_METHOD(void, nativeDestroyARNodeDelegate) (VRO_ARGS
                                                jlong delegateRef) {
     delete reinterpret_cast<PersistentRef<ARDeclarativeNodeDelegate> *>(delegateRef);
 }

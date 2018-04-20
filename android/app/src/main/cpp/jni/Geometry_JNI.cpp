@@ -8,14 +8,15 @@
 #include "VROGeometry.h"
 #include <jni.h>
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Geometry_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
-                                     jobject obj,
+VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
                                      jlong geo_j,
                                      jlongArray materials_j) {
     jlong *materials_c = env->GetLongArrayElements(materials_j, 0);
@@ -35,8 +36,7 @@ JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
     env->ReleaseLongArrayElements(materials_j, materials_c, 0);
 }
 
-JNI_METHOD(void, nativeCopyAndSetMaterials)(JNIEnv *env,
-                                            jobject obj,
+VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
                                             jlong nativeGeoRef,
                                             jlongArray longArrayRef) {
     jlong *longArray = env->GetLongArrayElements(longArrayRef, 0);

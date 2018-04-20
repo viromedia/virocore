@@ -8,10 +8,11 @@
 #ifndef ANDROID_ARUTILS_JNI_H
 #define ANDROID_ARUTILS_JNI_H
 
-
-#include <jni.h>
 #include <VROARPlaneAnchor.h>
 #include <VROARHitTestResult.h>
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 // Helper functions to create a Java ARAnchor object
 jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor);

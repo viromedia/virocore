@@ -8,18 +8,20 @@
 #ifndef Node_JNI_h
 #define Node_JNI_h
 
-#include <jni.h>
 #include <memory>
 #include <VRONode.h>
 #include "PersistentRef.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace Node {
-    inline jlong jptr(std::shared_ptr<VRONode> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VRONode> shared_node) {
         PersistentRef<VRONode> *native_node = new PersistentRef<VRONode>(shared_node);
         return reinterpret_cast<intptr_t>(native_node);
     }
 
-    inline std::shared_ptr<VRONode> native(jlong ptr) {
+    inline std::shared_ptr<VRONode> native(VRO_REF ptr) {
         PersistentRef<VRONode> *persistentNode = reinterpret_cast<PersistentRef<VRONode> *>(ptr);
         return persistentNode->get();
     }

@@ -8,22 +8,21 @@
 #include "Portal_JNI.h"
 #include "PersistentRef.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Portal_##method_name
-
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreatePortal)(JNIEnv *env,
-        jclass clazz) {
+VRO_METHOD(jlong, nativeCreatePortal)(VRO_NO_ARGS) {
     std::shared_ptr<VROPortalFrame> portal = std::make_shared<VROPortalFrame>();
     return Portal::jptr(portal);
 }
 
-JNI_METHOD(void, nativeDestroyPortal)(JNIEnv *env,
-                                                jclass clazz,
-                                                jlong native_ref) {
+VRO_METHOD(void, nativeDestroyPortal)(VRO_ARGS
+                                      jlong native_ref) {
     delete reinterpret_cast<PersistentRef<VROPortalFrame> *>(native_ref);
 }
 

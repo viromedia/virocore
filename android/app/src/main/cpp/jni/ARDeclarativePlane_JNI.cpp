@@ -11,14 +11,15 @@
 #include "ARDeclarativePlane_JNI.h"
 #include "ARUtils_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ARDeclarativePlane_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateARPlane)(JNIEnv *env,
-                                       jclass clazz,
+VRO_METHOD(jlong, nativeCreateARPlane)(VRO_ARGS
                                        jfloat minWidth,
                                        jfloat minHeight,
                                        jstring jAlignment) {
@@ -41,24 +42,21 @@ JNI_METHOD(jlong, nativeCreateARPlane)(JNIEnv *env,
     return ARDeclarativePlane::jptr(arPlane);
 }
 
-JNI_METHOD(void, nativeSetMinWidth)(JNIEnv *env,
-                                    jobject object,
+VRO_METHOD(void, nativeSetMinWidth)(VRO_ARGS
                                     jlong nativeARPlane,
                                     jfloat minWidth) {
     std::shared_ptr<VROARDeclarativePlane> arPlane = ARDeclarativePlane::native(nativeARPlane);
     arPlane->setMinWidth(minWidth);
 }
 
-JNI_METHOD(void, nativeSetMinHeight)(JNIEnv *env,
-                                     jobject object,
+VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
                                      jlong nativeARPlane,
                                      jfloat minHeight) {
     std::shared_ptr<VROARDeclarativePlane> arPlane = ARDeclarativePlane::native(nativeARPlane);
     arPlane->setMinHeight(minHeight);
 }
 
-JNI_METHOD(void, nativeSetAlignment)(JNIEnv *env,
-                                     jobject object,
+VRO_METHOD(void, nativeSetAlignment)(VRO_ARGS
                                      jlong nativeARPlane,
                                      jstring jAlignment) {
     std::string strAlignment = VROPlatformGetString(jAlignment, env);

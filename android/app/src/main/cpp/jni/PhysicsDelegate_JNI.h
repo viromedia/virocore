@@ -8,9 +8,11 @@
 #ifndef ANDROID_PHYSICS_DELEGATE_JNI_H
 #define ANDROID_PHYSICS_DELEGATE_JNI_H
 
-#include <jni.h>
 #include <PersistentRef.h>
 #include "VROPhysicsBodyDelegate.h"
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 /**
  * PhysicsDelegate_JNI implements a JNI abstraction of the VROPhysicsBodyDelegate to
@@ -23,12 +25,12 @@ public:
     PhysicsDelegate_JNI(jobject videoJavaObject);
     ~PhysicsDelegate_JNI();
 
-    static jlong jptr(std::shared_ptr<PhysicsDelegate_JNI> shared_node) {
+    static VRO_REF jptr(std::shared_ptr<PhysicsDelegate_JNI> shared_node) {
         PersistentRef<PhysicsDelegate_JNI> *native_surface = new PersistentRef<PhysicsDelegate_JNI>(shared_node);
         return reinterpret_cast<intptr_t>(native_surface);
     }
 
-    static std::shared_ptr<PhysicsDelegate_JNI> native(jlong ptr) {
+    static std::shared_ptr<PhysicsDelegate_JNI> native(VRO_REF ptr) {
         PersistentRef<PhysicsDelegate_JNI> *persistentSurface = reinterpret_cast<PersistentRef<PhysicsDelegate_JNI> *>(ptr);
         return persistentSurface->get();
     }

@@ -5,8 +5,10 @@
 #ifndef ANDROID_IMAGETRACKEROUTPUT_JNI_H
 #define ANDROID_IMAGETRACKEROUTPUT_JNI_H
 
-#include <jni.h>
 #include <memory>
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 #if ENABLE_OPENCV
 
@@ -14,12 +16,12 @@
 #include "PersistentRef.h"
 
 namespace ImageTrackerOutput {
-    inline jlong jptr(std::shared_ptr<VROARImageTrackerOutput> tracker) {
+    inline VRO_REF jptr(std::shared_ptr<VROARImageTrackerOutput> tracker) {
         PersistentRef<VROARImageTrackerOutput> *nativeTracker = new PersistentRef<VROARImageTrackerOutput>(tracker);
         return reinterpret_cast<intptr_t>(nativeTracker);
     }
 
-    inline std::shared_ptr<VROARImageTrackerOutput> native(jlong ptr) {
+    inline std::shared_ptr<VROARImageTrackerOutput> native(VRO_REF ptr) {
         PersistentRef<VROARImageTrackerOutput> *persistentOutput = reinterpret_cast<PersistentRef<VROARImageTrackerOutput> *>(ptr);
         return persistentOutput->get();
     }

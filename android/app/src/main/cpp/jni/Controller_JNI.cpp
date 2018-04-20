@@ -12,14 +12,15 @@
 #include "EventDelegate_JNI.h"
 #include "ARUtils_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Controller_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
                                          jlong render_context_ref,
                                          jlong native_delegate_ref) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
@@ -37,8 +38,7 @@ JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
-                                      jobject obj,
+VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
                                       jlong render_context_ref,
                                       jboolean enable) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
@@ -57,10 +57,9 @@ JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeEnableController)(JNIEnv *env,
-                                      jobject obj,
-                                      jlong render_context_ref,
-                                      jboolean enable) {
+VRO_METHOD(void, nativeEnableController)(VRO_ARGS
+                                         jlong render_context_ref,
+                                         jboolean enable) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
 
     VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {
@@ -74,18 +73,16 @@ JNI_METHOD(void, nativeEnableController)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(jfloatArray, nativeGetControllerForwardVector)(JNIEnv *env,
-                                                          jobject obj,
+VRO_METHOD(jfloatArray, nativeGetControllerForwardVector)(VRO_ARGS
                                                           jlong context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     VROVector3f position = context->getInputController()->getPresenter()->getLastKnownForward();
     return ARUtilsCreateFloatArrayFromVector3f(position);
 }
 
-JNI_METHOD(void, nativeGetControllerForwardVectorAsync)(JNIEnv *env,
-                                          jobject obj,
-                                          jlong native_render_context_ref,
-                                          jobject callback) {
+VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
+                                                        jlong native_render_context_ref,
+                                                        jobject callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);
     std::weak_ptr<ViroContext> helperContext_w = ViroContext::native(native_render_context_ref);
 

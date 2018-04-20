@@ -9,14 +9,15 @@
 #include "ViroContext_JNI.h"
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ParticleEmitter_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateEmitter)(JNIEnv *env,
-                                       jobject obj,
+VRO_METHOD(jlong, nativeCreateEmitter)(VRO_ARGS
                                        jlong context_j,
                                        jlong native_surface_ref) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
@@ -30,14 +31,12 @@ JNI_METHOD(jlong, nativeCreateEmitter)(JNIEnv *env,
     return ParticleEmitter::jptr(particleEmitter);
 }
 
-JNI_METHOD(void, nativeDestroyEmitter)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong nativeParticleEmitterRef) {
+VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
+                                       jlong nativeParticleEmitterRef) {
     delete reinterpret_cast<PersistentRef<VROParticleEmitter> *>(nativeParticleEmitterRef);
 }
 
-JNI_METHOD(void, nativeSetDelay)(JNIEnv *env,
-                                 jclass clazz,
+VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
                                  jlong native_ref,
                                  jfloat delay) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
@@ -49,10 +48,9 @@ JNI_METHOD(void, nativeSetDelay)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetDuration)(JNIEnv *env,
-                                 jclass clazz,
-                                 jlong native_ref,
-                                 jfloat value) {
+VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
+                                    jlong native_ref,
+                                    jfloat value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -62,10 +60,9 @@ JNI_METHOD(void, nativeSetDuration)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetLoop)(JNIEnv *env,
-                                    jclass clazz,
-                                    jlong native_ref,
-                                    jboolean value) {
+VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
+                                jlong native_ref,
+                                jboolean value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -75,10 +72,9 @@ JNI_METHOD(void, nativeSetLoop)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRun)(JNIEnv *env,
-                                jclass clazz,
-                                jlong native_ref,
-                                jboolean value) {
+VRO_METHOD(void, nativeSetRun)(VRO_ARGS
+                               jlong native_ref,
+                               jboolean value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -88,10 +84,9 @@ JNI_METHOD(void, nativeSetRun)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetFixedToEmitter)(JNIEnv *env,
-                                jclass clazz,
-                                jlong native_ref,
-                                jboolean value) {
+VRO_METHOD(void, nativeSetFixedToEmitter)(VRO_ARGS
+                                          jlong native_ref,
+                                          jboolean value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -101,9 +96,8 @@ JNI_METHOD(void, nativeSetFixedToEmitter)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeResetEmissionCycle)(JNIEnv *env,
-                                jclass clazz,
-                                jlong native_ref) {
+VRO_METHOD(void, nativeResetEmissionCycle)(VRO_ARGS
+                                           jlong native_ref) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -114,10 +108,9 @@ JNI_METHOD(void, nativeResetEmissionCycle)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetEmissionRatePerSecond)(JNIEnv *env,
-                                 jclass clazz,
-                                 jlong native_ref,
-                                 jint value1, jint value2) {
+VRO_METHOD(void, nativeSetEmissionRatePerSecond)(VRO_ARGS
+                                                 jlong native_ref,
+                                                 jint value1, jint value2) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -127,10 +120,9 @@ JNI_METHOD(void, nativeSetEmissionRatePerSecond)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetEmissionRatePerMeter)(JNIEnv *env,
-                                                 jclass clazz,
-                                                 jlong native_ref,
-                                                 jint value1, jint value2) {
+VRO_METHOD(void, nativeSetEmissionRatePerMeter)(VRO_ARGS
+                                                jlong native_ref,
+                                                jint value1, jint value2) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -140,10 +132,9 @@ JNI_METHOD(void, nativeSetEmissionRatePerMeter)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetParticleLifetime)(JNIEnv *env,
-                                                 jclass clazz,
-                                                 jlong native_ref,
-                                                 jint value1, jint value2) {
+VRO_METHOD(void, nativeSetParticleLifetime)(VRO_ARGS
+                                            jlong native_ref,
+                                            jint value1, jint value2) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -153,8 +144,7 @@ JNI_METHOD(void, nativeSetParticleLifetime)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetMaxParticles)(JNIEnv *env,
-                                        jclass clazz,
+VRO_METHOD(void, nativeSetMaxParticles)(VRO_ARGS
                                         jlong native_ref,
                                         jint value1) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
@@ -166,12 +156,11 @@ JNI_METHOD(void, nativeSetMaxParticles)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetSpawnVolume)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong native_ref,
-                                        jstring jShape,
-                                        jfloatArray jShapeParams,
-                                        jboolean jSpawnOnSurface) {
+VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
+                                       jlong native_ref,
+                                       jstring jShape,
+                                       jfloatArray jShapeParams,
+                                       jboolean jSpawnOnSurface) {
 
     // Grab the emitter's spawn volume shape.
     std::string strShape = VROPlatformGetString(jShape, env);
@@ -204,12 +193,11 @@ JNI_METHOD(void, nativeSetSpawnVolume)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetExplosiveImpulse)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong native_ref,
-                                       jfloat jImpulse,
-                                       jfloatArray jPosition,
-                                       jfloat jDeccelPeriod) {
+VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
+                                            jlong native_ref,
+                                            jfloat jImpulse,
+                                            jfloatArray jPosition,
+                                            jfloat jDeccelPeriod) {
     // Grab the position at which to apply the explosive impulse.
     int paramsLength = env->GetArrayLength(jPosition);
     jfloat *pointArray = env->GetFloatArrayElements(jPosition, 0);
@@ -230,10 +218,9 @@ JNI_METHOD(void, nativeSetExplosiveImpulse)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetParticleBursts)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong native_ref,
-                                        jobjectArray jBursts) {
+VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
+                                          jlong native_ref,
+                                          jobjectArray jBursts) {
 
     // Grab and create a list of bursts if any.
     std::vector<VROParticleEmitter::VROParticleBurst> particleBursts;
@@ -272,8 +259,7 @@ JNI_METHOD(void, nativeSetParticleBursts)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetParticleModifier)(JNIEnv *env,
-                                            jclass clazz,
+VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
                                             jlong native_ref,
                                             jstring jModifier,
                                             jstring jFactor,
@@ -314,8 +300,7 @@ JNI_METHOD(void, nativeSetParticleModifier)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(bool, nativeSetParticleBlendMode)(JNIEnv *env,
-                                             jclass clazz,
+VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
                                              jlong native_ref,
                                              jstring jblendMode) {
     std::string strBlendMode = VROPlatformGetString(jblendMode, env);
@@ -338,10 +323,9 @@ JNI_METHOD(bool, nativeSetParticleBlendMode)(JNIEnv *env,
     return true;
 }
 
-JNI_METHOD(void, nativeSetBloomThreshold)(JNIEnv *env,
-                                                jclass clazz,
-                                                jlong native_ref,
-                                                jfloat threshold) {
+VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
+                                          jlong native_ref,
+                                          jfloat threshold) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, threshold] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();

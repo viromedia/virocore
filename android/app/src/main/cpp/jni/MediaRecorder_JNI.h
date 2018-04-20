@@ -4,18 +4,20 @@
 #ifndef MEDIA_RECORDER_JNI_H
 #define MEDIA_RECORDER_JNI_H
 
-#include <jni.h>
 #include <PersistentRef.h>
 #include "VROAVRecorderAndroid.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace MediaRecorder {
-    inline jlong jptr(std::shared_ptr<MediaRecorder_JNI> delegate) {
+    inline VRO_REF jptr(std::shared_ptr<MediaRecorder_JNI> delegate) {
         PersistentRef<MediaRecorder_JNI> *delegateRef
                 = new PersistentRef<MediaRecorder_JNI>(delegate);
         return reinterpret_cast<intptr_t>(delegateRef);
     }
 
-    inline std::shared_ptr<MediaRecorder_JNI> native(jlong ptr) {
+    inline std::shared_ptr<MediaRecorder_JNI> native(VRO_REF ptr) {
         PersistentRef<MediaRecorder_JNI> *persistentDelegate
                 = reinterpret_cast<PersistentRef<MediaRecorder_JNI> *>(ptr);
         return persistentDelegate->get();

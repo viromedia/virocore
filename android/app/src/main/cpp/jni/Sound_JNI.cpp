@@ -14,19 +14,20 @@
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
 
-
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Sound_##method_name
+#endif
 
 // TODO: when GVR audio supports the seekToTime, etc, then change the native object to a VROSound.
 namespace Sound {
-    inline jlong jptr(std::shared_ptr<VROAudioPlayerAndroid> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROAudioPlayerAndroid> ptr) {
         PersistentRef<VROAudioPlayerAndroid> *persistentRef = new PersistentRef<VROAudioPlayerAndroid>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROAudioPlayerAndroid> native(jlong ptr) {
+    inline std::shared_ptr<VROAudioPlayerAndroid> native(VRO_REF ptr) {
         PersistentRef<VROAudioPlayerAndroid> *persistentRef = reinterpret_cast<PersistentRef<VROAudioPlayerAndroid> *>(ptr);
         return persistentRef->get();
     }
@@ -37,8 +38,7 @@ extern "C" {
      * Since we're using VROAudioPlayerAndroid, there's no difference between the logic for
      * web urls vs local file urls, the Android MediaPlayer handles both.
      */
-    JNI_METHOD(jlong, nativeCreateSound)(JNIEnv *env,
-                                         jobject object,
+    VRO_METHOD(jlong, nativeCreateSound)(VRO_ARGS
                                          jstring filename,
                                          jlong context_j) {
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
@@ -47,19 +47,17 @@ extern "C" {
         std::string file = VROPlatformGetString(filename, env);
         std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(file, false);
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
-        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
+        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(obj));
         return Sound::jptr(playerAndroid);
     }
 
-    JNI_METHOD(void, nativeSetup)(JNIEnv *env,
-                                  jobject object,
+    VRO_METHOD(void, nativeSetup)(VRO_ARGS
                                   jlong sound_j) {
         std::shared_ptr<VROAudioPlayerAndroid> player = Sound::native(sound_j);
         player->setup();
     }
 
-    JNI_METHOD(jlong, nativeCreateSoundWithData)(JNIEnv *env,
-                                                 jobject object,
+    VRO_METHOD(jlong, nativeCreateSoundWithData)(VRO_ARGS
                                                  jlong dataRef,
                                                  jlong context_j) {
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
@@ -68,45 +66,47 @@ extern "C" {
 
         std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(data);
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
-        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
+        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(obj));
         playerAndroid->setup();
 
         return Sound::jptr(playerAndroid);
     }
 
-    JNI_METHOD(void, nativePlaySound)(JNIEnv *env, jobject obj,
+    VRO_METHOD(void, nativePlaySound)(VRO_ARGS
                                       jlong nativeRef) {
         Sound::native(nativeRef)->play();
     }
 
-    JNI_METHOD(void, nativePauseSound)(JNIEnv *env, jobject obj, jlong nativeRef) {
+    VRO_METHOD(void, nativePauseSound)(VRO_ARGS
+                                       jlong nativeRef) {
         Sound::native(nativeRef)->pause();
     }
 
-    JNI_METHOD(void, nativeSetVolume)(JNIEnv *env, jobject obj,
+    VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
                                       jlong nativeRef,
                                       jfloat volume) {
         Sound::native(nativeRef)->setVolume(volume);
     }
 
-    JNI_METHOD(void, nativeSetMuted)(JNIEnv *env, jobject obj,
+    VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
                                      jlong nativeRef,
                                      jboolean muted) {
         Sound::native(nativeRef)->setMuted(muted);
     }
 
-    JNI_METHOD(void, nativeSetLoop)(JNIEnv *env, jobject obj,
+    VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                     jlong nativeRef,
                                     jboolean loop) {
         Sound::native(nativeRef)->setLoop(loop);
     }
-    JNI_METHOD(void, nativeSeekToTime)(JNIEnv *env, jobject obj,
+    VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
                                        jlong nativeRef,
                                        jfloat seconds) {
         Sound::native(nativeRef)->seekToTime(seconds);
     }
 
-    JNI_METHOD(void, nativeDestroySound)(JNIEnv *env, jobject obj, jlong nativeRef) {
+    VRO_METHOD(void, nativeDestroySound)(VRO_ARGS
+                                         jlong nativeRef) {
         delete reinterpret_cast<PersistentRef<VROAudioPlayerAndroid> *>(nativeRef);
     }
 

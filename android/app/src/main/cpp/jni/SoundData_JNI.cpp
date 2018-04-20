@@ -8,14 +8,15 @@
 #include <VROPlatformUtil.h>
 #include "SoundData_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_SoundData_##method_name
+#endif
 
 extern "C" {
 
-    JNI_METHOD(jlong, nativeCreateSoundData)(JNIEnv *env,
-                                             jobject object,
+    VRO_METHOD(jlong, nativeCreateSoundData)(VRO_ARGS
                                              jstring filepath) {
         std::string path = VROPlatformGetString(filepath, env);
 
@@ -26,25 +27,22 @@ extern "C" {
         return SoundData::jptr(data);
     }
 
-    JNI_METHOD(jlong, nativeSetSoundDataDelegate)(JNIEnv *env,
-                                             jobject object,
-                                             jlong nativeRef) {
+    VRO_METHOD(jlong, nativeSetSoundDataDelegate)(VRO_ARGS
+                                                  jlong nativeRef) {
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(nativeRef);
         std::shared_ptr<VROSoundDataDelegate_JNI> delegateRef
-                = std::make_shared<VROSoundDataDelegate_JNI>(object, env);
+                = std::make_shared<VROSoundDataDelegate_JNI>(obj, env);
         data->setDelegate(delegateRef);
         return SoundDataDelegate::jptr(delegateRef);
     }
 
-    JNI_METHOD(void, nativeDestroySoundData)(JNIEnv *env,
-                                             jobject obj,
+    VRO_METHOD(void, nativeDestroySoundData)(VRO_ARGS
                                              jlong nativeRef) {
         delete reinterpret_cast<PersistentRef<VROSoundDataGVR> *>(nativeRef);
     }
 
-    JNI_METHOD(void, nativeDestroySoundDataDelegate)(JNIEnv *env,
-                                             jobject obj,
-                                             jlong nativeRef) {
+    VRO_METHOD(void, nativeDestroySoundDataDelegate)(VRO_ARGS
+                                                    jlong nativeRef) {
         delete reinterpret_cast<PersistentRef<VROSoundDataDelegate_JNI> *>(nativeRef);
     }
 } // extern "C"

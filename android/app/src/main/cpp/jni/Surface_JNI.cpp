@@ -18,14 +18,15 @@
 #include "VideoTexture_JNI.h"
 #include "Material_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Surface_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateSurface)(JNIEnv *env,
-                                       jobject object,
+VRO_METHOD(jlong, nativeCreateSurface)(VRO_ARGS
                                        jfloat width,
                                        jfloat height,
                                        jfloat u0, jfloat v0,
@@ -34,8 +35,7 @@ JNI_METHOD(jlong, nativeCreateSurface)(JNIEnv *env,
     return Surface::jptr(surface);
 }
 
-JNI_METHOD(jlong, nativeCreateSurfaceFromSurface)(JNIEnv *env,
-                                                  jobject object,
+VRO_METHOD(jlong, nativeCreateSurfaceFromSurface)(VRO_ARGS
                                                   jfloat width,
                                                   jfloat height,
                                                   jfloat u0, jfloat v0,
@@ -49,16 +49,14 @@ JNI_METHOD(jlong, nativeCreateSurfaceFromSurface)(JNIEnv *env,
     return Surface::jptr(surface);
 }
 
-JNI_METHOD(void, nativeDestroySurface)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong nativeSurface) {
+VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
+                                       jlong nativeSurface) {
     delete reinterpret_cast<PersistentRef<VROSurface> *>(nativeSurface);
 }
 
-JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong nativeSurface,
-                                       jfloat width) {
+VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
+                                 jlong nativeSurface,
+                                 jfloat width) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, width] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -69,10 +67,9 @@ JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong nativeSurface,
-                                       jfloat height) {
+VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
+                                  jlong nativeSurface,
+                                  jfloat height) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, height] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -83,8 +80,7 @@ JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
                                         jlong surfaceRef,
                                         jlong textureRef) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
@@ -107,8 +103,7 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
                                         jlong surfaceRef,
                                         jlong textureRef) {
     std::weak_ptr<VROTexture> imageTexture_w = Texture::native(textureRef);
@@ -130,8 +125,7 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearMaterial)(JNIEnv *env,
-                                      jobject obj,
+VRO_METHOD(void, nativeClearMaterial)(VRO_ARGS
                                       jlong surfaceRef) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
     VROPlatformDispatchAsyncRenderer([surface_w] {

@@ -10,7 +10,6 @@
 #include "ARUtils_JNI.h"
 #include "VROARPointCloud.h"
 
-
 /**
  * Creates an ARAnchor from the given VROARPlaneAnchor.
  */

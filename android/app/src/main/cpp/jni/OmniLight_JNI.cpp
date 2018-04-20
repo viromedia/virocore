@@ -11,17 +11,19 @@
 #include <VROPlatformUtil.h>
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_OmniLight_##method_name
+#endif
 
 namespace OmniLight {
-    inline jlong jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(jlong ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -30,8 +32,7 @@ namespace OmniLight {
 extern "C" {
 
 
-JNI_METHOD(jlong, nativeCreateOmniLight)(JNIEnv *env,
-                                         jclass clazz,
+VRO_METHOD(jlong, nativeCreateOmniLight)(VRO_ARGS
                                          jlong color,
                                          jfloat intensity,
                                          jfloat attenuationStartDistance,
@@ -61,8 +62,7 @@ JNI_METHOD(jlong, nativeCreateOmniLight)(JNIEnv *env,
 
 // Setters
 
-JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
-                                                    jclass clazz,
+VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
                                                     jlong native_light_ref,
                                                     jfloat attenuationStartDistance) {
     std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
@@ -75,8 +75,7 @@ JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetAttenuationEndDistance)(JNIEnv *env,
-                                                  jclass clazz,
+VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
                                                   jlong native_light_ref,
                                                   jfloat attenuationEndDistance) {
     std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
@@ -89,8 +88,7 @@ JNI_METHOD(void, nativeSetAttenuationEndDistance)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
-                                    jclass clazz,
+VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     jlong native_light_ref,
                                     jfloat positionX,
                                     jfloat positionY,

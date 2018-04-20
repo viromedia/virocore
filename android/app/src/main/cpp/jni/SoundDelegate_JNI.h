@@ -8,10 +8,12 @@
 #ifndef ANDROID_VIDEO_DELEGATE_JNI_H
 #define ANDROID_VIDEO_DELEGATE_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <PersistentRef.h>
 #include <VROSoundDelegateInternal.h>
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 class SoundDelegate : public VROSoundDelegateInternal {
 
@@ -19,11 +21,11 @@ public:
     SoundDelegate(jobject soundObjectJava);
     ~SoundDelegate();
 
-    static jlong jptr(std::shared_ptr<SoundDelegate> delegate) {
+    static VRO_REF jptr(std::shared_ptr<SoundDelegate> delegate) {
         return reinterpret_cast<intptr_t>(new PersistentRef<SoundDelegate>(delegate));
     }
 
-    static std::shared_ptr<SoundDelegate> native(jlong ptr) {
+    static std::shared_ptr<SoundDelegate> native(VRO_REF ptr) {
         return reinterpret_cast<PersistentRef<SoundDelegate> *>(ptr)->get();
     }
 

@@ -11,9 +11,11 @@
 #include "VROLog.h"
 #include "VROARShadow.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Material_##method_name
+#endif
 
 VROVector4f parseColor(jlong color) {
     float a = ((color >> 24) & 0xFF) / 255.0;
@@ -90,12 +92,12 @@ VROCullMode parseCullMode(std::string strName) {
     }
 }
 
-JNI_METHOD(jlong, nativeCreateMaterial)(JNIEnv *env, jobject obj) {
+VRO_METHOD(jlong, nativeCreateMaterial)(VRO_NO_ARGS) {
     std::shared_ptr<VROMaterial> materialPtr = std::make_shared<VROMaterial>();
     return Material::jptr(materialPtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImmutableMaterial)(JNIEnv *env, jobject obj,
+VRO_METHOD(jlong, nativeCreateImmutableMaterial)(VRO_ARGS
                                                  jstring lightingModel, jlong diffuseColor, jlong diffuseTexture,
                                                  jfloat diffuseIntensity, jlong specularTexture,
                                                  jfloat shininess, jfloat fresnelExponent, jlong normalMap, jstring cullMode,
@@ -119,7 +121,7 @@ JNI_METHOD(jlong, nativeCreateImmutableMaterial)(JNIEnv *env, jobject obj,
     return Material::jptr(material);
 }
 
-JNI_METHOD(void, nativeSetWritesToDepthBuffer)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetWritesToDepthBuffer)(VRO_ARGS
                                                jlong material_j,
                                                jboolean writesToDepthBuffer) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
@@ -131,7 +133,7 @@ JNI_METHOD(void, nativeSetWritesToDepthBuffer)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetReadsFromDepthBuffer)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetReadsFromDepthBuffer)(VRO_ARGS
                                                 jlong material_j,
                                                 jboolean readsFromDepthBuffer) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
@@ -143,7 +145,7 @@ JNI_METHOD(void, nativeSetReadsFromDepthBuffer)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetTexture)(VRO_ARGS
                                    jlong material_j,
                                    jlong textureRef,
                                    jstring materialPropertyName) {
@@ -184,7 +186,7 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  jlong material_j,
                                  jlong color,
                                  jstring materialPropertyName) {
@@ -217,7 +219,7 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetFloat)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetFloat)(VRO_ARGS
                                  jlong material_j,
                                  jfloat value,
                                  jstring name_j) {
@@ -236,7 +238,7 @@ JNI_METHOD(void, nativeSetFloat)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetShininess)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetShininess)(VRO_ARGS
                                      jlong material_j,
                                      jdouble shininess) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
@@ -248,7 +250,7 @@ JNI_METHOD(void, nativeSetShininess)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetFresnelExponent)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetFresnelExponent)(VRO_ARGS
                                            jlong material_j,
                                            jdouble fresnelExponent) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
@@ -260,7 +262,7 @@ JNI_METHOD(void, nativeSetFresnelExponent)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetLightingModel)(VRO_ARGS
                                          jlong material_j,
                                          jstring lightingModelName) {
     std::string strName = VROPlatformGetString(lightingModelName, env);
@@ -274,7 +276,7 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetBlendMode)(VRO_ARGS
                                      jlong material_j,
                                      jstring blendMode_s) {
     std::string blendMode = VROPlatformGetString(blendMode_s, env);
@@ -288,7 +290,7 @@ JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetTransparencyMode)(VRO_ARGS
                                             jlong material_j,
                                             jstring transparencyModeName) {
     std::string strName = VROPlatformGetString(transparencyModeName, env);
@@ -302,8 +304,7 @@ JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
-                                    jobject obj,
+VRO_METHOD(void, nativeSetCullMode)(VRO_ARGS
                                     jlong material_j,
                                     jstring cullModeName) {
     std::string strName = VROPlatformGetString(cullModeName, env);
@@ -317,7 +318,7 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetDiffuseIntensity)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetDiffuseIntensity)(VRO_ARGS
                                             jlong material_j, jfloat diffuseIntensity) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, diffuseIntensity] {
@@ -328,7 +329,7 @@ JNI_METHOD(void, nativeSetDiffuseIntensity)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetBloomThreshold)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
                                           jlong material_j, jfloat bloomThreshold) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, bloomThreshold] {
@@ -339,13 +340,12 @@ JNI_METHOD(void, nativeSetBloomThreshold)(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeDestroyMaterial)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeDestroyMaterial)(VRO_ARGS
                                         jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROMaterial> *>(nativeRef);
 }
 
-JNI_METHOD(void, nativeSetShadowMode(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeSetShadowMode(VRO_ARGS
                                      jlong material_j, jstring shadow_j)) {
     std::string shadow_s = VROPlatformGetString(shadow_j, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
@@ -371,7 +371,8 @@ JNI_METHOD(void, nativeSetShadowMode(JNIEnv *env, jobject obj,
     });
 }
 
-JNI_METHOD(void, nativeSetName(JNIEnv *env, jobject obj, jlong jMaterial, jstring jName)) {
+VRO_METHOD(void, nativeSetName(VRO_ARGS
+                               jlong jMaterial, jstring jName)) {
     std::string strName = VROPlatformGetString(jName, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(jMaterial);
 

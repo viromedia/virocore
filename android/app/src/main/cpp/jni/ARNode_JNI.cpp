@@ -2,14 +2,15 @@
 #include "ARNode_JNI.h"
 #include "ARUtils_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARNode_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeSetPauseUpdates)(JNIEnv *env,
-                                        jobject object,
+VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
                                         jlong node_j,
                                         jboolean pauseUpdates) {
     std::weak_ptr<VROARNode> node_w = ARNode::native(node_j);

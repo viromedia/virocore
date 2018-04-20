@@ -23,49 +23,45 @@
 #include "ParticleEmitter_JNI.h"
 #include "VROPostProcessEffectFactory.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Scene_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateSceneController)(JNIEnv *env,
-                                     jobject object,
-                                     jlong root_node_ref) {
+VRO_METHOD(jlong, nativeCreateSceneController)(VRO_ARGS
+                                               jlong root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     return SceneController::jptr(sceneController);
 }
 
-JNI_METHOD(jlong, nativeGetSceneNodeRef)(JNIEnv *env,
-                                               jobject object,
-                                               jlong root_node_ref) {
+VRO_METHOD(jlong, nativeGetSceneNodeRef)(VRO_ARGS
+                                         jlong root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = SceneController::native(root_node_ref);
     std::shared_ptr<VRONode> node = std::static_pointer_cast<VRONode>(sceneController->getScene()->getRootNode());
     return Node::jptr(node);
 }
 
-JNI_METHOD(jlong, nativeCreateSceneControllerDelegate)(JNIEnv *env,
-                                                       jobject object,
+VRO_METHOD(jlong, nativeCreateSceneControllerDelegate)(VRO_ARGS
                                                        jlong native_object_ref) {
-    std::shared_ptr<SceneControllerDelegate> delegate = std::make_shared<SceneControllerDelegate>(object, env);
+    std::shared_ptr<SceneControllerDelegate> delegate = std::make_shared<SceneControllerDelegate>(obj, env);
     SceneController::native(native_object_ref)->setDelegate(delegate);
     return SceneControllerDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeDestroySceneController)(JNIEnv *env,
-                                               jclass clazz,
+VRO_METHOD(void, nativeDestroySceneController)(VRO_ARGS
                                                jlong native_object_ref) {
     delete reinterpret_cast<PersistentRef<VROSceneController> *>(native_object_ref);
 }
 
-JNI_METHOD(void, nativeDestroySceneControllerDelegate)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong native_delegate_object_ref) {
+VRO_METHOD(void, nativeDestroySceneControllerDelegate)(VRO_ARGS
+                                                       jlong native_delegate_object_ref) {
     delete reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(native_delegate_object_ref);
 }
 
-JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
-                                             jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
                                              jlong scene_j,
                                              jlong texture_j) {
     std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
@@ -81,8 +77,7 @@ JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
-                                              jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
                                               jlong sceneRef,
                                               jfloat rotationRadiansX,
                                               jfloat rotationRadiansY,
@@ -99,10 +94,9 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
-                                          jclass clazz,
-                                          jlong sceneRef,
-                                          jlong textureRef) {
+VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
+                                                      jlong sceneRef,
+                                                      jlong textureRef) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     std::weak_ptr<VROTexture> texture_w = Texture::native(textureRef);
 
@@ -115,8 +109,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
-                                                   jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
                                                    jlong sceneRef,
                                                    jlong color) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
@@ -136,8 +129,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
-                                               jclass clazz,
+VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
                                                jlong scene_j,
                                                jlong texture_j) {
     std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
@@ -156,7 +148,8 @@ JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong context_j,
+VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
+                                     jlong sceneRef, jlong context_j,
                                      jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
                                      jstring ceilingMaterial, jstring floorMaterial) {
     std::string strWallMaterial = VROPlatformGetString(wallMaterial, env);
@@ -182,10 +175,9 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     });
 }
 
-JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
-                                           jclass clazz,
-                                           jlong sceneRef,
-                                           jobjectArray jEffects) {
+VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
+                                   jlong sceneRef,
+                                   jobjectArray jEffects) {
     std::vector<std::string> effects;
     if (jEffects != NULL) {
         int numberOfValues = env->GetArrayLength(jEffects);
@@ -207,10 +199,9 @@ JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong sceneRef,
-                                     jfloatArray gravityArray) {
+VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
+                                               jlong sceneRef,
+                                               jfloatArray gravityArray) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     jfloat *gravityArrayf = env->GetFloatArrayElements(gravityArray, 0);
     VROVector3f gravity = VROVector3f(gravityArrayf[0], gravityArrayf[1], gravityArrayf[2]);
@@ -223,10 +214,9 @@ JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPhysicsWorldDebugDraw)(JNIEnv *env,
-                                               jclass clazz,
-                                               jlong sceneRef,
-                                               jboolean debugDraw) {
+VRO_METHOD(void, nativeSetPhysicsWorldDebugDraw)(VRO_ARGS
+                                                 jlong sceneRef,
+                                                 jboolean debugDraw) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, debugDraw] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -236,14 +226,13 @@ JNI_METHOD(void, nativeSetPhysicsWorldDebugDraw)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
-                                     jobject obj,
-                                     jlong sceneRef,
-                                     jfloatArray fromPos,
-                                     jfloatArray toPos,
-                                     jboolean closest,
-                                     jstring tag,
-                                     jobject callback) {
+VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
+                                             jlong sceneRef,
+                                             jfloatArray fromPos,
+                                             jfloatArray toPos,
+                                             jboolean closest,
+                                             jstring tag,
+                                             jobject callback) {
 
     // Grab start position from which to perform the collision test
     jfloat *fromPosf = env->GetFloatArrayElements(fromPos, 0);
@@ -294,15 +283,14 @@ JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
-                                       jobject obj,
-                                       jlong sceneRef,
-                                       jfloatArray posStart,
-                                       jfloatArray posEnd,
-                                       jstring shapeType,
-                                       jfloatArray shapeParams,
-                                       jstring tag,
-                                       jobject callback) {
+VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
+                                              jlong sceneRef,
+                                              jfloatArray posStart,
+                                              jfloatArray posEnd,
+                                              jstring shapeType,
+                                              jfloatArray shapeParams,
+                                              jstring tag,
+                                              jobject callback) {
 
     // Grab start position from which to perform the collision test
     jfloat *posStartf = env->GetFloatArrayElements(posStart, 0);

@@ -9,19 +9,20 @@
 #ifndef Image_JNI_h
 #define Image_JNI_h
 
-#include <jni.h>
 #include <memory>
-
 #include "VROImageAndroid.h"
 #include "PersistentRef.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace Image {
-    inline jlong jptr(std::shared_ptr<VROImageAndroid> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROImageAndroid> ptr) {
         PersistentRef<VROImageAndroid> *persistentRef = new PersistentRef<VROImageAndroid>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROImageAndroid> native(jlong ptr) {
+    inline std::shared_ptr<VROImageAndroid> native(VRO_REF ptr) {
         PersistentRef<VROImageAndroid> *persistentRef = reinterpret_cast<PersistentRef<VROImageAndroid> *>(ptr);
         return persistentRef->get();
     }

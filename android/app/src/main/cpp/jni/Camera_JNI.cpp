@@ -16,26 +16,25 @@
 #include "VROStringUtil.h"
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Camera_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateCamera)(JNIEnv *env,
-                                      jclass clazz) {
+VRO_METHOD(jlong, nativeCreateCamera)(VRO_NO_ARGS) {
     std::shared_ptr<VRONodeCamera> node = std::make_shared<VRONodeCamera>();
     return Camera::jptr(node);
 }
 
-JNI_METHOD(void, nativeDestroyCamera)(JNIEnv *env,
-                                    jclass clazz,
-                                    jlong native_node_ref) {
+VRO_METHOD(void, nativeDestroyCamera)(VRO_ARGS
+                                     jlong native_node_ref) {
     delete reinterpret_cast<PersistentRef<VRONodeCamera> *>(native_node_ref);
 }
 
-JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
-                                    jobject obj,
+VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     jlong nativeCamera, jfloat x, jfloat y, jfloat z) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
@@ -46,8 +45,7 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
                                          jlong nativeCamera, jfloat x, jfloat y, jfloat z) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
@@ -59,8 +57,7 @@ JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotationQuaternion)(JNIEnv *env,
-                                              jobject obj,
+VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
                                               jlong nativeCamera, jfloat x, jfloat y, jfloat z, jfloat w) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z, w] {
@@ -72,10 +69,9 @@ JNI_METHOD(void, nativeSetRotationQuaternion)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotationType)(JNIEnv *env,
-                                              jobject obj,
-                                              jlong nativeCamera,
-                                              jstring rotationType) {
+VRO_METHOD(void, nativeSetRotationType)(VRO_ARGS
+                                        jlong nativeCamera,
+                                        jstring rotationType) {
     VROCameraRotationType type;
     if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(rotationType, env), "orbit")) {
         type = VROCameraRotationType::Orbit;
@@ -93,8 +89,7 @@ JNI_METHOD(void, nativeSetRotationType)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetOrbitFocalPoint)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(void, nativeSetOrbitFocalPoint)(VRO_ARGS
                                            jlong nativeCamera, jfloat x, jfloat y, jfloat z) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
@@ -105,8 +100,7 @@ JNI_METHOD(void, nativeSetOrbitFocalPoint)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetFieldOfView)(JNIEnv *env,
-                                       jobject obj,
+VRO_METHOD(void, nativeSetFieldOfView)(VRO_ARGS
                                        jlong camera_j, jfloat fov) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(camera_j);
     VROPlatformDispatchAsyncRenderer([camera_w, fov] {

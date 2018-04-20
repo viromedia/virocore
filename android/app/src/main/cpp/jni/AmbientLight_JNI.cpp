@@ -4,24 +4,28 @@
 //
 // Copyright © 2016 Viro Media. All rights reserved.
 
-#include <jni.h>
 #include <VROLight.h>
 #include <PersistentRef.h>
 #include <VRONode.h>
 #include <VROPlatformUtil.h>
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
-  JNIEXPORT return_type JNICALL              \
-      Java_com_viro_core_AmbientLight_##method_name
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
+    JNIEXPORT return_type JNICALL              \
+        Java_com_viro_core_AmbientLight_##method_name
+#endif
 
 namespace AmbientLight {
-    inline jlong jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(jlong ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -29,10 +33,9 @@ namespace AmbientLight {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateAmbientLight)(JNIEnv *env,
-                                            jclass clazz,
-                                            jlong color,
-                                            jfloat intensity) {
+VRO_METHOD(VRO_REF, nativeCreateAmbientLight)(VRO_ARGS
+                                              VRO_LONG color,
+                                              VRO_FLOAT intensity) {
     std::shared_ptr<VROLight> ambientLight = std::make_shared<VROLight>(VROLightType::Ambient);
 
     // Get the color

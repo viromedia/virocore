@@ -8,22 +8,24 @@
 #ifndef TransformDelegate_JNI_H
 #define TransformDelegate_JNI_H
 
-#include <jni.h>
 #include <PersistentRef.h>
 #include <VROTransformDelegate.h>
 #include "VROVideoDelegateInternal.h"
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 class TransformDelegate_JNI : public VROTransformDelegate {
 public:
     TransformDelegate_JNI(jobject delegateJavaObject, double distanceFilter);
     ~TransformDelegate_JNI();
 
-    static jlong jptr(std::shared_ptr<TransformDelegate_JNI> shared_node) {
+    static VRO_REF jptr(std::shared_ptr<TransformDelegate_JNI> shared_node) {
         PersistentRef<TransformDelegate_JNI> *native_surface = new PersistentRef<TransformDelegate_JNI>(shared_node);
         return reinterpret_cast<intptr_t>(native_surface);
     }
 
-    static std::shared_ptr<TransformDelegate_JNI> native(jlong ptr) {
+    static std::shared_ptr<TransformDelegate_JNI> native(VRO_REF ptr) {
         PersistentRef<TransformDelegate_JNI> *persistentSurface = reinterpret_cast<PersistentRef<TransformDelegate_JNI> *>(ptr);
         return persistentSurface->get();
     }

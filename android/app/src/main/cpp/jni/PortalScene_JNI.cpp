@@ -8,26 +8,26 @@
 #include "Texture_JNI.h"
 #include <VROPlatformUtil.h>
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_PortalScene_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreatePortalScene)(JNIEnv *env,
-                                           jclass clazz) {
+VRO_METHOD(jlong, nativeCreatePortalScene)(VRO_NO_ARGS) {
     std::shared_ptr<VROPortal> portal = std::make_shared<VROPortal>();
     return PortalScene::jptr(portal);
 }
 
-JNI_METHOD(void, nativeDestroyPortalScene)(JNIEnv *env,
-                                           jobject object,
+VRO_METHOD(void, nativeDestroyPortalScene)(VRO_ARGS
                                            jlong portalRef) {
     delete reinterpret_cast<PersistentRef<VROPortal> *>(portalRef);
 }
 
-JNI_METHOD(void, nativeSetPassable)(JNIEnv *env,
-                                     jobject object, jlong nativeRef, jboolean passable) {
+VRO_METHOD(void, nativeSetPassable)(VRO_ARGS
+                                    jlong nativeRef, jboolean passable) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([portal_w, passable] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();
@@ -37,22 +37,19 @@ JNI_METHOD(void, nativeSetPassable)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(jlong, nativeCreatePortalDelegate)(JNIEnv *env,
-                                              jobject object) {
+VRO_METHOD(jlong, nativeCreatePortalDelegate)(VRO_NO_ARGS) {
     VROPlatformSetEnv(env);
-    std::shared_ptr<PortalDelegate> delegate = std::make_shared<PortalDelegate>(object);
+    std::shared_ptr<PortalDelegate> delegate = std::make_shared<PortalDelegate>(obj);
     return PortalDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeDestroyPortalDelegate)(JNIEnv *env,
-                                              jobject object,
+VRO_METHOD(void, nativeDestroyPortalDelegate)(VRO_ARGS
                                               jlong delegateRef) {
     delete reinterpret_cast<PersistentRef<PortalDelegate> *>(delegateRef);
 }
 
 
-JNI_METHOD(void, nativeAttachDelegate)(JNIEnv *env,
-                                       jobject object,
+VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
                                        jlong portalRef, jlong delegateRef) {
 
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portalRef);
@@ -72,8 +69,9 @@ JNI_METHOD(void, nativeAttachDelegate)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPortalEntrance)(JNIEnv *env, jclass clazz, jlong portalSceneRef,
-                                    jlong portalRef) {
+VRO_METHOD(void, nativeSetPortalEntrance)(VRO_ARGS
+                                          jlong portalSceneRef,
+                                          jlong portalRef) {
     std::weak_ptr<VROPortal> portalScene_w = PortalScene::native(portalSceneRef);
     std::weak_ptr<VROPortalFrame> portalFrame_w = Portal::native(portalRef);
     VROPlatformDispatchAsyncRenderer([portalScene_w, portalFrame_w] {
@@ -90,8 +88,7 @@ JNI_METHOD(void, nativeSetPortalEntrance)(JNIEnv *env, jclass clazz, jlong porta
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
-                                             jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
                                              jlong portal_j,
                                              jlong texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
@@ -107,8 +104,7 @@ JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
-                                              jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
                                               jlong portal_j,
                                               jfloat rotationRadiansX,
                                               jfloat rotationRadiansY,
@@ -123,8 +119,7 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
-                                                      jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
                                                       jlong portal_j,
                                                       jlong texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
@@ -139,8 +134,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
-                                                   jclass clazz,
+VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
                                                    jlong portal_j,
                                                    jlong color) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
@@ -160,8 +154,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetLightingEnvironment)(JNIEnv *env,
-                                               jclass clazz,
+VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
                                                jlong portal_j,
                                                jlong texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);

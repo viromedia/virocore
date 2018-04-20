@@ -9,12 +9,14 @@
 #ifndef ANDROID_LAZYMATERIAL_JNI_H
 #define ANDROID_LAZYMATERIAL_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include "VROLazyMaterial.h"
 #include "PersistentRef.h"
 #include "VROPlatformUtil.h"
 #include "Material_JNI.h"
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 class VROLazyMaterialJNI : public VROLazyMaterial {
 
@@ -35,7 +37,7 @@ public:
             return nullptr;
         }
 
-        jlong jptr = VROPlatformCallJavaLongFunction(localObj, "get", "()J");
+        VRO_REF jptr = VROPlatformCallJavaLongFunction(localObj, "get", "()J");
         VROPlatformGetJNIEnv()->DeleteLocalRef(localObj);
         return Material::native(jptr);
     }
@@ -46,12 +48,12 @@ private:
 };
 
 namespace LazyMaterial {
-    inline jlong jptr(std::shared_ptr<VROLazyMaterialJNI> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROLazyMaterialJNI> ptr) {
         PersistentRef<VROLazyMaterialJNI> *persistentRef = new PersistentRef<VROLazyMaterialJNI>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROLazyMaterialJNI> native(jlong ptr) {
+    inline std::shared_ptr<VROLazyMaterialJNI> native(VRO_REF ptr) {
         PersistentRef<VROLazyMaterialJNI> *persistentRef = reinterpret_cast<PersistentRef<VROLazyMaterialJNI> *>(ptr);
         return persistentRef->get();
     }

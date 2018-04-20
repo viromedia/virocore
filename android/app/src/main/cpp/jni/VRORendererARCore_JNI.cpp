@@ -14,13 +14,15 @@
 #include "ARUtils_JNI.h"
 #include "VRORenderer.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_RendererARCore_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
+VRO_METHOD(jlong, nativeCreateRendererARCore)(VRO_ARGS
                                               jobject class_loader,
                                               jobject android_context,
                                               jobject asset_mgr,
@@ -46,29 +48,31 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
     return Renderer::jptr(renderer);
 }
 
-JNI_METHOD(jint, nativeGetCameraTextureId)(JNIEnv *env,
-                                           jobject object,
+VRO_METHOD(jint, nativeGetCameraTextureId)(VRO_ARGS
                                            jlong renderer_j) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
     return arRenderer->getCameraTextureId();
 }
 
-JNI_METHOD(void, nativeSetARCoreSession)(JNIEnv *env, jobject object, jlong renderer_j,
+VRO_METHOD(void, nativeSetARCoreSession)(VRO_ARGS
+                                         jlong renderer_j,
                                          jlong session_j) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
     arRenderer->setARCoreSession(reinterpret_cast<arcore::Session *>(session_j));
 }
 
-JNI_METHOD(void, nativeSetARDisplayGeometry)(JNIEnv *env, jobject object, jlong renderer_j,
+VRO_METHOD(void, nativeSetARDisplayGeometry)(VRO_ARGS
+                                             jlong renderer_j,
                                              jint rotation, jint width, jint height) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
     arRenderer->setDisplayGeometry(rotation, width, height);
 }
 
-JNI_METHOD(void, nativeSetPlaneFindingMode)(JNIEnv *env, jobject object, jlong renderer_j,
+VRO_METHOD(void, nativeSetPlaneFindingMode)(VRO_ARGS
+                                            jlong renderer_j,
                                             jboolean enabled) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
@@ -133,8 +137,7 @@ void performARHitTestPoint(JNIEnv *env, float x, float y, std::weak_ptr<VROScene
     }
 }
 
-JNI_METHOD(void, nativePerformARHitTestWithRay) (JNIEnv *env,
-                                                 jobject object,
+VRO_METHOD(void, nativePerformARHitTestWithRay) (VRO_ARGS
                                                  jlong native_renderer,
                                                  jfloatArray ray,
                                                  jobject callback) {
@@ -153,8 +156,7 @@ JNI_METHOD(void, nativePerformARHitTestWithRay) (JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
-                                                      jobject object,
+VRO_METHOD(void, nativePerformARHitTestWithPosition) (VRO_ARGS
                                                       jlong native_renderer,
                                                       jfloatArray position,
                                                       jobject callback) {
@@ -178,8 +180,7 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativePerformARHitTestWithPoint) (JNIEnv *env,
-                                                   jobject object,
+VRO_METHOD(void, nativePerformARHitTestWithPoint) (VRO_ARGS
                                                    jlong native_renderer,
                                                    jfloat x, jfloat y,
                                                    jobject callback) {
@@ -192,8 +193,7 @@ JNI_METHOD(void, nativePerformARHitTestWithPoint) (JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeEnableTracking) (JNIEnv *env,
-                                        jobject object,
+VRO_METHOD(void, nativeEnableTracking) (VRO_ARGS
                                         jlong nativeRenderer,
                                         jboolean shouldTrack) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(nativeRenderer);

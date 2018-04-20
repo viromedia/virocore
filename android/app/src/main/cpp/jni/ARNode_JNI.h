@@ -1,18 +1,20 @@
 #ifndef ANDROID_ARNODE_JNI_H
 #define ANDROID_ARNODE_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <VROARNode.h>
 #include "PersistentRef.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace ARNode {
-    inline jlong jptr(std::shared_ptr<VROARNode> node) {
+    inline VRO_REF jptr(std::shared_ptr<VROARNode> node) {
         PersistentRef<VROARNode> *node_p = new PersistentRef<VROARNode>(node);
         return reinterpret_cast<intptr_t>(node_p);
     }
 
-    inline std::shared_ptr<VROARNode> native(jlong node_j) {
+    inline std::shared_ptr<VROARNode> native(VRO_REF node_j) {
         PersistentRef<VROARNode> *node_p = reinterpret_cast<PersistentRef<VROARNode> *>(node_j);
         return node_p->get();
     }

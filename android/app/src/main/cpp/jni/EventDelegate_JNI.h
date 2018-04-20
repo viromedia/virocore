@@ -8,7 +8,6 @@
 #ifndef EventDelegate_JNI_h
 #define EventDelegate_JNI_h
 
-#include <jni.h>
 #include <memory>
 #include <stdarg.h>
 #include <iostream>
@@ -20,6 +19,9 @@
 #include "VRONode.h"
 #include "VROARHitTestResult.h"
 #include "Node_JNI.h"
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 /**
  * EventDelegate_JNI implements a JNI abstraction of the VROEventDelegate to
@@ -61,13 +63,13 @@ private:
 };
 
 namespace EventDelegate{
-    inline jlong jptr(std::shared_ptr<EventDelegate_JNI> delegate) {
+    inline VRO_REF jptr(std::shared_ptr<EventDelegate_JNI> delegate) {
         PersistentRef<EventDelegate_JNI> *nativeDelegate
                 = new PersistentRef<EventDelegate_JNI>(delegate);
         return reinterpret_cast<intptr_t>(nativeDelegate);
     }
 
-    inline std::shared_ptr<EventDelegate_JNI> native(jlong ptr) {
+    inline std::shared_ptr<EventDelegate_JNI> native(VRO_REF ptr) {
         PersistentRef<EventDelegate_JNI> *persistentObject
                 = reinterpret_cast<PersistentRef<EventDelegate_JNI> *>(ptr);
         return persistentObject->get();

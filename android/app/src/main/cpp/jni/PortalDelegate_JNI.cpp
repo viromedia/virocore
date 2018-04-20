@@ -6,7 +6,6 @@
 #include <VROPlatformUtil.h>
 #include "PortalDelegate_JNI.h"
 
-
 PortalDelegate::PortalDelegate(jobject javaPortalSceneObject){
     _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaPortalSceneObject));
 }

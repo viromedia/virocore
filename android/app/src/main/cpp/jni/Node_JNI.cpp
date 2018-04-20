@@ -36,7 +36,7 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateNode)(VRO_NO_ARGS_STATIC) {
+VRO_METHOD(VRO_REF, nativeCreateNode)(VRO_NO_ARGS) {
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     return Node::jptr(node);
 }
@@ -47,7 +47,7 @@ VRO_METHOD(VRO_INT, nativeGetUniqueIdentifier)(VRO_ARGS
     return node->getUniqueID();
 }
 
-VRO_METHOD(void, nativeDestroyNode)(VRO_ARGS_STATIC
+VRO_METHOD(void, nativeDestroyNode)(VRO_ARGS
                                     VRO_REF native_node_ref) {
 
     delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);

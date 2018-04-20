@@ -11,13 +11,16 @@
 #include "Image_JNI.h"
 #include "Texture_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_Image_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateImage)(JNIEnv *env, jobject obj, jstring resource, jstring format) {
+VRO_METHOD(jlong, nativeCreateImage)(VRO_ARGS
+                                     jstring resource, jstring format) {
     std::string strResource = VROPlatformGetString(resource, env);
 
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
@@ -26,22 +29,26 @@ JNI_METHOD(jlong, nativeCreateImage)(JNIEnv *env, jobject obj, jstring resource,
     return Image::jptr(imagePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImageFromBitmap)(JNIEnv *env, jobject obj, jobject jbitmap, jstring format) {
+VRO_METHOD(jlong, nativeCreateImageFromBitmap)(VRO_ARGS
+                                               jobject jbitmap, jstring format) {
     VROPlatformSetEnv(env);
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
     std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(jbitmap, internalFormat);
     return Image::jptr(imagePtr);
 }
 
-JNI_METHOD(jlong, nativeGetWidth)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(jlong, nativeGetWidth)(VRO_ARGS
+                                  jlong nativeRef) {
     return Image::native(nativeRef).get()->getWidth();
 }
 
-JNI_METHOD(jlong, nativeGetHeight)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(jlong, nativeGetHeight)(VRO_ARGS
+                                   jlong nativeRef) {
     return Image::native(nativeRef).get()->getHeight();
 }
 
-JNI_METHOD(void, nativeDestroyImage)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(void, nativeDestroyImage)(VRO_ARGS
+                                     jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROImageAndroid> *>(nativeRef);
 }
 

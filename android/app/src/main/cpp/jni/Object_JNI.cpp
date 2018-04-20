@@ -4,7 +4,6 @@
 //
 // Copyright © 2016 Viro Media. All rights reserved.
 
-#include <jni.h>
 #include <memory>
 #include <VROModelIOUtil.h>
 #include "VROOBJLoader.h"
@@ -14,22 +13,26 @@
 #include "Node_JNI.h"
 #include "OBJLoaderDelegate_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
-  JNIEXPORT return_type JNICALL              \
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
+    JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Object3D_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeLoadModelFromURL)(JNIEnv *env,
-                                         jobject object,
-                                         jstring jURL,
-                                         jlong node_j,
-                                         jboolean isFBX,
-                                         jlong requestId) {
+VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
+                                         VRO_STRING jURL,
+                                         VRO_REF node_j,
+                                         VRO_BOOL isFBX,
+                                         VRO_LONG requestId) {
     VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
 
     std::string URL = VROPlatformGetString(jURL, env);
-    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
+    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(obj, env);
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, isFBX, requestId](std::shared_ptr<VRONode> node, bool success) {
                 if (!success) {
@@ -50,17 +53,16 @@ JNI_METHOD(void, nativeLoadModelFromURL)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeLoadModelFromResources)(JNIEnv *env,
-                                                jobject object,
-                                                jstring jresource,
-                                                jobject resourceMap_j,
-                                                jlong node_j,
-                                                jboolean isFBX,
-                                                jlong requestId) {
+VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
+                                               VRO_STRING jresource,
+                                               jobject resourceMap_j,
+                                               VRO_REF node_j,
+                                               VRO_BOOL isFBX,
+                                               VRO_LONG requestId) {
     VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
 
     std::string resource = VROPlatformGetString(jresource, env);
-    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
+    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(obj, env);
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, isFBX, requestId](std::shared_ptr<VRONode> node, bool success) {
                 if (!success) {

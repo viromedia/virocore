@@ -8,14 +8,15 @@
 #include "VRORenderer_JNI.h"
 #include "VROChoreographer.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ViroMediaRecorder_##method_name
+#endif
 
 extern "C" {
-JNI_METHOD(jlong, nativeCreateNativeRecorder)(JNIEnv *env,
-                                            jobject obj,
-                                            jlong rendererRef) {
+VRO_METHOD(jlong, nativeCreateNativeRecorder)(VRO_ARGS
+                                              jlong rendererRef) {
     std::shared_ptr<MediaRecorder_JNI> recorder = std::make_shared<MediaRecorder_JNI>(obj, env);
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(rendererRef);
 
@@ -28,26 +29,23 @@ JNI_METHOD(jlong, nativeCreateNativeRecorder)(JNIEnv *env,
     return MediaRecorder::jptr(recorder);
 }
 
-JNI_METHOD(void, nativeDeleteNativeRecorder)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong jRecorderRef) {
+VRO_METHOD(void, nativeDeleteNativeRecorder)(VRO_ARGS
+                                            jlong jRecorderRef) {
     delete reinterpret_cast<PersistentRef<MediaRecorder_JNI> *>(jRecorderRef);
 
 }
 
-JNI_METHOD(void, nativeEnableFrameRecording)(JNIEnv *env,
-                                                       jclass clazz,
-                                                        jlong jRecorderRef,
-                                                        jboolean jIsRecording) {
+VRO_METHOD(void, nativeEnableFrameRecording)(VRO_ARGS
+                                             jlong jRecorderRef,
+                                             jboolean jIsRecording) {
     std::shared_ptr<MediaRecorder_JNI> recorder = MediaRecorder::native(jRecorderRef);
     VROPlatformDispatchAsyncRenderer([recorder, jIsRecording] {
         recorder->nativeEnableFrameRecording(jIsRecording);
     });
 }
 
-JNI_METHOD(void, nativeScheduleScreenCapture)(JNIEnv *env,
-                                             jclass clazz,
-                                             jlong jRecorderRef) {
+VRO_METHOD(void, nativeScheduleScreenCapture)(VRO_ARGS
+                                              jlong jRecorderRef) {
     std::shared_ptr<MediaRecorder_JNI> recorder = MediaRecorder::native(jRecorderRef);
     VROPlatformDispatchAsyncRenderer([recorder] {
         recorder->nativeScheduleScreenCapture();

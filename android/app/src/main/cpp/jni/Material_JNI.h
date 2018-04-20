@@ -7,22 +7,23 @@
 #ifndef Material_JNI_h
 #define Material_JNI_h
 
-#include <jni.h>
 #include <memory>
 #include <VROLog.h>
-
 #include "VROMaterial.h"
 #include "Texture_JNI.h"
 #include "VROPlatformUtil.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 class Material {
 public:
-    static jlong jptr(std::shared_ptr<VROMaterial> ptr) {
+    static VRO_REF jptr(std::shared_ptr<VROMaterial> ptr) {
         PersistentRef<VROMaterial> *persistentRef = new PersistentRef<VROMaterial>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    static std::shared_ptr<VROMaterial> native(jlong ptr) {
+    static std::shared_ptr<VROMaterial> native(VRO_REF ptr) {
         PersistentRef<VROMaterial> *persistentRef = reinterpret_cast<PersistentRef<VROMaterial> *>(ptr);
         return persistentRef->get();
     }

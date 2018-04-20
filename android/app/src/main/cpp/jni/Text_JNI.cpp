@@ -17,17 +17,19 @@
 #include "ViroContext_JNI.h"
 #include "VROPlatformUtil.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Text_##method_name
+#endif
 
 namespace Text {
-    inline jlong jptr(std::shared_ptr<VROText> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROText> shared_node) {
         PersistentRef<VROText> *native_text = new PersistentRef<VROText>(shared_node);
         return reinterpret_cast<intptr_t>(native_text);
     }
 
-    inline std::shared_ptr<VROText> native(jlong ptr) {
+    inline std::shared_ptr<VROText> native(VRO_REF ptr) {
         PersistentRef<VROText> *persistentText = reinterpret_cast<PersistentRef<VROText> *>(ptr);
         return persistentText->get();
     }
@@ -84,8 +86,7 @@ VROTextClipMode getTextClipModeEnum(const std::string& strName) {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
-                                    jobject object,
+VRO_METHOD(jlong, nativeCreateText)(VRO_ARGS
                                     jlong context_j,
                                     jstring text_j,
                                     jstring fontFamily_j,
@@ -149,14 +150,12 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
     return Text::jptr(vroText);
 }
 
-JNI_METHOD(void, nativeDestroyText)(JNIEnv *env,
-                                    jobject obj,
+VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
                                     jlong text_j) {
     delete reinterpret_cast<PersistentRef<VROText> *>(text_j);
 }
 
-JNI_METHOD(void, nativeSetText)(JNIEnv *env,
-                                jobject obj,
+VRO_METHOD(void, nativeSetText)(VRO_ARGS
                                 jlong text_j,
                                 jstring text_string_j) {
 
@@ -177,8 +176,7 @@ JNI_METHOD(void, nativeSetText)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
-                                jobject obj,
+VRO_METHOD(void, nativeSetFont)(VRO_ARGS
                                 jlong context_j,
                                 jlong text_j,
                                 jstring family_j,
@@ -199,8 +197,7 @@ JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
-                                 jobject obj,
+VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  jlong text_j,
                                  jlong color_j) {
 
@@ -220,8 +217,7 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
-                                 jobject obj,
+VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  jlong text_j,
                                  jfloat width) {
 
@@ -235,8 +231,7 @@ JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
-                                  jobject obj,
+VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
                                   jlong text_j,
                                   jfloat height) {
 
@@ -250,8 +245,7 @@ JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHorizontalAlignment)(JNIEnv *env,
-                                               jobject obj,
+VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
                                                jlong text_j,
                                                jstring horizontalAlignment_j) {
     VROTextHorizontalAlignment horizontalAlignment
@@ -267,8 +261,7 @@ JNI_METHOD(void, nativeSetHorizontalAlignment)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetVerticalAlignment)(JNIEnv *env,
-                                             jobject obj,
+VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
                                              jlong text_j,
                                              jstring verticalAlignment_j) {
     VROTextVerticalAlignment verticalAlignment
@@ -284,8 +277,7 @@ JNI_METHOD(void, nativeSetVerticalAlignment)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetLineBreakMode)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
                                          jlong text_j,
                                          jstring lineBreakMode_j) {
     VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
@@ -300,8 +292,7 @@ JNI_METHOD(void, nativeSetLineBreakMode)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetClipMode)(JNIEnv *env,
-                                    jobject obj,
+VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
                                     jlong text_j,
                                     jstring clipMode_j) {
 
@@ -318,8 +309,7 @@ JNI_METHOD(void, nativeSetClipMode)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetMaxLines)(JNIEnv *env,
-                                    jobject obj,
+VRO_METHOD(void, nativeSetMaxLines)(VRO_ARGS
                                     jlong text_j,
                                     jint maxLines) {
 

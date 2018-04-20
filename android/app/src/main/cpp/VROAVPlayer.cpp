@@ -9,20 +9,20 @@
 #include "VROAVPlayer.h"
 #include "VROPlatformUtil.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_AVPlayer_##method_name
 
 extern "C" {
-    inline jlong jptr(VROAVPlayer *nativePlayer) {
+    inline VRO_REF jptr(VROAVPlayer *nativePlayer) {
         return reinterpret_cast<intptr_t>(nativePlayer);
     }
 
-    inline VROAVPlayer *native(jlong ptr) {
+    inline VROAVPlayer *native(VRO_REF ptr) {
         return reinterpret_cast<VROAVPlayer *>(ptr);
     }
 
-    JNI_METHOD(void, nativeOnFinished)(JNIEnv *env,
+    VRO_METHOD(void, nativeOnFinished)(JNIEnv *env,
                                             jclass clazz,
                                             jlong nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
@@ -32,7 +32,7 @@ extern "C" {
         }
     }
 
-    JNI_METHOD(void, nativeOnPrepared)(JNIEnv *env,
+    VRO_METHOD(void, nativeOnPrepared)(JNIEnv *env,
                                        jclass clazz,
                                        jlong nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
@@ -42,7 +42,7 @@ extern "C" {
         }
     }
 
-    JNI_METHOD(void, nativeWillBuffer)(JNIEnv *env,
+    VRO_METHOD(void, nativeWillBuffer)(JNIEnv *env,
                                       jclass clazz,
                                       jlong nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
@@ -52,7 +52,7 @@ extern "C" {
         }
     }
 
-    JNI_METHOD(void, nativeDidBuffer)(JNIEnv *env,
+    VRO_METHOD(void, nativeDidBuffer)(JNIEnv *env,
                                        jclass clazz,
                                        jlong nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
@@ -62,7 +62,7 @@ extern "C" {
         }
     }
 
-    JNI_METHOD(void, nativeOnError)(JNIEnv *env,
+    VRO_METHOD(void, nativeOnError)(JNIEnv *env,
                                     jclass clazz,
                                     jlong nativePlayerRef,
                                     jstring error) {

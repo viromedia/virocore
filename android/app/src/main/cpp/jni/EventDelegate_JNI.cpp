@@ -10,21 +10,21 @@
 #include "ARUtils_JNI.h"
 #include "VROARPointCloud.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_EventDelegate_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateDelegate)(JNIEnv *env,
-                                        jobject obj) {
+VRO_METHOD(jlong, nativeCreateDelegate)(VRO_NO_ARGS) {
    std::shared_ptr<EventDelegate_JNI> delegate
            = std::make_shared<EventDelegate_JNI>(obj, env);
    return EventDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeDestroyDelegate)(JNIEnv *env,
-                                        jclass clazz,
+VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
                                         jlong native_node_ref) {
     // TODO: figure out why this is needed
     VROPlatformDispatchAsyncRenderer([native_node_ref]{
@@ -32,8 +32,7 @@ JNI_METHOD(void, nativeDestroyDelegate)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
-                                    jclass clazz,
+VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
                                     jlong native_node_ref,
                                     jint eventTypeId,
                                     jboolean enabled) {
@@ -49,8 +48,7 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetTimeToFuse)(JNIEnv *env,
-                                      jclass clazz,
+VRO_METHOD(void, nativeSetTimeToFuse)(VRO_ARGS
                                       jlong native_node_ref,
                                       jfloat durationInMillis) {
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);

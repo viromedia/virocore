@@ -8,13 +8,15 @@
 #ifndef ANDROID_FIXED_PARTICLE_EMITTER_JNI_H
 #define ANDROID_FIXED_PARTICLE_EMITTER_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <VROFixedParticleEmitter.h>
 #include "PersistentRef.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace FixedParticleEmitter {
-    inline jlong jptr(std::shared_ptr<VROFixedParticleEmitter> emitter) {
+    inline VRO_REF jptr(std::shared_ptr<VROFixedParticleEmitter> emitter) {
         PersistentRef<VROFixedParticleEmitter> *emitter_p = new PersistentRef<VROFixedParticleEmitter>(emitter);
         return reinterpret_cast<intptr_t>(emitter_p);
     }

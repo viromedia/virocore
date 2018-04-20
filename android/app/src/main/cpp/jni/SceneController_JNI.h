@@ -4,20 +4,22 @@
 //
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
-#include <jni.h>
+
 #include <memory>
 #include <VROSceneController.h>
 #include <VROPlatformUtil.h>
-
 #include "PersistentRef.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace SceneController {
-    inline jlong jptr(std::shared_ptr<VROSceneController> ptr) {
+    inline VRO_REF jptr(std::shared_ptr<VROSceneController> ptr) {
         PersistentRef<VROSceneController> *persistentRef = new PersistentRef<VROSceneController>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROSceneController> native(jlong ptr) {
+    inline std::shared_ptr<VROSceneController> native(VRO_REF ptr) {
         PersistentRef<VROSceneController> *persistentRef = reinterpret_cast<PersistentRef<VROSceneController> *>(ptr);
         return persistentRef->get();
     }
@@ -33,12 +35,12 @@ public:
         VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
     }
 
-    static jlong jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {
+    static VRO_REF jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {
         PersistentRef<SceneControllerDelegate> *native_delegate = new PersistentRef<SceneControllerDelegate>(shared_node);
         return reinterpret_cast<intptr_t>(native_delegate);
     }
 
-    static std::shared_ptr<SceneControllerDelegate> native(jlong ptr) {
+    static std::shared_ptr<SceneControllerDelegate> native(VRO_REF ptr) {
         PersistentRef<SceneControllerDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(ptr);
         return persistentDelegate->get();
     }

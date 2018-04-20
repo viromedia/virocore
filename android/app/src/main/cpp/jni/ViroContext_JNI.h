@@ -8,12 +8,14 @@
 #ifndef ANDROID_VIRO_CONTEXT_JNI_H
 #define ANDROID_VIRO_CONTEXT_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <android/log.h>
 #include <VROSceneRenderer.h>
 #include "VROImageAndroid.h"
 #include "PersistentRef.h"
+
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
 
 /**
  * Helper Context for accessing render specific information, without exposing the entire renderer.
@@ -26,12 +28,12 @@ public:
     }
     virtual ~ViroContext(){}
 
-    static jlong jptr(std::shared_ptr<ViroContext> nativeContext) {
+    static VRO_REF jptr(std::shared_ptr<ViroContext> nativeContext) {
         PersistentRef<ViroContext> *persistedContext = new PersistentRef<ViroContext>(nativeContext);
         return reinterpret_cast<intptr_t>(persistedContext);
     }
 
-    static std::shared_ptr<ViroContext> native(jlong ptr) {
+    static std::shared_ptr<ViroContext> native(VRO_REF ptr) {
         PersistentRef<ViroContext> *persistedContext = reinterpret_cast<PersistentRef<ViroContext> *>(ptr);
         return persistedContext->get();
     }

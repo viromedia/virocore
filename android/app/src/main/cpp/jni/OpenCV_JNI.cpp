@@ -19,10 +19,11 @@
 #include <VROPlatformUtil.h>
 #include "VROLog.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_OpenCV_##method_name
-
+#endif
 
 extern "C" {
 
@@ -47,7 +48,7 @@ cv::Mat openCVParseBitmapImage(JNIEnv *env, jobject bitmap) {
     return toReturn;
 }
 
-JNI_METHOD(void, nativeRunEdgeDetection)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeRunEdgeDetection)(VRO_ARGS
                                          jstring jinputFile,
                                          jstring joutputFile) {
     // Get the strings
@@ -62,7 +63,7 @@ JNI_METHOD(void, nativeRunEdgeDetection)(JNIEnv *env, jobject obj,
     cv::imwrite(outputFileName, output);
 }
 
-JNI_METHOD(void, nativeReadWriteBitmap)(JNIEnv *env, jobject obj,
+VRO_METHOD(void, nativeReadWriteBitmap)(VRO_ARGS
                                         jstring jinstring, jstring joutstring) {
     std::string inputFilePath = VROPlatformGetString(jinstring, env);
     std::string outputFilePath = VROPlatformGetString(joutstring, env);

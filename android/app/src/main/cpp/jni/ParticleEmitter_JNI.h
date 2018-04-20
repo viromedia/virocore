@@ -8,20 +8,22 @@
 #ifndef ANDROID_PARTICLE_EMITTER_JNI_H
 #define ANDROID_PARTICLE_EMITTER_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include <VROPlatformUtil.h>
 #include "PersistentRef.h"
 #include "VROParticleEmitter.h"
 
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
 namespace ParticleEmitter {
 
-    inline jlong jptr(std::shared_ptr<VROParticleEmitter> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROParticleEmitter> shared_node) {
         PersistentRef<VROParticleEmitter> *native_emitter = new PersistentRef<VROParticleEmitter>(shared_node);
         return reinterpret_cast<intptr_t>(native_emitter);
     }
 
-    inline std::shared_ptr<VROParticleEmitter> native(jlong ptr) {
+    inline std::shared_ptr<VROParticleEmitter> native(VRO_REF ptr) {
         PersistentRef<VROParticleEmitter> *persistentObj = reinterpret_cast<PersistentRef<VROParticleEmitter> *>(ptr);
         return persistentObj->get();
     }

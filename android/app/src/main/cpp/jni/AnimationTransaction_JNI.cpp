@@ -7,13 +7,15 @@
 #include "VROStringUtil.h"
 #include "VROLog.h"
 
-#define JNI_METHOD(return_type, method_name) \
-  JNIEXPORT return_type JNICALL              \
-      Java_com_viro_core_AnimationTransaction_##method_name
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
+    JNIEXPORT return_type JNICALL              \
+        Java_com_viro_core_AnimationTransaction_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(long, nativeBegin)(JNIEnv *env, jclass clazz) {
+VRO_METHOD(long, nativeBegin)(VRO_NO_ARGS_STATIC) {
     std::shared_ptr<VROTransaction> transaction = std::shared_ptr<VROTransaction>(new VROTransaction());
     VROPlatformDispatchAsyncRenderer([transaction] {
         VROTransaction::add(transaction);
@@ -21,7 +23,8 @@ JNI_METHOD(long, nativeBegin)(JNIEnv *env, jclass clazz) {
     return AnimationTransaction::jptr(transaction);
 }
 
-JNI_METHOD(void, nativeCommit)(JNIEnv *env, jclass clazz, jobject obj) {
+VRO_METHOD(void, nativeCommit)(VRO_ARGS_STATIC
+                               jobject obj) {
     jobject jGlobalObj = env->NewGlobalRef(obj);
     VROPlatformDispatchAsyncRenderer([jGlobalObj] {
 
@@ -39,25 +42,29 @@ JNI_METHOD(void, nativeCommit)(JNIEnv *env, jclass clazz, jobject obj) {
     });
 }
 
-JNI_METHOD(void, nativeSetAnimationDelay)(JNIEnv *env, jclass clazz, float delay) {
+VRO_METHOD(void, nativeSetAnimationDelay)(VRO_ARGS_STATIC
+                                          float delay) {
     VROPlatformDispatchAsyncRenderer([delay] {
         VROTransaction::setAnimationDelay(delay);
     });
 }
 
-JNI_METHOD(void, nativeSetAnimationDuration)(JNIEnv *env, jclass clazz, float duration) {
+VRO_METHOD(void, nativeSetAnimationDuration)(VRO_ARGS_STATIC
+                                             float duration) {
     VROPlatformDispatchAsyncRenderer([duration] {
         VROTransaction::setAnimationDuration(duration);
     });
 }
 
-JNI_METHOD(void, nativeSetAnimationLoop)(JNIEnv *env, jclass clazz, jboolean loop) {
+VRO_METHOD(void, nativeSetAnimationLoop)(VRO_ARGS_STATIC
+                                         jboolean loop) {
     VROPlatformDispatchAsyncRenderer([loop] {
         VROTransaction::setAnimationLoop(loop);
     });
 }
 
-JNI_METHOD(void, nativeSetTimingFunction)(JNIEnv *env, jclass clazz, jstring timing_j) {
+VRO_METHOD(void, nativeSetTimingFunction)(VRO_ARGS_STATIC
+                                          jstring timing_j) {
     std::string timing_s = VROPlatformGetString(timing_j, env);
     VROTimingFunctionType timing = VROTimingFunctionType::Linear;
     if (VROStringUtil::strcmpinsensitive(timing_s, "easein")) {
@@ -75,11 +82,13 @@ JNI_METHOD(void, nativeSetTimingFunction)(JNIEnv *env, jclass clazz, jstring tim
     });
 }
 
-JNI_METHOD(void, nativeDispose)(JNIEnv *env, jobject obj, jlong transaction_j) {
+VRO_METHOD(void, nativeDispose)(VRO_ARGS
+                                jlong transaction_j) {
     delete reinterpret_cast<PersistentRef<VROTransaction> *>(transaction_j);
 }
 
-JNI_METHOD(void, nativePause)(JNIEnv *env, jobject obj, jlong transaction_j) {
+VRO_METHOD(void, nativePause)(VRO_ARGS
+                              jlong transaction_j) {
     std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
@@ -90,7 +99,8 @@ JNI_METHOD(void, nativePause)(JNIEnv *env, jobject obj, jlong transaction_j) {
     });
 }
 
-JNI_METHOD(void, nativeResume)(JNIEnv *env, jobject obj, jlong transaction_j) {
+VRO_METHOD(void, nativeResume)(VRO_ARGS
+                               jlong transaction_j) {
     std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
@@ -101,7 +111,8 @@ JNI_METHOD(void, nativeResume)(JNIEnv *env, jobject obj, jlong transaction_j) {
     });
 }
 
-JNI_METHOD(void, nativeTerminate)(JNIEnv *env, jobject obj, jlong transaction_j) {
+VRO_METHOD(void, nativeTerminate)(VRO_ARGS
+                                  jlong transaction_j) {
     std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();

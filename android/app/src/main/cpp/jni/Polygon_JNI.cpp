@@ -10,14 +10,15 @@
 #include "ViroContext_JNI.h"
 #include "Material_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Polygon_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateSurface)(JNIEnv *env,
-                                       jobject object,
+VRO_METHOD(jlong, nativeCreateSurface)(VRO_ARGS
                                        jobjectArray jpoints,
                                        jfloat u0, jfloat v0,
                                        jfloat u1, jfloat v1) {
@@ -35,9 +36,8 @@ JNI_METHOD(jlong, nativeCreateSurface)(JNIEnv *env,
     return Polygon::jptr(surface);
 }
 
-JNI_METHOD(void, nativeDestroySurface)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong nativeSurface) {
+VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
+                                       jlong nativeSurface) {
     delete reinterpret_cast<PersistentRef<VROPolygon> *>(nativeSurface);
 }
 

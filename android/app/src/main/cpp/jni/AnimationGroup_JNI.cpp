@@ -10,9 +10,11 @@
 #include "LazyMaterial_JNI.h"
 #include <VROPlatformUtil.h>
 
-#define JNI_METHOD(return_type, method_name) \
-  JNIEXPORT return_type JNICALL              \
-      Java_com_viro_core_internal_AnimationGroup_##method_name
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
+    JNIEXPORT return_type JNICALL              \
+        Java_com_viro_core_internal_AnimationGroup_##method_name
+#endif
 
 extern "C" {
 
@@ -32,7 +34,7 @@ void AddPropertyIfNotNull(JNIEnv *env, std::string property, jstring candidate,
     }
 }
 
-JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
+VRO_METHOD(jlong, nativeCreateAnimationGroup)(VRO_ARGS
                                               jstring positionX, jstring positionY, jstring positionZ,
                                               jstring scaleX, jstring scaleY, jstring scaleZ,
                                               jstring rotateX, jstring rotateY, jstring rotateZ,
@@ -67,12 +69,14 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
     return AnimationGroup::jptr(animationGroup);
 }
 
-JNI_METHOD(jlong, nativeCopyAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(jlong, nativeCopyAnimation)(VRO_ARGS
+                                       jlong nativeRef) {
     std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
     return AnimationGroup::jptr(std::dynamic_pointer_cast<VROAnimationGroup>(group->copy()));
 }
 
-JNI_METHOD(void, nativeDestroyAnimationGroup)(JNIEnv *env, jobject obj, jlong nativeRef) {
+VRO_METHOD(void, nativeDestroyAnimationGroup)(VRO_ARGS
+                                              jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
 }
 

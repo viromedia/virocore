@@ -11,17 +11,19 @@
 #include <VROPlatformUtil.h>
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Polyline_##method_name
+#endif
 
 namespace Polyline {
-    inline jlong jptr(std::shared_ptr<VROPolyline> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROPolyline> shared_node) {
         PersistentRef<VROPolyline> *native_line = new PersistentRef<VROPolyline>(shared_node);
         return reinterpret_cast<intptr_t>(native_line);
     }
 
-    inline std::shared_ptr<VROPolyline> native(jlong ptr) {
+    inline std::shared_ptr<VROPolyline> native(VRO_REF ptr) {
         PersistentRef<VROPolyline> *persistentLine = reinterpret_cast<PersistentRef<VROPolyline> *>(ptr);
         return persistentLine->get();
     }
@@ -54,17 +56,15 @@ namespace Polyline {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreatePolylineEmpty)(JNIEnv *env,
-                                            jclass clazz,
-                                            jfloat width) {
+VRO_METHOD(jlong, nativeCreatePolylineEmpty)(VRO_ARGS
+                                             jfloat width) {
 
     std::shared_ptr<VROPolyline> polyline = std::make_shared<VROPolyline>();
     polyline->setThickness(width);
     return Polyline::jptr(polyline);
 }
 
-JNI_METHOD(jlong, nativeCreatePolyline)(JNIEnv *env,
-                                        jclass clazz,
+VRO_METHOD(jlong, nativeCreatePolyline)(VRO_ARGS
                                         jobjectArray points_j,
                                         jfloat width) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
@@ -72,16 +72,14 @@ JNI_METHOD(jlong, nativeCreatePolyline)(JNIEnv *env,
     return Polyline::jptr(polyline);
 }
 
-JNI_METHOD(void, nativeDestroyPolyline)(JNIEnv *env,
-                                        jclass clazz,
+VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
                                         jlong nativePolylineRef) {
     delete reinterpret_cast<PersistentRef<VROPolyline> *>(nativePolylineRef);
 }
 
-JNI_METHOD(void, nativeAppendPoint)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong polyline_j,
-                                       jfloatArray point_j) {
+VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
+                                    jlong polyline_j,
+                                    jfloatArray point_j) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
 
     VROVector3f point = Polyline::convertPoint(env, point_j);
@@ -93,8 +91,7 @@ JNI_METHOD(void, nativeAppendPoint)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPoints)(JNIEnv *env,
-                                  jclass clazz,
+VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
                                   jlong polyline_j,
                                   jobjectArray points_j) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
@@ -109,10 +106,9 @@ JNI_METHOD(void, nativeSetPoints)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetThickness)(JNIEnv *env,
-                                 jclass clazz,
-                                 jlong polyline_j,
-                                 jfloat thickness) {
+VRO_METHOD(void, nativeSetThickness)(VRO_ARGS
+                                     jlong polyline_j,
+                                     jfloat thickness) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, thickness] {
         std::shared_ptr<VROPolyline> polyline = polyline_w.lock();

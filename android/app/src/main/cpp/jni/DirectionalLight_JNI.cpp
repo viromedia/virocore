@@ -11,17 +11,19 @@
 #include <VROPlatformUtil.h>
 #include "Node_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_DirectionalLight_##method_name
+#endif
 
 namespace DirectionalLight {
-    inline jlong jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(jlong ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -29,8 +31,7 @@ namespace DirectionalLight {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateDirectionalLight)(JNIEnv *env,
-                                                jclass clazz,
+VRO_METHOD(jlong, nativeCreateDirectionalLight)(VRO_ARGS
                                                 jlong color,
                                                 jfloat intensity,
                                                 jfloat directionX,
@@ -56,8 +57,7 @@ JNI_METHOD(jlong, nativeCreateDirectionalLight)(JNIEnv *env,
 
 // Setters
 
-JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
-                                     jclass clazz,
+VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
                                      jlong native_light_ref,
                                      jfloat directionX,
                                      jfloat directionY,
@@ -75,8 +75,7 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
-                                       jclass clazz,
+VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
                                        jlong native_light_ref,
                                        jboolean castsShadow) {
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
@@ -89,10 +88,9 @@ JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowOrthographicSize)(JNIEnv *env,
-                                                 jclass clazz,
-                                                 jlong native_light_ref,
-                                                 jfloat size) {
+VRO_METHOD(void, nativeSetShadowOrthographicSize)(VRO_ARGS
+                                                  jlong native_light_ref,
+                                                  jfloat size) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, size] {
@@ -104,12 +102,11 @@ JNI_METHOD(void, nativeSetShadowOrthographicSize)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowOrthographicPosition)(JNIEnv *env,
-                                                  jclass clazz,
-                                                  jlong native_light_ref,
-                                                  jfloat posX,
-                                                  jfloat posY,
-                                                  jfloat posZ) {
+VRO_METHOD(void, nativeSetShadowOrthographicPosition)(VRO_ARGS
+                                                      jlong native_light_ref,
+                                                      jfloat posX,
+                                                      jfloat posY,
+                                                      jfloat posZ) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, posX, posY, posZ] {
@@ -122,8 +119,7 @@ JNI_METHOD(void, nativeSetShadowOrthographicPosition)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowMapSize)(JNIEnv *env,
-                                         jclass clazz,
+VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
                                          jlong native_light_ref,
                                          jint size) {
 
@@ -138,8 +134,7 @@ JNI_METHOD(void, nativeSetShadowMapSize)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowOpacity)(JNIEnv *env,
-                                         jclass clazz,
+VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
                                          jlong native_light_ref,
                                          float opacity) {
 
@@ -154,8 +149,7 @@ JNI_METHOD(void, nativeSetShadowOpacity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowBias)(JNIEnv *env,
-                                      jclass clazz,
+VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
                                       jlong native_light_ref,
                                       jfloat bias) {
 
@@ -171,10 +165,9 @@ JNI_METHOD(void, nativeSetShadowBias)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetShadowNearZ)(JNIEnv *env,
-                                      jclass clazz,
-                                      jlong native_light_ref,
-                                      jfloat shadowNearZ) {
+VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
+                                       jlong native_light_ref,
+                                       jfloat shadowNearZ) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
 
@@ -187,10 +180,9 @@ JNI_METHOD(void, nativeSetShadowNearZ)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowFarZ)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong native_light_ref,
-                                       jfloat shadowFarZ) {
+VRO_METHOD(void, nativeSetShadowFarZ)(VRO_ARGS
+                                      jlong native_light_ref,
+                                      jfloat shadowFarZ) {
 
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);

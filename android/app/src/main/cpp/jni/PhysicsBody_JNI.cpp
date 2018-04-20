@@ -9,14 +9,15 @@
 #include "PhysicsDelegate_JNI.h"
 #include "VROPlatformUtil.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_PhysicsBody_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(void, nativeInitPhysicsBody)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
                                         jlong nativeRef,
                                         jstring bodyTypeStr,
                                         jfloat mass,
@@ -52,8 +53,7 @@ JNI_METHOD(void, nativeInitPhysicsBody)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearPhysicsBody)(JNIEnv *env,
-                                         jobject obj,
+VRO_METHOD(void, nativeClearPhysicsBody)(VRO_ARGS
                                          jlong nativeRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
@@ -64,8 +64,7 @@ JNI_METHOD(void, nativeClearPhysicsBody)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPhysicsShape)(JNIEnv *env,
-                                        jobject obj,
+VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
                                         jlong nativeRef,
                                         jstring shapeTypeStr,
                                         jfloatArray shapeParams) {
@@ -101,8 +100,7 @@ JNI_METHOD(void, nativeSetPhysicsShape)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetPhysicsMass)(JNIEnv *env,
-                                       jobject obj,
+VRO_METHOD(void, nativeSetPhysicsMass)(VRO_ARGS
                                        jlong nativeRef,
                                        jfloat mass) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -115,8 +113,7 @@ JNI_METHOD(void, nativeSetPhysicsMass)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetPhysicsInertia)(JNIEnv *env,
-                                          jobject obj,
+VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
                                           jlong nativeRef,
                                           jfloatArray inertiaArray) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -132,8 +129,7 @@ JNI_METHOD(void, nativeSetPhysicsInertia)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPhysicsFriction)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(void, nativeSetPhysicsFriction)(VRO_ARGS
                                            jlong nativeRef,
                                            jfloat friction) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -145,8 +141,7 @@ JNI_METHOD(void, nativeSetPhysicsFriction)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPhysicsRestitution)(JNIEnv *env,
-                                              jobject obj,
+VRO_METHOD(void, nativeSetPhysicsRestitution)(VRO_ARGS
                                               jlong nativeRef,
                                               jfloat restitution) {
 
@@ -159,8 +154,7 @@ JNI_METHOD(void, nativeSetPhysicsRestitution)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPhysicsUseGravity)(JNIEnv *env,
-                                             jobject obj,
+VRO_METHOD(void, nativeSetPhysicsUseGravity)(VRO_ARGS
                                              jlong nativeRef,
                                              jboolean useGravity) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -172,8 +166,7 @@ JNI_METHOD(void, nativeSetPhysicsUseGravity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearPhysicsForce)(JNIEnv *env,
-                                          jobject obj,
+VRO_METHOD(void, nativeClearPhysicsForce)(VRO_ARGS
                                           jlong nativeRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
@@ -184,8 +177,7 @@ JNI_METHOD(void, nativeClearPhysicsForce)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeApplyPhysicsForce)(JNIEnv *env,
-                                          jobject obj,
+VRO_METHOD(void, nativeApplyPhysicsForce)(VRO_ARGS
                                           jlong nativeRef,
                                           jfloatArray forceArray,
                                           jfloatArray positionArray) {
@@ -209,8 +201,7 @@ JNI_METHOD(void, nativeApplyPhysicsForce)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeApplyPhysicsTorque)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(void, nativeApplyPhysicsTorque)(VRO_ARGS
                                            jlong nativeRef,
                                            jfloatArray torqueArray) {
     jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
@@ -227,8 +218,7 @@ JNI_METHOD(void, nativeApplyPhysicsTorque)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeApplyPhysicsImpulse)(JNIEnv *env,
-                                            jobject obj,
+VRO_METHOD(void, nativeApplyPhysicsImpulse)(VRO_ARGS
                                             jlong nativeRef,
                                             jfloatArray forceArray,
                                             jfloatArray positionArray) {
@@ -252,8 +242,7 @@ JNI_METHOD(void, nativeApplyPhysicsImpulse)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeApplyPhysicsTorqueImpulse)(JNIEnv *env,
-                                                  jobject obj,
+VRO_METHOD(void, nativeApplyPhysicsTorqueImpulse)(VRO_ARGS
                                                   jlong nativeRef,
                                                   jfloatArray torqueArray) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -269,8 +258,7 @@ JNI_METHOD(void, nativeApplyPhysicsTorqueImpulse)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(jstring, nativeIsValidBodyType)(JNIEnv *env,
-                                           jclass clazz,
+VRO_METHOD(jstring, nativeIsValidBodyType)(VRO_ARGS
                                            jstring bodyType,
                                            jfloat mass) {
     // Grab the physics body type
@@ -286,8 +274,7 @@ JNI_METHOD(jstring, nativeIsValidBodyType)(JNIEnv *env,
     }
 }
 
-JNI_METHOD(jstring, nativeIsValidShapeType)(JNIEnv *env,
-                                            jclass clazz,
+VRO_METHOD(jstring, nativeIsValidShapeType)(VRO_ARGS
                                             jstring shapeType,
                                             jfloatArray shapeParams) {
     // Grab the shape type
@@ -312,8 +299,7 @@ JNI_METHOD(jstring, nativeIsValidShapeType)(JNIEnv *env,
     }
 }
 
-JNI_METHOD(jlong, nativeSetPhysicsDelegate)(JNIEnv *env,
-                                            jobject obj,
+VRO_METHOD(jlong, nativeSetPhysicsDelegate)(VRO_ARGS
                                             jlong nativeRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<PhysicsDelegate_JNI> delegate = std::make_shared<PhysicsDelegate_JNI>(obj);
@@ -328,8 +314,7 @@ JNI_METHOD(jlong, nativeSetPhysicsDelegate)(JNIEnv *env,
     return PhysicsDelegate_JNI::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeClearPhysicsDelegate)(JNIEnv *env,
-                                             jobject obj,
+VRO_METHOD(void, nativeClearPhysicsDelegate)(VRO_ARGS
                                              jlong nativeRef,
                                              jlong delegateRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -343,8 +328,7 @@ JNI_METHOD(void, nativeClearPhysicsDelegate)(JNIEnv *env,
 }
 
 
-JNI_METHOD(void, nativeSetPhysicsVelocity)(JNIEnv *env,
-                                           jobject obj,
+VRO_METHOD(void, nativeSetPhysicsVelocity)(VRO_ARGS
                                            jlong nativeRef,
                                            jfloatArray velocityArray,
                                            jboolean isConstant) {
@@ -361,8 +345,7 @@ JNI_METHOD(void, nativeSetPhysicsVelocity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPhysicsEnabled)(JNIEnv *env,
-                                          jobject obj,
+VRO_METHOD(void, nativeSetPhysicsEnabled)(VRO_ARGS
                                           jlong nativeRef,
                                           jboolean enabled) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
