@@ -58,13 +58,13 @@ Check out our [blog](https://blog.viromedia.com/) for tutorials, news, and updat
 
 [Link to AR Retail tutorial](https://blog.viromedia.com/tutorial-how-to-build-amazons-ar-view-for-arcore-android-using-virocore-and-java-ba1cc3ff2d87)
 
-### [AR Tesla](https://github.com/viromedia/virocore/blob/master/ARTesla/app/src/main/java/com/example/virosample/ViroActivityAR.java)
+### [AR Tesla](https://github.com/viromedia/virocore/tree/master/ARTesla)
 
 <a href="https://github.com/viromedia/virocore/blob/master/ARTesla/app/src/main/java/com/example/virosample/ViroActivityAR.java">
 <img src="https://github.com/viromedia/virocore/blob/master/ARTesla/viro_car_marker_demo.gif">
 </a>
 
-### [AR Black Panther](https://github.com/viromedia/virocore/blob/master/ARBlackPanther/app/src/main/java/com/example/virosample/ViroActivityAR.java)
+### [AR Black Panther](https://github.com/viromedia/virocore/tree/master/ARBlackPanther)
 
 <a href="https://github.com/viromedia/virocore/blob/master/ARBlackPanther/app/src/main/java/com/example/virosample/ViroActivityAR.java">
 <img src="https://github.com/viromedia/virocore/blob/master/ARBlackPanther/viro_black_panther_marker_demo.gif">
