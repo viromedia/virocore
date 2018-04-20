@@ -51,10 +51,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This activity demonstrates how we can easily add and track multiple imageTracker
- * representing Node targets within an ARScene, in this case, a Tesla Car. Users are
- * able to scan his environment for the tesla logo.png, and when found a Tesla
- * 3D model is then placed at that location.
+ * This activity demonstrates how to use an ARImageTarget. When a Tesla logo is
+ * detected, a 3D Tesla car is created over the logo, along with controls that let
+ * the user customize the car.
  */
 public class ViroActivityAR extends Activity implements ARScene.Listener {
     private static final String TAG = ViroActivityAR.class.getSimpleName();
@@ -64,6 +63,7 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
     private Node mColorChooserGroupNode;
     private Map<String, Pair<ARImageTarget, Node>> mTargetedNodesMap;
     private HashMap<CAR_MODEL, Texture> mCarColorTextures = new HashMap<>();
+
     private enum CAR_MODEL{
         WHITE("object_car_main_Base_Color.png",         new Vector(231,231,231)),
         BLUE("object_car_main_Base_Color_blue.png",     new Vector(19, 42, 143)),
@@ -82,11 +82,14 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         public String getCarSrc(){
             return mDiffuseSource;
         }
-
         public Vector getColorPickerSrc(){
             return mUIPickerColorSource;
         }
     }
+
+    // +---------------------------------------------------------------------------+
+    //  Initialization
+    // +---------------------------------------------------------------------------+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +110,10 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
     }
 
     /*
-     Create the main ARScene with a modelNodeGroup (our Tesla car and the color picker spheres) to
-     be placed at an ARImageTarget (our logo.png in the real world).
+     Create the main ARScene. We add an ARImageTarget representing the Tesla logo to the scene,
+     then we create a Node (teslaNode) that consists of the Tesla car and the controls to
+     customize it. This Node is not yet added to the Scene -- we will wait until the Tesla logo
+     is found.
      */
     private void onRenderCreate() {
         // Create the base ARScene
@@ -116,20 +121,87 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         mScene.setListener(this);
         mViroView.setScene(mScene);
 
-        // Create an the ARImageTarget from which to get transformation updates.
+        // Create an ARImageTarget for the Tesla logo
         Bitmap teslaLogoTargetBmp = getBitmapFromAssets("logo.png");
-        ARImageTarget imageTarget = new ARImageTarget(teslaLogoTargetBmp, ARImageTarget.Orientation.Up, 0.188f);
+        ARImageTarget teslaTarget = new ARImageTarget(teslaLogoTargetBmp, ARImageTarget.Orientation.Up, 0.188f);
+        mScene.addARImageTarget(teslaTarget);
 
-        // Build your 3D node group to be rendered on the imageTarget when found.
-        Node modelGroupNode = new Node();
-        initCarModel(modelGroupNode);
-        initColorPickerModels(modelGroupNode);
-        initSceneLights(modelGroupNode);
+        // Build the Tesla car Node and add it to the Scene. Set it to invisible: it will be made
+        // visible when the ARImageTarget is found.
+        Node teslaNode = new Node();
+        initCarModel(teslaNode);
+        initColorPickerModels(teslaNode);
+        initSceneLights(teslaNode);
+        teslaNode.setVisible(false);
+        mScene.getRootNode().addChildNode(teslaNode);
 
-        // Finally link both the modelGroupNode to be positioned at the track target and
-        // add both of them to the scene.
-        addAndTrackImageNodeTargets(imageTarget, modelGroupNode);
+        // Link the Node with the ARImageTarget, such that when the image target is
+        // found, we'll render the Node.
+        linkTargetWithNode(teslaTarget, teslaNode);
     }
+
+    /*
+     Link the given ARImageTarget with the provided Node. When the ARImageTarget is
+     found in the scene (by onAnchorFound below), the Node will be made visible and
+     the target's transformations will be applied to the Node, thereby rendering the
+     Node over the target.
+     */
+    private void linkTargetWithNode(ARImageTarget imageToDetect, Node nodeToRender){
+        String key = imageToDetect.getId();
+        mTargetedNodesMap.put(key, new Pair(imageToDetect, nodeToRender));
+    }
+
+    // +---------------------------------------------------------------------------+
+    //  ARScene.Listener Implementation
+    // +---------------------------------------------------------------------------+
+
+    /*
+     When an ARImageTarget is found, lookup the target's corresponding Node in the
+     mTargetedNodesMap. Make the Node visible and apply the target's transformations
+     to the Node. This makes the Node appear correctly over the target.
+
+     (In this case, this makes the Tesla 3D model and color pickers appear directly
+      over the detected Tesla logo)
+     */
+    @Override
+    public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
+        String anchorId = anchor.getAnchorId();
+        if (!mTargetedNodesMap.containsKey(anchorId)) {
+            return;
+        }
+
+        Node imageTargetNode = mTargetedNodesMap.get(anchorId).second;
+        Vector rot = new Vector(0,anchor.getRotation().y, 0);
+        imageTargetNode.setPosition(anchor.getPosition());
+        imageTargetNode.setRotation(rot);
+        imageTargetNode.setVisible(true);
+        animateCarVisible(mCarModelNode);
+
+        // Stop the node from moving in place once found
+        ARImageTarget imgTarget = mTargetedNodesMap.get(anchorId).first;
+        mScene.removeARImageTarget(imgTarget);
+        mTargetedNodesMap.remove(anchorId);
+    }
+
+    @Override
+    public void onAnchorRemoved(ARAnchor anchor, ARNode arNode) {
+        String anchorId = anchor.getAnchorId();
+        if (!mTargetedNodesMap.containsKey(anchorId)) {
+            return;
+        }
+
+        Node imageTargetNode = mTargetedNodesMap.get(anchorId).second;
+        imageTargetNode.setVisible(false);
+    }
+
+    @Override
+    public void onAnchorUpdated(ARAnchor anchor, ARNode arNode) {
+        // No-op
+    }
+
+    // +---------------------------------------------------------------------------+
+    //  Scene Building Methods
+    // +---------------------------------------------------------------------------+
 
     /*
      Init, loads the the Tesla Object3D, and attaches it to the passed in groupNode.
@@ -224,9 +296,6 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         groupNode.addChildNode(mColorChooserGroupNode);
     }
 
-    /*
-     Constructs the mainlights in our scene.
-     */
     private void initSceneLights(Node groupNode){
         Node rootLightNode = new Node();
 
@@ -261,61 +330,6 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         mScene.setLightingEnvironment(environment);
     }
 
-    /*
-     Map and reference the provided ARImageTarget with the nodeToRender, such that
-     when the imageTarget is found, the nodeGroup is rendered at the location of that target.
-     */
-    private void addAndTrackImageNodeTargets(ARImageTarget imageToDetect, Node nodeToRender){
-        // First add both the tracking target and it's nodeToRender to the scene.
-        mScene.addARImageTarget(imageToDetect);
-        mScene.getRootNode().addChildNode(nodeToRender);
-        nodeToRender.setVisible(false);
-
-        // Then store them in a map for reference.
-        String key = imageToDetect.getId();
-        mTargetedNodesMap.put(key, new Pair(imageToDetect, nodeToRender));
-    }
-
-    /*
-     Update the nodeToRender's transformations with the ones of found imageTarget.
-     */
-    @Override
-    public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
-        String anchorId = anchor.getAnchorId();
-        if (!mTargetedNodesMap.containsKey(anchorId)) {
-            return;
-        }
-
-        Node imageTargetNode = mTargetedNodesMap.get(anchorId).second;
-        Vector rot = new Vector(0,anchor.getRotation().y, 0);
-        imageTargetNode.setPosition(anchor.getPosition());
-        imageTargetNode.setRotation(rot);
-        imageTargetNode.setVisible(true);
-        animateCarVisible(mCarModelNode);
-
-        // Stop the node from moving in place once found
-        ARImageTarget imgTarget = mTargetedNodesMap.get(anchorId).first;
-        mScene.removeARImageTarget(imgTarget);
-        mTargetedNodesMap.remove(anchorId);
-    }
-
-    @Override
-    public void onAnchorRemoved(ARAnchor anchor, ARNode arNode) {
-        String anchorId = anchor.getAnchorId();
-        if (!mTargetedNodesMap.containsKey(anchorId)) {
-            return;
-        }
-
-        Node imageTargetNode = mTargetedNodesMap.get(anchorId).second;
-        imageTargetNode.setVisible(false);
-    }
-
-    @Override
-    public void onAnchorUpdated(ARAnchor anchor, ARNode arNode) {
-        // No-op
-    }
-
-
     private Material preloadCarColorTextures(Node node){
         final Texture metallicTexture = new Texture(getBitmapFromAssets("object_car_main_Metallic.png"),
                 Texture.Format.RGBA8, true, true);
@@ -342,10 +356,10 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         return material;
     }
 
+    // +---------------------------------------------------------------------------+
+    //  Image Loading
+    // +---------------------------------------------------------------------------+
 
-    /*
-     Helper functions for loading images.
-     */
     private Bitmap getBitmapFromAssets(final String assetName) {
         final InputStream istr;
         Bitmap bitmap = null;
@@ -358,11 +372,12 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         return bitmap;
     }
 
-    /*
-     Helper function for animating nodes.
-     */
-    private void animScale(Node node, long duration, Vector targetScale,
-                           AnimationTimingFunction fcn, final Runnable runnable) {
+    // +---------------------------------------------------------------------------+
+    //  Animation Utilities
+    // +---------------------------------------------------------------------------+
+
+    private void animateScale(Node node, long duration, Vector targetScale,
+                              AnimationTimingFunction fcn, final Runnable runnable) {
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(duration);
         AnimationTransaction.setTimingFunction(fcn);
@@ -380,28 +395,29 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
 
     private void animateColorPickerVisible(boolean isVisible, Node groupNode) {
         if (isVisible){
-            animScale(groupNode, 500, new Vector(1,1,1), AnimationTimingFunction.Bounce, null);
+            animateScale(groupNode, 500, new Vector(1,1,1), AnimationTimingFunction.Bounce, null);
         } else {
-            animScale(groupNode, 200, new Vector(0,0,0), AnimationTimingFunction.Bounce, null);
+            animateScale(groupNode, 200, new Vector(0,0,0), AnimationTimingFunction.Bounce, null);
         }
     }
 
     private void animateCarVisible(Node car) {
-        animScale(car, 500, new Vector(0.09f, 0.09f, 0.09f), AnimationTimingFunction.EaseInEaseOut, null);
+        animateScale(car, 500, new Vector(0.09f, 0.09f, 0.09f), AnimationTimingFunction.EaseInEaseOut, null);
     }
 
     private void animateColorPickerClicked(final Node picker){
-        animScale(picker, 50, new Vector(0.8f, 0.8f, 0.8f), AnimationTimingFunction.EaseInEaseOut, new Runnable() {
+        animateScale(picker, 50, new Vector(0.8f, 0.8f, 0.8f), AnimationTimingFunction.EaseInEaseOut, new Runnable() {
             @Override
             public void run() {
-                animScale(picker, 50, new Vector(1,1,1), AnimationTimingFunction.EaseInEaseOut, null);
+                animateScale(picker, 50, new Vector(1,1,1), AnimationTimingFunction.EaseInEaseOut, null);
             }
         });
     }
 
-    /*
-     Hooked up life cycle callbacks for the renderer.
-     */
+    // +---------------------------------------------------------------------------+
+    //  Lifecycle
+    // +---------------------------------------------------------------------------+
+
     @Override
     protected void onStart() {
         super.onStart();

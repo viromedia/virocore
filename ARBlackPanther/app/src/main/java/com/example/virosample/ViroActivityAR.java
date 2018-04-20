@@ -24,8 +24,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.viro.core.ARAnchor;
@@ -49,20 +47,25 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /**
- * Activity that initializes Viro and ARCore. This activity demonstrates how we can
- * add and easily track multiple imageTracker to Node targets within an ARScene.
+ * Activity that initializes Viro and ARCore. This activity demonstrates how to use an
+ * ARImageTarget: in this case, when a Black Panther poster is recognized, a Black Panther
+ * model will jump out of the poster.
  */
 public class ViroActivityAR extends Activity {
     private static final String TAG = ViroActivityAR.class.getSimpleName();
     protected ViroView mViroView;
     private ARScene mScene;
     private ARImageTarget mImageTarget;
-    private Node mBlackPantherGroupNode;
+    private Node mBlackPantherNode;
     private AssetManager mAssetManager;
-    private Object3D mblackPantherModel;
+    private Object3D mBlackPantherModel;
 
     private boolean mObjLoaded = false;
     private boolean mImageTargetFound = false;
+
+    // +---------------------------------------------------------------------------+
+    //  Initialization
+    // +---------------------------------------------------------------------------+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +74,7 @@ public class ViroActivityAR extends Activity {
         mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
             @Override
             public void onSuccess() {
-                // Override this function to start building your scene here! We provide a sample
-                // "Hello World" scene
+                // Override this function to start building your scene here
                 onRenderCreate();
             }
 
@@ -88,94 +90,26 @@ public class ViroActivityAR extends Activity {
         // Create the base ARScene
         mScene = new ARScene();
 
-        // Create an the ARImageTarget from which to get transformation updates.
-        Bitmap teslaLogoTargetBmp = getBitmapFromAssets("logo.jpg");
-        mImageTarget = new ARImageTarget(teslaLogoTargetBmp, ARImageTarget.Orientation.Up, 0.188f);
+        // Create an ARImageTarget out of the Black Panther poster
+        Bitmap blackPantherPoster = getBitmapFromAssets("logo.jpg");
+        mImageTarget = new ARImageTarget(blackPantherPoster, ARImageTarget.Orientation.Up, 0.188f);
+        mScene.addARImageTarget(mImageTarget);
 
-        // Create our Black Panther Node Group
-        mBlackPantherGroupNode = initBlackPantherGroupNode();
-        mBlackPantherGroupNode.addChildNode(initLightsNode());
+        // Create a Node containing the Black Panther model
+        mBlackPantherNode = initBlackPantherNode();
+        mBlackPantherNode.addChildNode(initLightingNode());
+        mScene.getRootNode().addChildNode(mBlackPantherNode);
 
         mViroView.setScene(mScene);
         trackImageNodeTargets();
     }
 
-    private Node initBlackPantherGroupNode() {
-        Node blackPantherModelNode = new Node();
-        mblackPantherModel = new Object3D();
-        mblackPantherModel.setRotation(new Vector(Math.toRadians(-90), 0, 0));
-        mblackPantherModel.setScale(new Vector(0.2f, 0.2f, 0.2f));
-        mblackPantherModel.loadModel(Uri.parse("file:///android_asset/blackpanther/object_bpanther_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
-            @Override
-            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
-                mObjLoaded = true;
-                startPantherExperience();
-            }
+    /*
+     Sets up our ARScene.Listener such that when we detect the Black Panther poster, we activate
+     the Black Panther model, making it jump out of the poster.
+     */
+    private void trackImageNodeTargets() {
 
-            @Override
-            public void onObject3DFailed(final String error) {
-                Log.e(TAG,"Black Panther Object Failed to load.");
-            }
-        });
-
-        mblackPantherModel.setVisible(false);
-        blackPantherModelNode.addChildNode(mblackPantherModel);
-        return blackPantherModelNode;
-    }
-
-    private Node initLightsNode() {
-        Vector omniLightPositions [] = {    new Vector(-3, 3, 0.3),
-                new Vector(3, 3, 1),
-                new Vector(-3,-3,1),
-                new Vector(3, -3, 1)};
-        Node groupLightNode = new Node();
-        for (Vector pos : omniLightPositions){
-            final OmniLight light = new OmniLight();
-            light.setPosition(pos);
-            light.setColor(Color.parseColor("#FFFFFF"));
-            light.setIntensity(20);
-            light.setAttenuationStartDistance(6);
-            light.setAttenuationEndDistance(9);
-            groupLightNode.addLight(light);
-        }
-
-        Spotlight spotLight = new Spotlight();
-        spotLight.setPosition(new Vector(0,5,-0.5));
-        spotLight.setColor(Color.parseColor("#FFFFFF"));
-        spotLight.setDirection(new Vector(0, -1, 0));
-        spotLight.setIntensity(50);
-        spotLight.setShadowOpacity(0.4f);
-        spotLight.setShadowMapSize(2048);
-        spotLight.setShadowNearZ(2f);
-        spotLight.setShadowFarZ(7f);
-        spotLight.setInnerAngle(5);
-        spotLight.setOuterAngle(20);
-        spotLight.setCastsShadow(true);
-        groupLightNode.addLight(spotLight);
-
-        // Add the lighting environment for PBR
-        Texture environment = Texture.loadRadianceHDRTexture(Uri.parse("file:///android_asset/hotel_room_2k.hdr"));
-        mScene.setLightingEnvironment(environment);
-
-        // Add our shadow planes.
-        final Material material = new Material();
-        material.setShadowMode(Material.ShadowMode.TRANSPARENT);
-        Surface surface = new Surface(3, 3);
-        surface.setMaterials(Arrays.asList(material));
-        Node surfaceShadowNode = new Node();
-        surfaceShadowNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
-        surfaceShadowNode.setGeometry(surface);
-        surfaceShadowNode.setPosition(new Vector(0, 0, 0.0));
-        groupLightNode.addChildNode(surfaceShadowNode);
-
-        groupLightNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
-        return groupLightNode;
-    }
-
-    private void trackImageNodeTargets(){
-        // Finally link the two together and set the scene.
-        mScene.addARImageTarget(mImageTarget);
-        mScene.getRootNode().addChildNode(mBlackPantherGroupNode);
         mScene.setListener(new ARScene.Listener() {
             @Override
             public void onTrackingInitialized() {
@@ -201,9 +135,9 @@ public class ViroActivityAR extends Activity {
 
                 Vector anchorPos = anchor.getPosition();
                 Vector pos = new Vector(anchorPos.x, anchorPos.y - 0.4 , anchorPos.z - 0.15);
-                mBlackPantherGroupNode.setPosition(pos);
-                mBlackPantherGroupNode.setRotation(anchor.getRotation());
-                mblackPantherModel.setVisible(true);
+                mBlackPantherNode.setPosition(pos);
+                mBlackPantherNode.setRotation(anchor.getRotation());
+                mBlackPantherModel.setVisible(true);
                 mImageTargetFound = true;
                 startPantherExperience();
             }
@@ -220,18 +154,18 @@ public class ViroActivityAR extends Activity {
                     return;
                 }
 
-                mBlackPantherGroupNode.setVisible(false);
+                mBlackPantherNode.setVisible(false);
             }
         });
     }
 
-    private void startPantherExperience(){
-        if (!mObjLoaded || !mImageTargetFound){
+    private void startPantherExperience() {
+        if (!mObjLoaded || !mImageTargetFound) {
             return;
         }
 
         // Animate the black panther's jump animation
-        final Animation animationJump = mblackPantherModel.getAnimation("01");
+        final Animation animationJump = mBlackPantherModel.getAnimation("01");
         animationJump.setListener(new Animation.Listener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -241,28 +175,99 @@ public class ViroActivityAR extends Activity {
             @Override
             public void onAnimationFinish(Animation animation, boolean canceled) {
                 // After jump animation is finished set the panther's idle animation
-                final Animation animationIdle = mblackPantherModel.getAnimation("02");
+                final Animation animationIdle = mBlackPantherModel.getAnimation("02");
                 animationIdle.play();
             }
         });
         animationJump.play();
     }
 
-    private Bitmap getBitmapFromAssets(String assetName) {
-        if (mAssetManager == null) {
-            mAssetManager = getResources().getAssets();
+    // +---------------------------------------------------------------------------+
+    //  3D Scene Construction
+    // +---------------------------------------------------------------------------+
+
+    private Node initBlackPantherNode() {
+        Node blackPantherNode = new Node();
+        mBlackPantherModel = new Object3D();
+        mBlackPantherModel.setRotation(new Vector(Math.toRadians(-90), 0, 0));
+        mBlackPantherModel.setScale(new Vector(0.2f, 0.2f, 0.2f));
+        mBlackPantherModel.loadModel(Uri.parse("file:///android_asset/blackpanther/object_bpanther_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                mObjLoaded = true;
+                startPantherExperience();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+                Log.e(TAG,"Black Panther Object Failed to load.");
+            }
+        });
+
+        mBlackPantherModel.setVisible(false);
+        blackPantherNode.addChildNode(mBlackPantherModel);
+        return blackPantherNode;
+    }
+
+    private Node initLightingNode() {
+        Vector omniLightPositions [] = {    new Vector(-3, 3, 0.3),
+                new Vector(3, 3, 1),
+                new Vector(-3,-3,1),
+                new Vector(3, -3, 1)};
+
+        Node lightingNode = new Node();
+        for (Vector pos : omniLightPositions){
+            final OmniLight light = new OmniLight();
+            light.setPosition(pos);
+            light.setColor(Color.parseColor("#FFFFFF"));
+            light.setIntensity(20);
+            light.setAttenuationStartDistance(6);
+            light.setAttenuationEndDistance(9);
+
+            lightingNode.addLight(light);
         }
 
-        InputStream imageStream;
-        try {
-            imageStream = mAssetManager.open(assetName);
-        } catch (IOException exception) {
-            Log.w("Viro", "Unable to find image [" + assetName + "] in assets! Error: "
-                    + exception.getMessage());
-            return null;
-        }
-        return BitmapFactory.decodeStream(imageStream);
+        // The spotlight will cast the shadows
+        Spotlight spotLight = new Spotlight();
+        spotLight.setPosition(new Vector(0,5,-0.5));
+        spotLight.setColor(Color.parseColor("#FFFFFF"));
+        spotLight.setDirection(new Vector(0, -1, 0));
+        spotLight.setIntensity(50);
+        spotLight.setShadowOpacity(0.4f);
+        spotLight.setShadowMapSize(2048);
+        spotLight.setShadowNearZ(2f);
+        spotLight.setShadowFarZ(7f);
+        spotLight.setInnerAngle(5);
+        spotLight.setOuterAngle(20);
+        spotLight.setCastsShadow(true);
+
+        lightingNode.addLight(spotLight);
+
+        // Add a lighting environment for realistic PBR rendering
+        Texture environment = Texture.loadRadianceHDRTexture(Uri.parse("file:///android_asset/wakanda_360.hdr"));
+        mScene.setLightingEnvironment(environment);
+
+        // Add shadow planes: these are "invisible" surfaces on which virtual shadows will be cast,
+        // simulating real-world shadows
+        final Material material = new Material();
+        material.setShadowMode(Material.ShadowMode.TRANSPARENT);
+
+        Surface surface = new Surface(3, 3);
+        surface.setMaterials(Arrays.asList(material));
+
+        Node surfaceShadowNode = new Node();
+        surfaceShadowNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
+        surfaceShadowNode.setGeometry(surface);
+        surfaceShadowNode.setPosition(new Vector(0, 0, 0.0));
+        lightingNode.addChildNode(surfaceShadowNode);
+
+        lightingNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
+        return lightingNode;
     }
+
+    // +---------------------------------------------------------------------------+
+    //  Lifecycle
+    // +---------------------------------------------------------------------------+
 
     @Override
     protected void onStart() {
@@ -286,5 +291,25 @@ public class ViroActivityAR extends Activity {
     protected void onStop() {
         super.onStop();
         mViroView.onActivityStopped(this);
+    }
+
+    // +---------------------------------------------------------------------------+
+    //  Utility Functions
+    // +---------------------------------------------------------------------------+
+
+    private Bitmap getBitmapFromAssets(String assetName) {
+        if (mAssetManager == null) {
+            mAssetManager = getResources().getAssets();
+        }
+
+        InputStream imageStream;
+        try {
+            imageStream = mAssetManager.open(assetName);
+        } catch (IOException exception) {
+            Log.w("Viro", "Unable to find image [" + assetName + "] in assets! Error: "
+                    + exception.getMessage());
+            return null;
+        }
+        return BitmapFactory.decodeStream(imageStream);
     }
 }
