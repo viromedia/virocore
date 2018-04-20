@@ -5,7 +5,7 @@ This activity demonstrates tracking a Viro Image Tracker that represents a Black
 <img src="https://github.com/viromedia/virocore/blob/master/ARBlackPanther/viro_black_panther_marker_demo.gif">
 
 ## Example Screenshot
-Here is a screenshot of BlackPanther (after jumping out of the poster) to face in a fight of with Orange Knight!
+Here is a screenshot of BlackPanther (after jumping out of the poster) to face a fight-off with Orange Knight!
 
 <img src="https://github.com/viromedia/virocore/blob/master/ARBlackPanther/sample_screenshot.png" width="30%">
 
