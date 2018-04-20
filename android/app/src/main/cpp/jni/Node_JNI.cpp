@@ -6,7 +6,6 @@
 //
 
 #include <iostream>
-#include <jni.h>
 #include <memory>
 #include <VROBillboardConstraint.h>
 #include "VROGeometry.h"
@@ -26,36 +25,37 @@
 #include "ARUtils_JNI.h"
 #include "FixedParticleEmitter_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#include "VRODefines.h"
+#include VRO_C_INCLUDE
+
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Node_##method_name
+#endif
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateNode)(JNIEnv *env,
-                                    jclass clazz) {
+VRO_METHOD(VRO_REF, nativeCreateNode)(VRO_NO_ARGS_STATIC) {
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     return Node::jptr(node);
 }
 
-JNI_METHOD(jint , nativeGetUniqueIdentifier)(JNIEnv *env,
-                                             jobject obj,
-                                             jlong node_j) {
+VRO_METHOD(VRO_INT, nativeGetUniqueIdentifier)(VRO_ARGS
+                                               VRO_REF node_j) {
     std::shared_ptr<VRONode> node = Node::native(node_j);
     return node->getUniqueID();
 }
 
-JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
-                                    jclass clazz,
-                                    jlong native_node_ref) {
+VRO_METHOD(void, nativeDestroyNode)(VRO_ARGS_STATIC
+                                    VRO_REF native_node_ref) {
 
     delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
 }
 
-JNI_METHOD(void, nativeAddChildNode)(JNIEnv *env,
-                                     jobject obj,
-                                     jlong native_node_ref,
-                                     jlong child_node_ref) {
+VRO_METHOD(void, nativeAddChildNode)(VRO_ARGS
+                                     VRO_REF native_node_ref,
+                                     VRO_REF child_node_ref) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     std::shared_ptr<VRONode> childNode = Node::native(child_node_ref);
@@ -67,9 +67,8 @@ JNI_METHOD(void, nativeAddChildNode)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveAllChildNodes)(JNIEnv *env,
-                                            jobject obj,
-                                            jlong native_node_ref) {
+VRO_METHOD(void, nativeRemoveAllChildNodes)(VRO_ARGS
+                                            VRO_REF native_node_ref) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -77,9 +76,8 @@ JNI_METHOD(void, nativeRemoveAllChildNodes)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
-                                         jobject obj,
-                                         jlong native_node_ref) {
+VRO_METHOD(void, nativeRemoveFromParent)(VRO_ARGS
+                                         VRO_REF native_node_ref) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
@@ -90,10 +88,9 @@ JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetTag)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong native_node_ref,
-                                    jstring tag) {
+VRO_METHOD(void, nativeSetTag)(VRO_ARGS
+                               VRO_REF native_node_ref,
+                               VRO_STRING tag) {
     std::string strBodyType = VROPlatformGetString(tag, env);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, strBodyType] {
@@ -104,10 +101,9 @@ JNI_METHOD(void, nativeSetTag)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong node_j,
-                                    jlong geo_j) {
+VRO_METHOD(void, nativeSetGeometry)(VRO_ARGS
+                                    VRO_REF node_j,
+                                    VRO_REF geo_j) {
     std::weak_ptr<VROGeometry> geo_w = Geometry::native(geo_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([geo_w, node_w] {
@@ -120,9 +116,8 @@ JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearGeometry)(JNIEnv *env,
-                                      jobject obj,
-                                      jlong node_j) {
+VRO_METHOD(void, nativeClearGeometry)(VRO_ARGS
+                                      VRO_REF node_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -132,10 +127,9 @@ JNI_METHOD(void, nativeClearGeometry)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetFixedParticleEmitter)(JNIEnv *env,
-                                           jclass clazz,
-                                           jlong node_j,
-                                           jlong particle_j) {
+VRO_METHOD(void, nativeSetFixedParticleEmitter)(VRO_ARGS
+                                                VRO_REF node_j,
+                                                VRO_REF particle_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     std::weak_ptr<VROFixedParticleEmitter> particle_w = FixedParticleEmitter::native(particle_j);
     VROPlatformDispatchAsyncRenderer([node_w, particle_w] {
@@ -153,10 +147,9 @@ JNI_METHOD(void, nativeSetFixedParticleEmitter)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetParticleEmitter)(JNIEnv *env,
-                                           jclass clazz,
-                                           jlong node_j,
-                                           jlong particle_j) {
+VRO_METHOD(void, nativeSetParticleEmitter)(VRO_ARGS
+                                           VRO_REF node_j,
+                                           VRO_REF particle_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     std::weak_ptr<VROParticleEmitter> particle_w = ParticleEmitter::native(particle_j);
     VROPlatformDispatchAsyncRenderer([node_w, particle_w] {
@@ -174,9 +167,8 @@ JNI_METHOD(void, nativeSetParticleEmitter)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
-                                              jclass clazz,
-                                              jlong node_j) {
+VRO_METHOD(void, nativeRemoveParticleEmitter)(VRO_ARGS
+                                              VRO_REF node_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -186,10 +178,9 @@ JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeAddLight)(JNIEnv *env,
-                                 jobject obj,
-                                 jlong node_j,
-                                 jlong light_j) {
+VRO_METHOD(void, nativeAddLight)(VRO_ARGS
+                                 VRO_REF node_j,
+                                 VRO_REF light_j) {
     std::weak_ptr<VROLight> light_w = Light::native(light_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([light_w, node_w] {
@@ -202,10 +193,9 @@ JNI_METHOD(void, nativeAddLight)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveLight)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong node_j,
-                                    jlong light_j) {
+VRO_METHOD(void, nativeRemoveLight)(VRO_ARGS
+                                    VRO_REF node_j,
+                                    VRO_REF light_j) {
     std::weak_ptr<VROLight> light_w = Light::native(light_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([light_w, node_w] {
@@ -218,9 +208,8 @@ JNI_METHOD(void, nativeRemoveLight)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveAllLights)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong node_j) {
+VRO_METHOD(void, nativeRemoveAllLights)(VRO_ARGS
+                                        VRO_REF node_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -230,10 +219,9 @@ JNI_METHOD(void, nativeRemoveAllLights)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeAddSound)(JNIEnv *env,
-                                 jobject obj,
-                                 jlong node_j,
-                                 jlong sound_j) {
+VRO_METHOD(void, nativeAddSound)(VRO_ARGS
+                                 VRO_REF node_j,
+                                 VRO_REF sound_j) {
     std::weak_ptr<VROSoundGVR> sound_w = SpatialSound::native(sound_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([sound_w, node_w] {
@@ -246,10 +234,9 @@ JNI_METHOD(void, nativeAddSound)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveSound)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong node_j,
-                                    jlong sound_j) {
+VRO_METHOD(void, nativeRemoveSound)(VRO_ARGS
+                                    VRO_REF node_j,
+                                    VRO_REF sound_j) {
     std::weak_ptr<VROSoundGVR> sound_w = SpatialSound::native(sound_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([sound_w, node_w] {
@@ -262,9 +249,8 @@ JNI_METHOD(void, nativeRemoveSound)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeRemoveAllSounds)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong node_j) {
+VRO_METHOD(void, nativeRemoveAllSounds)(VRO_ARGS
+                                        VRO_REF node_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -274,10 +260,9 @@ JNI_METHOD(void, nativeRemoveAllSounds)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetCamera)(JNIEnv *env,
-                                  jobject obj,
-                                  jlong node_j,
-                                  jlong camera_j) {
+VRO_METHOD(void, nativeSetCamera)(VRO_ARGS
+                                  VRO_REF node_j,
+                                  VRO_REF camera_j) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(camera_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([camera_w, node_w] {
@@ -290,9 +275,8 @@ JNI_METHOD(void, nativeSetCamera)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearCamera)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong node_j) {
+VRO_METHOD(void, nativeClearCamera)(VRO_ARGS
+                                    VRO_REF node_j) {
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -302,12 +286,11 @@ JNI_METHOD(void, nativeClearCamera)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong native_node_ref,
-                                    jfloat positionX,
-                                    jfloat positionY,
-                                    jfloat positionZ) {
+VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
+                                    VRO_REF native_node_ref,
+                                    VRO_FLOAT positionX,
+                                    VRO_FLOAT positionY,
+                                    VRO_FLOAT positionZ) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, positionX, positionY, positionZ] {
@@ -318,12 +301,11 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
-                                         jobject obj,
-                                         jlong native_node_ref,
-                                         jfloat rotationRadiansX,
-                                         jfloat rotationRadiansY,
-                                         jfloat rotationRadiansZ) {
+VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
+                                         VRO_REF native_node_ref,
+                                         VRO_FLOAT rotationRadiansX,
+                                         VRO_FLOAT rotationRadiansY,
+                                         VRO_FLOAT rotationRadiansZ) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -335,13 +317,12 @@ JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotationQuaternion)(JNIEnv *env,
-                                              jobject obj,
-                                              jlong native_node_ref,
-                                              jfloat quatX,
-                                              jfloat quatY,
-                                              jfloat quatZ,
-                                              jfloat quatW) {
+VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
+                                              VRO_REF native_node_ref,
+                                              VRO_FLOAT quatX,
+                                              VRO_FLOAT quatY,
+                                              VRO_FLOAT quatZ,
+                                              VRO_FLOAT quatW) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, quatX, quatY, quatZ, quatW] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -352,12 +333,11 @@ JNI_METHOD(void, nativeSetRotationQuaternion)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetScale)(JNIEnv *env,
-                                 jobject obj,
-                                 jlong native_node_ref,
-                                 jfloat scaleX,
-                                 jfloat scaleY,
-                                 jfloat scaleZ) {
+VRO_METHOD(void, nativeSetScale)(VRO_ARGS
+                                 VRO_REF native_node_ref,
+                                 VRO_FLOAT scaleX,
+                                 VRO_FLOAT scaleY,
+                                 VRO_FLOAT scaleZ) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, scaleX, scaleY, scaleZ] {
@@ -368,12 +348,11 @@ JNI_METHOD(void, nativeSetScale)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotationPivot)(JNIEnv *env,
-                                         jobject obj,
-                                         jlong native_node_ref,
-                                         jfloat pivotX,
-                                         jfloat pivotY,
-                                         jfloat pivotZ) {
+VRO_METHOD(void, nativeSetRotationPivot)(VRO_ARGS
+                                         VRO_REF native_node_ref,
+                                         VRO_FLOAT pivotX,
+                                         VRO_FLOAT pivotY,
+                                         VRO_FLOAT pivotZ) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
@@ -386,12 +365,11 @@ JNI_METHOD(void, nativeSetRotationPivot)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetScalePivot)(JNIEnv *env,
-                                      jobject obj,
-                                      jlong native_node_ref,
-                                      jfloat pivotX,
-                                      jfloat pivotY,
-                                      jfloat pivotZ) {
+VRO_METHOD(void, nativeSetScalePivot)(VRO_ARGS
+                                      VRO_REF native_node_ref,
+                                      VRO_FLOAT pivotX,
+                                      VRO_FLOAT pivotY,
+                                      VRO_FLOAT pivotZ) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
@@ -404,71 +382,65 @@ JNI_METHOD(void, nativeSetScalePivot)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(jfloatArray, nativeGetPosition)(JNIEnv *env,
-                                           jobject obj,
-                                           jlong node_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetPosition)(VRO_ARGS
+                                               VRO_REF node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalPosition());
 }
 
-JNI_METHOD(jfloatArray, nativeGetScale)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong node_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetScale)(VRO_ARGS
+                                            VRO_REF node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalScale());
 }
 
-JNI_METHOD(jfloatArray, nativeGetRotationEuler)(JNIEnv *env,
-                                                jobject obj,
-                                                jlong node_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetRotationEuler)(VRO_ARGS
+                                                    VRO_REF node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalRotation().toEuler());
 }
 
-JNI_METHOD(jfloatArray, nativeGetRotationQuaternion)(JNIEnv *env,
-                                                     jobject obj,
-                                                     jlong node_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetRotationQuaternion)(VRO_ARGS
+                                                         VRO_REF node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     VROQuaternion quaternion = node->getLastLocalRotation();
 
-    jfloatArray array_j = env->NewFloatArray(4);
-    jfloat array_c[4];
+    VRO_FLOAT_ARRAY array_j = VRO_NEW_FLOAT_ARRAY(4);
+    float array_c[4];
     array_c[0] = quaternion.X; array_c[1] = quaternion.Y; array_c[2] = quaternion.Z; array_c[3] = quaternion.W;
-    env->SetFloatArrayRegion(array_j, 0, 4, array_c);
+    VRO_FLOAT_ARRAY_SET(array_j, 0, 4, array_c);
+
     return array_j;
 }
 
-JNI_METHOD(jfloatArray, nativeGetBoundingBox)(JNIEnv *env, jobject obj, jlong node_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetBoundingBox)(VRO_ARGS VRO_REF node_j) {
     std::shared_ptr<VRONode> node = Node::native(node_j);
     return ARUtilsCreateFloatArrayFromBoundingBox(node->getLastUmbrellaBoundingBox());
 }
 
-JNI_METHOD(jfloatArray, nativeConvertLocalPositionToWorldSpace)(JNIEnv *env,
-                                                                 jobject obj,
-                                                                 jlong node_j, float x, float y, float z) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertLocalPositionToWorldSpace)(VRO_ARGS
+                                                                    VRO_REF node_j, float x, float y, float z) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     VROVector3f localPosition(x, y, z);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().invert().multiply(localPosition));
 }
 
-JNI_METHOD(jfloatArray, nativeConvertWorldPositionToLocalSpace)(JNIEnv *env,
-                                                                jobject obj,
-                                                                jlong node_j, float x, float y, float z) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertWorldPositionToLocalSpace)(VRO_ARGS
+                                                                    VRO_REF node_j, float x, float y, float z) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     VROVector3f worldPosition(x, y, z);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().multiply(worldPosition));
 }
 
-JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
-                                   jobject obj,
-                                   jlong native_node_ref,
-                                   jfloat opacity) {
+VRO_METHOD(void, nativeSetOpacity)(VRO_ARGS
+                                   VRO_REF native_node_ref,
+                                   VRO_FLOAT opacity) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, opacity] {
@@ -479,11 +451,10 @@ JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetLightReceivingBitMask)(JNIEnv *env,
-                                                  jobject obj,
-                                                  jlong native_node_ref,
-                                                  jint bitMask,
-                                                  jboolean recursive) {
+VRO_METHOD(void, nativeSetLightReceivingBitMask)(VRO_ARGS
+                                                 VRO_REF native_node_ref,
+                                                 VRO_INT bitMask,
+                                                 VRO_BOOL recursive) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, bitMask, recursive] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -493,11 +464,10 @@ JNI_METHOD(void, nativeSetLightReceivingBitMask)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetShadowCastingBitMask)(JNIEnv *env,
-                                                 jobject obj,
-                                                 jlong native_node_ref,
-                                                 jint bitMask,
-                                                 jboolean recursive) {
+VRO_METHOD(void, nativeSetShadowCastingBitMask)(VRO_ARGS
+                                                VRO_REF native_node_ref,
+                                                VRO_INT bitMask,
+                                                VRO_BOOL recursive) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, bitMask, recursive] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -507,17 +477,15 @@ JNI_METHOD(void, nativeSetShadowCastingBitMask)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHighAccuracyGaze)(JNIEnv *env,
-                                            jobject obj,
-                                            jlong native_node_ref,
-                                            jboolean enabled) {
+VRO_METHOD(void, nativeSetHighAccuracyGaze)(VRO_ARGS
+                                            VRO_REF native_node_ref,
+                                            VRO_BOOL enabled) {
     Node::native(native_node_ref)->setHighAccuracyGaze(enabled);
 }
 
-JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
-                                   jobject obj,
-                                   jlong native_node_ref,
-                                   jboolean visible) {
+VRO_METHOD(void, nativeSetVisible)(VRO_ARGS
+                                   VRO_REF native_node_ref,
+                                   VRO_BOOL visible) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, visible] {
@@ -528,10 +496,9 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetDragType)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong native_node_ref,
-                                    jstring dragType) {
+VRO_METHOD(void, nativeSetDragType)(VRO_ARGS
+                                    VRO_REF native_node_ref,
+                                    VRO_STRING dragType) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
@@ -553,10 +520,9 @@ JNI_METHOD(void, nativeSetDragType)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetIgnoreEventHandling)(JNIEnv *env,
-                                   jobject obj,
-                                   jlong native_node_ref,
-                                   jboolean ignoreEventHandling) {
+VRO_METHOD(void, nativeSetIgnoreEventHandling)(VRO_ARGS
+                                               VRO_REF native_node_ref,
+                                               VRO_BOOL ignoreEventHandling) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, ignoreEventHandling] {
@@ -567,10 +533,9 @@ JNI_METHOD(void, nativeSetIgnoreEventHandling)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHierarchicalRendering)(JNIEnv *env,
-                                                 jobject obj,
-                                                 jlong native_node_ref,
-                                                 jboolean hierarchicalRendering) {
+VRO_METHOD(void, nativeSetHierarchicalRendering)(VRO_ARGS
+                                                 VRO_REF native_node_ref,
+                                                 VRO_BOOL hierarchicalRendering) {
 
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, hierarchicalRendering] {
@@ -581,15 +546,14 @@ JNI_METHOD(void, nativeSetHierarchicalRendering)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
-                                              jobject obj,
-                                              jlong nativeNodeRef,
-                                              jobjectArray stringArrayRef) {
+VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
+                                              VRO_REF nativeNodeRef,
+                                              VRO_ARRAY stringArrayRef) {
     std::vector<std::shared_ptr<VROBillboardConstraint>> tempConstraints;
-    int length = env->GetArrayLength(stringArrayRef);
+    int length = VRO_ARRAY_LENGTH(stringArrayRef);
 
     for (int i = 0; i < length; i++) {
-        jstring string = (jstring) (env->GetObjectArrayElement(stringArrayRef, i));
+        jstring string = VRO_STRING_ARRAY_GET(stringArrayRef, i);
         std::string transformBehavior = VROPlatformGetString(string, env);
 
         // Parse out the constraints and save a copy into tempConstraints
@@ -604,7 +568,6 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
                     std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
         }
     }
-    env->DeleteLocalRef(stringArrayRef);
 
     // Post set the constraints into the node
     std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
@@ -619,31 +582,24 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(jobjectArray, nativeGetAnimationKeys)(JNIEnv *env,
-                                                 jobject obj,
-                                                 jlong nativeRef) {
+VRO_METHOD(VRO_ARRAY, nativeGetAnimationKeys)(VRO_ARGS
+                                              VRO_REF nativeRef) {
 
     std::shared_ptr<VRONode> node = Node::native(nativeRef);
     std::set<std::string> keys = node->getAnimationKeys(true);
-    jobjectArray array = (jobjectArray) env->NewObjectArray(keys.size(),
-                                                            env->FindClass("java/lang/String"),
-                                                            env->NewStringUTF(""));
+    VRO_ARRAY array = VRO_NEW_STRING_ARRAY(keys.size());
 
     int i = 0;
     for (const std::string &key : keys) {
-        jstring jkey = env->NewStringUTF(key.c_str());
-        env->SetObjectArrayElement(array, i, jkey);
+        VRO_STRING_ARRAY_SET(array, i, key);
         ++i;
-
-        env->DeleteLocalRef(jkey);
     }
     return array;
 }
 
-JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
-                                         jobject obj,
-                                         jlong nativeRef,
-                                         jlong delegateRef) {
+VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
+                                         VRO_REF nativeRef,
+                                         VRO_REF delegateRef) {
 
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(delegateRef);
@@ -655,10 +611,9 @@ JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(jlong, nativeSetTransformDelegate)(JNIEnv *env,
-                                           jobject obj,
-                                           jlong nativeRef,
-                                           jdouble distanceFilter) {
+VRO_METHOD(VRO_REF, nativeSetTransformDelegate)(VRO_ARGS
+                                                VRO_REF nativeRef,
+                                                VRO_DOUBLE distanceFilter) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<TransformDelegate_JNI> delegate
             = std::make_shared<TransformDelegate_JNI>(obj , distanceFilter);
@@ -669,10 +624,9 @@ JNI_METHOD(jlong, nativeSetTransformDelegate)(JNIEnv *env,
     return TransformDelegate_JNI::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeRemoveTransformDelegate)(JNIEnv *env,
-                                           jobject obj,
-                                           jlong nativeRef,
-                                           jlong delegateRef) {
+VRO_METHOD(void, nativeRemoveTransformDelegate)(VRO_ARGS
+                                                VRO_REF nativeRef,
+                                                VRO_REF delegateRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -683,14 +637,14 @@ JNI_METHOD(void, nativeRemoveTransformDelegate)(JNIEnv *env,
 }
 
 
-JNI_METHOD(jfloatArray, nativeGetWorldTransform)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong node_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetWorldTransform)(VRO_ARGS
+                                                     VRO_REF node_j) {
     std::shared_ptr<VRONode> node = Node::native(node_j);
     return ARUtilsCreateFloatArrayFromMatrix(node->getLastWorldTransform());
 }
 
-JNI_METHOD(void, nativeSetName(JNIEnv *env, jobject obj, jlong node_j, jstring name_j)) {
+VRO_METHOD(void, nativeSetName(VRO_ARGS
+                               VRO_REF node_j, VRO_STRING name_j)) {
     std::string name = VROPlatformGetString(name_j, env);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
 

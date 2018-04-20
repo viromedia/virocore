@@ -33,6 +33,41 @@
 #define VRO_PLATFORM_IOS 0
 #define VRO_PLATFORM_WASM 0
 #define VRO_PLATFORM_MACOS 0
+
+#define VRO_C_INCLUDE <jni.h>
+#define VRO_ARGS JNIEnv *env, jobject obj,
+#define VRO_ARGS_STATIC JNIEnv *env, jclass clazz,
+#define VRO_NO_ARGS JNIEnv *env, jobject obj
+#define VRO_NO_ARGS_STATIC JNIEnv *env, jclass clazz
+#define VRO_REF jlong
+#define VRO_BOOL jboolean
+#define VRO_INT jint
+#define VRO_LONG jlong
+#define VRO_FLOAT jfloat
+#define VRO_DOUBLE jdouble
+#define VRO_STRING jstring
+#define VRO_ARRAY jobjectArray
+#define VRO_FLOAT_ARRAY jfloatArray
+#define VRO_INT_ARRAY jintArray
+
+#define VRO_ARRAY_LENGTH(array) \
+    env->GetArrayLength(array);
+
+#define VRO_NEW_FLOAT_ARRAY(size) \
+    env->NewFloatArray(size);
+#define VRO_FLOAT_ARRAY_SET(dest, start, len, src) \
+    env->SetFloatArrayRegion(dest, start, len, src);
+
+#define VRO_NEW_STRING_ARRAY(size) \
+    env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));
+#define VRO_STRING_ARRAY_GET(array, index) \
+    (jstring) (env->GetObjectArrayElement(array, index));
+
+#define VRO_STRING_ARRAY_SET(array, index, item) \
+    jstring jkey = env->NewStringUTF(item.c_str()); \
+    env->SetObjectArrayElement(array, index, jkey); \
+    env->DeleteLocalRef(jkey); \
+
 #endif
 #endif // !__OBJC __
 
