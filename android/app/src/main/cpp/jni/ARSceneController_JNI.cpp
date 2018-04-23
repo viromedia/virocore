@@ -112,7 +112,7 @@ VRO_METHOD(void, nativeSetPointCloudSurface)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPointCloudSurfaceScale)(VRO_ARGS
                                                   VRO_REF arSceneControllerPtr,
-                                                  jfloat scaleX, jfloat scaleY, jfloat scaleZ) {
+                                                  VRO_FLOAT scaleX, VRO_FLOAT scaleY, VRO_FLOAT scaleZ) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w, scaleX, scaleY, scaleZ] {

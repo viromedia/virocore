@@ -27,19 +27,19 @@
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
-                                         jfloat width,
-                                         jfloat height,
-                                         jfloat u0, jfloat v0,
-                                         jfloat u1, jfloat v1) {
+                                         VRO_FLOAT width,
+                                         VRO_FLOAT height,
+                                         VRO_FLOAT u0, VRO_FLOAT v0,
+                                         VRO_FLOAT u1, VRO_FLOAT v1) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     return Surface::jptr(surface);
 }
 
 VRO_METHOD(VRO_REF, nativeCreateSurfaceFromSurface)(VRO_ARGS
-                                                    jfloat width,
-                                                    jfloat height,
-                                                    jfloat u0, jfloat v0,
-                                                    jfloat u1, jfloat v1,
+                                                    VRO_FLOAT width,
+                                                    VRO_FLOAT height,
+                                                    VRO_FLOAT u0, VRO_FLOAT v0,
+                                                    VRO_FLOAT u1, VRO_FLOAT v1,
                                                     VRO_REF oldSurface) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     std::vector<std::shared_ptr<VROMaterial>> materials = Surface::native(oldSurface)->getMaterials();
@@ -56,7 +56,7 @@ VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF nativeSurface,
-                                 jfloat width) {
+                                 VRO_FLOAT width) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, width] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -69,7 +69,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
                                   VRO_REF nativeSurface,
-                                  jfloat height) {
+                                  VRO_FLOAT height) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, height] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();

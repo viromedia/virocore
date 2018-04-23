@@ -94,8 +94,8 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       jint style,
                                       jint weight,
                                       jlong color,
-                                      jfloat width,
-                                      jfloat height,
+                                      VRO_FLOAT width,
+                                      VRO_FLOAT height,
                                       jstring horizontalAlignment_j,
                                       jstring verticalAlignment_j,
                                       jstring lineBreakMode_j,
@@ -219,7 +219,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF text_j,
-                                 jfloat width) {
+                                 VRO_FLOAT width) {
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, width] {
@@ -233,7 +233,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
                                   VRO_REF text_j,
-                                  jfloat height) {
+                                  VRO_FLOAT height) {
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, height] {

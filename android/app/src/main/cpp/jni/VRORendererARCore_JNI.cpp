@@ -142,7 +142,7 @@ VRO_METHOD(void, nativePerformARHitTestWithRay) (VRO_ARGS
                                                  jfloatArray ray,
                                                  jobject callback) {
     // Grab ray to perform the AR hit test
-    jfloat *rayStart = env->GetFloatArrayElements(ray, 0);
+    VRO_FLOAT *rayStart = env->GetFloatArrayElements(ray, 0);
     VROVector3f rayVec = VROVector3f(rayStart[0], rayStart[1], rayStart[2]);
     env->ReleaseFloatArrayElements(ray, rayStart, 0);
 
@@ -163,7 +163,7 @@ VRO_METHOD(void, nativePerformARHitTestWithPosition) (VRO_ARGS
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
 
     // Calculate ray to perform the AR hit test
-    jfloat *positionStart = env->GetFloatArrayElements(position, 0);
+    VRO_FLOAT *positionStart = env->GetFloatArrayElements(position, 0);
     VROVector3f positionVec = VROVector3f(positionStart[0], positionStart[1], positionStart[2]);
     env->ReleaseFloatArrayElements(position, positionStart, 0);
 
@@ -182,7 +182,7 @@ VRO_METHOD(void, nativePerformARHitTestWithPosition) (VRO_ARGS
 
 VRO_METHOD(void, nativePerformARHitTestWithPoint) (VRO_ARGS
                                                    VRO_REF native_renderer,
-                                                   jfloat x, jfloat y,
+                                                   VRO_FLOAT x, VRO_FLOAT y,
                                                    jobject callback) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     std::weak_ptr<VROSceneRendererARCore> arRenderer_w = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);

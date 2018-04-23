@@ -30,7 +30,7 @@ namespace Polyline {
 
     VROVector3f convertPoint(JNIEnv *env, jfloatArray point_j) {
         int numCoordinates = env->GetArrayLength(point_j);
-        jfloat *point_c = env->GetFloatArrayElements(point_j, 0);
+        VRO_FLOAT *point_c = env->GetFloatArrayElements(point_j, 0);
 
         VROVector3f point;
         if (numCoordinates == 2) {
@@ -57,7 +57,7 @@ namespace Polyline {
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
-                                               jfloat width) {
+                                               VRO_FLOAT width) {
 
     std::shared_ptr<VROPolyline> polyline = std::make_shared<VROPolyline>();
     polyline->setThickness(width);
@@ -66,7 +66,7 @@ VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
                                           jobjectArray points_j,
-                                          jfloat width) {
+                                          VRO_FLOAT width) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
     std::shared_ptr<VROPolyline> polyline = VROPolyline::createPolyline(points, width);
     return Polyline::jptr(polyline);
@@ -108,7 +108,7 @@ VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetThickness)(VRO_ARGS
                                      VRO_REF polyline_j,
-                                     jfloat thickness) {
+                                     VRO_FLOAT thickness) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, thickness] {
         std::shared_ptr<VROPolyline> polyline = polyline_w.lock();

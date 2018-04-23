@@ -16,7 +16,7 @@ extern "C" {
 VRO_METHOD(VRO_REF, nativeCreateARImageTarget)(VRO_ARGS
                                                jobject bitmap,
                                                jstring orientation,
-                                               jfloat physicalWidth,
+                                               VRO_FLOAT physicalWidth,
                                                jstring id) {
     VROPlatformSetEnv(env);
 

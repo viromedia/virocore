@@ -99,9 +99,9 @@ VRO_METHOD(VRO_REF, nativeCreateMaterial)(VRO_NO_ARGS) {
 
 VRO_METHOD(VRO_REF, nativeCreateImmutableMaterial)(VRO_ARGS
                                                    jstring lightingModel, jlong diffuseColor, VRO_REF diffuseTexture,
-                                                   jfloat diffuseIntensity, VRO_REF specularTexture,
-                                                   jfloat shininess, jfloat fresnelExponent, VRO_REF normalMap, jstring cullMode,
-                                                   jstring transparencyMode, jstring blendMode, jfloat bloomThreshold,
+                                                   VRO_FLOAT diffuseIntensity, VRO_REF specularTexture,
+                                                   VRO_FLOAT shininess, VRO_FLOAT fresnelExponent, VRO_REF normalMap, jstring cullMode,
+                                                   jstring transparencyMode, jstring blendMode, VRO_FLOAT bloomThreshold,
                                                    jboolean writesToDepthBuffer, jboolean readsFromDepthBuffer) {
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setLightingModel(parseLightingModel(VROPlatformGetString(lightingModel, env)));
@@ -221,7 +221,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetFloat)(VRO_ARGS
                                  VRO_REF material_j,
-                                 jfloat value,
+                                 VRO_FLOAT value,
                                  jstring name_j) {
     std::string name_s = VROPlatformGetString(name_j, env);
 
@@ -319,7 +319,7 @@ VRO_METHOD(void, nativeSetCullMode)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetDiffuseIntensity)(VRO_ARGS
-                                            VRO_REF material_j, jfloat diffuseIntensity) {
+                                            VRO_REF material_j, VRO_FLOAT diffuseIntensity) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, diffuseIntensity] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
@@ -330,7 +330,7 @@ VRO_METHOD(void, nativeSetDiffuseIntensity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
-                                          VRO_REF material_j, jfloat bloomThreshold) {
+                                          VRO_REF material_j, VRO_FLOAT bloomThreshold) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, bloomThreshold] {
         std::shared_ptr<VROMaterial> material = material_w.lock();

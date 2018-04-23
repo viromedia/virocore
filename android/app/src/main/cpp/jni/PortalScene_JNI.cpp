@@ -106,9 +106,9 @@ VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
                                               VRO_REF portal_j,
-                                              jfloat rotationRadiansX,
-                                              jfloat rotationRadiansY,
-                                              jfloat rotationRadiansZ) {
+                                              VRO_FLOAT rotationRadiansX,
+                                              VRO_FLOAT rotationRadiansY,
+                                              VRO_FLOAT rotationRadiansZ) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
 
     VROPlatformDispatchAsyncRenderer([portal_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {

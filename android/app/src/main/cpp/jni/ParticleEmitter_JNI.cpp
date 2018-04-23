@@ -38,7 +38,7 @@ VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
                                  VRO_REF native_ref,
-                                 jfloat delay) {
+                                 VRO_FLOAT delay) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, delay] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -50,7 +50,7 @@ VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
                                     VRO_REF native_ref,
-                                    jfloat value) {
+                                    VRO_FLOAT value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -171,7 +171,7 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
     std::vector<float> params;
     if (jShapeParams != NULL) {
         int paramsLength = env->GetArrayLength(jShapeParams);
-        jfloat *pointArray = env->GetFloatArrayElements(jShapeParams, 0);
+        VRO_FLOAT *pointArray = env->GetFloatArrayElements(jShapeParams, 0);
         for (int i = 0; i < paramsLength; i ++) {
             params.push_back(pointArray[i]);
         }
@@ -195,12 +195,12 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
                                             VRO_REF native_ref,
-                                            jfloat jImpulse,
+                                            VRO_FLOAT jImpulse,
                                             jfloatArray jPosition,
-                                            jfloat jDeccelPeriod) {
+                                            VRO_FLOAT jDeccelPeriod) {
     // Grab the position at which to apply the explosive impulse.
     int paramsLength = env->GetArrayLength(jPosition);
-    jfloat *pointArray = env->GetFloatArrayElements(jPosition, 0);
+    VRO_FLOAT *pointArray = env->GetFloatArrayElements(jPosition, 0);
     std::vector<float> position;
     for (int i = 0; i < paramsLength; i ++) {
         position.push_back(pointArray[i]);
@@ -325,7 +325,7 @@ VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
                                           VRO_REF native_ref,
-                                          jfloat threshold) {
+                                          VRO_FLOAT threshold) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, threshold] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();

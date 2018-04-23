@@ -976,7 +976,7 @@ void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldN
     env->SetIntField(jObj, fieldId, value);
 }
 
-void VROPlatformSetFloat(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jfloat value) {
+void VROPlatformSetFloat(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_FLOAT value) {
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "F");
     if (fieldId == NULL){
         pwarn("Attempted to set undefined field: %s", fieldName);

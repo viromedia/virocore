@@ -38,13 +38,13 @@ namespace Sphere{
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateSphere)(VRO_ARGS
-                                        jfloat radius) {
+                                        VRO_FLOAT radius) {
     std::shared_ptr<VROSphere> sphere = std::make_shared<VROSphere>(radius);
     return Sphere::jptr(sphere);
 }
 
 VRO_METHOD(VRO_REF, nativeCreateSphereParameterized)(VRO_ARGS
-                                                     jfloat radius,
+                                                     VRO_FLOAT radius,
                                                      jint widthSegmentCount,
                                                      jint heightSegmentCount,
                                                      jboolean facesOutward) {
@@ -119,7 +119,7 @@ VRO_METHOD(void, nativeSetHeightSegmentCount)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetRadius)(VRO_ARGS
                                   VRO_REF jsphere,
-                                  jfloat radius) {
+                                  VRO_FLOAT radius) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, radius] {
         std::shared_ptr<VROSphere> sphere = sphere_w.lock();

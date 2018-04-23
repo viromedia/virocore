@@ -20,13 +20,13 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
                                          jobjectArray jpoints,
-                                         jfloat u0, jfloat v0,
-                                         jfloat u1, jfloat v1) {
+                                         VRO_FLOAT u0, VRO_FLOAT v0,
+                                         VRO_FLOAT u1, VRO_FLOAT v1) {
     std::vector<VROVector3f> initialValues;
     int numberOfValues = env->GetArrayLength(jpoints);
     for (int i = 0; i < numberOfValues; i++) {
         jfloatArray vec3Value = (jfloatArray) env->GetObjectArrayElement(jpoints, i);
-        jfloat *vec3ValueArray = env->GetFloatArrayElements(vec3Value, 0);
+        VRO_FLOAT *vec3ValueArray = env->GetFloatArrayElements(vec3Value, 0);
         VROVector3f vec3 = VROVector3f(vec3ValueArray[0], vec3ValueArray[1]);
         initialValues.push_back(vec3);
         env->ReleaseFloatArrayElements(vec3Value, vec3ValueArray, JNI_ABORT);

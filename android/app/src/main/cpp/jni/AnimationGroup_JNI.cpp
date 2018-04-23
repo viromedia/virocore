@@ -39,7 +39,7 @@ VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
                                                 jstring scaleX, jstring scaleY, jstring scaleZ,
                                                 jstring rotateX, jstring rotateY, jstring rotateZ,
                                                 jstring opacity, jstring color, VRO_REF lazyMaterialRef,
-                                                jfloat durationSeconds, jfloat delaySeconds, jstring functionType) {
+                                                VRO_FLOAT durationSeconds, VRO_FLOAT delaySeconds, jstring functionType) {
     std::map<std::string, std::string> animationProperties;
 
     // NOTE: AddPropertyIfNotNull WILL release the jstring after its done running so don't

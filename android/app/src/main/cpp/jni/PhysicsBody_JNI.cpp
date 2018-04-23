@@ -20,7 +20,7 @@ extern "C" {
 VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
                                         VRO_REF nativeRef,
                                         jstring bodyTypeStr,
-                                        jfloat mass,
+                                        VRO_FLOAT mass,
                                         jstring shapeTypeStr,
                                         jfloatArray shapeParams) {
     // Get Physics Body type
@@ -34,7 +34,7 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
         int paramsLength = env->GetArrayLength(shapeParams);
-        jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+        VRO_FLOAT *pointArray = env->GetFloatArrayElements(shapeParams, 0);
         std::vector<float> params;
         for (int i = 0; i < paramsLength; i++) {
             params.push_back(pointArray[i]);
@@ -79,7 +79,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
 
         // Get the shape params
         int paramsLength = env->GetArrayLength(shapeParams);
-        jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+        VRO_FLOAT *pointArray = env->GetFloatArrayElements(shapeParams, 0);
         std::vector<float> params;
         for (int i = 0; i < paramsLength; i++) {
             params.push_back(pointArray[i]);
@@ -102,7 +102,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPhysicsMass)(VRO_ARGS
                                        VRO_REF nativeRef,
-                                       jfloat mass) {
+                                       VRO_FLOAT mass) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, mass] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -117,7 +117,7 @@ VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
                                           VRO_REF nativeRef,
                                           jfloatArray inertiaArray) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
-    jfloat *inertia = env->GetFloatArrayElements(inertiaArray, 0);
+    VRO_FLOAT *inertia = env->GetFloatArrayElements(inertiaArray, 0);
     VROVector3f vectorInertia = VROVector3f(inertia[0], inertia[1], inertia[2]);
     env->ReleaseFloatArrayElements(inertiaArray, inertia, 0);
 
@@ -131,7 +131,7 @@ VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPhysicsFriction)(VRO_ARGS
                                            VRO_REF nativeRef,
-                                           jfloat friction) {
+                                           VRO_FLOAT friction) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, friction] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -143,7 +143,7 @@ VRO_METHOD(void, nativeSetPhysicsFriction)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPhysicsRestitution)(VRO_ARGS
                                               VRO_REF nativeRef,
-                                              jfloat restitution) {
+                                              VRO_FLOAT restitution) {
 
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, restitution] {
@@ -182,12 +182,12 @@ VRO_METHOD(void, nativeApplyPhysicsForce)(VRO_ARGS
                                           jfloatArray forceArray,
                                           jfloatArray positionArray) {
     // Grab the physics force to be applied
-    jfloat *force = env->GetFloatArrayElements(forceArray, 0);
+    VRO_FLOAT *force = env->GetFloatArrayElements(forceArray, 0);
     VROVector3f vectorForce = VROVector3f(force[0], force[1], force[2]);
     env->ReleaseFloatArrayElements(forceArray, force, 0);
 
     // Grab the position at which to apply the force at
-    jfloat *position = env->GetFloatArrayElements(positionArray, 0);
+    VRO_FLOAT *position = env->GetFloatArrayElements(positionArray, 0);
     VROVector3f vectorPosition = VROVector3f(position[0], position[1], position[2]);
     env->ReleaseFloatArrayElements(positionArray, force, 0);
 
@@ -204,7 +204,7 @@ VRO_METHOD(void, nativeApplyPhysicsForce)(VRO_ARGS
 VRO_METHOD(void, nativeApplyPhysicsTorque)(VRO_ARGS
                                            VRO_REF nativeRef,
                                            jfloatArray torqueArray) {
-    jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
+    VRO_FLOAT *torque = env->GetFloatArrayElements(torqueArray, 0);
     VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
     env->ReleaseFloatArrayElements(torqueArray, torque, 0);
 
@@ -223,12 +223,12 @@ VRO_METHOD(void, nativeApplyPhysicsImpulse)(VRO_ARGS
                                             jfloatArray forceArray,
                                             jfloatArray positionArray) {
     // Grab the physics impulse to be applied
-    jfloat *force = env->GetFloatArrayElements(forceArray, 0);
+    VRO_FLOAT *force = env->GetFloatArrayElements(forceArray, 0);
     VROVector3f vectorForce = VROVector3f(force[0], force[1], force[2]);
     env->ReleaseFloatArrayElements(forceArray, force, 0);
 
     // Grab the position at which to apply the impulse at
-    jfloat *jPos = env->GetFloatArrayElements(positionArray, 0);
+    VRO_FLOAT *jPos = env->GetFloatArrayElements(positionArray, 0);
     VROVector3f vectorPos = VROVector3f(jPos[0], jPos[1], jPos[2]);
     env->ReleaseFloatArrayElements(positionArray, jPos, 0);
 
@@ -246,7 +246,7 @@ VRO_METHOD(void, nativeApplyPhysicsTorqueImpulse)(VRO_ARGS
                                                   VRO_REF nativeRef,
                                                   jfloatArray torqueArray) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
-    jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
+    VRO_FLOAT *torque = env->GetFloatArrayElements(torqueArray, 0);
     VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
     env->ReleaseFloatArrayElements(torqueArray, torque, 0);
 
@@ -260,7 +260,7 @@ VRO_METHOD(void, nativeApplyPhysicsTorqueImpulse)(VRO_ARGS
 
 VRO_METHOD(jstring, nativeIsValidBodyType)(VRO_ARGS
                                            jstring bodyType,
-                                           jfloat mass) {
+                                           VRO_FLOAT mass) {
     // Grab the physics body type
     std::string strBodyType = VROPlatformGetString(bodyType, env);
 
@@ -282,7 +282,7 @@ VRO_METHOD(jstring, nativeIsValidShapeType)(VRO_ARGS
 
     // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);
-    jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+    VRO_FLOAT *pointArray = env->GetFloatArrayElements(shapeParams, 0);
     std::vector<float> params;
     for (int i = 0; i < paramsLength; i++) {
         params.push_back(pointArray[i]);
@@ -332,7 +332,7 @@ VRO_METHOD(void, nativeSetPhysicsVelocity)(VRO_ARGS
                                            VRO_REF nativeRef,
                                            jfloatArray velocityArray,
                                            jboolean isConstant) {
-    jfloat *jVelocity = env->GetFloatArrayElements(velocityArray, 0);
+    VRO_FLOAT *jVelocity = env->GetFloatArrayElements(velocityArray, 0);
     VROVector3f velocity = VROVector3f(jVelocity[0], jVelocity[1], jVelocity[2]);
     env->ReleaseFloatArrayElements(velocityArray, jVelocity, 0);
 

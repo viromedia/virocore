@@ -79,9 +79,9 @@ VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
                                               VRO_REF sceneRef,
-                                              jfloat rotationRadiansX,
-                                              jfloat rotationRadiansY,
-                                              jfloat rotationRadiansZ) {
+                                              VRO_FLOAT rotationRadiansX,
+                                              VRO_FLOAT rotationRadiansY,
+                                              VRO_FLOAT rotationRadiansZ) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
@@ -150,7 +150,7 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
                                      VRO_REF sceneRef, VRO_REF context_j,
-                                     jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
+                                     VRO_FLOAT sizeX, VRO_FLOAT sizeY, VRO_FLOAT sizeZ, jstring wallMaterial,
                                      jstring ceilingMaterial, jstring floorMaterial) {
     std::string strWallMaterial = VROPlatformGetString(wallMaterial, env);
     std::string strCeilingMaterial = VROPlatformGetString(ceilingMaterial, env);
@@ -203,7 +203,7 @@ VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
                                                VRO_REF sceneRef,
                                                jfloatArray gravityArray) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
-    jfloat *gravityArrayf = env->GetFloatArrayElements(gravityArray, 0);
+    VRO_FLOAT *gravityArrayf = env->GetFloatArrayElements(gravityArray, 0);
     VROVector3f gravity = VROVector3f(gravityArrayf[0], gravityArrayf[1], gravityArrayf[2]);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, gravity] {
@@ -235,12 +235,12 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                                              jobject callback) {
 
     // Grab start position from which to perform the collision test
-    jfloat *fromPosf = env->GetFloatArrayElements(fromPos, 0);
+    VRO_FLOAT *fromPosf = env->GetFloatArrayElements(fromPos, 0);
     VROVector3f from = VROVector3f(fromPosf[0], fromPosf[1], fromPosf[2]);
     env->ReleaseFloatArrayElements(fromPos, fromPosf, 0);
 
     // Grab end position to which to perform the test to.
-    jfloat *toPosf = env->GetFloatArrayElements(toPos, 0);
+    VRO_FLOAT *toPosf = env->GetFloatArrayElements(toPos, 0);
     VROVector3f to = VROVector3f(toPosf[0], toPosf[1], toPosf[2]);
     env->ReleaseFloatArrayElements(toPos, toPosf, 0);
 
@@ -293,12 +293,12 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
                                               jobject callback) {
 
     // Grab start position from which to perform the collision test
-    jfloat *posStartf = env->GetFloatArrayElements(posStart, 0);
+    VRO_FLOAT *posStartf = env->GetFloatArrayElements(posStart, 0);
     VROVector3f from = VROVector3f(posStartf[0], posStartf[1], posStartf[2]);
     env->ReleaseFloatArrayElements(posStart, posStartf, 0);
 
     // Grab end position to which to perform the test to.
-    jfloat *posEndf = env->GetFloatArrayElements(posEnd, 0);
+    VRO_FLOAT *posEndf = env->GetFloatArrayElements(posEnd, 0);
     VROVector3f to = VROVector3f(posEndf[0], posEndf[1], posEndf[2]);
     env->ReleaseFloatArrayElements(posStart, posEndf, 0);
 
@@ -307,7 +307,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
 
     // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);
-    jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+    VRO_FLOAT *pointArray = env->GetFloatArrayElements(shapeParams, 0);
     std::vector<float> params;
     for (int i = 0; i < paramsLength; i ++) {
         params.push_back(pointArray[i]);

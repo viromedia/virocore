@@ -33,7 +33,7 @@ VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
 
     int returnLength = output->corners.size() * 2;
     jfloatArray returnCorners = env->NewFloatArray(returnLength);
-    jfloat tempArr[returnLength];
+    VRO_FLOAT tempArr[returnLength];
 
     if (output->found) {
         for (int i = 0; i < output->corners.size(); i++) {
@@ -54,7 +54,7 @@ VRO_METHOD(jfloatArray, nativeOutputPosition)(VRO_ARGS
                                               VRO_REF nativeRef) {
 
     jfloatArray returnPosition = env->NewFloatArray(3);
-    jfloat tempArr[3];
+    VRO_FLOAT tempArr[3];
 
 #if ENABLE_OPENCV
     std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
@@ -74,7 +74,7 @@ VRO_METHOD(jfloatArray, nativeOutputRotation)(VRO_ARGS
                                               VRO_REF nativeRef) {
 
     jfloatArray returnRotation = env->NewFloatArray(3);
-    jfloat tempArr[3];
+    VRO_FLOAT tempArr[3];
 
 #if ENABLE_OPENCV
     std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);

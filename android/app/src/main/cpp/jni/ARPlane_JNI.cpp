@@ -18,8 +18,8 @@
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateARPlane)(VRO_ARGS
-                                         jfloat minWidth,
-                                         jfloat minHeight) {
+                                         VRO_FLOAT minWidth,
+                                         VRO_FLOAT minHeight) {
     std::shared_ptr<VROARPlaneNode> arPlane = std::make_shared<VROARPlaneNode>(minWidth, minHeight);
     return ARPlane::jptr(arPlane);
 }
@@ -45,14 +45,14 @@ VRO_METHOD(void, nativeDestroyARPlaneDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetMinWidth)(VRO_ARGS
                                     VRO_REF nativeARPlane,
-                                    jfloat minWidth) {
+                                    VRO_FLOAT minWidth) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
     arPlane->setMinWidth(minWidth);
 }
 
 VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
                                      VRO_REF nativeARPlane,
-                                     jfloat minHeight) {
+                                     VRO_FLOAT minHeight) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
     arPlane->setMinHeight(minHeight);
 }

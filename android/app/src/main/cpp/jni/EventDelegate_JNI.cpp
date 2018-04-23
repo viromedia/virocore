@@ -50,7 +50,7 @@ VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetTimeToFuse)(VRO_ARGS
                                       VRO_REF native_node_ref,
-                                      jfloat durationInMillis) {
+                                      VRO_FLOAT durationInMillis) {
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, durationInMillis] {
         std::shared_ptr<EventDelegate_JNI> delegate = delegate_w.lock();
@@ -86,7 +86,7 @@ void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool 
             int returnLength = 3;
             positionArray = env->NewFloatArray(returnLength);
 
-            jfloat tempArr[returnLength];
+            VRO_FLOAT tempArr[returnLength];
             tempArr[0] = position.at(0);
             tempArr[1] = position.at(1);
             tempArr[2] = position.at(2);
@@ -118,7 +118,7 @@ void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, Click
         if (position.size() == 3) {
             int returnLength = 3;
             positionArray = env->NewFloatArray(returnLength);
-            jfloat tempArr[returnLength];
+            VRO_FLOAT tempArr[returnLength];
             tempArr[0] = position.at(0);
             tempArr[1] = position.at(1);
             tempArr[2] = position.at(2);

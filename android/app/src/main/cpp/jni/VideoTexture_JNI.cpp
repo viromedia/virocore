@@ -126,7 +126,7 @@ VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
                                   VRO_REF textureRef,
-                                  jfloat volume) {
+                                  VRO_FLOAT volume) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, volume] {
@@ -154,7 +154,7 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
                                    VRO_REF textureRef,
-                                   jfloat seconds) {
+                                   VRO_FLOAT seconds) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, seconds] {

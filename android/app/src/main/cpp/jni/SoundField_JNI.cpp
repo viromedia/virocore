@@ -70,7 +70,7 @@ VRO_METHOD(void, nativePauseSoundField)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
                                   VRO_REF nativeRef,
-                                  jfloat volume) {
+                                  VRO_FLOAT volume) {
     SoundField::native(nativeRef)->setVolume(volume);
 }
 
@@ -88,15 +88,15 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
                                    VRO_REF nativeRef,
-                                   jfloat seconds) {
+                                   VRO_FLOAT seconds) {
     SoundField::native(nativeRef)->seekToTime(seconds);
 }
 
 VRO_METHOD(void, nativeSetRotation)(VRO_ARGS
                                     VRO_REF nativeRef,
-                                    jfloat rotationRadiansX,
-                                    jfloat rotationRadiansY,
-                                    jfloat rotationRadiansZ) {
+                                    VRO_FLOAT rotationRadiansX,
+                                    VRO_FLOAT rotationRadiansY,
+                                    VRO_FLOAT rotationRadiansZ) {
     SoundField::native(nativeRef)->setRotation({rotationRadiansX, rotationRadiansY, rotationRadiansZ});
 }
 

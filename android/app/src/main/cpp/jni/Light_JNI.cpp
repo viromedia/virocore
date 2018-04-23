@@ -40,7 +40,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetIntensity)(VRO_ARGS
                                      VRO_REF native_light_ref,
-                                     jfloat intensity) {
+                                     VRO_FLOAT intensity) {
     std::shared_ptr<VROLight> light = Light::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light, intensity] {
         light->setIntensity(intensity);
@@ -49,7 +49,7 @@ VRO_METHOD(void, nativeSetIntensity)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetTemperature)(VRO_ARGS
                                        VRO_REF native_light_ref,
-                                       jfloat temperature) {
+                                       VRO_FLOAT temperature) {
     std::shared_ptr<VROLight> light = Light::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light, temperature] {
         light->setTemperature(temperature);

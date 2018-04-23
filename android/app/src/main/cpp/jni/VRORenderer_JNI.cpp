@@ -200,9 +200,9 @@ VRO_METHOD(void, nativeOnTouchEvent)(VRO_ARGS
 VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
                                       VRO_REF native_renderer,
                                       jint pinchState,
-                                      jfloat scaleFactor,
-                                      jfloat viewportX,
-                                      jfloat viewportY) {
+                                      VRO_FLOAT scaleFactor,
+                                      VRO_FLOAT viewportX,
+                                      VRO_FLOAT viewportY) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, pinchState, scaleFactor, viewportX, viewportY] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -216,9 +216,9 @@ VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
 VRO_METHOD(void, nativeOnRotateEvent) (VRO_ARGS
                                        VRO_REF native_renderer,
                                        jint rotateState,
-                                       jfloat rotateRadians,
-                                       jfloat viewportX,
-                                       jfloat viewportY) {
+                                       VRO_FLOAT rotateRadians,
+                                       VRO_FLOAT viewportX,
+                                       VRO_FLOAT viewportY) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, rotateState, rotateRadians, viewportX, viewportY] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -287,7 +287,7 @@ VRO_METHOD(void, nativeSetSceneController)(VRO_ARGS
 VRO_METHOD(void, nativeSetSceneControllerWithAnimation)(VRO_ARGS
                                                         VRO_REF native_renderer,
                                                         VRO_REF native_scene_controller_ref,
-                                                        jfloat duration) {
+                                                        VRO_FLOAT duration) {
     if (kRunRendererTest) {
         return;
     }
@@ -388,14 +388,14 @@ VRO_METHOD(void, nativeRecenterTracking)(VRO_ARGS
 
 VRO_METHOD(jfloatArray, nativeProjectPoint)(VRO_ARGS
                                             VRO_REF renderer_j,
-                                            jfloat x, jfloat y, jfloat z) {
+                                            VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->projectPoint({ x, y, z }));
 }
 
 VRO_METHOD(jfloatArray, nativeUnprojectPoint)(VRO_ARGS
                                               VRO_REF renderer_j,
-                                              jfloat x, jfloat y, jfloat z) {
+                                              VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
 }
@@ -484,7 +484,7 @@ VRO_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(VRO_ARGS
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
 }
 
-VRO_METHOD(jfloat, nativeGetFieldOfView)(VRO_ARGS
+VRO_METHOD(VRO_FLOAT, nativeGetFieldOfView)(VRO_ARGS
                                          VRO_REF native_ref) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_ref);
     return renderer->getRenderer()->getActiveFieldOfView();

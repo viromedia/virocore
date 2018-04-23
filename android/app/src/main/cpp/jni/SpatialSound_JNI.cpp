@@ -56,7 +56,7 @@ VRO_METHOD(void, nativePauseSpatialSound)(VRO_ARGS VRO_REF nativeRef) {
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
                                   VRO_REF nativeRef,
-                                  jfloat volume) {
+                                  VRO_FLOAT volume) {
     SpatialSound::native(nativeRef)->setVolume(volume);
 }
 
@@ -74,23 +74,23 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
                                    VRO_REF nativeRef,
-                                   jfloat seconds) {
+                                   VRO_FLOAT seconds) {
     SpatialSound::native(nativeRef)->seekToTime(seconds);
 }
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_REF nativeRef,
-                                    jfloat posX,
-                                    jfloat posY,
-                                    jfloat posZ) {
+                                    VRO_FLOAT posX,
+                                    VRO_FLOAT posY,
+                                    VRO_FLOAT posZ) {
     SpatialSound::native(nativeRef)->setPosition({posX, posY, posZ});
 }
 
 VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
                                            VRO_REF nativeRef,
                                            jstring model,
-                                           jfloat minDistance,
-                                           jfloat maxDistance) {
+                                           VRO_FLOAT minDistance,
+                                           VRO_FLOAT maxDistance) {
     std::string modelString = VROPlatformGetString(model, env);
 
     if (VROStringUtil::strcmpinsensitive(modelString, "none")) {

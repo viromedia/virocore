@@ -84,7 +84,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
                                       VRO_REF nativeRef,
-                                      jfloat volume) {
+                                      VRO_FLOAT volume) {
         Sound::native(nativeRef)->setVolume(volume);
     }
 
@@ -101,7 +101,7 @@ extern "C" {
     }
     VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
                                        VRO_REF nativeRef,
-                                       jfloat seconds) {
+                                       VRO_FLOAT seconds) {
         Sound::native(nativeRef)->seekToTime(seconds);
     }
 

@@ -83,7 +83,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
 jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jfloatArray returnArray = env->NewFloatArray(3);
-    jfloat tempArr[3];
+    VRO_FLOAT tempArr[3];
     tempArr[0] = vector.x; tempArr[1] = vector.y; tempArr[2] = vector.z;
     env->SetFloatArrayRegion(returnArray, 0, 3, tempArr);
     return returnArray;
@@ -101,7 +101,7 @@ jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
 jfloatArray ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jfloatArray returnArray = env->NewFloatArray(6);
-    jfloat tempArr[6];
+    VRO_FLOAT tempArr[6];
     tempArr[0] = boundingBox.getMinX(); tempArr[1] = boundingBox.getMaxX();
     tempArr[2] = boundingBox.getMinY(); tempArr[3] = boundingBox.getMaxY();
     tempArr[4] = boundingBox.getMinZ(); tempArr[5] = boundingBox.getMaxZ();
@@ -169,7 +169,7 @@ jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     std::vector<VROVector4f> points = pointCloud->getPoints();
-    jfloat tempConfidencesArr[points.size() * 4];
+    VRO_FLOAT tempConfidencesArr[points.size() * 4];
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
@@ -192,7 +192,7 @@ jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
 
 jfloatArray ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jfloat tempPointsArr[points.size() * 3];
+    VRO_FLOAT tempPointsArr[points.size() * 3];
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
