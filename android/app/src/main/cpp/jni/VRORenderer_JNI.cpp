@@ -25,7 +25,6 @@
 #include "VROReticle.h"
 #include "SceneController_JNI.h"
 #include "FrameListener_JNI.h"
-#include "object.hpp"
 #include "ARUtils_JNI.h"
 #include "Camera_JNI.h"
 #include "VRORenderer.h"
