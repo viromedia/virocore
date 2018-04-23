@@ -143,7 +143,7 @@ VRO_METHOD(void, nativeSetAnchorDetectionTypes)(JNIEnv *env, VRO_REF sceneRef, j
             ARSceneController::native(sceneRef)->getScene());
     std::set<VROAnchorDetection> types;
 
-    int stringCount = env->GetArrayLength(typeStrArray);
+    int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
     for (int i = 0; i < stringCount; i++) {
         std::string typeString = VROPlatformGetString((jstring) env->GetObjectArrayElement(typeStrArray, i), env);
         if (VROStringUtil::strcmpinsensitive(typeString, "None")) {

@@ -180,7 +180,7 @@ VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
                                    jobjectArray jEffects) {
     std::vector<std::string> effects;
     if (jEffects != NULL) {
-        int numberOfValues = env->GetArrayLength(jEffects);
+        int numberOfValues = VRO_ARRAY_LENGTH(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
             jstring jEffect = (jstring) env->GetObjectArrayElement(jEffects, i);
             std::string strEffect = VROPlatformGetString(jEffect, env);
@@ -284,13 +284,13 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
 }
 
 VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
-                                              VRO_REF sceneRef,
-                                              VRO_FLOAT_ARRAY posStart,
-                                              VRO_FLOAT_ARRAY posEnd,
-                                              jstring shapeType,
-                                              VRO_FLOAT_ARRAY shapeParams,
-                                              jstring tag,
-                                              jobject callback) {
+                                               VRO_REF sceneRef,
+                                               VRO_FLOAT_ARRAY posStart,
+                                               VRO_FLOAT_ARRAY posEnd,
+                                               jstring shapeType,
+                                               VRO_FLOAT_ARRAY shapeParams,
+                                               jstring tag,
+                                               jobject callback) {
 
     // Grab start position from which to perform the collision test
     VRO_FLOAT *posStartf = VRO_FLOAT_ARRAY_GET_ELEMENTS(posStart);
@@ -306,7 +306,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
     std::string strShapeType = VROPlatformGetString(shapeType, env);
 
     // Grab the shape params
-    int paramsLength = env->GetArrayLength(shapeParams);
+    int paramsLength = VRO_ARRAY_LENGTH(shapeParams);
     VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(shapeParams);
     std::vector<float> params;
     for (int i = 0; i < paramsLength; i ++) {

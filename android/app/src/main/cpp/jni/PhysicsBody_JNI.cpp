@@ -33,7 +33,7 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
         std::string strShapeType = VROPlatformGetString(shapeTypeStr, env);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
-        int paramsLength = env->GetArrayLength(shapeParams);
+        int paramsLength = VRO_ARRAY_LENGTH(shapeParams);
         VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(shapeParams);
         std::vector<float> params;
         for (int i = 0; i < paramsLength; i++) {
@@ -78,7 +78,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
         // Get the shape params
-        int paramsLength = env->GetArrayLength(shapeParams);
+        int paramsLength = VRO_ARRAY_LENGTH(shapeParams);
         VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(shapeParams);
         std::vector<float> params;
         for (int i = 0; i < paramsLength; i++) {
@@ -281,7 +281,7 @@ VRO_METHOD(jstring, nativeIsValidShapeType)(VRO_ARGS
     std::string strShapeType = VROPlatformGetString(shapeType, env);
 
     // Grab the shape params
-    int paramsLength = env->GetArrayLength(shapeParams);
+    int paramsLength = VRO_ARRAY_LENGTH(shapeParams);
     VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(shapeParams);
     std::vector<float> params;
     for (int i = 0; i < paramsLength; i++) {

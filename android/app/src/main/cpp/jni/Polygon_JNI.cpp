@@ -23,7 +23,7 @@ VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
                                          VRO_FLOAT u0, VRO_FLOAT v0,
                                          VRO_FLOAT u1, VRO_FLOAT v1) {
     std::vector<VROVector3f> initialValues;
-    int numberOfValues = env->GetArrayLength(jpoints);
+    int numberOfValues = VRO_ARRAY_LENGTH(jpoints);
     for (int i = 0; i < numberOfValues; i++) {
         VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY) env->GetObjectArrayElement(jpoints, i);
         VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);

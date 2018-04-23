@@ -35,7 +35,7 @@ namespace ParticleEmitter {
                                                                     jobjectArray jInterpolatedValues) {
         // Parse out the initial values for this modifier
         std::vector<VROVector3f> initialValues;
-        int numberOfValues = env->GetArrayLength(jInitialValue);
+        int numberOfValues = VRO_ARRAY_LENGTH(jInitialValue);
         for (int i = 0; i < numberOfValues; i++) {
             VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jInitialValue, i);
             VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);
@@ -54,7 +54,7 @@ namespace ParticleEmitter {
         // Parse out VROModifierIntervals containing sequentially interpolated target values and its
         // corresponding intervals.
         std::vector<VROParticleModifier::VROModifierInterval> interpolatedIntervals;
-        int numberOfIntervals = env->GetArrayLength(jInterpolatedIntervals);
+        int numberOfIntervals = VRO_ARRAY_LENGTH(jInterpolatedIntervals);
         for (int i = 0; i < numberOfIntervals; i++) {
             // Get the interval window this interpolation point applies to
             VRO_FLOAT_ARRAY vec2Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jInterpolatedIntervals, i);

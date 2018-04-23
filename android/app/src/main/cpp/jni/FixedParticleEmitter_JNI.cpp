@@ -45,7 +45,7 @@ VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
                                      VRO_REF emitter_j,
                                      jobjectArray jPositions) {
     std::vector<VROVector4f> initialValues;
-    int numberOfValues = env->GetArrayLength(jPositions);
+    int numberOfValues = VRO_ARRAY_LENGTH(jPositions);
     for (int i = 0; i < numberOfValues; i++) {
         VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jPositions, i);
         VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);

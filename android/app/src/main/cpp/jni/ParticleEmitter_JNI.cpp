@@ -170,7 +170,7 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
     // Also grab any parameters describing the shape if any.
     std::vector<float> params;
     if (jShapeParams != NULL) {
-        int paramsLength = env->GetArrayLength(jShapeParams);
+        int paramsLength = VRO_ARRAY_LENGTH(jShapeParams);
         VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(jShapeParams);
         for (int i = 0; i < paramsLength; i ++) {
             params.push_back(pointArray[i]);
@@ -199,7 +199,7 @@ VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
                                             VRO_FLOAT_ARRAY jPosition,
                                             VRO_FLOAT jDeccelPeriod) {
     // Grab the position at which to apply the explosive impulse.
-    int paramsLength = env->GetArrayLength(jPosition);
+    int paramsLength = VRO_ARRAY_LENGTH(jPosition);
     VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(jPosition);
     std::vector<float> position;
     for (int i = 0; i < paramsLength; i ++) {
@@ -225,7 +225,7 @@ VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
     // Grab and create a list of bursts if any.
     std::vector<VROParticleEmitter::VROParticleBurst> particleBursts;
     if (jBursts != NULL) {
-        int numberOfValues = env->GetArrayLength(jBursts);
+        int numberOfValues = VRO_ARRAY_LENGTH(jBursts);
         for (int i = 0; i < numberOfValues; i++) {
             jdoubleArray burstData = (jdoubleArray)env->GetObjectArrayElement(jBursts, i);
             jdouble *burstDataArray = env->GetDoubleArrayElements(burstData, 0);

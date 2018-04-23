@@ -29,7 +29,7 @@ namespace Polyline {
     }
 
     VROVector3f convertPoint(JNIEnv *env, VRO_FLOAT_ARRAY point_j) {
-        int numCoordinates = env->GetArrayLength(point_j);
+        int numCoordinates = VRO_ARRAY_LENGTH(point_j);
         VRO_FLOAT *point_c = VRO_FLOAT_ARRAY_GET_ELEMENTS(point_j);
 
         VROVector3f point;
@@ -45,7 +45,7 @@ namespace Polyline {
 
     std::vector<VROVector3f> convertPoints(JNIEnv *env, jobjectArray points_j) {
         std::vector<VROVector3f> points;
-        int numPoints = env->GetArrayLength(points_j);
+        int numPoints = VRO_ARRAY_LENGTH(points_j);
         for (int i = 0; i < numPoints; i++) {
             VRO_FLOAT_ARRAY point_j = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(points_j, i);
             points.push_back(convertPoint(env, point_j));
