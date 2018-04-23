@@ -81,16 +81,16 @@ void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool 
             return;
         }
 
-        jfloatArray positionArray;
+        VRO_FLOAT_ARRAY positionArray;
         if (position.size() == 3) {
             int returnLength = 3;
-            positionArray = env->NewFloatArray(returnLength);
+            positionArray = VRO_NEW_FLOAT_ARRAY(returnLength);
 
             VRO_FLOAT tempArr[returnLength];
             tempArr[0] = position.at(0);
             tempArr[1] = position.at(1);
             tempArr[2] = position.at(2);
-            env->SetFloatArrayRegion(positionArray, 0, 3, tempArr);
+            VRO_FLOAT_ARRAY_SET(positionArray, 0, 3, tempArr);
         } else {
             positionArray = nullptr;
         }
@@ -114,15 +114,15 @@ void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, Click
             return;
         }
 
-        jfloatArray positionArray;
+        VRO_FLOAT_ARRAY positionArray;
         if (position.size() == 3) {
             int returnLength = 3;
-            positionArray = env->NewFloatArray(returnLength);
+            positionArray = VRO_NEW_FLOAT_ARRAY(returnLength);
             VRO_FLOAT tempArr[returnLength];
             tempArr[0] = position.at(0);
             tempArr[1] = position.at(1);
             tempArr[2] = position.at(2);
-            env->SetFloatArrayRegion(positionArray, 0, 3, tempArr);
+            VRO_FLOAT_ARRAY_SET(positionArray, 0, 3, tempArr);
         } else {
             positionArray = nullptr;
         }

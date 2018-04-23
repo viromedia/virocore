@@ -73,8 +73,8 @@ VRO_METHOD(void, nativeEnableController)(VRO_ARGS
     });
 }
 
-VRO_METHOD(jfloatArray, nativeGetControllerForwardVector)(VRO_ARGS
-                                                          VRO_REF context_j) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetControllerForwardVector)(VRO_ARGS
+                                                              VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     VROVector3f position = context->getInputController()->getPresenter()->getLastKnownForward();
     return ARUtilsCreateFloatArrayFromVector3f(position);

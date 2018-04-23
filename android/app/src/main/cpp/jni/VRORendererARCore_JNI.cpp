@@ -139,12 +139,12 @@ void performARHitTestPoint(JNIEnv *env, float x, float y, std::weak_ptr<VROScene
 
 VRO_METHOD(void, nativePerformARHitTestWithRay) (VRO_ARGS
                                                  VRO_REF native_renderer,
-                                                 jfloatArray ray,
+                                                 VRO_FLOAT_ARRAY ray,
                                                  jobject callback) {
     // Grab ray to perform the AR hit test
-    VRO_FLOAT *rayStart = env->GetFloatArrayElements(ray, 0);
+    VRO_FLOAT *rayStart = VRO_FLOAT_ARRAY_GET_ELEMENTS(ray);
     VROVector3f rayVec = VROVector3f(rayStart[0], rayStart[1], rayStart[2]);
-    env->ReleaseFloatArrayElements(ray, rayStart, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(ray, rayStart);
 
     // Create weak pointers for dispatching
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
@@ -158,14 +158,14 @@ VRO_METHOD(void, nativePerformARHitTestWithRay) (VRO_ARGS
 
 VRO_METHOD(void, nativePerformARHitTestWithPosition) (VRO_ARGS
                                                       VRO_REF native_renderer,
-                                                      jfloatArray position,
+                                                      VRO_FLOAT_ARRAY position,
                                                       jobject callback) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
 
     // Calculate ray to perform the AR hit test
-    VRO_FLOAT *positionStart = env->GetFloatArrayElements(position, 0);
+    VRO_FLOAT *positionStart = VRO_FLOAT_ARRAY_GET_ELEMENTS(position);
     VROVector3f positionVec = VROVector3f(positionStart[0], positionStart[1], positionStart[2]);
-    env->ReleaseFloatArrayElements(position, positionStart, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(position, positionStart);
 
     VROVector3f cameraVec = renderer->getRenderer()->getCamera().getPosition();
     // the ray we want to use is (given position - camera position)

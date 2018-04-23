@@ -47,11 +47,11 @@ VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
     std::vector<VROVector4f> initialValues;
     int numberOfValues = env->GetArrayLength(jPositions);
     for (int i = 0; i < numberOfValues; i++) {
-        jfloatArray vec3Value = (jfloatArray)env->GetObjectArrayElement(jPositions, i);
-        VRO_FLOAT *vec3ValueArray = env->GetFloatArrayElements(vec3Value, 0);
+        VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jPositions, i);
+        VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);
         VROVector4f vec4 = VROVector4f(vec3ValueArray[0], vec3ValueArray[1], vec3ValueArray[2], 1.0);
         initialValues.push_back(vec4);
-        env->ReleaseFloatArrayElements(vec3Value, vec3ValueArray, JNI_ABORT);
+        VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(vec3Value, vec3ValueArray);
     }
 
     std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);

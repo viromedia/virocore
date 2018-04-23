@@ -28,9 +28,9 @@ namespace Polyline {
         return persistentLine->get();
     }
 
-    VROVector3f convertPoint(JNIEnv *env, jfloatArray point_j) {
+    VROVector3f convertPoint(JNIEnv *env, VRO_FLOAT_ARRAY point_j) {
         int numCoordinates = env->GetArrayLength(point_j);
-        VRO_FLOAT *point_c = env->GetFloatArrayElements(point_j, 0);
+        VRO_FLOAT *point_c = VRO_FLOAT_ARRAY_GET_ELEMENTS(point_j);
 
         VROVector3f point;
         if (numCoordinates == 2) {
@@ -39,7 +39,7 @@ namespace Polyline {
         else if (numCoordinates >= 3) {
             point = { point_c[0], point_c[1], point_c[2] };
         }
-        env->ReleaseFloatArrayElements(point_j, point_c, JNI_ABORT);
+        VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(point_j, point_c);
         return point;
     }
 
@@ -47,7 +47,7 @@ namespace Polyline {
         std::vector<VROVector3f> points;
         int numPoints = env->GetArrayLength(points_j);
         for (int i = 0; i < numPoints; i++) {
-            jfloatArray point_j = (jfloatArray)env->GetObjectArrayElement(points_j, i);
+            VRO_FLOAT_ARRAY point_j = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(points_j, i);
             points.push_back(convertPoint(env, point_j));
         }
         return points;
@@ -79,7 +79,7 @@ VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
 
 VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
                                     VRO_REF polyline_j,
-                                    jfloatArray point_j) {
+                                    VRO_FLOAT_ARRAY point_j) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
 
     VROVector3f point = Polyline::convertPoint(env, point_j);

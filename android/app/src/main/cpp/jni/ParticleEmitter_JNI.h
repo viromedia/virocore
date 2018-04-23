@@ -37,8 +37,8 @@ namespace ParticleEmitter {
         std::vector<VROVector3f> initialValues;
         int numberOfValues = env->GetArrayLength(jInitialValue);
         for (int i = 0; i < numberOfValues; i++) {
-            jfloatArray vec3Value = (jfloatArray)env->GetObjectArrayElement(jInitialValue, i);
-            VRO_FLOAT *vec3ValueArray = env->GetFloatArrayElements(vec3Value, 0);
+            VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jInitialValue, i);
+            VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);
             VROVector3f vec3 = VROVector3f(vec3ValueArray[0], vec3ValueArray[1], vec3ValueArray[2]);
             initialValues.push_back(vec3);
         }
@@ -57,12 +57,12 @@ namespace ParticleEmitter {
         int numberOfIntervals = env->GetArrayLength(jInterpolatedIntervals);
         for (int i = 0; i < numberOfIntervals; i++) {
             // Get the interval window this interpolation point applies to
-            jfloatArray vec2Value = (jfloatArray)env->GetObjectArrayElement(jInterpolatedIntervals, i);
-            VRO_FLOAT *jIntervalWindow = env->GetFloatArrayElements(vec2Value, 0);
+            VRO_FLOAT_ARRAY vec2Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jInterpolatedIntervals, i);
+            VRO_FLOAT *jIntervalWindow = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec2Value);
 
             // Get the value to interpolate towards at the end of this interval window
-            jfloatArray vec3Value = (jfloatArray)env->GetObjectArrayElement(jInterpolatedValues, i);
-            VRO_FLOAT *jPoint = env->GetFloatArrayElements(vec3Value, 0);
+            VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(jInterpolatedValues, i);
+            VRO_FLOAT *jPoint = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);
             VROVector3f targetedValue = VROVector3f(jPoint[0], jPoint[1], jPoint[2]);
 
             VROParticleModifier::VROModifierInterval interpolatedPoint;

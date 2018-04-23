@@ -54,9 +54,9 @@ public:
             if (localObj == NULL) {
                 return;
             }
-            jfloatArray jPos = ARUtilsCreateFloatArrayFromVector3f(pos);
-            jfloatArray jRot = ARUtilsCreateFloatArrayFromVector3f(rot);
-            jfloatArray jForward = ARUtilsCreateFloatArrayFromVector3f(forward);
+            VRO_FLOAT_ARRAY jPos = ARUtilsCreateFloatArrayFromVector3f(pos);
+            VRO_FLOAT_ARRAY jRot = ARUtilsCreateFloatArrayFromVector3f(rot);
+            VRO_FLOAT_ARRAY jForward = ARUtilsCreateFloatArrayFromVector3f(forward);
             VROPlatformCallJavaFunction(localObj, "onCameraTransformationUpdate", "([F[F[F)V",
                                         jPos, jRot, jForward);
             env->DeleteLocalRef(localObj);

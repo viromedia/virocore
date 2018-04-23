@@ -54,9 +54,13 @@
     env->GetArrayLength(array);
 
 #define VRO_NEW_FLOAT_ARRAY(size) \
-    env->NewFloatArray(size);
+    env->NewFloatArray(size)
 #define VRO_FLOAT_ARRAY_SET(dest, start, len, src) \
-    env->SetFloatArrayRegion(dest, start, len, src);
+    env->SetFloatArrayRegion(dest, start, len, src)
+#define VRO_FLOAT_ARRAY_GET_ELEMENTS(array) \
+    env->GetFloatArrayElements(array, 0)
+#define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
+    env->ReleaseFloatArrayElements(array, elements, 0);
 
 #define VRO_NEW_STRING_ARRAY(size) \
     env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));

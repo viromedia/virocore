@@ -386,16 +386,16 @@ VRO_METHOD(void, nativeRecenterTracking)(VRO_ARGS
     ovrRenderer->recenterTracking();
 }
 
-VRO_METHOD(jfloatArray, nativeProjectPoint)(VRO_ARGS
-                                            VRO_REF renderer_j,
-                                            VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeProjectPoint)(VRO_ARGS
+                                                VRO_REF renderer_j,
+                                                VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->projectPoint({ x, y, z }));
 }
 
-VRO_METHOD(jfloatArray, nativeUnprojectPoint)(VRO_ARGS
-                                              VRO_REF renderer_j,
-                                              VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeUnprojectPoint)(VRO_ARGS
+                                                  VRO_REF renderer_j,
+                                                  VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
 }
@@ -466,26 +466,26 @@ VRO_METHOD(jboolean, nativeIsReticlePointerFixed)(VRO_ARGS
     return sceneRenderer->getRenderer()->getInputController()->getPresenter()->getReticle()->isHeadlocked();
 }
 
-VRO_METHOD(jfloatArray, nativeGetCameraPositionRealtime)(VRO_ARGS
-                                                         VRO_REF native_renderer) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetCameraPositionRealtime)(VRO_ARGS
+                                                             VRO_REF native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraPositionRealTime());
 }
 
-VRO_METHOD(jfloatArray, nativeGetCameraRotationRealtime)(VRO_ARGS
-                                                         VRO_REF native_renderer) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetCameraRotationRealtime)(VRO_ARGS
+                                                             VRO_REF native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraRotationRealTime());
 }
 
-VRO_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(VRO_ARGS
-                                                        VRO_REF native_renderer) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetCameraForwardRealtime)(VRO_ARGS
+                                                            VRO_REF native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
 }
 
 VRO_METHOD(VRO_FLOAT, nativeGetFieldOfView)(VRO_ARGS
-                                         VRO_REF native_ref) {
+                                            VRO_REF native_ref) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_ref);
     return renderer->getRenderer()->getActiveFieldOfView();
 }

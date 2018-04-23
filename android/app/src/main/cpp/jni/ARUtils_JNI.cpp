@@ -21,11 +21,11 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
 
     VROMatrix4f transform = anchor->getTransform();
     VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
-    jfloatArray positionArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractTranslation());
-    jfloatArray rotationArray = ARUtilsCreateFloatArrayFromVector3f( {rotationRads.x,
+    VRO_FLOAT_ARRAY positionArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractTranslation());
+    VRO_FLOAT_ARRAY rotationArray = ARUtilsCreateFloatArrayFromVector3f( {rotationRads.x,
                                                                       rotationRads.y,
                                                                       rotationRads.z});
-    jfloatArray scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
+    VRO_FLOAT_ARRAY scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
 
     // Create an ARPlaneAnchor if necessary and return.
     std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
@@ -39,9 +39,9 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
         jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F[F)V");
 
         jstring alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
-        jfloatArray extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
-        jfloatArray centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
-        jfloatArray polygonPointsArray = ARUtilsCreatePointsArray(plane->getBoundaryVertices());
+        VRO_FLOAT_ARRAY extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
+        VRO_FLOAT_ARRAY centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
+        VRO_FLOAT_ARRAY polygonPointsArray = ARUtilsCreatePointsArray(plane->getBoundaryVertices());
 
         const char *typeArr = "plane";
         jstring type = env->NewStringUTF(typeArr);
@@ -80,32 +80,32 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
 
 }
 
-jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
+VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jfloatArray returnArray = env->NewFloatArray(3);
+    VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT tempArr[3];
     tempArr[0] = vector.x; tempArr[1] = vector.y; tempArr[2] = vector.z;
-    env->SetFloatArrayRegion(returnArray, 0, 3, tempArr);
+    VRO_FLOAT_ARRAY_SET(returnArray, 0, 3, tempArr);
     return returnArray;
 }
 
-jfloatArray ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
+VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jfloatArray returnArray = env->NewFloatArray(16);
+    VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(16);
 
     const float *array = matrix.getArray();
-    env->SetFloatArrayRegion(returnArray, 0, 16, array);
+    VRO_FLOAT_ARRAY_SET(returnArray, 0, 16, array);
     return returnArray;
 }
 
-jfloatArray ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox) {
+VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jfloatArray returnArray = env->NewFloatArray(6);
+    VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(6);
     VRO_FLOAT tempArr[6];
     tempArr[0] = boundingBox.getMinX(); tempArr[1] = boundingBox.getMaxX();
     tempArr[2] = boundingBox.getMinY(); tempArr[3] = boundingBox.getMaxY();
     tempArr[4] = boundingBox.getMinZ(); tempArr[5] = boundingBox.getMaxZ();
-    env->SetFloatArrayRegion(returnArray, 0, 6, tempArr);
+    VRO_FLOAT_ARRAY_SET(returnArray, 0, 6, tempArr);
     return returnArray;
 }
 
@@ -133,9 +133,9 @@ jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
 
     jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>", "(Ljava/lang/String;[F[F[F)V");
     jstring jtypeString;
-    jfloatArray jposition = env->NewFloatArray(3);
-    jfloatArray jscale = env->NewFloatArray(3);
-    jfloatArray jrotation = env->NewFloatArray(3);
+    VRO_FLOAT_ARRAY jposition = VRO_NEW_FLOAT_ARRAY(3);
+    VRO_FLOAT_ARRAY jscale = VRO_NEW_FLOAT_ARRAY(3);
+    VRO_FLOAT_ARRAY jrotation = VRO_NEW_FLOAT_ARRAY(3);
 
     VROVector3f positionVec = result.getWorldTransform().extractTranslation();
     VROVector3f scaleVec = result.getWorldTransform().extractScale();
@@ -145,9 +145,9 @@ jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
     float rotation[3] = {rotationVec.x, rotationVec.y, rotationVec.z};
 
-    env->SetFloatArrayRegion(jposition, 0, 3, position);
-    env->SetFloatArrayRegion(jscale, 0, 3, scale);
-    env->SetFloatArrayRegion(jrotation, 0, 3, rotation);
+    VRO_FLOAT_ARRAY_SET(jposition, 0, 3, position);
+    VRO_FLOAT_ARRAY_SET(jscale, 0, 3, scale);
+    VRO_FLOAT_ARRAY_SET(jrotation, 0, 3, rotation);
 
     const char* typeString;
     // Note: ARCore currently only supports Plane & FeaturePoint. See VROARFrameARCore::hitTest.
@@ -179,9 +179,9 @@ jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
         tempConfidencesArr[i*4+3] = points[i].w;
     }
 
-    // copy confidence values over to a jfloatArray
-    jfloatArray jConfidencesArray = env->NewFloatArray(points.size() * 4);
-    env->SetFloatArrayRegion(jConfidencesArray, 0, points.size() * 4, tempConfidencesArr);
+    // copy confidence values over to a VRO_FLOAT_ARRAY
+    VRO_FLOAT_ARRAY jConfidencesArray = VRO_NEW_FLOAT_ARRAY(points.size() * 4);
+    VRO_FLOAT_ARRAY_SET(jConfidencesArray, 0, points.size() * 4, tempConfidencesArr);
 
     // get constructor, create and return an ARPointCloud Java object
     jclass arPointCloudClass = env->FindClass("com/viro/core/ARPointCloud");
@@ -190,7 +190,7 @@ jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
     return env->NewObject(arPointCloudClass, constructorMethod, jConfidencesArray);
 }
 
-jfloatArray ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
+VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     VRO_FLOAT tempPointsArr[points.size() * 3];
 
@@ -201,8 +201,8 @@ jfloatArray ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
         tempPointsArr[i*3+2] = points[i].z;
     }
 
-    jfloatArray jPointsArray = env->NewFloatArray(points.size() * 3);
-    env->SetFloatArrayRegion(jPointsArray, 0, points.size() * 3, tempPointsArr);
+    VRO_FLOAT_ARRAY jPointsArray = VRO_NEW_FLOAT_ARRAY(points.size() * 3);
+    VRO_FLOAT_ARRAY_SET(jPointsArray, 0, points.size() * 3, tempPointsArr);
     return jPointsArray;
 }
 

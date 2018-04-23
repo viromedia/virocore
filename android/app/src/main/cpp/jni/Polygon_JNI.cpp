@@ -25,11 +25,11 @@ VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
     std::vector<VROVector3f> initialValues;
     int numberOfValues = env->GetArrayLength(jpoints);
     for (int i = 0; i < numberOfValues; i++) {
-        jfloatArray vec3Value = (jfloatArray) env->GetObjectArrayElement(jpoints, i);
-        VRO_FLOAT *vec3ValueArray = env->GetFloatArrayElements(vec3Value, 0);
+        VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY) env->GetObjectArrayElement(jpoints, i);
+        VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);
         VROVector3f vec3 = VROVector3f(vec3ValueArray[0], vec3ValueArray[1]);
         initialValues.push_back(vec3);
-        env->ReleaseFloatArrayElements(vec3Value, vec3ValueArray, JNI_ABORT);
+        VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(vec3Value, vec3ValueArray);
     }
 
     std::shared_ptr<VROPolygon> surface  = VROPolygon::createPolygon(initialValues, u0, v0, u1, v1);

@@ -201,9 +201,9 @@ VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
                                                VRO_REF sceneRef,
-                                               jfloatArray gravityArray) {
+                                               VRO_FLOAT_ARRAY gravityArray) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
-    VRO_FLOAT *gravityArrayf = env->GetFloatArrayElements(gravityArray, 0);
+    VRO_FLOAT *gravityArrayf = VRO_FLOAT_ARRAY_GET_ELEMENTS(gravityArray);
     VROVector3f gravity = VROVector3f(gravityArrayf[0], gravityArrayf[1], gravityArrayf[2]);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, gravity] {
@@ -228,21 +228,21 @@ VRO_METHOD(void, nativeSetPhysicsWorldDebugDraw)(VRO_ARGS
 
 VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                                              VRO_REF sceneRef,
-                                             jfloatArray fromPos,
-                                             jfloatArray toPos,
+                                             VRO_FLOAT_ARRAY fromPos,
+                                             VRO_FLOAT_ARRAY toPos,
                                              jboolean closest,
                                              jstring tag,
                                              jobject callback) {
 
     // Grab start position from which to perform the collision test
-    VRO_FLOAT *fromPosf = env->GetFloatArrayElements(fromPos, 0);
+    VRO_FLOAT *fromPosf = VRO_FLOAT_ARRAY_GET_ELEMENTS(fromPos);
     VROVector3f from = VROVector3f(fromPosf[0], fromPosf[1], fromPosf[2]);
-    env->ReleaseFloatArrayElements(fromPos, fromPosf, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(fromPos, fromPosf);
 
     // Grab end position to which to perform the test to.
-    VRO_FLOAT *toPosf = env->GetFloatArrayElements(toPos, 0);
+    VRO_FLOAT *toPosf = VRO_FLOAT_ARRAY_GET_ELEMENTS(toPos);
     VROVector3f to = VROVector3f(toPosf[0], toPosf[1], toPosf[2]);
-    env->ReleaseFloatArrayElements(toPos, toPosf, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(toPos, toPosf);
 
     // Get the ray tag used to notify collided objects with.
     std::string strTag = VROPlatformGetString(tag, env);
@@ -285,34 +285,34 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
 
 VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
                                               VRO_REF sceneRef,
-                                              jfloatArray posStart,
-                                              jfloatArray posEnd,
+                                              VRO_FLOAT_ARRAY posStart,
+                                              VRO_FLOAT_ARRAY posEnd,
                                               jstring shapeType,
-                                              jfloatArray shapeParams,
+                                              VRO_FLOAT_ARRAY shapeParams,
                                               jstring tag,
                                               jobject callback) {
 
     // Grab start position from which to perform the collision test
-    VRO_FLOAT *posStartf = env->GetFloatArrayElements(posStart, 0);
+    VRO_FLOAT *posStartf = VRO_FLOAT_ARRAY_GET_ELEMENTS(posStart);
     VROVector3f from = VROVector3f(posStartf[0], posStartf[1], posStartf[2]);
-    env->ReleaseFloatArrayElements(posStart, posStartf, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(posStart, posStartf);
 
     // Grab end position to which to perform the test to.
-    VRO_FLOAT *posEndf = env->GetFloatArrayElements(posEnd, 0);
+    VRO_FLOAT *posEndf = VRO_FLOAT_ARRAY_GET_ELEMENTS(posEnd);
     VROVector3f to = VROVector3f(posEndf[0], posEndf[1], posEndf[2]);
-    env->ReleaseFloatArrayElements(posStart, posEndf, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(posStart, posEndf);
 
     // Grab the shape type
     std::string strShapeType = VROPlatformGetString(shapeType, env);
 
     // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);
-    VRO_FLOAT *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+    VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(shapeParams);
     std::vector<float> params;
     for (int i = 0; i < paramsLength; i ++) {
         params.push_back(pointArray[i]);
     }
-    env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(shapeParams, pointArray);
 
     // Get the ray tag used to notify collided objects with.
     std::string strTag = VROPlatformGetString(tag, env);

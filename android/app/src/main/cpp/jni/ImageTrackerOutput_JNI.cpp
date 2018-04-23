@@ -25,14 +25,14 @@ VRO_METHOD(jboolean, nativeOutputFound)(VRO_ARGS
 #endif /* ENABLE_OPENCV */
 }
 
-VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
-                                             VRO_REF nativeRef) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeOutputCorners)(VRO_ARGS
+                                                 VRO_REF nativeRef) {
 #if ENABLE_OPENCV
 
     std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
 
     int returnLength = output->corners.size() * 2;
-    jfloatArray returnCorners = env->NewFloatArray(returnLength);
+    VRO_FLOAT_ARRAY returnCorners = VRO_NEW_FLOAT_ARRAY(returnLength);
     VRO_FLOAT tempArr[returnLength];
 
     if (output->found) {
@@ -41,7 +41,7 @@ VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
             tempArr[i * 2 + 1] = output->corners[i].y;
         }
     }
-    env->SetFloatArrayRegion(returnCorners, 0, returnLength, tempArr);
+    VRO_FLOAT_ARRAY_SET(returnCorners, 0, returnLength, tempArr);
 
     return returnCorners;
 #else
@@ -50,10 +50,10 @@ VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
 
 }
 
-VRO_METHOD(jfloatArray, nativeOutputPosition)(VRO_ARGS
-                                              VRO_REF nativeRef) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeOutputPosition)(VRO_ARGS
+                                                  VRO_REF nativeRef) {
 
-    jfloatArray returnPosition = env->NewFloatArray(3);
+    VRO_FLOAT_ARRAY returnPosition = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT tempArr[3];
 
 #if ENABLE_OPENCV
@@ -64,16 +64,16 @@ VRO_METHOD(jfloatArray, nativeOutputPosition)(VRO_ARGS
     tempArr[1] = - output->translation.at<double>(1,0);
     tempArr[2] = - output->translation.at<double>(2,0);
 
-    env->SetFloatArrayRegion(returnPosition, 0, 3, tempArr);
+    VRO_FLOAT_ARRAY_SET(returnPosition, 0, 3, tempArr);
 #endif /* ENABLE_OPENCV */
 
     return returnPosition;
 }
 
-VRO_METHOD(jfloatArray, nativeOutputRotation)(VRO_ARGS
-                                              VRO_REF nativeRef) {
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeOutputRotation)(VRO_ARGS
+                                                  VRO_REF nativeRef) {
 
-    jfloatArray returnRotation = env->NewFloatArray(3);
+    VRO_FLOAT_ARRAY returnRotation = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT tempArr[3];
 
 #if ENABLE_OPENCV
@@ -84,7 +84,7 @@ VRO_METHOD(jfloatArray, nativeOutputRotation)(VRO_ARGS
     tempArr[1] = - output->rotation.at<double>(1,0);
     tempArr[2] = - output->rotation.at<double>(2,0);
 
-    env->SetFloatArrayRegion(returnRotation, 0, 3, tempArr);
+    VRO_FLOAT_ARRAY_SET(returnRotation, 0, 3, tempArr);
 #endif /* ENABLE_OPENCV */
 
     return returnRotation;

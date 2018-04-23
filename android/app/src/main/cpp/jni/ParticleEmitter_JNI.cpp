@@ -159,7 +159,7 @@ VRO_METHOD(void, nativeSetMaxParticles)(VRO_ARGS
 VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
                                        VRO_REF native_ref,
                                        jstring jShape,
-                                       jfloatArray jShapeParams,
+                                       VRO_FLOAT_ARRAY jShapeParams,
                                        jboolean jSpawnOnSurface) {
 
     // Grab the emitter's spawn volume shape.
@@ -171,11 +171,11 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
     std::vector<float> params;
     if (jShapeParams != NULL) {
         int paramsLength = env->GetArrayLength(jShapeParams);
-        VRO_FLOAT *pointArray = env->GetFloatArrayElements(jShapeParams, 0);
+        VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(jShapeParams);
         for (int i = 0; i < paramsLength; i ++) {
             params.push_back(pointArray[i]);
         }
-        env->ReleaseFloatArrayElements(jShapeParams, pointArray, 0);
+        VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(jShapeParams, pointArray);
     }
 
     // Finally create and set the emitter's spawn volume.
@@ -196,16 +196,16 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
 VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
                                             VRO_REF native_ref,
                                             VRO_FLOAT jImpulse,
-                                            jfloatArray jPosition,
+                                            VRO_FLOAT_ARRAY jPosition,
                                             VRO_FLOAT jDeccelPeriod) {
     // Grab the position at which to apply the explosive impulse.
     int paramsLength = env->GetArrayLength(jPosition);
-    VRO_FLOAT *pointArray = env->GetFloatArrayElements(jPosition, 0);
+    VRO_FLOAT *pointArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(jPosition);
     std::vector<float> position;
     for (int i = 0; i < paramsLength; i ++) {
         position.push_back(pointArray[i]);
     }
-    env->ReleaseFloatArrayElements(jPosition, pointArray, 0);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(jPosition, pointArray);
     VROVector3f vecPos = VROVector3f(position[0], position[1], position[2]);
 
     // Apply the explosive impulse on the emitter.
