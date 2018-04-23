@@ -26,21 +26,21 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateSurface)(VRO_ARGS
-                                       jfloat width,
-                                       jfloat height,
-                                       jfloat u0, jfloat v0,
-                                       jfloat u1, jfloat v1) {
+VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
+                                         jfloat width,
+                                         jfloat height,
+                                         jfloat u0, jfloat v0,
+                                         jfloat u1, jfloat v1) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     return Surface::jptr(surface);
 }
 
-VRO_METHOD(jlong, nativeCreateSurfaceFromSurface)(VRO_ARGS
-                                                  jfloat width,
-                                                  jfloat height,
-                                                  jfloat u0, jfloat v0,
-                                                  jfloat u1, jfloat v1,
-                                                  jlong oldSurface) {
+VRO_METHOD(VRO_REF, nativeCreateSurfaceFromSurface)(VRO_ARGS
+                                                    jfloat width,
+                                                    jfloat height,
+                                                    jfloat u0, jfloat v0,
+                                                    jfloat u1, jfloat v1,
+                                                    VRO_REF oldSurface) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     std::vector<std::shared_ptr<VROMaterial>> materials = Surface::native(oldSurface)->getMaterials();
     if (materials.size() > 0) {
@@ -50,12 +50,12 @@ VRO_METHOD(jlong, nativeCreateSurfaceFromSurface)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
-                                       jlong nativeSurface) {
+                                       VRO_REF nativeSurface) {
     delete reinterpret_cast<PersistentRef<VROSurface> *>(nativeSurface);
 }
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
-                                 jlong nativeSurface,
+                                 VRO_REF nativeSurface,
                                  jfloat width) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, width] {
@@ -68,7 +68,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
-                                  jlong nativeSurface,
+                                  VRO_REF nativeSurface,
                                   jfloat height) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, height] {
@@ -81,8 +81,8 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
-                                        jlong surfaceRef,
-                                        jlong textureRef) {
+                                        VRO_REF surfaceRef,
+                                        VRO_REF textureRef) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
     std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
 
@@ -104,8 +104,8 @@ VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
-                                        jlong surfaceRef,
-                                        jlong textureRef) {
+                                        VRO_REF surfaceRef,
+                                        VRO_REF textureRef) {
     std::weak_ptr<VROTexture> imageTexture_w = Texture::native(textureRef);
     std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
 
@@ -126,7 +126,7 @@ VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeClearMaterial)(VRO_ARGS
-                                      jlong surfaceRef) {
+                                      VRO_REF surfaceRef) {
     std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
     VROPlatformDispatchAsyncRenderer([surface_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();

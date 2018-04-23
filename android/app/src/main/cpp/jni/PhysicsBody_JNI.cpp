@@ -18,7 +18,7 @@
 extern "C" {
 
 VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
-                                        jlong nativeRef,
+                                        VRO_REF nativeRef,
                                         jstring bodyTypeStr,
                                         jfloat mass,
                                         jstring shapeTypeStr,
@@ -54,7 +54,7 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeClearPhysicsBody)(VRO_ARGS
-                                         jlong nativeRef) {
+                                         VRO_REF nativeRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -65,7 +65,7 @@ VRO_METHOD(void, nativeClearPhysicsBody)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
-                                        jlong nativeRef,
+                                        VRO_REF nativeRef,
                                         jstring shapeTypeStr,
                                         jfloatArray shapeParams) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -101,7 +101,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetPhysicsMass)(VRO_ARGS
-                                       jlong nativeRef,
+                                       VRO_REF nativeRef,
                                        jfloat mass) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, mass] {
@@ -114,7 +114,7 @@ VRO_METHOD(void, nativeSetPhysicsMass)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
-                                          jlong nativeRef,
+                                          VRO_REF nativeRef,
                                           jfloatArray inertiaArray) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     jfloat *inertia = env->GetFloatArrayElements(inertiaArray, 0);
@@ -130,7 +130,7 @@ VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPhysicsFriction)(VRO_ARGS
-                                           jlong nativeRef,
+                                           VRO_REF nativeRef,
                                            jfloat friction) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, friction] {
@@ -142,7 +142,7 @@ VRO_METHOD(void, nativeSetPhysicsFriction)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPhysicsRestitution)(VRO_ARGS
-                                              jlong nativeRef,
+                                              VRO_REF nativeRef,
                                               jfloat restitution) {
 
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
@@ -155,7 +155,7 @@ VRO_METHOD(void, nativeSetPhysicsRestitution)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPhysicsUseGravity)(VRO_ARGS
-                                             jlong nativeRef,
+                                             VRO_REF nativeRef,
                                              jboolean useGravity) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, useGravity] {
@@ -167,7 +167,7 @@ VRO_METHOD(void, nativeSetPhysicsUseGravity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeClearPhysicsForce)(VRO_ARGS
-                                          jlong nativeRef) {
+                                          VRO_REF nativeRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -178,7 +178,7 @@ VRO_METHOD(void, nativeClearPhysicsForce)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeApplyPhysicsForce)(VRO_ARGS
-                                          jlong nativeRef,
+                                          VRO_REF nativeRef,
                                           jfloatArray forceArray,
                                           jfloatArray positionArray) {
     // Grab the physics force to be applied
@@ -202,7 +202,7 @@ VRO_METHOD(void, nativeApplyPhysicsForce)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeApplyPhysicsTorque)(VRO_ARGS
-                                           jlong nativeRef,
+                                           VRO_REF nativeRef,
                                            jfloatArray torqueArray) {
     jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
     VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
@@ -219,7 +219,7 @@ VRO_METHOD(void, nativeApplyPhysicsTorque)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeApplyPhysicsImpulse)(VRO_ARGS
-                                            jlong nativeRef,
+                                            VRO_REF nativeRef,
                                             jfloatArray forceArray,
                                             jfloatArray positionArray) {
     // Grab the physics impulse to be applied
@@ -243,7 +243,7 @@ VRO_METHOD(void, nativeApplyPhysicsImpulse)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeApplyPhysicsTorqueImpulse)(VRO_ARGS
-                                                  jlong nativeRef,
+                                                  VRO_REF nativeRef,
                                                   jfloatArray torqueArray) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
@@ -299,8 +299,8 @@ VRO_METHOD(jstring, nativeIsValidShapeType)(VRO_ARGS
     }
 }
 
-VRO_METHOD(jlong, nativeSetPhysicsDelegate)(VRO_ARGS
-                                            jlong nativeRef) {
+VRO_METHOD(VRO_REF, nativeSetPhysicsDelegate)(VRO_ARGS
+                                              VRO_REF nativeRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<PhysicsDelegate_JNI> delegate = std::make_shared<PhysicsDelegate_JNI>(obj);
 
@@ -315,8 +315,8 @@ VRO_METHOD(jlong, nativeSetPhysicsDelegate)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeClearPhysicsDelegate)(VRO_ARGS
-                                             jlong nativeRef,
-                                             jlong delegateRef) {
+                                             VRO_REF nativeRef,
+                                             VRO_REF delegateRef) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -329,7 +329,7 @@ VRO_METHOD(void, nativeClearPhysicsDelegate)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetPhysicsVelocity)(VRO_ARGS
-                                           jlong nativeRef,
+                                           VRO_REF nativeRef,
                                            jfloatArray velocityArray,
                                            jboolean isConstant) {
     jfloat *jVelocity = env->GetFloatArrayElements(velocityArray, 0);
@@ -346,7 +346,7 @@ VRO_METHOD(void, nativeSetPhysicsVelocity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPhysicsEnabled)(VRO_ARGS
-                                          jlong nativeRef,
+                                          VRO_REF nativeRef,
                                           jboolean enabled) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, enabled] {

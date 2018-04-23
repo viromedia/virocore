@@ -19,19 +19,19 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateViroContext)(VRO_ARGS
-                                           jlong renderer_j) {
+VRO_METHOD(VRO_REF, nativeCreateViroContext)(VRO_ARGS
+                                             VRO_REF renderer_j) {
     std::shared_ptr<ViroContext> context = std::make_shared<ViroContext>(Renderer::native(renderer_j));
     return ViroContext::jptr(context);
 }
 
 VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
-                                          jlong context_j) {
+                                          VRO_REF context_j) {
     delete reinterpret_cast<PersistentRef<ViroContext> *>(context_j);
 }
 
 VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
-                                             jlong context_j,
+                                             VRO_REF context_j,
                                              jobject callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);

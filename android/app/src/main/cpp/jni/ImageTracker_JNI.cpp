@@ -67,8 +67,8 @@ cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
 }
 #endif /* ENABLE_OPENCV */
 
-VRO_METHOD(jlong, nativeCreateImageTracker)(VRO_ARGS
-                                            jlong imageTargetRef) {
+VRO_METHOD(VRO_REF, nativeCreateImageTracker)(VRO_ARGS
+                                              VRO_REF imageTargetRef) {
 #if ENABLE_OPENCV
     std::shared_ptr<VROARImageTargetAndroid> arImageTarget = ARImageTarget::native(imageTargetRef);
     std::shared_ptr<VROImage> image = arImageTarget->getImage();
@@ -86,9 +86,9 @@ VRO_METHOD(jlong, nativeCreateImageTracker)(VRO_ARGS
 #endif /* ENABLE_OPENCV */
 }
 
-VRO_METHOD(jlong, nativeFindTarget)(VRO_ARGS
-                                    jlong nativeRef,
-                                    jobject bitmapImage) {
+VRO_METHOD(VRO_REF, nativeFindTarget)(VRO_ARGS
+                                      VRO_REF nativeRef,
+                                      jobject bitmapImage) {
 #if ENABLE_OPENCV
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 

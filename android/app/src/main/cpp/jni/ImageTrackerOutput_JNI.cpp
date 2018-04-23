@@ -17,7 +17,7 @@
 extern "C" {
 
 VRO_METHOD(jboolean, nativeOutputFound)(VRO_ARGS
-                                        jlong nativeRef) {
+                                        VRO_REF nativeRef) {
 #if ENABLE_OPENCV
     return ImageTrackerOutput::native(nativeRef)->found;
 #else
@@ -26,7 +26,7 @@ VRO_METHOD(jboolean, nativeOutputFound)(VRO_ARGS
 }
 
 VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
-                                             jlong nativeRef) {
+                                             VRO_REF nativeRef) {
 #if ENABLE_OPENCV
 
     std::shared_ptr<VROARImageTrackerOutput> output = ImageTrackerOutput::native(nativeRef);
@@ -51,7 +51,7 @@ VRO_METHOD(jfloatArray, nativeOutputCorners)(VRO_ARGS
 }
 
 VRO_METHOD(jfloatArray, nativeOutputPosition)(VRO_ARGS
-                                              jlong nativeRef) {
+                                              VRO_REF nativeRef) {
 
     jfloatArray returnPosition = env->NewFloatArray(3);
     jfloat tempArr[3];
@@ -71,7 +71,7 @@ VRO_METHOD(jfloatArray, nativeOutputPosition)(VRO_ARGS
 }
 
 VRO_METHOD(jfloatArray, nativeOutputRotation)(VRO_ARGS
-                                              jlong nativeRef) {
+                                              VRO_REF nativeRef) {
 
     jfloatArray returnRotation = env->NewFloatArray(3);
     jfloat tempArr[3];

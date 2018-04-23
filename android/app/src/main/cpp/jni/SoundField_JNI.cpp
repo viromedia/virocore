@@ -33,9 +33,9 @@ namespace SoundField {
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateSoundField)(VRO_ARGS
-                                          jstring filename,
-                                          jlong context_j) {
+VRO_METHOD(VRO_REF, nativeCreateSoundField)(VRO_ARGS
+                                            jstring filename,
+                                            VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::string file = VROPlatformGetString(filename, env);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROResourceType::URL, VROSoundType::SoundField);
@@ -45,9 +45,9 @@ VRO_METHOD(jlong, nativeCreateSoundField)(VRO_ARGS
     return SoundField::jptr(soundGvr);
 }
 
-VRO_METHOD(jlong, nativeCreateSoundFieldWithData)(VRO_ARGS
-                                                  jlong dataRef,
-                                                  jlong context_j) {
+VRO_METHOD(VRO_REF, nativeCreateSoundFieldWithData)(VRO_ARGS
+                                                    VRO_REF dataRef,
+                                                    VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 
@@ -59,41 +59,41 @@ VRO_METHOD(jlong, nativeCreateSoundFieldWithData)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativePlaySoundField)(VRO_ARGS
-                                       jlong nativeRef) {
+                                       VRO_REF nativeRef) {
     SoundField::native(nativeRef)->play();
 }
 
 VRO_METHOD(void, nativePauseSoundField)(VRO_ARGS
-                                        jlong nativeRef) {
+                                        VRO_REF nativeRef) {
     SoundField::native(nativeRef)->pause();
 }
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                  jlong nativeRef,
+                                  VRO_REF nativeRef,
                                   jfloat volume) {
     SoundField::native(nativeRef)->setVolume(volume);
 }
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                 jlong nativeRef,
+                                 VRO_REF nativeRef,
                                  jboolean muted) {
     SoundField::native(nativeRef)->setMuted(muted);
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                jlong nativeRef,
+                                VRO_REF nativeRef,
                                 jboolean loop) {
     SoundField::native(nativeRef)->setLoop(loop);
 }
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                   jlong nativeRef,
+                                   VRO_REF nativeRef,
                                    jfloat seconds) {
     SoundField::native(nativeRef)->seekToTime(seconds);
 }
 
 VRO_METHOD(void, nativeSetRotation)(VRO_ARGS
-                                    jlong nativeRef,
+                                    VRO_REF nativeRef,
                                     jfloat rotationRadiansX,
                                     jfloat rotationRadiansY,
                                     jfloat rotationRadiansZ) {
@@ -101,7 +101,7 @@ VRO_METHOD(void, nativeSetRotation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySoundField)(VRO_ARGS
-                                          jlong nativeRef) {
+                                          VRO_REF nativeRef) {
     delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
 }
 

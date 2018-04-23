@@ -16,8 +16,8 @@
 
 extern "C" {
 
-    VRO_METHOD(jlong, nativeCreateSoundData)(VRO_ARGS
-                                             jstring filepath) {
+    VRO_METHOD(VRO_REF, nativeCreateSoundData)(VRO_ARGS
+                                               jstring filepath) {
         std::string path = VROPlatformGetString(filepath, env);
 
         // Set the platform env because the renderer could've not been initialized yet (and set
@@ -27,8 +27,8 @@ extern "C" {
         return SoundData::jptr(data);
     }
 
-    VRO_METHOD(jlong, nativeSetSoundDataDelegate)(VRO_ARGS
-                                                  jlong nativeRef) {
+    VRO_METHOD(VRO_REF, nativeSetSoundDataDelegate)(VRO_ARGS
+                                                    VRO_REF nativeRef) {
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(nativeRef);
         std::shared_ptr<VROSoundDataDelegate_JNI> delegateRef
                 = std::make_shared<VROSoundDataDelegate_JNI>(obj, env);
@@ -37,12 +37,12 @@ extern "C" {
     }
 
     VRO_METHOD(void, nativeDestroySoundData)(VRO_ARGS
-                                             jlong nativeRef) {
+                                             VRO_REF nativeRef) {
         delete reinterpret_cast<PersistentRef<VROSoundDataGVR> *>(nativeRef);
     }
 
     VRO_METHOD(void, nativeDestroySoundDataDelegate)(VRO_ARGS
-                                                    jlong nativeRef) {
+                                                    VRO_REF nativeRef) {
         delete reinterpret_cast<PersistentRef<VROSoundDataDelegate_JNI> *>(nativeRef);
     }
 } // extern "C"

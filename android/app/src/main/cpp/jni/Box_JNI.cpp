@@ -33,22 +33,22 @@ namespace Box {
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateBox)(VRO_ARGS
-                                   jfloat width,
-                                   jfloat height,
-                                   jfloat length) {
+VRO_METHOD(VRO_REF, nativeCreateBox)(VRO_ARGS
+                                     jfloat width,
+                                     jfloat height,
+                                     jfloat length) {
     std::shared_ptr<VROBox> box = VROBox::createBox(width, height, length);
     return Box::jptr(box);
 }
 
 VRO_METHOD(void, nativeDestroyBox)(JNIEnv *env,
                                         jclass clazz,
-                                        jlong nativeBoxRef) {
+                                        VRO_REF nativeBoxRef) {
     delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
 }
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
-                                 jlong native_box_ref,
+                                 VRO_REF native_box_ref,
                                  jfloat width) {
     std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, width] {
@@ -60,7 +60,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
-                                  jlong native_box_ref,
+                                  VRO_REF native_box_ref,
                                   jfloat height) {
     std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, height] {
@@ -72,7 +72,7 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLength)(VRO_ARGS
-                                  jlong native_box_ref,
+                                  VRO_REF native_box_ref,
                                   jfloat length) {
     std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, length] {

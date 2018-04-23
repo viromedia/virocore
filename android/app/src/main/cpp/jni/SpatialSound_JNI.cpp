@@ -21,9 +21,9 @@
 #endif
 
 extern "C" {
-VRO_METHOD(jlong, nativeCreateSpatialSound)(VRO_ARGS
-                                            jstring uri_j,
-                                            jlong context_j) {
+VRO_METHOD(VRO_REF, nativeCreateSpatialSound)(VRO_ARGS
+                                              jstring uri_j,
+                                              VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::string uri = VROPlatformGetString(uri_j, env);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(uri, VROResourceType::URL, VROSoundType::Spatial);
@@ -32,9 +32,9 @@ VRO_METHOD(jlong, nativeCreateSpatialSound)(VRO_ARGS
     return SpatialSound::jptr(soundGvr);
 }
 
-VRO_METHOD(jlong, nativeCreateSpatialSoundWithData)(VRO_ARGS
-                                                    jlong dataRef,
-                                                    jlong context_j) {
+VRO_METHOD(VRO_REF, nativeCreateSpatialSoundWithData)(VRO_ARGS
+                                                      VRO_REF dataRef,
+                                                      VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 
@@ -46,40 +46,40 @@ VRO_METHOD(jlong, nativeCreateSpatialSoundWithData)(VRO_ARGS
     return SpatialSound::jptr(soundGvr);
 }
 
-VRO_METHOD(void, nativePlaySpatialSound)(VRO_ARGS jlong nativeRef) {
+VRO_METHOD(void, nativePlaySpatialSound)(VRO_ARGS VRO_REF nativeRef) {
     SpatialSound::native(nativeRef)->play();
 }
 
-VRO_METHOD(void, nativePauseSpatialSound)(VRO_ARGS jlong nativeRef) {
+VRO_METHOD(void, nativePauseSpatialSound)(VRO_ARGS VRO_REF nativeRef) {
     SpatialSound::native(nativeRef)->pause();
 }
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                  jlong nativeRef,
+                                  VRO_REF nativeRef,
                                   jfloat volume) {
     SpatialSound::native(nativeRef)->setVolume(volume);
 }
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                 jlong nativeRef,
+                                 VRO_REF nativeRef,
                                  jboolean muted) {
     SpatialSound::native(nativeRef)->setMuted(muted);
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                jlong nativeRef,
+                                VRO_REF nativeRef,
                                 jboolean loop) {
     SpatialSound::native(nativeRef)->setLoop(loop);
 }
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                   jlong nativeRef,
+                                   VRO_REF nativeRef,
                                    jfloat seconds) {
     SpatialSound::native(nativeRef)->seekToTime(seconds);
 }
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
-                                    jlong nativeRef,
+                                    VRO_REF nativeRef,
                                     jfloat posX,
                                     jfloat posY,
                                     jfloat posZ) {
@@ -87,7 +87,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
-                                           jlong nativeRef,
+                                           VRO_REF nativeRef,
                                            jstring model,
                                            jfloat minDistance,
                                            jfloat maxDistance) {
@@ -106,7 +106,7 @@ VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySpatialSound)(VRO_ARGS
-                                            jlong nativeRef) {
+                                            VRO_REF nativeRef) {
     SpatialSound::native(nativeRef)->setDelegate(nullptr);
     delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
 }

@@ -13,11 +13,11 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateARImageTarget)(VRO_ARGS
-                                             jobject bitmap,
-                                             jstring orientation,
-                                             jfloat physicalWidth,
-                                             jstring id) {
+VRO_METHOD(VRO_REF, nativeCreateARImageTarget)(VRO_ARGS
+                                               jobject bitmap,
+                                               jstring orientation,
+                                               jfloat physicalWidth,
+                                               jstring id) {
     VROPlatformSetEnv(env);
 
     std::string strOrientation = VROPlatformGetString(orientation, env);
@@ -43,7 +43,7 @@ VRO_METHOD(jlong, nativeCreateARImageTarget)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyARImageTarget)(VRO_ARGS
-                                             jlong nativeRef) {
+                                             VRO_REF nativeRef) {
     delete reinterpret_cast<PersistentRef<VROARImageTargetAndroid> *>(nativeRef);
 }
 

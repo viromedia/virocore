@@ -20,7 +20,7 @@ TextDelegate::~TextDelegate() {
     env->DeleteWeakGlobalRef(_javaObject);
 }
 
-void TextDelegate::textCreated(jlong nativeTextRef) {
+void TextDelegate::textCreated(VRO_REF nativeTextRef) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 

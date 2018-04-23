@@ -19,10 +19,10 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateARPlane)(VRO_ARGS
-                                       jfloat minWidth,
-                                       jfloat minHeight,
-                                       jstring jAlignment) {
+VRO_METHOD(VRO_REF, nativeCreateARPlane)(VRO_ARGS
+                                         jfloat minWidth,
+                                         jfloat minHeight,
+                                         jstring jAlignment) {
 
     std::string strAlignment = VROPlatformGetString(jAlignment, env);
     VROARPlaneAlignment alignment = VROARPlaneAlignment::Horizontal;
@@ -43,21 +43,21 @@ VRO_METHOD(jlong, nativeCreateARPlane)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetMinWidth)(VRO_ARGS
-                                    jlong nativeARPlane,
+                                    VRO_REF nativeARPlane,
                                     jfloat minWidth) {
     std::shared_ptr<VROARDeclarativePlane> arPlane = ARDeclarativePlane::native(nativeARPlane);
     arPlane->setMinWidth(minWidth);
 }
 
 VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
-                                     jlong nativeARPlane,
+                                     VRO_REF nativeARPlane,
                                      jfloat minHeight) {
     std::shared_ptr<VROARDeclarativePlane> arPlane = ARDeclarativePlane::native(nativeARPlane);
     arPlane->setMinHeight(minHeight);
 }
 
 VRO_METHOD(void, nativeSetAlignment)(VRO_ARGS
-                                     jlong nativeARPlane,
+                                     VRO_REF nativeARPlane,
                                      jstring jAlignment) {
     std::string strAlignment = VROPlatformGetString(jAlignment, env);
     std::shared_ptr<VROARDeclarativePlane> arPlane = ARDeclarativePlane::native(nativeARPlane);

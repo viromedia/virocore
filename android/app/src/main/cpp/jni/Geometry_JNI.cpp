@@ -17,7 +17,7 @@
 extern "C" {
 
 VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
-                                     jlong geo_j,
+                                     VRO_REF geo_j,
                                      jlongArray materials_j) {
     jlong *materials_c = env->GetLongArrayElements(materials_j, 0);
     jsize len = env->GetArrayLength(materials_j);
@@ -37,7 +37,7 @@ VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
-                                            jlong nativeGeoRef,
+                                            VRO_REF nativeGeoRef,
                                             jlongArray longArrayRef) {
     jlong *longArray = env->GetLongArrayElements(longArrayRef, 0);
     jsize len = env->GetArrayLength(longArrayRef);

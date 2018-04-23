@@ -28,9 +28,9 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateVideoTexture)(VRO_ARGS
-                                            jlong context_j,
-                                            jstring stereoMode) {
+VRO_METHOD(VRO_REF, nativeCreateVideoTexture)(VRO_ARGS
+                                              VRO_REF context_j,
+                                              jstring stereoMode) {
     VROStereoMode mode = VROTextureUtil::getStereoModeForString(VROPlatformGetString(stereoMode, env));
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(mode);
@@ -48,14 +48,14 @@ VRO_METHOD(jlong, nativeCreateVideoTexture)(VRO_ARGS
     return VideoTexture::jptr(videoTexture);
 }
 
-VRO_METHOD(jlong, nativeCreateVideoDelegate)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF, nativeCreateVideoDelegate)(VRO_NO_ARGS) {
 
     std::shared_ptr<VideoDelegate> delegate = std::make_shared<VideoDelegate>(obj);
     return VideoDelegate::jptr(delegate);
 }
 
 VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
-                                       jlong textureRef, jlong delegateRef) {
+                                       VRO_REF textureRef, VRO_REF delegateRef) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     std::weak_ptr<VideoDelegate> videoDelegate_w = VideoDelegate::native(delegateRef);
@@ -76,17 +76,17 @@ VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDeleteVideoTexture)(VRO_ARGS
-                                           jlong textureRef) {
+                                           VRO_REF textureRef) {
     delete reinterpret_cast<PersistentRef<VROVideoTextureAVP> *>(textureRef);
 }
 
 VRO_METHOD(void, nativeDeleteVideoDelegate)(VRO_ARGS
-                                            jlong delegateRef) {
+                                            VRO_REF delegateRef) {
     delete reinterpret_cast<PersistentRef<VideoDelegate> *>(delegateRef);
 }
 
 VRO_METHOD(void, nativePause)(VRO_ARGS
-                              jlong textureRef) {
+                              VRO_REF textureRef) {
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w] {
         std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
@@ -98,7 +98,7 @@ VRO_METHOD(void, nativePause)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativePlay)(VRO_ARGS
-                             jlong textureRef) {
+                             VRO_REF textureRef) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w] {
@@ -111,7 +111,7 @@ VRO_METHOD(void, nativePlay)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                 jlong textureRef,
+                                 VRO_REF textureRef,
                                  jboolean muted) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
@@ -125,7 +125,7 @@ VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                  jlong textureRef,
+                                  VRO_REF textureRef,
                                   jfloat volume) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
@@ -139,7 +139,7 @@ VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                jlong textureRef,
+                                VRO_REF textureRef,
                                 jboolean loop) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
@@ -153,7 +153,7 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                   jlong textureRef,
+                                   VRO_REF textureRef,
                                    jfloat seconds) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
@@ -167,9 +167,9 @@ VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeLoadSource)(VRO_ARGS
-                                   jlong textureRef,
+                                   VRO_REF textureRef,
                                    jstring source,
-                                   jlong context_j) {
+                                   VRO_REF context_j) {
     // Grab required objects from the RenderContext required for initialization
     std::string strVideoSource = VROPlatformGetString(source, env);
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);

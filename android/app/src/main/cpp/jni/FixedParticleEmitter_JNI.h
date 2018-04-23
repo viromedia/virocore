@@ -21,7 +21,7 @@ namespace FixedParticleEmitter {
         return reinterpret_cast<intptr_t>(emitter_p);
     }
 
-    inline std::shared_ptr<VROFixedParticleEmitter> native(jlong emitter_j) {
+    inline std::shared_ptr<VROFixedParticleEmitter> native(VRO_REF emitter_j) {
         PersistentRef<VROFixedParticleEmitter> *emitter_p
                 = reinterpret_cast<PersistentRef<VROFixedParticleEmitter> *>(emitter_j);
         return emitter_p->get();

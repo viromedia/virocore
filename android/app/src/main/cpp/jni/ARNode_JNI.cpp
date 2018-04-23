@@ -11,7 +11,7 @@
 extern "C" {
 
 VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
-                                        jlong node_j,
+                                        VRO_REF node_j,
                                         jboolean pauseUpdates) {
     std::weak_ptr<VROARNode> node_w = ARNode::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w, pauseUpdates] {

@@ -38,9 +38,9 @@ extern "C" {
      * Since we're using VROAudioPlayerAndroid, there's no difference between the logic for
      * web urls vs local file urls, the Android MediaPlayer handles both.
      */
-    VRO_METHOD(jlong, nativeCreateSound)(VRO_ARGS
-                                         jstring filename,
-                                         jlong context_j) {
+    VRO_METHOD(VRO_REF, nativeCreateSound)(VRO_ARGS
+                                           jstring filename,
+                                           VRO_REF context_j) {
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
@@ -52,14 +52,14 @@ extern "C" {
     }
 
     VRO_METHOD(void, nativeSetup)(VRO_ARGS
-                                  jlong sound_j) {
+                                  VRO_REF sound_j) {
         std::shared_ptr<VROAudioPlayerAndroid> player = Sound::native(sound_j);
         player->setup();
     }
 
-    VRO_METHOD(jlong, nativeCreateSoundWithData)(VRO_ARGS
-                                                 jlong dataRef,
-                                                 jlong context_j) {
+    VRO_METHOD(VRO_REF, nativeCreateSoundWithData)(VRO_ARGS
+                                                   VRO_REF dataRef,
+                                                   VRO_REF context_j) {
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
@@ -73,40 +73,40 @@ extern "C" {
     }
 
     VRO_METHOD(void, nativePlaySound)(VRO_ARGS
-                                      jlong nativeRef) {
+                                      VRO_REF nativeRef) {
         Sound::native(nativeRef)->play();
     }
 
     VRO_METHOD(void, nativePauseSound)(VRO_ARGS
-                                       jlong nativeRef) {
+                                       VRO_REF nativeRef) {
         Sound::native(nativeRef)->pause();
     }
 
     VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                      jlong nativeRef,
+                                      VRO_REF nativeRef,
                                       jfloat volume) {
         Sound::native(nativeRef)->setVolume(volume);
     }
 
     VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                     jlong nativeRef,
+                                     VRO_REF nativeRef,
                                      jboolean muted) {
         Sound::native(nativeRef)->setMuted(muted);
     }
 
     VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                    jlong nativeRef,
+                                    VRO_REF nativeRef,
                                     jboolean loop) {
         Sound::native(nativeRef)->setLoop(loop);
     }
     VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                       jlong nativeRef,
+                                       VRO_REF nativeRef,
                                        jfloat seconds) {
         Sound::native(nativeRef)->seekToTime(seconds);
     }
 
     VRO_METHOD(void, nativeDestroySound)(VRO_ARGS
-                                         jlong nativeRef) {
+                                         VRO_REF nativeRef) {
         delete reinterpret_cast<PersistentRef<VROAudioPlayerAndroid> *>(nativeRef);
     }
 

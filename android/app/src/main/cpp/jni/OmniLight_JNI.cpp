@@ -32,14 +32,14 @@ namespace OmniLight {
 extern "C" {
 
 
-VRO_METHOD(jlong, nativeCreateOmniLight)(VRO_ARGS
-                                         jlong color,
-                                         jfloat intensity,
-                                         jfloat attenuationStartDistance,
-                                         jfloat attenuationEndDistance,
-                                         jfloat positionX,
-                                         jfloat positionY,
-                                         jfloat positionZ) {
+VRO_METHOD(VRO_REF, nativeCreateOmniLight)(VRO_ARGS
+                                           jlong color,
+                                           jfloat intensity,
+                                           jfloat attenuationStartDistance,
+                                           jfloat attenuationEndDistance,
+                                           jfloat positionX,
+                                           jfloat positionY,
+                                           jfloat positionZ) {
 
     std::shared_ptr<VROLight> omniLight = std::make_shared<VROLight>(VROLightType::Omni);
 
@@ -63,7 +63,7 @@ VRO_METHOD(jlong, nativeCreateOmniLight)(VRO_ARGS
 // Setters
 
 VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
-                                                    jlong native_light_ref,
+                                                    VRO_REF native_light_ref,
                                                     jfloat attenuationStartDistance) {
     std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationStartDistance] {
@@ -76,7 +76,7 @@ VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
-                                                  jlong native_light_ref,
+                                                  VRO_REF native_light_ref,
                                                   jfloat attenuationEndDistance) {
     std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationEndDistance] {
@@ -89,7 +89,7 @@ VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
-                                    jlong native_light_ref,
+                                    VRO_REF native_light_ref,
                                     jfloat positionX,
                                     jfloat positionY,
                                     jfloat positionZ) {

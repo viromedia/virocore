@@ -21,8 +21,8 @@
 extern "C" {
 
 VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
-                                         jlong render_context_ref,
-                                         jlong native_delegate_ref) {
+                                         VRO_REF render_context_ref,
+                                         VRO_REF native_delegate_ref) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_delegate_ref);
 
@@ -39,7 +39,7 @@ VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
-                                      jlong render_context_ref,
+                                      VRO_REF render_context_ref,
                                       jboolean enable) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
 
@@ -58,7 +58,7 @@ VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeEnableController)(VRO_ARGS
-                                         jlong render_context_ref,
+                                         VRO_REF render_context_ref,
                                          jboolean enable) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
 
@@ -74,14 +74,14 @@ VRO_METHOD(void, nativeEnableController)(VRO_ARGS
 }
 
 VRO_METHOD(jfloatArray, nativeGetControllerForwardVector)(VRO_ARGS
-                                                          jlong context_j) {
+                                                          VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     VROVector3f position = context->getInputController()->getPresenter()->getLastKnownForward();
     return ARUtilsCreateFloatArrayFromVector3f(position);
 }
 
 VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
-                                                        jlong native_render_context_ref,
+                                                        VRO_REF native_render_context_ref,
                                                         jobject callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);
     std::weak_ptr<ViroContext> helperContext_w = ViroContext::native(native_render_context_ref);

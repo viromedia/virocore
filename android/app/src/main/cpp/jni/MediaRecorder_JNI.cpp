@@ -15,8 +15,8 @@
 #endif
 
 extern "C" {
-VRO_METHOD(jlong, nativeCreateNativeRecorder)(VRO_ARGS
-                                              jlong rendererRef) {
+VRO_METHOD(VRO_REF, nativeCreateNativeRecorder)(VRO_ARGS
+                                                VRO_REF rendererRef) {
     std::shared_ptr<MediaRecorder_JNI> recorder = std::make_shared<MediaRecorder_JNI>(obj, env);
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(rendererRef);
 
@@ -30,13 +30,13 @@ VRO_METHOD(jlong, nativeCreateNativeRecorder)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDeleteNativeRecorder)(VRO_ARGS
-                                            jlong jRecorderRef) {
+                                            VRO_REF jRecorderRef) {
     delete reinterpret_cast<PersistentRef<MediaRecorder_JNI> *>(jRecorderRef);
 
 }
 
 VRO_METHOD(void, nativeEnableFrameRecording)(VRO_ARGS
-                                             jlong jRecorderRef,
+                                             VRO_REF jRecorderRef,
                                              jboolean jIsRecording) {
     std::shared_ptr<MediaRecorder_JNI> recorder = MediaRecorder::native(jRecorderRef);
     VROPlatformDispatchAsyncRenderer([recorder, jIsRecording] {
@@ -45,7 +45,7 @@ VRO_METHOD(void, nativeEnableFrameRecording)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeScheduleScreenCapture)(VRO_ARGS
-                                              jlong jRecorderRef) {
+                                              VRO_REF jRecorderRef) {
     std::shared_ptr<MediaRecorder_JNI> recorder = MediaRecorder::native(jRecorderRef);
     VROPlatformDispatchAsyncRenderer([recorder] {
         recorder->nativeScheduleScreenCapture();

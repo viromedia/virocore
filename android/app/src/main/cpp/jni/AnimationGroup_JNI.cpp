@@ -34,12 +34,12 @@ void AddPropertyIfNotNull(JNIEnv *env, std::string property, jstring candidate,
     }
 }
 
-VRO_METHOD(jlong, nativeCreateAnimationGroup)(VRO_ARGS
-                                              jstring positionX, jstring positionY, jstring positionZ,
-                                              jstring scaleX, jstring scaleY, jstring scaleZ,
-                                              jstring rotateX, jstring rotateY, jstring rotateZ,
-                                              jstring opacity, jstring color, jlong lazyMaterialRef,
-                                              jfloat durationSeconds, jfloat delaySeconds, jstring functionType) {
+VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
+                                                jstring positionX, jstring positionY, jstring positionZ,
+                                                jstring scaleX, jstring scaleY, jstring scaleZ,
+                                                jstring rotateX, jstring rotateY, jstring rotateZ,
+                                                jstring opacity, jstring color, VRO_REF lazyMaterialRef,
+                                                jfloat durationSeconds, jfloat delaySeconds, jstring functionType) {
     std::map<std::string, std::string> animationProperties;
 
     // NOTE: AddPropertyIfNotNull WILL release the jstring after its done running so don't
@@ -69,14 +69,14 @@ VRO_METHOD(jlong, nativeCreateAnimationGroup)(VRO_ARGS
     return AnimationGroup::jptr(animationGroup);
 }
 
-VRO_METHOD(jlong, nativeCopyAnimation)(VRO_ARGS
-                                       jlong nativeRef) {
+VRO_METHOD(VRO_REF, nativeCopyAnimation)(VRO_ARGS
+                                         VRO_REF nativeRef) {
     std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
     return AnimationGroup::jptr(std::dynamic_pointer_cast<VROAnimationGroup>(group->copy()));
 }
 
 VRO_METHOD(void, nativeDestroyAnimationGroup)(VRO_ARGS
-                                              jlong nativeRef) {
+                                              VRO_REF nativeRef) {
     delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
 }
 

@@ -16,13 +16,13 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreatePortal)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF, nativeCreatePortal)(VRO_NO_ARGS) {
     std::shared_ptr<VROPortalFrame> portal = std::make_shared<VROPortalFrame>();
     return Portal::jptr(portal);
 }
 
 VRO_METHOD(void, nativeDestroyPortal)(VRO_ARGS
-                                      jlong native_ref) {
+                                      VRO_REF native_ref) {
     delete reinterpret_cast<PersistentRef<VROPortalFrame> *>(native_ref);
 }
 

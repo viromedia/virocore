@@ -28,7 +28,7 @@ public:
         return persistentDelegate->get();
     }
 
-    void textCreated(jlong native_text_ref);
+    void textCreated(VRO_REF native_text_ref);
 
 private:
     jobject _javaObject;

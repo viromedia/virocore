@@ -86,21 +86,21 @@ VROTextClipMode getTextClipModeEnum(const std::string& strName) {
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateText)(VRO_ARGS
-                                    jlong context_j,
-                                    jstring text_j,
-                                    jstring fontFamily_j,
-                                    jint size,
-                                    jint style,
-                                    jint weight,
-                                    jlong color,
-                                    jfloat width,
-                                    jfloat height,
-                                    jstring horizontalAlignment_j,
-                                    jstring verticalAlignment_j,
-                                    jstring lineBreakMode_j,
-                                    jstring clipMode_j,
-                                    jint maxLines) {
+VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
+                                      VRO_REF context_j,
+                                      jstring text_j,
+                                      jstring fontFamily_j,
+                                      jint size,
+                                      jint style,
+                                      jint weight,
+                                      jlong color,
+                                      jfloat width,
+                                      jfloat height,
+                                      jstring horizontalAlignment_j,
+                                      jstring verticalAlignment_j,
+                                      jstring lineBreakMode_j,
+                                      jstring clipMode_j,
+                                      jint maxLines) {
     // Get the text string
     std::wstring text;
     if (text_j != NULL){
@@ -151,12 +151,12 @@ VRO_METHOD(jlong, nativeCreateText)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
-                                    jlong text_j) {
+                                    VRO_REF text_j) {
     delete reinterpret_cast<PersistentRef<VROText> *>(text_j);
 }
 
 VRO_METHOD(void, nativeSetText)(VRO_ARGS
-                                jlong text_j,
+                                VRO_REF text_j,
                                 jstring text_string_j) {
 
     const jchar *text_c = env->GetStringChars(text_string_j, NULL);
@@ -177,8 +177,8 @@ VRO_METHOD(void, nativeSetText)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetFont)(VRO_ARGS
-                                jlong context_j,
-                                jlong text_j,
+                                VRO_REF context_j,
+                                VRO_REF text_j,
                                 jstring family_j,
                                 jint size,
                                 jint style,
@@ -198,7 +198,7 @@ VRO_METHOD(void, nativeSetFont)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS
-                                 jlong text_j,
+                                 VRO_REF text_j,
                                  jlong color_j) {
 
     float a = ((color_j >> 24) & 0xFF) / 255.0;
@@ -218,7 +218,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
-                                 jlong text_j,
+                                 VRO_REF text_j,
                                  jfloat width) {
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
@@ -232,7 +232,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
-                                  jlong text_j,
+                                  VRO_REF text_j,
                                   jfloat height) {
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
@@ -246,7 +246,7 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
-                                               jlong text_j,
+                                               VRO_REF text_j,
                                                jstring horizontalAlignment_j) {
     VROTextHorizontalAlignment horizontalAlignment
             = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j, env));
@@ -262,7 +262,7 @@ VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
-                                             jlong text_j,
+                                             VRO_REF text_j,
                                              jstring verticalAlignment_j) {
     VROTextVerticalAlignment verticalAlignment
             = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j, env));
@@ -278,7 +278,7 @@ VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
-                                         jlong text_j,
+                                         VRO_REF text_j,
                                          jstring lineBreakMode_j) {
     VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
 
@@ -293,7 +293,7 @@ VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
-                                    jlong text_j,
+                                    VRO_REF text_j,
                                     jstring clipMode_j) {
 
     // Get clip mode
@@ -310,7 +310,7 @@ VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetMaxLines)(VRO_ARGS
-                                    jlong text_j,
+                                    VRO_REF text_j,
                                     jint maxLines) {
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);

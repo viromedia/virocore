@@ -83,12 +83,12 @@ VRO_METHOD(void, nativeSetTimingFunction)(VRO_ARGS_STATIC
 }
 
 VRO_METHOD(void, nativeDispose)(VRO_ARGS
-                                jlong transaction_j) {
+                                VRO_REF transaction_j) {
     delete reinterpret_cast<PersistentRef<VROTransaction> *>(transaction_j);
 }
 
 VRO_METHOD(void, nativePause)(VRO_ARGS
-                              jlong transaction_j) {
+                              VRO_REF transaction_j) {
     std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
@@ -100,7 +100,7 @@ VRO_METHOD(void, nativePause)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeResume)(VRO_ARGS
-                               jlong transaction_j) {
+                               VRO_REF transaction_j) {
     std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
@@ -112,7 +112,7 @@ VRO_METHOD(void, nativeResume)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeTerminate)(VRO_ARGS
-                                  jlong transaction_j) {
+                                  VRO_REF transaction_j) {
     std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();

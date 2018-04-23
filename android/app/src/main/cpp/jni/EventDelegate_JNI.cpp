@@ -18,14 +18,14 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateDelegate)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF, nativeCreateDelegate)(VRO_NO_ARGS) {
    std::shared_ptr<EventDelegate_JNI> delegate
            = std::make_shared<EventDelegate_JNI>(obj, env);
    return EventDelegate::jptr(delegate);
 }
 
 VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
-                                        jlong native_node_ref) {
+                                        VRO_REF native_node_ref) {
     // TODO: figure out why this is needed
     VROPlatformDispatchAsyncRenderer([native_node_ref]{
         delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
@@ -33,7 +33,7 @@ VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
-                                    jlong native_node_ref,
+                                    VRO_REF native_node_ref,
                                     jint eventTypeId,
                                     jboolean enabled) {
 
@@ -49,7 +49,7 @@ VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetTimeToFuse)(VRO_ARGS
-                                      jlong native_node_ref,
+                                      VRO_REF native_node_ref,
                                       jfloat durationInMillis) {
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, durationInMillis] {

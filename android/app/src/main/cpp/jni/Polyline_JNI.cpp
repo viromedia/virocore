@@ -56,29 +56,29 @@ namespace Polyline {
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreatePolylineEmpty)(VRO_ARGS
-                                             jfloat width) {
+VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
+                                               jfloat width) {
 
     std::shared_ptr<VROPolyline> polyline = std::make_shared<VROPolyline>();
     polyline->setThickness(width);
     return Polyline::jptr(polyline);
 }
 
-VRO_METHOD(jlong, nativeCreatePolyline)(VRO_ARGS
-                                        jobjectArray points_j,
-                                        jfloat width) {
+VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
+                                          jobjectArray points_j,
+                                          jfloat width) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
     std::shared_ptr<VROPolyline> polyline = VROPolyline::createPolyline(points, width);
     return Polyline::jptr(polyline);
 }
 
 VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
-                                        jlong nativePolylineRef) {
+                                        VRO_REF nativePolylineRef) {
     delete reinterpret_cast<PersistentRef<VROPolyline> *>(nativePolylineRef);
 }
 
 VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
-                                    jlong polyline_j,
+                                    VRO_REF polyline_j,
                                     jfloatArray point_j) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
 
@@ -92,7 +92,7 @@ VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
-                                  jlong polyline_j,
+                                  VRO_REF polyline_j,
                                   jobjectArray points_j) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
 
@@ -107,7 +107,7 @@ VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetThickness)(VRO_ARGS
-                                     jlong polyline_j,
+                                     VRO_REF polyline_j,
                                      jfloat thickness) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, thickness] {

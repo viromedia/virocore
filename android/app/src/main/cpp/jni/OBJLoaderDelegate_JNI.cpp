@@ -75,7 +75,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
         }
 
         // Call the nodeDidFinishCreation callback.
-        jlong jGeometryRef = geometryRef;
+        VRO_REF jGeometryRef = geometryRef;
         VROPlatformCallJavaFunction(localObj,
                                     "nodeDidFinishCreation",
                                     "([Lcom/viro/core/Material;ZJ)V",

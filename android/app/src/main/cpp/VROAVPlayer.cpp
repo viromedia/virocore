@@ -24,7 +24,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeOnFinished)(JNIEnv *env,
                                             jclass clazz,
-                                            jlong nativePlayerRef) {
+                                            VRO_REF nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
                 = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
@@ -34,7 +34,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeOnPrepared)(JNIEnv *env,
                                        jclass clazz,
-                                       jlong nativePlayerRef) {
+                                       VRO_REF nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
                 = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
@@ -44,7 +44,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeWillBuffer)(JNIEnv *env,
                                       jclass clazz,
-                                      jlong nativePlayerRef) {
+                                      VRO_REF nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
                 = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
@@ -54,7 +54,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeDidBuffer)(JNIEnv *env,
                                        jclass clazz,
-                                       jlong nativePlayerRef) {
+                                       VRO_REF nativePlayerRef) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
                 = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
@@ -64,7 +64,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeOnError)(JNIEnv *env,
                                     jclass clazz,
-                                    jlong nativePlayerRef,
+                                    VRO_REF nativePlayerRef,
                                     jstring error) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
             = native(nativePlayerRef)->getDelegate();
@@ -88,7 +88,7 @@ VROAVPlayer::VROAVPlayer() :
      * Pass into AVPlayer a long address referencing it's corresponding
      * native object.
      */
-    jlong myLongVal = jptr(this);
+    VRO_REF myLongVal = jptr(this);
     jobject javPlayer = env->NewObject(cls, jmethod, myLongVal, jcontext);
 
     env->DeleteLocalRef(cls);

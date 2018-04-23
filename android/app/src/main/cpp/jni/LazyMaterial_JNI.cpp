@@ -16,13 +16,13 @@
 
 extern "C" {
 
-VRO_METHOD(jlong, nativeCreateLazyMaterial)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF, nativeCreateLazyMaterial)(VRO_NO_ARGS) {
     std::shared_ptr<VROLazyMaterialJNI> materialPtr = std::make_shared<VROLazyMaterialJNI>(obj);
     return LazyMaterial::jptr(materialPtr);
 }
 
 VRO_METHOD(void, nativeDestroyLazyMaterial)(VRO_ARGS
-                                            jlong nativeRef) {
+                                            VRO_REF nativeRef) {
     delete reinterpret_cast<PersistentRef<VROLazyMaterialJNI> *>(nativeRef);
 }
 
