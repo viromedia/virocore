@@ -944,17 +944,16 @@ cv::Mat VROARImageTracker::getIntrinsicMatrix(int inputCols, int inputRows) {
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else if (kSamsungS7Devices.find(model) != kSamsungS7Devices.end() // Samsung S7
                || kSamsungS7EdgeDevices.find(model) != kSamsungS7EdgeDevices.end()) { // Samsung S7 Edge
-        // TODO: add Samsung S7 intrinsics (below copied from s8)
         if (inputCols < inputRows) {
-            cols = inputCols * .5215;
-            rows = inputRows * .5022;
+            cols = inputCols * .4666;
+            rows = inputRows * .51;
         } else {
-            cols = inputCols * .5022;
-            rows = inputRows * .5215;
+            cols = inputCols * .51;
+            rows = inputRows * .4666;
         }
 
-        double cameraArr[9] = {2129.987076073671, 0, cols,
-                               0, 2127.653050656804, rows,
+        double cameraArr[9] = {1950, 0, cols,
+                               0, 1950, rows,
                                0, 0, 1};
         cameraMatrix = cv::Mat(3, 3, CV_64F, &cameraArr);
     } else if (kSamsungA5Devices.find(model) != kSamsungA5Devices.end() // Samsung A5
@@ -1034,9 +1033,8 @@ cv::Mat VROARImageTracker::getDistortionCoeffs() {
         return distCoeffs.clone();
     } else if (kSamsungS7Devices.find(model) != kSamsungS7Devices.end() // Samsung S7
                || kSamsungS7EdgeDevices.find(model) != kSamsungS7EdgeDevices.end()) { // Samsung S7 Edge
-        // TODO: add S7 dist coeffs (below is copied from S8
-        double distCoeffsArr[5] = {0.1923965528968363, -0.4941594689145613, 0.004114994401515823,
-                                   -0.001190136151737745, 0.03055129101581667};
+        double distCoeffsArr[5] = {0.3439199908891861, -0.8787014522144443, 0.01023219955480601,
+                                   0, 0.4907721715431468};
         cv::Mat distCoeffs(5, 1, CV_64F, &distCoeffsArr);
         return distCoeffs.clone();
     } else if (kSamsungA5Devices.find(model) != kSamsungA5Devices.end() // Samsung A5
