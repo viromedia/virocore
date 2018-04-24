@@ -185,7 +185,7 @@ VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
                                          VRO_REF native_light_ref,
-                                         jint size) {
+                                         VRO_INT size) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, size] {

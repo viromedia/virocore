@@ -1551,7 +1551,7 @@ void VROSceneRendererOVR::onSurfaceCreated(jobject surface) {
     ovrMessageQueue_PostMessage( &appThread->MessageQueue, &message );
 }
 
-void VROSceneRendererOVR::onSurfaceChanged(jobject surface, jint width, jint height) {
+void VROSceneRendererOVR::onSurfaceChanged(jobject surface, VRO_INT width, VRO_INT height) {
     ALOGV( "    GLES3JNILib::onSurfaceChanged()" );
     ovrAppThread * appThread = _appThread;
 

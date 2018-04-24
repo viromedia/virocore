@@ -184,7 +184,7 @@ VRO_METHOD (void, nativeOnKeyEvent)(VRO_ARGS
 
 VRO_METHOD(void, nativeOnTouchEvent)(VRO_ARGS
                                      VRO_REF native_renderer,
-                                     jint onTouchAction,
+                                     VRO_INT onTouchAction,
                                      float xPos,
                                      float yPos) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
@@ -199,7 +199,7 @@ VRO_METHOD(void, nativeOnTouchEvent)(VRO_ARGS
 
 VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
                                       VRO_REF native_renderer,
-                                      jint pinchState,
+                                      VRO_INT pinchState,
                                       VRO_FLOAT scaleFactor,
                                       VRO_FLOAT viewportX,
                                       VRO_FLOAT viewportY) {
@@ -215,7 +215,7 @@ VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
 
 VRO_METHOD(void, nativeOnRotateEvent) (VRO_ARGS
                                        VRO_REF native_renderer,
-                                       jint rotateState,
+                                       VRO_INT rotateState,
                                        VRO_FLOAT rotateRadians,
                                        VRO_FLOAT viewportX,
                                        VRO_FLOAT viewportY) {
@@ -341,8 +341,8 @@ VRO_METHOD(void, nativeOnSurfaceCreated)(VRO_ARGS
 
 VRO_METHOD(void, nativeOnSurfaceChanged)(VRO_ARGS
                                          jobject surface,
-                                         jint width,
-                                         jint height,
+                                         VRO_INT width,
+                                         VRO_INT height,
                                          VRO_REF native_renderer) {
     Renderer::native(native_renderer)->onSurfaceChanged(surface, width, height);
 }
@@ -402,7 +402,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeUnprojectPoint)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetClearColor)(VRO_ARGS
                                       VRO_REF native_renderer,
-                                      jint color) {
+                                      VRO_INT color) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, color] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();

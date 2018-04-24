@@ -48,8 +48,8 @@ VRO_METHOD(VRO_REF, nativeCreateRendererARCore)(VRO_ARGS
     return Renderer::jptr(renderer);
 }
 
-VRO_METHOD(jint, nativeGetCameraTextureId)(VRO_ARGS
-                                           VRO_REF renderer_j) {
+VRO_METHOD(VRO_INT, nativeGetCameraTextureId)(VRO_ARGS
+                                              VRO_REF renderer_j) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
     return arRenderer->getCameraTextureId();
@@ -65,7 +65,7 @@ VRO_METHOD(void, nativeSetARCoreSession)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetARDisplayGeometry)(VRO_ARGS
                                              VRO_REF renderer_j,
-                                             jint rotation, jint width, jint height) {
+                                             VRO_INT rotation, VRO_INT width, VRO_INT height) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
     arRenderer->setDisplayGeometry(rotation, width, height);

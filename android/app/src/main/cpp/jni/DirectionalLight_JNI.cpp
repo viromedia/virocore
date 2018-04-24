@@ -121,7 +121,7 @@ VRO_METHOD(void, nativeSetShadowOrthographicPosition)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
                                          VRO_REF native_light_ref,
-                                         jint size) {
+                                         VRO_INT size) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
 

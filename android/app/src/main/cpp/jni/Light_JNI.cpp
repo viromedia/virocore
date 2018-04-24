@@ -58,7 +58,7 @@ VRO_METHOD(void, nativeSetTemperature)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetInfluenceBitMask)(VRO_ARGS
                                             VRO_REF native_light_ref,
-                                            jint bitMask) {
+                                            VRO_INT bitMask) {
     std::weak_ptr<VROLight> light_w = Light::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, bitMask] {
         std::shared_ptr<VROLight> light = light_w.lock();

@@ -85,7 +85,7 @@ public:
      Surface lifecycle.
      */
     virtual void onSurfaceCreated(jobject surface) = 0;
-    virtual void onSurfaceChanged(jobject surface, jint width, jint height) = 0;
+    virtual void onSurfaceChanged(jobject surface, VRO_INT width, VRO_INT height) = 0;
     virtual void onSurfaceDestroyed() = 0;
 
     /*

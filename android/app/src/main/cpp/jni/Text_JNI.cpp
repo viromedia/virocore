@@ -90,9 +90,9 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       VRO_REF context_j,
                                       VRO_STRING text_j,
                                       VRO_STRING fontFamily_j,
-                                      jint size,
-                                      jint style,
-                                      jint weight,
+                                      VRO_INT size,
+                                      VRO_INT style,
+                                      VRO_INT weight,
                                       jlong color,
                                       VRO_FLOAT width,
                                       VRO_FLOAT height,
@@ -100,7 +100,7 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       VRO_STRING verticalAlignment_j,
                                       VRO_STRING lineBreakMode_j,
                                       VRO_STRING clipMode_j,
-                                      jint maxLines) {
+                                      VRO_INT maxLines) {
     // Get the text string
     std::wstring text;
     if (text_j != NULL){
@@ -180,9 +180,9 @@ VRO_METHOD(void, nativeSetFont)(VRO_ARGS
                                 VRO_REF context_j,
                                 VRO_REF text_j,
                                 VRO_STRING family_j,
-                                jint size,
-                                jint style,
-                                jint weight) {
+                                VRO_INT size,
+                                VRO_INT style,
+                                VRO_INT weight) {
     std::string family = VROPlatformGetString(family_j, env);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
@@ -311,7 +311,7 @@ VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetMaxLines)(VRO_ARGS
                                     VRO_REF text_j,
-                                    jint maxLines) {
+                                    VRO_INT maxLines) {
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, maxLines] {

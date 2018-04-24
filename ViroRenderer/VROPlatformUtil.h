@@ -231,7 +231,7 @@ jlong VROPlatformCallJavaLongFunction(jobject javaObject,
 // Helper functions for setting jObject properties through JNI from C++
 void VROPlatformSetFloat(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_FLOAT value);
 void VROPlatformSetString(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, std::string value);
-void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jint value);
+void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_INT value);
 void VROPlatformSetBool(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jboolean value);
 void VROPlatformSetEnumValue(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName,
                              std::string enumClassPathName, std::string enumValueStr);
@@ -258,7 +258,7 @@ int VROPlatformGetAudioBufferSize();
 
 extern "C" {
 
-void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId);
+void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, VRO_INT taskId);
 
 }
 

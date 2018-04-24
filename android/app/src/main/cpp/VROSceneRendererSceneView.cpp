@@ -99,7 +99,7 @@ void VROSceneRendererSceneView::renderSuspended() {
 /*
  Update render sizes as the surface changes.
  */
-void VROSceneRendererSceneView::onSurfaceChanged(jobject surface, jint width, jint height) {
+void VROSceneRendererSceneView::onSurfaceChanged(jobject surface, VRO_INT width, VRO_INT height) {
     VROThreadRestricted::setThread(VROThreadName::Renderer);
 
     _surfaceSize.width = width;

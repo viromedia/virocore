@@ -245,7 +245,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
     _renderer->endFrame(_driver);
 }
 
-void VROSceneRendererGVR::onSurfaceChanged(jobject surface, jint width, jint height) {
+void VROSceneRendererGVR::onSurfaceChanged(jobject surface, VRO_INT width, VRO_INT height) {
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     _surfaceSize.width = width;
     _surfaceSize.height = height;

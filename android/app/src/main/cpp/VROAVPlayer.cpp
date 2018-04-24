@@ -65,7 +65,7 @@ extern "C" {
     VRO_METHOD(void, nativeOnError)(JNIEnv *env,
                                     jclass clazz,
                                     VRO_REF nativePlayerRef,
-                                    jstring error) {
+                                    VRO_STRING error) {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
             = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
@@ -115,7 +115,7 @@ VROAVPlayer::~VROAVPlayer() {
 
 bool VROAVPlayer::setDataSourceURL(const char *resourceOrUrl) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jstring = env->NewStringUTF(resourceOrUrl);
+    VRO_STRING jstring = VRO_NEW_STRING(resourceOrUrl);
     jobject jcontext = VROPlatformGetJavaAppContext();
 
     jclass cls = env->GetObjectClass(_javPlayer);

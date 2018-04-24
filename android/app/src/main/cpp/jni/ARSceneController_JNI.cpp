@@ -126,7 +126,7 @@ VRO_METHOD(void, nativeSetPointCloudSurfaceScale)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPointCloudMaxPoints)(VRO_ARGS
                                                VRO_REF arSceneControllerPtr,
-                                               jint maxPoints) {
+                                               VRO_INT maxPoints) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w, maxPoints] {

@@ -34,7 +34,7 @@ VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
                                     VRO_REF native_node_ref,
-                                    jint eventTypeId,
+                                    VRO_INT eventTypeId,
                                     jboolean enabled) {
 
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);

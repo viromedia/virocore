@@ -45,8 +45,8 @@ VRO_METHOD(VRO_REF, nativeCreateSphere)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateSphereParameterized)(VRO_ARGS
                                                      VRO_FLOAT radius,
-                                                     jint widthSegmentCount,
-                                                     jint heightSegmentCount,
+                                                     VRO_INT widthSegmentCount,
+                                                     VRO_INT heightSegmentCount,
                                                      jboolean facesOutward) {
     std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(radius,
                                                                 widthSegmentCount,
@@ -92,7 +92,7 @@ VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetWidthSegmentCount)(VRO_ARGS
                                              VRO_REF jsphere,
-                                             jint widthSegmentCount) {
+                                             VRO_INT widthSegmentCount) {
 
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, widthSegmentCount] {
@@ -106,7 +106,7 @@ VRO_METHOD(void, nativeSetWidthSegmentCount)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetHeightSegmentCount)(VRO_ARGS
                                               VRO_REF jsphere,
-                                              jint heightSegmentCount) {
+                                              VRO_INT heightSegmentCount) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, heightSegmentCount] {
         std::shared_ptr<VROSphere> sphere = sphere_w.lock();

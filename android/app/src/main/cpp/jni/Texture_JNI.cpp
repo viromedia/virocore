@@ -227,7 +227,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
-                                                  jobject jbuffer, jint width, jint height,
+                                                  jobject jbuffer, VRO_INT width, VRO_INT height,
                                                   VRO_STRING inputFormat_s, VRO_STRING storageFormat_s,
                                                   jboolean sRGB, jboolean mipmap,
                                                   VRO_STRING stereoMode_s) {
@@ -272,14 +272,14 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureVHD)(VRO_ARGS
     return Texture::jptr(texture);
 }
 
-VRO_METHOD(jint, nativeGetTextureWidth)(VRO_ARGS
-                                        VRO_REF texture_j) {
+VRO_METHOD(VRO_INT, nativeGetTextureWidth)(VRO_ARGS
+                                           VRO_REF texture_j) {
     std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
     return texture->getWidth();
 }
 
-VRO_METHOD(jint, nativeGetTextureHeight)(VRO_ARGS
-                                         VRO_REF texture_j) {
+VRO_METHOD(VRO_INT, nativeGetTextureHeight)(VRO_ARGS
+                                            VRO_REF texture_j) {
     std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
     return texture->getHeight();
 }

@@ -503,7 +503,7 @@ std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap
     // get keysetLength
     jclass setClass = env->GetObjectClass(keySet); // should be a Set
     jmethodID sizeMethod = env->GetMethodID(setClass, "size", "()I");
-    jint setSize = (jint) env->CallIntMethod(keySet, sizeMethod);
+    VRO_INT setSize = (VRO_INT) env->CallIntMethod(keySet, sizeMethod);
     // get keyset array
     jmethodID toArrayMethod = env->GetMethodID(setClass, "toArray", "()[Ljava/lang/Object;");
     jobjectArray keyArray = (jobjectArray) env->CallObjectMethod(keySet, toArrayMethod);
@@ -744,7 +744,7 @@ int VROPlatformGetAudioSampleRate() {
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "getAudioSampleRate", "()I");
-    jint sampleRate = env->CallIntMethod(sPlatformUtil, jmethod);
+    VRO_INT sampleRate = env->CallIntMethod(sPlatformUtil, jmethod);
 
     env->DeleteLocalRef(cls);
     return sampleRate;
@@ -756,7 +756,7 @@ int VROPlatformGetAudioBufferSize() {
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "getAudioBufferSize", "()I");
-    jint bufferSize = env->CallIntMethod(sPlatformUtil, jmethod);
+    VRO_INT bufferSize = env->CallIntMethod(sPlatformUtil, jmethod);
 
     env->DeleteLocalRef(cls);
     return bufferSize;
@@ -962,7 +962,7 @@ void VROPlatformSetBool(JNIEnv *env, jclass cls, jobject jObj, const char *field
     env->SetBooleanField(jObj, fieldId, value);
 }
 
-void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jint value) {
+void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_INT value) {
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "I");
     if (fieldId == NULL) {
         pwarn("Attempted to set undefined field: %s", fieldName);
@@ -1079,7 +1079,7 @@ void VROPlatformSetTrackingImageView(std::string filepath) {
     });
 }
 
-void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
+void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, VRO_INT taskId) {
     VROPlatformRunTask(taskId);
 }
 
