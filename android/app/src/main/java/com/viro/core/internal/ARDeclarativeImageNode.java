@@ -12,6 +12,7 @@ import com.viro.core.ARImageTarget;
  * This class represents an ARDeclarativeNode that should be matched with
  * the given ARImageTarget
  */
+//#IFDEF 'viro_react'
 public class ARDeclarativeImageNode extends ARDeclarativeNode {
 
     private ARImageTarget mARImageTarget;
@@ -32,3 +33,4 @@ public class ARDeclarativeImageNode extends ARDeclarativeNode {
     private native long nativeCreateARImageTargetNode();
     private native void nativeSetARImageTarget(long nativeRef, long arImageTargetRef);
 }
+//#ENDIF
