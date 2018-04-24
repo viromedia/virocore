@@ -19,7 +19,10 @@ public class SoundData {
 
         if (mInitCallback != null) {
             mNativeDelegateRef = nativeSetSoundDataDelegate(mNativeRef);
-        } else {
+        }
+        else {
+            // Don't reformat this block back to } else {, unless you know how to fix the regex in
+            // preprocessor.gradle lines 23-27. I tried.
             mNativeDelegateRef = -1L;
         }
     }
