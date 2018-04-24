@@ -70,6 +70,15 @@ public class ViroViewARCore extends ViroView {
 
     private static final String TAG = "Viro";
 
+    // Note: we load the viro_arcore library in the constructor, this'll allow users to use other
+    // parts of our API that require accessing native methods without needing to create a
+    // ViroViewARCore object first.
+    static {
+        System.loadLibrary("gvr");
+        System.loadLibrary("gvr_audio");
+        System.loadLibrary("viro_renderer");
+    }
+
     // Determines whether we add an ImageView for debugging Image Tracking
     private static final boolean ENABLE_TRACKING_DEBUG_VIEW = false;
     private static ImageView sTrackingImageView;
@@ -379,12 +388,9 @@ public class ViroViewARCore extends ViroView {
             throw new DeviceNotCompatibleException();
         }
 
-        // We wait to load libraries until after the ARCore check, otherwise UnsatisfiedLinkErrors
-        // may occur on devices that are using Android 23 or earlier (due to ARCore's dependency
-        // on native camera)
-        System.loadLibrary("gvr");
-        System.loadLibrary("gvr_audio");
-        System.loadLibrary("viro_renderer");
+        // We wait to load the viro_arcore library until after the ARCore check, otherwise
+        // UnsatisfiedLinkErrors may occur on devices that are using Android 23 or earlier
+        // (due to ARCore's dependency on native camera)
         System.loadLibrary("viro_arcore");
 
         mSurfaceView = new GLSurfaceView(context);
