@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "VROVector3f.h"
 
 class VRORenderContext;
 class VROMaterial;
@@ -32,6 +33,8 @@ enum class VRODiffuseTextureType {
  VROShaderCapabilities::deriveMaterialCapabilitiesKey(VROMaterial).
  */
 struct VROMaterialShaderCapabilities {
+
+    // Fields used for comparison
     VROLightingModel lightingModel;
     VRODiffuseTextureType diffuseTexture;
     VROStereoMode diffuseTextureStereoMode;
@@ -42,17 +45,21 @@ struct VROMaterialShaderCapabilities {
     bool roughnessMap, metalnessMap, aoMap;
     bool bloom;
     bool receivesShadows;
+    int chromaKeyFiltering;
     std::string additionalModifierKeys;
+
+    // Additional data fields (not used in comparison)
+    VROVector3f chromaKeyFilteringColor;
     
     bool operator< (const VROMaterialShaderCapabilities& r) const {
         return std::tie(lightingModel, diffuseTexture, diffuseTextureStereoMode,
                         diffuseEGLModifier, specularTexture, normalTexture, reflectiveTexture,
                         roughnessMap, metalnessMap, aoMap, bloom,
-                        receivesShadows, additionalModifierKeys) <
+                        receivesShadows, chromaKeyFiltering, additionalModifierKeys) <
                 std::tie(r.lightingModel, r.diffuseTexture, r.diffuseTextureStereoMode,
                          r.diffuseEGLModifier, r.specularTexture, r.normalTexture, r.reflectiveTexture,
                          r.roughnessMap, r.metalnessMap, r.aoMap, r.bloom,
-                         r.receivesShadows, r.additionalModifierKeys);
+                         r.receivesShadows, r.chromaKeyFiltering, r.additionalModifierKeys);
     }
 };
 

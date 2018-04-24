@@ -42,6 +42,7 @@ static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
 static std::shared_ptr<VROShaderModifier> sBloomModifier;
+static std::map<int, std::shared_ptr<VROShaderModifier>> sChromaKeyModifiers;
 static std::map<VROStereoMode, std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
 // Debugging
@@ -158,6 +159,10 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     
     if (materialCapabilities.diffuseEGLModifier) {
         modifiers.push_back(createEGLImageModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
+    }
+
+    if (materialCapabilities.chromaKeyFiltering) {
+        modifiers.push_back(createChromaKeyModifier(materialCapabilities.chromaKeyFilteringColor));
     }
     
     // Normal Map (note this must be placed before the PBR surface modifier, which uses the normal)
@@ -800,6 +805,44 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createEGLImageModifier(bool
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, input);
     modifier->addReplacement("uniform sampler2D diffuse_texture;", "uniform samplerExternalOES diffuse_texture;");
 
+    return modifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createChromaKeyModifier(VROVector3f chromaKey) {
+    /*
+     Modifier that renders colors 'near' the chromaKey as transparent. This is used for alpha
+     video blending.
+     */
+    auto it = sChromaKeyModifiers.find(chromaKey.hash());
+    if (it != sChromaKeyModifiers.end()) {
+        return it->second;
+    }
+
+    std::vector<std::string> modifierCode = {
+            "const highp float chroma_threshold_sensitivity = 0.4;",
+            "const highp float smoothing = 0.1;",
+            "uniform highp vec3 color_to_replace;",
+
+            "highp float mask_y = 0.2989 * color_to_replace.r + 0.5866 * color_to_replace.g + 0.1145 * color_to_replace.b;",
+            "highp float mask_cr = 0.7132 * (color_to_replace.r - mask_y);",
+            "highp float mask_cb = 0.5647 * (color_to_replace.b - mask_y);",
+            "highp float y = 0.2989 * _surface.diffuse_color.r + 0.5866 * _surface.diffuse_color.g + 0.1145 * _surface.diffuse_color.b;",
+            "highp float cr = 0.7132 * (_surface.diffuse_color.r - y);",
+            "highp float cb = 0.5647 * (_surface.diffuse_color.b - y);",
+
+            "highp float blend_value = smoothstep(chroma_threshold_sensitivity, chroma_threshold_sensitivity + smoothing, distance(vec2(cr, cb), vec2(mask_cr, mask_cb)));",
+            "_surface.diffuse_color = vec4(_surface.diffuse_color.rgb * blend_value, 1.0 * blend_value);",
+    };
+    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                                      modifierCode);
+    modifier->setUniformBinder("color_to_replace", [chromaKey](VROUniform *uniform, GLuint location,
+                                                       const VROGeometry *geometry,
+                                                       const VROMaterial *material) {
+        uniform->setVec3(chromaKey);
+    });
+    modifier->setName("chromakey");
+
+    sChromaKeyModifiers[chromaKey.hash()] = modifier;
     return modifier;
 }
 

@@ -226,8 +226,7 @@ void VROTexture::hydrate(std::shared_ptr<VRODriver> &driver) {
 int VROTexture::getNumSubstratesForFormat(VROTextureInternalFormat format) const {
     if (format == VROTextureInternalFormat::YCBCR) {
         return 2;
-    }
-    else {
+    } else {
         return 1;
     }
 }

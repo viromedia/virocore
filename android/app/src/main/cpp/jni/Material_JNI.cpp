@@ -386,4 +386,32 @@ VRO_METHOD(void, nativeSetName(VRO_ARGS
     });
 }
 
+VRO_METHOD(void, nativeSetChromaKeyFilteringEnabled)(VRO_ARGS
+                                                     VRO_REF material_j, VRO_BOOL enabled) {
+    std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
+
+    VROPlatformDispatchAsyncRenderer([material_w, enabled] {
+        std::shared_ptr<VROMaterial> material = material_w.lock();
+        if (!material) {
+            return;
+        }
+        material->setChromaKeyFilteringEnabled(enabled);
+    });
+}
+
+VRO_METHOD(void, nativeSetChromaKeyFilteringColor)(VRO_ARGS
+                                                   VRO_REF material_j, jlong color_j) {
+    std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
+    VROVector4f color = parseColor(color_j);
+
+    VROPlatformDispatchAsyncRenderer([material_w, color] {
+        std::shared_ptr<VROMaterial> material = material_w.lock();
+        if (!material) {
+            return;
+        }
+        material->setChromaKeyFilteringColor({ color.x, color.y, color.z });
+    });
+}
+
+
 }  // extern "C"

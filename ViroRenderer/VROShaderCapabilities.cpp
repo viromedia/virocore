@@ -66,7 +66,7 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
         cap.diffuseTextureStereoMode = VROStereoMode::None;
         cap.diffuseEGLModifier = false;
     }
-    
+
     // Specular Map
     if (specular.getTextureType() == VROTextureType::Texture2D &&
         (lightingModel == VROLightingModel::Blinn || lightingModel == VROLightingModel::Phong)) {
@@ -126,6 +126,15 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
     
     // Bloom
     cap.bloom = material.isBloomSupported();
+
+    // Chroma key filtering
+    if (material.isChromaKeyFilteringEnabled()) {
+        cap.chromaKeyFiltering = material.getChromaKeyFilteringColor().hash();
+        cap.chromaKeyFilteringColor = material.getChromaKeyFilteringColor();
+    } else {
+        cap.chromaKeyFiltering = 0;
+    }
+
     return cap;
 }
 

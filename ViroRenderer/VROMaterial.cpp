@@ -35,6 +35,8 @@ VROMaterial::VROMaterial() :
     _bloomThreshold(-1),
     _receivesShadows(true),
     _castsShadows(true),
+    _chromaKeyFilteringEnabled(false),
+    _chromaKeyFilteringColor({ 0, 1, 0 }),
     _substrate(nullptr) {
     
     _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |
@@ -77,6 +79,8 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
  _bloomThreshold(material->_bloomThreshold),
  _receivesShadows(material->_receivesShadows),
  _castsShadows(material->_castsShadows),
+ _chromaKeyFilteringEnabled(material->_chromaKeyFilteringEnabled),
+ _chromaKeyFilteringColor(material->_chromaKeyFilteringColor),
  _substrate(nullptr) {
  
      _diffuse = new VROMaterialVisual(*material->_diffuse);
@@ -137,6 +141,8 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _bloomThreshold = material->_bloomThreshold;
     _receivesShadows = material->_receivesShadows;
     _castsShadows = material->_castsShadows;
+    _chromaKeyFilteringEnabled = material->_chromaKeyFilteringEnabled;
+    _chromaKeyFilteringColor = material->_chromaKeyFilteringColor;
     
     _substrate = nullptr;
     
@@ -290,4 +296,14 @@ bool VROMaterial::hasDiffuseAlpha() const {
         return _diffuse->getColor().w < (1.0 - kEpsilon) ||
                _diffuse->getTexture()->hasAlpha();
     }
+}
+
+void VROMaterial::setChromaKeyFilteringEnabled(bool enabled) {
+    _chromaKeyFilteringEnabled = enabled;
+    updateSubstrate();
+}
+
+void VROMaterial::setChromaKeyFilteringColor(VROVector3f color) {
+    _chromaKeyFilteringColor = color;
+    updateSubstrate();
 }

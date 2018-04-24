@@ -20,6 +20,7 @@ class VROMaterial;
 class VROLight;
 class VROShaderModifier;
 class VRODriverOpenGL;
+class VROVector3f;
 enum class VROStereoMode;
 
 struct VROMaterialShaderCapabilities;
@@ -90,6 +91,7 @@ private:
 
     std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier(bool linearizeColor);
     std::shared_ptr<VROShaderModifier> createEGLImageModifier(bool linearizeColor);
+    std::shared_ptr<VROShaderModifier> createChromaKeyModifier(VROVector3f chromaKey);
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
     std::shared_ptr<VROShaderModifier> createBloomModifier();
     std::vector<std::string> createColorLinearizationCode();

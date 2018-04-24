@@ -404,6 +404,8 @@ public class Material {
     private BlendMode mBlendMode = BlendMode.ALPHA;
     private float mBloomThreshold = -1.0f;
     private String mName ="";
+    private boolean mChromaKeyFilteringEnabled = false;
+    private int mChromaKeyFilteringColor = Color.GREEN;
 
     /**
      * Construct a new Material. The material defaults to a flat white color with a constant
@@ -1033,6 +1035,55 @@ public class Material {
         return mName;
     }
 
+    /**
+     * Enable chroma key filtering for this material. When chroma key filtering is enabled, then
+     * all colors within an epsilon range about the chroma key filtering color will be removed
+     * (made transparent). This technique is useful when rendering "green screen" or "blue screen"
+     * videos, as is commonly seen in the newscasting, motion picture, and videogame industries,
+     * effectively enabling partially transparent videos. To set the color to be removed, use
+     * {@link #setChromaKeyFilteringColor(int)}.
+     *
+     * @param enabled True to enable chroma key filtering.
+     */
+    public void setChromaKeyFilteringEnabled(boolean enabled) {
+        mChromaKeyFilteringEnabled = enabled;
+        nativeSetChromaKeyFilteringEnabled(mNativeRef, enabled);
+    }
+
+    /**
+     * Returns true if chroma key filtering is enabled.
+     *
+     * @return True if chroma key filtering is enabled.
+     */
+    public boolean isChromaKeyFilteringEnabled() {
+        return mChromaKeyFilteringEnabled;
+    }
+
+    /**
+     * Set the color to remove from all surfaces rendering with this material, via chroma key
+     * filtering. When chroma key filtering is enabled, then all colors within an epsilon range this
+     * color will be removed (made transparent). This technique is useful when rendering "green
+     * screen" or "blue screen" videos, as is commonly seen in the newscasting, motion picture, and
+     * videogame industries, effectively enabling partially transparent videos. To enable chroma key
+     * filtering, you must also call {@link #setChromaKeyFilteringEnabled(boolean)}.
+     *
+     * @param color The {@link Color} to use for the filtering.
+     */
+    public void setChromaKeyFilteringColor(int color) {
+        mChromaKeyFilteringColor = color;
+        nativeSetChromaKeyFilteringColor(mNativeRef, color);
+    }
+
+    /**
+     * Returns the chroma key filtering color. Hues within an epsilon range about this color are
+     * removed (made transparent) when chroma key filtering is enabled.
+     *
+     * @return The chroma key filtering color.
+     */
+    public int getChromaKeyFilteringColor() {
+        return mChromaKeyFilteringColor;
+    }
+
     private native long nativeCreateMaterial();
     private native long nativeCreateImmutableMaterial(String lightingModel, long diffuseColor, long diffuseTexture, float diffuseIntensity, long specularTexture,
                                                       float shininess, float fresnelExponent, long normalMap, String cullMode,
@@ -1054,6 +1105,8 @@ public class Material {
     private native void nativeSetBloomThreshold(long nativeRef, float bloomThreshold);
     private native void nativeSetShadowMode(long nativeRef, String shadowMode);
     private native void nativeSetName(long nativeRef, String name);
+    private native void nativeSetChromaKeyFilteringEnabled(long nativeRef, boolean enabled);
+    private native void nativeSetChromaKeyFilteringColor(long nativeRef, int color);
 
     /**
      * Builder for creating {@link Material} objects.
