@@ -23,10 +23,24 @@ platform :android do
 
   desc "Build react library version ViroRenderer - viro_renderer-release.aar"
   desc "And copy it to ../../../react-viro/android/viro_renderer/"
-  lane :release_renderer_react_lib do
+  lane :renderer_viro_core_lib do
     ensure_git_status_clean
     git_pull
-    gradle(task: "assembleViro_reactRelease")
+    gradle(task: "clean")
+    gradle(task: ":viroreact:assembleRelease")
+    changelog_from_git_commits(commits_count: 5,
+                   pretty: "- (%ae) %s",
+                   date_format: "short",
+                   merge_commit_filtering: "exclude_merges") 
+  end
+
+
+  desc "Build viro core library version ViroRenderer - viro_core-release.aar"
+  lane :renderer_viro_react_lib do
+    ensure_git_status_clean
+    git_pull
+    gradle(task: "clean")
+    gradle(task: ":virocore:assembleRelease")
     changelog_from_git_commits(commits_count: 5,
                    pretty: "- (%ae) %s",
                    date_format: "short",
