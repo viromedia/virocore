@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2017-present, ViroMedia, Inc.
+ * Copyright (c) 2017-present, Viro Media, Inc.
  * All rights reserved.
  */
 
 /*
  * Java JNI wrapper for linking the following classes below across the bridge.
  *
- * Java JNI Wrapper     : com.viro.renderer.jni.SurfaceJni.java
  * Cpp JNI wrapper      : Surface_JNI.cpp
  * Cpp Object           : VROSurface.cpp
  */
@@ -15,11 +14,10 @@ package com.viro.core;
 import java.util.Arrays;
 
 /**
- * Surface represents a one-sided plane defined by a width and height.
- * This class has been deprecated, please use {@link Quad}
+ * Quad represents a one-sided plane defined by a width and height.
+ *
  */
-@Deprecated
-public class Surface extends Geometry {
+public class Quad extends Geometry {
 
     private float mWidth, mHeight;
 
@@ -29,7 +27,7 @@ public class Surface extends Geometry {
      * @param width  The extent of the Surface along its horizontal axis (X).
      * @param height The extent of the Surface along its vertical axis (Y).
      */
-    public Surface(float width, float height) {
+    public Quad(float width, float height) {
         this(width, height, 0, 0, 1, 1);
     }
 
@@ -59,19 +57,19 @@ public class Surface extends Geometry {
      * @param u1     The texture coordinate that specifies the end {@link Texture} left edge.
      * @param v1     The texture coordinate that specifies the end {@link Texture} top edge.
      */
-    public Surface(float width, float height, float u0, float v0, float u1, float v1) {
+    public Quad(float width, float height, float u0, float v0, float u1, float v1) {
         mWidth = width;
         mHeight = height;
-        mNativeRef = nativeCreateSurface(width, height, u0, v0, u1, v1);
+        mNativeRef = nativeCreateQuad(width, height, u0, v0, u1, v1);
     }
 
     /**
      * @hide
      */
     //#IFDEF 'viro_react'
-    public Surface(float width, float height, float u0, float v0, float u1, float v1,
+    public Quad(float width, float height, float u0, float v0, float u1, float v1,
                    Surface oldSurface) {
-        mNativeRef = nativeCreateSurfaceFromSurface(width, height, u0, v0, u1, v1,
+        mNativeRef = nativeCreateQuadFromQuad(width, height, u0, v0, u1, v1,
                 oldSurface.mNativeRef);
     }
     //#ENDIF
@@ -89,7 +87,7 @@ public class Surface extends Geometry {
      */
     public void dispose(){
         if (mNativeRef != 0) {
-            nativeDestroySurface(mNativeRef);
+            nativeDestroyQuad(mNativeRef);
             mNativeRef = 0;
         }
     }
@@ -132,11 +130,11 @@ public class Surface extends Geometry {
         return mHeight;
     }
 
-    private native long nativeCreateSurface(float width, float height, float u0, float v0, float u1, float v1);
-    private native long nativeCreateSurfaceFromSurface(float width, float height,
+    private native long nativeCreateQuad(float width, float height, float u0, float v0, float u1, float v1);
+    private native long nativeCreateQuadFromQuad(float width, float height,
                                                        float u0, float v0, float u1, float v1,
                                                        long oldSurfaceRef);
-    private native void nativeDestroySurface(long surfaceRef);
+    private native void nativeDestroyQuad(long surfaceRef);
     private native void nativeSetWidth(long surfaceRef, float width);
     private native void nativeSetHeight(long surfaceRef, float height);
     private native void nativeSetVideoTexture(long surfaceRef, long textureRef);

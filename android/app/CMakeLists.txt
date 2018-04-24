@@ -97,6 +97,7 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/jni/PhysicsBody_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/AnimationTransaction_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/MediaRecorder_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Quad_JNI.cpp
 
              # Math
              ${VIRO_RENDERER_SRC}/VROLineSegment.cpp

@@ -16,6 +16,7 @@ import android.support.test.espresso.core.deps.guava.collect.Iterables;
 import com.viro.core.AmbientLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.Quad;
 import com.viro.core.Surface;
 import com.viro.core.Texture;
 import com.viro.core.Vector;
@@ -30,8 +31,8 @@ import java.util.List;
  * Created by vadvani on 10/30/17.
  */
 
-public class ViroSurfaceTest extends ViroBaseTest {
-    private Surface mSurface;
+public class ViroQuadTest extends ViroBaseTest {
+    private Quad mSurface;
     private Node mNode;
 
     @Override
@@ -45,7 +46,7 @@ public class ViroSurfaceTest extends ViroBaseTest {
         material.setDiffuseColor(Color.RED);
         material.setLightingModel(Material.LightingModel.BLINN);
 
-        mSurface = new Surface(1, 1);
+        mSurface = new Quad(1, 1);
         mNode = new Node();
         mNode.setGeometry(mSurface);
         final float[] position = {0, 0, -10};
@@ -67,7 +68,7 @@ public class ViroSurfaceTest extends ViroBaseTest {
                 mSurface.setWidth(mSurface.getWidth() + 1);
             }
         };
-        assertPass("Surface width increased in size.");
+        assertPass("Quad width increased in size.");
     }
 
     public void surfaceHeight() {
@@ -76,7 +77,7 @@ public class ViroSurfaceTest extends ViroBaseTest {
                 mSurface.setHeight(mSurface.getHeight() + 1);
             }
         };
-        assertPass("Surface height increased in size.");
+        assertPass("Quad height increased in size.");
     }
 
     public void surfaceUVs() {
@@ -93,10 +94,10 @@ public class ViroSurfaceTest extends ViroBaseTest {
 
         mMutableTestMethod = () -> {
             Float numTilesUV = itr.next();
-            mSurface = new Surface(5, 5, 0, 0, numTilesUV , numTilesUV);
+            mSurface = new Quad(5, 5, 0, 0, numTilesUV , numTilesUV);
             mSurface.setMaterials(Arrays.asList(material));
             mNode.setGeometry(mSurface);
         };
-        assertPass("Surface tiles material 2, 4 and 8 times with UV coordinates.");
+        assertPass("Quad tiles material 2, 4 and 8 times with UV coordinates.");
     }
 }
