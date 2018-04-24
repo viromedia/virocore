@@ -35,18 +35,18 @@ void VROAnimationChain::execute(std::shared_ptr<VRONode> node,
 void VROAnimationChain::executeSerial(std::shared_ptr<VRONode> node, int animationIndex,
                                       std::function<void()> onFinished) {
     size_t numAnimations = _animations.size();
+    
     std::weak_ptr<VROAnimationChain> weakSelf = shared_from_this();
+    std::weak_ptr<VRONode> node_w = node;
     std::shared_ptr<VROExecutableAnimation> &animation = _animations[animationIndex];
     
-    // TODO VIRO-3442 Do not use a strong reference for the node here, it can result
-    //                in a reference cycle between the animation and the node
-    
-    std::function<void()> finishCallback = [node, weakSelf, animationIndex, numAnimations, onFinished](){
+    std::function<void()> finishCallback = [node_w, weakSelf, animationIndex, numAnimations, onFinished](){
         // Move to next group if chain isn't finished
         if (animationIndex < numAnimations - 1) {
             std::shared_ptr<VROAnimationChain> myself = weakSelf.lock();
-            if (myself) {
-                myself->executeSerial(node, animationIndex + 1, onFinished);
+            std::shared_ptr<VRONode> node_s = node_w.lock();
+            if (myself && node_s) {
+                myself->executeSerial(node_s, animationIndex + 1, onFinished);
             }
         }
         else {
