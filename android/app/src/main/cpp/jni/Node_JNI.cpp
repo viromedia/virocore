@@ -553,7 +553,7 @@ VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
     int length = VRO_ARRAY_LENGTH(stringArrayRef);
 
     for (int i = 0; i < length; i++) {
-        jstring string = VRO_STRING_ARRAY_GET(stringArrayRef, i);
+        VRO_STRING string = VRO_STRING_ARRAY_GET(stringArrayRef, i);
         std::string transformBehavior = VROPlatformGetString(string, env);
 
         // Parse out the constraints and save a copy into tempConstraints

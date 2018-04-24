@@ -158,7 +158,7 @@ VRO_METHOD(void, nativeSetMaxParticles)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
                                        VRO_REF native_ref,
-                                       jstring jShape,
+                                       VRO_STRING jShape,
                                        VRO_FLOAT_ARRAY jShapeParams,
                                        jboolean jSpawnOnSurface) {
 
@@ -261,8 +261,8 @@ VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
                                             VRO_REF native_ref,
-                                            jstring jModifier,
-                                            jstring jFactor,
+                                            VRO_STRING jModifier,
+                                            VRO_STRING jFactor,
                                             jobjectArray jInitialValues,
                                             jobjectArray jInterpolatedIntervalWindows,
                                             jobjectArray jInterpolatedPoints) {
@@ -302,7 +302,7 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
 
 VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
                                              VRO_REF native_ref,
-                                             jstring jblendMode) {
+                                             VRO_STRING jblendMode) {
     std::string strBlendMode = VROPlatformGetString(jblendMode, env);
     VROBlendMode mode = VROMaterial::getBlendModeFromString(strBlendMode);
     if (mode == VROBlendMode::None){

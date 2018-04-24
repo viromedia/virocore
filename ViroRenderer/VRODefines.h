@@ -45,7 +45,6 @@
 #define VRO_LONG jlong
 #define VRO_FLOAT jfloat
 #define VRO_DOUBLE jdouble
-#define VRO_STRING jstring
 #define VRO_ARRAY jobjectArray
 #define VRO_FLOAT_ARRAY jfloatArray
 #define VRO_INT_ARRAY jintArray
@@ -62,10 +61,22 @@
 #define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
     env->ReleaseFloatArrayElements(array, elements, 0);
 
+#define VRO_STRING jstring
+#define VRO_NEW_STRING(chars) \
+    env->NewStringUTF(chars);
+#define VRO_STRING_GET_CHARS(str) \
+    env->GetStringUTFChars(str, NULL)
+#define VRO_STRING_RELEASE_CHARS(str, chars) \
+    env->ReleaseStringUTFChars(str, chars);
+#define VRO_STRING_GET_CHARS_WIDE(str) \
+    env->GetStringChars(str, NULL)
+#define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
+    env->ReleaseStringChars(str, chars);
+
 #define VRO_NEW_STRING_ARRAY(size) \
     env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));
 #define VRO_STRING_ARRAY_GET(array, index) \
-    (jstring) (env->GetObjectArrayElement(array, index));
+    (VRO_STRING) (env->GetObjectArrayElement(array, index));
 
 #define VRO_STRING_ARRAY_SET(array, index, item) \
     jstring jkey = env->NewStringUTF(item.c_str()); \

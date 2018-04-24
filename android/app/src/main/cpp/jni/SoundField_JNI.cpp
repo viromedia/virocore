@@ -34,7 +34,7 @@ namespace SoundField {
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateSoundField)(VRO_ARGS
-                                            jstring filename,
+                                            VRO_STRING filename,
                                             VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::string file = VROPlatformGetString(filename, env);

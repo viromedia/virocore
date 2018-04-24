@@ -21,29 +21,27 @@ extern "C" {
 /*
  * Helper function that adds the candidate to the propertyMap if it isnt null.
  *
- * Note: this function releases the jstring candidate before returning!
+ * Note: this function releases the VRO_STRING candidate before returning!
  */
-void AddPropertyIfNotNull(JNIEnv *env, std::string property, jstring candidate,
+void AddPropertyIfNotNull(JNIEnv *env, std::string property, VRO_STRING candidate,
                           std::map<std::string, std::string> &propertyMap) {
     const char *candidateCStr = nullptr;
     if (candidate != NULL) {
-        candidateCStr = env->GetStringUTFChars(candidate, NULL);
-        std::string candidateStr(candidateCStr);
+        std::string candidateStr = VROPlatformGetString(candidate, env);
         propertyMap[property] = candidateStr;
-        env->ReleaseStringUTFChars(candidate, candidateCStr);
     }
 }
 
 VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
-                                                jstring positionX, jstring positionY, jstring positionZ,
-                                                jstring scaleX, jstring scaleY, jstring scaleZ,
-                                                jstring rotateX, jstring rotateY, jstring rotateZ,
-                                                jstring opacity, jstring color, VRO_REF lazyMaterialRef,
-                                                VRO_FLOAT durationSeconds, VRO_FLOAT delaySeconds, jstring functionType) {
+                                                VRO_STRING positionX, VRO_STRING positionY, VRO_STRING positionZ,
+                                                VRO_STRING scaleX, VRO_STRING scaleY, VRO_STRING scaleZ,
+                                                VRO_STRING rotateX, VRO_STRING rotateY, VRO_STRING rotateZ,
+                                                VRO_STRING opacity, VRO_STRING color, VRO_REF lazyMaterialRef,
+                                                VRO_FLOAT durationSeconds, VRO_FLOAT delaySeconds, VRO_STRING functionType) {
     std::map<std::string, std::string> animationProperties;
 
-    // NOTE: AddPropertyIfNotNull WILL release the jstring after its done running so don't
-    // use the jstring after!
+    // NOTE: AddPropertyIfNotNull WILL release the VRO_STRING after its done running so don't
+    // use the VRO_STRING after!
     AddPropertyIfNotNull(env, "positionX", positionX, animationProperties);
     AddPropertyIfNotNull(env, "positionY", positionY, animationProperties);
     AddPropertyIfNotNull(env, "positionZ", positionZ, animationProperties);

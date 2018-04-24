@@ -19,9 +19,9 @@ extern "C" {
 
 VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
                                         VRO_REF nativeRef,
-                                        jstring bodyTypeStr,
+                                        VRO_STRING bodyTypeStr,
                                         VRO_FLOAT mass,
-                                        jstring shapeTypeStr,
+                                        VRO_STRING shapeTypeStr,
                                         VRO_FLOAT_ARRAY shapeParams) {
     // Get Physics Body type
     std::string strBodyType = VROPlatformGetString(bodyTypeStr, env);
@@ -66,7 +66,7 @@ VRO_METHOD(void, nativeClearPhysicsBody)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
                                         VRO_REF nativeRef,
-                                        jstring shapeTypeStr,
+                                        VRO_STRING shapeTypeStr,
                                         VRO_FLOAT_ARRAY shapeParams) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
 
@@ -258,9 +258,9 @@ VRO_METHOD(void, nativeApplyPhysicsTorqueImpulse)(VRO_ARGS
     });
 }
 
-VRO_METHOD(jstring, nativeIsValidBodyType)(VRO_ARGS
-                                           jstring bodyType,
-                                           VRO_FLOAT mass) {
+VRO_METHOD(VRO_STRING, nativeIsValidBodyType)(VRO_ARGS
+                                              VRO_STRING bodyType,
+                                              VRO_FLOAT mass) {
     // Grab the physics body type
     std::string strBodyType = VROPlatformGetString(bodyType, env);
 
@@ -270,13 +270,13 @@ VRO_METHOD(jstring, nativeIsValidBodyType)(VRO_ARGS
     if (isValid) {
         return nullptr;
     } else {
-        return env->NewStringUTF(errorMsg.c_str());
+        return VRO_NEW_STRING(errorMsg.c_str());
     }
 }
 
-VRO_METHOD(jstring, nativeIsValidShapeType)(VRO_ARGS
-                                            jstring shapeType,
-                                            VRO_FLOAT_ARRAY shapeParams) {
+VRO_METHOD(VRO_STRING, nativeIsValidShapeType)(VRO_ARGS
+                                               VRO_STRING shapeType,
+                                               VRO_FLOAT_ARRAY shapeParams) {
     // Grab the shape type
     std::string strShapeType = VROPlatformGetString(shapeType, env);
 
@@ -295,7 +295,7 @@ VRO_METHOD(jstring, nativeIsValidShapeType)(VRO_ARGS
     if (isValid) {
         return nullptr;
     } else {
-        return env->NewStringUTF(errorMsg.c_str());
+        return VRO_NEW_STRING(errorMsg.c_str());
     }
 }
 

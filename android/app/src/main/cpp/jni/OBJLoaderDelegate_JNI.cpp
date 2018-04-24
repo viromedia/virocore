@@ -130,7 +130,7 @@ void OBJLoaderDelegate::objFailed(std::string error) {
             return;
         }
 
-        jstring jerror = env->NewStringUTF(error.c_str());
+        VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
         VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
 
         env->DeleteLocalRef(localObj);

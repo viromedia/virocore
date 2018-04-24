@@ -88,26 +88,26 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       VRO_REF context_j,
-                                      jstring text_j,
-                                      jstring fontFamily_j,
+                                      VRO_STRING text_j,
+                                      VRO_STRING fontFamily_j,
                                       jint size,
                                       jint style,
                                       jint weight,
                                       jlong color,
                                       VRO_FLOAT width,
                                       VRO_FLOAT height,
-                                      jstring horizontalAlignment_j,
-                                      jstring verticalAlignment_j,
-                                      jstring lineBreakMode_j,
-                                      jstring clipMode_j,
+                                      VRO_STRING horizontalAlignment_j,
+                                      VRO_STRING verticalAlignment_j,
+                                      VRO_STRING lineBreakMode_j,
+                                      VRO_STRING clipMode_j,
                                       jint maxLines) {
     // Get the text string
     std::wstring text;
     if (text_j != NULL){
-        const jchar *text_c = env->GetStringChars(text_j, NULL);
+        const jchar *text_c = VRO_STRING_GET_CHARS_WIDE(text_j);
         jsize textLength = env->GetStringLength(text_j);
         text.assign(text_c, text_c + textLength);
-        env->ReleaseStringChars(text_j, text_c);
+        VRO_STRING_RELEASE_CHARS_WIDE(text_j, text_c);
     }
 
     // Get the color
@@ -157,14 +157,14 @@ VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetText)(VRO_ARGS
                                 VRO_REF text_j,
-                                jstring text_string_j) {
+                                VRO_STRING text_string_j) {
 
-    const jchar *text_c = env->GetStringChars(text_string_j, NULL);
+    const jchar *text_c = VRO_STRING_GET_CHARS_WIDE(text_string_j);
     jsize textLength = env->GetStringLength(text_string_j);
 
     std::wstring text_string;
     text_string.assign(text_c, text_c + textLength);
-    env->ReleaseStringChars(text_string_j, text_c);
+    VRO_STRING_RELEASE_CHARS_WIDE(text_string_j, text_c);
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, text_string] {
@@ -179,7 +179,7 @@ VRO_METHOD(void, nativeSetText)(VRO_ARGS
 VRO_METHOD(void, nativeSetFont)(VRO_ARGS
                                 VRO_REF context_j,
                                 VRO_REF text_j,
-                                jstring family_j,
+                                VRO_STRING family_j,
                                 jint size,
                                 jint style,
                                 jint weight) {
@@ -247,7 +247,7 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
                                                VRO_REF text_j,
-                                               jstring horizontalAlignment_j) {
+                                               VRO_STRING horizontalAlignment_j) {
     VROTextHorizontalAlignment horizontalAlignment
             = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j, env));
 
@@ -263,7 +263,7 @@ VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
                                              VRO_REF text_j,
-                                             jstring verticalAlignment_j) {
+                                             VRO_STRING verticalAlignment_j) {
     VROTextVerticalAlignment verticalAlignment
             = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j, env));
 
@@ -279,7 +279,7 @@ VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
                                          VRO_REF text_j,
-                                         jstring lineBreakMode_j) {
+                                         VRO_STRING lineBreakMode_j) {
     VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
@@ -294,7 +294,7 @@ VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
                                     VRO_REF text_j,
-                                    jstring clipMode_j) {
+                                    VRO_STRING clipMode_j) {
 
     // Get clip mode
     VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j, env));

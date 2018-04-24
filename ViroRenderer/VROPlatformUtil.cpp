@@ -401,11 +401,11 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 
 std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jurl = env->NewStringUTF(url.c_str());
+    VRO_STRING jurl = VRO_NEW_STRING(url.c_str());
     
     jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
     jmethodID jmethod = env->GetMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
+    VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
     
     env->DeleteLocalRef(jurl);
     env->DeleteLocalRef(cls);
@@ -418,12 +418,8 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
         *success = true;
     }
 
-    const char *path = env->GetStringUTFChars(jpath, 0);
-    std::string spath(path);
-
+    std::string spath = VROPlatformGetString(jpath, env);
     pinfo("Downloaded URL [%s] to file [%s]", url.c_str(), spath.c_str());
-
-    env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
     
     *temp = true;
@@ -457,7 +453,7 @@ void VROPlatformDeleteFile(std::string filename) {
     }
 
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jfilename = env->NewStringUTF(filename.c_str());
+    VRO_STRING jfilename = VRO_NEW_STRING(filename.c_str());
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "deleteFile", "(Ljava/lang/String;)V");
@@ -469,11 +465,11 @@ void VROPlatformDeleteFile(std::string filename) {
 
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jasset = env->NewStringUTF(asset.c_str());
+    VRO_STRING jasset = VRO_NEW_STRING(asset.c_str());
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "copyResourceToFile", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
+    VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
     std::string spath = VROPlatformGetString(jpath, env);
     pinfo("Copied resource %s to [%s]", asset.c_str(), spath.c_str());
@@ -519,12 +515,12 @@ std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap
     for (int i = 0; i < setSize; i++) {
         // get individual value for key
         // get the key
-        jstring key = (jstring) env->GetObjectArrayElement(keyArray, i);
+        VRO_STRING key = (VRO_STRING) env->GetObjectArrayElement(keyArray, i);
         // convert to std::string
         std::string strKey = VROPlatformGetString(key, env);
         // get the value from the Map
         jmethodID mapGetMethod = env->GetMethodID(mapClass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-        jstring value = (jstring) env->CallObjectMethod(javaMap, mapGetMethod, key);
+        VRO_STRING value = (VRO_STRING) env->CallObjectMethod(javaMap, mapGetMethod, key);
         // convert to std::string
         std::string strValue = VROPlatformGetString(value, env);
         // add to the map
@@ -563,11 +559,11 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
 
 std::string VROPlatformCopyAssetToFile(std::string asset) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jasset = env->NewStringUTF(asset.c_str());
+    VRO_STRING jasset = VRO_NEW_STRING(asset.c_str());
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "copyAssetToFile", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
+    VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
     std::string spath = VROPlatformGetString(jpath, env);
     pinfo("Copied asset %s to [%s]", asset.c_str(), spath.c_str());
@@ -581,13 +577,13 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
 
 std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isItalic, int weight) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jtypeface = env->NewStringUTF(typeface.c_str());
+    VRO_STRING jtypeface = VRO_NEW_STRING(typeface.c_str());
     
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jfindFontFile = env->GetMethodID(cls, "findFontFile", "(Ljava/lang/String;ZI)Ljava/lang/String;");
     jmethodID jfindFontIndex = env->GetMethodID(cls, "findFontIndex", "(Ljava/lang/String;ZI)I");
 
-    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jfindFontFile, jtypeface, isItalic, weight);
+    VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jfindFontFile, jtypeface, isItalic, weight);
 
     std::string path;
     int index = -1;
@@ -629,7 +625,7 @@ jobject VROPlatformLoadBitmapFromAsset(std::string asset, VROTextureInternalForm
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromAsset", "(Ljava/lang/String;Z)Landroid/graphics/Bitmap;");
 
-    jstring string = env->NewStringUTF(asset.c_str());
+    VRO_STRING string = VRO_NEW_STRING(asset.c_str());
     jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string,
                                             format == VROTextureInternalFormat::RGB565);
 
@@ -645,7 +641,7 @@ jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromFile", "(Ljava/lang/String;Z)Landroid/graphics/Bitmap;");
 
-    jstring string = env->NewStringUTF(path.c_str());
+    VRO_STRING string = VRO_NEW_STRING(path.c_str());
     jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string,
                                             format == VROTextureInternalFormat::RGB565);
 
@@ -705,7 +701,7 @@ void VROPlatformSaveRGBAImage(void *data, int length, int width, int height, std
     jclass cls = env->GetObjectClass(sPlatformUtil);
 
     jobject jbuffer = env->NewDirectByteBuffer(data, length);
-    jstring jpath = env->NewStringUTF(filename.c_str());
+    VRO_STRING jpath = VRO_NEW_STRING(filename.c_str());
     jmethodID jsaveRGBAImageToFile = env->GetMethodID(cls, "saveRGBAImageToFile", "(Ljava/nio/ByteBuffer;IILjava/lang/String;)V");
 
     env->CallVoidMethod(sPlatformUtil, jsaveRGBAImageToFile, jbuffer, width, height, jpath);
@@ -876,7 +872,7 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
     jclass classLoaderClass = jni->FindClass("java/lang/ClassLoader");
     jmethodID loadClassMethodId = jni->GetMethodID(classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;" );
 
-    jstring jclassName = jni->NewStringUTF(className);
+    VRO_STRING jclassName = jni->NewStringUTF(className);
     jclass cls = static_cast<jclass>(jni->CallObjectMethod(classLoader, loadClassMethodId, jclassName));
     if (cls == 0) {
         perr("Failed to locate class %s using activity class loader", className);
@@ -993,7 +989,7 @@ void VROPlatformSetString(JNIEnv *env, jclass cls, jobject jObj, const char *fie
         return;
     }
 
-    jstring jValue = env->NewStringUTF(value.c_str());
+    VRO_STRING jValue = VRO_NEW_STRING(value.c_str());
     env->SetObjectField(jObj, fieldId, jValue);
 }
 
@@ -1016,7 +1012,7 @@ void VROPlatformSetEnumValue(JNIEnv *env, jclass jObjClass, jobject jObj, const 
     env->DeleteLocalRef(jEnumValue);
 }
 
-std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){
+std::string VROPlatformGetString(VRO_STRING jInputString, JNIEnv *env){
     if (env == NULL){
         env = VROPlatformGetJNIEnv();
         env->ExceptionClear();
@@ -1026,9 +1022,9 @@ std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){
         return "";
     }
 
-    const char *inputString_c = env->GetStringUTFChars(jInputString, NULL);
+    const char * inputString_c = VRO_STRING_GET_CHARS(jInputString);
     std::string sInputString(inputString_c);
-    env->ReleaseStringUTFChars(jInputString, inputString_c);
+    VRO_STRING_RELEASE_CHARS(jInputString, inputString_c);
 
     return sInputString;
 }
@@ -1039,7 +1035,7 @@ std::string VROPlatformGetDeviceModel() {
     jclass cls = env->FindClass("android/os/Build");
     jfieldID modelFieldID = env->GetStaticFieldID(cls, "MODEL", "Ljava/lang/String;");
 
-    jstring jModelString = (jstring) env->GetStaticObjectField(cls, modelFieldID);
+    VRO_STRING jModelString = (VRO_STRING) env->GetStaticObjectField(cls, modelFieldID);
 
     return VROPlatformGetString(jModelString, env);
 }
@@ -1050,7 +1046,7 @@ std::string VROPlatformGetDeviceBrand() {
     jclass cls = env->FindClass("android/os/Build");
     jfieldID brandFieldID = env->GetStaticFieldID(cls, "BRAND", "Ljava/lang/String;");
 
-    jstring jBrandString = (jstring) env->GetStaticObjectField(cls, brandFieldID);
+    VRO_STRING jBrandString = (VRO_STRING) env->GetStaticObjectField(cls, brandFieldID);
 
     return VROPlatformGetString(jBrandString, env);
 }
@@ -1061,7 +1057,7 @@ std::string VROPlatformGetCacheDirectory() {
 
     jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
     jmethodID jmethod = env->GetMethodID(cls, "getCacheDirectory", "()Ljava/lang/String;");
-    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod);
+    VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod);
 
     return VROPlatformGetString(jpath, env);
 }
@@ -1075,7 +1071,7 @@ void VROPlatformSetTrackingImageView(std::string filepath) {
         jclass cls = env->FindClass("com/viro/core/ViroViewARCore");
         jmethodID jmethod = env->GetStaticMethodID(cls, "setImageOnTrackingImageView", "(Ljava/lang/String;)Z");
 
-        jstring string = env->NewStringUTF(filepath.c_str());
+        VRO_STRING string = VRO_NEW_STRING(filepath.c_str());
 
         env->CallStaticBooleanMethod(cls, jmethod, string);
 

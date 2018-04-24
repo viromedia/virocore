@@ -26,7 +26,7 @@
 
 namespace Texture {
 
-    VROTextureFormat getInputFormat(JNIEnv *env, jstring jformat) {
+    VROTextureFormat getInputFormat(JNIEnv *env, VRO_STRING jformat) {
         std::string sformat = VROPlatformGetString(jformat, env);
 
         VROTextureFormat ret = VROTextureFormat::RGBA8;
@@ -40,7 +40,7 @@ namespace Texture {
         return ret;
     }
 
-    VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {
+    VROTextureInternalFormat getFormat(JNIEnv *env, VRO_STRING jformat) {
         std::string sformat = VROPlatformGetString(jformat, env);
         VROTextureInternalFormat ret = VROTextureInternalFormat::RGBA8;
         if (sformat == "RGBA4") {
@@ -55,7 +55,7 @@ namespace Texture {
         return ret;
     }
 
-    VROWrapMode getWrapMode(JNIEnv *env, jstring jwrapMode) {
+    VROWrapMode getWrapMode(JNIEnv *env, VRO_STRING jwrapMode) {
         std::string swrapMode = VROPlatformGetString(jwrapMode, env);
         VROWrapMode ret = VROWrapMode::Clamp;
         if (swrapMode == "Repeat") {
@@ -67,7 +67,7 @@ namespace Texture {
         return ret;
     }
 
-    VROFilterMode getFilterMode(JNIEnv *env, jstring jfilterMode) {
+    VROFilterMode getFilterMode(JNIEnv *env, VRO_STRING jfilterMode) {
         std::string sfilterMode = VROPlatformGetString(jfilterMode, env);
         VROFilterMode ret = VROFilterMode::Linear;
         if (sfilterMode == "Nearest") {
@@ -76,7 +76,7 @@ namespace Texture {
         return ret;
     }
 
-    VROStereoMode getStereoMode(JNIEnv *env, jstring stereoMode) {
+    VROStereoMode getStereoMode(JNIEnv *env, VRO_STRING stereoMode) {
         if (stereoMode != NULL) {
             std::string strStereoMode = VROPlatformGetString(stereoMode, env);
             return VROTextureUtil::getStereoModeForString(strStereoMode);
@@ -152,7 +152,7 @@ namespace Texture {
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateRadianceHDRTexture)(VRO_ARGS_STATIC
-                                                    jstring uri_j) {
+                                                    VRO_STRING uri_j) {
     std::string uri = VROPlatformGetString(uri_j, env);
     bool isTemp, success;
     std::string path = VROModelIOUtil::retrieveResource(uri, VROResourceType::URL, &isTemp, &success);
@@ -186,7 +186,7 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTexture)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageTexture)(VRO_ARGS
                                               VRO_REF image,
-                                              jboolean sRGB, jboolean mipmap, jstring stereoMode) {
+                                              jboolean sRGB, jboolean mipmap, VRO_STRING stereoMode) {
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
@@ -199,7 +199,7 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTextureBitmap)(VRO_ARGS
                                                    jobject px, jobject nx,
                                                    jobject py, jobject ny,
                                                    jobject pz, jobject nz,
-                                                   jstring format_s) {
+                                                   VRO_STRING format_s) {
 
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
     std::vector<std::shared_ptr<VROImage>> cubeImages = {std::make_shared<VROImageAndroid>(px, format),
@@ -214,8 +214,8 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTextureBitmap)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
                                                     jobject bitmap,
-                                                    jstring format_s, jboolean sRGB,
-                                                    jboolean mipmap, jstring stereoMode) {
+                                                    VRO_STRING format_s, jboolean sRGB,
+                                                    jboolean mipmap, VRO_STRING stereoMode) {
 
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
@@ -228,9 +228,9 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
                                                   jobject jbuffer, jint width, jint height,
-                                                  jstring inputFormat_s, jstring storageFormat_s,
+                                                  VRO_STRING inputFormat_s, VRO_STRING storageFormat_s,
                                                   jboolean sRGB, jboolean mipmap,
-                                                  jstring stereoMode_s) {
+                                                  VRO_STRING stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
     jlong capacity = env->GetDirectBufferCapacity(jbuffer);
 
@@ -248,7 +248,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureVHD)(VRO_ARGS
-                                                 jobject jbuffer, jstring stereoMode_s) {
+                                                 jobject jbuffer, VRO_STRING stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
     jlong capacity = env->GetDirectBufferCapacity(jbuffer);
 
@@ -285,31 +285,31 @@ VRO_METHOD(jint, nativeGetTextureHeight)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetWrapS)(VRO_ARGS
-                                 VRO_REF nativeRef, jstring wrapS) {
+                                 VRO_REF nativeRef, VRO_STRING wrapS) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setWrapS(Texture::getWrapMode(env, wrapS));
 }
 
 VRO_METHOD(void, nativeSetWrapT)(VRO_ARGS
-                                 VRO_REF nativeRef, jstring wrapT) {
+                                 VRO_REF nativeRef, VRO_STRING wrapT) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setWrapT(Texture::getWrapMode(env, wrapT));
 }
 
 VRO_METHOD(void, nativeSetMinificationFilter)(VRO_ARGS
-                                              VRO_REF nativeRef, jstring minFilter) {
+                                              VRO_REF nativeRef, VRO_STRING minFilter) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setMinificationFilter(Texture::getFilterMode(env, minFilter));
 }
 
 VRO_METHOD(void, nativeSetMagnificationFilter)(VRO_ARGS
-                                               VRO_REF nativeRef, jstring magFilter) {
+                                               VRO_REF nativeRef, VRO_STRING magFilter) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setMagnificationFilter(Texture::getFilterMode(env, magFilter));
 }
 
 VRO_METHOD(void, nativeSetMipFilter)(VRO_ARGS
-                                     VRO_REF nativeRef, jstring mipFilter) {
+                                     VRO_REF nativeRef, VRO_STRING mipFilter) {
     std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
     texture->setMipFilter(Texture::getFilterMode(env, mipFilter));
 }

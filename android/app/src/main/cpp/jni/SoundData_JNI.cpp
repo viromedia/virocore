@@ -17,7 +17,7 @@
 extern "C" {
 
     VRO_METHOD(VRO_REF, nativeCreateSoundData)(VRO_ARGS
-                                               jstring filepath) {
+                                               VRO_STRING filepath) {
         std::string path = VROPlatformGetString(filepath, env);
 
         // Set the platform env because the renderer could've not been initialized yet (and set
@@ -86,7 +86,7 @@ void VROSoundDataDelegate_JNI::dataError(std::string error){
             return;
         }
 
-        jstring jerror = env->NewStringUTF(error.c_str());
+        VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
         VROPlatformCallJavaFunction(localObj, "dataError", "(Ljava/lang/String;)V", jerror);
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(weakObj);

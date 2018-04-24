@@ -39,7 +39,7 @@ extern "C" {
      * web urls vs local file urls, the Android MediaPlayer handles both.
      */
     VRO_METHOD(VRO_REF, nativeCreateSound)(VRO_ARGS
-                                           jstring filename,
+                                           VRO_STRING filename,
                                            VRO_REF context_j) {
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);

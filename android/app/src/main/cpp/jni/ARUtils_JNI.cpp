@@ -17,7 +17,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     const char *achorIdArr = anchor->getId().c_str();
-    jstring anchorId = env->NewStringUTF(achorIdArr);
+    VRO_STRING anchorId = VRO_NEW_STRING(achorIdArr);
 
     VROMatrix4f transform = anchor->getTransform();
     VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
@@ -38,13 +38,13 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
         jclass cls = env->FindClass("com/viro/core/ARPlaneAnchor");
         jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F[F)V");
 
-        jstring alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
+        VRO_STRING alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
         VRO_FLOAT_ARRAY extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
         VRO_FLOAT_ARRAY centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
         VRO_FLOAT_ARRAY polygonPointsArray = ARUtilsCreatePointsArray(plane->getBoundaryVertices());
 
         const char *typeArr = "plane";
-        jstring type = env->NewStringUTF(typeArr);
+        VRO_STRING type = VRO_NEW_STRING(typeArr);
 
         return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray,
                                             alignment, extentArray, centerArray, polygonPointsArray);
@@ -61,7 +61,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
         jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
 
         const char *typeArr = "image";
-        jstring type = env->NewStringUTF(typeArr);
+        VRO_STRING type = VRO_NEW_STRING(typeArr);
         return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
     }
 
@@ -75,7 +75,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
     jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
 
     const char *typeArr = "anchor";
-    jstring type = env->NewStringUTF(typeArr);
+    VRO_STRING type = VRO_NEW_STRING(typeArr);
     return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
 
 }
@@ -109,7 +109,7 @@ VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBo
     return returnArray;
 }
 
-jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
+VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     const char *strArr;
     if (alignment == VROARPlaneAlignment::Horizontal) {
@@ -124,7 +124,7 @@ jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     else {
         strArr = "NonHorizontal";
     }
-    return env->NewStringUTF(strArr);
+    return VRO_NEW_STRING(strArr);
 }
 
 jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
@@ -132,7 +132,7 @@ jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
     jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>", "(Ljava/lang/String;[F[F[F)V");
-    jstring jtypeString;
+    VRO_STRING jtypeString;
     VRO_FLOAT_ARRAY jposition = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT_ARRAY jscale = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT_ARRAY jrotation = VRO_NEW_FLOAT_ARRAY(3);
@@ -160,7 +160,7 @@ jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
             break;
     }
 
-    jtypeString = env->NewStringUTF(typeString);
+    jtypeString = VRO_NEW_STRING(typeString);
     return env->NewObject(arHitTestResultClass, constructorMethod, jtypeString,
                           jposition, jscale, jrotation);
 }

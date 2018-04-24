@@ -150,8 +150,8 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
                                      VRO_REF sceneRef, VRO_REF context_j,
-                                     VRO_FLOAT sizeX, VRO_FLOAT sizeY, VRO_FLOAT sizeZ, jstring wallMaterial,
-                                     jstring ceilingMaterial, jstring floorMaterial) {
+                                     VRO_FLOAT sizeX, VRO_FLOAT sizeY, VRO_FLOAT sizeZ, VRO_STRING wallMaterial,
+                                     VRO_STRING ceilingMaterial, VRO_STRING floorMaterial) {
     std::string strWallMaterial = VROPlatformGetString(wallMaterial, env);
     std::string strCeilingMaterial = VROPlatformGetString(ceilingMaterial, env);
     std::string strFloorMaterial = VROPlatformGetString(floorMaterial, env);
@@ -182,7 +182,7 @@ VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
     if (jEffects != NULL) {
         int numberOfValues = VRO_ARRAY_LENGTH(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
-            jstring jEffect = (jstring) env->GetObjectArrayElement(jEffects, i);
+            VRO_STRING jEffect = (VRO_STRING) env->GetObjectArrayElement(jEffects, i);
             std::string strEffect = VROPlatformGetString(jEffect, env);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
             effects.push_back(strEffect);
@@ -231,7 +231,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                                              VRO_FLOAT_ARRAY fromPos,
                                              VRO_FLOAT_ARRAY toPos,
                                              jboolean closest,
-                                             jstring tag,
+                                             VRO_STRING tag,
                                              jobject callback) {
 
     // Grab start position from which to perform the collision test
@@ -287,9 +287,9 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
                                                VRO_REF sceneRef,
                                                VRO_FLOAT_ARRAY posStart,
                                                VRO_FLOAT_ARRAY posEnd,
-                                               jstring shapeType,
+                                               VRO_STRING shapeType,
                                                VRO_FLOAT_ARRAY shapeParams,
-                                               jstring tag,
+                                               VRO_STRING tag,
                                                jobject callback) {
 
     // Grab start position from which to perform the collision test

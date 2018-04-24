@@ -15,9 +15,9 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateARImageTarget)(VRO_ARGS
                                                jobject bitmap,
-                                               jstring orientation,
+                                               VRO_STRING orientation,
                                                VRO_FLOAT physicalWidth,
-                                               jstring id) {
+                                               VRO_STRING id) {
     VROPlatformSetEnv(env);
 
     std::string strOrientation = VROPlatformGetString(orientation, env);

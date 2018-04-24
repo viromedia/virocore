@@ -12,7 +12,7 @@ extern "C" {
 
 VRO_METHOD(void, nativeSetAnchorId) (VRO_ARGS
                                      VRO_REF node_j,
-                                     jstring id_j) {
+                                     VRO_STRING id_j) {
     std::string id_s = VROPlatformGetString(id_j, env);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setAnchorId(id_s);

@@ -352,16 +352,16 @@ VRO_METHOD(void, nativeOnSurfaceDestroyed)(VRO_ARGS
     Renderer::native(native_renderer)->onSurfaceDestroyed();
 }
 
-VRO_METHOD(jstring, nativeGetHeadset)(VRO_ARGS
-                                      VRO_REF nativeRenderer) {
+VRO_METHOD(VRO_STRING, nativeGetHeadset)(VRO_ARGS
+                                         VRO_REF nativeRenderer) {
     std::string headset = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getHeadset();
-    return env->NewStringUTF(headset.c_str());
+    return VRO_NEW_STRING(headset.c_str());
 }
 
-VRO_METHOD(jstring, nativeGetController)(VRO_ARGS
-                                         VRO_REF nativeRenderer) {
+VRO_METHOD(VRO_STRING, nativeGetController)(VRO_ARGS
+                                            VRO_REF nativeRenderer) {
     std::string controller = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getController();
-    return env->NewStringUTF(controller.c_str());
+    return VRO_NEW_STRING(controller.c_str());
 }
 
 VRO_METHOD(void, nativeSetDebugHUDEnabled)(VRO_ARGS

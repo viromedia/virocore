@@ -59,7 +59,7 @@ VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetAnchorId)(VRO_ARGS
                                     VRO_REF nativeARPlane,
-                                    jstring id) {
+                                    VRO_STRING id) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
     arPlane->setId(VROPlatformGetString(id, env));
 }

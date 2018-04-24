@@ -98,10 +98,10 @@ VRO_METHOD(VRO_REF, nativeCreateMaterial)(VRO_NO_ARGS) {
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImmutableMaterial)(VRO_ARGS
-                                                   jstring lightingModel, jlong diffuseColor, VRO_REF diffuseTexture,
+                                                   VRO_STRING lightingModel, jlong diffuseColor, VRO_REF diffuseTexture,
                                                    VRO_FLOAT diffuseIntensity, VRO_REF specularTexture,
-                                                   VRO_FLOAT shininess, VRO_FLOAT fresnelExponent, VRO_REF normalMap, jstring cullMode,
-                                                   jstring transparencyMode, jstring blendMode, VRO_FLOAT bloomThreshold,
+                                                   VRO_FLOAT shininess, VRO_FLOAT fresnelExponent, VRO_REF normalMap, VRO_STRING cullMode,
+                                                   VRO_STRING transparencyMode, VRO_STRING blendMode, VRO_FLOAT bloomThreshold,
                                                    jboolean writesToDepthBuffer, jboolean readsFromDepthBuffer) {
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setLightingModel(parseLightingModel(VROPlatformGetString(lightingModel, env)));
@@ -148,7 +148,7 @@ VRO_METHOD(void, nativeSetReadsFromDepthBuffer)(VRO_ARGS
 VRO_METHOD(void, nativeSetTexture)(VRO_ARGS
                                    VRO_REF material_j,
                                    VRO_REF textureRef,
-                                   jstring materialPropertyName) {
+                                   VRO_STRING materialPropertyName) {
     std::string strName = VROPlatformGetString(materialPropertyName, env);
 
     std::shared_ptr<VROTexture> texture;
@@ -189,7 +189,7 @@ VRO_METHOD(void, nativeSetTexture)(VRO_ARGS
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  VRO_REF material_j,
                                  jlong color,
-                                 jstring materialPropertyName) {
+                                 VRO_STRING materialPropertyName) {
     std::string strName = VROPlatformGetString(materialPropertyName, env);
     VROVector4f vecColor = parseColor(color);
 
@@ -222,7 +222,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
 VRO_METHOD(void, nativeSetFloat)(VRO_ARGS
                                  VRO_REF material_j,
                                  VRO_FLOAT value,
-                                 jstring name_j) {
+                                 VRO_STRING name_j) {
     std::string name_s = VROPlatformGetString(name_j, env);
 
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
@@ -264,7 +264,7 @@ VRO_METHOD(void, nativeSetFresnelExponent)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetLightingModel)(VRO_ARGS
                                          VRO_REF material_j,
-                                         jstring lightingModelName) {
+                                         VRO_STRING lightingModelName) {
     std::string strName = VROPlatformGetString(lightingModelName, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
 
@@ -278,7 +278,7 @@ VRO_METHOD(void, nativeSetLightingModel)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetBlendMode)(VRO_ARGS
                                      VRO_REF material_j,
-                                     jstring blendMode_s) {
+                                     VRO_STRING blendMode_s) {
     std::string blendMode = VROPlatformGetString(blendMode_s, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
 
@@ -292,7 +292,7 @@ VRO_METHOD(void, nativeSetBlendMode)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetTransparencyMode)(VRO_ARGS
                                             VRO_REF material_j,
-                                            jstring transparencyModeName) {
+                                            VRO_STRING transparencyModeName) {
     std::string strName = VROPlatformGetString(transparencyModeName, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
 
@@ -306,7 +306,7 @@ VRO_METHOD(void, nativeSetTransparencyMode)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetCullMode)(VRO_ARGS
                                     VRO_REF material_j,
-                                    jstring cullModeName) {
+                                    VRO_STRING cullModeName) {
     std::string strName = VROPlatformGetString(cullModeName, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
 
@@ -346,7 +346,7 @@ VRO_METHOD(void, nativeDestroyMaterial)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowMode(VRO_ARGS
-                                     VRO_REF material_j, jstring shadow_j)) {
+                                     VRO_REF material_j, VRO_STRING shadow_j)) {
     std::string shadow_s = VROPlatformGetString(shadow_j, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
 
@@ -372,7 +372,7 @@ VRO_METHOD(void, nativeSetShadowMode(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetName(VRO_ARGS
-                               VRO_REF jMaterial, jstring jName)) {
+                               VRO_REF jMaterial, VRO_STRING jName)) {
     std::string strName = VROPlatformGetString(jName, env);
     std::weak_ptr<VROMaterial> material_w = Material::native(jMaterial);
 

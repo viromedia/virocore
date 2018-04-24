@@ -22,7 +22,7 @@ extern "C" {
 VRO_METHOD(VRO_REF, nativeCreateARPlane)(VRO_ARGS
                                          VRO_FLOAT minWidth,
                                          VRO_FLOAT minHeight,
-                                         jstring jAlignment) {
+                                         VRO_STRING jAlignment) {
 
     std::string strAlignment = VROPlatformGetString(jAlignment, env);
     VROARPlaneAlignment alignment = VROARPlaneAlignment::Horizontal;
@@ -58,7 +58,7 @@ VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetAlignment)(VRO_ARGS
                                      VRO_REF nativeARPlane,
-                                     jstring jAlignment) {
+                                     VRO_STRING jAlignment) {
     std::string strAlignment = VROPlatformGetString(jAlignment, env);
     std::shared_ptr<VROARDeclarativePlane> arPlane = ARDeclarativePlane::native(nativeARPlane);
     if (VROStringUtil::strcmpinsensitive(strAlignment, "Horizontal")) {

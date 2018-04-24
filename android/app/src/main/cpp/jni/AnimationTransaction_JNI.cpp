@@ -64,7 +64,7 @@ VRO_METHOD(void, nativeSetAnimationLoop)(VRO_ARGS_STATIC
 }
 
 VRO_METHOD(void, nativeSetTimingFunction)(VRO_ARGS_STATIC
-                                          jstring timing_j) {
+                                          VRO_STRING timing_j) {
     std::string timing_s = VROPlatformGetString(timing_j, env);
     VROTimingFunctionType timing = VROTimingFunctionType::Linear;
     if (VROStringUtil::strcmpinsensitive(timing_s, "easein")) {

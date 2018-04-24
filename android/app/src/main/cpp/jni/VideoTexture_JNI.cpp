@@ -30,7 +30,7 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateVideoTexture)(VRO_ARGS
                                               VRO_REF context_j,
-                                              jstring stereoMode) {
+                                              VRO_STRING stereoMode) {
     VROStereoMode mode = VROTextureUtil::getStereoModeForString(VROPlatformGetString(stereoMode, env));
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(mode);
@@ -168,7 +168,7 @@ VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
 
 VRO_METHOD(void, nativeLoadSource)(VRO_ARGS
                                    VRO_REF textureRef,
-                                   jstring source,
+                                   VRO_STRING source,
                                    VRO_REF context_j) {
     // Grab required objects from the RenderContext required for initialization
     std::string strVideoSource = VROPlatformGetString(source, env);

@@ -71,7 +71,7 @@ VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetRotationType)(VRO_ARGS
                                         VRO_REF nativeCamera,
-                                        jstring rotationType) {
+                                        VRO_STRING rotationType) {
     VROCameraRotationType type;
     if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(rotationType, env), "orbit")) {
         type = VROCameraRotationType::Orbit;

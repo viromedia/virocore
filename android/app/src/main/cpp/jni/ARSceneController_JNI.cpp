@@ -145,7 +145,7 @@ VRO_METHOD(void, nativeSetAnchorDetectionTypes)(JNIEnv *env, VRO_REF sceneRef, j
 
     int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
     for (int i = 0; i < stringCount; i++) {
-        std::string typeString = VROPlatformGetString((jstring) env->GetObjectArrayElement(typeStrArray, i), env);
+        std::string typeString = VROPlatformGetString((VRO_STRING) env->GetObjectArrayElement(typeStrArray, i), env);
         if (VROStringUtil::strcmpinsensitive(typeString, "None")) {
             types.insert(VROAnchorDetection::None);
         } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {

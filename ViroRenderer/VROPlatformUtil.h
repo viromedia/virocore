@@ -237,7 +237,7 @@ void VROPlatformSetEnumValue(JNIEnv *env, jclass cls, jobject jObj, const char *
                              std::string enumClassPathName, std::string enumValueStr);
 
 // Safely converts the given string with the provided jni environment.
-std::string VROPlatformGetString(jstring string, JNIEnv *env);
+std::string VROPlatformGetString(VRO_STRING string, JNIEnv *env);
 
 #pragma mark - Android Image Tracking Debugging
 /*

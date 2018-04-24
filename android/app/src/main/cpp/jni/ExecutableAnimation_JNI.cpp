@@ -20,16 +20,14 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeWrapNodeAnimation)(VRO_ARGS
                                              VRO_REF nodeRef,
-                                             jstring jkey) {
+                                             VRO_STRING jkey) {
 
     std::shared_ptr<VRONode> node = Node::native(nodeRef);
 
     std::shared_ptr<VROExecutableAnimation> animation;
     if (jkey != NULL) {
-        const char *key_c = env->GetStringUTFChars(jkey, NULL);
-        std::string key_s(key_c);
+        std::string key_s = VROPlatformGetString(jkey, env);
         animation = node->getAnimation(key_s, true);
-        env->ReleaseStringUTFChars(jkey, key_c);
     }
 
     if (animation) {

@@ -49,8 +49,8 @@ cv::Mat openCVParseBitmapImage(JNIEnv *env, jobject bitmap) {
 }
 
 VRO_METHOD(void, nativeRunEdgeDetection)(VRO_ARGS
-                                         jstring jinputFile,
-                                         jstring joutputFile) {
+                                         VRO_STRING jinputFile,
+                                         VRO_STRING joutputFile) {
     // Get the strings
     std::string inputFileName = VROPlatformGetString(jinputFile, env);
     std::string outputFileName = VROPlatformGetString(joutputFile, env);
@@ -64,7 +64,7 @@ VRO_METHOD(void, nativeRunEdgeDetection)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeReadWriteBitmap)(VRO_ARGS
-                                        jstring jinstring, jstring joutstring) {
+                                        VRO_STRING jinstring, VRO_STRING joutstring) {
     std::string inputFilePath = VROPlatformGetString(jinstring, env);
     std::string outputFilePath = VROPlatformGetString(joutstring, env);
 

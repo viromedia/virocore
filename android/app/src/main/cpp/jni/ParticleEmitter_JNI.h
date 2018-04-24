@@ -29,7 +29,7 @@ namespace ParticleEmitter {
     }
 
     inline std::shared_ptr<VROParticleModifier> getParticleModifier(JNIEnv *env,
-                                                                    jstring jFactor,
+                                                                    VRO_STRING jFactor,
                                                                     jobjectArray jInitialValue,
                                                                     jobjectArray jInterpolatedIntervals,
                                                                     jobjectArray jInterpolatedValues) {

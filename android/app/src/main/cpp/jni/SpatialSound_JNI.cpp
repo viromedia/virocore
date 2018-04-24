@@ -22,7 +22,7 @@
 
 extern "C" {
 VRO_METHOD(VRO_REF, nativeCreateSpatialSound)(VRO_ARGS
-                                              jstring uri_j,
+                                              VRO_STRING uri_j,
                                               VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::string uri = VROPlatformGetString(uri_j, env);
@@ -88,7 +88,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
                                            VRO_REF nativeRef,
-                                           jstring model,
+                                           VRO_STRING model,
                                            VRO_FLOAT minDistance,
                                            VRO_FLOAT maxDistance) {
     std::string modelString = VROPlatformGetString(model, env);
