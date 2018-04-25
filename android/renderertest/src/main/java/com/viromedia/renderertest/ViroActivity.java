@@ -865,36 +865,38 @@ public class ViroActivity extends AppCompatActivity {
 
             @Override
             public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
-                int bitmask = 4;
 
-                Log.i("Viro", "Found anchor!");
-                final Spotlight spot = new Spotlight(Color.RED, 1000.0f, 1,
-                        10, new Vector(0, 4, 0),
-                        new Vector(0, -1, 0), (float) Math.toRadians(2), (float) Math.toRadians(10));
-                spot.setInfluenceBitMask(bitmask);
-                spot.setCastsShadow(true);
+                Log.i("Viro", "Found anchor! Type: " + anchor.getType().getStringValue());
+                if (anchor.getType() == ARAnchor.Type.PLANE) {
+                    int bitmask = 4;
+                    final Spotlight spot = new Spotlight(Color.RED, 1000.0f, 1,
+                            10, new Vector(0, 4, 0),
+                            new Vector(0, -1, 0), (float) Math.toRadians(2), (float) Math.toRadians(10));
+                    spot.setInfluenceBitMask(bitmask);
+                    spot.setCastsShadow(true);
 
-                node.addLight(spot);
-                node.addChildNode(loadObjectNode(bitmask | 1));
-                node.setDragListener(new DragListener() {
-                    @Override
-                    public void onDrag(int source, Node node, Vector worldLocation, Vector localLocation) {
+                    node.addLight(spot);
+                    node.addChildNode(loadObjectNode(bitmask | 1));
+                    node.setDragListener(new DragListener() {
+                        @Override
+                        public void onDrag(int source, Node node, Vector worldLocation, Vector localLocation) {
 
-                    }
-                });
+                        }
+                    });
 
-                Surface surface = new Surface(2, 2);
-                Material material = new Material();
-                material.setDiffuseColor(Color.WHITE);
-                material.setShadowMode(Material.ShadowMode.TRANSPARENT);
-                surface.setMaterials(Arrays.asList(material));
+                    Surface surface = new Surface(2, 2);
+                    Material material = new Material();
+                    material.setDiffuseColor(Color.WHITE);
+                    material.setShadowMode(Material.ShadowMode.TRANSPARENT);
+                    surface.setMaterials(Arrays.asList(material));
 
-                Node surfaceNode = new Node();
-                surfaceNode.setPosition(new Vector(0, -0.5f, 0));
-                surfaceNode.setRotation(new Vector((float) -Math.PI / 2, 0, 0));
-                surfaceNode.setGeometry(surface);
-                surfaceNode.setLightReceivingBitMask(bitmask | 1);
-                node.addChildNode(surfaceNode);
+                    Node surfaceNode = new Node();
+                    surfaceNode.setPosition(new Vector(0, -0.5f, 0));
+                    surfaceNode.setRotation(new Vector((float) -Math.PI / 2, 0, 0));
+                    surfaceNode.setGeometry(surface);
+                    surfaceNode.setLightReceivingBitMask(bitmask | 1);
+                    node.addChildNode(surfaceNode);
+                }
             }
 
             @Override
