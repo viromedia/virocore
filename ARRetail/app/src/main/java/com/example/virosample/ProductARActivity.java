@@ -350,26 +350,17 @@ public class ProductARActivity extends Activity {
             }
         });
 
-        // Set click listeners on this 3D product
-        productModel.setClickListener(new ClickListener() {
-            @Override
-            public void onClick(int i, Node node, Vector vector) {
-                // No-op
-            }
-
-            @Override
-            public void onClickState(int i, Node node, ClickState clickState, Vector vector) {
-                onModelClick(clickState);
-            }
-        });
-
         // Set gesture listeners such that the user can rotate this model.
         productModel.setGestureRotateListener(new GestureRotateListener() {
             @Override
             public void onRotate(int source, Node node, float radians, RotateState rotateState) {
-                Vector rotateTo = new Vector(mLastProductRotation.x, mLastProductRotation.y + radians, mLastProductRotation.z);
-                productModel.setRotation(rotateTo);
-                mSavedRotateToRotation = rotateTo;
+                if (rotateState == RotateState.ROTATE_END) {
+                    mLastProductRotation = mSavedRotateToRotation;
+                } else {
+                    Vector rotateTo = new Vector(mLastProductRotation.x, mLastProductRotation.y + radians, mLastProductRotation.z);
+                    mProductModelGroup.setRotation(rotateTo);
+                    mSavedRotateToRotation = rotateTo;
+                }
             }
         });
 
@@ -461,14 +452,6 @@ public class ProductARActivity extends Activity {
         mProductModelGroup.setOpacity(1);
         mProductModelGroup.setPosition(position);
         mProductModelGroup.setRotation(rotation);
-    }
-
-    private void onModelClick(ClickState state){
-        if (state == ClickState.CLICK_DOWN){
-            mLastProductRotation = mProductModelGroup.getRotationEulerRealtime();
-        } else if (state == ClickState.CLICK_UP) {
-            mLastProductRotation = mSavedRotateToRotation;
-        }
     }
 
     private class ARHitTestListenerCrossHair implements ARHitTestListener {
