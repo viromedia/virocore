@@ -25,7 +25,6 @@ platform :android do
   desc "And copy it to ../../../react-viro/android/viro_renderer/"
   lane :renderer_viro_core_lib do
     ensure_git_status_clean
-    git_pull
     gradle(task: "clean")
     gradle(task: ":viroreact:assembleRelease")
     changelog_from_git_commits(commits_count: 5,
