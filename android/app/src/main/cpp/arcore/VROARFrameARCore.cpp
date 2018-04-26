@@ -82,11 +82,6 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
             } else {
                 type = VROARHitTestResultType::EstimatedHorizontalPlane;
             }
-
-            arcore::Anchor *anchor = trackable->acquireAnchor(pose);
-            vAnchor = session_s->getAnchorForNative(anchor);
-            anchor->detach();
-            delete (anchor);
         } else {
             type = VROARHitTestResultType::FeaturePoint;
         }

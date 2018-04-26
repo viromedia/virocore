@@ -325,7 +325,22 @@ public class ViroActivity extends AppCompatActivity {
 
         //testBackgroundImage(scene);
 
-        //nodes.addAll(testImperativePlane(scene));
+        // Add a box in front of the user
+        Box box = new Box(.2f, .2f, .2f);
+        box.setMaterials(Arrays.asList(new Material()));
+        Node boxNode = new Node();
+        boxNode.setGeometry(box);
+        boxNode.setPosition(new Vector(0, 0, -1));
+        nodes.add(boxNode);
+        boxNode.setDragListener(new DragListener() {
+            @Override
+            public void onDrag(int source, Node node, Vector worldLocation, Vector localLocation) {
+
+            }
+        });
+        boxNode.setDragType(Node.DragType.FIXED_TO_WORLD);
+
+        nodes.addAll(testImperativePlane(scene));
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
