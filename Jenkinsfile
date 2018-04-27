@@ -8,9 +8,19 @@ fastlane gradle_clean'''
       }
     }
     stage('virocore_lib') {
-      steps {
-        sh '''cd android
+      parallel {
+        stage('virocore_lib') {
+          steps {
+            sh '''cd android
 fastlane renderer_viro_core_lib'''
+          }
+        }
+        stage('viroreact_lib') {
+          steps {
+            sh '''cd android
+fastlane renderer_viro_react_lib'''
+          }
+        }
       }
     }
   }
