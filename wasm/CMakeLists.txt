@@ -18,8 +18,7 @@ INCLUDE_DIRECTORIES(${VIRO_RENDERER_SRC}
                     libs/zlib/include
                     libs/jpeg/include)
 
-ADD_LIBRARY( viro_renderer
-             STATIC
+SET(         VIRO_RENDERER_SRC
 
              # Web Platform
              src/cpp/VROViewScene.cpp
@@ -203,7 +202,8 @@ ADD_LIBRARY( viro_renderer
              ${VIRO_RENDERER_SRC}/VROPBRTexturedTest.cpp
              ${VIRO_RENDERER_SRC}/VRODiffuseIrradianceTest.cpp
              ${VIRO_RENDERER_SRC}/VROPhotometricLightTest.cpp
-             ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp)
+             ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
+		     ../ViroRenderer/capi/TestAPI.cpp)
 
 ADD_SUBDIRECTORY(libs/bullet/src/LinearMath)
 ADD_SUBDIRECTORY(libs/bullet/src/BulletSoftBody)
@@ -212,25 +212,37 @@ ADD_SUBDIRECTORY(libs/bullet/src/BulletCollision)
 ADD_SUBDIRECTORY(libs/protobuf/src)
 ADD_SUBDIRECTORY(libs/jpeg/src)
 
-SET (VIRO_LINK_LIBS        viro_renderer)
-LIST(APPEND VIRO_LINK_LIBS protobuf-lite)
+SET (VIRO_LINK_LIBS        protobuf-lite)
 LIST(APPEND VIRO_LINK_LIBS jpeg)
 LIST(APPEND VIRO_LINK_LIBS bullet_linearmath)
 LIST(APPEND VIRO_LINK_LIBS bullet_softbody)
 LIST(APPEND VIRO_LINK_LIBS bullet_dynamics)
 LIST(APPEND VIRO_LINK_LIBS bullet_collision)
 
-SET(VIRO_LINK_FLAGS "-s WASM=1 -s USE_ZLIB=1 -s USE_FREETYPE=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_WEBGL2=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ${CMAKE_SOURCE_DIR}/products/preload@/ --shell-file ${CMAKE_SOURCE_DIR}/test/viro_shell.html --emrun")
+SET(VIRO_LINK_FLAGS "-s WASM=1 \
+                     -s USE_ZLIB=1 \
+                     -s USE_FREETYPE=1 \
+                     -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' \
+                     -s USE_WEBGL2=1 \
+                     -s ALLOW_MEMORY_GROWTH=1 \
+                     --bind \
+                     --preload-file ${CMAKE_SOURCE_DIR}/products/preload@/ \
+                     --shell-file ${CMAKE_SOURCE_DIR}/test/viro_shell.html \
+                     --emrun")
 
 # Build executables for each test
-ADD_EXECUTABLE       (viro_fbx_test test/fbx/bootstrap.cpp)
+ADD_EXECUTABLE       (viro_fbx_test ${VIRO_RENDERER_SRC} test/fbx/bootstrap.cpp)
 SET_TARGET_PROPERTIES(viro_fbx_test PROPERTIES LINK_FLAGS ${VIRO_LINK_FLAGS})
 TARGET_LINK_LIBRARIES(viro_fbx_test ${VIRO_LINK_LIBS})
 ADD_CUSTOM_COMMAND(TARGET viro_fbx_test
 				   PRE_BUILD
 		           COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/copy_preload.sh fbx
                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+ADD_CUSTOM_COMMAND(TARGET viro_fbx_test
+                   POST_BUILD
+                   COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/copy_js.sh
+                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-ADD_EXECUTABLE       (viro_pbr_test test/pbr/bootstrap.cpp)
+ADD_EXECUTABLE       (viro_pbr_test ${VIRO_RENDERER_SRC} test/pbr/bootstrap.cpp)
 SET_TARGET_PROPERTIES(viro_pbr_test PROPERTIES LINK_FLAGS ${VIRO_LINK_FLAGS})
 TARGET_LINK_LIBRARIES(viro_pbr_test ${VIRO_LINK_LIBS})

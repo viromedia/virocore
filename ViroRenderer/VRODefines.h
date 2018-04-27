@@ -28,6 +28,14 @@
 #define VRO_PLATFORM_IOS 0
 #define VRO_PLATFORM_WASM 1
 #define VRO_PLATFORM_MACOS 0
+
+#define VRO_C_INCLUDE <string>
+#define VRO_ARGS ,
+#define VRO_ARGS_STATIC ,
+#define VRO_NO_ARGS
+#define VRO_NO_ARGS_STATIC
+#define VRO_REF int
+
 #else  // !WASM_PLATFORM
 #define VRO_PLATFORM_ANDROID 1
 #define VRO_PLATFORM_IOS 0

@@ -42,19 +42,20 @@ source ~/Source/emsdk/emsdk_env.sh --build=Release
         * EMSCRIPTEN: /Users/radvani/Source/emsdk/emscripten/1.37.34
     * Generation path: products
 
-10. Wait for the IDE to sync
-11. At the top right, change to Emscripten, and the target you want to build (e.g. viro_test_fbx)
-12. Build!
+10. DELETE the other profiles (e.g. Debug): this forces CLion to also use the Emscripten profile when compiling in the IDE
+11. Wait for the IDE to sync
+12. At the top right, change to Emscripten, and the target you want to build (e.g. viro_test_fbx)
+13. Build!
      Note: if you can an error that the working directory `Products` does not exist, create it under ViroRenderer/wasm
 
-13. To run with CLion, go to  `Run` -> `Edit Configurations` 
-14. Choose the desired target: e.g. `viro_fbx_test`
-15. Set Executable to `run.sh` (in the ViroRenderer/wasm directory)
-16. Set Program Arguments to `--no_browser --port 8080 ./products/build/`
-17. Set Environment Variable: `PATH=$PATH:/Users/radvani/Source/emsdk/emscripten/1.37.34:/usr/bin`
+14. To run with CLion, go to  `Run` -> `Edit Configurations` 
+15. Choose the desired target: e.g. `viro_fbx_test`
+16. Set Executable to `run.sh` (in the ViroRenderer/wasm directory)
+17. Set Program Arguments to `--no_browser --port 8080 ./products/build/`
+18. Set Environment Variable: `PATH=$PATH:/Users/radvani/Source/emsdk/emscripten/1.37.34:/usr/bin`
       (Note: change to _your_ Emscripten path. The usr/bin is for Python)
-18. Run!
-19. Navigate to http://localhost:8080/build/viro_fbx_test.html
+19. Run!
+20. Navigate to http://localhost:8080/build/viro_fbx_test.html
 
 
 
