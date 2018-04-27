@@ -1,20 +1,10 @@
 pipeline {
   agent any
   stages {
-    stage('virocore_lib') {
-      parallel {
-        stage('virocore_lib') {
-          steps {
-            sh '''cd android
-fastlane renderer_viro_core_lib'''
-          }
-        }
-        stage('viroreact_lib') {
-          steps {
-            sh '''cd android
-fastlane renderer_viro_react_lib'''
-          }
-        }
+    stage('clean') {
+      steps {
+        sh '''cd android
+fastlane gradle_clean'''
       }
     }
   }
