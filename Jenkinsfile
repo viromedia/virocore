@@ -7,6 +7,12 @@ pipeline {
 fastlane gradle_clean'''
       }
     }
+    stage('virocore_lib') {
+      steps {
+        sh '''cd android
+fastlane renderer_viro_core_lib'''
+      }
+    }
   }
   environment {
     LC_ALL = 'en_US.UTF-8'
