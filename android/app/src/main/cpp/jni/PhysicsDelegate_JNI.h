@@ -22,7 +22,7 @@
 class PhysicsDelegate_JNI : public VROPhysicsBodyDelegate {
 
 public:
-    PhysicsDelegate_JNI(jobject videoJavaObject);
+    PhysicsDelegate_JNI(VRO_OBJECT videoJavaObject);
     ~PhysicsDelegate_JNI();
 
     static VRO_REF jptr(std::shared_ptr<PhysicsDelegate_JNI> shared_node) {
@@ -38,6 +38,6 @@ public:
     void onCollided(std::string key, VROPhysicsBody::VROCollision collision);
 
 private:
-        jobject _javaObject;
+        VRO_OBJECT _javaObject;
 };
 #endif

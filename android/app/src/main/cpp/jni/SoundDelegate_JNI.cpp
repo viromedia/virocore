@@ -10,7 +10,7 @@
 #include <VROLog.h>
 #include "SoundDelegate_JNI.h"
 
-SoundDelegate::SoundDelegate(jobject soundObjectJava) {
+SoundDelegate::SoundDelegate(VRO_OBJECT soundObjectJava) {
     _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(soundObjectJava));
 }
 

@@ -15,7 +15,7 @@
 
 class TextDelegate {
 public:
-    TextDelegate(jobject textJavaObject, JNIEnv *env);
+    TextDelegate(VRO_OBJECT textJavaObject, JNIEnv *env);
     ~TextDelegate();
 
     static VRO_REF jptr(std::shared_ptr<TextDelegate> shared_node) {
@@ -31,7 +31,7 @@ public:
     void textCreated(VRO_REF native_text_ref);
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 
 };
 #endif //ANDROID_TEXTDELEGATE_JNI_H

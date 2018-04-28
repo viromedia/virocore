@@ -11,7 +11,7 @@
 
 #include <VROPlatformUtil.h>
 
-TextDelegate::TextDelegate(jobject textJavaObject, JNIEnv *env) {
+TextDelegate::TextDelegate(VRO_OBJECT textJavaObject, JNIEnv *env) {
     _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(textJavaObject));
 }
 
@@ -26,7 +26,7 @@ void TextDelegate::textCreated(VRO_REF nativeTextRef) {
 
     VROPlatformDispatchAsyncApplication([weakObj, nativeTextRef] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }

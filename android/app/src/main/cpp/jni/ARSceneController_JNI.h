@@ -34,7 +34,7 @@ namespace ARSceneController {
 
 class ARDeclarativeSceneDelegate : public VROARSceneDelegate, public VROARDeclarativeSessionDelegate {
 public:
-    ARDeclarativeSceneDelegate(jobject arSceneJavaObject, JNIEnv *env) {
+    ARDeclarativeSceneDelegate(VRO_OBJECT arSceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(arSceneJavaObject));
     }
 
@@ -60,12 +60,12 @@ public:
     void anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor);
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 class ARImperativeSceneDelegate : public VROARSceneDelegate, public VROARImperativeSessionDelegate {
 public:
-    ARImperativeSceneDelegate(jobject arSceneJavaObject, JNIEnv *env) {
+    ARImperativeSceneDelegate(VRO_OBJECT arSceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(arSceneJavaObject));
     }
 
@@ -91,7 +91,7 @@ public:
     void anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node);
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 #endif

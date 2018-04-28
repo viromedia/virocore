@@ -30,7 +30,7 @@ VRO_METHOD(VRO_REF, nativeCreateImage)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImageFromBitmap)(VRO_ARGS
-                                                 jobject jbitmap, VRO_STRING format) {
+                                                 VRO_OBJECT jbitmap, VRO_STRING format) {
     VROPlatformSetEnv(env);
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
     std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(jbitmap, internalFormat);

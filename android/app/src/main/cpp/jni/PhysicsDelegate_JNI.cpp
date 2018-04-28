@@ -12,7 +12,7 @@
 #include "PhysicsDelegate_JNI.h"
 #include "VROLog.h"
 
-PhysicsDelegate_JNI::PhysicsDelegate_JNI(jobject obj){
+PhysicsDelegate_JNI::PhysicsDelegate_JNI(VRO_OBJECT obj){
     _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(obj));
 }
 
@@ -26,7 +26,7 @@ void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollisi
 
     VROPlatformDispatchAsyncApplication([weakObj, collision] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }

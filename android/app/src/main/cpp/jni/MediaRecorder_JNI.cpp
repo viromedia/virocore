@@ -54,7 +54,7 @@ VRO_METHOD(void, nativeScheduleScreenCapture)(VRO_ARGS
 } // extern "C"
 
 
-MediaRecorder_JNI::MediaRecorder_JNI(jobject recorderJavaObject, JNIEnv *env) {
+MediaRecorder_JNI::MediaRecorder_JNI(VRO_OBJECT recorderJavaObject, JNIEnv *env) {
     _javaMediaRecorder = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(recorderJavaObject));
 }
 

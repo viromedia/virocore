@@ -83,14 +83,14 @@ void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
     jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, planeAnchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
         std::shared_ptr<VROARPlaneAnchor> planeAnchor = planeAnchor_w.lock();
         if (localObj == NULL || !planeAnchor) {
             return;
         }
 
         // create the Java ARAnchor POJO
-        jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(planeAnchor);
+        VRO_OBJECT anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(planeAnchor);
 
         // Yes, the function in the bridge is onAnchorFound.
         VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/core/ARAnchor;)V",
@@ -105,14 +105,14 @@ void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
     jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, planeAnchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
         std::shared_ptr<VROARPlaneAnchor> planeAnchor = planeAnchor_w.lock();
         if (localObj == NULL || !planeAnchor) {
             return;
         }
 
         // create the Java ARAnchor POJO
-        jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(planeAnchor);
+        VRO_OBJECT anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(planeAnchor);
 
         // Yes, the function in the bridge is onAnchorUpdated.
         VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/core/ARAnchor;)V",
@@ -127,7 +127,7 @@ void ARPlaneDelegate::onARAnchorRemoved() {
     jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObject_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
         if (localObj == NULL) {
             return;
         }

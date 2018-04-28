@@ -17,7 +17,7 @@
 
 class TransformDelegate_JNI : public VROTransformDelegate {
 public:
-    TransformDelegate_JNI(jobject delegateJavaObject, double distanceFilter);
+    TransformDelegate_JNI(VRO_OBJECT delegateJavaObject, double distanceFilter);
     ~TransformDelegate_JNI();
 
     static VRO_REF jptr(std::shared_ptr<TransformDelegate_JNI> shared_node) {
@@ -36,6 +36,6 @@ public:
     void onPositionUpdate(VROVector3f position);
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 #endif

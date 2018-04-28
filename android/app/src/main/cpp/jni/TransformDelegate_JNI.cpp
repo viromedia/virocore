@@ -10,7 +10,7 @@
 #include <VROPlatformUtil.h>
 #include "TransformDelegate_JNI.h"
 
-TransformDelegate_JNI::TransformDelegate_JNI(jobject javaDelegateObject, double distanceFilter):VROTransformDelegate(distanceFilter){
+TransformDelegate_JNI::TransformDelegate_JNI(VRO_OBJECT javaDelegateObject, double distanceFilter):VROTransformDelegate(distanceFilter){
     _javaObject  = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaDelegateObject));
 }
 
@@ -25,7 +25,7 @@ void TransformDelegate_JNI::onPositionUpdate(VROVector3f position){
 
     VROPlatformDispatchAsyncApplication([weakObj, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }

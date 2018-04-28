@@ -88,7 +88,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTracker)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeFindTarget)(VRO_ARGS
                                       VRO_REF nativeRef,
-                                      jobject bitmapImage) {
+                                      VRO_OBJECT bitmapImage) {
 #if ENABLE_OPENCV
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 

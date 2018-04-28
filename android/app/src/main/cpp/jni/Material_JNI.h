@@ -28,7 +28,7 @@ public:
         return persistentRef->get();
     }
 
-    static jobject createJMaterial(std::shared_ptr<VROMaterial> &mat) {
+    static VRO_OBJECT createJMaterial(std::shared_ptr<VROMaterial> &mat) {
         JNIEnv *env = VROPlatformGetJNIEnv();
         if (env == nullptr){
             perror("Required JNIEnv to create a jMaterial is null!");
@@ -46,7 +46,7 @@ public:
 
         // Create our Material.java object with the native reference.
         jmethodID jmethod = env->GetMethodID(cls, "<init>", "(J)V");
-        jobject jMat = env->NewObject(cls, jmethod, matRef);
+        VRO_OBJECT jMat = env->NewObject(cls, jmethod, matRef);
         VROPlatformSetString(env, cls, jMat, "mName", mat->getName());
 
         // Set basic visual properties for Material.java
@@ -81,7 +81,7 @@ public:
 
 private:
     Material() {}
-    static void setEnumLightModel(JNIEnv *env, jclass cls, jobject jMat, const char *jMatFieldName,
+    static void setEnumLightModel(JNIEnv *env, jclass cls, VRO_OBJECT jMat, const char *jMatFieldName,
                                   VROLightingModel model) {
         std::string enumClassPathName = "com/viro/core/Material$LightingModel";
         std::string enumValueStr;
@@ -97,7 +97,7 @@ private:
         VROPlatformSetEnumValue(env, cls, jMat, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    static void setCullMode(JNIEnv *env, jclass cls, jobject jMat, const char *jMatFieldName,
+    static void setCullMode(JNIEnv *env, jclass cls, VRO_OBJECT jMat, const char *jMatFieldName,
                             VROCullMode mode) {
         std::string enumClassPathName = "com/viro/core/Material$CullMode";
         std::string enumValueStr;
@@ -111,7 +111,7 @@ private:
         VROPlatformSetEnumValue(env, cls, jMat, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    static void setTransparencyMode(JNIEnv *env, jclass cls, jobject jMat, const char *jMatFieldName,
+    static void setTransparencyMode(JNIEnv *env, jclass cls, VRO_OBJECT jMat, const char *jMatFieldName,
                                     VROTransparencyMode mode) {
         std::string enumClassPathName = "com/viro/core/Material$TransparencyMode";
         std::string enumValueStr;
@@ -125,7 +125,7 @@ private:
         VROPlatformSetEnumValue(env, cls, jMat, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    static void setBlendMode(JNIEnv *env, jclass cls, jobject jMat, const char *jMatFieldName,
+    static void setBlendMode(JNIEnv *env, jclass cls, VRO_OBJECT jMat, const char *jMatFieldName,
                              VROBlendMode mode) {
         std::string enumClassPathName = "com/viro/core/Material$BlendMode";
         std::string enumValueStr;
@@ -140,7 +140,7 @@ private:
         VROPlatformSetEnumValue(env, cls, jMat, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    static void setShadowMode(JNIEnv *env, jclass cls, jobject jMat, const char *jMatFieldName,
+    static void setShadowMode(JNIEnv *env, jclass cls, VRO_OBJECT jMat, const char *jMatFieldName,
                               bool shadow) {
         std::string enumClassPathName = "com/viro/core/Material$ShadowMode";
         std::string enumValueStr = shadow ? "NORMAL" : "DISABLED";
@@ -148,13 +148,13 @@ private:
         VROPlatformSetEnumValue(env, cls, jMat, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    static void setTexture(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName,
+    static void setTexture(JNIEnv *env, jclass cls, VRO_OBJECT jObj, const char *fieldName,
                            std::shared_ptr<VROTexture> texture) {
         if (texture == nullptr){
             return;
         }
 
-        jobject jTexture = Texture::createJTexture(texture);
+        VRO_OBJECT jTexture = Texture::createJTexture(texture);
         jfieldID fieldId = env->GetFieldID(cls, fieldName, "Lcom/viro/core/Texture;");
         if (fieldId == NULL){
             pwarn("Attempted to set undefined field: %s", fieldName);

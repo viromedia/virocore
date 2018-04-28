@@ -16,7 +16,7 @@
 #include "VROMaterial.h"
 #include "Material_JNI.h"
 
-OBJLoaderDelegate::OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env) {
+OBJLoaderDelegate::OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, JNIEnv *env) {
     _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(nodeJavaObject));
 }
 
@@ -39,7 +39,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
 
     VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             env->DeleteWeakGlobalRef(weakObj);
             return;
@@ -65,7 +65,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
             for(std::map<std::string, std::shared_ptr<VROMaterial>>::iterator
                         it = mats.begin(); it != mats.end(); ++it) {
                 // Create the Material.java and added it to the array
-                jobject jMat = Material::createJMaterial(it->second);
+                VRO_OBJECT jMat = Material::createJMaterial(it->second);
                 env->SetObjectArrayElement(materialArray, i, jMat);
 
                 // Clean up our local reference to jMaterial after.
@@ -124,7 +124,7 @@ void OBJLoaderDelegate::objFailed(std::string error) {
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             env->DeleteWeakGlobalRef(weakObj);
             return;

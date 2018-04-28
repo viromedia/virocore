@@ -27,7 +27,7 @@ namespace SceneController {
 
 class SceneControllerDelegate : public VROSceneController::VROSceneControllerDelegate {
 public:
-    SceneControllerDelegate(jobject sceneJavaObject, JNIEnv *env) {
+    SceneControllerDelegate(VRO_OBJECT sceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(sceneJavaObject));
     }
 
@@ -51,5 +51,5 @@ public:
     void onSceneDidDisappear(VRORenderContext * context, std::shared_ptr<VRODriver> driver);
 private:
     void callVoidFunctionWithName(std::string functionName);
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };

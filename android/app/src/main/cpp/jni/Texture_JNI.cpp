@@ -86,7 +86,7 @@ namespace Texture {
         }
     }
 
-    void setWrapMode(JNIEnv *env, jclass cls, jobject jTex, const char *jMatFieldName,
+    void setWrapMode(JNIEnv *env, jclass cls, VRO_OBJECT jTex, const char *jMatFieldName,
                      VROWrapMode mode) {
         std::string enumClassPathName = "com/viro/core/Texture$WrapMode";
         std::string enumValueStr;
@@ -101,7 +101,7 @@ namespace Texture {
         VROPlatformSetEnumValue(env, cls, jTex, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    void setFilterMode(JNIEnv *env, jclass cls, jobject jTex, const char *jMatFieldName,
+    void setFilterMode(JNIEnv *env, jclass cls, VRO_OBJECT jTex, const char *jMatFieldName,
                        VROFilterMode mode) {
         std::string enumClassPathName = "com/viro/core/Texture$FilterMode";
         std::string enumValueStr;
@@ -115,7 +115,7 @@ namespace Texture {
         VROPlatformSetEnumValue(env, cls, jTex, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    jobject createJTexture(std::shared_ptr<VROTexture> texture) {
+    VRO_OBJECT createJTexture(std::shared_ptr<VROTexture> texture) {
         JNIEnv *env = VROPlatformGetJNIEnv();
         if (env == nullptr) {
             perror("Required JNIEnv to create a jTexture is null!");
@@ -196,9 +196,9 @@ VRO_METHOD(VRO_REF, nativeCreateImageTexture)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateCubeTextureBitmap)(VRO_ARGS
-                                                   jobject px, jobject nx,
-                                                   jobject py, jobject ny,
-                                                   jobject pz, jobject nz,
+                                                   VRO_OBJECT px, VRO_OBJECT nx,
+                                                   VRO_OBJECT py, VRO_OBJECT ny,
+                                                   VRO_OBJECT pz, VRO_OBJECT nz,
                                                    VRO_STRING format_s) {
 
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
@@ -213,7 +213,7 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTextureBitmap)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
-                                                    jobject bitmap,
+                                                    VRO_OBJECT bitmap,
                                                     VRO_STRING format_s, jboolean sRGB,
                                                     jboolean mipmap, VRO_STRING stereoMode) {
 
@@ -227,7 +227,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
-                                                  jobject jbuffer, VRO_INT width, VRO_INT height,
+                                                  VRO_OBJECT jbuffer, VRO_INT width, VRO_INT height,
                                                   VRO_STRING inputFormat_s, VRO_STRING storageFormat_s,
                                                   jboolean sRGB, jboolean mipmap,
                                                   VRO_STRING stereoMode_s) {
@@ -248,7 +248,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureVHD)(VRO_ARGS
-                                                 jobject jbuffer, VRO_STRING stereoMode_s) {
+                                                 VRO_OBJECT jbuffer, VRO_STRING stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
     jlong capacity = env->GetDirectBufferCapacity(jbuffer);
 

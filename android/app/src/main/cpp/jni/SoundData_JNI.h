@@ -17,13 +17,13 @@
 
 class VROSoundDataDelegate_JNI: public VROSoundDataDelegate {
 public:
-    VROSoundDataDelegate_JNI(jobject soundDataObject, JNIEnv *env);
+    VROSoundDataDelegate_JNI(VRO_OBJECT soundDataObject, JNIEnv *env);
     ~VROSoundDataDelegate_JNI();
 
     void dataIsReady();
     void dataError(std::string error);
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 namespace SoundData {

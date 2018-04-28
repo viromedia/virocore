@@ -30,7 +30,7 @@
  */
 class EventDelegate_JNI : public VROEventDelegate {
 public:
-    EventDelegate_JNI(jobject sceneJavaObject, JNIEnv *env) {
+    EventDelegate_JNI(VRO_OBJECT sceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(sceneJavaObject));
     }
 
@@ -59,7 +59,7 @@ public:
 
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 namespace EventDelegate{

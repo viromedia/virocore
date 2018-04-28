@@ -82,13 +82,13 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetControllerForwardVector)(VRO_ARGS
 
 VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
                                                         VRO_REF native_render_context_ref,
-                                                        jobject callback) {
+                                                        VRO_OBJECT callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);
     std::weak_ptr<ViroContext> helperContext_w = ViroContext::native(native_render_context_ref);
 
     VROPlatformDispatchAsyncApplication([helperContext_w, weakCallback] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject jCallback = env->NewLocalRef(weakCallback);
+        VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
         if (jCallback == NULL) {
             return;
         }

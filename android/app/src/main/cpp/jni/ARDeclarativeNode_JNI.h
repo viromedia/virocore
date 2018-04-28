@@ -23,7 +23,7 @@ namespace ARDeclarativeNode {
 
 class ARDeclarativeNodeDelegate : public VROARDeclarativeNodeDelegate {
 public:
-    ARDeclarativeNodeDelegate(jobject arNodeObject, JNIEnv *env) {
+    ARDeclarativeNodeDelegate(VRO_OBJECT arNodeObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(arNodeObject));
     }
 
@@ -46,7 +46,7 @@ public:
     void onARAnchorRemoved();
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 #endif //ANDROID_ARDECLARATIVENODE_H

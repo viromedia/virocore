@@ -14,7 +14,7 @@
 
 class PortalDelegate: public VROPortalDelegate {
     public:
-    PortalDelegate(jobject javaObject);
+    PortalDelegate(VRO_OBJECT javaObject);
     ~PortalDelegate();
 
     static VRO_REF jptr(std::shared_ptr<PortalDelegate> shared_node) {
@@ -30,7 +30,7 @@ class PortalDelegate: public VROPortalDelegate {
     virtual void onPortalEnter();
     virtual void onPortalExit();
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 

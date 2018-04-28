@@ -30,8 +30,11 @@
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
-  JNIEXPORT return_type JNICALL              \
+    JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Node_##method_name
+#elif VRO_PLATFORM_WASM
+#define VRO_METHOD(return_type, method_name) \
+    return_type method_name
 #endif
 
 extern "C" {

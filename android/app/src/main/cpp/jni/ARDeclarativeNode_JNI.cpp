@@ -39,14 +39,14 @@ void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> 
     jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, anchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
         if (localObj == NULL || !anchor_s) {
             env->DeleteWeakGlobalRef(jObject_w);
             return;
         }
 
-        jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
+        VRO_OBJECT anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
         VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
         env->DeleteWeakGlobalRef(jObject_w);
@@ -59,14 +59,14 @@ void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> a
     jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, anchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
         if (localObj == NULL || !anchor_s) {
             env->DeleteWeakGlobalRef(jObject_w);
             return;
         }
 
-        jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
+        VRO_OBJECT anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
         VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
         env->DeleteWeakGlobalRef(jObject_w);
@@ -78,7 +78,7 @@ void ARDeclarativeNodeDelegate::onARAnchorRemoved() {
     jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObject_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
         if (localObj == NULL) {
             env->DeleteWeakGlobalRef(jObject_w);
             return;

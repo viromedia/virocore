@@ -24,8 +24,8 @@ VRO_METHOD(long, nativeBegin)(VRO_NO_ARGS_STATIC) {
 }
 
 VRO_METHOD(void, nativeCommit)(VRO_ARGS_STATIC
-                               jobject obj) {
-    jobject jGlobalObj = env->NewGlobalRef(obj);
+                               VRO_OBJECT obj) {
+    VRO_OBJECT jGlobalObj = env->NewGlobalRef(obj);
     VROPlatformDispatchAsyncRenderer([jGlobalObj] {
 
         VROTransaction::setFinishCallback([jGlobalObj](bool terminate) {

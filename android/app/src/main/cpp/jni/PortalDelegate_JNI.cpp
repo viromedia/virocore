@@ -6,7 +6,7 @@
 #include <VROPlatformUtil.h>
 #include "PortalDelegate_JNI.h"
 
-PortalDelegate::PortalDelegate(jobject javaPortalSceneObject){
+PortalDelegate::PortalDelegate(VRO_OBJECT javaPortalSceneObject){
     _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaPortalSceneObject));
 }
 
@@ -20,7 +20,7 @@ void PortalDelegate::onPortalEnter() {
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -39,7 +39,7 @@ void PortalDelegate::onPortalExit() {
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }

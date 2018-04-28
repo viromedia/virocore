@@ -14,7 +14,7 @@
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateARImageTarget)(VRO_ARGS
-                                               jobject bitmap,
+                                               VRO_OBJECT bitmap,
                                                VRO_STRING orientation,
                                                VRO_FLOAT physicalWidth,
                                                VRO_STRING id) {

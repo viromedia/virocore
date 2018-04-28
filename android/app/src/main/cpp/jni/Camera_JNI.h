@@ -33,7 +33,7 @@ namespace Camera {
 
 class CameraDelegateJNI : public VROCameraDelegate {
 public:
-    CameraDelegateJNI(jobject obj) {
+    CameraDelegateJNI(VRO_OBJECT obj) {
         _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(obj));
     }
 
@@ -50,7 +50,7 @@ public:
         jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
         VROPlatformDispatchAsyncApplication([jObjWeak, pos, rot, forward] {
             JNIEnv *env = VROPlatformGetJNIEnv();
-            jobject localObj = env->NewLocalRef(jObjWeak);
+            VRO_OBJECT localObj = env->NewLocalRef(jObjWeak);
             if (localObj == NULL) {
                 return;
             }
@@ -122,7 +122,7 @@ public:
     }
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 
     /*
      Last time stamp at which we have been notified of transformation updates.

@@ -13,7 +13,7 @@
 /**
  * Creates an ARAnchor from the given VROARPlaneAnchor.
  */
-jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor) {
+VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     const char *achorIdArr = anchor->getId().c_str();
@@ -127,7 +127,7 @@ VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     return VRO_NEW_STRING(strArr);
 }
 
-jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
+VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
@@ -165,7 +165,7 @@ jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
                           jposition, jscale, jrotation);
 }
 
-jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
+VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     std::vector<VROVector4f> points = pointCloud->getPoints();

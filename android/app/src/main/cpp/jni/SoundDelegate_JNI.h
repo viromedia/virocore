@@ -18,7 +18,7 @@
 class SoundDelegate : public VROSoundDelegateInternal {
 
 public:
-    SoundDelegate(jobject soundObjectJava);
+    SoundDelegate(VRO_OBJECT soundObjectJava);
     ~SoundDelegate();
 
     static VRO_REF jptr(std::shared_ptr<SoundDelegate> delegate) {
@@ -35,7 +35,7 @@ public:
     virtual void soundDidFail(std::string error);
 
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 };
 
 #endif

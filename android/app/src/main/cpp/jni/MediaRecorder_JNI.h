@@ -27,7 +27,7 @@ class VROSceneRenderer;
 
 class MediaRecorder_JNI : public std::enable_shared_from_this<MediaRecorder_JNI> {
 public:
-    MediaRecorder_JNI(jobject nodeJavaObject, JNIEnv *env);
+    MediaRecorder_JNI(VRO_OBJECT nodeJavaObject, JNIEnv *env);
     ~MediaRecorder_JNI();
 
     // Java to native calls;
@@ -44,7 +44,7 @@ public:
 
 private:
     std::shared_ptr<VROAVRecorderAndroid> _nativeMediaRecorder;
-    jobject _javaMediaRecorder;
+    VRO_OBJECT _javaMediaRecorder;
 };
 
 #endif //MEDIA_RECORDER_JNI_H

@@ -21,7 +21,7 @@
 class VROLazyMaterialJNI : public VROLazyMaterial {
 
 public:
-    VROLazyMaterialJNI(jobject obj) {
+    VROLazyMaterialJNI(VRO_OBJECT obj) {
         JNIEnv *env = VROPlatformGetJNIEnv();
         _jobj = env->NewWeakGlobalRef(obj);
     }
@@ -32,7 +32,7 @@ public:
     }
 
     std::shared_ptr<VROMaterial> get() {
-        jobject localObj = VROPlatformGetJNIEnv()->NewLocalRef(_jobj);
+        VRO_OBJECT localObj = VROPlatformGetJNIEnv()->NewLocalRef(_jobj);
         if (localObj == NULL) {
             return nullptr;
         }
@@ -44,7 +44,7 @@ public:
 
 private:
     // The corresponding LazyMaterialJni
-    jobject _jobj;
+    VRO_OBJECT _jobj;
 };
 
 namespace LazyMaterial {

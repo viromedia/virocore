@@ -17,13 +17,13 @@ class VRONode;
 class VROMaterial;
 class OBJLoaderDelegate {
 public:
-    OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env);
+    OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, JNIEnv *env);
     ~OBJLoaderDelegate();
 
     void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId);
     void objFailed(std::string error);
 private:
-    jobject _javaObject;
+    VRO_OBJECT _javaObject;
 
     /*
      Creates a map of unique jMaterials for a given VRONode, recursively.

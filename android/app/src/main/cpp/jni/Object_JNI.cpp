@@ -55,7 +55,7 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
 
 VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
                                                VRO_STRING jresource,
-                                               jobject resourceMap_j,
+                                               VRO_OBJECT resourceMap_j,
                                                VRO_REF node_j,
                                                VRO_BOOL isFBX,
                                                VRO_LONG requestId) {

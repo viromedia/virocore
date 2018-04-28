@@ -47,7 +47,7 @@ extern "C" {
     }
 } // extern "C"
 
-VROSoundDataDelegate_JNI::VROSoundDataDelegate_JNI(jobject nodeJavaObject, JNIEnv *env) {
+VROSoundDataDelegate_JNI::VROSoundDataDelegate_JNI(VRO_OBJECT nodeJavaObject, JNIEnv *env) {
     _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(nodeJavaObject));
 }
 
@@ -62,7 +62,7 @@ void VROSoundDataDelegate_JNI::dataIsReady(){
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             env->DeleteWeakGlobalRef(weakObj);
             return;
@@ -80,7 +80,7 @@ void VROSoundDataDelegate_JNI::dataError(std::string error){
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             env->DeleteWeakGlobalRef(weakObj);
             return;

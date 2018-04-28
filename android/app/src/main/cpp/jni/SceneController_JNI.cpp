@@ -232,7 +232,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                                              VRO_FLOAT_ARRAY toPos,
                                              jboolean closest,
                                              VRO_STRING tag,
-                                             jobject callback) {
+                                             VRO_OBJECT callback) {
 
     // Grab start position from which to perform the collision test
     VRO_FLOAT *fromPosf = VRO_FLOAT_ARRAY_GET_ELEMENTS(fromPos);
@@ -271,7 +271,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
         // Notify the bridge after collision tests are complete
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
             JNIEnv *env = VROPlatformGetJNIEnv();
-            jobject jCallback = env->NewLocalRef(weakCallback);
+            VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
             if (jCallback == NULL) {
                 return;
             }
@@ -290,7 +290,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
                                                VRO_STRING shapeType,
                                                VRO_FLOAT_ARRAY shapeParams,
                                                VRO_STRING tag,
-                                               jobject callback) {
+                                               VRO_OBJECT callback) {
 
     // Grab start position from which to perform the collision test
     VRO_FLOAT *posStartf = VRO_FLOAT_ARRAY_GET_ELEMENTS(posStart);
@@ -341,7 +341,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
         // Notify the bridge after collision tests are complete
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
             JNIEnv *env = VROPlatformGetJNIEnv();
-            jobject jCallback = env->NewLocalRef(weakCallback);
+            VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
             if (jCallback == NULL) {
                 return;
             }
@@ -376,7 +376,7 @@ void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName)
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(jObjWeak);
+        VRO_OBJECT localObj = env->NewLocalRef(jObjWeak);
         if (localObj == NULL) {
             return;
         }

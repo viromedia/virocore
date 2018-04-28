@@ -42,7 +42,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
                                          VRO_REF nativeRef, VRO_REF nodeRef) {
     // Hold a global reference to the object until the animation finishes, so that
     // we invoke its animationDidFinish callback
-    jobject obj_g = env->NewGlobalRef(obj);
+    VRO_OBJECT obj_g = env->NewGlobalRef(obj);
 
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
