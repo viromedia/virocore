@@ -136,6 +136,10 @@
 #define VRO_DELETE_WEAK_GLOBAL_REF(object) \
     env->DeleteWeakGlobalRef(object)
 
+#define VRO_BUFFER_GET_CAPACITY(buffer) \
+    env->GetDirectBufferCapacity(buffer)
+#define VRO_BUFFER_GET_ADDRESS(buffer) \
+    env->GetDirectBufferAddress(buffer)
 
 #endif
 #endif // !__OBJC __

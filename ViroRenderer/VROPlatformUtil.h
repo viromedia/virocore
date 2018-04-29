@@ -234,12 +234,14 @@ VRO_OBJECT VROPlatformConstructHostObject(std::string className,
                                           std::string constructorSignature, ...);
 
 // Helper functions for setting host object properties through from C++
-void VROPlatformSetFloat(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_FLOAT value);
-void VROPlatformSetString(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, std::string value);
-void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_INT value);
-void VROPlatformSetBool(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jboolean value);
-void VROPlatformSetEnumValue(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName,
+void VROPlatformSetFloat(JNIEnv *env, jobject jObj, const char *fieldName, VRO_FLOAT value);
+void VROPlatformSetString(JNIEnv *env, jobject jObj, const char *fieldName, std::string value);
+void VROPlatformSetInt(JNIEnv *env, jobject jObj, const char *fieldName, VRO_INT value);
+void VROPlatformSetBool(JNIEnv *env, jobject jObj, const char *fieldName, jboolean value);
+void VROPlatformSetEnumValue(JNIEnv *env, jobject jObj, const char *fieldName,
                              std::string enumClassPathName, std::string enumValueStr);
+void VROPlatformSetObject(JNIEnv *env, jobject jObj, const char *fieldName,
+                          const char *fieldType, VRO_OBJECT object);
 
 // Safely converts the given string with the provided jni environment.
 std::string VROPlatformGetString(VRO_STRING string, JNIEnv *env);

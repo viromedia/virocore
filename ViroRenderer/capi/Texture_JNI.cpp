@@ -86,7 +86,7 @@ namespace Texture {
         }
     }
 
-    void setWrapMode(JNIEnv *env, jclass cls, VRO_OBJECT jTex, const char *jMatFieldName,
+    void setWrapMode(JNIEnv *env, VRO_OBJECT jTex, const char *jMatFieldName,
                      VROWrapMode mode) {
         std::string enumClassPathName = "com/viro/core/Texture$WrapMode";
         std::string enumValueStr;
@@ -98,10 +98,10 @@ namespace Texture {
                 enumValueStr = "CLAMP";
         }
 
-        VROPlatformSetEnumValue(env, cls, jTex, jMatFieldName, enumClassPathName, enumValueStr);
+        VROPlatformSetEnumValue(env, jTex, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    void setFilterMode(JNIEnv *env, jclass cls, VRO_OBJECT jTex, const char *jMatFieldName,
+    void setFilterMode(JNIEnv *env, VRO_OBJECT jTex, const char *jMatFieldName,
                        VROFilterMode mode) {
         std::string enumClassPathName = "com/viro/core/Texture$FilterMode";
         std::string enumValueStr;
@@ -112,7 +112,7 @@ namespace Texture {
                 enumValueStr = "LINEAR";
         }
 
-        VROPlatformSetEnumValue(env, cls, jTex, jMatFieldName, enumClassPathName, enumValueStr);
+        VROPlatformSetEnumValue(env, jTex, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
     VRO_OBJECT createJTexture(std::shared_ptr<VROTexture> texture) {
@@ -125,25 +125,19 @@ namespace Texture {
         // Create a persistent native reference that would represent the jTexture object.
         PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(texture);
         jlong matRef = reinterpret_cast<intptr_t>(persistentRef);
-        jclass cls = env->FindClass("com/viro/core/Texture");
-        if (cls == nullptr) {
-            perror("Required Texture.java to create a jTexture is not defined!");
-            return NULL;
-        }
 
         // Create our Texture.java object with the native reference.
         VRO_OBJECT jTexture = VROPlatformConstructHostObject("com/viro/core/Texture", "(J)V", matRef);
 
         // Set visual properties of this Texture.java object and return it
-        VROPlatformSetInt(env, cls, jTexture, "mWidth", texture->getWidth());
-        VROPlatformSetInt(env, cls, jTexture, "mHeight", texture->getWidth());
-        setWrapMode(env, cls, jTexture, "mWrapS", texture->getWrapS());
-        setWrapMode(env, cls, jTexture, "mWrapT", texture->getWrapT());
-        setFilterMode(env, cls, jTexture, "mMinificationFilter", texture->getMinificationFilter());
-        setFilterMode(env, cls, jTexture, "mMagnificationFilter", texture->getMagnificationFilter());
-        setFilterMode(env, cls, jTexture, "mMipFilter", texture->getMipFilter());
+        VROPlatformSetInt(env, jTexture, "mWidth", texture->getWidth());
+        VROPlatformSetInt(env, jTexture, "mHeight", texture->getWidth());
+        setWrapMode(env, jTexture, "mWrapS", texture->getWrapS());
+        setWrapMode(env, jTexture, "mWrapT", texture->getWrapT());
+        setFilterMode(env, jTexture, "mMinificationFilter", texture->getMinificationFilter());
+        setFilterMode(env, jTexture, "mMagnificationFilter", texture->getMagnificationFilter());
+        setFilterMode(env, jTexture, "mMipFilter", texture->getMipFilter());
 
-        VRO_DELETE_LOCAL_REF(cls);
         return jTexture;
     }
 }
@@ -230,8 +224,8 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
                                                   VRO_STRING inputFormat_s, VRO_STRING storageFormat_s,
                                                   jboolean sRGB, jboolean mipmap,
                                                   VRO_STRING stereoMode_s) {
-    void *buffer = env->GetDirectBufferAddress(jbuffer);
-    VRO_LONG capacity = env->GetDirectBufferCapacity(jbuffer);
+    void *buffer = VRO_BUFFER_GET_ADDRESS(jbuffer);
+    VRO_LONG capacity = VRO_BUFFER_GET_CAPACITY(jbuffer);
 
     std::shared_ptr<VROData> data = std::make_shared<VROData>(buffer, capacity);
     VROTextureFormat inputFormat = Texture::getInputFormat(env, inputFormat_s);
@@ -248,8 +242,8 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureVHD)(VRO_ARGS
                                                  VRO_OBJECT jbuffer, VRO_STRING stereoMode_s) {
-    void *buffer = env->GetDirectBufferAddress(jbuffer);
-    VRO_LONG capacity = env->GetDirectBufferCapacity(jbuffer);
+    void *buffer = VRO_BUFFER_GET_ADDRESS(jbuffer);
+    VRO_LONG capacity = VRO_BUFFER_GET_CAPACITY(jbuffer);
 
     std::string data_gzip((char *)buffer, capacity);
     std::string data_texture = VROCompress::decompress(data_gzip);
