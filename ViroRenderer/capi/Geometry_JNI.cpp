@@ -18,8 +18,8 @@ extern "C" {
 
 VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
                                      VRO_REF geo_j,
-                                     jlongArray materials_j) {
-    jlong *materials_c = env->GetLongArrayElements(materials_j, 0);
+                                     VRO_LONG_ARRAY materials_j) {
+    VRO_LONG *materials_c = VRO_LONG_ARRAY_GET_ELEMENTS(materials_j);
     jsize len = VRO_ARRAY_LENGTH(materials_j);
     std::vector<std::shared_ptr<VROMaterial>> materials;
     for (int i = 0; i < len; i++) {
@@ -33,13 +33,13 @@ VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
             geo->setMaterials(materials);
         }
     });
-    env->ReleaseLongArrayElements(materials_j, materials_c, 0);
+    VRO_LONG_ARRAY_RELEASE_ELEMENTS(materials_j, materials_c);
 }
 
 VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
                                             VRO_REF nativeGeoRef,
-                                            jlongArray longArrayRef) {
-    jlong *longArray = env->GetLongArrayElements(longArrayRef, 0);
+                                            VRO_LONG_ARRAY longArrayRef) {
+    VRO_LONG *longArray = VRO_LONG_ARRAY_GET_ELEMENTS(longArrayRef);
     jsize len = VRO_ARRAY_LENGTH(longArrayRef);
 
     std::vector<std::shared_ptr<VROMaterial>> tempMaterials;
@@ -64,6 +64,6 @@ VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
         }
     });
 
-    env->ReleaseLongArrayElements(longArrayRef, longArray, 0);
+    VRO_LONG_ARRAY_RELEASE_ELEMENTS(longArrayRef, longArray);
 }
 }

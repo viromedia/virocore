@@ -57,13 +57,27 @@
 #define VRO_FLOAT jfloat
 #define VRO_DOUBLE jdouble
 #define VRO_OBJECT jobject
-#define VRO_ARRAY jobjectArray
-#define VRO_FLOAT_ARRAY jfloatArray
-#define VRO_INT_ARRAY jintArray
 
+#define VRO_STRING jstring
+#define VRO_NEW_STRING(chars) \
+    env->NewStringUTF(chars);
+#define VRO_STRING_LENGTH(string) \
+    env->GetStringLength(string)
+#define VRO_STRING_GET_CHARS(str) \
+    env->GetStringUTFChars(str, NULL)
+#define VRO_STRING_RELEASE_CHARS(str, chars) \
+    env->ReleaseStringUTFChars(str, chars);
+#define VRO_STRING_GET_CHARS_WIDE(str) \
+    env->GetStringChars(str, NULL)
+#define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
+    env->ReleaseStringChars(str, chars);
+
+#define VRO_ARRAY jobjectArray
+#define VRO_INT_ARRAY jintArray
 #define VRO_ARRAY_LENGTH(array) \
     env->GetArrayLength(array);
 
+#define VRO_FLOAT_ARRAY jfloatArray
 #define VRO_NEW_FLOAT_ARRAY(size) \
     env->NewFloatArray(size)
 #define VRO_FLOAT_ARRAY_SET(dest, start, len, src) \
@@ -73,17 +87,15 @@
 #define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
     env->ReleaseFloatArrayElements(array, elements, 0);
 
-#define VRO_STRING jstring
-#define VRO_NEW_STRING(chars) \
-    env->NewStringUTF(chars);
-#define VRO_STRING_GET_CHARS(str) \
-    env->GetStringUTFChars(str, NULL)
-#define VRO_STRING_RELEASE_CHARS(str, chars) \
-    env->ReleaseStringUTFChars(str, chars);
-#define VRO_STRING_GET_CHARS_WIDE(str) \
-    env->GetStringChars(str, NULL)
-#define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
-    env->ReleaseStringChars(str, chars);
+#define VRO_LONG_ARRAY jlongArray
+#define VRO_NEW_LONG_ARRAY(size) \
+    env->NewLongArray(size)
+#define VRO_LONG_ARRAY_SET(dest, start, len, src) \
+    env->SetLongArrayRegion(dest, start, len, src)
+#define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
+    env->GetLongArrayElements(array, 0)
+#define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
+    env->ReleaseLongArrayElements(array, elements, 0);
 
 #define VRO_NEW_STRING_ARRAY(size) \
     env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));

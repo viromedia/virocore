@@ -105,7 +105,7 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
     std::wstring text;
     if (text_j != NULL){
         const jchar *text_c = VRO_STRING_GET_CHARS_WIDE(text_j);
-        jsize textLength = env->GetStringLength(text_j);
+        jsize textLength = VRO_STRING_LENGTH(text_j);
         text.assign(text_c, text_c + textLength);
         VRO_STRING_RELEASE_CHARS_WIDE(text_j, text_c);
     }
@@ -160,7 +160,7 @@ VRO_METHOD(void, nativeSetText)(VRO_ARGS
                                 VRO_STRING text_string_j) {
 
     const jchar *text_c = VRO_STRING_GET_CHARS_WIDE(text_string_j);
-    jsize textLength = env->GetStringLength(text_string_j);
+    jsize textLength = VRO_STRING_LENGTH(text_string_j);
 
     std::wstring text_string;
     text_string.assign(text_c, text_c + textLength);
