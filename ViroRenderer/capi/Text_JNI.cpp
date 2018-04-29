@@ -93,7 +93,7 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       VRO_INT size,
                                       VRO_INT style,
                                       VRO_INT weight,
-                                      jlong color,
+                                      VRO_LONG color,
                                       VRO_FLOAT width,
                                       VRO_FLOAT height,
                                       VRO_STRING horizontalAlignment_j,
@@ -199,7 +199,7 @@ VRO_METHOD(void, nativeSetFont)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  VRO_REF text_j,
-                                 jlong color_j) {
+                                 VRO_LONG color_j) {
 
     float a = ((color_j >> 24) & 0xFF) / 255.0;
     float r = ((color_j >> 16) & 0xFF) / 255.0;

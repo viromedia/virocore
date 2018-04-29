@@ -14,7 +14,7 @@
 #include "VideoDelegate_JNI.h"
 #include "VROLog.h"
 
-VideoDelegate::VideoDelegate(jobject javaVideoObject){
+VideoDelegate::VideoDelegate(VRO_OBJECT javaVideoObject){
     _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaVideoObject));
 }
 
@@ -28,7 +28,7 @@ void VideoDelegate::videoWillBuffer() {
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -45,7 +45,7 @@ void VideoDelegate::videoDidBuffer() {
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -62,7 +62,7 @@ void VideoDelegate::videoDidFinish() {
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -79,7 +79,7 @@ void VideoDelegate::videoDidFail(std::string error) {
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -98,7 +98,7 @@ void VideoDelegate::onReady() {
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -115,7 +115,7 @@ void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTi
 
     VROPlatformDispatchAsyncApplication([weakObj, currentTimeInSeconds, totalTimeInSeconds] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }

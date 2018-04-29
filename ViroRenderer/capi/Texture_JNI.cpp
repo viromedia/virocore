@@ -232,7 +232,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
                                                   jboolean sRGB, jboolean mipmap,
                                                   VRO_STRING stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
-    jlong capacity = env->GetDirectBufferCapacity(jbuffer);
+    VRO_LONG capacity = env->GetDirectBufferCapacity(jbuffer);
 
     std::shared_ptr<VROData> data = std::make_shared<VROData>(buffer, capacity);
     VROTextureFormat inputFormat = Texture::getInputFormat(env, inputFormat_s);
@@ -250,7 +250,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
 VRO_METHOD(VRO_REF, nativeCreateImageTextureVHD)(VRO_ARGS
                                                  VRO_OBJECT jbuffer, VRO_STRING stereoMode_s) {
     void *buffer = env->GetDirectBufferAddress(jbuffer);
-    jlong capacity = env->GetDirectBufferCapacity(jbuffer);
+    VRO_LONG capacity = env->GetDirectBufferCapacity(jbuffer);
 
     std::string data_gzip((char *)buffer, capacity);
     std::string data_texture = VROCompress::decompress(data_gzip);

@@ -317,10 +317,10 @@ void EventDelegate_JNI::onCameraARHitTest(std::vector<VROARHitTestResult> result
             return;
         }
         //start code to convert VROARHitTestResult to ARHitTestResult
-        jobjectArray resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
+        VRO_ARRAY resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
         for (int i = 0; i < results.size(); i++) {
             VRO_OBJECT jresult = ARUtilsCreateARHitTestResult(results[i]);
-            env->SetObjectArrayElement(resultsArray, i, jresult);
+            VRO_ARRAY_SET(resultsArray, i, jresult);
         }
 
         VROPlatformCallJavaFunction(localObj,

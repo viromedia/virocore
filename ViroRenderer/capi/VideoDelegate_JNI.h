@@ -14,7 +14,7 @@
 
 class VideoDelegate : public VROVideoDelegateInternal {
     public:
-    VideoDelegate(jobject videoJavaObject);
+    VideoDelegate(VRO_OBJECT videoJavaObject);
     ~VideoDelegate();
 
     static VRO_REF jptr(std::shared_ptr<VideoDelegate> shared_node) {
@@ -42,6 +42,6 @@ class VideoDelegate : public VROVideoDelegateInternal {
     virtual void videoDidFail(std::string error);
 
 private:
-        jobject _javaObject;
+        VRO_OBJECT _javaObject;
 };
 #endif

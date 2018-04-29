@@ -33,7 +33,7 @@ extern "C" {
 
 
 VRO_METHOD(VRO_REF, nativeCreateOmniLight)(VRO_ARGS
-                                           jlong color,
+                                           VRO_LONG color,
                                            VRO_FLOAT intensity,
                                            VRO_FLOAT attenuationStartDistance,
                                            VRO_FLOAT attenuationEndDistance,

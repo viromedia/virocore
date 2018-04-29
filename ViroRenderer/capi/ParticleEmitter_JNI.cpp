@@ -220,25 +220,25 @@ VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
                                           VRO_REF native_ref,
-                                          jobjectArray jBursts) {
+                                          VRO_ARRAY jBursts) {
 
     // Grab and create a list of bursts if any.
     std::vector<VROParticleEmitter::VROParticleBurst> particleBursts;
     if (jBursts != NULL) {
         int numberOfValues = VRO_ARRAY_LENGTH(jBursts);
         for (int i = 0; i < numberOfValues; i++) {
-            jdoubleArray burstData = (jdoubleArray)env->GetObjectArrayElement(jBursts, i);
-            jdouble *burstDataArray = env->GetDoubleArrayElements(burstData, 0);
+            VRO_DOUBLE_ARRAY burstData = (VRO_DOUBLE_ARRAY) VRO_ARRAY_GET(jBursts, i);
+            VRO_DOUBLE *burstDataArray = VRO_DOUBLE_ARRAY_GET_ELEMENTS(burstData);
 
             VROParticleModifier::VROModifierFactor factor
                     = burstDataArray[0] == 1 ?
                       VROParticleModifier::VROModifierFactor::Time
                                              : VROParticleModifier::VROModifierFactor::Distance;
-            jdouble start = burstDataArray[1];
-            jdouble min = burstDataArray[2];
-            jdouble max = burstDataArray[3];
-            jdouble period = burstDataArray[4];
-            jdouble cycles = burstDataArray[5];
+            VRO_DOUBLE start = burstDataArray[1];
+            VRO_DOUBLE min = burstDataArray[2];
+            VRO_DOUBLE max = burstDataArray[3];
+            VRO_DOUBLE period = burstDataArray[4];
+            VRO_DOUBLE cycles = burstDataArray[5];
 
             VROParticleEmitter::VROParticleBurst burst;
             burst.referenceValueStart = start;
@@ -247,6 +247,8 @@ VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
             burst.cycles = cycles;
             burst.referenceFactor = factor;
             particleBursts.push_back(burst);
+
+            VRO_DOUBLE_ARRAY_RELEASE_ELEMENTS(burstData, burstDataArray);
         }
     }
 
@@ -263,9 +265,9 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
                                             VRO_REF native_ref,
                                             VRO_STRING jModifier,
                                             VRO_STRING jFactor,
-                                            jobjectArray jInitialValues,
-                                            jobjectArray jInterpolatedIntervalWindows,
-                                            jobjectArray jInterpolatedPoints) {
+                                            VRO_ARRAY jInitialValues,
+                                            VRO_ARRAY jInterpolatedIntervalWindows,
+                                            VRO_ARRAY jInterpolatedPoints) {
 
     // Construct a modifier with the given initialValues and interpolation values.
     std::shared_ptr<VROParticleModifier> mod = ParticleEmitter::getParticleModifier(env, jFactor,

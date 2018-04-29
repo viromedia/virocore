@@ -17,7 +17,7 @@
       Java_com_viro_core_Material_##method_name
 #endif
 
-VROVector4f parseColor(jlong color) {
+VROVector4f parseColor(VRO_LONG color) {
     float a = ((color >> 24) & 0xFF) / 255.0;
     float r = ((color >> 16) & 0xFF) / 255.0;
     float g = ((color >> 8) & 0xFF) / 255.0;
@@ -98,7 +98,7 @@ VRO_METHOD(VRO_REF, nativeCreateMaterial)(VRO_NO_ARGS) {
 }
 
 VRO_METHOD(VRO_REF, nativeCreateImmutableMaterial)(VRO_ARGS
-                                                   VRO_STRING lightingModel, jlong diffuseColor, VRO_REF diffuseTexture,
+                                                   VRO_STRING lightingModel, VRO_LONG diffuseColor, VRO_REF diffuseTexture,
                                                    VRO_FLOAT diffuseIntensity, VRO_REF specularTexture,
                                                    VRO_FLOAT shininess, VRO_FLOAT fresnelExponent, VRO_REF normalMap, VRO_STRING cullMode,
                                                    VRO_STRING transparencyMode, VRO_STRING blendMode, VRO_FLOAT bloomThreshold,
@@ -188,7 +188,7 @@ VRO_METHOD(void, nativeSetTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  VRO_REF material_j,
-                                 jlong color,
+                                 VRO_LONG color,
                                  VRO_STRING materialPropertyName) {
     std::string strName = VROPlatformGetString(materialPropertyName, env);
     VROVector4f vecColor = parseColor(color);
@@ -400,7 +400,7 @@ VRO_METHOD(void, nativeSetChromaKeyFilteringEnabled)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetChromaKeyFilteringColor)(VRO_ARGS
-                                                   VRO_REF material_j, jlong color_j) {
+                                                   VRO_REF material_j, VRO_LONG color_j) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROVector4f color = parseColor(color_j);
 

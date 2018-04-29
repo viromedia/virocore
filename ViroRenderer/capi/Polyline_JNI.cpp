@@ -43,11 +43,11 @@ namespace Polyline {
         return point;
     }
 
-    std::vector<VROVector3f> convertPoints(JNIEnv *env, jobjectArray points_j) {
+    std::vector<VROVector3f> convertPoints(JNIEnv *env, VRO_ARRAY points_j) {
         std::vector<VROVector3f> points;
         int numPoints = VRO_ARRAY_LENGTH(points_j);
         for (int i = 0; i < numPoints; i++) {
-            VRO_FLOAT_ARRAY point_j = (VRO_FLOAT_ARRAY)env->GetObjectArrayElement(points_j, i);
+            VRO_FLOAT_ARRAY point_j = (VRO_FLOAT_ARRAY) VRO_ARRAY_GET(points_j, i);
             points.push_back(convertPoint(env, point_j));
         }
         return points;
@@ -65,7 +65,7 @@ VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
-                                          jobjectArray points_j,
+                                          VRO_ARRAY points_j,
                                           VRO_FLOAT width) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
     std::shared_ptr<VROPolyline> polyline = VROPolyline::createPolyline(points, width);
@@ -93,7 +93,7 @@ VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
                                   VRO_REF polyline_j,
-                                  jobjectArray points_j) {
+                                  VRO_ARRAY points_j) {
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
 
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);

@@ -20,7 +20,7 @@ public:
     OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, JNIEnv *env);
     ~OBJLoaderDelegate();
 
-    void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId);
+    void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO_LONG requestId);
     void objFailed(std::string error);
 private:
     VRO_OBJECT _javaObject;

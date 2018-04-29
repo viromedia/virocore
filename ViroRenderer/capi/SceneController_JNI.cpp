@@ -111,7 +111,7 @@ VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
                                                    VRO_REF sceneRef,
-                                                   jlong color) {
+                                                   VRO_LONG color) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, color] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -177,12 +177,12 @@ VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
 
 VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
                                    VRO_REF sceneRef,
-                                   jobjectArray jEffects) {
+                                   VRO_ARRAY jEffects) {
     std::vector<std::string> effects;
     if (jEffects != NULL) {
         int numberOfValues = VRO_ARRAY_LENGTH(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
-            VRO_STRING jEffect = (VRO_STRING) env->GetObjectArrayElement(jEffects, i);
+            VRO_STRING jEffect = (VRO_STRING) VRO_ARRAY_GET(jEffects, i);
             std::string strEffect = VROPlatformGetString(jEffect, env);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
             effects.push_back(strEffect);

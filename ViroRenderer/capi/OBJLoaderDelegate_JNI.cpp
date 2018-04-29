@@ -25,12 +25,12 @@ OBJLoaderDelegate::~OBJLoaderDelegate() {
     VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
-void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId) {
+void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO_LONG requestId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     // If the request is antiquated, clear the node
-    jlong activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
+    VRO_LONG activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
     if (activeRequestID != requestId) {
         pinfo("Received antiquated Object3D load, discarding");
         node->removeAllChildren();
@@ -56,7 +56,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
         std::map<std::string, std::shared_ptr<VROMaterial>> mats;
         generateJMaterials(mats, node);
 
-        // Generate a jObjectArray containing a unique list of jMaterials
+        // Generate an array containing a unique list of jMaterials
         jobjectArray materialArray = env->NewObjectArray(mats.size(),
                                                          env->FindClass("com/viro/core/Material"),
                                                          NULL);

@@ -136,7 +136,7 @@ VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
                                                    VRO_REF portal_j,
-                                                   jlong color) {
+                                                   VRO_LONG color) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
     VROPlatformDispatchAsyncRenderer([portal_w, color] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();

@@ -32,7 +32,7 @@ namespace DirectionalLight {
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateDirectionalLight)(VRO_ARGS
-                                                  jlong color,
+                                                  VRO_LONG color,
                                                   VRO_FLOAT intensity,
                                                   VRO_FLOAT directionX,
                                                   VRO_FLOAT directionY,

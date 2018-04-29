@@ -73,9 +73,12 @@
     env->ReleaseStringChars(str, chars);
 
 #define VRO_ARRAY jobjectArray
-#define VRO_INT_ARRAY jintArray
 #define VRO_ARRAY_LENGTH(array) \
     env->GetArrayLength(array);
+#define VRO_ARRAY_GET(array, index) \
+    env->GetObjectArrayElement(array, index)
+#define VRO_ARRAY_SET(array, index, object) \
+    env->SetObjectArrayElement(array, index, object)
 
 #define VRO_FLOAT_ARRAY jfloatArray
 #define VRO_NEW_FLOAT_ARRAY(size) \
@@ -85,8 +88,19 @@
 #define VRO_FLOAT_ARRAY_GET_ELEMENTS(array) \
     env->GetFloatArrayElements(array, 0)
 #define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
-    env->ReleaseFloatArrayElements(array, elements, 0);
+    env->ReleaseFloatArrayElements(array, elements, 0)
 
+#define VRO_DOUBLE_ARRAY jdoubleArray
+#define VRO_NEW_DOUBLE_ARRAY(size) \
+    env->NewDoubleArray(size)
+#define VRO_DOUBLE_ARRAY_SET(dest, start, len, src) \
+    env->SetDoubleArrayRegion(dest, start, len, src)
+#define VRO_DOUBLE_ARRAY_GET_ELEMENTS(array) \
+    env->GetDoubleArrayElements(array, 0)
+#define VRO_DOUBLE_ARRAY_RELEASE_ELEMENTS(array, elements) \
+    env->ReleaseDoubleArrayElements(array, elements, 0)
+
+#define VRO_INT_ARRAY jintArray
 #define VRO_LONG_ARRAY jlongArray
 #define VRO_NEW_LONG_ARRAY(size) \
     env->NewLongArray(size)
@@ -95,24 +109,23 @@
 #define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
     env->GetLongArrayElements(array, 0)
 #define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
-    env->ReleaseLongArrayElements(array, elements, 0);
+    env->ReleaseLongArrayElements(array, elements, 0)
 
 #define VRO_NEW_STRING_ARRAY(size) \
     env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));
 #define VRO_STRING_ARRAY_GET(array, index) \
     (VRO_STRING) (env->GetObjectArrayElement(array, index));
-
 #define VRO_STRING_ARRAY_SET(array, index, item) \
     jstring jkey = env->NewStringUTF(item.c_str()); \
     env->SetObjectArrayElement(array, index, jkey); \
-    env->DeleteLocalRef(jkey); \
+    env->DeleteLocalRef(jkey);
 
 #define VRO_NEW_GLOBAL_REF(object) \
     env->NewGlobalRef(object)
 #define VRO_NEW_LOCAL_REF(object) \
     env->NewLocalRef(object)
 #define VRO_NEW_WEAK_GLOBAL_REF(object) \
-    env->NewWeakGlobalRef(object);
+    env->NewWeakGlobalRef(object)
 
 #define VRO_DELETE_GLOBAL_REF(object) \
     env->DeleteGlobalRef(object)

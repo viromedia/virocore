@@ -138,14 +138,14 @@ VRO_METHOD(void, nativeSetPointCloudMaxPoints)(VRO_ARGS
     });
 }
 
-VRO_METHOD(void, nativeSetAnchorDetectionTypes)(JNIEnv *env, VRO_REF sceneRef, jobjectArray typeStrArray) {
+VRO_METHOD(void, nativeSetAnchorDetectionTypes)(JNIEnv *env, VRO_REF sceneRef, VRO_ARRAY typeStrArray) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(sceneRef)->getScene());
     std::set<VROAnchorDetection> types;
 
     int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
     for (int i = 0; i < stringCount; i++) {
-        std::string typeString = VROPlatformGetString((VRO_STRING) env->GetObjectArrayElement(typeStrArray, i), env);
+        std::string typeString = VROPlatformGetString((VRO_STRING) VRO_ARRAY_GET(typeStrArray, i), env);
         if (VROStringUtil::strcmpinsensitive(typeString, "None")) {
             types.insert(VROAnchorDetection::None);
         } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {

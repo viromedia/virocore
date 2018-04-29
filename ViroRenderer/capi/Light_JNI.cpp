@@ -20,7 +20,7 @@ VRO_METHOD(void, nativeDestroyLight)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS
                                  VRO_REF native_light_ref,
-                                 jlong color) {
+                                 VRO_LONG color) {
     std::weak_ptr<VROLight> light_w = Light::native(native_light_ref);
 
     VROPlatformDispatchAsyncRenderer([light_w, color] {
