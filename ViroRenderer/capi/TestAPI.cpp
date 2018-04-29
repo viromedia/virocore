@@ -17,7 +17,6 @@
     return_type method_name
 #endif
 
-
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeTestMethod) ( VRO_NO_ARGS emscripten::val object ) {

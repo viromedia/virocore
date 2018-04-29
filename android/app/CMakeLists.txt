@@ -3,10 +3,13 @@ cmake_minimum_required(VERSION 3.4.1)
 set(VIRO_ANDROID_INCLUDES ${CMAKE_SOURCE_DIR}/../libs)
 set(VIRO_ANDROID_LIBS     ${CMAKE_SOURCE_DIR}/../app/src/main/jniLibs)
 set(VIRO_RENDERER_SRC     ${CMAKE_SOURCE_DIR}/../../ViroRenderer)
+set(VIRO_CAPI_SRC         ${CMAKE_SOURCE_DIR}/../../ViroRenderer/capi)
 set(VIRO_ANDROID_SRC      ${CMAKE_SOURCE_DIR}/../app/src/main/cpp)
 
 include_directories(${VIRO_RENDERER_SRC}
+                    ${VIRO_CAPI_SRC}
                     ${VIRO_ANDROID_SRC}
+                    ${VIRO_ANDROID_SRC}/jni
                     ${VIRO_ANDROID_INCLUDES}/gvr/include
                     ${VIRO_ANDROID_INCLUDES}/ovr/include
                     ${VIRO_ANDROID_INCLUDES}/freetype/include
@@ -50,54 +53,56 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/VROAVRecorderAndroid.cpp
              ${VIRO_ANDROID_SRC}/VROTextureReader.cpp
 
-             # Android JNI
-             ${VIRO_ANDROID_SRC}/jni/VRORenderer_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Node_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Geometry_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/SceneController_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Camera_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Box_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Controller_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Surface_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Polygon_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Sphere_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Material_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Image_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Texture_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/VideoTexture_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/VideoDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/ViroContext_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/EventDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/AnimationChain_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/AnimationGroup_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/ExecutableAnimation_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Light_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/AmbientLight_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/SpotLight_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/DirectionalLight_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/OmniLight_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Sound_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/SoundField_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/SpatialSound_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/SoundDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Text_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/TextDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/SoundData_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Object_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/OBJLoaderDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/LazyMaterial_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Polyline_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/PhysicsDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/TransformDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/FixedParticleEmitter_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/ParticleEmitter_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Portal_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/PortalScene_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/PortalDelegate_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/PhysicsBody_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/AnimationTransaction_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/MediaRecorder_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Quad_JNI.cpp
+             # C API
+             ${VIRO_CAPI_SRC}/Node_JNI.cpp
+             ${VIRO_CAPI_SRC}/Geometry_JNI.cpp
+             ${VIRO_CAPI_SRC}/SceneController_JNI.cpp
+             ${VIRO_CAPI_SRC}/Camera_JNI.cpp
+             ${VIRO_CAPI_SRC}/Box_JNI.cpp
+             ${VIRO_CAPI_SRC}/Controller_JNI.cpp
+             ${VIRO_CAPI_SRC}/Surface_JNI.cpp
+             ${VIRO_CAPI_SRC}/Polygon_JNI.cpp
+             ${VIRO_CAPI_SRC}/Sphere_JNI.cpp
+             ${VIRO_CAPI_SRC}/Material_JNI.cpp
+             ${VIRO_CAPI_SRC}/Texture_JNI.cpp
+             ${VIRO_CAPI_SRC}/VideoTexture_JNI.cpp
+             ${VIRO_CAPI_SRC}/VideoDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/ViroContext_JNI.cpp
+             ${VIRO_CAPI_SRC}/EventDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/AnimationChain_JNI.cpp
+             ${VIRO_CAPI_SRC}/AnimationGroup_JNI.cpp
+             ${VIRO_CAPI_SRC}/ExecutableAnimation_JNI.cpp
+             ${VIRO_CAPI_SRC}/Light_JNI.cpp
+             ${VIRO_CAPI_SRC}/AmbientLight_JNI.cpp
+             ${VIRO_CAPI_SRC}/SpotLight_JNI.cpp
+             ${VIRO_CAPI_SRC}/DirectionalLight_JNI.cpp
+             ${VIRO_CAPI_SRC}/OmniLight_JNI.cpp
+             ${VIRO_CAPI_SRC}/Sound_JNI.cpp
+             ${VIRO_CAPI_SRC}/SoundField_JNI.cpp
+             ${VIRO_CAPI_SRC}/SpatialSound_JNI.cpp
+             ${VIRO_CAPI_SRC}/SoundDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/Text_JNI.cpp
+             ${VIRO_CAPI_SRC}/TextDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/SoundData_JNI.cpp
+             ${VIRO_CAPI_SRC}/Object_JNI.cpp
+             ${VIRO_CAPI_SRC}/OBJLoaderDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/Polyline_JNI.cpp
+             ${VIRO_CAPI_SRC}/PhysicsDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/TransformDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/FixedParticleEmitter_JNI.cpp
+             ${VIRO_CAPI_SRC}/ParticleEmitter_JNI.cpp
+             ${VIRO_CAPI_SRC}/Portal_JNI.cpp
+             ${VIRO_CAPI_SRC}/PortalScene_JNI.cpp
+             ${VIRO_CAPI_SRC}/PortalDelegate_JNI.cpp
+             ${VIRO_CAPI_SRC}/PhysicsBody_JNI.cpp
+             ${VIRO_CAPI_SRC}/AnimationTransaction_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARUtils_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARNode_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARDeclarativeNode_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARDeclarativePlane_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARSceneController_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARImageTarget_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARDeclarativeImageNode_JNI.cpp
 
              # Math
              ${VIRO_RENDERER_SRC}/VROLineSegment.cpp
@@ -197,7 +202,6 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROInputControllerAR.cpp
              ${VIRO_RENDERER_SRC}/VROARShadow.cpp
              ${VIRO_ANDROID_SRC}/VROInputControllerARAndroid.cpp
-             ${VIRO_ANDROID_SRC}/jni/ARUtils_JNI.cpp
              ${VIRO_ANDROID_SRC}/VROSceneRendererARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROARSessionARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROARFrameARCore.cpp
@@ -207,15 +211,6 @@ add_library( # Sets the name of the library.
              # AR (Image Tracking)
              ../../ViroRenderer/VROARTrackingSession.cpp
              ../../ViroRenderer/VROARImageTargetAndroid.cpp
-             src/main/cpp/jni/ARImageTarget_JNI.cpp
-             src/main/cpp/jni/ARDeclarativeImageNode_JNI.cpp
-
-             # Android AR JNI
-             ${VIRO_ANDROID_SRC}/jni/ARNode_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/ARDeclarativeNode_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/ARDeclarativePlane_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/ARSceneController_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/VRORendererARCore_JNI.cpp
 
              # Animation
              ${VIRO_RENDERER_SRC}/VROTimingFunction.cpp
@@ -273,7 +268,12 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROPhysicsBody.cpp
              ${VIRO_RENDERER_SRC}/VROPhysicsShape.cpp
 
-             # Image Tracking
+             # Android JNI
+             ${VIRO_ANDROID_SRC}/jni/VRORenderer_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/Image_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/LazyMaterial_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/MediaRecorder_JNI.cpp
+             ${VIRO_ANDROID_SRC}/jni/VRORendererARCore_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/OpenCV_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/ImageTracker_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/ImageTrackerOutput_JNI.cpp

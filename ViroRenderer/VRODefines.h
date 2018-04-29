@@ -36,6 +36,9 @@
 #define VRO_NO_ARGS_STATIC
 #define VRO_REF int
 
+#define VRO_METHOD(return_type, method_name) \
+    return_type method_name
+
 #else  // !WASM_PLATFORM
 #define VRO_PLATFORM_ANDROID 1
 #define VRO_PLATFORM_IOS 0
@@ -53,6 +56,7 @@
 #define VRO_LONG jlong
 #define VRO_FLOAT jfloat
 #define VRO_DOUBLE jdouble
+#define VRO_OBJECT jobject
 #define VRO_ARRAY jobjectArray
 #define VRO_FLOAT_ARRAY jfloatArray
 #define VRO_INT_ARRAY jintArray
@@ -90,6 +94,21 @@
     jstring jkey = env->NewStringUTF(item.c_str()); \
     env->SetObjectArrayElement(array, index, jkey); \
     env->DeleteLocalRef(jkey); \
+
+#define VRO_NEW_GLOBAL_REF(object) \
+    env->NewGlobalRef(object)
+#define VRO_NEW_LOCAL_REF(object) \
+    env->NewLocalRef(object)
+#define VRO_NEW_WEAK_GLOBAL_REF(object) \
+    env->NewWeakGlobalRef(object);
+
+#define VRO_DELETE_GLOBAL_REF(object) \
+    env->DeleteGlobalRef(object)
+#define VRO_DELETE_LOCAL_REF(object) \
+    env->DeleteLocalRef(object)
+#define VRO_DELETE_WEAK_GLOBAL_REF(object) \
+    env->DeleteWeakGlobalRef(object)
+
 
 #endif
 #endif // !__OBJC __
