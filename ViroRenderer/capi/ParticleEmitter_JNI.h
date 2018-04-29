@@ -28,7 +28,7 @@ namespace ParticleEmitter {
         return persistentObj->get();
     }
 
-    inline std::shared_ptr<VROParticleModifier> getParticleModifier(JNIEnv *env,
+    inline std::shared_ptr<VROParticleModifier> getParticleModifier(VRO_ENV env,
                                                                     VRO_STRING jFactor,
                                                                     VRO_ARRAY jInitialValue,
                                                                     VRO_ARRAY jInterpolatedIntervals,

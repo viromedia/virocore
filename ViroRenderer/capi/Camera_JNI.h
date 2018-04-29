@@ -46,10 +46,10 @@ public:
             return;
         }
 
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         jweak jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
         VROPlatformDispatchAsyncApplication([jObjWeak, pos, rot, forward] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
+            VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
             if (localObj == NULL) {
                 return;

@@ -15,7 +15,7 @@
 
 class TextDelegate {
 public:
-    TextDelegate(VRO_OBJECT textJavaObject, JNIEnv *env);
+    TextDelegate(VRO_OBJECT textJavaObject, VRO_ENV env);
     ~TextDelegate();
 
     static VRO_REF jptr(std::shared_ptr<TextDelegate> shared_node) {

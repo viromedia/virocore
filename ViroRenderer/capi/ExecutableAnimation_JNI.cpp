@@ -48,7 +48,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
     std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
 
     VROPlatformDispatchAsyncRenderer([animation_w, node_w, obj_g] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
             VRO_DELETE_GLOBAL_REF(obj_g);
@@ -62,7 +62,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
         animation->execute(node, [obj_g] {
             VROPlatformDispatchAsyncApplication([obj_g] {
                 VROPlatformCallJavaFunction(obj_g, "animationDidFinish", "()V");
-                JNIEnv *env = VROPlatformGetJNIEnv();
+                VRO_ENV env = VROPlatformGetJNIEnv();
                 VRO_DELETE_GLOBAL_REF(obj_g);
             });
         });

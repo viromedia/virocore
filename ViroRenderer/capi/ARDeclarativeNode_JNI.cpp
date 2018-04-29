@@ -35,10 +35,10 @@ VRO_METHOD(void, nativeDestroyARNodeDelegate) (VRO_ARGS
 
 void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARAnchor> anchor_w = std::dynamic_pointer_cast<VROARAnchor>(anchor);
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, anchor_w] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
         if (localObj == NULL || !anchor_s) {
@@ -55,10 +55,10 @@ void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> 
 
 void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARAnchor> anchor_w = std::dynamic_pointer_cast<VROARAnchor>(anchor);
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, anchor_w] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
         if (localObj == NULL || !anchor_s) {
@@ -74,10 +74,10 @@ void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> a
 }
 
 void ARDeclarativeNodeDelegate::onARAnchorRemoved() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([jObject_w] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         if (localObj == NULL) {
             VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);

@@ -17,7 +17,7 @@ class VRONode;
 class VROMaterial;
 class OBJLoaderDelegate {
 public:
-    OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, JNIEnv *env);
+    OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, VRO_ENV env);
     ~OBJLoaderDelegate();
 
     void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO_LONG requestId);

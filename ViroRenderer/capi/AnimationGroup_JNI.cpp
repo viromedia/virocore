@@ -23,7 +23,7 @@ extern "C" {
  *
  * Note: this function releases the VRO_STRING candidate before returning!
  */
-void AddPropertyIfNotNull(JNIEnv *env, std::string property, VRO_STRING candidate,
+void AddPropertyIfNotNull(VRO_ENV env, std::string property, VRO_STRING candidate,
                           std::map<std::string, std::string> &propertyMap) {
     const char *candidateCStr = nullptr;
     if (candidate != NULL) {

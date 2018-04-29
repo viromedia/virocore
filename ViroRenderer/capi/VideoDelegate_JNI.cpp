@@ -23,11 +23,11 @@ VideoDelegate::~VideoDelegate() {
 }
 
 void VideoDelegate::videoWillBuffer() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
@@ -40,11 +40,11 @@ void VideoDelegate::videoWillBuffer() {
 }
 
 void VideoDelegate::videoDidBuffer() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
@@ -57,11 +57,11 @@ void VideoDelegate::videoDidBuffer() {
 }
 
 void VideoDelegate::videoDidFinish() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
@@ -74,11 +74,11 @@ void VideoDelegate::videoDidFinish() {
 }
 
 void VideoDelegate::videoDidFail(std::string error) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
@@ -93,11 +93,11 @@ void VideoDelegate::videoDidFail(std::string error) {
 }
 
 void VideoDelegate::onReady() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
@@ -110,11 +110,11 @@ void VideoDelegate::onReady() {
 }
 
 void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds){
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, currentTimeInSeconds, totalTimeInSeconds] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;

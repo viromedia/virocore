@@ -270,7 +270,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
 
         // Notify the bridge after collision tests are complete
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
+            VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
             if (jCallback == NULL) {
                 return;
@@ -340,7 +340,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
 
         // Notify the bridge after collision tests are complete
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
+            VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
             if (jCallback == NULL) {
                 return;
@@ -372,10 +372,10 @@ void SceneControllerDelegate::onSceneDidDisappear(VRORenderContext *context, std
 }
 
 void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     jweak jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
         if (localObj == NULL) {
             return;

@@ -34,7 +34,7 @@ namespace ARSceneController {
 
 class ARDeclarativeSceneDelegate : public VROARSceneDelegate, public VROARDeclarativeSessionDelegate {
 public:
-    ARDeclarativeSceneDelegate(VRO_OBJECT arSceneJavaObject, JNIEnv *env) {
+    ARDeclarativeSceneDelegate(VRO_OBJECT arSceneJavaObject, VRO_ENV env) {
         _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(arSceneJavaObject));
     }
 
@@ -65,7 +65,7 @@ private:
 
 class ARImperativeSceneDelegate : public VROARSceneDelegate, public VROARImperativeSessionDelegate {
 public:
-    ARImperativeSceneDelegate(VRO_OBJECT arSceneJavaObject, JNIEnv *env) {
+    ARImperativeSceneDelegate(VRO_OBJECT arSceneJavaObject, VRO_ENV env) {
         _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(arSceneJavaObject));
     }
 

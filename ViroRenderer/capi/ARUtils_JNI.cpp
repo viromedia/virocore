@@ -14,7 +14,7 @@
  * Creates an ARAnchor from the given VROARPlaneAnchor.
  */
 VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
 
     const char *achorIdArr = anchor->getId().c_str();
     VRO_STRING anchorId = VRO_NEW_STRING(achorIdArr);
@@ -73,7 +73,7 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
 }
 
 VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT tempArr[3];
     tempArr[0] = vector.x; tempArr[1] = vector.y; tempArr[2] = vector.z;
@@ -82,7 +82,7 @@ VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
 }
 
 VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(16);
 
     const float *array = matrix.getArray();
@@ -91,7 +91,7 @@ VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
 }
 
 VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
 
     VRO_FLOAT tempArr[6];
     tempArr[0] = boundingBox.getMinX(); tempArr[1] = boundingBox.getMaxX();
@@ -104,7 +104,7 @@ VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBo
 }
 
 VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     const char *strArr;
     if (alignment == VROARPlaneAlignment::Horizontal) {
         strArr = "Horizontal";
@@ -122,7 +122,7 @@ VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
 }
 
 VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
 
     VRO_STRING jtypeString;
     VRO_FLOAT_ARRAY jposition = VRO_NEW_FLOAT_ARRAY(3);
@@ -158,7 +158,7 @@ VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
 }
 
 VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
 
     std::vector<VROVector4f> points = pointCloud->getPoints();
     VRO_FLOAT tempConfidencesArr[points.size() * 4];
@@ -180,7 +180,7 @@ VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud
 }
 
 VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_FLOAT tempPointsArr[points.size() * 3];
 
     // populate the array with Vector objects

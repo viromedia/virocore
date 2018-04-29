@@ -37,7 +37,7 @@ VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
     VROPlatformDispatchAsyncRenderer([context_w, weakCallback] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
         if (jCallback == NULL) {
             return;

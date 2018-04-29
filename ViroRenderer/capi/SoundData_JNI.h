@@ -17,7 +17,7 @@
 
 class VROSoundDataDelegate_JNI: public VROSoundDataDelegate {
 public:
-    VROSoundDataDelegate_JNI(VRO_OBJECT soundDataObject, JNIEnv *env);
+    VROSoundDataDelegate_JNI(VRO_OBJECT soundDataObject, VRO_ENV env);
     ~VROSoundDataDelegate_JNI();
 
     void dataIsReady();

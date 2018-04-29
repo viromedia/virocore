@@ -19,7 +19,7 @@
 
 namespace Texture {
 
-    VROTextureInternalFormat getFormat(JNIEnv *env, VRO_STRING jformat);
+    VROTextureInternalFormat getFormat(VRO_ENV env, VRO_STRING jformat);
     VRO_OBJECT createJTexture(std::shared_ptr<VROTexture> texture);
 
     inline VRO_REF jptr(std::shared_ptr<VROTexture> ptr) {

@@ -26,7 +26,7 @@
 
 namespace Texture {
 
-    VROTextureFormat getInputFormat(JNIEnv *env, VRO_STRING jformat) {
+    VROTextureFormat getInputFormat(VRO_ENV env, VRO_STRING jformat) {
         std::string sformat = VROPlatformGetString(jformat, env);
 
         VROTextureFormat ret = VROTextureFormat::RGBA8;
@@ -40,7 +40,7 @@ namespace Texture {
         return ret;
     }
 
-    VROTextureInternalFormat getFormat(JNIEnv *env, VRO_STRING jformat) {
+    VROTextureInternalFormat getFormat(VRO_ENV env, VRO_STRING jformat) {
         std::string sformat = VROPlatformGetString(jformat, env);
         VROTextureInternalFormat ret = VROTextureInternalFormat::RGBA8;
         if (sformat == "RGBA4") {
@@ -55,7 +55,7 @@ namespace Texture {
         return ret;
     }
 
-    VROWrapMode getWrapMode(JNIEnv *env, VRO_STRING jwrapMode) {
+    VROWrapMode getWrapMode(VRO_ENV env, VRO_STRING jwrapMode) {
         std::string swrapMode = VROPlatformGetString(jwrapMode, env);
         VROWrapMode ret = VROWrapMode::Clamp;
         if (swrapMode == "Repeat") {
@@ -67,7 +67,7 @@ namespace Texture {
         return ret;
     }
 
-    VROFilterMode getFilterMode(JNIEnv *env, VRO_STRING jfilterMode) {
+    VROFilterMode getFilterMode(VRO_ENV env, VRO_STRING jfilterMode) {
         std::string sfilterMode = VROPlatformGetString(jfilterMode, env);
         VROFilterMode ret = VROFilterMode::Linear;
         if (sfilterMode == "Nearest") {
@@ -76,7 +76,7 @@ namespace Texture {
         return ret;
     }
 
-    VROStereoMode getStereoMode(JNIEnv *env, VRO_STRING stereoMode) {
+    VROStereoMode getStereoMode(VRO_ENV env, VRO_STRING stereoMode) {
         if (stereoMode != NULL) {
             std::string strStereoMode = VROPlatformGetString(stereoMode, env);
             return VROTextureUtil::getStereoModeForString(strStereoMode);
@@ -86,7 +86,7 @@ namespace Texture {
         }
     }
 
-    void setWrapMode(JNIEnv *env, VRO_OBJECT jTex, const char *jMatFieldName,
+    void setWrapMode(VRO_ENV env, VRO_OBJECT jTex, const char *jMatFieldName,
                      VROWrapMode mode) {
         std::string enumClassPathName = "com/viro/core/Texture$WrapMode";
         std::string enumValueStr;
@@ -101,7 +101,7 @@ namespace Texture {
         VROPlatformSetEnumValue(env, jTex, jMatFieldName, enumClassPathName, enumValueStr);
     }
 
-    void setFilterMode(JNIEnv *env, VRO_OBJECT jTex, const char *jMatFieldName,
+    void setFilterMode(VRO_ENV env, VRO_OBJECT jTex, const char *jMatFieldName,
                        VROFilterMode mode) {
         std::string enumClassPathName = "com/viro/core/Texture$FilterMode";
         std::string enumValueStr;
@@ -116,7 +116,7 @@ namespace Texture {
     }
 
     VRO_OBJECT createJTexture(std::shared_ptr<VROTexture> texture) {
-        JNIEnv *env = VROPlatformGetJNIEnv();
+        VRO_ENV env = VROPlatformGetJNIEnv();
         if (env == nullptr) {
             perror("Required JNIEnv to create a jTexture is null!");
             return NULL;
