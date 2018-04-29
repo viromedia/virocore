@@ -83,12 +83,12 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetControllerForwardVector)(VRO_ARGS
 VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
                                                         VRO_REF native_render_context_ref,
                                                         VRO_OBJECT callback) {
-    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<ViroContext> helperContext_w = ViroContext::native(native_render_context_ref);
 
     VROPlatformDispatchAsyncApplication([helperContext_w, weakCallback] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
+        VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
         if (jCallback == NULL) {
             return;
         }
@@ -99,8 +99,8 @@ VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
         VROVector3f position = helperContext->getInputController()->getPresenter()->getLastKnownForward();
         VROPlatformCallJavaFunction(jCallback,
                                     "onGetForwardVector", "(FFF)V", position.x, position.y, position.z);
-        env->DeleteLocalRef(jCallback);
-        env->DeleteWeakGlobalRef(weakCallback);
+        VRO_DELETE_LOCAL_REF(jCallback);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakCallback);
     });
 }
 /**

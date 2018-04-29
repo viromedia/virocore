@@ -80,10 +80,10 @@ VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
 void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARPlaneAnchor> planeAnchor_w = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
+    jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, planeAnchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARPlaneAnchor> planeAnchor = planeAnchor_w.lock();
         if (localObj == NULL || !planeAnchor) {
             return;
@@ -95,17 +95,17 @@ void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
         // Yes, the function in the bridge is onAnchorFound.
         VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
-        env->DeleteWeakGlobalRef(jObject_w);
+        VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
     });
 }
 
 void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARPlaneAnchor> planeAnchor_w = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
+    jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, planeAnchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARPlaneAnchor> planeAnchor = planeAnchor_w.lock();
         if (localObj == NULL || !planeAnchor) {
             return;
@@ -118,23 +118,23 @@ void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
         VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
 
-        env->DeleteWeakGlobalRef(jObject_w);
+        VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
     });
 }
 
 void ARPlaneDelegate::onARAnchorRemoved() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
+    jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([jObject_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(jObject_w);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         if (localObj == NULL) {
             return;
         }
 
         // Yes, the function in the bridge is onAnchorRemoved.
         VROPlatformCallJavaFunction(localObj, "onAnchorRemoved", "()V");
-        env->DeleteWeakGlobalRef(jObject_w);
+        VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
     });
 }
 

@@ -31,12 +31,12 @@
 class EventDelegate_JNI : public VROEventDelegate {
 public:
     EventDelegate_JNI(VRO_OBJECT sceneJavaObject, JNIEnv *env) {
-        _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(sceneJavaObject));
+        _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(sceneJavaObject));
     }
 
     ~EventDelegate_JNI() {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        env->DeleteWeakGlobalRef(_javaObject);
+        VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
     /*

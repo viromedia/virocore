@@ -252,7 +252,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
         strTag = kDefaultNodeTag;
     }
 
-    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     // Perform the collision ray test asynchronously.
@@ -271,14 +271,14 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
         // Notify the bridge after collision tests are complete
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
             JNIEnv *env = VROPlatformGetJNIEnv();
-            VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
+            VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
             if (jCallback == NULL) {
                 return;
             }
 
             VROPlatformCallJavaFunction(jCallback, "onComplete", "(Z)V", hitSomething);
-            env->DeleteLocalRef(jCallback);
-            env->DeleteWeakGlobalRef(weakCallback);
+            VRO_DELETE_LOCAL_REF(jCallback);
+            VRO_DELETE_WEAK_GLOBAL_REF(weakCallback);
         });
     });
 }
@@ -322,7 +322,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
         strTag = kDefaultNodeTag;
     }
 
-    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     // Perform the collision shape test asynchronously.
@@ -341,14 +341,14 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
         // Notify the bridge after collision tests are complete
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
             JNIEnv *env = VROPlatformGetJNIEnv();
-            VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
+            VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
             if (jCallback == NULL) {
                 return;
             }
 
             VROPlatformCallJavaFunction(jCallback, "onComplete", "(Z)V", hitSomething);
-            env->DeleteLocalRef(jCallback);
-            env->DeleteWeakGlobalRef(weakCallback);
+            VRO_DELETE_LOCAL_REF(jCallback);
+            VRO_DELETE_WEAK_GLOBAL_REF(weakCallback);
         });
     });
 }
@@ -373,16 +373,16 @@ void SceneControllerDelegate::onSceneDidDisappear(VRORenderContext *context, std
 
 void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    jweak jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(jObjWeak);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
         if (localObj == NULL) {
             return;
         }
 
         VROPlatformCallJavaFunction(localObj,
                                     functionName, "()V");
-        env->DeleteLocalRef(localObj);
+        VRO_DELETE_LOCAL_REF(localObj);
     });
 }

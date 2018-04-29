@@ -144,7 +144,7 @@ namespace Texture {
         setFilterMode(env, cls, jTexture, "mMagnificationFilter", texture->getMagnificationFilter());
         setFilterMode(env, cls, jTexture, "mMipFilter", texture->getMipFilter());
 
-        env->DeleteLocalRef(cls);
+        VRO_DELETE_LOCAL_REF(cls);
         return jTexture;
     }
 }

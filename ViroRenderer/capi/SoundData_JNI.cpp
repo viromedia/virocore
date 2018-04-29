@@ -48,48 +48,48 @@ extern "C" {
 } // extern "C"
 
 VROSoundDataDelegate_JNI::VROSoundDataDelegate_JNI(VRO_OBJECT nodeJavaObject, JNIEnv *env) {
-    _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(nodeJavaObject));
+    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(nodeJavaObject));
 }
 
 VROSoundDataDelegate_JNI::~VROSoundDataDelegate_JNI() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    env->DeleteWeakGlobalRef(_javaObject);
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 void VROSoundDataDelegate_JNI::dataIsReady(){
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
-            env->DeleteWeakGlobalRef(weakObj);
+            VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
             return;
         }
 
         VROPlatformCallJavaFunction(localObj, "dataIsReady", "()V");
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
 void VROSoundDataDelegate_JNI::dataError(std::string error){
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
-            env->DeleteWeakGlobalRef(weakObj);
+            VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
             return;
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
         VROPlatformCallJavaFunction(localObj, "dataError", "(Ljava/lang/String;)V", jerror);
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
-        env->DeleteLocalRef(jerror);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
+        VRO_DELETE_LOCAL_REF(jerror);
     });
 }

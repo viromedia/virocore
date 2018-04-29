@@ -25,7 +25,7 @@ VRO_METHOD(long, nativeBegin)(VRO_NO_ARGS_STATIC) {
 
 VRO_METHOD(void, nativeCommit)(VRO_ARGS_STATIC
                                VRO_OBJECT obj) {
-    VRO_OBJECT jGlobalObj = env->NewGlobalRef(obj);
+    VRO_OBJECT jGlobalObj = VRO_NEW_GLOBAL_REF(obj);
     VROPlatformDispatchAsyncRenderer([jGlobalObj] {
 
         VROTransaction::setFinishCallback([jGlobalObj](bool terminate) {
@@ -34,7 +34,7 @@ VRO_METHOD(void, nativeCommit)(VRO_ARGS_STATIC
                 JNIEnv *env = VROPlatformGetJNIEnv();
                 VROPlatformCallJavaFunction(jGlobalObj, "onAnimationFinished", "()V");
                 if (terminate) {
-                    env->DeleteGlobalRef(jGlobalObj);
+                    VRO_DELETE_GLOBAL_REF(jGlobalObj);
                 }
             });
         });

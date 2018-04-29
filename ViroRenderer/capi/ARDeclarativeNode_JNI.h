@@ -24,7 +24,7 @@ namespace ARDeclarativeNode {
 class ARDeclarativeNodeDelegate : public VROARDeclarativeNodeDelegate {
 public:
     ARDeclarativeNodeDelegate(VRO_OBJECT arNodeObject, JNIEnv *env) {
-        _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(arNodeObject));
+        _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(arNodeObject));
     }
 
     ~ARDeclarativeNodeDelegate() {

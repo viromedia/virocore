@@ -33,12 +33,12 @@ VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
 VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
                                              VRO_REF context_j,
                                              VRO_OBJECT callback) {
-    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
     VROPlatformDispatchAsyncRenderer([context_w, weakCallback] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT jCallback = env->NewLocalRef(weakCallback);
+        VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
         if (jCallback == NULL) {
             return;
         }
@@ -59,7 +59,7 @@ VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
                                     rotation.x, rotation.y, rotation.z,
                                     forward.x, forward.y, forward.z,
                                     up.x, up.y, up.z);
-        env->DeleteLocalRef(jCallback);
+        VRO_DELETE_LOCAL_REF(jCallback);
     });
 }
 

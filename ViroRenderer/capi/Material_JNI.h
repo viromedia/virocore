@@ -75,7 +75,7 @@ public:
         setTexture(env, cls, jMat, "mRoughnessMap", mat->getRoughness().getTexture());
         setTexture(env, cls, jMat, "mAmbientOcclusionMap", mat->getAmbientOcclusion().getTexture());
 
-        env->DeleteLocalRef(cls);
+        VRO_DELETE_LOCAL_REF(cls);
         return jMat;
     }
 
@@ -162,7 +162,7 @@ private:
         }
 
         env->SetObjectField(jObj, fieldId, jTexture);
-        env->DeleteLocalRef(jTexture);
+        VRO_DELETE_LOCAL_REF(jTexture);
     }
 
     static int parseColor(VROVector4f parseColor) {

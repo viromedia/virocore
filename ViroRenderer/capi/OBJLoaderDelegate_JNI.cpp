@@ -17,17 +17,17 @@
 #include "Material_JNI.h"
 
 OBJLoaderDelegate::OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, JNIEnv *env) {
-    _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(nodeJavaObject));
+    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(nodeJavaObject));
 }
 
 OBJLoaderDelegate::~OBJLoaderDelegate() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    env->DeleteWeakGlobalRef(_javaObject);
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     // If the request is antiquated, clear the node
     jlong activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
@@ -39,9 +39,9 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
 
     VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
-            env->DeleteWeakGlobalRef(weakObj);
+            VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
             return;
         }
 
@@ -69,7 +69,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
                 env->SetObjectArrayElement(materialArray, i, jMat);
 
                 // Clean up our local reference to jMaterial after.
-                env->DeleteLocalRef(jMat);
+                VRO_DELETE_LOCAL_REF(jMat);
                 i++;
             }
         }
@@ -81,8 +81,8 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
                                     "([Lcom/viro/core/Material;ZJ)V",
                                     materialArray, isFBX, jGeometryRef);
 
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
@@ -119,22 +119,22 @@ void OBJLoaderDelegate::generateJMaterials(std::map<std::string, std::shared_ptr
 
 void OBJLoaderDelegate::objFailed(std::string error) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
-        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
-            env->DeleteWeakGlobalRef(weakObj);
+            VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
             return;
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
         VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
 
-        env->DeleteLocalRef(localObj);
-        env->DeleteLocalRef(jerror);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_LOCAL_REF(jerror);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }

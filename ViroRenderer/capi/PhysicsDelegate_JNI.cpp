@@ -22,11 +22,11 @@ PhysicsDelegate_JNI::~PhysicsDelegate_JNI() {
 
 void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollision collision) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, collision] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = env->NewLocalRef(weakObj);
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
@@ -41,7 +41,7 @@ void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollisi
                                     collision.collidedNormal.y,
                                     collision.collidedNormal.z);
 
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }

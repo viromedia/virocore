@@ -24,105 +24,105 @@ VideoDelegate::~VideoDelegate() {
 
 void VideoDelegate::videoWillBuffer() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
 
         VROPlatformCallJavaFunction(localObj, "playerWillBuffer", "()V");
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
 void VideoDelegate::videoDidBuffer() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
 
         VROPlatformCallJavaFunction(localObj, "playerDidBuffer", "()V");
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
 void VideoDelegate::videoDidFinish() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
 
         VROPlatformCallJavaFunction(localObj, "playerDidFinishPlaying", "()V");
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
 void VideoDelegate::videoDidFail(std::string error) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
         VROPlatformCallJavaFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", jerror);
-        env->DeleteLocalRef(localObj);
-        env->DeleteLocalRef(jerror);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_LOCAL_REF(jerror);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
 void VideoDelegate::onReady() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
 
         VROPlatformCallJavaFunction(weakObj, "onReady", "()V");
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
 
 void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds){
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, currentTimeInSeconds, totalTimeInSeconds] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jobject localObj = env->NewLocalRef(weakObj);
+        jobject localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
 
         VROPlatformCallJavaFunction(weakObj, "onVideoUpdatedTime", "(FF)V",
                                     currentTimeInSeconds, totalTimeInSeconds);
-        env->DeleteLocalRef(localObj);
-        env->DeleteWeakGlobalRef(weakObj);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }

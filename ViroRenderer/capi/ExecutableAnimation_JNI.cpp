@@ -42,7 +42,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
                                          VRO_REF nativeRef, VRO_REF nodeRef) {
     // Hold a global reference to the object until the animation finishes, so that
     // we invoke its animationDidFinish callback
-    VRO_OBJECT obj_g = env->NewGlobalRef(obj);
+    VRO_OBJECT obj_g = VRO_NEW_GLOBAL_REF(obj);
 
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
@@ -51,19 +51,19 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
         JNIEnv *env = VROPlatformGetJNIEnv();
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
-            env->DeleteGlobalRef(obj_g);
+            VRO_DELETE_GLOBAL_REF(obj_g);
             return;
         }
         std::shared_ptr<VRONode> node = node_w.lock();
         if (!node) {
-            env->DeleteGlobalRef(obj_g);
+            VRO_DELETE_GLOBAL_REF(obj_g);
             return;
         }
         animation->execute(node, [obj_g] {
             VROPlatformDispatchAsyncApplication([obj_g] {
                 VROPlatformCallJavaFunction(obj_g, "animationDidFinish", "()V");
                 JNIEnv *env = VROPlatformGetJNIEnv();
-                env->DeleteGlobalRef(obj_g);
+                VRO_DELETE_GLOBAL_REF(obj_g);
             });
         });
     });

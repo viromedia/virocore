@@ -47,10 +47,10 @@ public:
         }
 
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+        jweak jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
         VROPlatformDispatchAsyncApplication([jObjWeak, pos, rot, forward] {
             JNIEnv *env = VROPlatformGetJNIEnv();
-            VRO_OBJECT localObj = env->NewLocalRef(jObjWeak);
+            VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
             if (localObj == NULL) {
                 return;
             }
@@ -59,8 +59,8 @@ public:
             VRO_FLOAT_ARRAY jForward = ARUtilsCreateFloatArrayFromVector3f(forward);
             VROPlatformCallJavaFunction(localObj, "onCameraTransformationUpdate", "([F[F[F)V",
                                         jPos, jRot, jForward);
-            env->DeleteLocalRef(localObj);
-            env->DeleteWeakGlobalRef(jObjWeak);
+            VRO_DELETE_LOCAL_REF(localObj);
+            VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
         });
     }
 

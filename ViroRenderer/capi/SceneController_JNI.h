@@ -28,7 +28,7 @@ namespace SceneController {
 class SceneControllerDelegate : public VROSceneController::VROSceneControllerDelegate {
 public:
     SceneControllerDelegate(VRO_OBJECT sceneJavaObject, JNIEnv *env) {
-        _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(sceneJavaObject));
+        _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(sceneJavaObject));
     }
 
     ~SceneControllerDelegate() {
