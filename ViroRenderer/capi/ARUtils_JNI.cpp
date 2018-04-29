@@ -35,9 +35,6 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
          String anchorId, String type, float[] position, float[] rotation,
          float[] scale, String alignment, float[] extent, float[] center
          */
-        jclass cls = env->FindClass("com/viro/core/ARPlaneAnchor");
-        jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F[F)V");
-
         VRO_STRING alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
         VRO_FLOAT_ARRAY extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
         VRO_FLOAT_ARRAY centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
@@ -46,8 +43,9 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
         const char *typeArr = "plane";
         VRO_STRING type = VRO_NEW_STRING(typeArr);
 
-        return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray,
-                                            alignment, extentArray, centerArray, polygonPointsArray);
+        return VROPlatformConstructHostObject("com/viro/core/ARPlaneAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F[F)V",
+                                              anchorId, type, positionArray, rotationArray, scaleArray, alignment, extentArray,
+                                              centerArray, polygonPointsArray);
     }
 
     // Create an ARImageAnchor in necessary and return.
@@ -57,27 +55,21 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
          ARImageAnchor's constructor has the following args:
          String anchorId, String type, float[] position, float[] rotation, float[] scale
          */
-        jclass cls = env->FindClass("com/viro/core/ARImageAnchor");
-        jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
-
         const char *typeArr = "image";
         VRO_STRING type = VRO_NEW_STRING(typeArr);
-        return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
+        return VROPlatformConstructHostObject("com/viro/core/ARImageAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
+                                              anchorId, type, positionArray, rotationArray, scaleArray);
     }
-
 
     // Create normal ARAnchor object and return it
     /*
      ARAnchor's constructor has the following args:
      String anchorId, String type, float[] position, float[] rotation, float[] scale
      */
-    jclass cls = env->FindClass("com/viro/core/ARAnchor");
-    jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
-
     const char *typeArr = "anchor";
     VRO_STRING type = VRO_NEW_STRING(typeArr);
-    return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
-
+    return VROPlatformConstructHostObject("com/viro/core/ARAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
+                                          anchorId, type, positionArray, rotationArray, scaleArray);
 }
 
 VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
@@ -100,11 +92,13 @@ VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix) {
 
 VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(6);
+
     VRO_FLOAT tempArr[6];
     tempArr[0] = boundingBox.getMinX(); tempArr[1] = boundingBox.getMaxX();
     tempArr[2] = boundingBox.getMinY(); tempArr[3] = boundingBox.getMaxY();
     tempArr[4] = boundingBox.getMinZ(); tempArr[5] = boundingBox.getMaxZ();
+
+    VRO_FLOAT_ARRAY returnArray = VRO_NEW_FLOAT_ARRAY(6);
     VRO_FLOAT_ARRAY_SET(returnArray, 0, 6, tempArr);
     return returnArray;
 }
@@ -129,9 +123,7 @@ VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
 
 VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
-    jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>", "(Ljava/lang/String;[F[F[F)V");
     VRO_STRING jtypeString;
     VRO_FLOAT_ARRAY jposition = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT_ARRAY jscale = VRO_NEW_FLOAT_ARRAY(3);
@@ -161,8 +153,8 @@ VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     }
 
     jtypeString = VRO_NEW_STRING(typeString);
-    return env->NewObject(arHitTestResultClass, constructorMethod, jtypeString,
-                          jposition, jscale, jrotation);
+    return VROPlatformConstructHostObject("com/viro/core/ARHitTestResult", "(Ljava/lang/String;[F[F[F)V",
+                                          jtypeString, jposition, jscale, jrotation);
 }
 
 VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
@@ -173,10 +165,10 @@ VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
-        tempConfidencesArr[i*4] = points[i].x;
-        tempConfidencesArr[i*4+1] = points[i].y;
-        tempConfidencesArr[i*4+2] = points[i].z;
-        tempConfidencesArr[i*4+3] = points[i].w;
+        tempConfidencesArr[i * 4] = points[i].x;
+        tempConfidencesArr[i * 4 + 1] = points[i].y;
+        tempConfidencesArr[i * 4 + 2] = points[i].z;
+        tempConfidencesArr[i * 4 + 3] = points[i].w;
     }
 
     // copy confidence values over to a VRO_FLOAT_ARRAY
@@ -184,10 +176,7 @@ VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud
     VRO_FLOAT_ARRAY_SET(jConfidencesArray, 0, points.size() * 4, tempConfidencesArr);
 
     // get constructor, create and return an ARPointCloud Java object
-    jclass arPointCloudClass = env->FindClass("com/viro/core/ARPointCloud");
-    jmethodID constructorMethod = env->GetMethodID(arPointCloudClass, "<init>", "([F)V");
-
-    return env->NewObject(arPointCloudClass, constructorMethod, jConfidencesArray);
+    return VROPlatformConstructHostObject("com/viro/core/ARPointCloud", "([F)V", jConfidencesArray);
 }
 
 VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {

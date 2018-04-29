@@ -952,6 +952,30 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     return result;
 }
 
+VRO_OBJECT VROPlatformConstructHostObject(std::string className,
+                                          std::string constructorSignature, ...) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    env->ExceptionClear();
+
+    jclass cls = env->FindClass(className.c_str());
+    jmethodID constructor = env->GetMethodID(cls, "<init>", constructorSignature.c_str());
+
+    va_list args;
+    va_start(args, constructorSignature);
+    VRO_OBJECT object = env->NewObject(cls, constructor, args);
+    if (env->ExceptionOccurred()) {
+        perr("Exception occured when calling constructor %s", constructorSignature.c_str());
+        env->ExceptionDescribe();
+
+        std::string errorString = "A java exception has been thrown when calling constructor " + constructorSignature;
+        throw std::runtime_error(errorString.c_str());
+    }
+    va_end(args);
+
+    env->DeleteLocalRef(cls);
+    return object;
+}
+
 void VROPlatformSetBool(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, jboolean value) {
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "Z");
     if (fieldId == NULL) {

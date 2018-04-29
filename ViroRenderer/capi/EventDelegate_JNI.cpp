@@ -310,14 +310,13 @@ void EventDelegate_JNI::onCameraARHitTest(std::vector<VROARHitTestResult> result
 
     VROPlatformDispatchAsyncApplication([weakObj, results] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (localObj == NULL) {
             return;
         }
         //start code to convert VROARHitTestResult to ARHitTestResult
-        VRO_ARRAY resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
+        VRO_ARRAY resultsArray = VRO_NEW_ARRAY(results.size(), "com/viro/core/ARHitTestResult");
         for (int i = 0; i < results.size(); i++) {
             VRO_OBJECT jresult = ARUtilsCreateARHitTestResult(results[i]);
             VRO_ARRAY_SET(resultsArray, i, jresult);

@@ -214,8 +214,9 @@ jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext);
 // (i.e. threads created using pthread_create).
 jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *className);
 
-// Calls a java function from native through JNI on the given jObject with the given
-// functionName, methodID and desired java function parameters.
+// Calls a method on the host platform (e.g. a Java or Javascript function).
+// The method is invoked on the given object with the given functionName,
+// methodID and desired function parameters.
 //
 // Example: VROPlatformCallJavaFunction(jObj,
 //                                      "onHover",
@@ -228,7 +229,11 @@ jlong VROPlatformCallJavaLongFunction(jobject javaObject,
                                      std::string functionName,
                                      std::string methodID, ...);
 
-// Helper functions for setting jObject properties through JNI from C++
+// Constructs an object on the host platform (e.g. a Java or Javascript object)
+VRO_OBJECT VROPlatformConstructHostObject(std::string className,
+                                          std::string constructorSignature, ...);
+
+// Helper functions for setting host object properties through from C++
 void VROPlatformSetFloat(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_FLOAT value);
 void VROPlatformSetString(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, std::string value);
 void VROPlatformSetInt(JNIEnv *env, jclass cls, jobject jObj, const char *fieldName, VRO_INT value);

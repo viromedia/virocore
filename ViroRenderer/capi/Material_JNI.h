@@ -45,8 +45,7 @@ public:
         }
 
         // Create our Material.java object with the native reference.
-        jmethodID jmethod = env->GetMethodID(cls, "<init>", "(J)V");
-        VRO_OBJECT jMat = env->NewObject(cls, jmethod, matRef);
+        VRO_OBJECT jMat = VROPlatformConstructHostObject("com/viro/core/Material", "(J)V", matRef);
         VROPlatformSetString(env, cls, jMat, "mName", mat->getName());
 
         // Set basic visual properties for Material.java

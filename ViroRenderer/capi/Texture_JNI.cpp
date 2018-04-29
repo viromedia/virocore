@@ -132,8 +132,7 @@ namespace Texture {
         }
 
         // Create our Texture.java object with the native reference.
-        jmethodID jmethod = env->GetMethodID(cls, "<init>", "(J)V");
-        jobject jTexture = env->NewObject(cls, jmethod, matRef);
+        VRO_OBJECT jTexture = VROPlatformConstructHostObject("com/viro/core/Texture", "(J)V", matRef);
 
         // Set visual properties of this Texture.java object and return it
         VROPlatformSetInt(env, cls, jTexture, "mWidth", texture->getWidth());

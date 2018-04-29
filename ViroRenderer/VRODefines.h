@@ -79,6 +79,8 @@
     env->GetObjectArrayElement(array, index)
 #define VRO_ARRAY_SET(array, index, object) \
     env->SetObjectArrayElement(array, index, object)
+#define VRO_NEW_ARRAY(size, cls) \
+    env->NewObjectArray(size, env->FindClass(cls), NULL);
 
 #define VRO_FLOAT_ARRAY jfloatArray
 #define VRO_NEW_FLOAT_ARRAY(size) \

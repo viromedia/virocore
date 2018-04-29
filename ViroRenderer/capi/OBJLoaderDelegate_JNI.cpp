@@ -57,16 +57,14 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         generateJMaterials(mats, node);
 
         // Generate an array containing a unique list of jMaterials
-        jobjectArray materialArray = env->NewObjectArray(mats.size(),
-                                                         env->FindClass("com/viro/core/Material"),
-                                                         NULL);
+        jobjectArray materialArray = VRO_NEW_ARRAY(mats.size(), "com/viro/core/Material");
         if (mats.size() > 0) {
             int i = 0;
             for(std::map<std::string, std::shared_ptr<VROMaterial>>::iterator
                         it = mats.begin(); it != mats.end(); ++it) {
                 // Create the Material.java and added it to the array
                 VRO_OBJECT jMat = Material::createJMaterial(it->second);
-                env->SetObjectArrayElement(materialArray, i, jMat);
+                VRO_ARRAY_SET(materialArray, i, jMat);
 
                 // Clean up our local reference to jMaterial after.
                 VRO_DELETE_LOCAL_REF(jMat);
