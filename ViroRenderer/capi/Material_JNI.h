@@ -37,7 +37,7 @@ public:
 
         // Create a persistent native reference that would represent the jMaterial object.
         PersistentRef<VROMaterial> *persistentRef = new PersistentRef<VROMaterial>(mat);
-        jlong matRef = reinterpret_cast<intptr_t>(persistentRef);
+        VRO_REF matRef = reinterpret_cast<VRO_REF>(persistentRef);
 
         // Create our Material.java object with the native reference.
         VRO_OBJECT jMat = VROPlatformConstructHostObject("com/viro/core/Material", "(J)V", matRef);

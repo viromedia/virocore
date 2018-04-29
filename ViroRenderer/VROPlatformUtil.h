@@ -179,7 +179,6 @@ void VROPlatformSetEnv(JNIEnv *env, jobject appContext, jobject assetManager, jo
 void VROPlatformSetEnv(JNIEnv *env);
 void VROPlatformReleaseEnv();
 
-JNIEnv *VROPlatformGetJNIEnv();
 jobject VROPlatformGetJavaAppContext();
 jobject VROPlatformGetJavaAssetManager();
 AAssetManager *VROPlatformGetAssetManager();
@@ -214,39 +213,8 @@ jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext);
 // (i.e. threads created using pthread_create).
 jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *className);
 
-// Calls a method on the host platform (e.g. a Java or Javascript function).
-// The method is invoked on the given object with the given functionName,
-// methodID and desired function parameters.
-//
-// Example: VROPlatformCallJavaFunction(jObj,
-//                                      "onHover",
-//                                      "(Z)V",
-//                                      isGazing);
-void VROPlatformCallJavaFunction(jobject javaObject,
-                                 std::string functionName,
-                                 std::string methodID, ...);
-jlong VROPlatformCallJavaLongFunction(jobject javaObject,
-                                     std::string functionName,
-                                     std::string methodID, ...);
-
-// Constructs an object on the host platform (e.g. a Java or Javascript object)
-VRO_OBJECT VROPlatformConstructHostObject(std::string className,
-                                          std::string constructorSignature, ...);
-
-// Helper functions for setting host object properties through from C++
-void VROPlatformSetFloat(JNIEnv *env, jobject jObj, const char *fieldName, VRO_FLOAT value);
-void VROPlatformSetString(JNIEnv *env, jobject jObj, const char *fieldName, std::string value);
-void VROPlatformSetInt(JNIEnv *env, jobject jObj, const char *fieldName, VRO_INT value);
-void VROPlatformSetBool(JNIEnv *env, jobject jObj, const char *fieldName, jboolean value);
-void VROPlatformSetEnumValue(JNIEnv *env, jobject jObj, const char *fieldName,
-                             std::string enumClassPathName, std::string enumValueStr);
-void VROPlatformSetObject(JNIEnv *env, jobject jObj, const char *fieldName,
-                          const char *fieldType, VRO_OBJECT object);
-
-// Safely converts the given string with the provided jni environment.
-std::string VROPlatformGetString(VRO_STRING string, JNIEnv *env);
-
 #pragma mark - Android Image Tracking Debugging
+
 /*
  This function calls setImageOnTrackingImageView on ViroViewARCore in order to debug
  Image Tracking/Detection
@@ -268,6 +236,47 @@ extern "C" {
 void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, VRO_INT taskId);
 
 }
+
+#endif
+
+#pragma mark - C API (Android + WebAssembly)
+
+#if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
+
+// Get the host platform environment
+VRO_ENV VROPlatformGetJNIEnv();
+
+// Calls a method on the host platform (e.g. a Java or Javascript function).
+// The method is invoked on the given object with the given functionName,
+// methodID, and desired function parameters.
+//
+// Example: VROPlatformCallJavaFunction(jObj,
+//                                      "onHover",
+//                                      "(Z)V",
+//                                      isGazing);
+void VROPlatformCallJavaFunction(VRO_OBJECT object,
+                                 std::string functionName,
+                                 std::string methodID, ...);
+VRO_LONG VROPlatformCallJavaLongFunction(VRO_OBJECT object,
+                                         std::string functionName,
+                                         std::string methodID, ...);
+
+// Constructs an object on the host platform (e.g. a Java or Javascript object)
+VRO_OBJECT VROPlatformConstructHostObject(std::string className,
+                                          std::string constructorSignature, ...);
+
+// Helper functions for setting host object properties through from C++
+void VROPlatformSetFloat(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_FLOAT value);
+void VROPlatformSetString(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, std::string value);
+void VROPlatformSetInt(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_INT value);
+void VROPlatformSetBool(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_BOOL value);
+void VROPlatformSetEnumValue(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
+                             std::string enumClassPathName, std::string enumValueStr);
+void VROPlatformSetObject(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
+                          const char *fieldType, VRO_OBJECT object);
+
+// Safely converts the given string with the provided jni environment.
+std::string VROPlatformGetString(VRO_STRING string, VRO_ENV env);
 
 #endif
 

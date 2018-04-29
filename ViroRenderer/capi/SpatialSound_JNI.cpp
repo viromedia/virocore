@@ -5,7 +5,6 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include "SpatialSound_JNI.h"
 #include <VROSound.h>

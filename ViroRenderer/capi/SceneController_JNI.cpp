@@ -5,11 +5,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include <VROBox.h>
-#include <VROImageAndroid.h>
-
 #include "VRONode.h"
 #include "VROScene.h"
 #include "VROSceneController.h"
@@ -252,7 +249,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
         strTag = kDefaultNodeTag;
     }
 
-    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
+    VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     // Perform the collision ray test asynchronously.
@@ -322,7 +319,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
         strTag = kDefaultNodeTag;
     }
 
-    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
+    VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     // Perform the collision shape test asynchronously.
@@ -373,7 +370,7 @@ void SceneControllerDelegate::onSceneDidDisappear(VRORenderContext *context, std
 
 void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);

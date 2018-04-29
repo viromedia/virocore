@@ -5,7 +5,6 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include <PersistentRef.h>
 #include "ViroContext_JNI.h"
@@ -33,7 +32,7 @@ VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
 VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
                                              VRO_REF context_j,
                                              VRO_OBJECT callback) {
-    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
+    VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
     VROPlatformDispatchAsyncRenderer([context_w, weakCallback] {

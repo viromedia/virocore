@@ -6,7 +6,6 @@
 //
 
 #include <VROPolyline.h>
-#include <jni.h>
 #include <PersistentRef.h>
 #include <VROPlatformUtil.h>
 #include "Node_JNI.h"

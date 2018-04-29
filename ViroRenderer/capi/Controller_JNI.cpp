@@ -5,7 +5,6 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include <VROInputPresenterDaydream.h>
 #include "ViroContext_JNI.h"
@@ -83,7 +82,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetControllerForwardVector)(VRO_ARGS
 VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
                                                         VRO_REF native_render_context_ref,
                                                         VRO_OBJECT callback) {
-    jweak weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
+    VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<ViroContext> helperContext_w = ViroContext::native(native_render_context_ref);
 
     VROPlatformDispatchAsyncApplication([helperContext_w, weakCallback] {

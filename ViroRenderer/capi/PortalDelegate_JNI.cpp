@@ -6,8 +6,9 @@
 #include <VROPlatformUtil.h>
 #include "PortalDelegate_JNI.h"
 
-PortalDelegate::PortalDelegate(VRO_OBJECT javaPortalSceneObject){
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaPortalSceneObject));
+PortalDelegate::PortalDelegate(VRO_OBJECT javaPortalSceneObject) {
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(javaPortalSceneObject));
 }
 
 PortalDelegate::~PortalDelegate() {
@@ -16,7 +17,7 @@ PortalDelegate::~PortalDelegate() {
 
 void PortalDelegate::onPortalEnter() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -35,7 +36,7 @@ void PortalDelegate::onPortalEnter() {
 
 void PortalDelegate::onPortalExit() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();

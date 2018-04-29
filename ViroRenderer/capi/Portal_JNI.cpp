@@ -2,7 +2,6 @@
  * Copyright © 2017 Viro Media. All rights reserved.
  */
 
-#include <jni.h>
 #include <memory>
 #include <VROPortalFrame.h>
 #include "Portal_JNI.h"

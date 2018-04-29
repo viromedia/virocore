@@ -29,12 +29,104 @@
 #define VRO_PLATFORM_WASM 1
 #define VRO_PLATFORM_MACOS 0
 
+#include <emscripten.h>
+#include <emscripten/val.h>
+
 #define VRO_C_INCLUDE <string>
+#define VRO_ENV void*
 #define VRO_ARGS ,
 #define VRO_ARGS_STATIC ,
 #define VRO_NO_ARGS
 #define VRO_NO_ARGS_STATIC
 #define VRO_REF int
+#define VRO_BOOL bool
+#define VRO_INT int
+#define VRO_LONG uint64_t
+#define VRO_FLOAT float
+#define VRO_DOUBLE double
+#define VRO_OBJECT void*
+#define VRO_WEAK void*
+
+#define VRO_STRING std::string
+#define VRO_NEW_STRING(chars) \
+    std::string(chars)
+#define VRO_STRING_LENGTH(string) \
+    string.size()
+#define VRO_STRING_GET_CHARS(str) \
+    str.c_str()
+#define VRO_STRING_RELEASE_CHARS(str, chars) \
+
+#define VRO_STRING_GET_CHARS_WIDE(str) \
+    str.c_str()
+#define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
+    
+
+#define VRO_ARRAY std::vector<emscripten::val>
+#define VRO_ARRAY_LENGTH(array) \
+    array.size()
+#define VRO_ARRAY_GET(array, index) \
+    array[index]
+#define VRO_ARRAY_SET(array, index, object) \
+    array[index] = object
+#define VRO_NEW_ARRAY(size, cls) \
+    std::vector<emscripten::val>(size)
+
+#define VRO_FLOAT_ARRAY std::vector<float>
+#define VRO_NEW_FLOAT_ARRAY(size) \
+    std::vector<float>(size)
+#define VRO_FLOAT_ARRAY_SET(dest, start, len, src) \
+    dest.insert(dest.start() + start, &src[0], &src[len]);
+#define VRO_FLOAT_ARRAY_GET_ELEMENTS(array) \
+    array.data()
+#define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
+
+
+#define VRO_DOUBLE_ARRAY std::vector<double>
+#define VRO_NEW_DOUBLE_ARRAY(size) \
+    std::vector<double>(size)
+#define VRO_DOUBLE_ARRAY_SET(dest, start, len, src) \
+    dest.insert(dest.start() + start, &src[0], &src[len]);
+#define VRO_DOUBLE_ARRAY_GET_ELEMENTS(array) \
+    array.data()
+#define VRO_DOUBLE_ARRAY_RELEASE_ELEMENTS(array, elements) \
+
+
+#define VRO_INT_ARRAY std::vector<int>
+#define VRO_LONG_ARRAY std::vector<uint64_t>
+#define VRO_NEW_LONG_ARRAY(size) \
+    std::vector<uint64_t>(size)
+#define VRO_LONG_ARRAY_SET(dest, start, len, src) \
+    dest.insert(dest.start() + start, &src[0], &src[len]);
+#define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
+    array.data()
+#define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
+
+
+#define VRO_NEW_STRING_ARRAY(size) \
+    std::vector<std::string>(size)
+#define VRO_STRING_ARRAY_GET(array, index) \
+    array[index]
+#define VRO_STRING_ARRAY_SET(array, index, item) \
+    array[index] = item
+
+#define VRO_NEW_GLOBAL_REF(object) \
+    object
+#define VRO_NEW_LOCAL_REF(object) \
+    object
+#define VRO_NEW_WEAK_GLOBAL_REF(object) \
+    object
+
+#define VRO_DELETE_GLOBAL_REF(object) \
+
+#define VRO_DELETE_LOCAL_REF(object) \
+
+#define VRO_DELETE_WEAK_GLOBAL_REF(object) \
+
+
+#define VRO_BUFFER_GET_CAPACITY(buffer) \
+    0
+#define VRO_BUFFER_GET_ADDRESS(buffer) \
+    0
 
 #define VRO_METHOD(return_type, method_name) \
     return_type method_name
@@ -46,6 +138,7 @@
 #define VRO_PLATFORM_MACOS 0
 
 #define VRO_C_INCLUDE <jni.h>
+#define VRO_ENV JNIEnv*
 #define VRO_ARGS JNIEnv *env, jobject obj,
 #define VRO_ARGS_STATIC JNIEnv *env, jclass clazz,
 #define VRO_NO_ARGS JNIEnv *env, jobject obj
@@ -57,6 +150,7 @@
 #define VRO_FLOAT jfloat
 #define VRO_DOUBLE jdouble
 #define VRO_OBJECT jobject
+#define VRO_WEAK jweak
 
 #define VRO_STRING jstring
 #define VRO_NEW_STRING(chars) \
@@ -66,21 +160,21 @@
 #define VRO_STRING_GET_CHARS(str) \
     env->GetStringUTFChars(str, NULL)
 #define VRO_STRING_RELEASE_CHARS(str, chars) \
-    env->ReleaseStringUTFChars(str, chars);
+    env->ReleaseStringUTFChars(str, chars)
 #define VRO_STRING_GET_CHARS_WIDE(str) \
     env->GetStringChars(str, NULL)
 #define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
-    env->ReleaseStringChars(str, chars);
+    env->ReleaseStringChars(str, chars)
 
 #define VRO_ARRAY jobjectArray
 #define VRO_ARRAY_LENGTH(array) \
-    env->GetArrayLength(array);
+    env->GetArrayLength(array)
 #define VRO_ARRAY_GET(array, index) \
     env->GetObjectArrayElement(array, index)
 #define VRO_ARRAY_SET(array, index, object) \
     env->SetObjectArrayElement(array, index, object)
 #define VRO_NEW_ARRAY(size, cls) \
-    env->NewObjectArray(size, env->FindClass(cls), NULL);
+    env->NewObjectArray(size, env->FindClass(cls), NULL)
 
 #define VRO_FLOAT_ARRAY jfloatArray
 #define VRO_NEW_FLOAT_ARRAY(size) \

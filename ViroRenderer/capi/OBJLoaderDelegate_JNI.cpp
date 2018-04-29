@@ -6,7 +6,6 @@
 //
 
 
-#include <jni.h>
 #include <memory>
 #include "VROPlatformUtil.h"
 #include "OBJLoaderDelegate_JNI.h"
@@ -27,7 +26,7 @@ OBJLoaderDelegate::~OBJLoaderDelegate() {
 
 void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO_LONG requestId) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     // If the request is antiquated, clear the node
     VRO_LONG activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
@@ -117,7 +116,7 @@ void OBJLoaderDelegate::generateJMaterials(std::map<std::string, std::shared_ptr
 
 void OBJLoaderDelegate::objFailed(std::string error) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         VRO_ENV env = VROPlatformGetJNIEnv();

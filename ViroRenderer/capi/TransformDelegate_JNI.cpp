@@ -5,13 +5,13 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include <VROPlatformUtil.h>
 #include "TransformDelegate_JNI.h"
 
 TransformDelegate_JNI::TransformDelegate_JNI(VRO_OBJECT javaDelegateObject, double distanceFilter):VROTransformDelegate(distanceFilter){
-    _javaObject  = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaDelegateObject));
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    _javaObject  = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(javaDelegateObject));
 }
 
 TransformDelegate_JNI::~TransformDelegate_JNI() {
@@ -21,7 +21,7 @@ TransformDelegate_JNI::~TransformDelegate_JNI() {
 
 void TransformDelegate_JNI::onPositionUpdate(VROVector3f position){
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, position] {
         VRO_ENV env = VROPlatformGetJNIEnv();

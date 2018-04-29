@@ -5,15 +5,15 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include <VROPlatformUtil.h>
 #include "VRONode.h"
 #include "PhysicsDelegate_JNI.h"
 #include "VROLog.h"
 
-PhysicsDelegate_JNI::PhysicsDelegate_JNI(VRO_OBJECT obj){
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(obj));
+PhysicsDelegate_JNI::PhysicsDelegate_JNI(VRO_OBJECT obj) {
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(obj));
 }
 
 PhysicsDelegate_JNI::~PhysicsDelegate_JNI() {
@@ -22,7 +22,7 @@ PhysicsDelegate_JNI::~PhysicsDelegate_JNI() {
 
 void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollision collision) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, collision] {
         VRO_ENV env = VROPlatformGetJNIEnv();

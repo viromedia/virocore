@@ -5,7 +5,6 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include "PersistentRef.h"
 #include <VROTypefaceAndroid.h>

@@ -5,13 +5,13 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <VROPlatformUtil.h>
 #include <VROLog.h>
 #include "SoundDelegate_JNI.h"
 
 SoundDelegate::SoundDelegate(VRO_OBJECT soundObjectJava) {
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(soundObjectJava));
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(soundObjectJava));
 }
 
 SoundDelegate::~SoundDelegate() {

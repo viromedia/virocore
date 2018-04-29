@@ -9,7 +9,6 @@
 #ifndef Texture_JNI_h
 #define Texture_JNI_h
 
-#include <jni.h>
 #include <memory>
 #include "VROTexture.h"
 #include "PersistentRef.h"

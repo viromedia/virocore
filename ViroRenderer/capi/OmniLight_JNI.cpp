@@ -4,7 +4,6 @@
 //
 // Copyright © 2016 Viro Media. All rights reserved.
 
-#include <jni.h>
 #include <VROLight.h>
 #include <PersistentRef.h>
 #include <VRONode.h>

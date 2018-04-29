@@ -1217,6 +1217,57 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
     return "";
 }
 
+VRO_ENV VROPlatformGetJNIEnv() {
+    return nullptr;
+}
+
+void VROPlatformCallJavaFunction(VRO_OBJECT object,
+                                 std::string functionName,
+                                 std::string methodID, ...) {
+
+}
+
+VRO_LONG VROPlatformCallJavaLongFunction(VRO_OBJECT object,
+                                         std::string functionName,
+                                         std::string methodID, ...) {
+    return 0;
+}
+
+VRO_OBJECT VROPlatformConstructHostObject(std::string className,
+                                          std::string constructorSignature, ...) {
+
+}
+
+void VROPlatformSetFloat(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_FLOAT value) {
+
+}
+
+void VROPlatformSetString(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, std::string value) {
+
+}
+
+void VROPlatformSetInt(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_INT value) {
+
+}
+
+void VROPlatformSetBool(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_BOOL value) {
+
+}
+
+void VROPlatformSetEnumValue(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
+                             std::string enumClassPathName, std::string enumValueStr) {
+
+}
+
+void VROPlatformSetObject(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
+                          const char *fieldType, VRO_OBJECT object) {
+
+}
+
+std::string VROPlatformGetString(VRO_STRING string, VRO_ENV env) {
+    return string;
+}
+
 #endif
 #pragma mark - iOS and Android
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID

@@ -7,7 +7,6 @@
 
 #include "Camera_JNI.h"
 #include <iostream>
-#include <jni.h>
 #include <memory>
 #include <VROPlatformUtil.h>
 #include "PersistentRef.h"

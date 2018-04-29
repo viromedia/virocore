@@ -5,7 +5,6 @@
 #ifndef ANDROID_SURFACE_JNI_H
 #define ANDROID_SURFACE_JNI_H
 
-#include <jni.h>
 #include <memory>
 #include "PersistentRef.h"
 #include "VROSurface.h"

@@ -5,7 +5,6 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include <VROVideoSurface.h>
 #include <VROVideoTextureAVP.h>
@@ -14,8 +13,9 @@
 #include "VideoDelegate_JNI.h"
 #include "VROLog.h"
 
-VideoDelegate::VideoDelegate(VRO_OBJECT javaVideoObject){
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaVideoObject));
+VideoDelegate::VideoDelegate(VRO_OBJECT javaVideoObject) {
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(javaVideoObject));
 }
 
 VideoDelegate::~VideoDelegate() {
@@ -24,7 +24,7 @@ VideoDelegate::~VideoDelegate() {
 
 void VideoDelegate::videoWillBuffer() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -41,7 +41,7 @@ void VideoDelegate::videoWillBuffer() {
 
 void VideoDelegate::videoDidBuffer() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -58,7 +58,7 @@ void VideoDelegate::videoDidBuffer() {
 
 void VideoDelegate::videoDidFinish() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -75,7 +75,7 @@ void VideoDelegate::videoDidFinish() {
 
 void VideoDelegate::videoDidFail(std::string error) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -94,7 +94,7 @@ void VideoDelegate::videoDidFail(std::string error) {
 
 void VideoDelegate::onReady() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -111,7 +111,7 @@ void VideoDelegate::onReady() {
 
 void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds){
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, currentTimeInSeconds, totalTimeInSeconds] {
         VRO_ENV env = VROPlatformGetJNIEnv();

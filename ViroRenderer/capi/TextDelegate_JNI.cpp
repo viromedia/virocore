@@ -5,10 +5,8 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
 #include <memory>
 #include "TextDelegate_JNI.h"
-
 #include <VROPlatformUtil.h>
 
 TextDelegate::TextDelegate(VRO_OBJECT textJavaObject, VRO_ENV env) {
@@ -22,7 +20,7 @@ TextDelegate::~TextDelegate() {
 
 void TextDelegate::textCreated(VRO_REF nativeTextRef) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, nativeTextRef] {
         VRO_ENV env = VROPlatformGetJNIEnv();

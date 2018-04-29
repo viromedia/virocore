@@ -80,7 +80,7 @@ VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
 void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARPlaneAnchor> planeAnchor_w = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, planeAnchor_w] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
@@ -102,7 +102,7 @@ void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
 void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARPlaneAnchor> planeAnchor_w = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([this, jObject_w, planeAnchor_w] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
@@ -124,7 +124,7 @@ void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
 
 void ARPlaneDelegate::onARAnchorRemoved() {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK jObject_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
     VROPlatformDispatchAsyncApplication([jObject_w] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);

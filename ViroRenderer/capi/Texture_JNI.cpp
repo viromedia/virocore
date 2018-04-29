@@ -4,7 +4,7 @@
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
-#include <jni.h>
+
 #include <memory>
 #include <VROTextureUtil.h>
 #include "VROData.h"

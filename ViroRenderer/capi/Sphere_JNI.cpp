@@ -4,8 +4,8 @@
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+
 #include <iostream>
-#include <jni.h>
 #include <memory>
 #include <VROSphere.h>
 #include <Viro.h>

@@ -8,7 +8,6 @@
 #ifndef ANDROID_VIDEO_DELEGATE_JNI_H
 #define ANDROID_VIDEO_DELEGATE_JNI_H
 
-#include <jni.h>
 #include <PersistentRef.h>
 #include "VROVideoDelegateInternal.h"
 

@@ -6,7 +6,6 @@
 #include "Material_JNI.h"
 #include "VROPlatformUtil.h"
 #include "VROGeometry.h"
-#include <jni.h>
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

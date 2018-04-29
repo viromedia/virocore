@@ -4,7 +4,7 @@
 //
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
-#include <jni.h>
+
 #include <VROPlatformUtil.h>
 #include "SoundData_JNI.h"
 
@@ -58,7 +58,7 @@ VROSoundDataDelegate_JNI::~VROSoundDataDelegate_JNI() {
 
 void VROSoundDataDelegate_JNI::dataIsReady(){
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -76,7 +76,7 @@ void VROSoundDataDelegate_JNI::dataIsReady(){
 
 void VROSoundDataDelegate_JNI::dataError(std::string error){
     VRO_ENV env = VROPlatformGetJNIEnv();
-    jweak weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         VRO_ENV env = VROPlatformGetJNIEnv();
