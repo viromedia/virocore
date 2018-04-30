@@ -62,7 +62,7 @@ VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                 VRO_REF native_ref,
-                                jboolean value) {
+                                VRO_BOOL value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -74,7 +74,7 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetRun)(VRO_ARGS
                                VRO_REF native_ref,
-                               jboolean value) {
+                               VRO_BOOL value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -86,7 +86,7 @@ VRO_METHOD(void, nativeSetRun)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetFixedToEmitter)(VRO_ARGS
                                           VRO_REF native_ref,
-                                          jboolean value) {
+                                          VRO_BOOL value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -160,7 +160,7 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
                                        VRO_REF native_ref,
                                        VRO_STRING jShape,
                                        VRO_FLOAT_ARRAY jShapeParams,
-                                       jboolean jSpawnOnSurface) {
+                                       VRO_BOOL jSpawnOnSurface) {
 
     // Grab the emitter's spawn volume shape.
     std::string strShape = VROPlatformGetString(jShape, env);

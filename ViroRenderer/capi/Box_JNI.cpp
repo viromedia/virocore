@@ -40,9 +40,8 @@ VRO_METHOD(VRO_REF, nativeCreateBox)(VRO_ARGS
     return Box::jptr(box);
 }
 
-VRO_METHOD(void, nativeDestroyBox)(VRO_ENV env,
-                                        jclass clazz,
-                                        VRO_REF nativeBoxRef) {
+VRO_METHOD(void, nativeDestroyBox)(VRO_ARGS
+                                   VRO_REF nativeBoxRef) {
     delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
 }
 

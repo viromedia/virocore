@@ -76,7 +76,7 @@ VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
                                        VRO_REF native_light_ref,
-                                       jboolean castsShadow) {
+                                       VRO_BOOL castsShadow) {
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, castsShadow] {
         std::shared_ptr<VROLight> light = light_w.lock();

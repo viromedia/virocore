@@ -94,7 +94,7 @@ VRO_METHOD(void, nativeResumeAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
-                                           VRO_REF nativeRef, jboolean jumpToEnd) {
+                                           VRO_REF nativeRef, VRO_BOOL jumpToEnd) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w, jumpToEnd] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();

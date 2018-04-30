@@ -6,7 +6,7 @@
 #define ANDROID_LIGHT_JNI_H
 
 #include <VROLight.h>
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE

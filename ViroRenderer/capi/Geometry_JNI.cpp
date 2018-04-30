@@ -19,7 +19,7 @@ VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
                                      VRO_REF geo_j,
                                      VRO_LONG_ARRAY materials_j) {
     VRO_LONG *materials_c = VRO_LONG_ARRAY_GET_ELEMENTS(materials_j);
-    jsize len = VRO_ARRAY_LENGTH(materials_j);
+    int len = VRO_ARRAY_LENGTH(materials_j);
     std::vector<std::shared_ptr<VROMaterial>> materials;
     for (int i = 0; i < len; i++) {
         materials.push_back(Material::native(materials_c[i]));
@@ -39,7 +39,7 @@ VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
                                             VRO_REF nativeGeoRef,
                                             VRO_LONG_ARRAY longArrayRef) {
     VRO_LONG *longArray = VRO_LONG_ARRAY_GET_ELEMENTS(longArrayRef);
-    jsize len = VRO_ARRAY_LENGTH(longArrayRef);
+    int len = VRO_ARRAY_LENGTH(longArrayRef);
 
     std::vector<std::shared_ptr<VROMaterial>> tempMaterials;
     for (int i = 0; i < len; i++) {

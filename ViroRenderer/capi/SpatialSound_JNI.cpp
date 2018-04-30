@@ -61,13 +61,13 @@ VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
                                  VRO_REF nativeRef,
-                                 jboolean muted) {
+                                 VRO_BOOL muted) {
     SpatialSound::native(nativeRef)->setMuted(muted);
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                 VRO_REF nativeRef,
-                                jboolean loop) {
+                                VRO_BOOL loop) {
     SpatialSound::native(nativeRef)->setLoop(loop);
 }
 

@@ -47,7 +47,7 @@ VRO_METHOD(VRO_REF, nativeCreateSphereParameterized)(VRO_ARGS
                                                      VRO_FLOAT radius,
                                                      VRO_INT widthSegmentCount,
                                                      VRO_INT heightSegmentCount,
-                                                     jboolean facesOutward) {
+                                                     VRO_BOOL facesOutward) {
     std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(radius,
                                                                 widthSegmentCount,
                                                                 heightSegmentCount,
@@ -132,7 +132,7 @@ VRO_METHOD(void, nativeSetRadius)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetFacesOutward)(VRO_ARGS
                                         VRO_REF jsphere,
-                                        jboolean facesOutward) {
+                                        VRO_BOOL facesOutward) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, facesOutward] {
         std::shared_ptr<VROSphere> sphere = sphere_w.lock();

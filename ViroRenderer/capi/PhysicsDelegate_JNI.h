@@ -8,7 +8,7 @@
 #ifndef ANDROID_PHYSICS_DELEGATE_JNI_H
 #define ANDROID_PHYSICS_DELEGATE_JNI_H
 
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 #include "VROPhysicsBodyDelegate.h"
 
 #include "VRODefines.h"

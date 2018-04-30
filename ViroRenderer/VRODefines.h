@@ -34,8 +34,8 @@
 
 #define VRO_C_INCLUDE <string>
 #define VRO_ENV void*
-#define VRO_ARGS ,
-#define VRO_ARGS_STATIC ,
+#define VRO_ARGS void *env,
+#define VRO_ARGS_STATIC
 #define VRO_NO_ARGS
 #define VRO_NO_ARGS_STATIC
 #define VRO_REF int
@@ -61,53 +61,53 @@
 #define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
     
 
-#define VRO_ARRAY std::vector<emscripten::val>
+#define VRO_ARRAY std::vector<void *>*
 #define VRO_ARRAY_LENGTH(array) \
-    array.size()
+    (int) array->size()
 #define VRO_ARRAY_GET(array, index) \
-    array[index]
+    (*array)[index]
 #define VRO_ARRAY_SET(array, index, object) \
-    array[index] = object
+    (*array)[index] = object
 #define VRO_NEW_ARRAY(size, cls) \
-    std::vector<emscripten::val>(size)
+    new std::vector<void *>(size)
 
-#define VRO_FLOAT_ARRAY std::vector<float>
+#define VRO_FLOAT_ARRAY std::vector<float>*
 #define VRO_NEW_FLOAT_ARRAY(size) \
-    std::vector<float>(size)
+    new std::vector<float>(size)
 #define VRO_FLOAT_ARRAY_SET(dest, start, len, src) \
-    dest.insert(dest.start() + start, &src[0], &src[len]);
+    dest->insert(dest->start() + start, &src[0], &src[len])
 #define VRO_FLOAT_ARRAY_GET_ELEMENTS(array) \
-    array.data()
+    array->data()
 #define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
 
-#define VRO_DOUBLE_ARRAY std::vector<double>
+#define VRO_DOUBLE_ARRAY std::vector<double>*
 #define VRO_NEW_DOUBLE_ARRAY(size) \
-    std::vector<double>(size)
+    new std::vector<double>(size)
 #define VRO_DOUBLE_ARRAY_SET(dest, start, len, src) \
-    dest.insert(dest.start() + start, &src[0], &src[len]);
+    dest->insert(dest->start() + start, &src[0], &src[len])
 #define VRO_DOUBLE_ARRAY_GET_ELEMENTS(array) \
-    array.data()
+    array->data()
 #define VRO_DOUBLE_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
 
-#define VRO_INT_ARRAY std::vector<int>
-#define VRO_LONG_ARRAY std::vector<uint64_t>
+#define VRO_INT_ARRAY std::vector<int>*
+#define VRO_LONG_ARRAY std::vector<uint64_t>*
 #define VRO_NEW_LONG_ARRAY(size) \
     std::vector<uint64_t>(size)
 #define VRO_LONG_ARRAY_SET(dest, start, len, src) \
-    dest.insert(dest.start() + start, &src[0], &src[len]);
+    dest->insert(dest->start() + start, &src[0], &src[len])
 #define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
-    array.data()
+    array->data()
 #define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
-
+#define VRO_STRING_ARRAY std::vector<std::string>*
 #define VRO_NEW_STRING_ARRAY(size) \
-    std::vector<std::string>(size)
+    new std::vector<std::string>(size)
 #define VRO_STRING_ARRAY_GET(array, index) \
-    array[index]
+    (*array)[index]
 #define VRO_STRING_ARRAY_SET(array, index, item) \
-    array[index] = item
+    (*array)[index] = item
 
 #define VRO_NEW_GLOBAL_REF(object) \
     object
@@ -168,7 +168,7 @@
 
 #define VRO_ARRAY jobjectArray
 #define VRO_ARRAY_LENGTH(array) \
-    env->GetArrayLength(array)
+    (int) env->GetArrayLength(array)
 #define VRO_ARRAY_GET(array, index) \
     env->GetObjectArrayElement(array, index)
 #define VRO_ARRAY_SET(array, index, object) \
@@ -207,6 +207,7 @@
 #define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
     env->ReleaseLongArrayElements(array, elements, 0)
 
+#define VRO_STRING_ARRAY jobjectArray
 #define VRO_NEW_STRING_ARRAY(size) \
     env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));
 #define VRO_STRING_ARRAY_GET(array, index) \

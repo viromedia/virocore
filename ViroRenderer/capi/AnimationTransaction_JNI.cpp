@@ -57,7 +57,7 @@ VRO_METHOD(void, nativeSetAnimationDuration)(VRO_ARGS_STATIC
 }
 
 VRO_METHOD(void, nativeSetAnimationLoop)(VRO_ARGS_STATIC
-                                         jboolean loop) {
+                                         VRO_BOOL loop) {
     VROPlatformDispatchAsyncRenderer([loop] {
         VROTransaction::setAnimationLoop(loop);
     });

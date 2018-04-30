@@ -10,7 +10,6 @@
 #include "VRONode.h"
 #include "VROScene.h"
 #include "VROSceneController.h"
-#include "Viro.h"
 #include "PersistentRef.h"
 #include "VideoTexture_JNI.h"
 #include "SceneController_JNI.h"
@@ -213,7 +212,7 @@ VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPhysicsWorldDebugDraw)(VRO_ARGS
                                                  VRO_REF sceneRef,
-                                                 jboolean debugDraw) {
+                                                 VRO_BOOL debugDraw) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, debugDraw] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -227,7 +226,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                                              VRO_REF sceneRef,
                                              VRO_FLOAT_ARRAY fromPos,
                                              VRO_FLOAT_ARRAY toPos,
-                                             jboolean closest,
+                                             VRO_BOOL closest,
                                              VRO_STRING tag,
                                              VRO_OBJECT callback) {
 

@@ -8,7 +8,7 @@
 #ifndef TransformDelegate_JNI_H
 #define TransformDelegate_JNI_H
 
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 #include <VROTransformDelegate.h>
 #include "VROVideoDelegateInternal.h"
 

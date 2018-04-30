@@ -111,7 +111,7 @@ VRO_METHOD(void, nativePlay)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
                                  VRO_REF textureRef,
-                                 jboolean muted) {
+                                 VRO_BOOL muted) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, muted] {
@@ -139,7 +139,7 @@ VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                 VRO_REF textureRef,
-                                jboolean loop) {
+                                VRO_BOOL loop) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, loop] {

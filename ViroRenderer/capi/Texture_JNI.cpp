@@ -179,7 +179,7 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTexture)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageTexture)(VRO_ARGS
                                               VRO_REF image,
-                                              jboolean sRGB, jboolean mipmap, VRO_STRING stereoMode) {
+                                              VRO_BOOL sRGB, VRO_BOOL mipmap, VRO_STRING stereoMode) {
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
@@ -207,8 +207,8 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTextureBitmap)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
                                                     VRO_OBJECT bitmap,
-                                                    VRO_STRING format_s, jboolean sRGB,
-                                                    jboolean mipmap, VRO_STRING stereoMode) {
+                                                    VRO_STRING format_s, VRO_BOOL sRGB,
+                                                    VRO_BOOL mipmap, VRO_STRING stereoMode) {
 
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
@@ -222,7 +222,7 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
 VRO_METHOD(VRO_REF, nativeCreateImageTextureData)(VRO_ARGS
                                                   VRO_OBJECT jbuffer, VRO_INT width, VRO_INT height,
                                                   VRO_STRING inputFormat_s, VRO_STRING storageFormat_s,
-                                                  jboolean sRGB, jboolean mipmap,
+                                                  VRO_BOOL sRGB, VRO_BOOL mipmap,
                                                   VRO_STRING stereoMode_s) {
     void *buffer = VRO_BUFFER_GET_ADDRESS(jbuffer);
     VRO_LONG capacity = VRO_BUFFER_GET_CAPACITY(jbuffer);

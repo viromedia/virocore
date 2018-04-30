@@ -90,13 +90,13 @@ extern "C" {
 
     VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
                                      VRO_REF nativeRef,
-                                     jboolean muted) {
+                                     VRO_BOOL muted) {
         Sound::native(nativeRef)->setMuted(muted);
     }
 
     VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                     VRO_REF nativeRef,
-                                    jboolean loop) {
+                                    VRO_BOOL loop) {
         Sound::native(nativeRef)->setLoop(loop);
     }
     VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS

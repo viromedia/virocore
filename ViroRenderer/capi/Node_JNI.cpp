@@ -551,7 +551,7 @@ VRO_METHOD(void, nativeSetHierarchicalRendering)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
                                               VRO_REF nativeNodeRef,
-                                              VRO_ARRAY stringArrayRef) {
+                                              VRO_STRING_ARRAY stringArrayRef) {
     std::vector<std::shared_ptr<VROBillboardConstraint>> tempConstraints;
     int length = VRO_ARRAY_LENGTH(stringArrayRef);
 
@@ -585,12 +585,12 @@ VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
     });
 }
 
-VRO_METHOD(VRO_ARRAY, nativeGetAnimationKeys)(VRO_ARGS
-                                              VRO_REF nativeRef) {
+VRO_METHOD(VRO_STRING_ARRAY, nativeGetAnimationKeys)(VRO_ARGS
+                                                     VRO_REF nativeRef) {
 
     std::shared_ptr<VRONode> node = Node::native(nativeRef);
     std::set<std::string> keys = node->getAnimationKeys(true);
-    VRO_ARRAY array = VRO_NEW_STRING_ARRAY(keys.size());
+    VRO_STRING_ARRAY array = VRO_NEW_STRING_ARRAY(keys.size());
 
     int i = 0;
     for (const std::string &key : keys) {
@@ -619,7 +619,7 @@ VRO_METHOD(VRO_REF, nativeSetTransformDelegate)(VRO_ARGS
                                                 VRO_DOUBLE distanceFilter) {
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<TransformDelegate_JNI> delegate
-            = std::make_shared<TransformDelegate_JNI>(obj , distanceFilter);
+            = std::make_shared<TransformDelegate_JNI>(obj, distanceFilter);
     VROPlatformDispatchAsyncRenderer([node_w, delegate] {
         std::shared_ptr<VRONode> node = node_w.lock();
         node->setTransformDelegate(delegate);

@@ -35,7 +35,7 @@ VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
 VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
                                     VRO_REF native_node_ref,
                                     VRO_INT eventTypeId,
-                                    jboolean enabled) {
+                                    VRO_BOOL enabled) {
 
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, eventTypeId, enabled] {

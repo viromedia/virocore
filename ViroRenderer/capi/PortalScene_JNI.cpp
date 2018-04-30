@@ -27,7 +27,7 @@ VRO_METHOD(void, nativeDestroyPortalScene)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPassable)(VRO_ARGS
-                                    VRO_REF nativeRef, jboolean passable) {
+                                    VRO_REF nativeRef, VRO_BOOL passable) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([portal_w, passable] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();

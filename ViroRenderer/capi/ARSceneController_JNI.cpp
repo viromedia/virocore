@@ -69,7 +69,7 @@ VRO_METHOD(void, nativeDestroyARSceneDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeDisplayPointCloud)(VRO_ARGS
                                           VRO_REF arSceneControllerPtr,
-                                          jboolean displayPointCloud) {
+                                          VRO_BOOL displayPointCloud) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w, displayPointCloud] {

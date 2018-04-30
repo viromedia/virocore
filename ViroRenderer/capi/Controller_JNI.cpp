@@ -39,7 +39,7 @@ VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
                                       VRO_REF render_context_ref,
-                                      jboolean enable) {
+                                      VRO_BOOL enable) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
 
     VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {
@@ -58,7 +58,7 @@ VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
 
 VRO_METHOD(void, nativeEnableController)(VRO_ARGS
                                          VRO_REF render_context_ref,
-                                         jboolean enable) {
+                                         VRO_BOOL enable) {
     std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
 
     VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {

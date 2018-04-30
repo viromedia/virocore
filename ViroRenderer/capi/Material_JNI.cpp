@@ -102,7 +102,7 @@ VRO_METHOD(VRO_REF, nativeCreateImmutableMaterial)(VRO_ARGS
                                                    VRO_FLOAT diffuseIntensity, VRO_REF specularTexture,
                                                    VRO_FLOAT shininess, VRO_FLOAT fresnelExponent, VRO_REF normalMap, VRO_STRING cullMode,
                                                    VRO_STRING transparencyMode, VRO_STRING blendMode, VRO_FLOAT bloomThreshold,
-                                                   jboolean writesToDepthBuffer, jboolean readsFromDepthBuffer) {
+                                                   VRO_BOOL writesToDepthBuffer, VRO_BOOL readsFromDepthBuffer) {
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setLightingModel(parseLightingModel(VROPlatformGetString(lightingModel, env)));
     material->getDiffuse().setColor(parseColor(diffuseColor));
@@ -123,7 +123,7 @@ VRO_METHOD(VRO_REF, nativeCreateImmutableMaterial)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetWritesToDepthBuffer)(VRO_ARGS
                                                VRO_REF material_j,
-                                               jboolean writesToDepthBuffer) {
+                                               VRO_BOOL writesToDepthBuffer) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, writesToDepthBuffer] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
@@ -135,7 +135,7 @@ VRO_METHOD(void, nativeSetWritesToDepthBuffer)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetReadsFromDepthBuffer)(VRO_ARGS
                                                 VRO_REF material_j,
-                                                jboolean readsFromDepthBuffer) {
+                                                VRO_BOOL readsFromDepthBuffer) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, readsFromDepthBuffer] {
         std::shared_ptr<VROMaterial> material = material_w.lock();

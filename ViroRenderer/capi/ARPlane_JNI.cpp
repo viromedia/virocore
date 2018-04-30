@@ -66,7 +66,7 @@ VRO_METHOD(void, nativeSetAnchorId)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
                                         VRO_REF nativeARPlane,
-                                        jboolean pauseUpdates) {
+                                        VRO_BOOL pauseUpdates) {
     std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(nativeARPlane);
     VROPlatformDispatchAsyncRenderer([arPlane_w, pauseUpdates] {
         std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();
