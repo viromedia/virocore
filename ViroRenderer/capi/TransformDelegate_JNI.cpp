@@ -9,13 +9,16 @@
 #include <VROPlatformUtil.h>
 #include "TransformDelegate_JNI.h"
 
-TransformDelegate_JNI::TransformDelegate_JNI(VRO_OBJECT javaDelegateObject, double distanceFilter):VROTransformDelegate(distanceFilter){
+TransformDelegate_JNI::TransformDelegate_JNI(VRO_OBJECT javaDelegateObject, double distanceFilter) :
+        VROTransformDelegate(distanceFilter),
+        _javaObject(VRO_OBJECT_NULL) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    _javaObject  = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(javaDelegateObject));
+    _javaObject = VRO_NEW_WEAK_GLOBAL_REF(javaDelegateObject);
 }
 
 TransformDelegate_JNI::~TransformDelegate_JNI() {
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 
@@ -26,7 +29,7 @@ void TransformDelegate_JNI::onPositionUpdate(VROVector3f position){
     VROPlatformDispatchAsyncApplication([weakObj, position] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 

@@ -8,7 +8,7 @@
 #ifndef ANDROID_VIDEO_DELEGATE_JNI_H
 #define ANDROID_VIDEO_DELEGATE_JNI_H
 
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 #include "VROVideoDelegateInternal.h"
 
 class VideoDelegate : public VROVideoDelegateInternal {
@@ -41,6 +41,6 @@ class VideoDelegate : public VROVideoDelegateInternal {
     virtual void videoDidFail(std::string error);
 
 private:
-        VRO_OBJECT _javaObject;
+    VRO_OBJECT _javaObject;
 };
 #endif

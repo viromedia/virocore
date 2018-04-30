@@ -12,6 +12,8 @@
 #include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
+#include "VRODriver.h"
+#include "VROPlatformUtil.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

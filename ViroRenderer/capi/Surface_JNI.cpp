@@ -8,12 +8,9 @@
 
 #include "Surface_JNI.h"
 #include <VROVideoSurface.h>
-#include <VROVideoTextureAVP.h>
 #include "VRONode.h"
-
 #include "VROMaterial.h"
 #include "VROFrameSynchronizer.h"
-#include "VRORenderer_JNI.h"
 #include "Node_JNI.h"
 #include "ViroContext_JNI.h"
 #include "VideoTexture_JNI.h"

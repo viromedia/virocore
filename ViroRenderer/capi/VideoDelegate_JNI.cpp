@@ -6,20 +6,21 @@
 //
 
 #include <memory>
-#include <VROVideoSurface.h>
-#include <VROVideoTextureAVP.h>
-#include <VROPlatformUtil.h>
+#include "VROVideoSurface.h"
+#include "VROPlatformUtil.h"
 #include "VRONode.h"
 #include "VideoDelegate_JNI.h"
 #include "VROLog.h"
 
-VideoDelegate::VideoDelegate(VRO_OBJECT javaVideoObject) {
+VideoDelegate::VideoDelegate(VRO_OBJECT obj) :
+    _javaObject(VRO_OBJECT_NULL) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(javaVideoObject));
+    _javaObject = VRO_NEW_WEAK_GLOBAL_REF(obj);
 }
 
 VideoDelegate::~VideoDelegate() {
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 void VideoDelegate::videoWillBuffer() {
@@ -29,7 +30,7 @@ void VideoDelegate::videoWillBuffer() {
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
@@ -46,7 +47,7 @@ void VideoDelegate::videoDidBuffer() {
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
@@ -63,7 +64,7 @@ void VideoDelegate::videoDidFinish() {
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
@@ -80,12 +81,12 @@ void VideoDelegate::videoDidFail(std::string error) {
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
-        VROPlatformCallJavaFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", jerror);
+        VROPlatformCallJavaFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", VRO_STRING_POD(jerror));
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_LOCAL_REF(jerror);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -99,7 +100,7 @@ void VideoDelegate::onReady() {
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
@@ -116,7 +117,7 @@ void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTi
     VROPlatformDispatchAsyncApplication([weakObj, currentTimeInSeconds, totalTimeInSeconds] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 

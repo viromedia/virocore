@@ -19,6 +19,8 @@
 #include "VROPlatformUtil.h"
 
 #if VRO_PLATFORM_ANDROID
+#include "VROImageAndroid.h"
+
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Texture_##method_name
@@ -77,7 +79,7 @@ namespace Texture {
     }
 
     VROStereoMode getStereoMode(VRO_ENV env, VRO_STRING stereoMode) {
-        if (stereoMode != NULL) {
+        if (!VRO_IS_STRING_EMPTY(stereoMode)) {
             std::string strStereoMode = VROPlatformGetString(stereoMode, env);
             return VROTextureUtil::getStereoModeForString(strStereoMode);
         }
@@ -119,12 +121,12 @@ namespace Texture {
         VRO_ENV env = VROPlatformGetJNIEnv();
         if (env == nullptr) {
             perror("Required JNIEnv to create a jTexture is null!");
-            return NULL;
+            return VRO_OBJECT_NULL;
         }
 
         // Create a persistent native reference that would represent the jTexture object.
         PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(texture);
-        jlong matRef = reinterpret_cast<intptr_t>(persistentRef);
+        VRO_REF matRef = reinterpret_cast<VRO_REF>(persistentRef);
 
         // Create our Texture.java object with the native reference.
         VRO_OBJECT jTexture = VROPlatformConstructHostObject("com/viro/core/Texture", "(J)V", matRef);
@@ -195,12 +197,19 @@ VRO_METHOD(VRO_REF, nativeCreateCubeTextureBitmap)(VRO_ARGS
                                                    VRO_STRING format_s) {
 
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
-    std::vector<std::shared_ptr<VROImage>> cubeImages = {std::make_shared<VROImageAndroid>(px, format),
-                                                         std::make_shared<VROImageAndroid>(nx, format),
-                                                         std::make_shared<VROImageAndroid>(py, format),
-                                                         std::make_shared<VROImageAndroid>(ny, format),
-                                                         std::make_shared<VROImageAndroid>(pz, format),
-                                                         std::make_shared<VROImageAndroid>(nz, format)};
+    std::vector<std::shared_ptr<VROImage>> cubeImages;
+
+#if VRO_PLATFORM_ANDROID
+    cubeImages = {std::make_shared<VROImageAndroid>(px, format),
+                  std::make_shared<VROImageAndroid>(nx, format),
+                  std::make_shared<VROImageAndroid>(py, format),
+                  std::make_shared<VROImageAndroid>(ny, format),
+                  std::make_shared<VROImageAndroid>(pz, format),
+                  std::make_shared<VROImageAndroid>(nz, format)};
+#else
+    //TODO Wasm
+#endif
+
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(true, cubeImages);
     return Texture::jptr(texturePtr);
 }
@@ -212,10 +221,17 @@ VRO_METHOD(VRO_REF, nativeCreateImageTextureBitmap)(VRO_ARGS
 
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     VROTextureInternalFormat format = Texture::getFormat(env, format_s);
+
+    std::shared_ptr<VROImage> image;
+#if VRO_PLATFORM_ANDROID
+    image = std::make_shared<VROImageAndroid>(bitmap, format);
+#else
+    //TODO Wasm
+#endif
+
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
-                                                                          std::make_shared<VROImageAndroid>(bitmap, format),
-                                                                          mode);
+                                                                          image, mode);
     return Texture::jptr(texturePtr);
 }
 

@@ -15,8 +15,8 @@
 #include "VROMaterial.h"
 #include "Material_JNI.h"
 
-OBJLoaderDelegate::OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, VRO_ENV env) {
-    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(nodeJavaObject));
+OBJLoaderDelegate::OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, VRO_ENV env) :
+    _javaObject(VRO_NEW_WEAK_GLOBAL_REF(nodeJavaObject)) {
 }
 
 OBJLoaderDelegate::~OBJLoaderDelegate() {
@@ -39,7 +39,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
     VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
             return;
         }
@@ -56,7 +56,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         generateJMaterials(mats, node);
 
         // Generate an array containing a unique list of jMaterials
-        jobjectArray materialArray = VRO_NEW_ARRAY(mats.size(), "com/viro/core/Material");
+        VRO_OBJECT_ARRAY materialArray = VRO_NEW_OBJECT_ARRAY(mats.size(), "com/viro/core/Material");
         if (mats.size() > 0) {
             int i = 0;
             for(std::map<std::string, std::shared_ptr<VROMaterial>>::iterator
@@ -122,13 +122,13 @@ void OBJLoaderDelegate::objFailed(std::string error) {
         VRO_ENV env = VROPlatformGetJNIEnv();
 
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
             return;
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
-        VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
+        VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", VRO_STRING_POD(jerror));
 
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_LOCAL_REF(jerror);

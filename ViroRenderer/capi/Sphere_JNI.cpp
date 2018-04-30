@@ -8,7 +8,6 @@
 #include <iostream>
 #include <memory>
 #include <VROSphere.h>
-#include <Viro.h>
 #include <VROPlatformUtil.h>
 #include "VROMaterial.h"
 #include "VRONode.h"

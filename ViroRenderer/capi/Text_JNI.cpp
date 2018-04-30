@@ -7,9 +7,9 @@
 
 #include <memory>
 #include "PersistentRef.h"
-#include <VROTypefaceAndroid.h>
+#include "VROTypeface.h"
 #include "VROTypefaceCollection.h"
-#include <VROStringUtil.h>
+#include "VROStringUtil.h"
 #include "VROText.h"
 #include "Node_JNI.h"
 #include "TextDelegate_JNI.h"
@@ -87,7 +87,7 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       VRO_REF context_j,
-                                      VRO_STRING text_j,
+                                      VRO_STRING_WIDE text_j,
                                       VRO_STRING fontFamily_j,
                                       VRO_INT size,
                                       VRO_INT style,
@@ -102,11 +102,8 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
                                       VRO_INT maxLines) {
     // Get the text string
     std::wstring text;
-    if (text_j != NULL){
-        const jchar *text_c = VRO_STRING_GET_CHARS_WIDE(text_j);
-        jsize textLength = VRO_STRING_LENGTH(text_j);
-        text.assign(text_c, text_c + textLength);
-        VRO_STRING_RELEASE_CHARS_WIDE(text_j, text_c);
+    if (!VRO_IS_WIDE_STRING_EMPTY(text_j)) {
+        VRO_STRING_GET_CHARS_WIDE(text_j, text);
     }
 
     // Get the color
@@ -156,14 +153,10 @@ VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetText)(VRO_ARGS
                                 VRO_REF text_j,
-                                VRO_STRING text_string_j) {
-
-    const jchar *text_c = VRO_STRING_GET_CHARS_WIDE(text_string_j);
-    jsize textLength = VRO_STRING_LENGTH(text_string_j);
+                                VRO_STRING_WIDE text_string_j) {
 
     std::wstring text_string;
-    text_string.assign(text_c, text_c + textLength);
-    VRO_STRING_RELEASE_CHARS_WIDE(text_string_j, text_c);
+    VRO_STRING_GET_CHARS_WIDE(text_string_j, text_string);
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, text_string] {

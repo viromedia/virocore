@@ -1217,6 +1217,10 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
     return "";
 }
 
+void VROPlatformSetEnv(VRO_ENV env) {
+
+}
+
 VRO_ENV VROPlatformGetJNIEnv() {
     return nullptr;
 }
@@ -1235,7 +1239,7 @@ VRO_LONG VROPlatformCallJavaLongFunction(VRO_OBJECT object,
 
 VRO_OBJECT VROPlatformConstructHostObject(std::string className,
                                           std::string constructorSignature, ...) {
-
+    return VRO_OBJECT_NULL;
 }
 
 void VROPlatformSetFloat(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_FLOAT value) {
@@ -1265,8 +1269,13 @@ void VROPlatformSetObject(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
 }
 
 std::string VROPlatformGetString(VRO_STRING string, VRO_ENV env) {
-    return string;
+    return *string.get();
 }
+
+std::map<std::string, std::string> VROPlatformConvertFromJavaMap(VRO_OBJECT javaMap) {
+    std::map<std::string, std::string> map;
+    return map;
+};
 
 #endif
 #pragma mark - iOS and Android

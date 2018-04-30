@@ -240,7 +240,7 @@ VRO_METHOD(void, nativeSetFloat)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetShininess)(VRO_ARGS
                                      VRO_REF material_j,
-                                     jdouble shininess) {
+                                     VRO_DOUBLE shininess) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, shininess] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
@@ -252,7 +252,7 @@ VRO_METHOD(void, nativeSetShininess)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetFresnelExponent)(VRO_ARGS
                                            VRO_REF material_j,
-                                           jdouble fresnelExponent) {
+                                           VRO_DOUBLE fresnelExponent) {
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([material_w, fresnelExponent] {
         std::shared_ptr<VROMaterial> material = material_w.lock();

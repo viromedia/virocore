@@ -6,13 +6,15 @@
 #include <VROPlatformUtil.h>
 #include "PortalDelegate_JNI.h"
 
-PortalDelegate::PortalDelegate(VRO_OBJECT javaPortalSceneObject) {
+PortalDelegate::PortalDelegate(VRO_OBJECT javaPortalSceneObject) :
+    _javaObject(VRO_OBJECT_NULL) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(javaPortalSceneObject));
+    _javaObject = VRO_NEW_WEAK_GLOBAL_REF(javaPortalSceneObject);
 }
 
 PortalDelegate::~PortalDelegate() {
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 void PortalDelegate::onPortalEnter() {
@@ -22,7 +24,7 @@ void PortalDelegate::onPortalEnter() {
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
@@ -41,7 +43,7 @@ void PortalDelegate::onPortalExit() {
     VROPlatformDispatchAsyncApplication([weakObj] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 

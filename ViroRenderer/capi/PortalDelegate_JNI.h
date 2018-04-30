@@ -6,7 +6,7 @@
 #ifndef ANDROID_PORTALDELEGATE_JNI_H
 #define ANDROID_PORTALDELEGATE_JNI_H
 
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 #include "VROPortalDelegate.h"
 
 #include "VRODefines.h"

@@ -13,6 +13,7 @@
 #include <VROFrameSynchronizer.h>
 #include "VRORenderDelegate.h"
 
+class VRONode;
 class VRORenderer;
 class VROSceneController;
 class VRORendererTestHarness;

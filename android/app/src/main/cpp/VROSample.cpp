@@ -6,11 +6,11 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 #include <VROARShadow.h>
-#include "Viro.h"
 #include "VROSample.h"
 #include "VRODriverOpenGLAndroid.h"
 #include "VRORendererTestHarness.h"
 #include "VRORendererTest.h"
+#include "VRONode.h"
 
 VROSample::VROSample() {
 

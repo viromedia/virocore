@@ -7,11 +7,14 @@
 
 #include <memory>
 #include "SpatialSound_JNI.h"
-#include <VROSound.h>
-#include <VROSoundDataGVR.h>
+#include "VROSound.h"
+#include "VROSoundDataGVR.h"
 #include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
+#include "VROPlatformUtil.h"
+#include "VRODriver.h"
+#include "VROStringUtil.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

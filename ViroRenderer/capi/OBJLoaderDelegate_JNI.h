@@ -8,7 +8,7 @@
 #ifndef ANDROID_OBJLOADERDELEGATE_JNI_H
 #define ANDROID_OBJLOADERDELEGATE_JNI_H
 
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE

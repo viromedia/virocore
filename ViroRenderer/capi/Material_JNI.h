@@ -32,7 +32,7 @@ public:
         VRO_ENV env = VROPlatformGetJNIEnv();
         if (env == nullptr){
             perror("Required JNIEnv to create a jMaterial is null!");
-            return NULL;
+            return VRO_OBJECT_NULL;
         }
 
         // Create a persistent native reference that would represent the jMaterial object.

@@ -75,7 +75,7 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
 
     std::map<std::string, std::string> resourceMap;
     bool hasResourceMap = false;
-    if (resourceMap_j != nullptr) {
+    if (!VRO_IS_OBJECT_NULL(resourceMap_j)) {
         resourceMap = VROPlatformConvertFromJavaMap(resourceMap_j);
         hasResourceMap = true;
     }

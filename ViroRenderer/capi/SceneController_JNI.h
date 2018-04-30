@@ -27,12 +27,13 @@ namespace SceneController {
 
 class SceneControllerDelegate : public VROSceneController::VROSceneControllerDelegate {
 public:
-    SceneControllerDelegate(VRO_OBJECT sceneJavaObject, VRO_ENV env) {
-        _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(sceneJavaObject));
+    SceneControllerDelegate(VRO_OBJECT obj, VRO_ENV env) :
+        _javaObject(VRO_NEW_WEAK_GLOBAL_REF(obj)) {
     }
 
     ~SceneControllerDelegate() {
-        VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+        VRO_ENV env = VROPlatformGetJNIEnv();
+        VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
     static VRO_REF jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {

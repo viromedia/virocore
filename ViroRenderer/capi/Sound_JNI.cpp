@@ -6,15 +6,20 @@
 //
 
 #include <memory>
-#include <VRORenderContext.h>
-#include <VROSoundGVR.h>
-#include <VROSoundDataGVR.h>
+#include "VRORenderContext.h"
+#include "VROSoundGVR.h"
+#include "VROSoundDataGVR.h"
 #include "PersistentRef.h"
 #include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
+#include "VROPlatformUtil.h"
+#include "VRODriver.h"
+#include "VROAudioPlayer.h"
 
 #if VRO_PLATFORM_ANDROID
+#include "VROAudioPlayerAndroid.h"
+
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Sound_##method_name
@@ -22,20 +27,21 @@
 
 // TODO: when GVR audio supports the seekToTime, etc, then change the native object to a VROSound.
 namespace Sound {
-    inline VRO_REF jptr(std::shared_ptr<VROAudioPlayerAndroid> ptr) {
-        PersistentRef<VROAudioPlayerAndroid> *persistentRef = new PersistentRef<VROAudioPlayerAndroid>(ptr);
+    inline VRO_REF jptr(std::shared_ptr<VROAudioPlayer> ptr) {
+        PersistentRef<VROAudioPlayer> *persistentRef = new PersistentRef<VROAudioPlayer>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROAudioPlayerAndroid> native(VRO_REF ptr) {
-        PersistentRef<VROAudioPlayerAndroid> *persistentRef = reinterpret_cast<PersistentRef<VROAudioPlayerAndroid> *>(ptr);
+    inline std::shared_ptr<VROAudioPlayer> native(VRO_REF ptr) {
+        PersistentRef<VROAudioPlayer> *persistentRef = reinterpret_cast<PersistentRef<VROAudioPlayer> *>(ptr);
         return persistentRef->get();
     }
 }
 
 extern "C" {
+
     /**
-     * Since we're using VROAudioPlayerAndroid, there's no difference between the logic for
+     * If we're using VROAudioPlayerAndroid, there's no difference between the logic for
      * web urls vs local file urls, the Android MediaPlayer handles both.
      */
     VRO_METHOD(VRO_REF, nativeCreateSound)(VRO_ARGS
@@ -46,14 +52,13 @@ extern "C" {
 
         std::string file = VROPlatformGetString(filename, env);
         std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(file, false);
-        std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
-        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(obj));
-        return Sound::jptr(playerAndroid);
+        player->setDelegate(std::make_shared<SoundDelegate>(obj));
+        return Sound::jptr(player);
     }
 
     VRO_METHOD(void, nativeSetup)(VRO_ARGS
                                   VRO_REF sound_j) {
-        std::shared_ptr<VROAudioPlayerAndroid> player = Sound::native(sound_j);
+        std::shared_ptr<VROAudioPlayer> player = Sound::native(sound_j);
         player->setup();
     }
 
@@ -65,11 +70,10 @@ extern "C" {
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 
         std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(data);
-        std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
-        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(obj));
-        playerAndroid->setup();
+        player->setDelegate(std::make_shared<SoundDelegate>(obj));
+        player->setup();
 
-        return Sound::jptr(playerAndroid);
+        return Sound::jptr(player);
     }
 
     VRO_METHOD(void, nativePlaySound)(VRO_ARGS
@@ -107,7 +111,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeDestroySound)(VRO_ARGS
                                          VRO_REF nativeRef) {
-        delete reinterpret_cast<PersistentRef<VROAudioPlayerAndroid> *>(nativeRef);
+        delete reinterpret_cast<PersistentRef<VROAudioPlayer> *>(nativeRef);
     }
 
 }  // extern "C"

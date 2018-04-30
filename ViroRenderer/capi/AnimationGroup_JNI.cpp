@@ -26,7 +26,7 @@ extern "C" {
 void AddPropertyIfNotNull(VRO_ENV env, std::string property, VRO_STRING candidate,
                           std::map<std::string, std::string> &propertyMap) {
     const char *candidateCStr = nullptr;
-    if (candidate != NULL) {
+    if (!VRO_IS_STRING_EMPTY(candidate)) {
         std::string candidateStr = VROPlatformGetString(candidate, env);
         propertyMap[property] = candidateStr;
     }

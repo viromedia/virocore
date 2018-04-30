@@ -9,8 +9,8 @@
 #define ANDROID_VIDEO_DELEGATE_JNI_H
 
 #include <memory>
-#include <PersistentRef.h>
-#include <VROSoundDelegateInternal.h>
+#include "PersistentRef.h"
+#include "VROSoundDelegateInternal.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE

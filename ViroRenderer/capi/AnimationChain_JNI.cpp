@@ -6,13 +6,13 @@
 //
 
 #include <memory>
-#include <VROAnimationChain.h>
-#include <PersistentRef.h>
-#include <VROStringUtil.h>
+#include "VROAnimationChain.h"
+#include "PersistentRef.h"
+#include "VROStringUtil.h"
 #include "AnimationGroup_JNI.h"
 #include "Node_JNI.h"
 #include "VROLog.h"
-#include <VROPlatformUtil.h>
+#include "VROPlatformUtil.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE

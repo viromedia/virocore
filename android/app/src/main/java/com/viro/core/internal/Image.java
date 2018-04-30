@@ -38,8 +38,8 @@ public class Image {
 
     private native long nativeCreateImage(String resource, String format);
     private native long nativeCreateImageFromBitmap(Bitmap bitmap, String format);
-    private native long nativeGetWidth(long nativeRef);
-    private native long nativeGetHeight(long nativeRef);
+    private native int nativeGetWidth(long nativeRef);
+    private native int nativeGetHeight(long nativeRef);
     private native void nativeDestroyImage(long nativeRef);
 }
 //#ENDIF

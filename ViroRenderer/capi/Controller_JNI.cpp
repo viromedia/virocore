@@ -6,10 +6,10 @@
 //
 
 #include <memory>
-#include <VROInputPresenterDaydream.h>
 #include "ViroContext_JNI.h"
 #include "EventDelegate_JNI.h"
 #include "ARUtils_JNI.h"
+#include "VROInputControllerBase.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
@@ -88,7 +88,7 @@ VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
     VROPlatformDispatchAsyncApplication([helperContext_w, weakCallback] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
-        if (jCallback == NULL) {
+        if (VRO_IS_OBJECT_NULL(jCallback)) {
             return;
         }
         std::shared_ptr<ViroContext> helperContext = helperContext_w.lock();

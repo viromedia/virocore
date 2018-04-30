@@ -41,14 +41,14 @@ void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> 
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
-        if (localObj == NULL || !anchor_s) {
+        if (VRO_IS_OBJECT_NULL(localObj) || !anchor_s) {
             VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
             return;
         }
 
         VRO_OBJECT anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
         VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/core/ARAnchor;)V",
-                                    anchorObj);
+                                    VRO_OBJECT_POD(anchorObj));
         VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
     });
 }
@@ -61,14 +61,14 @@ void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> a
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
-        if (localObj == NULL || !anchor_s) {
+        if (VRO_IS_OBJECT_NULL(localObj) || !anchor_s) {
             VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
             return;
         }
 
         VRO_OBJECT anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
         VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/core/ARAnchor;)V",
-                                    anchorObj);
+                                    VRO_OBJECT_POD(anchorObj));
         VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
     });
 }
@@ -79,7 +79,7 @@ void ARDeclarativeNodeDelegate::onARAnchorRemoved() {
     VROPlatformDispatchAsyncApplication([jObject_w] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             VRO_DELETE_WEAK_GLOBAL_REF(jObject_w);
             return;
         }

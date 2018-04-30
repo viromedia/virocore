@@ -23,12 +23,13 @@ namespace ARDeclarativeNode {
 
 class ARDeclarativeNodeDelegate : public VROARDeclarativeNodeDelegate {
 public:
-    ARDeclarativeNodeDelegate(VRO_OBJECT arNodeObject, VRO_ENV env) {
-        _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(arNodeObject));
+    ARDeclarativeNodeDelegate(VRO_OBJECT arNodeObject, VRO_ENV env) :
+        _javaObject(VRO_NEW_WEAK_GLOBAL_REF(arNodeObject)) {
     }
 
     ~ARDeclarativeNodeDelegate() {
-        VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+        VRO_ENV env = VROPlatformGetJNIEnv();
+        VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
     static VRO_REF jptr(std::shared_ptr<ARDeclarativeNodeDelegate> delegate) {

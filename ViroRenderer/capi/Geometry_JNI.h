@@ -6,7 +6,7 @@
 #define ANDROID_GEOMETRY_JNI_H
 
 #include <memory>
-#include <VRONode.h>
+#include "VRONode.h"
 #include "PersistentRef.h"
 
 #include "VRODefines.h"

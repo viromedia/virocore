@@ -19,9 +19,9 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeTestMethod) ( VRO_NO_ARGS emscripten::val object ) {
+VRO_METHOD(VRO_REF, nativeTestMethod)(VRO_NO_ARGS) {
     pinfo("Invoked C method");
-    object.call<void>("callJSMethod", 0);
+    obj.call<void>("callJSMethod", 0);
     return 0;
 }
 

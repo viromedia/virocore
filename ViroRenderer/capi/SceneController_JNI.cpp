@@ -173,12 +173,12 @@ VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
 
 VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
                                    VRO_REF sceneRef,
-                                   VRO_ARRAY jEffects) {
+                                   VRO_STRING_ARRAY jEffects) {
     std::vector<std::string> effects;
     if (jEffects != NULL) {
         int numberOfValues = VRO_ARRAY_LENGTH(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
-            VRO_STRING jEffect = (VRO_STRING) VRO_ARRAY_GET(jEffects, i);
+            VRO_STRING jEffect = VRO_STRING_ARRAY_GET(jEffects, i);
             std::string strEffect = VROPlatformGetString(jEffect, env);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
             effects.push_back(strEffect);
@@ -268,7 +268,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
             VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
-            if (jCallback == NULL) {
+            if (VRO_IS_OBJECT_NULL(jCallback)) {
                 return;
             }
 
@@ -338,7 +338,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
         VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
             VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
-            if (jCallback == NULL) {
+            if (VRO_IS_OBJECT_NULL(jCallback)) {
                 return;
             }
 
@@ -373,7 +373,7 @@ void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName)
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 

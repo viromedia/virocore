@@ -6,11 +6,16 @@
 //
 
 #include <memory>
-#include <PersistentRef.h>
+#include "PersistentRef.h"
 #include "ViroContext_JNI.h"
-#include "VRORenderer_JNI.h"
+#include "VROPlatformUtil.h"
+#include "VROVector3f.h"
+#include "VROCamera.h"
 
 #if VRO_PLATFORM_ANDROID
+#include "VRORenderer_JNI.h"
+#include "ViroContextAndroid_JNI.h"
+
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ViroContext_##method_name
@@ -20,7 +25,13 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateViroContext)(VRO_ARGS
                                              VRO_REF renderer_j) {
-    std::shared_ptr<ViroContext> context = std::make_shared<ViroContext>(Renderer::native(renderer_j));
+
+    std::shared_ptr<ViroContext> context;
+#if VRO_PLATFORM_ANDROID
+    context = std::make_shared<ViroContextAndroid>(Renderer::native(renderer_j));
+#else
+    // TODO wasm
+#endif
     return ViroContext::jptr(context);
 }
 
@@ -38,7 +49,7 @@ VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
     VROPlatformDispatchAsyncRenderer([context_w, weakCallback] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT jCallback = VRO_NEW_LOCAL_REF(weakCallback);
-        if (jCallback == NULL) {
+        if (VRO_IS_OBJECT_NULL(jCallback)) {
             return;
         }
         std::shared_ptr<ViroContext> helperContext = context_w.lock();

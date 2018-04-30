@@ -9,10 +9,10 @@
 #define ANDROID_CAMERA_JNI_H
 
 #include <memory>
-#include <VRONodeCamera.h>
-#include <VROCamera.h>
-#include <VROPlatformUtil.h>
-#include <VROTime.h>
+#include "VRONodeCamera.h"
+#include "VROCamera.h"
+#include "VROPlatformUtil.h"
+#include "VROTime.h"
 #include "PersistentRef.h"
 #include "ARUtils_JNI.h"
 
@@ -33,10 +33,18 @@ namespace Camera {
 
 class CameraDelegateJNI : public VROCameraDelegate {
 public:
-    CameraDelegateJNI(VRO_OBJECT obj) {
+    CameraDelegateJNI(VRO_OBJECT obj) :
+        _javaObject(VRO_OBJECT_NULL) {
+
         VRO_ENV env = VROPlatformGetJNIEnv();
         _javaObject = VRO_NEW_WEAK_GLOBAL_REF(obj);
     }
+
+    virtual ~CameraDelegateJNI() {
+        VRO_ENV env = VROPlatformGetJNIEnv();
+        VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
+    }
+
 
     /*
      Called from VRORenderer to notify the JNI bridge with a camera transformation update.
@@ -52,7 +60,7 @@ public:
         VROPlatformDispatchAsyncApplication([jObjWeak, pos, rot, forward] {
             VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
-            if (localObj == NULL) {
+            if (VRO_IS_OBJECT_NULL(localObj)) {
                 return;
             }
             VRO_FLOAT_ARRAY jPos = ARUtilsCreateFloatArrayFromVector3f(pos);

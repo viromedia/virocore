@@ -85,7 +85,7 @@ void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARPlaneAnchor> planeAnchor = planeAnchor_w.lock();
-        if (localObj == NULL || !planeAnchor) {
+        if (VRO_IS_OBJECT_NULL(localObj) || !planeAnchor) {
             return;
         }
 
@@ -107,7 +107,7 @@ void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
         std::shared_ptr<VROARPlaneAnchor> planeAnchor = planeAnchor_w.lock();
-        if (localObj == NULL || !planeAnchor) {
+        if (VRO_IS_OBJECT_NULL(localObj) || !planeAnchor) {
             return;
         }
 
@@ -128,7 +128,7 @@ void ARPlaneDelegate::onARAnchorRemoved() {
     VROPlatformDispatchAsyncApplication([jObject_w] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObject_w);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 

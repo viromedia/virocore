@@ -5,9 +5,9 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#include <VROPolyline.h>
-#include <PersistentRef.h>
-#include <VROPlatformUtil.h>
+#include "VROPolyline.h"
+#include "PersistentRef.h"
+#include "VROPlatformUtil.h"
 #include "Node_JNI.h"
 
 #if VRO_PLATFORM_ANDROID

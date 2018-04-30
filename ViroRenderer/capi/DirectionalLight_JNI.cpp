@@ -4,10 +4,10 @@
 //
 // Copyright © 2016 Viro Media. All rights reserved.
 
-#include <VROLight.h>
-#include <PersistentRef.h>
-#include <VRONode.h>
-#include <VROPlatformUtil.h>
+#include "VROLight.h"
+#include "PersistentRef.h"
+#include "VRONode.h"
+#include "VROPlatformUtil.h"
 #include "Node_JNI.h"
 
 #if VRO_PLATFORM_ANDROID

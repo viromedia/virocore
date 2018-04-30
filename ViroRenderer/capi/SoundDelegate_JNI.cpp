@@ -9,14 +9,15 @@
 #include <VROLog.h>
 #include "SoundDelegate_JNI.h"
 
-SoundDelegate::SoundDelegate(VRO_OBJECT soundObjectJava) {
+SoundDelegate::SoundDelegate(VRO_OBJECT soundObjectJava) :
+    _javaObject(VRO_OBJECT_NULL) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(soundObjectJava));
+    _javaObject = VRO_NEW_WEAK_GLOBAL_REF(soundObjectJava);
 }
 
 SoundDelegate::~SoundDelegate() {
-    // TODO: fix the below
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 void SoundDelegate::soundIsReady() {

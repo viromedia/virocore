@@ -9,7 +9,7 @@
 #define Node_JNI_h
 
 #include <memory>
-#include <VRONode.h>
+#include "VRONode.h"
 #include "PersistentRef.h"
 
 #include "VRODefines.h"

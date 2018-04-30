@@ -8,6 +8,7 @@
 #include "ParticleEmitter_JNI.h"
 #include "ViroContext_JNI.h"
 #include "Node_JNI.h"
+#include "VROMaterial.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

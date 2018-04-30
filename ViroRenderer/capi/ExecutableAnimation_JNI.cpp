@@ -25,7 +25,7 @@ VRO_METHOD(VRO_REF, nativeWrapNodeAnimation)(VRO_ARGS
     std::shared_ptr<VRONode> node = Node::native(nodeRef);
 
     std::shared_ptr<VROExecutableAnimation> animation;
-    if (jkey != NULL) {
+    if (!VRO_IS_STRING_EMPTY(jkey)) {
         std::string key_s = VROPlatformGetString(jkey, env);
         animation = node->getAnimation(key_s, true);
     }

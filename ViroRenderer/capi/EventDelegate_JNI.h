@@ -11,9 +11,9 @@
 #include <memory>
 #include <stdarg.h>
 #include <iostream>
-#include <VRONode.h>
-#include <VROBillboardConstraint.h>
-#include <VROPlatformUtil.h>
+#include "VRONode.h"
+#include "VROBillboardConstraint.h"
+#include "VROPlatformUtil.h"
 #include "PersistentRef.h"
 #include "VROGeometry.h"
 #include "VRONode.h"
@@ -30,8 +30,9 @@
  */
 class EventDelegate_JNI : public VROEventDelegate {
 public:
-    EventDelegate_JNI(VRO_OBJECT sceneJavaObject, VRO_ENV env) {
-        _javaObject = VRO_NEW_WEAK_GLOBAL_REF(sceneJavaObject);
+    EventDelegate_JNI(VRO_OBJECT obj, VRO_ENV env) :
+        _javaObject(VRO_NEW_WEAK_GLOBAL_REF(obj)) {
+
     }
 
     ~EventDelegate_JNI() {

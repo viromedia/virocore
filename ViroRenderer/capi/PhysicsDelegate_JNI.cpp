@@ -11,13 +11,15 @@
 #include "PhysicsDelegate_JNI.h"
 #include "VROLog.h"
 
-PhysicsDelegate_JNI::PhysicsDelegate_JNI(VRO_OBJECT obj) {
+PhysicsDelegate_JNI::PhysicsDelegate_JNI(VRO_OBJECT obj) :
+    _javaObject(VRO_OBJECT_NULL) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    _javaObject = reinterpret_cast<jclass>(VRO_NEW_WEAK_GLOBAL_REF(obj));
+    _javaObject = VRO_NEW_WEAK_GLOBAL_REF(obj);
 }
 
 PhysicsDelegate_JNI::~PhysicsDelegate_JNI() {
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
 void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollision collision) {
@@ -27,13 +29,13 @@ void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollisi
     VROPlatformDispatchAsyncApplication([weakObj, collision] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
-        if (localObj == NULL) {
+        if (VRO_IS_OBJECT_NULL(localObj)) {
             return;
         }
 
         VRO_STRING jCollidedBodyTag = VRO_NEW_STRING(collision.collidedBodyTag.c_str());
         VROPlatformCallJavaFunction(localObj, "onCollided", "(Ljava/lang/String;FFFFFF)V",
-                                    jCollidedBodyTag,
+                                    VRO_STRING_POD(jCollidedBodyTag),
                                     collision.collidedPoint.x,
                                     collision.collidedPoint.y,
                                     collision.collidedPoint.z,

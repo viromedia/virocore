@@ -34,7 +34,6 @@ add_library( # Sets the name of the library.
              # file are automatically included.
 
              # Android Platform
-             ${VIRO_ANDROID_SRC}/native-lib.cpp
              ${VIRO_ANDROID_SRC}/debug_stacktrace.cpp
              ${VIRO_ANDROID_SRC}/debug_mapinfo.cpp
              ${VIRO_ANDROID_SRC}/VROLooper.cpp
@@ -59,6 +58,7 @@ add_library( # Sets the name of the library.
              ${VIRO_CAPI_SRC}/SceneController_JNI.cpp
              ${VIRO_CAPI_SRC}/Camera_JNI.cpp
              ${VIRO_CAPI_SRC}/Box_JNI.cpp
+             ${VIRO_CAPI_SRC}/Image_JNI.cpp
              ${VIRO_CAPI_SRC}/Controller_JNI.cpp
              ${VIRO_CAPI_SRC}/Surface_JNI.cpp
              ${VIRO_CAPI_SRC}/Polygon_JNI.cpp
@@ -72,6 +72,7 @@ add_library( # Sets the name of the library.
              ${VIRO_CAPI_SRC}/AnimationChain_JNI.cpp
              ${VIRO_CAPI_SRC}/AnimationGroup_JNI.cpp
              ${VIRO_CAPI_SRC}/ExecutableAnimation_JNI.cpp
+             ${VIRO_CAPI_SRC}/LazyMaterial_JNI.cpp
              ${VIRO_CAPI_SRC}/Light_JNI.cpp
              ${VIRO_CAPI_SRC}/AmbientLight_JNI.cpp
              ${VIRO_CAPI_SRC}/SpotLight_JNI.cpp
@@ -270,8 +271,6 @@ add_library( # Sets the name of the library.
 
              # Android JNI
              ${VIRO_ANDROID_SRC}/jni/VRORenderer_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/Image_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/LazyMaterial_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/MediaRecorder_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/VRORendererARCore_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/OpenCV_JNI.cpp

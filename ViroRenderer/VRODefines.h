@@ -33,33 +33,46 @@
 #include <emscripten/val.h>
 
 #define VRO_C_INCLUDE <string>
-#define VRO_ENV void*
-#define VRO_ARGS void *env,
-#define VRO_ARGS_STATIC
-#define VRO_NO_ARGS
-#define VRO_NO_ARGS_STATIC
+#define VRO_ENV std::shared_ptr<int>
+#define VRO_ARGS VRO_ENV env, emscripten::val obj,
+#define VRO_ARGS_STATIC VRO_ENV env,
+#define VRO_NO_ARGS VRO_ENV env, emscripten::val obj
+#define VRO_NO_ARGS_STATIC VRO_ENV env
 #define VRO_REF int
 #define VRO_BOOL bool
 #define VRO_INT int
 #define VRO_LONG uint64_t
 #define VRO_FLOAT float
 #define VRO_DOUBLE double
-#define VRO_OBJECT void*
-#define VRO_WEAK void*
+#define VRO_CHAR_WIDE wchar_t
 
-#define VRO_STRING std::string
+#define VRO_OBJECT emscripten::val
+#define VRO_OBJECT_NULL emscripten::val::null()
+#define VRO_IS_OBJECT_NULL(object) \
+    false
+#define VRO_WEAK emscripten::val
+#define VRO_OBJECT_POD(object) \
+    &object
+
+#define VRO_STRING std::shared_ptr<std::string>
 #define VRO_NEW_STRING(chars) \
-    std::string(chars)
-#define VRO_STRING_LENGTH(string) \
-    string.size()
+    std::make_shared<std::string>(chars)
+#define VRO_STRING_LENGTH(str) \
+    str->size()
 #define VRO_STRING_GET_CHARS(str) \
-    str.c_str()
+    str->c_str()
 #define VRO_STRING_RELEASE_CHARS(str, chars) \
 
-#define VRO_STRING_GET_CHARS_WIDE(str) \
-    str.c_str()
-#define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
-    
+#define VRO_IS_STRING_EMPTY(str) \
+    (str == NULL || str->size() == 0)
+#define VRO_STRING_POD(str) \
+    str.get()
+
+#define VRO_STRING_WIDE std::wstring
+#define VRO_IS_WIDE_STRING_EMPTY(str) \
+    (str.size() == 0)
+#define VRO_STRING_GET_CHARS_WIDE(str, wide_str) \
+    wide_str = str
 
 #define VRO_ARRAY std::vector<void *>*
 #define VRO_ARRAY_LENGTH(array) \
@@ -71,11 +84,19 @@
 #define VRO_NEW_ARRAY(size, cls) \
     new std::vector<void *>(size)
 
+#define VRO_OBJECT_ARRAY std::vector<emscripten::val>*
+#define VRO_OBJECT_ARRAY_GET(array, index) \
+    (*array)[index]
+#define VRO_OBJECT_ARRAY_SET(array, index, object) \
+    (*array)[index] = object
+#define VRO_NEW_OBJECT_ARRAY(size, cls) \
+    new std::vector<emscripten::val>(size, emscripten::val::null())
+
 #define VRO_FLOAT_ARRAY std::vector<float>*
 #define VRO_NEW_FLOAT_ARRAY(size) \
     new std::vector<float>(size)
 #define VRO_FLOAT_ARRAY_SET(dest, start, len, src) \
-    dest->insert(dest->start() + start, &src[0], &src[len])
+    dest->insert(dest->begin() + start, &src[0], &src[len])
 #define VRO_FLOAT_ARRAY_GET_ELEMENTS(array) \
     array->data()
 #define VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(array, elements) \
@@ -85,7 +106,7 @@
 #define VRO_NEW_DOUBLE_ARRAY(size) \
     new std::vector<double>(size)
 #define VRO_DOUBLE_ARRAY_SET(dest, start, len, src) \
-    dest->insert(dest->start() + start, &src[0], &src[len])
+    dest->insert(dest->begin() + start, &src[0], &src[len])
 #define VRO_DOUBLE_ARRAY_GET_ELEMENTS(array) \
     array->data()
 #define VRO_DOUBLE_ARRAY_RELEASE_ELEMENTS(array, elements) \
@@ -96,18 +117,18 @@
 #define VRO_NEW_LONG_ARRAY(size) \
     std::vector<uint64_t>(size)
 #define VRO_LONG_ARRAY_SET(dest, start, len, src) \
-    dest->insert(dest->start() + start, &src[0], &src[len])
+    dest->insert(dest->begin() + start, &src[0], &src[len])
 #define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
     array->data()
 #define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
-#define VRO_STRING_ARRAY std::vector<std::string>*
+#define VRO_STRING_ARRAY std::vector<std::shared_ptr<std::string>>*
 #define VRO_NEW_STRING_ARRAY(size) \
-    new std::vector<std::string>(size)
+    new std::vector<std::shared_ptr<std::string>>(size)
 #define VRO_STRING_ARRAY_GET(array, index) \
     (*array)[index]
 #define VRO_STRING_ARRAY_SET(array, index, item) \
-    (*array)[index] = item
+    (*array)[index] = std::make_shared<std::string>(item)
 
 #define VRO_NEW_GLOBAL_REF(object) \
     object
@@ -149,22 +170,38 @@
 #define VRO_LONG jlong
 #define VRO_FLOAT jfloat
 #define VRO_DOUBLE jdouble
+#define VRO_CHAR_WIDE jchar
+
 #define VRO_OBJECT jobject
+#define VRO_OBJECT_NULL NULL
+#define VRO_IS_OBJECT_NULL(object) \
+    object == NULL
 #define VRO_WEAK jweak
+#define VRO_OBJECT_POD(object) \
+    object
 
 #define VRO_STRING jstring
 #define VRO_NEW_STRING(chars) \
-    env->NewStringUTF(chars);
+    env->NewStringUTF(chars)
 #define VRO_STRING_LENGTH(string) \
     env->GetStringLength(string)
 #define VRO_STRING_GET_CHARS(str) \
     env->GetStringUTFChars(str, NULL)
 #define VRO_STRING_RELEASE_CHARS(str, chars) \
     env->ReleaseStringUTFChars(str, chars)
-#define VRO_STRING_GET_CHARS_WIDE(str) \
-    env->GetStringChars(str, NULL)
-#define VRO_STRING_RELEASE_CHARS_WIDE(str, chars) \
-    env->ReleaseStringChars(str, chars)
+#define VRO_IS_STRING_EMPTY(str) \
+    (str == NULL || env->GetStringLength(str) == 0)
+#define VRO_STRING_POD(str) \
+    str
+
+#define VRO_STRING_WIDE jstring
+#define VRO_IS_WIDE_STRING_EMPTY(str) \
+    (str == NULL || env->GetStringLength(str) == 0)
+#define VRO_STRING_GET_CHARS_WIDE(str, wide_str) \
+    const jchar *text_c = env->GetStringChars(str, NULL); \
+    jsize textLength = env->GetStringLength(str); \
+    wide_str.assign(text_c, text_c + textLength); \
+    env->ReleaseStringChars(str, text_c)
 
 #define VRO_ARRAY jobjectArray
 #define VRO_ARRAY_LENGTH(array) \
@@ -174,6 +211,14 @@
 #define VRO_ARRAY_SET(array, index, object) \
     env->SetObjectArrayElement(array, index, object)
 #define VRO_NEW_ARRAY(size, cls) \
+    env->NewObjectArray(size, env->FindClass(cls), NULL)
+
+#define VRO_OBJECT_ARRAY jobjectArray
+#define VRO_OBJECT_ARRAY_GET(array, index) \
+    env->GetObjectArrayElement(array, index)
+#define VRO_OBJECT_ARRAY_SET(array, index, object) \
+    env->SetObjectArrayElement(array, index, object)
+#define VRO_NEW_OBJECT_ARRAY(size, cls) \
     env->NewObjectArray(size, env->FindClass(cls), NULL)
 
 #define VRO_FLOAT_ARRAY jfloatArray
@@ -209,13 +254,13 @@
 
 #define VRO_STRING_ARRAY jobjectArray
 #define VRO_NEW_STRING_ARRAY(size) \
-    env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""));
+    env->NewObjectArray(size, env->FindClass("java/lang/String"), env->NewStringUTF(""))
 #define VRO_STRING_ARRAY_GET(array, index) \
-    (VRO_STRING) (env->GetObjectArrayElement(array, index));
+    (VRO_STRING) (env->GetObjectArrayElement(array, index))
 #define VRO_STRING_ARRAY_SET(array, index, item) \
     jstring jkey = env->NewStringUTF(item.c_str()); \
     env->SetObjectArrayElement(array, index, jkey); \
-    env->DeleteLocalRef(jkey);
+    env->DeleteLocalRef(jkey)
 
 #define VRO_NEW_GLOBAL_REF(object) \
     env->NewGlobalRef(object)

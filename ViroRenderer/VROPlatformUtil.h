@@ -172,11 +172,6 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
 #if VRO_PLATFORM_ANDROID
 
 void VROPlatformSetEnv(JNIEnv *env, jobject appContext, jobject assetManager, jobject platformUtil);
-
-// This function was added because VROPlatformConvertBitmap can be called before the renderer
-// is created and as a result, activity and assetManager hasn't been set yet. We should think
-// about how to do this better.
-void VROPlatformSetEnv(JNIEnv *env);
 void VROPlatformReleaseEnv();
 
 jobject VROPlatformGetJavaAppContext();
@@ -188,12 +183,6 @@ AAssetManager *VROPlatformGetAssetManager();
 // for testing purposes only. Not needed in prod because assets are not used
 // in prod.
 std::string VROPlatformCopyAssetToFile(std::string asset);
-
-/**
- * This function takes a Java Map (java.util.Map) w/ String key and values and returns
- * a C++ std::map w/ std::string key and values.
- */
-std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap);
 
 /**
  * This function takes a java map of filename -> resource location and copies the resources
@@ -243,6 +232,11 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 
 #if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
 
+// This function was added because VROPlatformConvertBitmap can be called before the renderer
+// is created and as a result, activity and assetManager hasn't been set yet. We should think
+// about how to do this better.
+void VROPlatformSetEnv(VRO_ENV env);
+
 // Get the host platform environment
 VRO_ENV VROPlatformGetJNIEnv();
 
@@ -277,6 +271,11 @@ void VROPlatformSetObject(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
 
 // Safely converts the given string with the provided jni environment.
 std::string VROPlatformGetString(VRO_STRING string, VRO_ENV env);
+
+
+// This function takes a host object Map (Java: java.util.Map) with string keys and values,
+// and returns a C++ std::map w/ std::string key and values.
+std::map<std::string, std::string> VROPlatformConvertFromJavaMap(VRO_OBJECT javaMap);
 
 #endif
 
