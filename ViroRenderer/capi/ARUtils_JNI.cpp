@@ -23,8 +23,8 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
     VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
     VRO_FLOAT_ARRAY positionArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractTranslation());
     VRO_FLOAT_ARRAY rotationArray = ARUtilsCreateFloatArrayFromVector3f( {rotationRads.x,
-                                                                      rotationRads.y,
-                                                                      rotationRads.z});
+                                                                          rotationRads.y,
+                                                                          rotationRads.z });
     VRO_FLOAT_ARRAY scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
 
     // Create an ARPlaneAnchor if necessary and return.
@@ -185,9 +185,9 @@ VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
-        tempPointsArr[i*3] = points[i].x;
-        tempPointsArr[i*3+1] = points[i].y;
-        tempPointsArr[i*3+2] = points[i].z;
+        tempPointsArr[i * 3] = points[i].x;
+        tempPointsArr[i * 3 + 1] = points[i].y;
+        tempPointsArr[i * 3 + 2] = points[i].z;
     }
 
     VRO_FLOAT_ARRAY jPointsArray = VRO_NEW_FLOAT_ARRAY(points.size() * 3);

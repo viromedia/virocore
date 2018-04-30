@@ -887,7 +887,7 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
 
 void VROPlatformCallJavaFunction(jobject javaObject,
                                  std::string functionName,
-                                 std::string methodID, ...){
+                                 std::string methodID, ...) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
@@ -908,7 +908,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     va_start(args, methodID);
     env->CallVoidMethodV(javaObject, method, args);
     if (env->ExceptionOccurred()) {
-        perr("Exception occured when calling %s.", functionName.c_str());
+        perr("Exception occurred when calling %s.", functionName.c_str());
         env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling " + functionName;
         throw std::runtime_error(errorString.c_str());
@@ -920,7 +920,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
 
  jlong VROPlatformCallJavaLongFunction(jobject javaObject,
                                        std::string functionName,
-                                       std::string methodID, ...){
+                                       std::string methodID, ...) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
@@ -941,7 +941,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     va_start(args, methodID);
     jlong result = env->CallLongMethodV(javaObject, method, args);
     if (env->ExceptionOccurred()) {
-        perr("Exception occured when calling %s.", functionName.c_str());
+        perr("Exception occurred when calling %s.", functionName.c_str());
         env->ExceptionDescribe();
         std::string errorString = "A java exception has been thrown when calling " + functionName;
         throw std::runtime_error(errorString.c_str());
@@ -953,21 +953,21 @@ void VROPlatformCallJavaFunction(jobject javaObject,
 }
 
 VRO_OBJECT VROPlatformConstructHostObject(std::string className,
-                                          std::string constructorSignature, ...) {
+                                          std::string constructorSig, ...) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
     jclass cls = env->FindClass(className.c_str());
-    jmethodID constructor = env->GetMethodID(cls, "<init>", constructorSignature.c_str());
+    jmethodID constructor = env->GetMethodID(cls, "<init>", constructorSig.c_str());
 
     va_list args;
-    va_start(args, constructorSignature);
-    VRO_OBJECT object = env->NewObject(cls, constructor, args);
+    va_start(args, constructorSig);
+    jobject object = env->NewObjectV(cls, constructor, args);
     if (env->ExceptionOccurred()) {
-        perr("Exception occured when calling constructor %s", constructorSignature.c_str());
+        perr("Exception occurred when calling constructor %s", constructorSig.c_str());
         env->ExceptionDescribe();
 
-        std::string errorString = "A java exception has been thrown when calling constructor " + constructorSignature;
+        std::string errorString = "A java exception has been thrown when calling constructor " + constructorSig;
         throw std::runtime_error(errorString.c_str());
     }
     va_end(args);

@@ -263,7 +263,7 @@ VRO_LONG VROPlatformCallJavaLongFunction(VRO_OBJECT object,
 
 // Constructs an object on the host platform (e.g. a Java or Javascript object)
 VRO_OBJECT VROPlatformConstructHostObject(std::string className,
-                                          std::string constructorSignature, ...);
+                                          std::string constructorSig, ...);
 
 // Helper functions for setting host object properties through from C++
 void VROPlatformSetFloat(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_FLOAT value);
