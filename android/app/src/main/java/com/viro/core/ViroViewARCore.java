@@ -565,8 +565,7 @@ public class ViroViewARCore extends ViroView {
 
     @Override
     protected int getSystemUiVisibilityFlags() {
-        return (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        return 0;
     }
 
     /*
