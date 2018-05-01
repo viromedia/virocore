@@ -319,10 +319,11 @@ public:
         }
 
         if (VROStringUtil::strcmpinsensitive(vendor, "ARM")) {
-            if (renderer.find("Mali-T720") != std::string::npos) {
-                pinfo("   Detected antiquated Mali-T720 GPU, rendering will be limited");
-                _gpuType = VROGPUType::Adreno330OrOlder;
+            if (renderer.find("Mali") != std::string::npos) {
+                pinfo("   Detected Mali GPU, sRGB framebuffer assumed");
+                _gpuType = VROGPUType::Mali;
             }
+
         }
     }
 

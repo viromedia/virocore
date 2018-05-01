@@ -39,6 +39,10 @@ public:
         switch (getGPUType()) {
             case VROGPUType::Adreno330OrOlder:
                 return VROColorRenderingMode::NonLinear;
+            case VROGPUType::Mali:
+                // Mali GPUs fail to report when they *have* given us a proper sRGB framebuffer,
+                // so ignore the sRGBFramebuffer bool
+                return  VROColorRenderingMode::Linear;
             default:
                 // If the GPU doesn't support sRGB framebuffers then use software gamma correction
                 return _sRGBFramebuffer ? VROColorRenderingMode::Linear : VROColorRenderingMode::LinearSoftware;

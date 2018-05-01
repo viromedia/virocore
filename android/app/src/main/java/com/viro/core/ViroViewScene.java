@@ -115,7 +115,7 @@ public class ViroViewScene extends ViroView {
                 sRGBFramebuffer = true;
             }
             else {
-                Log.i(TAG, "Did not acquire sRGB framebuffer [colorspace " + value[0] + "]");
+                Log.i(TAG, "Driver reporting sRGB framebuffer *not* acquired [colorspace " + value[0] + "]");
             }
 
             view.mNativeRenderer.onSurfaceCreated(null);
