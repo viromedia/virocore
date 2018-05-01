@@ -127,6 +127,7 @@ namespace arcore {
     public:
         virtual ~LightEstimate() {}
         virtual float getPixelIntensity() = 0;
+        virtual void getColorCorrection(float *outColorCorrection) = 0;
         virtual bool isValid() = 0;
     };
 

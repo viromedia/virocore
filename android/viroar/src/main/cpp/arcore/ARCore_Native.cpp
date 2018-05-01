@@ -7,7 +7,6 @@
 //
 
 #include "ARCore_Native.h"
-#include "VROMatrix4f.h"
 #include <media/NdkImage.h>
 #include <media/NdkImageReader.h>
 
@@ -225,6 +224,10 @@ namespace arcore {
         float intensity;
         ArLightEstimate_getPixelIntensity(_session, _lightEstimate, &intensity);
         return intensity;
+    }
+
+    void LightEstimateNative::getColorCorrection(float *outCorrection) {
+        ArLightEstimate_getColorCorrection(_session, _lightEstimate, outCorrection);
     }
 
     bool LightEstimateNative::isValid() {

@@ -1219,7 +1219,7 @@ VRO_LONG VROPlatformCallJavaLongFunction(VRO_OBJECT object,
 }
 
 VRO_OBJECT VROPlatformConstructHostObject(std::string className,
-                                          std::string constructorSignature, ...) {
+                                          std::string constructorSig, ...) {
     return VRO_OBJECT_NULL;
 }
 

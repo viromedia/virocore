@@ -99,6 +99,7 @@ namespace arcore {
         LightEstimateNative(ArLightEstimate *lightEstimate, ArSession *session) : _lightEstimate(lightEstimate), _session(session) {}
         virtual ~LightEstimateNative();
         virtual float getPixelIntensity();
+        virtual void getColorCorrection(float *outColorCorrection);
         virtual bool isValid();
 
         ArLightEstimate *_lightEstimate;
