@@ -12,6 +12,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_PortalScene_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type PortalScene_##method_name
 #endif
 
 extern "C" {
@@ -38,6 +41,7 @@ VRO_METHOD(void, nativeSetPassable)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreatePortalDelegate)(VRO_NO_ARGS) {
+    VRO_METHOD_PREAMBLE;
     VROPlatformSetEnv(env);
     std::shared_ptr<PortalDelegate> delegate = std::make_shared<PortalDelegate>(obj);
     return PortalDelegate::jptr(delegate);

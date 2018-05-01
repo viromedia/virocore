@@ -21,6 +21,9 @@
 #define VRO_METHOD(return_type, method_name) \
     JNIEXPORT return_type JNICALL              \
         Java_com_viro_core_internal_AnimationChain_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type AnimationChain_##method_name
 #endif
 
 namespace AnimationChain {
@@ -39,10 +42,11 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateAnimationChain)(VRO_ARGS
                                                 VRO_STRING executionType) {
+    VRO_METHOD_PREAMBLE;
     std::vector<std::shared_ptr<VROExecutableAnimation>> emptyChain;
     VROAnimationChainExecution execution = VROAnimationChainExecution::Serial;
 
-    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(executionType, env), "parallel")) {
+    if (VROStringUtil::strcmpinsensitive(VRO_STRING_STL(executionType), "parallel")) {
         execution = VROAnimationChainExecution::Parallel;
     }
 

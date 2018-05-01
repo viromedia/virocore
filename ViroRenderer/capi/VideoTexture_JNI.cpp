@@ -24,6 +24,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_VideoTexture_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type VideoTexture_##method_name
 #endif
 
 extern "C" {
@@ -31,7 +34,8 @@ extern "C" {
 VRO_METHOD(VRO_REF, nativeCreateVideoTexture)(VRO_ARGS
                                               VRO_REF context_j,
                                               VRO_STRING stereoMode) {
-    VROStereoMode mode = VROTextureUtil::getStereoModeForString(VROPlatformGetString(stereoMode, env));
+    VRO_METHOD_PREAMBLE;
+    VROStereoMode mode = VROTextureUtil::getStereoModeForString(VRO_STRING_STL(stereoMode));
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
     std::shared_ptr<VROVideoTexture> videoTexture;
@@ -176,8 +180,10 @@ VRO_METHOD(void, nativeLoadSource)(VRO_ARGS
                                    VRO_REF textureRef,
                                    VRO_STRING source,
                                    VRO_REF context_j) {
+    VRO_METHOD_PREAMBLE;
+
     // Grab required objects from the RenderContext required for initialization
-    std::string strVideoSource = VROPlatformGetString(source, env);
+    std::string strVideoSource = VRO_STRING_STL(source);
     std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 

@@ -14,6 +14,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Polyline_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Polyline_##method_name
 #endif
 
 namespace Polyline {
@@ -66,6 +69,8 @@ VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
 VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
                                           VRO_ARRAY points_j,
                                           VRO_FLOAT width) {
+    VRO_METHOD_PREAMBLE;
+
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
     std::shared_ptr<VROPolyline> polyline = VROPolyline::createPolyline(points, width);
     return Polyline::jptr(polyline);
@@ -79,6 +84,7 @@ VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
 VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
                                     VRO_REF polyline_j,
                                     VRO_FLOAT_ARRAY point_j) {
+    VRO_METHOD_PREAMBLE;
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
 
     VROVector3f point = Polyline::convertPoint(env, point_j);
@@ -93,6 +99,7 @@ VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
 VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
                                   VRO_REF polyline_j,
                                   VRO_ARRAY points_j) {
+    VRO_METHOD_PREAMBLE;
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
 
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);

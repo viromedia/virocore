@@ -52,8 +52,8 @@ VRO_METHOD(void, nativeRunEdgeDetection)(VRO_ARGS
                                          VRO_STRING jinputFile,
                                          VRO_STRING joutputFile) {
     // Get the strings
-    std::string inputFileName = VROPlatformGetString(jinputFile, env);
-    std::string outputFileName = VROPlatformGetString(joutputFile, env);
+    std::string inputFileName = VRO_STRING_STL(jinputFile);
+    std::string outputFileName = VRO_STRING_STL(joutputFile);
 
     cv::Mat input = cv::imread(inputFileName, cv::IMREAD_GRAYSCALE);
 
@@ -65,8 +65,8 @@ VRO_METHOD(void, nativeRunEdgeDetection)(VRO_ARGS
 
 VRO_METHOD(void, nativeReadWriteBitmap)(VRO_ARGS
                                         VRO_STRING jinstring, VRO_STRING joutstring) {
-    std::string inputFilePath = VROPlatformGetString(jinstring, env);
-    std::string outputFilePath = VROPlatformGetString(joutstring, env);
+    std::string inputFilePath = VRO_STRING_STL(jinstring);
+    std::string outputFilePath = VRO_STRING_STL(joutstring);
 
     cv::Mat input = cv::imread(inputFilePath, cv::IMREAD_GRAYSCALE);
 

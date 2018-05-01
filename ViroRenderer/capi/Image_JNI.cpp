@@ -15,13 +15,17 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_Image_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Image_##method_name
 #endif
 
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateImage)(VRO_ARGS
                                        VRO_STRING resource, VRO_STRING format) {
-    std::string strResource = VROPlatformGetString(resource, env);
+    VRO_METHOD_PREAMBLE;
+    std::string strResource = VRO_STRING_STL(resource);
 
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
     std::shared_ptr<VROImage> imagePtr;
@@ -36,6 +40,7 @@ VRO_METHOD(VRO_REF, nativeCreateImage)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateImageFromBitmap)(VRO_ARGS
                                                  VRO_OBJECT jbitmap, VRO_STRING format) {
+    VRO_METHOD_PREAMBLE;
     VROPlatformSetEnv(env);
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
 

@@ -23,6 +23,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Sound_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Sound_##method_name
 #endif
 
 // TODO: when GVR audio supports the seekToTime, etc, then change the native object to a VROSound.
@@ -47,10 +50,11 @@ extern "C" {
     VRO_METHOD(VRO_REF, nativeCreateSound)(VRO_ARGS
                                            VRO_STRING filename,
                                            VRO_REF context_j) {
+        VRO_METHOD_PREAMBLE;
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
-        std::string file = VROPlatformGetString(filename, env);
+        std::string file = VRO_STRING_STL(filename);
         std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(file, false);
         player->setDelegate(std::make_shared<SoundDelegate>(obj));
         return Sound::jptr(player);
@@ -65,6 +69,7 @@ extern "C" {
     VRO_METHOD(VRO_REF, nativeCreateSoundWithData)(VRO_ARGS
                                                    VRO_REF dataRef,
                                                    VRO_REF context_j) {
+        VRO_METHOD_PREAMBLE;
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);

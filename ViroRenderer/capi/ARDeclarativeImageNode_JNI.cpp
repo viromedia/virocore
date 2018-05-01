@@ -12,6 +12,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ARDeclarativeImageNode_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type ARDeclarativeImageNode_##method_name
 #endif
 
 extern "C" {
@@ -25,7 +28,7 @@ VRO_METHOD(void, nativeSetARImageTarget)(VRO_ARGS
                                          VRO_REF nativeARImageNode,
                                          VRO_REF nativeARImageTarget) {
     std::shared_ptr<VROARDeclarativeImageNode> arImageNode = ARDeclarativeImageNode::native(nativeARImageNode);
-    std::shared_ptr<VROARImageTargetAndroid> arImageTarget = ARImageTarget::native(nativeARImageTarget);
+    std::shared_ptr<VROARImageTarget> arImageTarget = ARImageTarget::native(nativeARImageTarget);
     arImageNode->setImageTarget(arImageTarget);
 }
 

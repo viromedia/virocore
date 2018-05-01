@@ -15,13 +15,17 @@
 #include "ARNode_JNI.h"
 #include "Surface_JNI.h"
 #include "ARImageTarget_JNI.h"
-#include <VROPlatformUtil.h>
-#include <VROARImageTargetAndroid.h>
+#include "VROPlatformUtil.h"
 
 #if VRO_PLATFORM_ANDROID
+#include "VROARImageTargetAndroid.h"
+
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARScene_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type ARScene_##method_name
 #endif
 
 extern "C" {
@@ -44,6 +48,8 @@ VRO_METHOD(VRO_REF, nativeCreateARSceneControllerDeclarative)(VRO_NO_ARGS) {
 
 VRO_METHOD(VRO_REF, nativeCreateARSceneDelegate)(VRO_ARGS
                                                  VRO_REF arSceneControllerPtr) {
+    VRO_METHOD_PREAMBLE;
+
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(ARSceneController::native(arSceneControllerPtr)->getScene());
     if (arScene->getDeclarativeSession()) {
         std::shared_ptr<ARDeclarativeSceneDelegate> delegate = std::make_shared<ARDeclarativeSceneDelegate>(obj, env);
@@ -147,7 +153,7 @@ VRO_METHOD(void, nativeSetAnchorDetectionTypes)(VRO_ARGS
 
     int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
     for (int i = 0; i < stringCount; i++) {
-        std::string typeString = VROPlatformGetString(VRO_STRING_ARRAY_GET(typeStrArray, i), env);
+        std::string typeString = VRO_STRING_STL(VRO_STRING_ARRAY_GET(typeStrArray, i));
         if (VROStringUtil::strcmpinsensitive(typeString, "None")) {
             types.insert(VROAnchorDetection::None);
         } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {
@@ -222,11 +228,11 @@ VRO_METHOD(void, nativeAddARImageTarget)(VRO_ARGS
                                          VRO_REF arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+        std::shared_ptr<VROARImageTarget> arImageTarget = arImageTarget_w.lock();
 
         if (arScene && arImageTarget) {
             arScene->getImperativeSession()->addARImageTarget(arImageTarget);
@@ -239,11 +245,11 @@ VRO_METHOD(void, nativeRemoveARImageTarget)(VRO_ARGS
                                             VRO_REF arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+        std::shared_ptr<VROARImageTarget> arImageTarget = arImageTarget_w.lock();
 
         if (arScene && arImageTarget) {
             arScene->getImperativeSession()->removeARImageTarget(arImageTarget);
@@ -256,11 +262,11 @@ VRO_METHOD(void, nativeAddARImageTargetDeclarative)(VRO_ARGS
                                                     VRO_REF arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+        std::shared_ptr<VROARImageTarget> arImageTarget = arImageTarget_w.lock();
 
         if (arScene && arImageTarget) {
             arScene->getDeclarativeSession()->addARImageTarget(arImageTarget);
@@ -273,11 +279,11 @@ VRO_METHOD(void, nativeRemoveARImageTargetDeclarative)(VRO_ARGS
                                                        VRO_REF arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTargetAndroid> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARImageTargetAndroid> arImageTarget = arImageTarget_w.lock();
+        std::shared_ptr<VROARImageTarget> arImageTarget = arImageTarget_w.lock();
 
         if (arScene && arImageTarget) {
             arScene->getDeclarativeSession()->removeARImageTarget(arImageTarget);

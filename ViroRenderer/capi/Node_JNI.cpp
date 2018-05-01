@@ -32,9 +32,9 @@
 #define VRO_METHOD(return_type, method_name) \
     JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Node_##method_name
-#elif VRO_PLATFORM_WASM
+#else
 #define VRO_METHOD(return_type, method_name) \
-    return_type method_name
+    return_type Node_##method_name
 #endif
 
 extern "C" {
@@ -94,7 +94,7 @@ VRO_METHOD(void, nativeRemoveFromParent)(VRO_ARGS
 VRO_METHOD(void, nativeSetTag)(VRO_ARGS
                                VRO_REF native_node_ref,
                                VRO_STRING tag) {
-    std::string strBodyType = VROPlatformGetString(tag, env);
+    std::string strBodyType = VRO_STRING_STL(tag);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, strBodyType] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -502,12 +502,12 @@ VRO_METHOD(void, nativeSetVisible)(VRO_ARGS
 VRO_METHOD(void, nativeSetDragType)(VRO_ARGS
                                     VRO_REF native_node_ref,
                                     VRO_STRING dragType) {
-
+    VRO_METHOD_PREAMBLE;
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
     // default type to FixedDistance if we don't recognize the given string
     VRODragType type = VRODragType::FixedDistance;
-    std::string dragTypeStr = VROPlatformGetString(dragType, env);
+    std::string dragTypeStr = VRO_STRING_STL(dragType);
 
     if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistance")) {
         type = VRODragType::FixedDistance;
@@ -552,12 +552,13 @@ VRO_METHOD(void, nativeSetHierarchicalRendering)(VRO_ARGS
 VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
                                               VRO_REF nativeNodeRef,
                                               VRO_STRING_ARRAY stringArrayRef) {
+    VRO_METHOD_PREAMBLE;
     std::vector<std::shared_ptr<VROBillboardConstraint>> tempConstraints;
     int length = VRO_ARRAY_LENGTH(stringArrayRef);
 
     for (int i = 0; i < length; i++) {
         VRO_STRING string = VRO_STRING_ARRAY_GET(stringArrayRef, i);
-        std::string transformBehavior = VROPlatformGetString(string, env);
+        std::string transformBehavior = VRO_STRING_STL(string);
 
         // Parse out the constraints and save a copy into tempConstraints
         if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboard")) {
@@ -647,7 +648,8 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetWorldTransform)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetName(VRO_ARGS
                                VRO_REF node_j, VRO_STRING name_j)) {
-    std::string name = VROPlatformGetString(name_j, env);
+    VRO_METHOD_PREAMBLE;
+    std::string name = VRO_STRING_STL(name_j);
     std::weak_ptr<VRONode> node_w = Node::native(node_j);
 
     VROPlatformDispatchAsyncRenderer([node_w, name] {

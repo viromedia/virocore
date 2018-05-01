@@ -20,6 +20,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Text_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Text_##method_name
 #endif
 
 namespace Text {
@@ -114,18 +117,18 @@ VRO_METHOD(VRO_REF, nativeCreateText)(VRO_ARGS
     VROVector4f vecColor(r, g, b, a);
 
     // Get horizontal alignment
-    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j, env));
+    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(VRO_STRING_STL(horizontalAlignment_j));
 
     // Get vertical alignment
-    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j, env));
+    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(VRO_STRING_STL(verticalAlignment_j));
 
     // Get line break mode
-    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
+    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VRO_STRING_STL(lineBreakMode_j));
 
     // Get clip mode
-    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j, env));
+    VROTextClipMode clipMode = getTextClipModeEnum(VRO_STRING_STL(clipMode_j));
 
-    std::string fontFamily = VROPlatformGetString(fontFamily_j, env);
+    std::string fontFamily = VRO_STRING_STL(fontFamily_j);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
 
@@ -175,7 +178,7 @@ VRO_METHOD(void, nativeSetFont)(VRO_ARGS
                                 VRO_INT size,
                                 VRO_INT style,
                                 VRO_INT weight) {
-    std::string family = VROPlatformGetString(family_j, env);
+    std::string family = VRO_STRING_STL(family_j);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
@@ -241,7 +244,7 @@ VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
                                                VRO_REF text_j,
                                                VRO_STRING horizontalAlignment_j) {
     VROTextHorizontalAlignment horizontalAlignment
-            = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j, env));
+            = getHorizontalAlignmentEnum(VRO_STRING_STL(horizontalAlignment_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, horizontalAlignment] {
@@ -257,7 +260,7 @@ VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
                                              VRO_REF text_j,
                                              VRO_STRING verticalAlignment_j) {
     VROTextVerticalAlignment verticalAlignment
-            = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j, env));
+            = getVerticalAlignmentEnum(VRO_STRING_STL(verticalAlignment_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, verticalAlignment] {
@@ -272,7 +275,7 @@ VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
 VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
                                          VRO_REF text_j,
                                          VRO_STRING lineBreakMode_j) {
-    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
+    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VRO_STRING_STL(lineBreakMode_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, lineBreakMode] {
@@ -289,7 +292,7 @@ VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
                                     VRO_STRING clipMode_j) {
 
     // Get clip mode
-    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j, env));
+    VROTextClipMode clipMode = getTextClipModeEnum(VRO_STRING_STL(clipMode_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, clipMode] {

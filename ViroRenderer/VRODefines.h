@@ -29,15 +29,13 @@
 #define VRO_PLATFORM_WASM 1
 #define VRO_PLATFORM_MACOS 0
 
-#include <emscripten.h>
-#include <emscripten/val.h>
-
-#define VRO_C_INCLUDE <string>
-#define VRO_ENV std::shared_ptr<int>
-#define VRO_ARGS VRO_ENV env, emscripten::val obj,
+#define VRO_C_INCLUDE "VROWasmInclude.h"
+#define VRO_ENV void*
+#define VRO_ARGS emscripten::val obj,
 #define VRO_ARGS_STATIC VRO_ENV env,
-#define VRO_NO_ARGS VRO_ENV env, emscripten::val obj
+#define VRO_NO_ARGS emscripten::val obj
 #define VRO_NO_ARGS_STATIC VRO_ENV env
+#define VRO_METHOD_PREAMBLE void *env
 #define VRO_REF int
 #define VRO_BOOL bool
 #define VRO_INT int
@@ -67,6 +65,8 @@
     (str == NULL || str->size() == 0)
 #define VRO_STRING_POD(str) \
     str.get()
+#define VRO_STRING_STL(str) \
+    *str.get()
 
 #define VRO_STRING_WIDE std::wstring
 #define VRO_IS_WIDE_STRING_EMPTY(str) \
@@ -149,9 +149,6 @@
 #define VRO_BUFFER_GET_ADDRESS(buffer) \
     0
 
-#define VRO_METHOD(return_type, method_name) \
-    return_type method_name
-
 #else  // !WASM_PLATFORM
 #define VRO_PLATFORM_ANDROID 1
 #define VRO_PLATFORM_IOS 0
@@ -164,6 +161,7 @@
 #define VRO_ARGS_STATIC JNIEnv *env, jclass clazz,
 #define VRO_NO_ARGS JNIEnv *env, jobject obj
 #define VRO_NO_ARGS_STATIC JNIEnv *env, jclass clazz
+#define VRO_METHOD_PREAMBLE
 #define VRO_REF jlong
 #define VRO_BOOL jboolean
 #define VRO_INT jint
@@ -175,7 +173,7 @@
 #define VRO_OBJECT jobject
 #define VRO_OBJECT_NULL NULL
 #define VRO_IS_OBJECT_NULL(object) \
-    object == NULL
+    (object == NULL)
 #define VRO_WEAK jweak
 #define VRO_OBJECT_POD(object) \
     object
@@ -193,6 +191,10 @@
     (str == NULL || env->GetStringLength(str) == 0)
 #define VRO_STRING_POD(str) \
     str
+#define VRO_STRING_STL(str) ({ \
+    const char *str_c = VRO_STRING_GET_CHARS(str); \
+    std::string str_s(str_c); \
+    VRO_STRING_RELEASE_CHARS(str, str_c); str_s; })
 
 #define VRO_STRING_WIDE jstring
 #define VRO_IS_WIDE_STRING_EMPTY(str) \

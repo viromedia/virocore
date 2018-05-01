@@ -12,13 +12,17 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_SoundData_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type SoundData_##method_name
 #endif
 
 extern "C" {
 
     VRO_METHOD(VRO_REF, nativeCreateSoundData)(VRO_ARGS
                                                VRO_STRING filepath) {
-        std::string path = VROPlatformGetString(filepath, env);
+        VRO_METHOD_PREAMBLE;
+        std::string path = VRO_STRING_STL(filepath);
 
         // Set the platform env because the renderer could've not been initialized yet (and set
         // the env)
@@ -29,6 +33,8 @@ extern "C" {
 
     VRO_METHOD(VRO_REF, nativeSetSoundDataDelegate)(VRO_ARGS
                                                     VRO_REF nativeRef) {
+        VRO_METHOD_PREAMBLE;
+
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(nativeRef);
         std::shared_ptr<VROSoundDataDelegate_JNI> delegateRef
                 = std::make_shared<VROSoundDataDelegate_JNI>(obj, env);

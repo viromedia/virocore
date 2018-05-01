@@ -14,6 +14,9 @@
 #define VRO_METHOD(return_type, method_name) \
     JNIEXPORT return_type JNICALL              \
         Java_com_viro_core_internal_AnimationGroup_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type AnimationGroup_##method_name
 #endif
 
 extern "C" {
@@ -27,7 +30,7 @@ void AddPropertyIfNotNull(VRO_ENV env, std::string property, VRO_STRING candidat
                           std::map<std::string, std::string> &propertyMap) {
     const char *candidateCStr = nullptr;
     if (!VRO_IS_STRING_EMPTY(candidate)) {
-        std::string candidateStr = VROPlatformGetString(candidate, env);
+        std::string candidateStr = VRO_STRING_STL(candidate);
         propertyMap[property] = candidateStr;
     }
 }
@@ -38,6 +41,7 @@ VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
                                                 VRO_STRING rotateX, VRO_STRING rotateY, VRO_STRING rotateZ,
                                                 VRO_STRING opacity, VRO_STRING color, VRO_REF lazyMaterialRef,
                                                 VRO_FLOAT durationSeconds, VRO_FLOAT delaySeconds, VRO_STRING functionType) {
+    VRO_METHOD_PREAMBLE;
     std::map<std::string, std::string> animationProperties;
 
     // NOTE: AddPropertyIfNotNull WILL release the VRO_STRING after its done running so don't
@@ -60,7 +64,7 @@ VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
         materialAnimations.push_back(lazyMaterial);
     }
 
-    std::string functionTypeStr = VROPlatformGetString(functionType, env);
+    std::string functionTypeStr = VRO_STRING_STL(functionType);
     std::shared_ptr<VROAnimationGroup> animationGroup = VROAnimationGroup::parse(durationSeconds, delaySeconds,
                                                                                  functionTypeStr, animationProperties,
                                                                                  materialAnimations);

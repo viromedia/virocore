@@ -11,6 +11,9 @@
 #define VRO_METHOD(return_type, method_name) \
     JNIEXPORT return_type JNICALL              \
         Java_com_viro_core_AnimationTransaction_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type AnimationTransaction_##method_name
 #endif
 
 extern "C" {
@@ -65,7 +68,7 @@ VRO_METHOD(void, nativeSetAnimationLoop)(VRO_ARGS_STATIC
 
 VRO_METHOD(void, nativeSetTimingFunction)(VRO_ARGS_STATIC
                                           VRO_STRING timing_j) {
-    std::string timing_s = VROPlatformGetString(timing_j, env);
+    std::string timing_s = VRO_STRING_STL(timing_j);
     VROTimingFunctionType timing = VROTimingFunctionType::Linear;
     if (VROStringUtil::strcmpinsensitive(timing_s, "easein")) {
         timing = VROTimingFunctionType::EaseIn;

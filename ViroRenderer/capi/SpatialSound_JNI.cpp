@@ -20,14 +20,19 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_SpatialSound_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type SpatialSound_##method_name
 #endif
 
 extern "C" {
 VRO_METHOD(VRO_REF, nativeCreateSpatialSound)(VRO_ARGS
                                               VRO_STRING uri_j,
                                               VRO_REF context_j) {
+    VRO_METHOD_PREAMBLE;
+
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-    std::string uri = VROPlatformGetString(uri_j, env);
+    std::string uri = VRO_STRING_STL(uri_j);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(uri, VROResourceType::URL, VROSoundType::Spatial);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(obj));
@@ -37,6 +42,8 @@ VRO_METHOD(VRO_REF, nativeCreateSpatialSound)(VRO_ARGS
 VRO_METHOD(VRO_REF, nativeCreateSpatialSoundWithData)(VRO_ARGS
                                                       VRO_REF dataRef,
                                                       VRO_REF context_j) {
+    VRO_METHOD_PREAMBLE;
+
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 
@@ -93,7 +100,8 @@ VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
                                            VRO_STRING model,
                                            VRO_FLOAT minDistance,
                                            VRO_FLOAT maxDistance) {
-    std::string modelString = VROPlatformGetString(model, env);
+    VRO_METHOD_PREAMBLE;
+    std::string modelString = VRO_STRING_STL(model);
 
     if (VROStringUtil::strcmpinsensitive(modelString, "none")) {
         SpatialSound::native(nativeRef)->setDistanceRolloffModel(VROSoundRolloffModel::None,

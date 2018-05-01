@@ -13,6 +13,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_PhysicsBody_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type PhysicsBody_##method_name
 #endif
 
 extern "C" {
@@ -23,14 +26,16 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
                                         VRO_FLOAT mass,
                                         VRO_STRING shapeTypeStr,
                                         VRO_FLOAT_ARRAY shapeParams) {
+    VRO_METHOD_PREAMBLE;
+
     // Get Physics Body type
-    std::string strBodyType = VROPlatformGetString(bodyTypeStr, env);
+    std::string strBodyType = VRO_STRING_STL(bodyTypeStr);
     VROPhysicsBody::VROPhysicsBodyType bodyType = VROPhysicsBody::getBodyTypeForString(strBodyType);
 
     // Build a VROPhysicsShape if possible
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
     if (shapeTypeStr != NULL) {
-        std::string strShapeType = VROPlatformGetString(shapeTypeStr, env);
+        std::string strShapeType = VRO_STRING_STL(shapeTypeStr);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
         int paramsLength = VRO_ARRAY_LENGTH(shapeParams);
@@ -74,7 +79,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
     if (shapeTypeStr != NULL) {
         // Get the shape type
-        std::string strShapeType = VROPlatformGetString(shapeTypeStr, env);
+        std::string strShapeType = VRO_STRING_STL(shapeTypeStr);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
         // Get the shape params
@@ -262,7 +267,7 @@ VRO_METHOD(VRO_STRING, nativeIsValidBodyType)(VRO_ARGS
                                               VRO_STRING bodyType,
                                               VRO_FLOAT mass) {
     // Grab the physics body type
-    std::string strBodyType = VROPlatformGetString(bodyType, env);
+    std::string strBodyType = VRO_STRING_STL(bodyType);
 
     // Verify if the physics body type is valid and return
     std::string errorMsg;
@@ -278,7 +283,7 @@ VRO_METHOD(VRO_STRING, nativeIsValidShapeType)(VRO_ARGS
                                                VRO_STRING shapeType,
                                                VRO_FLOAT_ARRAY shapeParams) {
     // Grab the shape type
-    std::string strShapeType = VROPlatformGetString(shapeType, env);
+    std::string strShapeType = VRO_STRING_STL(shapeType);
 
     // Grab the shape params
     int paramsLength = VRO_ARRAY_LENGTH(shapeParams);

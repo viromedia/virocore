@@ -17,6 +17,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgcodecs/imgcodecs.hpp"
 #include "ARImageTarget_JNI.h"
+#include "VROARImageTargetAndroid.h"
 
 #endif /* ENABLE_OPENCV */
 
@@ -70,16 +71,14 @@ cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
 VRO_METHOD(VRO_REF, nativeCreateImageTracker)(VRO_ARGS
                                               VRO_REF imageTargetRef) {
 #if ENABLE_OPENCV
-    std::shared_ptr<VROARImageTargetAndroid> arImageTarget = ARImageTarget::native(imageTargetRef);
+    std::shared_ptr<VROARImageTargetAndroid> arImageTarget = std::dynamic_pointer_cast<VROARImageTargetAndroid>(ARImageTarget::native(imageTargetRef));
     std::shared_ptr<VROImage> image = arImageTarget->getImage();
 
     size_t length;
     cv::Mat temp(image->getHeight(), image->getWidth(), CV_8UC4, image->getData(&length));
-
     arImageTarget->setTargetMat(temp);
 
     std::shared_ptr<VROARImageTracker> tracker = VROARImageTracker::createARImageTracker(arImageTarget);
-
     return ImageTracker::jptr(tracker);
 #else
     return 0;

@@ -13,6 +13,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARPlane_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type ARPlane_##method_name
 #endif
 
 extern "C" {
@@ -61,7 +64,7 @@ VRO_METHOD(void, nativeSetAnchorId)(VRO_ARGS
                                     VRO_REF nativeARPlane,
                                     VRO_STRING id) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
-    arPlane->setId(VROPlatformGetString(id, env));
+    arPlane->setId(VRO_STRING_STL(id));
 }
 
 VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS

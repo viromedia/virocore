@@ -17,6 +17,9 @@
 #define VRO_METHOD(return_type, method_name) \
     JNIEXPORT return_type JNICALL              \
         Java_com_viro_core_AmbientLight_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type AmbientLight_##method_name
 #endif
 
 namespace AmbientLight {

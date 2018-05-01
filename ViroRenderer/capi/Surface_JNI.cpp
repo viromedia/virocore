@@ -20,6 +20,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Surface_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Surface_##method_name
 #endif
 
 extern "C" {

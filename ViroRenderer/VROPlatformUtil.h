@@ -232,6 +232,8 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 
 #if VRO_PLATFORM_ANDROID || VRO_PLATFORM_WASM
 
+#include VRO_C_INCLUDE
+
 // This function was added because VROPlatformConvertBitmap can be called before the renderer
 // is created and as a result, activity and assetManager hasn't been set yet. We should think
 // about how to do this better.
@@ -268,10 +270,6 @@ void VROPlatformSetEnumValue(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
                              std::string enumClassPathName, std::string enumValueStr);
 void VROPlatformSetObject(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
                           const char *fieldType, VRO_OBJECT object);
-
-// Safely converts the given string with the provided jni environment.
-std::string VROPlatformGetString(VRO_STRING string, VRO_ENV env);
-
 
 // This function takes a host object Map (Java: java.util.Map) with string keys and values,
 // and returns a C++ std::map w/ std::string key and values.

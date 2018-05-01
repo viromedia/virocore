@@ -23,6 +23,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Scene_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Scene_##method_name
 #endif
 
 extern "C" {
@@ -42,6 +45,8 @@ VRO_METHOD(VRO_REF, nativeGetSceneNodeRef)(VRO_ARGS
 
 VRO_METHOD(VRO_REF, nativeCreateSceneControllerDelegate)(VRO_ARGS
                                                          VRO_REF native_object_ref) {
+    VRO_METHOD_PREAMBLE;
+
     std::shared_ptr<SceneControllerDelegate> delegate = std::make_shared<SceneControllerDelegate>(obj, env);
     SceneController::native(native_object_ref)->setDelegate(delegate);
     return SceneControllerDelegate::jptr(delegate);
@@ -148,9 +153,10 @@ VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
                                      VRO_REF sceneRef, VRO_REF context_j,
                                      VRO_FLOAT sizeX, VRO_FLOAT sizeY, VRO_FLOAT sizeZ, VRO_STRING wallMaterial,
                                      VRO_STRING ceilingMaterial, VRO_STRING floorMaterial) {
-    std::string strWallMaterial = VROPlatformGetString(wallMaterial, env);
-    std::string strCeilingMaterial = VROPlatformGetString(ceilingMaterial, env);
-    std::string strFloorMaterial = VROPlatformGetString(floorMaterial, env);
+    VRO_METHOD_PREAMBLE;
+    std::string strWallMaterial = VRO_STRING_STL(wallMaterial);
+    std::string strCeilingMaterial = VRO_STRING_STL(ceilingMaterial);
+    std::string strFloorMaterial = VRO_STRING_STL(floorMaterial);
 
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
@@ -174,12 +180,14 @@ VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
 VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
                                    VRO_REF sceneRef,
                                    VRO_STRING_ARRAY jEffects) {
+    VRO_METHOD_PREAMBLE;
+
     std::vector<std::string> effects;
     if (jEffects != NULL) {
         int numberOfValues = VRO_ARRAY_LENGTH(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
             VRO_STRING jEffect = VRO_STRING_ARRAY_GET(jEffects, i);
-            std::string strEffect = VROPlatformGetString(jEffect, env);
+            std::string strEffect = VRO_STRING_STL(jEffect);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
             effects.push_back(strEffect);
         }
@@ -229,6 +237,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                                              VRO_BOOL closest,
                                              VRO_STRING tag,
                                              VRO_OBJECT callback) {
+    VRO_METHOD_PREAMBLE;
 
     // Grab start position from which to perform the collision test
     VRO_FLOAT *fromPosf = VRO_FLOAT_ARRAY_GET_ELEMENTS(fromPos);
@@ -241,7 +250,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(toPos, toPosf);
 
     // Get the ray tag used to notify collided objects with.
-    std::string strTag = VROPlatformGetString(tag, env);
+    std::string strTag = VRO_STRING_STL(tag);
 
     // If no ray tag is given, set it to the default tag.
     if (strTag.empty()) {
@@ -287,6 +296,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
                                                VRO_FLOAT_ARRAY shapeParams,
                                                VRO_STRING tag,
                                                VRO_OBJECT callback) {
+    VRO_METHOD_PREAMBLE;
 
     // Grab start position from which to perform the collision test
     VRO_FLOAT *posStartf = VRO_FLOAT_ARRAY_GET_ELEMENTS(posStart);
@@ -299,7 +309,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(posStart, posEndf);
 
     // Grab the shape type
-    std::string strShapeType = VROPlatformGetString(shapeType, env);
+    std::string strShapeType = VRO_STRING_STL(shapeType);
 
     // Grab the shape params
     int paramsLength = VRO_ARRAY_LENGTH(shapeParams);
@@ -311,7 +321,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(shapeParams, pointArray);
 
     // Get the ray tag used to notify collided objects with.
-    std::string strTag = VROPlatformGetString(tag, env);
+    std::string strTag = VRO_STRING_STL(tag);
 
     // If no ray tag is given, set it to the default tag.
     if (strTag.empty()) {

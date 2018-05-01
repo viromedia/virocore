@@ -14,6 +14,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ExecutableAnimation_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type ExecutableAnimation_##method_name
 #endif
 
 extern "C" {
@@ -21,12 +24,12 @@ extern "C" {
 VRO_METHOD(VRO_REF, nativeWrapNodeAnimation)(VRO_ARGS
                                              VRO_REF nodeRef,
                                              VRO_STRING jkey) {
-
+    VRO_METHOD_PREAMBLE;
     std::shared_ptr<VRONode> node = Node::native(nodeRef);
 
     std::shared_ptr<VROExecutableAnimation> animation;
     if (!VRO_IS_STRING_EMPTY(jkey)) {
-        std::string key_s = VROPlatformGetString(jkey, env);
+        std::string key_s = VRO_STRING_STL(jkey);
         animation = node->getAnimation(key_s, true);
     }
 
@@ -40,6 +43,8 @@ VRO_METHOD(VRO_REF, nativeWrapNodeAnimation)(VRO_ARGS
 
 VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
                                          VRO_REF nativeRef, VRO_REF nodeRef) {
+    VRO_METHOD_PREAMBLE;
+
     // Hold a global reference to the object until the animation finishes, so that
     // we invoke its animationDidFinish callback
     VRO_OBJECT obj_g = VRO_NEW_GLOBAL_REF(obj);

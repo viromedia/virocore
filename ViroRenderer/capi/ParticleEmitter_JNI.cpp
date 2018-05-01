@@ -14,6 +14,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ParticleEmitter_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type ParticleEmitter_##method_name
 #endif
 
 extern "C" {
@@ -164,7 +167,7 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
                                        VRO_BOOL jSpawnOnSurface) {
 
     // Grab the emitter's spawn volume shape.
-    std::string strShape = VROPlatformGetString(jShape, env);
+    std::string strShape = VRO_STRING_STL(jShape);
     VROParticleSpawnVolume::Shape shape
             = VROParticleSpawnVolume::getModifierFactorForString(strShape);
 
@@ -269,13 +272,13 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
                                             VRO_ARRAY jInitialValues,
                                             VRO_ARRAY jInterpolatedIntervalWindows,
                                             VRO_ARRAY jInterpolatedPoints) {
-
+    VRO_METHOD_PREAMBLE;
     // Construct a modifier with the given initialValues and interpolation values.
     std::shared_ptr<VROParticleModifier> mod = ParticleEmitter::getParticleModifier(env, jFactor,
                                                                                     jInitialValues,
                                                                                     jInterpolatedIntervalWindows,
                                                                                     jInterpolatedPoints);
-    std::string strModifier = VROPlatformGetString(jModifier, env);
+    std::string strModifier = VRO_STRING_STL(jModifier);
 
     // Apply the modifier on the targeted property, like opacity.
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
@@ -306,7 +309,7 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
 VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
                                              VRO_REF native_ref,
                                              VRO_STRING jblendMode) {
-    std::string strBlendMode = VROPlatformGetString(jblendMode, env);
+    std::string strBlendMode = VRO_STRING_STL(jblendMode);
     VROBlendMode mode = VROMaterial::getBlendModeFromString(strBlendMode);
     if (mode == VROBlendMode::None){
         pwarn("Viro: Attempted to set invalid Blend mode %s", strBlendMode.c_str());

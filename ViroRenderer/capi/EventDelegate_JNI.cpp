@@ -14,13 +14,16 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_EventDelegate_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type EventDelegate_##method_name
 #endif
 
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateDelegate)(VRO_NO_ARGS) {
-   std::shared_ptr<EventDelegate_JNI> delegate
-           = std::make_shared<EventDelegate_JNI>(obj, env);
+   VRO_METHOD_PREAMBLE;
+   std::shared_ptr<EventDelegate_JNI> delegate = std::make_shared<EventDelegate_JNI>(obj, env);
    return EventDelegate::jptr(delegate);
 }
 

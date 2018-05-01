@@ -19,6 +19,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_SoundField_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type SoundField_##method_name
 #endif
 
 namespace SoundField {
@@ -39,7 +42,7 @@ VRO_METHOD(VRO_REF, nativeCreateSoundField)(VRO_ARGS
                                             VRO_STRING filename,
                                             VRO_REF context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-    std::string file = VROPlatformGetString(filename, env);
+    std::string file = VRO_STRING_STL(filename);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROResourceType::URL, VROSoundType::SoundField);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(obj));
@@ -50,6 +53,8 @@ VRO_METHOD(VRO_REF, nativeCreateSoundField)(VRO_ARGS
 VRO_METHOD(VRO_REF, nativeCreateSoundFieldWithData)(VRO_ARGS
                                                     VRO_REF dataRef,
                                                     VRO_REF context_j) {
+    VRO_METHOD_PREAMBLE;
+
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 

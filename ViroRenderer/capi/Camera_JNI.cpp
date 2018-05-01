@@ -19,6 +19,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Camera_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Camera_##method_name
 #endif
 
 extern "C" {
@@ -71,8 +74,10 @@ VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
 VRO_METHOD(void, nativeSetRotationType)(VRO_ARGS
                                         VRO_REF nativeCamera,
                                         VRO_STRING rotationType) {
+    VRO_METHOD_PREAMBLE;
+
     VROCameraRotationType type;
-    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(rotationType, env), "orbit")) {
+    if (VROStringUtil::strcmpinsensitive(VRO_STRING_STL(rotationType), "orbit")) {
         type = VROCameraRotationType::Orbit;
     } else {
         // default rotation type is standard.

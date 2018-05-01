@@ -418,7 +418,7 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
         *success = true;
     }
 
-    std::string spath = VROPlatformGetString(jpath, env);
+    std::string spath = VRO_STRING_STL(jpath);
     pinfo("Downloaded URL [%s] to file [%s]", url.c_str(), spath.c_str());
     env->DeleteLocalRef(jpath);
     
@@ -471,7 +471,7 @@ std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
     jmethodID jmethod = env->GetMethodID(cls, "copyResourceToFile", "(Ljava/lang/String;)Ljava/lang/String;");
     VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
-    std::string spath = VROPlatformGetString(jpath, env);
+    std::string spath = VRO_STRING_STL(jpath);
     pinfo("Copied resource %s to [%s]", asset.c_str(), spath.c_str());
 
     env->DeleteLocalRef(jpath);
@@ -517,12 +517,12 @@ std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap
         // get the key
         VRO_STRING key = (VRO_STRING) env->GetObjectArrayElement(keyArray, i);
         // convert to std::string
-        std::string strKey = VROPlatformGetString(key, env);
+        std::string strKey = VRO_STRING_STL(key);
         // get the value from the Map
         jmethodID mapGetMethod = env->GetMethodID(mapClass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
         VRO_STRING value = (VRO_STRING) env->CallObjectMethod(javaMap, mapGetMethod, key);
         // convert to std::string
-        std::string strValue = VROPlatformGetString(value, env);
+        std::string strValue = VRO_STRING_STL(value);
         // add to the map
         toReturn.insert(std::make_pair(strKey.c_str(), strValue.c_str()));
     }
@@ -565,7 +565,7 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
     jmethodID jmethod = env->GetMethodID(cls, "copyAssetToFile", "(Ljava/lang/String;)Ljava/lang/String;");
     VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
-    std::string spath = VROPlatformGetString(jpath, env);
+    std::string spath = VRO_STRING_STL(jpath);
     pinfo("Copied asset %s to [%s]", asset.c_str(), spath.c_str());
 
     env->DeleteLocalRef(jpath);
@@ -589,7 +589,7 @@ std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isIta
     int index = -1;
 
     if (jpath != NULL) {
-        path = VROPlatformGetString(jpath, env);
+        path = VRO_STRING_STL(jpath);
         index = env->CallIntMethod(sPlatformUtil, jfindFontIndex, jtypeface, isItalic, weight);
         env->DeleteLocalRef(jpath);
     }
@@ -1047,23 +1047,6 @@ void VROPlatformSetObject(JNIEnv *env, jobject jObj, const char *fieldName,
     env->SetObjectField(jObj, fieldId, object);
 }
 
-std::string VROPlatformGetString(VRO_STRING jInputString, JNIEnv *env){
-    if (env == NULL){
-        env = VROPlatformGetJNIEnv();
-        env->ExceptionClear();
-    }
-
-    if (jInputString == NULL){
-        return "";
-    }
-
-    const char * inputString_c = VRO_STRING_GET_CHARS(jInputString);
-    std::string sInputString(inputString_c);
-    VRO_STRING_RELEASE_CHARS(jInputString, inputString_c);
-
-    return sInputString;
-}
-
 std::string VROPlatformGetDeviceModel() {
     JNIEnv *env;
     getJNIEnv(&env);
@@ -1071,8 +1054,7 @@ std::string VROPlatformGetDeviceModel() {
     jfieldID modelFieldID = env->GetStaticFieldID(cls, "MODEL", "Ljava/lang/String;");
 
     VRO_STRING jModelString = (VRO_STRING) env->GetStaticObjectField(cls, modelFieldID);
-
-    return VROPlatformGetString(jModelString, env);
+    return VRO_STRING_STL(jModelString);
 }
 
 std::string VROPlatformGetDeviceBrand() {
@@ -1082,8 +1064,7 @@ std::string VROPlatformGetDeviceBrand() {
     jfieldID brandFieldID = env->GetStaticFieldID(cls, "BRAND", "Ljava/lang/String;");
 
     VRO_STRING jBrandString = (VRO_STRING) env->GetStaticObjectField(cls, brandFieldID);
-
-    return VROPlatformGetString(jBrandString, env);
+    return VRO_STRING_STL(jBrandString);
 }
 
 std::string VROPlatformGetCacheDirectory() {
@@ -1094,7 +1075,7 @@ std::string VROPlatformGetCacheDirectory() {
     jmethodID jmethod = env->GetMethodID(cls, "getCacheDirectory", "()Ljava/lang/String;");
     VRO_STRING jpath = (VRO_STRING) env->CallObjectMethod(sPlatformUtil, jmethod);
 
-    return VROPlatformGetString(jpath, env);
+    return VRO_STRING_STL(jpath);
 }
 
 void VROPlatformSetTrackingImageView(std::string filepath) {
@@ -1266,10 +1247,6 @@ void VROPlatformSetEnumValue(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
 void VROPlatformSetObject(VRO_ENV env, VRO_OBJECT obj, const char *fieldName,
                           const char *fieldType, VRO_OBJECT object) {
 
-}
-
-std::string VROPlatformGetString(VRO_STRING string, VRO_ENV env) {
-    return *string.get();
 }
 
 std::map<std::string, std::string> VROPlatformConvertFromJavaMap(VRO_OBJECT javaMap) {

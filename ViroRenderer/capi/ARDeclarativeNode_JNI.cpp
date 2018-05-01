@@ -6,6 +6,9 @@
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_internal_ARDeclarativeNode_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type ARDeclarativeNode_##method_name
 #endif
 
 extern "C" {
@@ -13,13 +16,15 @@ extern "C" {
 VRO_METHOD(void, nativeSetAnchorId) (VRO_ARGS
                                      VRO_REF node_j,
                                      VRO_STRING id_j) {
-    std::string id_s = VROPlatformGetString(id_j, env);
+    std::string id_s = VRO_STRING_STL(id_j);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setAnchorId(id_s);
 }
 
 VRO_METHOD(VRO_REF, nativeCreateARNodeDelegate) (VRO_ARGS
                                                  VRO_REF node_j) {
+    VRO_METHOD_PREAMBLE;
+
     std::shared_ptr<ARDeclarativeNodeDelegate> delegate = std::make_shared<ARDeclarativeNodeDelegate>(obj, env);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setARNodeDelegate(delegate);
