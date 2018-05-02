@@ -18,7 +18,6 @@ default_platform :android
 platform :android do
   before_all do
     # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
-    gradle(task: "clean")
   end
   
   lane :gradle_clean do
@@ -45,8 +44,11 @@ platform :android do
                    date_format: "short",
                    merge_commit_filtering: "exclude_merges") 
   end
-
-
+  
+  lane :renderer_cp_viro_react_lib_to_tmp do
+    sh("mkdir -p /tmp/viro_react_lib/")
+    sh("cp ../viroreact/build/outputs/aar/viroreact-release.aar /tmp/viro_react_lib/viro_renderer-release.aar")
+  end
   desc "Build all artifacts for rendererTest (ovr, gvr, arcore, scene)"
   lane :release_renderer_rendererTest do
     gradle(task: ":rendererTest:assembleRelease")
