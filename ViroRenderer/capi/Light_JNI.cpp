@@ -17,12 +17,12 @@
 extern "C" {
 
 VRO_METHOD(void, nativeDestroyLight)(VRO_ARGS
-                                     VRO_REF native_light_ref) {
+                                     VRO_REF(VROLight) native_light_ref) {
     delete reinterpret_cast<PersistentRef<VROLight> *>(native_light_ref);
 }
 
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS
-                                 VRO_REF native_light_ref,
+                                 VRO_REF(VROLight) native_light_ref,
                                  VRO_LONG color) {
     std::weak_ptr<VROLight> light_w = Light::native(native_light_ref);
 
@@ -42,7 +42,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetIntensity)(VRO_ARGS
-                                     VRO_REF native_light_ref,
+                                     VRO_REF(VROLight) native_light_ref,
                                      VRO_FLOAT intensity) {
     std::shared_ptr<VROLight> light = Light::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light, intensity] {
@@ -51,7 +51,7 @@ VRO_METHOD(void, nativeSetIntensity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetTemperature)(VRO_ARGS
-                                       VRO_REF native_light_ref,
+                                       VRO_REF(VROLight) native_light_ref,
                                        VRO_FLOAT temperature) {
     std::shared_ptr<VROLight> light = Light::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light, temperature] {
@@ -60,7 +60,7 @@ VRO_METHOD(void, nativeSetTemperature)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetInfluenceBitMask)(VRO_ARGS
-                                            VRO_REF native_light_ref,
+                                            VRO_REF(VROLight) native_light_ref,
                                             VRO_INT bitMask) {
     std::weak_ptr<VROLight> light_w = Light::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, bitMask] {

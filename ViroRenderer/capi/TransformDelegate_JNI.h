@@ -20,12 +20,12 @@ public:
     TransformDelegate_JNI(VRO_OBJECT delegateJavaObject, double distanceFilter);
     ~TransformDelegate_JNI();
 
-    static VRO_REF jptr(std::shared_ptr<TransformDelegate_JNI> shared_node) {
+    static VRO_REF(TransformDelegate_JNI) jptr(std::shared_ptr<TransformDelegate_JNI> shared_node) {
         PersistentRef<TransformDelegate_JNI> *native_surface = new PersistentRef<TransformDelegate_JNI>(shared_node);
         return reinterpret_cast<intptr_t>(native_surface);
     }
 
-    static std::shared_ptr<TransformDelegate_JNI> native(VRO_REF ptr) {
+    static std::shared_ptr<TransformDelegate_JNI> native(VRO_REF(TransformDelegate_JNI) ptr) {
         PersistentRef<TransformDelegate_JNI> *persistentSurface = reinterpret_cast<PersistentRef<TransformDelegate_JNI> *>(ptr);
         return persistentSurface->get();
     }

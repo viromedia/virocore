@@ -46,7 +46,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
 
         // If the request was for an OBJ, create a persistent ref for the Java Geometry and
         // pass that up as well. This enables Java SDK users to set materials on the Geometry
-        long geometryRef = 0;
+        VRO_REF(VROGeometry) geometryRef = 0;
         if (!isFBX && node->getGeometry()) {
             geometryRef = Geometry::jptr(node->getGeometry());
         }
@@ -72,7 +72,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         }
 
         // Call the nodeDidFinishCreation callback.
-        VRO_REF jGeometryRef = geometryRef;
+        VRO_REF(VROGeometry) jGeometryRef = geometryRef;
         VROPlatformCallHostFunction(localObj,
                                     "nodeDidFinishCreation",
                                     "([Lcom/viro/core/Material;ZJ)V",

@@ -19,13 +19,13 @@
 extern "C" {
 
 VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
-                                     VRO_REF geo_j,
+                                     VRO_REF(VROGeometry) geo_j,
                                      VRO_LONG_ARRAY materials_j) {
     VRO_LONG *materials_c = VRO_LONG_ARRAY_GET_ELEMENTS(materials_j);
     int len = VRO_ARRAY_LENGTH(materials_j);
     std::vector<std::shared_ptr<VROMaterial>> materials;
     for (int i = 0; i < len; i++) {
-        materials.push_back(Material::native(materials_c[i]));
+        materials.push_back(VRO_REF_GET(VROMaterial, materials_c[i]));
     }
 
     std::weak_ptr<VROGeometry> geo_w = Geometry::native(geo_j);
@@ -39,7 +39,7 @@ VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
-                                            VRO_REF nativeGeoRef,
+                                            VRO_REF(VROGeometry) nativeGeoRef,
                                             VRO_LONG_ARRAY longArrayRef) {
     VRO_LONG *longArray = VRO_LONG_ARRAY_GET_ELEMENTS(longArrayRef);
     int len = VRO_ARRAY_LENGTH(longArrayRef);
@@ -49,7 +49,7 @@ VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
         // Always copy materials from the material manager, as they may be
         // modified by animations, etc. and we don't want these changes to
         // propagate to the reference material held by the material manager
-        tempMaterials.push_back(std::make_shared<VROMaterial>(Material::native(longArray[i])));
+        tempMaterials.push_back(std::make_shared<VROMaterial>(VRO_REF_GET(VROMaterial, longArray[i])));
     }
 
     std::weak_ptr<VROGeometry> geo_w = Geometry::native(nativeGeoRef);

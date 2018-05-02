@@ -21,9 +21,9 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateEmitter)(VRO_ARGS
-                                         VRO_REF context_j,
-                                         VRO_REF native_surface_ref) {
+VRO_METHOD(VRO_REF(VROParticleEmitter), nativeCreateEmitter)(VRO_ARGS
+                                                             VRO_REF(ViroContext) context_j,
+                                                             VRO_REF(VROSurface) native_surface_ref) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSurface> surface = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>();
@@ -36,12 +36,12 @@ VRO_METHOD(VRO_REF, nativeCreateEmitter)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
-                                       VRO_REF nativeParticleEmitterRef) {
+                                       VRO_REF(VROParticleEmitter) nativeParticleEmitterRef) {
     delete reinterpret_cast<PersistentRef<VROParticleEmitter> *>(nativeParticleEmitterRef);
 }
 
 VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
-                                 VRO_REF native_ref,
+                                 VRO_REF(VROParticleEmitter) native_ref,
                                  VRO_FLOAT delay) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, delay] {
@@ -53,7 +53,7 @@ VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
-                                    VRO_REF native_ref,
+                                    VRO_REF(VROParticleEmitter) native_ref,
                                     VRO_FLOAT value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
@@ -65,7 +65,7 @@ VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                VRO_REF native_ref,
+                                VRO_REF(VROParticleEmitter) native_ref,
                                 VRO_BOOL value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
@@ -77,7 +77,7 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetRun)(VRO_ARGS
-                               VRO_REF native_ref,
+                               VRO_REF(VROParticleEmitter) native_ref,
                                VRO_BOOL value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
@@ -89,7 +89,7 @@ VRO_METHOD(void, nativeSetRun)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetFixedToEmitter)(VRO_ARGS
-                                          VRO_REF native_ref,
+                                          VRO_REF(VROParticleEmitter) native_ref,
                                           VRO_BOOL value) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
@@ -101,7 +101,7 @@ VRO_METHOD(void, nativeSetFixedToEmitter)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeResetEmissionCycle)(VRO_ARGS
-                                           VRO_REF native_ref) {
+                                           VRO_REF(VROParticleEmitter) native_ref) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
@@ -113,7 +113,7 @@ VRO_METHOD(void, nativeResetEmissionCycle)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetEmissionRatePerSecond)(VRO_ARGS
-                                                 VRO_REF native_ref,
+                                                 VRO_REF(VROParticleEmitter) native_ref,
                                                  VRO_INT value1, VRO_INT value2) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
@@ -125,7 +125,7 @@ VRO_METHOD(void, nativeSetEmissionRatePerSecond)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetEmissionRatePerMeter)(VRO_ARGS
-                                                VRO_REF native_ref,
+                                                VRO_REF(VROParticleEmitter) native_ref,
                                                 VRO_INT value1, VRO_INT value2) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
@@ -137,7 +137,7 @@ VRO_METHOD(void, nativeSetEmissionRatePerMeter)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetParticleLifetime)(VRO_ARGS
-                                            VRO_REF native_ref,
+                                            VRO_REF(VROParticleEmitter) native_ref,
                                             VRO_INT value1, VRO_INT value2) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
@@ -149,7 +149,7 @@ VRO_METHOD(void, nativeSetParticleLifetime)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetMaxParticles)(VRO_ARGS
-                                        VRO_REF native_ref,
+                                        VRO_REF(VROParticleEmitter) native_ref,
                                         VRO_INT value1) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1] {
@@ -161,7 +161,7 @@ VRO_METHOD(void, nativeSetMaxParticles)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
-                                       VRO_REF native_ref,
+                                       VRO_REF(VROParticleEmitter) native_ref,
                                        VRO_STRING jShape,
                                        VRO_FLOAT_ARRAY jShapeParams,
                                        VRO_BOOL jSpawnOnSurface) {
@@ -198,7 +198,7 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
-                                            VRO_REF native_ref,
+                                            VRO_REF(VROParticleEmitter) native_ref,
                                             VRO_FLOAT jImpulse,
                                             VRO_FLOAT_ARRAY jPosition,
                                             VRO_FLOAT jDeccelPeriod) {
@@ -223,7 +223,7 @@ VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
-                                          VRO_REF native_ref,
+                                          VRO_REF(VROParticleEmitter) native_ref,
                                           VRO_ARRAY(VRO_DOUBLE_ARRAY) jBursts) {
 
     // Grab and create a list of bursts if any.
@@ -266,7 +266,7 @@ VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
-                                            VRO_REF native_ref,
+                                            VRO_REF(VROParticleEmitter) native_ref,
                                             VRO_STRING jModifier,
                                             VRO_STRING jFactor,
                                             VRO_ARRAY(VRO_FLOAT_ARRAY) jInitialValues,
@@ -307,7 +307,7 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
 }
 
 VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
-                                             VRO_REF native_ref,
+                                             VRO_REF(VROParticleEmitter) native_ref,
                                              VRO_STRING jblendMode) {
     std::string strBlendMode = VRO_STRING_STL(jblendMode);
     VROBlendMode mode = VROMaterial::getBlendModeFromString(strBlendMode);
@@ -330,7 +330,7 @@ VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
-                                          VRO_REF native_ref,
+                                          VRO_REF(VROParticleEmitter) native_ref,
                                           VRO_FLOAT threshold) {
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, threshold] {

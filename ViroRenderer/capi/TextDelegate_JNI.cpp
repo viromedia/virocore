@@ -18,7 +18,7 @@ TextDelegate::~TextDelegate() {
     VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
-void TextDelegate::textCreated(VRO_REF nativeTextRef) {
+void TextDelegate::textCreated(VRO_REF(VROText) nativeTextRef) {
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 

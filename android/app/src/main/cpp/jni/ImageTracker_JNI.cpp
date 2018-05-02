@@ -29,12 +29,12 @@
 
 #if ENABLE_OPENCV
 namespace ImageTracker {
-        inline VRO_REF jptr(std::shared_ptr<VROARImageTracker> tracker) {
+        inline jlong jptr(std::shared_ptr<VROARImageTracker> tracker) {
             PersistentRef<VROARImageTracker> *nativeTracker = new PersistentRef<VROARImageTracker>(tracker);
             return reinterpret_cast<intptr_t>(nativeTracker);
         }
 
-        inline std::shared_ptr<VROARImageTracker> native(VRO_REF ptr) {
+        inline std::shared_ptr<VROARImageTracker> native(jlong ptr) {
             PersistentRef<VROARImageTracker> *persistentTracker = reinterpret_cast<PersistentRef<VROARImageTracker> *>(ptr);
             return persistentTracker->get();
         }
@@ -68,8 +68,8 @@ cv::Mat parseBitmapImage(JNIEnv *env, jobject bitmap) {
 }
 #endif /* ENABLE_OPENCV */
 
-VRO_METHOD(VRO_REF, nativeCreateImageTracker)(VRO_ARGS
-                                              VRO_REF imageTargetRef) {
+VRO_METHOD(jlong, nativeCreateImageTracker)(VRO_ARGS
+                                            jlong imageTargetRef) {
 #if ENABLE_OPENCV
     std::shared_ptr<VROARImageTargetAndroid> arImageTarget = std::dynamic_pointer_cast<VROARImageTargetAndroid>(ARImageTarget::native(imageTargetRef));
     std::shared_ptr<VROImage> image = arImageTarget->getImage();
@@ -85,9 +85,9 @@ VRO_METHOD(VRO_REF, nativeCreateImageTracker)(VRO_ARGS
 #endif /* ENABLE_OPENCV */
 }
 
-VRO_METHOD(VRO_REF, nativeFindTarget)(VRO_ARGS
-                                      VRO_REF nativeRef,
-                                      VRO_OBJECT bitmapImage) {
+VRO_METHOD(jlong, nativeFindTarget)(VRO_ARGS
+                                    jlong nativeRef,
+                                    jobject bitmapImage) {
 #if ENABLE_OPENCV
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
 

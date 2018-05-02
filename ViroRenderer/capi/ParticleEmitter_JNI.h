@@ -18,12 +18,12 @@
 
 namespace ParticleEmitter {
 
-    inline VRO_REF jptr(std::shared_ptr<VROParticleEmitter> shared_node) {
+    inline VRO_REF(VROParticleEmitter) jptr(std::shared_ptr<VROParticleEmitter> shared_node) {
         PersistentRef<VROParticleEmitter> *native_emitter = new PersistentRef<VROParticleEmitter>(shared_node);
         return reinterpret_cast<intptr_t>(native_emitter);
     }
 
-    inline std::shared_ptr<VROParticleEmitter> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROParticleEmitter> native(VRO_REF(VROParticleEmitter) ptr) {
         PersistentRef<VROParticleEmitter> *persistentObj = reinterpret_cast<PersistentRef<VROParticleEmitter> *>(ptr);
         return persistentObj->get();
     }

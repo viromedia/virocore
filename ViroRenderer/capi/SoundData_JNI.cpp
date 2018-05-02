@@ -19,8 +19,8 @@
 
 extern "C" {
 
-    VRO_METHOD(VRO_REF, nativeCreateSoundData)(VRO_ARGS
-                                               VRO_STRING filepath) {
+    VRO_METHOD(VRO_REF(VROSoundDataGVR), nativeCreateSoundData)(VRO_ARGS
+                                                                VRO_STRING filepath) {
         VRO_METHOD_PREAMBLE;
         std::string path = VRO_STRING_STL(filepath);
 
@@ -31,8 +31,8 @@ extern "C" {
         return SoundData::jptr(data);
     }
 
-    VRO_METHOD(VRO_REF, nativeSetSoundDataDelegate)(VRO_ARGS
-                                                    VRO_REF nativeRef) {
+    VRO_METHOD(VRO_REF(VROSoundDataDelegate_JNI), nativeSetSoundDataDelegate)(VRO_ARGS
+                                                                              VRO_REF(VROSoundDataGVR) nativeRef) {
         VRO_METHOD_PREAMBLE;
 
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(nativeRef);
@@ -43,12 +43,12 @@ extern "C" {
     }
 
     VRO_METHOD(void, nativeDestroySoundData)(VRO_ARGS
-                                             VRO_REF nativeRef) {
+                                             VRO_REF(VROSoundDataGVR) nativeRef) {
         delete reinterpret_cast<PersistentRef<VROSoundDataGVR> *>(nativeRef);
     }
 
     VRO_METHOD(void, nativeDestroySoundDataDelegate)(VRO_ARGS
-                                                    VRO_REF nativeRef) {
+                                                     VRO_REF(VROSoundDataDelegate_JNI) nativeRef) {
         delete reinterpret_cast<PersistentRef<VROSoundDataDelegate_JNI> *>(nativeRef);
     }
 } // extern "C"

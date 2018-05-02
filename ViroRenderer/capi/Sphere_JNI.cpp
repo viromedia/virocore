@@ -26,12 +26,12 @@
 #endif
 
 namespace Sphere{
-    inline VRO_REF jptr(std::shared_ptr<VROSphere> ptr) {
+    inline VRO_REF(VROSphere) jptr(std::shared_ptr<VROSphere> ptr) {
         PersistentRef<VROSphere> *persistentRef = new PersistentRef<VROSphere>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROSphere> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROSphere> native(VRO_REF(VROSphere) ptr) {
         PersistentRef<VROSphere> *persistentRef = reinterpret_cast<PersistentRef<VROSphere> *>(ptr);
         return persistentRef->get();
     }
@@ -39,17 +39,17 @@ namespace Sphere{
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateSphere)(VRO_ARGS
-                                        VRO_FLOAT radius) {
+VRO_METHOD(VRO_REF(VROSphere), nativeCreateSphere)(VRO_ARGS
+                                                   VRO_FLOAT radius) {
     std::shared_ptr<VROSphere> sphere = std::make_shared<VROSphere>(radius);
     return Sphere::jptr(sphere);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateSphereParameterized)(VRO_ARGS
-                                                     VRO_FLOAT radius,
-                                                     VRO_INT widthSegmentCount,
-                                                     VRO_INT heightSegmentCount,
-                                                     VRO_BOOL facesOutward) {
+VRO_METHOD(VRO_REF(VROSphere), nativeCreateSphereParameterized)(VRO_ARGS
+                                                                VRO_FLOAT radius,
+                                                                VRO_INT widthSegmentCount,
+                                                                VRO_INT heightSegmentCount,
+                                                                VRO_BOOL facesOutward) {
     std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(radius,
                                                                 widthSegmentCount,
                                                                 heightSegmentCount,
@@ -58,13 +58,13 @@ VRO_METHOD(VRO_REF, nativeCreateSphereParameterized)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySphere)(VRO_ARGS
-                                      VRO_REF nativeNode) {
-    delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
+                                      VRO_REF(VROSphere) nativeNode) {
+    delete reinterpret_cast<PersistentRef<VROSphere> *>(nativeNode);
 }
 
 VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
-                                        VRO_REF sphereRef,
-                                        VRO_REF textureRef) {
+                                        VRO_REF(VROSphere) sphereRef,
+                                        VRO_REF(VROVideoTexture) textureRef) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(sphereRef);
     std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
 
@@ -93,7 +93,7 @@ VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetWidthSegmentCount)(VRO_ARGS
-                                             VRO_REF jsphere,
+                                             VRO_REF(VROSphere) jsphere,
                                              VRO_INT widthSegmentCount) {
 
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
@@ -107,7 +107,7 @@ VRO_METHOD(void, nativeSetWidthSegmentCount)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHeightSegmentCount)(VRO_ARGS
-                                              VRO_REF jsphere,
+                                              VRO_REF(VROSphere) jsphere,
                                               VRO_INT heightSegmentCount) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, heightSegmentCount] {
@@ -120,7 +120,7 @@ VRO_METHOD(void, nativeSetHeightSegmentCount)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetRadius)(VRO_ARGS
-                                  VRO_REF jsphere,
+                                  VRO_REF(VROSphere) jsphere,
                                   VRO_FLOAT radius) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, radius] {
@@ -133,7 +133,7 @@ VRO_METHOD(void, nativeSetRadius)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetFacesOutward)(VRO_ARGS
-                                        VRO_REF jsphere,
+                                        VRO_REF(VROSphere) jsphere,
                                         VRO_BOOL facesOutward) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
     VROPlatformDispatchAsyncRenderer([sphere_w, facesOutward] {

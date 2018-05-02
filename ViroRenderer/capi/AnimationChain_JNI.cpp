@@ -27,12 +27,12 @@
 #endif
 
 namespace AnimationChain {
-    inline VRO_REF jptr(std::shared_ptr<VROAnimationChain> ptr) {
+    inline VRO_REF(VROAnimationChain) jptr(std::shared_ptr<VROAnimationChain> ptr) {
         PersistentRef<VROAnimationChain> *persistentRef = new PersistentRef<VROAnimationChain>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROAnimationChain> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROAnimationChain> native(VRO_REF(VROAnimationChain) ptr) {
         PersistentRef<VROAnimationChain> *persistentRef = reinterpret_cast<PersistentRef<VROAnimationChain> *>(ptr);
         return persistentRef->get();
     }
@@ -40,8 +40,8 @@ namespace AnimationChain {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateAnimationChain)(VRO_ARGS
-                                                VRO_STRING executionType) {
+VRO_METHOD(VRO_REF(VROAnimationChain), nativeCreateAnimationChain)(VRO_ARGS
+                                                                   VRO_STRING executionType) {
     VRO_METHOD_PREAMBLE;
     std::vector<std::shared_ptr<VROExecutableAnimation>> emptyChain;
     VROAnimationChainExecution execution = VROAnimationChainExecution::Serial;
@@ -54,24 +54,26 @@ VRO_METHOD(VRO_REF, nativeCreateAnimationChain)(VRO_ARGS
     return AnimationChain::jptr(animationChain);
 }
 
-VRO_METHOD(VRO_REF, nativeCopyAnimation)(VRO_ARGS
-                                         VRO_REF nativeRef) {
+VRO_METHOD(VRO_REF(VROAnimationChain), nativeCopyAnimation)(VRO_ARGS
+                                                            VRO_REF(VROAnimationChain) nativeRef) {
     std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
     return AnimationChain::jptr(std::dynamic_pointer_cast<VROAnimationChain>(chain->copy()));
 }
 
 VRO_METHOD(void, nativeAddAnimationChain)(VRO_ARGS
-                                          VRO_REF nativeRef, VRO_REF chainRef) {
+                                          VRO_REF(VROAnimationChain) nativeRef,
+                                          VRO_REF(VROAnimationChain) chainRef) {
     AnimationChain::native(nativeRef)->addAnimation(AnimationChain::native(chainRef));
 }
 
 VRO_METHOD(void, nativeAddAnimationGroup)(VRO_ARGS
-                                          VRO_REF nativeRef, VRO_REF groupRef) {
+                                          VRO_REF(VROAnimationChain) nativeRef,
+                                          VRO_REF(AnimationGroup) groupRef) {
     AnimationChain::native(nativeRef)->addAnimation(AnimationGroup::native(groupRef));
 }
 
 VRO_METHOD(void, nativeDestroyAnimationChain)(VRO_ARGS
-                                              VRO_REF nativeRef) {
+                                              VRO_REF(VROAnimationChain) nativeRef) {
     delete reinterpret_cast<PersistentRef<VROAnimationChain> *>(nativeRef);
 }
 

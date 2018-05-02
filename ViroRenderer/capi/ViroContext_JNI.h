@@ -28,12 +28,12 @@ public:
     ViroContext() {}
     virtual ~ViroContext(){}
 
-    static VRO_REF jptr(std::shared_ptr<ViroContext> nativeContext) {
+    static VRO_REF(ViroContext) jptr(std::shared_ptr<ViroContext> nativeContext) {
         PersistentRef<ViroContext> *persistedContext = new PersistentRef<ViroContext>(nativeContext);
         return reinterpret_cast<intptr_t>(persistedContext);
     }
 
-    static std::shared_ptr<ViroContext> native(VRO_REF ptr) {
+    static std::shared_ptr<ViroContext> native(VRO_REF(ViroContext) ptr) {
         PersistentRef<ViroContext> *persistedContext = reinterpret_cast<PersistentRef<ViroContext> *>(ptr);
         return persistedContext->get();
     }

@@ -10,12 +10,12 @@
 #include VRO_C_INCLUDE
 
 namespace ARDeclarativeNode {
-    inline VRO_REF jptr(std::shared_ptr<VROARDeclarativeNode> node) {
+    inline VRO_REF(VROARDeclarativeNode) jptr(std::shared_ptr<VROARDeclarativeNode> node) {
         PersistentRef<VROARDeclarativeNode> *node_p = new PersistentRef<VROARDeclarativeNode>(node);
         return reinterpret_cast<intptr_t>(node_p);
     }
 
-    inline std::shared_ptr<VROARDeclarativeNode> native(VRO_REF node_j) {
+    inline std::shared_ptr<VROARDeclarativeNode> native(VRO_REF(VROARDeclarativeNode) node_j) {
         PersistentRef<VROARDeclarativeNode> *node_p = reinterpret_cast<PersistentRef<VROARDeclarativeNode> *>(node_j);
         return node_p->get();
     }
@@ -32,12 +32,12 @@ public:
         VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
-    static VRO_REF jptr(std::shared_ptr<ARDeclarativeNodeDelegate> delegate) {
+    static VRO_REF(ARDeclarativeNodeDelegate) jptr(std::shared_ptr<ARDeclarativeNodeDelegate> delegate) {
         PersistentRef<ARDeclarativeNodeDelegate> *delegate_p = new PersistentRef<ARDeclarativeNodeDelegate>(delegate);
         return reinterpret_cast<intptr_t>(delegate_p);
     }
 
-    static std::shared_ptr<ARDeclarativeNodeDelegate> native(VRO_REF delegate_j) {
+    static std::shared_ptr<ARDeclarativeNodeDelegate> native(VRO_REF(ARDeclarativeNodeDelegate) delegate_j) {
         PersistentRef<ARDeclarativeNodeDelegate> *delegate_p = reinterpret_cast<PersistentRef<ARDeclarativeNodeDelegate> *>(delegate_j);
         return delegate_p->get();
     }

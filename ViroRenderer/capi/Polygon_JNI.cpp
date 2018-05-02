@@ -21,10 +21,10 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
-                                         VRO_ARRAY(VRO_FLOAT_ARRAY) jpoints,
-                                         VRO_FLOAT u0, VRO_FLOAT v0,
-                                         VRO_FLOAT u1, VRO_FLOAT v1) {
+VRO_METHOD(VRO_REF(VROPolygon), nativeCreateSurface)(VRO_ARGS
+                                                     VRO_ARRAY(VRO_FLOAT_ARRAY) jpoints,
+                                                     VRO_FLOAT u0, VRO_FLOAT v0,
+                                                     VRO_FLOAT u1, VRO_FLOAT v1) {
     std::vector<VROVector3f> initialValues;
     int numberOfValues = VRO_ARRAY_LENGTH(jpoints);
     for (int i = 0; i < numberOfValues; i++) {
@@ -40,7 +40,7 @@ VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
-                                       VRO_REF nativeSurface) {
+                                       VRO_REF(VROPolygon) nativeSurface) {
     delete reinterpret_cast<PersistentRef<VROPolygon> *>(nativeSurface);
 }
 

@@ -15,12 +15,12 @@
 #include VRO_C_INCLUDE
 
 namespace ARDeclarativeImageNode {
-    inline VRO_REF jptr(std::shared_ptr<VROARDeclarativeImageNode> shared_ar_image) {
+    inline VRO_REF(VROARDeclarativeImageNode) jptr(std::shared_ptr<VROARDeclarativeImageNode> shared_ar_image) {
         PersistentRef<VROARDeclarativeImageNode> *native_ar_image = new PersistentRef<VROARDeclarativeImageNode>(shared_ar_image);
         return reinterpret_cast<intptr_t>(native_ar_image);
     }
 
-    inline std::shared_ptr<VROARDeclarativeImageNode> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROARDeclarativeImageNode> native(VRO_REF(VROARDeclarativeImageNode) ptr) {
         PersistentRef<VROARDeclarativeImageNode> *persistentARImageNode = reinterpret_cast<PersistentRef<VROARDeclarativeImageNode> *>(ptr);
         return persistentARImageNode->get();
     }

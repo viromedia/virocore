@@ -22,12 +22,12 @@
 #endif
 
 namespace Box {
-    inline VRO_REF jptr(std::shared_ptr<VROBox> shared_node) {
+    inline VRO_REF(VROBox) jptr(std::shared_ptr<VROBox> shared_node) {
         PersistentRef<VROBox> *native_box = new PersistentRef<VROBox>(shared_node);
         return reinterpret_cast<intptr_t>(native_box);
     }
 
-    inline std::shared_ptr<VROBox> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROBox> native(VRO_REF(VROBox) ptr) {
         PersistentRef<VROBox> *persistentBox = reinterpret_cast<PersistentRef<VROBox> *>(ptr);
         return persistentBox->get();
     }
@@ -35,21 +35,21 @@ namespace Box {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateBox)(VRO_ARGS
-                                     VRO_FLOAT width,
-                                     VRO_FLOAT height,
-                                     VRO_FLOAT length) {
+VRO_METHOD(VRO_REF(VROBox), nativeCreateBox)(VRO_ARGS
+                                             VRO_FLOAT width,
+                                             VRO_FLOAT height,
+                                             VRO_FLOAT length) {
     std::shared_ptr<VROBox> box = VROBox::createBox(width, height, length);
     return Box::jptr(box);
 }
 
 VRO_METHOD(void, nativeDestroyBox)(VRO_ARGS
-                                   VRO_REF nativeBoxRef) {
+                                   VRO_REF(VROBox) nativeBoxRef) {
     delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
 }
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
-                                 VRO_REF native_box_ref,
+                                 VRO_REF(VROBox) native_box_ref,
                                  VRO_FLOAT width) {
     std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, width] {
@@ -61,7 +61,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
-                                  VRO_REF native_box_ref,
+                                  VRO_REF(VROBox) native_box_ref,
                                   VRO_FLOAT height) {
     std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, height] {
@@ -73,7 +73,7 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLength)(VRO_ARGS
-                                  VRO_REF native_box_ref,
+                                  VRO_REF(VROBox) native_box_ref,
                                   VRO_FLOAT length) {
     std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, length] {

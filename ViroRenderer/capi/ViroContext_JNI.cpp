@@ -26,8 +26,8 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateViroContext)(VRO_ARGS
-                                             VRO_REF renderer_j) {
+VRO_METHOD(VRO_REF(ViroContext), nativeCreateViroContext)(VRO_ARGS
+                                                          VRO_REF(VROSceneRenderer) renderer_j) {
 
     std::shared_ptr<ViroContext> context;
 #if VRO_PLATFORM_ANDROID
@@ -39,12 +39,12 @@ VRO_METHOD(VRO_REF, nativeCreateViroContext)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
-                                          VRO_REF context_j) {
+                                          VRO_REF(ViroContext) context_j) {
     delete reinterpret_cast<PersistentRef<ViroContext> *>(context_j);
 }
 
 VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
-                                             VRO_REF context_j,
+                                             VRO_REF(ViroContext) context_j,
                                              VRO_OBJECT callback) {
     VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);

@@ -13,13 +13,22 @@
 #define VRO_NO_ARGS JNIEnv *env, jobject obj
 #define VRO_NO_ARGS_STATIC JNIEnv *env, jclass clazz
 #define VRO_METHOD_PREAMBLE
-#define VRO_REF jlong
 #define VRO_BOOL jboolean
 #define VRO_INT jint
 #define VRO_LONG jlong
 #define VRO_FLOAT jfloat
 #define VRO_DOUBLE jdouble
 #define VRO_CHAR_WIDE jchar
+
+#define VRO_REF(type) jlong
+#define VRO_REF_NEW(type, ptr) ({ \
+    PersistentRef<type> *persistentRef = new PersistentRef<type>(ptr); \
+    reinterpret_cast<jlong>(persistentRef); })
+#define VRO_REF_GET(type, ref) ({ \
+    PersistentRef<type> *persistentRef = reinterpret_cast<PersistentRef<type> *>(ref); \
+    persistentRef->get(); })
+#define VRO_REF_DELETE(type, ref) \
+    delete reinterpret_cast<PersistentRef<type> *>(ref);
 
 #define VRO_OBJECT jobject
 #define VRO_OBJECT_NULL NULL

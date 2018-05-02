@@ -12,12 +12,12 @@
 #include VRO_C_INCLUDE
 
 namespace Light {
-    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF(VROLight) jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF(VROLight) ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }

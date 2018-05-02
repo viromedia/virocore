@@ -30,12 +30,12 @@
 
 // TODO: when GVR audio supports the seekToTime, etc, then change the native object to a VROSound.
 namespace Sound {
-    inline VRO_REF jptr(std::shared_ptr<VROAudioPlayer> ptr) {
+    inline VRO_REF(VROAudioPlayer) jptr(std::shared_ptr<VROAudioPlayer> ptr) {
         PersistentRef<VROAudioPlayer> *persistentRef = new PersistentRef<VROAudioPlayer>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROAudioPlayer> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROAudioPlayer> native(VRO_REF(VROAudioPlayer) ptr) {
         PersistentRef<VROAudioPlayer> *persistentRef = reinterpret_cast<PersistentRef<VROAudioPlayer> *>(ptr);
         return persistentRef->get();
     }
@@ -47,9 +47,9 @@ extern "C" {
      * If we're using VROAudioPlayerAndroid, there's no difference between the logic for
      * web urls vs local file urls, the Android MediaPlayer handles both.
      */
-    VRO_METHOD(VRO_REF, nativeCreateSound)(VRO_ARGS
-                                           VRO_STRING filename,
-                                           VRO_REF context_j) {
+    VRO_METHOD(VRO_REF(VROAudioPlayer), nativeCreateSound)(VRO_ARGS
+                                                           VRO_STRING filename,
+                                                           VRO_REF(ViroContext) context_j) {
         VRO_METHOD_PREAMBLE;
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
@@ -61,14 +61,14 @@ extern "C" {
     }
 
     VRO_METHOD(void, nativeSetup)(VRO_ARGS
-                                  VRO_REF sound_j) {
+                                  VRO_REF(VROAudioPlayer) sound_j) {
         std::shared_ptr<VROAudioPlayer> player = Sound::native(sound_j);
         player->setup();
     }
 
-    VRO_METHOD(VRO_REF, nativeCreateSoundWithData)(VRO_ARGS
-                                                   VRO_REF dataRef,
-                                                   VRO_REF context_j) {
+    VRO_METHOD(VRO_REF(VROAudioPlayer), nativeCreateSoundWithData)(VRO_ARGS
+                                                                   VRO_REF(VROSoundDataGVR) dataRef,
+                                                                   VRO_REF(ViroContext) context_j) {
         VRO_METHOD_PREAMBLE;
         VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
@@ -82,40 +82,40 @@ extern "C" {
     }
 
     VRO_METHOD(void, nativePlaySound)(VRO_ARGS
-                                      VRO_REF nativeRef) {
+                                      VRO_REF(VROAudioPlayer) nativeRef) {
         Sound::native(nativeRef)->play();
     }
 
     VRO_METHOD(void, nativePauseSound)(VRO_ARGS
-                                       VRO_REF nativeRef) {
+                                       VRO_REF(VROAudioPlayer) nativeRef) {
         Sound::native(nativeRef)->pause();
     }
 
     VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                      VRO_REF nativeRef,
+                                      VRO_REF(VROAudioPlayer) nativeRef,
                                       VRO_FLOAT volume) {
         Sound::native(nativeRef)->setVolume(volume);
     }
 
     VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                     VRO_REF nativeRef,
+                                     VRO_REF(VROAudioPlayer) nativeRef,
                                      VRO_BOOL muted) {
         Sound::native(nativeRef)->setMuted(muted);
     }
 
     VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                    VRO_REF nativeRef,
+                                    VRO_REF(VROAudioPlayer) nativeRef,
                                     VRO_BOOL loop) {
         Sound::native(nativeRef)->setLoop(loop);
     }
     VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                       VRO_REF nativeRef,
+                                       VRO_REF(VROAudioPlayer) nativeRef,
                                        VRO_FLOAT seconds) {
         Sound::native(nativeRef)->seekToTime(seconds);
     }
 
     VRO_METHOD(void, nativeDestroySound)(VRO_ARGS
-                                         VRO_REF nativeRef) {
+                                         VRO_REF(VROAudioPlayer) nativeRef) {
         delete reinterpret_cast<PersistentRef<VROAudioPlayer> *>(nativeRef);
     }
 

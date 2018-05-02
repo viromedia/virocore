@@ -26,9 +26,9 @@
 #endif
 
 extern "C" {
-VRO_METHOD(VRO_REF, nativeCreateSpatialSound)(VRO_ARGS
-                                              VRO_STRING uri_j,
-                                              VRO_REF context_j) {
+VRO_METHOD(VRO_REF(VROSoundGVR), nativeCreateSpatialSound)(VRO_ARGS
+                                                           VRO_STRING uri_j,
+                                                           VRO_REF(ViroContext) context_j) {
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
@@ -39,9 +39,9 @@ VRO_METHOD(VRO_REF, nativeCreateSpatialSound)(VRO_ARGS
     return SpatialSound::jptr(soundGvr);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateSpatialSoundWithData)(VRO_ARGS
-                                                      VRO_REF dataRef,
-                                                      VRO_REF context_j) {
+VRO_METHOD(VRO_REF(VROSoundGVR), nativeCreateSpatialSoundWithData)(VRO_ARGS
+                                                                   VRO_REF(VROSoundDataGVR) dataRef,
+                                                                   VRO_REF(ViroContext) context_j) {
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
@@ -55,40 +55,42 @@ VRO_METHOD(VRO_REF, nativeCreateSpatialSoundWithData)(VRO_ARGS
     return SpatialSound::jptr(soundGvr);
 }
 
-VRO_METHOD(void, nativePlaySpatialSound)(VRO_ARGS VRO_REF nativeRef) {
+VRO_METHOD(void, nativePlaySpatialSound)(VRO_ARGS
+                                         VRO_REF(VROSoundGVR) nativeRef) {
     SpatialSound::native(nativeRef)->play();
 }
 
-VRO_METHOD(void, nativePauseSpatialSound)(VRO_ARGS VRO_REF nativeRef) {
+VRO_METHOD(void, nativePauseSpatialSound)(VRO_ARGS
+                                          VRO_REF(VROSoundGVR) nativeRef) {
     SpatialSound::native(nativeRef)->pause();
 }
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                  VRO_REF nativeRef,
+                                  VRO_REF(VROSoundGVR) nativeRef,
                                   VRO_FLOAT volume) {
     SpatialSound::native(nativeRef)->setVolume(volume);
 }
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                 VRO_REF nativeRef,
+                                 VRO_REF(VROSoundGVR) nativeRef,
                                  VRO_BOOL muted) {
     SpatialSound::native(nativeRef)->setMuted(muted);
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                VRO_REF nativeRef,
+                                VRO_REF(VROSoundGVR) nativeRef,
                                 VRO_BOOL loop) {
     SpatialSound::native(nativeRef)->setLoop(loop);
 }
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                   VRO_REF nativeRef,
+                                   VRO_REF(VROSoundGVR) nativeRef,
                                    VRO_FLOAT seconds) {
     SpatialSound::native(nativeRef)->seekToTime(seconds);
 }
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
-                                    VRO_REF nativeRef,
+                                    VRO_REF(VROSoundGVR) nativeRef,
                                     VRO_FLOAT posX,
                                     VRO_FLOAT posY,
                                     VRO_FLOAT posZ) {
@@ -96,7 +98,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
-                                           VRO_REF nativeRef,
+                                           VRO_REF(VROSoundGVR) nativeRef,
                                            VRO_STRING model,
                                            VRO_FLOAT minDistance,
                                            VRO_FLOAT maxDistance) {
@@ -116,7 +118,7 @@ VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySpatialSound)(VRO_ARGS
-                                            VRO_REF nativeRef) {
+                                            VRO_REF(VROSoundGVR) nativeRef) {
     SpatialSound::native(nativeRef)->setDelegate(nullptr);
     delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
 }

@@ -18,15 +18,6 @@
 
 class Material {
 public:
-    static VRO_REF jptr(std::shared_ptr<VROMaterial> ptr) {
-        PersistentRef<VROMaterial> *persistentRef = new PersistentRef<VROMaterial>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    static std::shared_ptr<VROMaterial> native(VRO_REF ptr) {
-        PersistentRef<VROMaterial> *persistentRef = reinterpret_cast<PersistentRef<VROMaterial> *>(ptr);
-        return persistentRef->get();
-    }
 
     static VRO_OBJECT createJMaterial(std::shared_ptr<VROMaterial> &mat) {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -36,8 +27,7 @@ public:
         }
 
         // Create a persistent native reference that would represent the jMaterial object.
-        PersistentRef<VROMaterial> *persistentRef = new PersistentRef<VROMaterial>(mat);
-        VRO_REF matRef = reinterpret_cast<VRO_REF>(persistentRef);
+        VRO_REF(VROMaterial) matRef = VRO_REF_NEW(VROMaterial, mat);
 
         // Create our Material.java object with the native reference.
         VRO_OBJECT jMat = VROPlatformConstructHostObject("com/viro/core/Material", "(J)V", matRef);

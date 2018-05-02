@@ -22,9 +22,9 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateEmitter)(VRO_ARGS
-                                         VRO_REF context_j,
-                                         VRO_REF native_surface_ref) {
+VRO_METHOD(VRO_REF(VROFixedParticleEmitter), nativeCreateEmitter)(VRO_ARGS
+                                                                  VRO_REF(ViroContext) context_j,
+                                                                  VRO_REF(VROSurface) native_surface_ref) {
     std::shared_ptr<VROFixedParticleEmitter> particleEmitter = std::make_shared<VROFixedParticleEmitter>();
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSurface> surface = nullptr;
@@ -40,12 +40,12 @@ VRO_METHOD(VRO_REF, nativeCreateEmitter)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
-                                       VRO_REF nativeParticleEmitterRef) {
+                                       VRO_REF(VROFixedParticleEmitter) nativeParticleEmitterRef) {
     delete reinterpret_cast<PersistentRef<VROFixedParticleEmitter> *>(nativeParticleEmitterRef);
 }
 
 VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
-                                     VRO_REF emitter_j,
+                                     VRO_REF(VROFixedParticleEmitter) emitter_j,
                                      VRO_ARRAY(VRO_FLOAT_ARRAY) jPositions) {
     std::vector<VROVector4f> initialValues;
     int numberOfValues = VRO_ARRAY_LENGTH(jPositions);
@@ -65,7 +65,7 @@ VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeClearParticles)(VRO_ARGS
-                                       VRO_REF emitter_j) {
+                                       VRO_REF(VROFixedParticleEmitter) emitter_j) {
     std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
     VROPlatformDispatchAsyncRenderer([emitter_w] {
         std::shared_ptr<VROFixedParticleEmitter> emitter = emitter_w.lock();
@@ -74,8 +74,8 @@ VRO_METHOD(void, nativeClearParticles)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetEmitterSurface)(VRO_ARGS
-                                          VRO_REF emitter_j,
-                                          VRO_REF native_surface_ref) {
+                                          VRO_REF(VROFixedParticleEmitter) emitter_j,
+                                          VRO_REF(VROSurface) native_surface_ref) {
     std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
     std::weak_ptr<VROSurface> surface_w = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
 

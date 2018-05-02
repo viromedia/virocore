@@ -18,11 +18,11 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateARImageTarget)(VRO_ARGS
-                                               VRO_OBJECT bitmap,
-                                               VRO_STRING orientation,
-                                               VRO_FLOAT physicalWidth,
-                                               VRO_STRING id) {
+VRO_METHOD(VRO_REF(VROARImageTarget), nativeCreateARImageTarget)(VRO_ARGS
+                                                                 VRO_OBJECT bitmap,
+                                                                 VRO_STRING orientation,
+                                                                 VRO_FLOAT physicalWidth,
+                                                                 VRO_STRING id) {
     VRO_METHOD_PREAMBLE;
     VROPlatformSetEnv(env);
     std::string strOrientation = VRO_STRING_STL(orientation);
@@ -52,7 +52,7 @@ VRO_METHOD(VRO_REF, nativeCreateARImageTarget)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyARImageTarget)(VRO_ARGS
-                                             VRO_REF nativeRef) {
+                                             VRO_REF(VROARImageTarget) nativeRef) {
     delete reinterpret_cast<PersistentRef<VROARImageTarget> *>(nativeRef);
 }
 

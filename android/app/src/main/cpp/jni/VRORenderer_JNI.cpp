@@ -43,16 +43,16 @@ extern "C" {
 static bool kRunRendererTest = false;
 static std::shared_ptr<VROSample> sample;
 
-VRO_METHOD(VRO_REF, nativeCreateRendererGVR)(VRO_ARGS
-                                             jobject class_loader,
-                                             jobject android_context,
-                                             jobject asset_mgr,
-                                             jobject platform_util,
-                                             VRO_REF native_gvr_api,
-                                             jboolean enableShadows,
-                                             jboolean enableHDR,
-                                             jboolean enablePBR,
-                                             jboolean enableBloom) {
+VRO_METHOD(jlong, nativeCreateRendererGVR)(VRO_ARGS
+                                           jobject class_loader,
+                                           jobject android_context,
+                                           jobject asset_mgr,
+                                           jobject platform_util,
+                                           jlong native_gvr_api,
+                                           jboolean enableShadows,
+                                           jboolean enableHDR,
+                                           jboolean enablePBR,
+                                           jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidGVR);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
@@ -71,17 +71,17 @@ VRO_METHOD(VRO_REF, nativeCreateRendererGVR)(VRO_ARGS
     return Renderer::jptr(renderer);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateRendererOVR)(VRO_ARGS
-                                             jobject class_loader,
-                                             jobject android_context,
-                                             jobject view,
-                                             jobject activity,
-                                             jobject asset_mgr,
-                                             jobject platform_util,
-                                             jboolean enableShadows,
-                                             jboolean enableHDR,
-                                             jboolean enablePBR,
-                                             jboolean enableBloom) {
+VRO_METHOD(jlong, nativeCreateRendererOVR)(VRO_ARGS
+                                           jobject class_loader,
+                                           jobject android_context,
+                                           jobject view,
+                                           jobject activity,
+                                           jobject asset_mgr,
+                                           jobject platform_util,
+                                           jboolean enableShadows,
+                                           jboolean enableHDR,
+                                           jboolean enablePBR,
+                                           jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidOVR);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
@@ -99,16 +99,16 @@ VRO_METHOD(VRO_REF, nativeCreateRendererOVR)(VRO_ARGS
     return Renderer::jptr(renderer);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateRendererSceneView)(VRO_ARGS
-                                                   jobject class_loader,
-                                                   jobject android_context,
-                                                   jobject view,
-                                                   jobject asset_mgr,
-                                                   jobject platform_util,
-                                                   jboolean enableShadows,
-                                                   jboolean enableHDR,
-                                                   jboolean enablePBR,
-                                                   jboolean enableBloom) {
+VRO_METHOD(jlong, nativeCreateRendererSceneView)(VRO_ARGS
+                                                 jobject class_loader,
+                                                 jobject android_context,
+                                                 jobject view,
+                                                 jobject asset_mgr,
+                                                 jobject platform_util,
+                                                 jboolean enableShadows,
+                                                 jboolean enableHDR,
+                                                 jboolean enablePBR,
+                                                 jboolean enableBloom) {
     VROPlatformSetType(VROPlatformType::AndroidSceneView);
 
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
@@ -127,7 +127,7 @@ VRO_METHOD(VRO_REF, nativeCreateRendererSceneView)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyRenderer)(VRO_ARGS
-                                        VRO_REF native_renderer) {
+                                        jlong native_renderer) {
     Renderer::native(native_renderer)->onDestroy();
     VROThreadRestricted::unsetThread();
 
@@ -138,7 +138,7 @@ VRO_METHOD(void, nativeDestroyRenderer)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeInitializeGL)(VRO_ARGS
-                                     VRO_REF native_renderer,
+                                     jlong native_renderer,
                                      jboolean sRGBFramebuffer,
                                      jboolean testingMode) {
 
@@ -164,12 +164,12 @@ VRO_METHOD(void, nativeInitializeGL)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDrawFrame)(VRO_ARGS
-                                  VRO_REF native_renderer) {
+                                  jlong native_renderer) {
     Renderer::native(native_renderer)->onDrawFrame();
 }
 
 VRO_METHOD (void, nativeOnKeyEvent)(VRO_ARGS
-                                    VRO_REF native_renderer,
+                                    jlong native_renderer,
                                     int keyCode,
                                     int action ){
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
@@ -183,7 +183,7 @@ VRO_METHOD (void, nativeOnKeyEvent)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeOnTouchEvent)(VRO_ARGS
-                                     VRO_REF native_renderer,
+                                     jlong native_renderer,
                                      VRO_INT onTouchAction,
                                      float xPos,
                                      float yPos) {
@@ -198,7 +198,7 @@ VRO_METHOD(void, nativeOnTouchEvent)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
-                                      VRO_REF native_renderer,
+                                      jlong native_renderer,
                                       VRO_INT pinchState,
                                       VRO_FLOAT scaleFactor,
                                       VRO_FLOAT viewportX,
@@ -214,7 +214,7 @@ VRO_METHOD(void, nativeOnPinchEvent) (VRO_ARGS
 }
 
 VRO_METHOD(void, nativeOnRotateEvent) (VRO_ARGS
-                                       VRO_REF native_renderer,
+                                       jlong native_renderer,
                                        VRO_INT rotateState,
                                        VRO_FLOAT rotateRadians,
                                        VRO_FLOAT viewportX,
@@ -230,7 +230,7 @@ VRO_METHOD(void, nativeOnRotateEvent) (VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetVRModeEnabled)(VRO_ARGS
-                                         VRO_REF nativeRenderer, jboolean enabled) {
+                                         jlong nativeRenderer, jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(nativeRenderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, enabled] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -242,28 +242,28 @@ VRO_METHOD(void, nativeSetVRModeEnabled)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeOnStart)(VRO_ARGS
-                                VRO_REF native_renderer) {
+                                jlong native_renderer) {
         Renderer::native(native_renderer)->onStart();
 }
 
 VRO_METHOD(void, nativeOnPause)(VRO_ARGS
-                                VRO_REF native_renderer) {
+                                jlong native_renderer) {
         Renderer::native(native_renderer)->onPause();
 }
 
 VRO_METHOD(void, nativeOnResume)(VRO_ARGS
-                                 VRO_REF native_renderer) {
+                                 jlong native_renderer) {
         Renderer::native(native_renderer)->onResume();
 }
 
 VRO_METHOD(void, nativeOnStop)(VRO_ARGS
-                               VRO_REF native_renderer) {
+                               jlong native_renderer) {
         Renderer::native(native_renderer)->onStop();
 }
 
 VRO_METHOD(void, nativeSetSceneController)(VRO_ARGS
-                                           VRO_REF native_renderer,
-                                           VRO_REF native_scene_controller_ref) {
+                                           jlong native_renderer,
+                                           jlong native_scene_controller_ref) {
     if (kRunRendererTest) {
         return;
     }
@@ -285,8 +285,8 @@ VRO_METHOD(void, nativeSetSceneController)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetSceneControllerWithAnimation)(VRO_ARGS
-                                                        VRO_REF native_renderer,
-                                                        VRO_REF native_scene_controller_ref,
+                                                        jlong native_renderer,
+                                                        jlong native_scene_controller_ref,
                                                         VRO_FLOAT duration) {
     if (kRunRendererTest) {
         return;
@@ -309,8 +309,8 @@ VRO_METHOD(void, nativeSetSceneControllerWithAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPointOfView)(VRO_ARGS
-                                       VRO_REF native_renderer,
-                                       VRO_REF native_node_ref) {
+                                       jlong native_renderer,
+                                       jlong native_node_ref) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     std::shared_ptr<VRONode> node;
     if (native_node_ref != 0) {
@@ -334,7 +334,7 @@ VRO_METHOD(void, nativeSetPointOfView)(VRO_ARGS
 
 VRO_METHOD(void, nativeOnSurfaceCreated)(VRO_ARGS
                                          jobject surface,
-                                         VRO_REF native_renderer) {
+                                         jlong native_renderer) {
 
     Renderer::native(native_renderer)->onSurfaceCreated(surface);
 }
@@ -343,36 +343,36 @@ VRO_METHOD(void, nativeOnSurfaceChanged)(VRO_ARGS
                                          jobject surface,
                                          VRO_INT width,
                                          VRO_INT height,
-                                         VRO_REF native_renderer) {
+                                         jlong native_renderer) {
     Renderer::native(native_renderer)->onSurfaceChanged(surface, width, height);
 }
 
 VRO_METHOD(void, nativeOnSurfaceDestroyed)(VRO_ARGS
-                                           VRO_REF native_renderer) {
+                                           jlong native_renderer) {
     Renderer::native(native_renderer)->onSurfaceDestroyed();
 }
 
 VRO_METHOD(VRO_STRING, nativeGetHeadset)(VRO_ARGS
-                                         VRO_REF nativeRenderer) {
+                                         jlong nativeRenderer) {
     std::string headset = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getHeadset();
     return VRO_NEW_STRING(headset.c_str());
 }
 
 VRO_METHOD(VRO_STRING, nativeGetController)(VRO_ARGS
-                                            VRO_REF nativeRenderer) {
+                                            jlong nativeRenderer) {
     std::string controller = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getController();
     return VRO_NEW_STRING(controller.c_str());
 }
 
 VRO_METHOD(void, nativeSetDebugHUDEnabled)(VRO_ARGS
-                                           VRO_REF native_renderer,
+                                           jlong native_renderer,
                                            jboolean enabled) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     renderer->getRenderer()->setDebugHUDEnabled(enabled);
 }
 
 VRO_METHOD(void, nativeSetSuspended)(VRO_ARGS
-                                     VRO_REF native_renderer,
+                                     jlong native_renderer,
                                      jboolean suspend_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     renderer->setSuspended(suspend_renderer);
@@ -380,28 +380,28 @@ VRO_METHOD(void, nativeSetSuspended)(VRO_ARGS
 
 // This function is OVR only!
 VRO_METHOD(void, nativeRecenterTracking)(VRO_ARGS
-                                         VRO_REF native_renderer) {
+                                         jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     std::shared_ptr<VROSceneRendererOVR> ovrRenderer = std::dynamic_pointer_cast<VROSceneRendererOVR>(renderer);
     ovrRenderer->recenterTracking();
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeProjectPoint)(VRO_ARGS
-                                                VRO_REF renderer_j,
+                                                jlong renderer_j,
                                                 VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->projectPoint({ x, y, z }));
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeUnprojectPoint)(VRO_ARGS
-                                                  VRO_REF renderer_j,
+                                                  jlong renderer_j,
                                                   VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
     std::shared_ptr<VRORenderer> renderer = Renderer::native(renderer_j)->getRenderer();
     return ARUtilsCreateFloatArrayFromVector3f(renderer->unprojectPoint({ x, y, z }));
 }
 
 VRO_METHOD(void, nativeSetClearColor)(VRO_ARGS
-                                      VRO_REF native_renderer,
+                                      jlong native_renderer,
                                       VRO_INT color) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     VROPlatformDispatchAsyncRenderer([renderer_w, color] {
@@ -421,7 +421,7 @@ VRO_METHOD(void, nativeSetClearColor)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeAddFrameListener)(VRO_ARGS
-                                         VRO_REF native_renderer, VRO_REF frame_listener) {
+                                         jlong native_renderer, jlong frame_listener) {
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
@@ -441,7 +441,7 @@ VRO_METHOD(void, nativeAddFrameListener)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeRemoveFrameListener)(VRO_ARGS
-                                            VRO_REF native_renderer, VRO_REF frame_listener) {
+                                            jlong native_renderer, jlong frame_listener) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
 
@@ -461,37 +461,37 @@ VRO_METHOD(void, nativeRemoveFrameListener)(VRO_ARGS
 }
 
 VRO_METHOD(jboolean, nativeIsReticlePointerFixed)(VRO_ARGS
-                                                  VRO_REF native_renderer) {
+                                                  jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
     return sceneRenderer->getRenderer()->getInputController()->getPresenter()->getReticle()->isHeadlocked();
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetCameraPositionRealtime)(VRO_ARGS
-                                                             VRO_REF native_renderer) {
+                                                             jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraPositionRealTime());
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetCameraRotationRealtime)(VRO_ARGS
-                                                             VRO_REF native_renderer) {
+                                                             jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraRotationRealTime());
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetCameraForwardRealtime)(VRO_ARGS
-                                                            VRO_REF native_renderer) {
+                                                            jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
 }
 
 VRO_METHOD(VRO_FLOAT, nativeGetFieldOfView)(VRO_ARGS
-                                            VRO_REF native_ref) {
+                                            jlong native_ref) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_ref);
     return renderer->getRenderer()->getActiveFieldOfView();
 }
 
 VRO_METHOD(void, nativeSetCameraListener)(VRO_ARGS
-                                          VRO_REF native_renderer,
+                                          jlong native_renderer,
                                           jboolean enabled) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     if (enabled) {
@@ -503,7 +503,7 @@ VRO_METHOD(void, nativeSetCameraListener)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowsEnabled)(VRO_ARGS
-                                          VRO_REF native_renderer,
+                                          jlong native_renderer,
                                           jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
 
@@ -517,7 +517,7 @@ VRO_METHOD(void, nativeSetShadowsEnabled)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetHDREnabled)(VRO_ARGS
-                                      VRO_REF native_renderer,
+                                      jlong native_renderer,
                                       jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
 
@@ -531,7 +531,7 @@ VRO_METHOD(void, nativeSetHDREnabled)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPBREnabled)(VRO_ARGS
-                                      VRO_REF native_renderer,
+                                      jlong native_renderer,
                                       jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
 
@@ -545,7 +545,7 @@ VRO_METHOD(void, nativeSetPBREnabled)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBloomEnabled)(VRO_ARGS
-                                        VRO_REF native_renderer,
+                                        jlong native_renderer,
                                         jboolean enabled) {
     std::weak_ptr<VROSceneRenderer> sceneRenderer_w = Renderer::native(native_renderer);
 

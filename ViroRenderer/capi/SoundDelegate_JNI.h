@@ -21,11 +21,11 @@ public:
     SoundDelegate(VRO_OBJECT soundObjectJava);
     ~SoundDelegate();
 
-    static VRO_REF jptr(std::shared_ptr<SoundDelegate> delegate) {
+    static VRO_REF(SoundDelegate) jptr(std::shared_ptr<SoundDelegate> delegate) {
         return reinterpret_cast<intptr_t>(new PersistentRef<SoundDelegate>(delegate));
     }
 
-    static std::shared_ptr<SoundDelegate> native(VRO_REF ptr) {
+    static std::shared_ptr<SoundDelegate> native(VRO_REF(SoundDelegate) ptr) {
         return reinterpret_cast<PersistentRef<SoundDelegate> *>(ptr)->get();
     }
 

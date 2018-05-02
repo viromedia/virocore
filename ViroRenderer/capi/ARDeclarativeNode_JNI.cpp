@@ -14,15 +14,15 @@
 extern "C" {
 
 VRO_METHOD(void, nativeSetAnchorId) (VRO_ARGS
-                                     VRO_REF node_j,
+                                     VRO_REF(VROARDeclarativeNode) node_j,
                                      VRO_STRING id_j) {
     std::string id_s = VRO_STRING_STL(id_j);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setAnchorId(id_s);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateARNodeDelegate) (VRO_ARGS
-                                                 VRO_REF node_j) {
+VRO_METHOD(VRO_REF(ARDeclarativeNodeDelegate), nativeCreateARNodeDelegate) (VRO_ARGS
+                                                                            VRO_REF(VROARDeclarativeNode) node_j) {
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<ARDeclarativeNodeDelegate> delegate = std::make_shared<ARDeclarativeNodeDelegate>(obj, env);
@@ -32,7 +32,7 @@ VRO_METHOD(VRO_REF, nativeCreateARNodeDelegate) (VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyARNodeDelegate) (VRO_ARGS
-                                               VRO_REF delegateRef) {
+                                               VRO_REF(ARDeclarativeNodeDelegate) delegateRef) {
     delete reinterpret_cast<PersistentRef<ARDeclarativeNodeDelegate> *>(delegateRef);
 }
 

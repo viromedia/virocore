@@ -22,8 +22,9 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateImage)(VRO_ARGS
-                                       VRO_STRING resource, VRO_STRING format) {
+VRO_METHOD(VRO_REF(VROImage), nativeCreateImage)(VRO_ARGS
+                                                 VRO_STRING resource,
+                                                 VRO_STRING format) {
     VRO_METHOD_PREAMBLE;
     std::string strResource = VRO_STRING_STL(resource);
 
@@ -38,8 +39,9 @@ VRO_METHOD(VRO_REF, nativeCreateImage)(VRO_ARGS
     return Image::jptr(imagePtr);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateImageFromBitmap)(VRO_ARGS
-                                                 VRO_OBJECT jbitmap, VRO_STRING format) {
+VRO_METHOD(VRO_REF(VROImage), nativeCreateImageFromBitmap)(VRO_ARGS
+                                                           VRO_OBJECT jbitmap,
+                                                           VRO_STRING format) {
     VRO_METHOD_PREAMBLE;
     VROPlatformSetEnv(env);
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
@@ -55,17 +57,17 @@ VRO_METHOD(VRO_REF, nativeCreateImageFromBitmap)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_INT, nativeGetWidth)(VRO_ARGS
-                                    VRO_REF nativeRef) {
+                                    VRO_REF(VROImage) nativeRef) {
     return Image::native(nativeRef).get()->getWidth();
 }
 
 VRO_METHOD(VRO_INT, nativeGetHeight)(VRO_ARGS
-                                     VRO_REF nativeRef) {
+                                     VRO_REF(VROImage) nativeRef) {
     return Image::native(nativeRef).get()->getHeight();
 }
 
 VRO_METHOD(void, nativeDestroyImage)(VRO_ARGS
-                                     VRO_REF nativeRef) {
+                                     VRO_REF(VROImage) nativeRef) {
     delete reinterpret_cast<PersistentRef<VROImage> *>(nativeRef);
 }
 

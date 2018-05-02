@@ -39,9 +39,9 @@ public:
             return nullptr;
         }
 
-        VRO_REF jptr = VROPlatformCallHostLongFunction(localObj, "get", "()J");
+        VRO_REF(VROMaterial) jptr = VROPlatformCallHostLongFunction(localObj, "get", "()J");
         VRO_DELETE_LOCAL_REF(localObj);
-        return Material::native(jptr);
+        return VRO_REF_GET(VROMaterial, jptr);
     }
 
 private:
@@ -50,12 +50,12 @@ private:
 };
 
 namespace LazyMaterial {
-    inline VRO_REF jptr(std::shared_ptr<VROLazyMaterialJNI> ptr) {
+    inline VRO_REF(VROLazyMaterialJNI) jptr(std::shared_ptr<VROLazyMaterialJNI> ptr) {
         PersistentRef<VROLazyMaterialJNI> *persistentRef = new PersistentRef<VROLazyMaterialJNI>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROLazyMaterialJNI> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROLazyMaterialJNI> native(VRO_REF(VROLazyMaterialJNI) ptr) {
         PersistentRef<VROLazyMaterialJNI> *persistentRef = reinterpret_cast<PersistentRef<VROLazyMaterialJNI> *>(ptr);
         return persistentRef->get();
     }

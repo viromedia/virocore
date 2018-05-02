@@ -13,12 +13,12 @@
 #include VRO_C_INCLUDE
 
 namespace PhysicsBody {
-    inline VRO_REF jptr(std::shared_ptr<VROPhysicsBody> physicsBody) {
+    inline VRO_REF(VROPhysicsBody) jptr(std::shared_ptr<VROPhysicsBody> physicsBody) {
         PersistentRef<VROPhysicsBody> *nativePhysics = new PersistentRef<VROPhysicsBody>(physicsBody);
         return reinterpret_cast<intptr_t>(nativePhysics);
     }
 
-    inline std::shared_ptr<VROPhysicsBody> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROPhysicsBody> native(VRO_REF(VROPhysicsBody) ptr) {
         PersistentRef<VROPhysicsBody> *persistentPhysics = reinterpret_cast<PersistentRef<VROPhysicsBody> *>(ptr);
         return persistentPhysics->get();
     }

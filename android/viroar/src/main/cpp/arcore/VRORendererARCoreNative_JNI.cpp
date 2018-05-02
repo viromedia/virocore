@@ -8,7 +8,6 @@
 
 #include "ARCore_Native.h"
 #include "VRODefines.h"
-#include VRO_C_INCLUDE
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
@@ -18,9 +17,9 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateARCoreSession)(JNIEnv *env, jobject object, jobject context) {
+VRO_METHOD(jlong, nativeCreateARCoreSession)(JNIEnv *env, jobject object, jobject context) {
     arcore::Session *session = new arcore::SessionNative(context, env);
-    return reinterpret_cast<VRO_REF>(session);
+    return reinterpret_cast<jlong>(session);
 }
 
 }

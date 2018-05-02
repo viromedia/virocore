@@ -2,13 +2,12 @@ cmake_minimum_required(VERSION 3.4.1)
 
 SET(VIRO_ANDROID_INCLUDES ${CMAKE_SOURCE_DIR}/../libs)
 SET(VIRO_RENDERER_SRC     ${CMAKE_SOURCE_DIR}/../../ViroRenderer)
-SET(VIRO_ANDROID_SRC      ${CMAKE_SOURCE_DIR}/../app/src/main/cpp)
+SET(VIRO_ANDROID_SRC      ${CMAKE_SOURCE_DIR}/../app/src/main/cpp/arcore)
 SET(VIRO_AR_LIBS          ${CMAKE_SOURCE_DIR}/src/main/jniLibs)
 SET(VIRO_AR_SRC           ${CMAKE_SOURCE_DIR}/src/main/cpp)
 
 INCLUDE_DIRECTORIES(${VIRO_RENDERER_SRC}
                     ${VIRO_ANDROID_SRC}
-                    ${VIRO_ANDROID_SRC}/arcore
                     ${VIRO_ANDROID_INCLUDES}/arcore/include)
 
 ADD_LIBRARY(viro_arcore

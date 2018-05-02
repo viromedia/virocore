@@ -17,12 +17,12 @@ class PortalDelegate: public VROPortalDelegate {
     PortalDelegate(VRO_OBJECT javaObject);
     ~PortalDelegate();
 
-    static VRO_REF jptr(std::shared_ptr<PortalDelegate> shared_node) {
+    static VRO_REF(PortalDelegate) jptr(std::shared_ptr<PortalDelegate> shared_node) {
         PersistentRef<PortalDelegate> *portalDelegate = new PersistentRef<PortalDelegate>(shared_node);
         return reinterpret_cast<intptr_t>(portalDelegate);
     }
 
-    static std::shared_ptr<PortalDelegate> native(VRO_REF ptr) {
+    static std::shared_ptr<PortalDelegate> native(VRO_REF(PortalDelegate) ptr) {
         PersistentRef<PortalDelegate> *persistentSurface = reinterpret_cast<PersistentRef<PortalDelegate> *>(ptr);
         return persistentSurface->get();
     }

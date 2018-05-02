@@ -23,12 +23,12 @@
 #endif
 
 namespace AmbientLight {
-    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF(VROLight) jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF(VROLight) ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -36,9 +36,9 @@ namespace AmbientLight {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateAmbientLight)(VRO_ARGS
-                                              VRO_LONG color,
-                                              VRO_FLOAT intensity) {
+VRO_METHOD(VRO_REF(VROLight), nativeCreateAmbientLight)(VRO_ARGS
+                                                        VRO_LONG color,
+                                                        VRO_FLOAT intensity) {
     std::shared_ptr<VROLight> ambientLight = std::make_shared<VROLight>(VROLightType::Ambient);
 
     // Get the color

@@ -16,12 +16,12 @@
 #include VRO_C_INCLUDE
 
 namespace AnimationGroup {
-    inline VRO_REF jptr(std::shared_ptr<VROAnimationGroup> ptr) {
+    inline VRO_REF(VROAnimationGroup) jptr(std::shared_ptr<VROAnimationGroup> ptr) {
         PersistentRef<VROAnimationGroup> *native_node = new PersistentRef<VROAnimationGroup>(ptr);
         return reinterpret_cast<intptr_t>(native_node);
     }
 
-    inline std::shared_ptr<VROAnimationGroup> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROAnimationGroup> native(VRO_REF(VROAnimationGroup) ptr) {
         PersistentRef<VROAnimationGroup> *persistentNode = reinterpret_cast<PersistentRef<VROAnimationGroup> *>(ptr);
         return persistentNode->get();
     }

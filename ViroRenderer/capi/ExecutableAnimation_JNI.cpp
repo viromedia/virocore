@@ -21,9 +21,9 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeWrapNodeAnimation)(VRO_ARGS
-                                             VRO_REF nodeRef,
-                                             VRO_STRING jkey) {
+VRO_METHOD(VRO_REF(VROExecutableAnimation), nativeWrapNodeAnimation)(VRO_ARGS
+                                                                     VRO_REF(VRONode) nodeRef,
+                                                                     VRO_STRING jkey) {
     VRO_METHOD_PREAMBLE;
     std::shared_ptr<VRONode> node = Node::native(nodeRef);
 
@@ -42,7 +42,8 @@ VRO_METHOD(VRO_REF, nativeWrapNodeAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
-                                         VRO_REF nativeRef, VRO_REF nodeRef) {
+                                         VRO_REF(VROExecutableAnimation) nativeRef,
+                                         VRO_REF(VRONode) nodeRef) {
     VRO_METHOD_PREAMBLE;
 
     // Hold a global reference to the object until the animation finishes, so that
@@ -75,7 +76,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativePauseAnimation)(VRO_ARGS
-                                       VRO_REF nativeRef) {
+                                       VRO_REF(VROExecutableAnimation) nativeRef) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
@@ -87,7 +88,7 @@ VRO_METHOD(void, nativePauseAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeResumeAnimation)(VRO_ARGS
-                                        VRO_REF nativeRef) {
+                                        VRO_REF(VROExecutableAnimation) nativeRef) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
@@ -99,7 +100,8 @@ VRO_METHOD(void, nativeResumeAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
-                                           VRO_REF nativeRef, VRO_BOOL jumpToEnd) {
+                                           VRO_REF(VROExecutableAnimation) nativeRef,
+                                           VRO_BOOL jumpToEnd) {
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w, jumpToEnd] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
@@ -111,7 +113,7 @@ VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyAnimation)(VRO_ARGS
-                                         VRO_REF nativeRef) {
+                                         VRO_REF(VROExecutableAnimation) nativeRef) {
     delete reinterpret_cast<PersistentRef<VROExecutableAnimation> *>(nativeRef);
 }
 

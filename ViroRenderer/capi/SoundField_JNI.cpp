@@ -25,12 +25,12 @@
 #endif
 
 namespace SoundField {
-    inline VRO_REF jptr(std::shared_ptr<VROSoundGVR> ptr) {
+    inline VRO_REF(VROSoundGVR) jptr(std::shared_ptr<VROSoundGVR> ptr) {
         PersistentRef<VROSoundGVR> *persistentRef = new PersistentRef<VROSoundGVR>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROSoundGVR> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROSoundGVR> native(VRO_REF(VROSoundGVR) ptr) {
         PersistentRef<VROSoundGVR> *persistentRef = reinterpret_cast<PersistentRef<VROSoundGVR> *>(ptr);
         return persistentRef->get();
     }
@@ -38,9 +38,9 @@ namespace SoundField {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateSoundField)(VRO_ARGS
-                                            VRO_STRING filename,
-                                            VRO_REF context_j) {
+VRO_METHOD(VRO_REF(VROSoundGVR), nativeCreateSoundField)(VRO_ARGS
+                                                         VRO_STRING filename,
+                                                         VRO_REF(ViroContext) context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::string file = VRO_STRING_STL(filename);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROResourceType::URL, VROSoundType::SoundField);
@@ -50,9 +50,9 @@ VRO_METHOD(VRO_REF, nativeCreateSoundField)(VRO_ARGS
     return SoundField::jptr(soundGvr);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateSoundFieldWithData)(VRO_ARGS
-                                                    VRO_REF dataRef,
-                                                    VRO_REF context_j) {
+VRO_METHOD(VRO_REF(VROSoundGVR), nativeCreateSoundFieldWithData)(VRO_ARGS
+                                                                 VRO_REF(VROSoundDataGVR) dataRef,
+                                                                 VRO_REF(ViroContext) context_j) {
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
@@ -66,41 +66,41 @@ VRO_METHOD(VRO_REF, nativeCreateSoundFieldWithData)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativePlaySoundField)(VRO_ARGS
-                                       VRO_REF nativeRef) {
+                                       VRO_REF(VROSoundGVR) nativeRef) {
     SoundField::native(nativeRef)->play();
 }
 
 VRO_METHOD(void, nativePauseSoundField)(VRO_ARGS
-                                        VRO_REF nativeRef) {
+                                        VRO_REF(VROSoundGVR) nativeRef) {
     SoundField::native(nativeRef)->pause();
 }
 
 VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
-                                  VRO_REF nativeRef,
+                                  VRO_REF(VROSoundGVR) nativeRef,
                                   VRO_FLOAT volume) {
     SoundField::native(nativeRef)->setVolume(volume);
 }
 
 VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
-                                 VRO_REF nativeRef,
+                                 VRO_REF(VROSoundGVR) nativeRef,
                                  VRO_BOOL muted) {
     SoundField::native(nativeRef)->setMuted(muted);
 }
 
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
-                                VRO_REF nativeRef,
+                                VRO_REF(VROSoundGVR) nativeRef,
                                 VRO_BOOL loop) {
     SoundField::native(nativeRef)->setLoop(loop);
 }
 
 VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
-                                   VRO_REF nativeRef,
+                                   VRO_REF(VROSoundGVR) nativeRef,
                                    VRO_FLOAT seconds) {
     SoundField::native(nativeRef)->seekToTime(seconds);
 }
 
 VRO_METHOD(void, nativeSetRotation)(VRO_ARGS
-                                    VRO_REF nativeRef,
+                                    VRO_REF(VROSoundGVR) nativeRef,
                                     VRO_FLOAT rotationRadiansX,
                                     VRO_FLOAT rotationRadiansY,
                                     VRO_FLOAT rotationRadiansZ) {
@@ -108,7 +108,7 @@ VRO_METHOD(void, nativeSetRotation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySoundField)(VRO_ARGS
-                                          VRO_REF nativeRef) {
+                                          VRO_REF(VROSoundGVR) nativeRef) {
     delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
 }
 

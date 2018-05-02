@@ -35,12 +35,12 @@ void AddPropertyIfNotNull(VRO_ENV env, std::string property, VRO_STRING candidat
     }
 }
 
-VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
-                                                VRO_STRING positionX, VRO_STRING positionY, VRO_STRING positionZ,
-                                                VRO_STRING scaleX, VRO_STRING scaleY, VRO_STRING scaleZ,
-                                                VRO_STRING rotateX, VRO_STRING rotateY, VRO_STRING rotateZ,
-                                                VRO_STRING opacity, VRO_STRING color, VRO_REF lazyMaterialRef,
-                                                VRO_FLOAT durationSeconds, VRO_FLOAT delaySeconds, VRO_STRING functionType) {
+VRO_METHOD(VRO_REF(VROAnimationGroup), nativeCreateAnimationGroup)(VRO_ARGS
+                                                                   VRO_STRING positionX, VRO_STRING positionY, VRO_STRING positionZ,
+                                                                   VRO_STRING scaleX, VRO_STRING scaleY, VRO_STRING scaleZ,
+                                                                   VRO_STRING rotateX, VRO_STRING rotateY, VRO_STRING rotateZ,
+                                                                   VRO_STRING opacity, VRO_STRING color, VRO_REF(VROLazyMaterial) lazyMaterialRef,
+                                                                   VRO_FLOAT durationSeconds, VRO_FLOAT delaySeconds, VRO_STRING functionType) {
     VRO_METHOD_PREAMBLE;
     std::map<std::string, std::string> animationProperties;
 
@@ -71,14 +71,14 @@ VRO_METHOD(VRO_REF, nativeCreateAnimationGroup)(VRO_ARGS
     return AnimationGroup::jptr(animationGroup);
 }
 
-VRO_METHOD(VRO_REF, nativeCopyAnimation)(VRO_ARGS
-                                         VRO_REF nativeRef) {
+VRO_METHOD(VRO_REF(VROAnimationGroup), nativeCopyAnimation)(VRO_ARGS
+                                                            VRO_REF(VROAnimationGroup) nativeRef) {
     std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
     return AnimationGroup::jptr(std::dynamic_pointer_cast<VROAnimationGroup>(group->copy()));
 }
 
 VRO_METHOD(void, nativeDestroyAnimationGroup)(VRO_ARGS
-                                              VRO_REF nativeRef) {
+                                              VRO_REF(VROAnimationGroup) nativeRef) {
     delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
 }
 

@@ -20,12 +20,12 @@
 #endif
 
 namespace Polyline {
-    inline VRO_REF jptr(std::shared_ptr<VROPolyline> shared_node) {
+    inline VRO_REF(VROPolyline) jptr(std::shared_ptr<VROPolyline> shared_node) {
         PersistentRef<VROPolyline> *native_line = new PersistentRef<VROPolyline>(shared_node);
         return reinterpret_cast<intptr_t>(native_line);
     }
 
-    inline std::shared_ptr<VROPolyline> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROPolyline> native(VRO_REF(VROPolyline) ptr) {
         PersistentRef<VROPolyline> *persistentLine = reinterpret_cast<PersistentRef<VROPolyline> *>(ptr);
         return persistentLine->get();
     }
@@ -58,17 +58,16 @@ namespace Polyline {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
-                                               VRO_FLOAT width) {
-
+VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolylineEmpty)(VRO_ARGS
+                                                            VRO_FLOAT width) {
     std::shared_ptr<VROPolyline> polyline = std::make_shared<VROPolyline>();
     polyline->setThickness(width);
     return Polyline::jptr(polyline);
 }
 
-VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
-                                          VRO_ARRAY(VRO_FLOAT_ARRAY) points_j,
-                                          VRO_FLOAT width) {
+VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolyline)(VRO_ARGS
+                                                       VRO_ARRAY(VRO_FLOAT_ARRAY) points_j,
+                                                       VRO_FLOAT width) {
     VRO_METHOD_PREAMBLE;
 
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
@@ -77,12 +76,12 @@ VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
-                                        VRO_REF nativePolylineRef) {
+                                        VRO_REF(VROPolyline) nativePolylineRef) {
     delete reinterpret_cast<PersistentRef<VROPolyline> *>(nativePolylineRef);
 }
 
 VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
-                                    VRO_REF polyline_j,
+                                    VRO_REF(VROPolyline) polyline_j,
                                     VRO_FLOAT_ARRAY point_j) {
     VRO_METHOD_PREAMBLE;
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
@@ -97,7 +96,7 @@ VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
-                                  VRO_REF polyline_j,
+                                  VRO_REF(VROPolyline) polyline_j,
                                   VRO_ARRAY(VRO_FLOAT_ARRAY) points_j) {
     VRO_METHOD_PREAMBLE;
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
@@ -113,7 +112,7 @@ VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetThickness)(VRO_ARGS
-                                     VRO_REF polyline_j,
+                                     VRO_REF(VROPolyline) polyline_j,
                                      VRO_FLOAT thickness) {
     std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, thickness] {

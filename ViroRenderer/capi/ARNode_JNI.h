@@ -9,12 +9,12 @@
 #include VRO_C_INCLUDE
 
 namespace ARNode {
-    inline VRO_REF jptr(std::shared_ptr<VROARNode> node) {
+    inline VRO_REF(VROARNode) jptr(std::shared_ptr<VROARNode> node) {
         PersistentRef<VROARNode> *node_p = new PersistentRef<VROARNode>(node);
         return reinterpret_cast<intptr_t>(node_p);
     }
 
-    inline std::shared_ptr<VROARNode> native(VRO_REF node_j) {
+    inline std::shared_ptr<VROARNode> native(VRO_REF(VROARNode) node_j) {
         PersistentRef<VROARNode> *node_p = reinterpret_cast<PersistentRef<VROARNode> *>(node_j);
         return node_p->get();
     }

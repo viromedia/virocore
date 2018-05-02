@@ -11,13 +11,13 @@
 #include VRO_C_INCLUDE
 
 namespace MediaRecorder {
-    inline VRO_REF jptr(std::shared_ptr<MediaRecorder_JNI> delegate) {
+    inline jlong jptr(std::shared_ptr<MediaRecorder_JNI> delegate) {
         PersistentRef<MediaRecorder_JNI> *delegateRef
                 = new PersistentRef<MediaRecorder_JNI>(delegate);
         return reinterpret_cast<intptr_t>(delegateRef);
     }
 
-    inline std::shared_ptr<MediaRecorder_JNI> native(VRO_REF ptr) {
+    inline std::shared_ptr<MediaRecorder_JNI> native(jlong ptr) {
         PersistentRef<MediaRecorder_JNI> *persistentDelegate
                 = reinterpret_cast<PersistentRef<MediaRecorder_JNI> *>(ptr);
         return persistentDelegate->get();

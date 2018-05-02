@@ -21,12 +21,12 @@ namespace Texture {
     VROTextureInternalFormat getFormat(VRO_ENV env, VRO_STRING jformat);
     VRO_OBJECT createJTexture(std::shared_ptr<VROTexture> texture);
 
-    inline VRO_REF jptr(std::shared_ptr<VROTexture> ptr) {
+    inline VRO_REF(VROTexture) jptr(std::shared_ptr<VROTexture> ptr) {
         PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROTexture> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROTexture> native(VRO_REF(VROTexture) ptr) {
         PersistentRef<VROTexture> *persistentRef = reinterpret_cast<PersistentRef<VROTexture> *>(ptr);
         return persistentRef->get();
     }

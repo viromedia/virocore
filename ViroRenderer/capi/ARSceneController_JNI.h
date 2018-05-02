@@ -19,13 +19,13 @@
 #include VRO_C_INCLUDE
 
 namespace ARSceneController {
-    inline VRO_REF jptr(std::shared_ptr<VROARSceneController> sharedARSceneController) {
+    inline VRO_REF(VROARSceneController) jptr(std::shared_ptr<VROARSceneController> sharedARSceneController) {
         PersistentRef<VROARSceneController> *arSceneController =
                 new PersistentRef<VROARSceneController>(sharedARSceneController);
         return reinterpret_cast<intptr_t>(arSceneController);
     }
 
-    inline std::shared_ptr<VROARSceneController> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROARSceneController> native(VRO_REF(VROARSceneController) ptr) {
         PersistentRef<VROARSceneController> *persistentARSceneController =
                 reinterpret_cast<PersistentRef<VROARSceneController> *>(ptr);
         return persistentARSceneController->get();
@@ -43,12 +43,12 @@ public:
         VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
-    static VRO_REF jptr(std::shared_ptr<ARDeclarativeSceneDelegate> arSceneDelegate) {
+    static VRO_REF(ARDeclarativeSceneDelegate) jptr(std::shared_ptr<ARDeclarativeSceneDelegate> arSceneDelegate) {
         PersistentRef<ARDeclarativeSceneDelegate> *persistentDelegate = new PersistentRef<ARDeclarativeSceneDelegate>(arSceneDelegate);
         return reinterpret_cast<intptr_t>(persistentDelegate);
     }
 
-    static std::shared_ptr<ARDeclarativeSceneDelegate> native(VRO_REF ptr) {
+    static std::shared_ptr<ARDeclarativeSceneDelegate> native(VRO_REF(ARDeclarativeSceneDelegate) ptr) {
         PersistentRef<ARDeclarativeSceneDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<ARDeclarativeSceneDelegate> *>(ptr);
         return persistentDelegate->get();
     }
@@ -75,12 +75,12 @@ public:
         VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
-    static VRO_REF jptr(std::shared_ptr<ARImperativeSceneDelegate> arSceneDelegate) {
+    static VRO_REF(ARImperativeSceneDelegate) jptr(std::shared_ptr<ARImperativeSceneDelegate> arSceneDelegate) {
         PersistentRef<ARImperativeSceneDelegate> *persistentDelegate = new PersistentRef<ARImperativeSceneDelegate>(arSceneDelegate);
         return reinterpret_cast<intptr_t>(persistentDelegate);
     }
 
-    static std::shared_ptr<ARImperativeSceneDelegate> native(VRO_REF ptr) {
+    static std::shared_ptr<ARImperativeSceneDelegate> native(VRO_REF(ARImperativeSceneDelegate) ptr) {
         PersistentRef<ARImperativeSceneDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<ARImperativeSceneDelegate> *>(ptr);
         return persistentDelegate->get();
     }

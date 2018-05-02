@@ -16,12 +16,12 @@ class VideoDelegate : public VROVideoDelegateInternal {
     VideoDelegate(VRO_OBJECT videoJavaObject);
     ~VideoDelegate();
 
-    static VRO_REF jptr(std::shared_ptr<VideoDelegate> shared_node) {
+    static VRO_REF(VideoDelegate) jptr(std::shared_ptr<VideoDelegate> shared_node) {
         PersistentRef<VideoDelegate> *native_surface = new PersistentRef<VideoDelegate>(shared_node);
         return reinterpret_cast<intptr_t>(native_surface);
     }
 
-    static std::shared_ptr<VideoDelegate> native(VRO_REF ptr) {
+    static std::shared_ptr<VideoDelegate> native(VRO_REF(VideoDelegate) ptr) {
         PersistentRef<VideoDelegate> *persistentSurface = reinterpret_cast<PersistentRef<VideoDelegate> *>(ptr);
         return persistentSurface->get();
     }

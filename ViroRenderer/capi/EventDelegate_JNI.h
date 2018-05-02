@@ -64,13 +64,13 @@ private:
 };
 
 namespace EventDelegate{
-    inline VRO_REF jptr(std::shared_ptr<EventDelegate_JNI> delegate) {
+    inline VRO_REF(EventDelegate_JNI) jptr(std::shared_ptr<EventDelegate_JNI> delegate) {
         PersistentRef<EventDelegate_JNI> *nativeDelegate
                 = new PersistentRef<EventDelegate_JNI>(delegate);
         return reinterpret_cast<intptr_t>(nativeDelegate);
     }
 
-    inline std::shared_ptr<EventDelegate_JNI> native(VRO_REF ptr) {
+    inline std::shared_ptr<EventDelegate_JNI> native(VRO_REF(EventDelegate_JNI) ptr) {
         PersistentRef<EventDelegate_JNI> *persistentObject
                 = reinterpret_cast<PersistentRef<EventDelegate_JNI> *>(ptr);
         return persistentObject->get();

@@ -19,18 +19,18 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreatePortalScene)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF(VROPortal), nativeCreatePortalScene)(VRO_NO_ARGS) {
     std::shared_ptr<VROPortal> portal = std::make_shared<VROPortal>();
     return PortalScene::jptr(portal);
 }
 
 VRO_METHOD(void, nativeDestroyPortalScene)(VRO_ARGS
-                                           VRO_REF portalRef) {
+                                           VRO_REF(VROPortal) portalRef) {
     delete reinterpret_cast<PersistentRef<VROPortal> *>(portalRef);
 }
 
 VRO_METHOD(void, nativeSetPassable)(VRO_ARGS
-                                    VRO_REF nativeRef, VRO_BOOL passable) {
+                                    VRO_REF(VROPortal) nativeRef, VRO_BOOL passable) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(nativeRef);
     VROPlatformDispatchAsyncRenderer([portal_w, passable] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();
@@ -40,7 +40,7 @@ VRO_METHOD(void, nativeSetPassable)(VRO_ARGS
     });
 }
 
-VRO_METHOD(VRO_REF, nativeCreatePortalDelegate)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF(PortalDelegate), nativeCreatePortalDelegate)(VRO_NO_ARGS) {
     VRO_METHOD_PREAMBLE;
     VROPlatformSetEnv(env);
     std::shared_ptr<PortalDelegate> delegate = std::make_shared<PortalDelegate>(obj);
@@ -48,13 +48,14 @@ VRO_METHOD(VRO_REF, nativeCreatePortalDelegate)(VRO_NO_ARGS) {
 }
 
 VRO_METHOD(void, nativeDestroyPortalDelegate)(VRO_ARGS
-                                              VRO_REF delegateRef) {
+                                              VRO_REF(PortalDelegate) delegateRef) {
     delete reinterpret_cast<PersistentRef<PortalDelegate> *>(delegateRef);
 }
 
 
 VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
-                                       VRO_REF portalRef, VRO_REF delegateRef) {
+                                       VRO_REF(VROPortal) portalRef,
+                                       VRO_REF(VROPortalDelegate) delegateRef) {
 
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portalRef);
     std::weak_ptr<PortalDelegate> portalDelegate_w = PortalDelegate::native(delegateRef);
@@ -74,8 +75,8 @@ VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPortalEntrance)(VRO_ARGS
-                                          VRO_REF portalSceneRef,
-                                          VRO_REF portalRef) {
+                                          VRO_REF(VROPortal) portalSceneRef,
+                                          VRO_REF(VROPortalFrame) portalRef) {
     std::weak_ptr<VROPortal> portalScene_w = PortalScene::native(portalSceneRef);
     std::weak_ptr<VROPortalFrame> portalFrame_w = Portal::native(portalRef);
     VROPlatformDispatchAsyncRenderer([portalScene_w, portalFrame_w] {
@@ -93,8 +94,8 @@ VRO_METHOD(void, nativeSetPortalEntrance)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
-                                             VRO_REF portal_j,
-                                             VRO_REF texture_j) {
+                                             VRO_REF(VROPortal) portal_j,
+                                             VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
     std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
 
@@ -109,7 +110,7 @@ VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
-                                              VRO_REF portal_j,
+                                              VRO_REF(VROPortal) portal_j,
                                               VRO_FLOAT rotationRadiansX,
                                               VRO_FLOAT rotationRadiansY,
                                               VRO_FLOAT rotationRadiansZ) {
@@ -124,8 +125,8 @@ VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
-                                                      VRO_REF portal_j,
-                                                      VRO_REF texture_j) {
+                                                      VRO_REF(VROPortal) portal_j,
+                                                      VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
     std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
 
@@ -139,7 +140,7 @@ VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
-                                                   VRO_REF portal_j,
+                                                   VRO_REF(VROPortal) portal_j,
                                                    VRO_LONG color) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
     VROPlatformDispatchAsyncRenderer([portal_w, color] {
@@ -159,8 +160,8 @@ VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
-                                               VRO_REF portal_j,
-                                               VRO_REF texture_j) {
+                                               VRO_REF(VROPortal) portal_j,
+                                               VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
     long texture_ref = texture_j;
     VROPlatformDispatchAsyncRenderer([portal_w, texture_ref] {

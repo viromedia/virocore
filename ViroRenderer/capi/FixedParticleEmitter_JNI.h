@@ -16,12 +16,12 @@
 #include VRO_C_INCLUDE
 
 namespace FixedParticleEmitter {
-    inline VRO_REF jptr(std::shared_ptr<VROFixedParticleEmitter> emitter) {
+    inline VRO_REF(VROFixedParticleEmitter) jptr(std::shared_ptr<VROFixedParticleEmitter> emitter) {
         PersistentRef<VROFixedParticleEmitter> *emitter_p = new PersistentRef<VROFixedParticleEmitter>(emitter);
         return reinterpret_cast<intptr_t>(emitter_p);
     }
 
-    inline std::shared_ptr<VROFixedParticleEmitter> native(VRO_REF emitter_j) {
+    inline std::shared_ptr<VROFixedParticleEmitter> native(VRO_REF(VROFixedParticleEmitter) emitter_j) {
         PersistentRef<VROFixedParticleEmitter> *emitter_p
                 = reinterpret_cast<PersistentRef<VROFixedParticleEmitter> *>(emitter_j);
         return emitter_p->get();

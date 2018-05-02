@@ -17,12 +17,12 @@
 #include VRO_C_INCLUDE
 
 namespace Image {
-    inline VRO_REF jptr(std::shared_ptr<VROImage> ptr) {
+    inline VRO_REF(VROImage) jptr(std::shared_ptr<VROImage> ptr) {
         PersistentRef<VROImage> *persistentRef = new PersistentRef<VROImage>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROImage> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROImage> native(VRO_REF(VROImage) ptr) {
         PersistentRef<VROImage> *persistentRef = reinterpret_cast<PersistentRef<VROImage> *>(ptr);
         return persistentRef->get();
     }

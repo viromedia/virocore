@@ -29,7 +29,7 @@ extern "C" {
 
 VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
                                          VRO_STRING jURL,
-                                         VRO_REF node_j,
+                                         VRO_REF(VRONode) node_j,
                                          VRO_BOOL isFBX,
                                          VRO_LONG requestId) {
     VRO_METHOD_PREAMBLE;
@@ -60,7 +60,7 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
 VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
                                                VRO_STRING jresource,
                                                VRO_OBJECT resourceMap_j,
-                                               VRO_REF node_j,
+                                               VRO_REF(VRONode) node_j,
                                                VRO_BOOL isFBX,
                                                VRO_LONG requestId) {
     VRO_METHOD_PREAMBLE;

@@ -12,12 +12,12 @@
 #include VRO_C_INCLUDE
 
 namespace PortalScene {
-    inline VRO_REF jptr(std::shared_ptr<VROPortal> shared_portal) {
+    inline VRO_REF(VROPortal) jptr(std::shared_ptr<VROPortal> shared_portal) {
         PersistentRef<VROPortal> *native_portal = new PersistentRef<VROPortal>(shared_portal);
         return reinterpret_cast<intptr_t>(native_portal);
     }
 
-    inline std::shared_ptr<VROPortal> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROPortal> native(VRO_REF(VROPortal) ptr) {
         PersistentRef<VROPortal> *persistentPortal = reinterpret_cast<PersistentRef<VROPortal> *>(ptr);
         return persistentPortal->get();
     }

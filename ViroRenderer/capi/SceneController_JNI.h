@@ -14,12 +14,12 @@
 #include VRO_C_INCLUDE
 
 namespace SceneController {
-    inline VRO_REF jptr(std::shared_ptr<VROSceneController> ptr) {
+    inline VRO_REF(VROSceneController) jptr(std::shared_ptr<VROSceneController> ptr) {
         PersistentRef<VROSceneController> *persistentRef = new PersistentRef<VROSceneController>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline std::shared_ptr<VROSceneController> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROSceneController> native(VRO_REF(VROSceneController) ptr) {
         PersistentRef<VROSceneController> *persistentRef = reinterpret_cast<PersistentRef<VROSceneController> *>(ptr);
         return persistentRef->get();
     }
@@ -36,12 +36,12 @@ public:
         VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
     }
 
-    static VRO_REF jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {
+    static VRO_REF(SceneControllerDelegate) jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {
         PersistentRef<SceneControllerDelegate> *native_delegate = new PersistentRef<SceneControllerDelegate>(shared_node);
         return reinterpret_cast<intptr_t>(native_delegate);
     }
 
-    static std::shared_ptr<SceneControllerDelegate> native(VRO_REF ptr) {
+    static std::shared_ptr<SceneControllerDelegate> native(VRO_REF(SceneControllerDelegate) ptr) {
         PersistentRef<SceneControllerDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(ptr);
         return persistentDelegate->get();
     }

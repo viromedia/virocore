@@ -13,12 +13,12 @@
 #include VRO_C_INCLUDE
 
 namespace FrameListener {
-    inline VRO_REF jptr(std::shared_ptr<VROFrameListener> shared_node) {
+    inline VRO_REF(VROFrameListener) jptr(std::shared_ptr<VROFrameListener> shared_node) {
         PersistentRef<VROFrameListener> *nativeListener = new PersistentRef<VROFrameListener>(shared_node);
         return reinterpret_cast<intptr_t>(nativeListener);
     }
 
-    inline std::shared_ptr<VROFrameListener> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROFrameListener> native(VRO_REF(VROFrameListener) ptr) {
         PersistentRef<VROFrameListener> *nativeListener = reinterpret_cast<PersistentRef<VROFrameListener> *>(ptr);
         return nativeListener->get();
     }

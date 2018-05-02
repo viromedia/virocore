@@ -20,12 +20,12 @@
 #endif
 
 namespace SpotLight {
-    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF(VROLight) jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF(VROLight) ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -33,19 +33,19 @@ namespace SpotLight {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateSpotLight)(VRO_ARGS
-                                           VRO_LONG color,
-                                           VRO_FLOAT intensity,
-                                           VRO_FLOAT attenuationStartDistance,
-                                           VRO_FLOAT attenuationEndDistance,
-                                           VRO_FLOAT positionX,
-                                           VRO_FLOAT positionY,
-                                           VRO_FLOAT positionZ,
-                                           VRO_FLOAT directionX,
-                                           VRO_FLOAT directionY,
-                                           VRO_FLOAT directionZ,
-                                           VRO_FLOAT innerAngle,
-                                           VRO_FLOAT outerAngle) {
+VRO_METHOD(VRO_REF(VROLight), nativeCreateSpotLight)(VRO_ARGS
+                                                     VRO_LONG color,
+                                                     VRO_FLOAT intensity,
+                                                     VRO_FLOAT attenuationStartDistance,
+                                                     VRO_FLOAT attenuationEndDistance,
+                                                     VRO_FLOAT positionX,
+                                                     VRO_FLOAT positionY,
+                                                     VRO_FLOAT positionZ,
+                                                     VRO_FLOAT directionX,
+                                                     VRO_FLOAT directionY,
+                                                     VRO_FLOAT directionZ,
+                                                     VRO_FLOAT innerAngle,
+                                                     VRO_FLOAT outerAngle) {
 
     std::shared_ptr<VROLight> spotLight = std::make_shared<VROLight>(VROLightType::Spot);
 
@@ -75,7 +75,7 @@ VRO_METHOD(VRO_REF, nativeCreateSpotLight)(VRO_ARGS
 // Setters
 
 VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
-                                                    VRO_REF native_light_ref,
+                                                    VRO_REF(VROLight) native_light_ref,
                                                     VRO_FLOAT attenuationStartDistance) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationStartDistance] {
@@ -88,7 +88,7 @@ VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
-                                                  VRO_REF native_light_ref,
+                                                  VRO_REF(VROLight) native_light_ref,
                                                   VRO_FLOAT attenuationEndDistance) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationEndDistance] {
@@ -101,7 +101,7 @@ VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
-                                    VRO_REF native_light_ref,
+                                    VRO_REF(VROLight) native_light_ref,
                                     VRO_FLOAT positionX,
                                     VRO_FLOAT positionY,
                                     VRO_FLOAT positionZ) {
@@ -117,7 +117,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
-                                     VRO_REF native_light_ref,
+                                     VRO_REF(VROLight) native_light_ref,
                                      VRO_FLOAT directionX,
                                      VRO_FLOAT directionY,
                                      VRO_FLOAT directionZ) {
@@ -133,7 +133,7 @@ VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetInnerAngle)(VRO_ARGS
-                                      VRO_REF native_light_ref,
+                                      VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT innerAngleRadians) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, innerAngleRadians] {
@@ -146,7 +146,7 @@ VRO_METHOD(void, nativeSetInnerAngle)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetOuterAngle)(VRO_ARGS
-                                      VRO_REF native_light_ref,
+                                      VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT outerAngleRadians) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, outerAngleRadians] {
@@ -159,7 +159,7 @@ VRO_METHOD(void, nativeSetOuterAngle)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
-                                       VRO_REF native_light_ref,
+                                       VRO_REF(VROLight) native_light_ref,
                                        VRO_BOOL castsShadow) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, castsShadow] {
@@ -172,8 +172,8 @@ VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
-                                        VRO_REF native_light_ref,
-                                        VRO_FLOAT shadowOpacity) {
+                                         VRO_REF(VROLight) native_light_ref,
+                                         VRO_FLOAT shadowOpacity) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, shadowOpacity] {
@@ -186,7 +186,7 @@ VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
-                                         VRO_REF native_light_ref,
+                                         VRO_REF(VROLight) native_light_ref,
                                          VRO_INT size) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
@@ -200,7 +200,7 @@ VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
-                                      VRO_REF native_light_ref,
+                                      VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT bias) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
@@ -211,7 +211,7 @@ VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
-                                       VRO_REF native_light_ref,
+                                       VRO_REF(VROLight) native_light_ref,
                                        VRO_FLOAT shadowNearZ) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
@@ -222,7 +222,7 @@ VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowFarZ)(VRO_ARGS
-                                      VRO_REF native_light_ref,
+                                      VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT shadowFarZ) {
 
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);

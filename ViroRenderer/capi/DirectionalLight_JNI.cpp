@@ -20,12 +20,12 @@
 #endif
 
 namespace DirectionalLight {
-    inline VRO_REF jptr(std::shared_ptr<VROLight> shared_node) {
+    inline VRO_REF(VROLight) jptr(std::shared_ptr<VROLight> shared_node) {
         PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
         return reinterpret_cast<intptr_t>(native_light);
     }
 
-    inline std::shared_ptr<VROLight> native(VRO_REF ptr) {
+    inline std::shared_ptr<VROLight> native(VRO_REF(VROLight) ptr) {
         PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
         return persistentBox->get();
     }
@@ -33,12 +33,12 @@ namespace DirectionalLight {
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateDirectionalLight)(VRO_ARGS
-                                                  VRO_LONG color,
-                                                  VRO_FLOAT intensity,
-                                                  VRO_FLOAT directionX,
-                                                  VRO_FLOAT directionY,
-                                                  VRO_FLOAT directionZ) {
+VRO_METHOD(VRO_REF(VROLight), nativeCreateDirectionalLight)(VRO_ARGS
+                                                            VRO_LONG color,
+                                                            VRO_FLOAT intensity,
+                                                            VRO_FLOAT directionX,
+                                                            VRO_FLOAT directionY,
+                                                            VRO_FLOAT directionZ) {
 
     std::shared_ptr<VROLight> directionalLight = std::make_shared<VROLight>(VROLightType::Directional);
 
@@ -60,7 +60,7 @@ VRO_METHOD(VRO_REF, nativeCreateDirectionalLight)(VRO_ARGS
 // Setters
 
 VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
-                                     VRO_REF native_light_ref,
+                                     VRO_REF(VROLight) native_light_ref,
                                      VRO_FLOAT directionX,
                                      VRO_FLOAT directionY,
                                      VRO_FLOAT directionZ) {
@@ -78,7 +78,7 @@ VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
-                                       VRO_REF native_light_ref,
+                                       VRO_REF(VROLight) native_light_ref,
                                        VRO_BOOL castsShadow) {
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, castsShadow] {
@@ -91,7 +91,7 @@ VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowOrthographicSize)(VRO_ARGS
-                                                  VRO_REF native_light_ref,
+                                                  VRO_REF(VROLight) native_light_ref,
                                                   VRO_FLOAT size) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
@@ -105,7 +105,7 @@ VRO_METHOD(void, nativeSetShadowOrthographicSize)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowOrthographicPosition)(VRO_ARGS
-                                                      VRO_REF native_light_ref,
+                                                      VRO_REF(VROLight) native_light_ref,
                                                       VRO_FLOAT posX,
                                                       VRO_FLOAT posY,
                                                       VRO_FLOAT posZ) {
@@ -122,7 +122,7 @@ VRO_METHOD(void, nativeSetShadowOrthographicPosition)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
-                                         VRO_REF native_light_ref,
+                                         VRO_REF(VROLight) native_light_ref,
                                          VRO_INT size) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
@@ -137,7 +137,7 @@ VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
-                                         VRO_REF native_light_ref,
+                                         VRO_REF(VROLight) native_light_ref,
                                          float opacity) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
@@ -152,7 +152,7 @@ VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
-                                      VRO_REF native_light_ref,
+                                      VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT bias) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
@@ -168,7 +168,7 @@ VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
-                                       VRO_REF native_light_ref,
+                                       VRO_REF(VROLight) native_light_ref,
                                        VRO_FLOAT shadowNearZ) {
 
     std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
@@ -183,7 +183,7 @@ VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetShadowFarZ)(VRO_ARGS
-                                      VRO_REF native_light_ref,
+                                      VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT shadowFarZ) {
 
 

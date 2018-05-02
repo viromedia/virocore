@@ -30,21 +30,21 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateSceneController)(VRO_ARGS
-                                                 VRO_REF root_node_ref) {
+VRO_METHOD(VRO_REF(VROSceneController), nativeCreateSceneController)(VRO_ARGS
+                                                                     VRO_REF(VRONode) root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     return SceneController::jptr(sceneController);
 }
 
-VRO_METHOD(VRO_REF, nativeGetSceneNodeRef)(VRO_ARGS
-                                           VRO_REF root_node_ref) {
-    std::shared_ptr<VROSceneController> sceneController = SceneController::native(root_node_ref);
+VRO_METHOD(VRO_REF(VRONode), nativeGetSceneNodeRef)(VRO_ARGS
+                                                    VRO_REF(VROSceneController) scene_j) {
+    std::shared_ptr<VROSceneController> sceneController = SceneController::native(scene_j);
     std::shared_ptr<VRONode> node = std::static_pointer_cast<VRONode>(sceneController->getScene()->getRootNode());
     return Node::jptr(node);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateSceneControllerDelegate)(VRO_ARGS
-                                                         VRO_REF native_object_ref) {
+VRO_METHOD(VRO_REF(SceneControllerDelegate), nativeCreateSceneControllerDelegate)(VRO_ARGS
+                                                                                  VRO_REF(VROSceneController) native_object_ref) {
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<SceneControllerDelegate> delegate = std::make_shared<SceneControllerDelegate>(obj, env);
@@ -53,18 +53,18 @@ VRO_METHOD(VRO_REF, nativeCreateSceneControllerDelegate)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeDestroySceneController)(VRO_ARGS
-                                               VRO_REF native_object_ref) {
+                                               VRO_REF(VROSceneController) native_object_ref) {
     delete reinterpret_cast<PersistentRef<VROSceneController> *>(native_object_ref);
 }
 
 VRO_METHOD(void, nativeDestroySceneControllerDelegate)(VRO_ARGS
-                                                       VRO_REF native_delegate_object_ref) {
+                                                       VRO_REF(SceneControllerDelegate) native_delegate_object_ref) {
     delete reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(native_delegate_object_ref);
 }
 
 VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
-                                             VRO_REF scene_j,
-                                             VRO_REF texture_j) {
+                                             VRO_REF(VROSceneController) scene_j,
+                                             VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
     std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
 
@@ -79,7 +79,7 @@ VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
-                                              VRO_REF sceneRef,
+                                              VRO_REF(VROSceneController) sceneRef,
                                               VRO_FLOAT rotationRadiansX,
                                               VRO_FLOAT rotationRadiansY,
                                               VRO_FLOAT rotationRadiansZ) {
@@ -96,8 +96,8 @@ VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
-                                                      VRO_REF sceneRef,
-                                                      VRO_REF textureRef) {
+                                                      VRO_REF(VROSceneController) sceneRef,
+                                                      VRO_REF(VROTexture) textureRef) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     std::weak_ptr<VROTexture> texture_w = Texture::native(textureRef);
 
@@ -111,7 +111,7 @@ VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
-                                                   VRO_REF sceneRef,
+                                                   VRO_REF(VROSceneController) sceneRef,
                                                    VRO_LONG color) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, color] {
@@ -131,10 +131,10 @@ VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
-                                               VRO_REF scene_j,
-                                               VRO_REF texture_j) {
+                                               VRO_REF(VROSceneController) scene_j,
+                                               VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
-    long texture_ref = texture_j;
+    VRO_REF(VROTexture) texture_ref = texture_j;
     VROPlatformDispatchAsyncRenderer([scene_w, texture_ref] {
         std::shared_ptr<VROSceneController> scene = scene_w.lock();
         if (!scene){
@@ -150,7 +150,8 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
-                                     VRO_REF sceneRef, VRO_REF context_j,
+                                     VRO_REF(VROSceneController) sceneRef,
+                                     VRO_REF(ViroContext) context_j,
                                      VRO_FLOAT sizeX, VRO_FLOAT sizeY, VRO_FLOAT sizeZ, VRO_STRING wallMaterial,
                                      VRO_STRING ceilingMaterial, VRO_STRING floorMaterial) {
     VRO_METHOD_PREAMBLE;
@@ -178,7 +179,7 @@ VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
 }
 
 VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
-                                   VRO_REF sceneRef,
+                                   VRO_REF(VROSceneController) sceneRef,
                                    VRO_STRING_ARRAY jEffects) {
     VRO_METHOD_PREAMBLE;
 
@@ -204,7 +205,7 @@ VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
 
 
 VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
-                                               VRO_REF sceneRef,
+                                               VRO_REF(VROSceneController) sceneRef,
                                                VRO_FLOAT_ARRAY gravityArray) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VRO_FLOAT *gravityArrayf = VRO_FLOAT_ARRAY_GET_ELEMENTS(gravityArray);
@@ -219,7 +220,7 @@ VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetPhysicsWorldDebugDraw)(VRO_ARGS
-                                                 VRO_REF sceneRef,
+                                                 VRO_REF(VROSceneController) sceneRef,
                                                  VRO_BOOL debugDraw) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, debugDraw] {
@@ -231,7 +232,7 @@ VRO_METHOD(void, nativeSetPhysicsWorldDebugDraw)(VRO_ARGS
 }
 
 VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
-                                             VRO_REF sceneRef,
+                                             VRO_REF(VROSceneController) sceneRef,
                                              VRO_FLOAT_ARRAY fromPos,
                                              VRO_FLOAT_ARRAY toPos,
                                              VRO_BOOL closest,
@@ -289,7 +290,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
 }
 
 VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
-                                               VRO_REF sceneRef,
+                                               VRO_REF(VROSceneController) sceneRef,
                                                VRO_FLOAT_ARRAY posStart,
                                                VRO_FLOAT_ARRAY posEnd,
                                                VRO_STRING shapeType,
