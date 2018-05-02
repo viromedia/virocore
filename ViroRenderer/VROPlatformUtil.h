@@ -223,7 +223,7 @@ int VROPlatformGetAudioBufferSize();
 
 extern "C" {
 
-void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, VRO_INT taskId);
+void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId);
 
 }
 
