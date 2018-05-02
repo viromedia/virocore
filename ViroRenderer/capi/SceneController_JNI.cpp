@@ -33,14 +33,14 @@ extern "C" {
 VRO_METHOD(VRO_REF(VROSceneController), nativeCreateSceneController)(VRO_ARGS
                                                                      VRO_REF(VRONode) root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
-    return SceneController::jptr(sceneController);
+    return VRO_REF_NEW(VROSceneController, sceneController);
 }
 
 VRO_METHOD(VRO_REF(VRONode), nativeGetSceneNodeRef)(VRO_ARGS
                                                     VRO_REF(VROSceneController) scene_j) {
-    std::shared_ptr<VROSceneController> sceneController = SceneController::native(scene_j);
+    std::shared_ptr<VROSceneController> sceneController = VRO_REF_GET(VROSceneController, scene_j);
     std::shared_ptr<VRONode> node = std::static_pointer_cast<VRONode>(sceneController->getScene()->getRootNode());
-    return Node::jptr(node);
+    return VRO_REF_NEW(VRONode, node);
 }
 
 VRO_METHOD(VRO_REF(SceneControllerDelegate), nativeCreateSceneControllerDelegate)(VRO_ARGS
@@ -48,8 +48,8 @@ VRO_METHOD(VRO_REF(SceneControllerDelegate), nativeCreateSceneControllerDelegate
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<SceneControllerDelegate> delegate = std::make_shared<SceneControllerDelegate>(obj, env);
-    SceneController::native(native_object_ref)->setDelegate(delegate);
-    return SceneControllerDelegate::jptr(delegate);
+    VRO_REF_GET(VROSceneController, native_object_ref)->setDelegate(delegate);
+    return VRO_REF_NEW(SceneControllerDelegate, delegate);
 }
 
 VRO_METHOD(void, nativeDestroySceneController)(VRO_ARGS
@@ -65,8 +65,8 @@ VRO_METHOD(void, nativeDestroySceneControllerDelegate)(VRO_ARGS
 VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS
                                              VRO_REF(VROSceneController) scene_j,
                                              VRO_REF(VROTexture) texture_j) {
-    std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
-    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
+    std::weak_ptr<VROSceneController> scene_w = VRO_REF_GET(VROSceneController, scene_j);
+    std::weak_ptr<VROTexture> texture_w = VRO_REF_GET(VROTexture, texture_j);
 
     VROPlatformDispatchAsyncRenderer([scene_w, texture_w] {
         std::shared_ptr<VROSceneController> scene = scene_w.lock();
@@ -83,7 +83,7 @@ VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
                                               VRO_FLOAT rotationRadiansX,
                                               VRO_FLOAT rotationRadiansY,
                                               VRO_FLOAT rotationRadiansZ) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -98,8 +98,8 @@ VRO_METHOD(void, nativeSetBackgroundRotation)(VRO_ARGS
 VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
                                                       VRO_REF(VROSceneController) sceneRef,
                                                       VRO_REF(VROTexture) textureRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
-    std::weak_ptr<VROTexture> texture_w = Texture::native(textureRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
+    std::weak_ptr<VROTexture> texture_w = VRO_REF_GET(VROTexture, textureRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, texture_w] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -113,7 +113,7 @@ VRO_METHOD(void, nativeSetBackgroundCubeImageTexture)(VRO_ARGS
 VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
                                                    VRO_REF(VROSceneController) sceneRef,
                                                    VRO_LONG color) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, color] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         if (!sceneController) {
@@ -133,7 +133,7 @@ VRO_METHOD(void, nativeSetBackgroundCubeWithColor)(VRO_ARGS
 VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
                                                VRO_REF(VROSceneController) scene_j,
                                                VRO_REF(VROTexture) texture_j) {
-    std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
+    std::weak_ptr<VROSceneController> scene_w = VRO_REF_GET(VROSceneController, scene_j);
     VRO_REF(VROTexture) texture_ref = texture_j;
     VROPlatformDispatchAsyncRenderer([scene_w, texture_ref] {
         std::shared_ptr<VROSceneController> scene = scene_w.lock();
@@ -142,7 +142,7 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
         }
 
         if (texture_ref != 0){
-            scene->getScene()->getRootNode()->setLightingEnvironment(Texture::native(texture_ref));
+            scene->getScene()->getRootNode()->setLightingEnvironment(VRO_REF_GET(VROTexture, texture_ref));
         } else {
             scene->getScene()->getRootNode()->setLightingEnvironment(nullptr);
         }
@@ -159,7 +159,7 @@ VRO_METHOD(void, nativeSetSoundRoom)(VRO_ARGS
     std::string strCeilingMaterial = VRO_STRING_STL(ceilingMaterial);
     std::string strFloorMaterial = VRO_STRING_STL(floorMaterial);
 
-    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
+    std::weak_ptr<ViroContext> context_w = VRO_REF_GET(ViroContext, context_j);
 
     VROPlatformDispatchAsyncRenderer([context_w,
                                              sizeX, sizeY, sizeZ,
@@ -194,7 +194,7 @@ VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
         }
     }
     
-    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
+    std::shared_ptr<VROSceneController> sceneController = VRO_REF_GET(VROSceneController, sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController, effects] {
         if (sceneController->getScene()){
             sceneController->getScene()->setPostProcessingEffects(effects);
@@ -207,7 +207,7 @@ VRO_METHOD(bool, nativeSetEffects)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
                                                VRO_REF(VROSceneController) sceneRef,
                                                VRO_FLOAT_ARRAY gravityArray) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
     VRO_FLOAT *gravityArrayf = VRO_FLOAT_ARRAY_GET_ELEMENTS(gravityArray);
     VROVector3f gravity = VROVector3f(gravityArrayf[0], gravityArrayf[1], gravityArrayf[2]);
 
@@ -222,7 +222,7 @@ VRO_METHOD(void, nativeSetPhysicsWorldGravity)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsWorldDebugDraw)(VRO_ARGS
                                                  VRO_REF(VROSceneController) sceneRef,
                                                  VRO_BOOL debugDraw) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, debugDraw] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         if (sceneController) {
@@ -259,7 +259,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
     }
 
     VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
 
     // Perform the collision ray test asynchronously.
     VROPlatformDispatchAsyncRenderer([sceneController_w, weakCallback, from, to, closest, strTag] {
@@ -330,7 +330,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
     }
 
     VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, sceneRef);
 
     // Perform the collision shape test asynchronously.
     VROPlatformDispatchAsyncRenderer([sceneController_w, weakCallback, from, to, strShapeType, params, strTag] {

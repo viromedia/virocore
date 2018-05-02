@@ -6,6 +6,7 @@
 #define ANDROID_VROANDROIDCAPI_H
 
 #include <jni.h>
+#include "PersistentRef.h"
 
 #define VRO_ENV JNIEnv*
 #define VRO_ARGS JNIEnv *env, jobject obj,

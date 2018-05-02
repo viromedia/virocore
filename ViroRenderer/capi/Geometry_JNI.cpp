@@ -28,7 +28,7 @@ VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
         materials.push_back(VRO_REF_GET(VROMaterial, materials_c[i]));
     }
 
-    std::weak_ptr<VROGeometry> geo_w = Geometry::native(geo_j);
+    std::weak_ptr<VROGeometry> geo_w = VRO_REF_GET(VROGeometry, geo_j);
     VROPlatformDispatchAsyncRenderer([geo_w, materials] {
         std::shared_ptr<VROGeometry> geo = geo_w.lock();
         if (geo) {
@@ -52,7 +52,7 @@ VRO_METHOD(void, nativeCopyAndSetMaterials)(VRO_ARGS
         tempMaterials.push_back(std::make_shared<VROMaterial>(VRO_REF_GET(VROMaterial, longArray[i])));
     }
 
-    std::weak_ptr<VROGeometry> geo_w = Geometry::native(nativeGeoRef);
+    std::weak_ptr<VROGeometry> geo_w = VRO_REF_GET(VROGeometry, nativeGeoRef);
     VROPlatformDispatchAsyncRenderer([geo_w, tempMaterials] {
         std::shared_ptr<VROGeometry> geo = geo_w.lock();
 

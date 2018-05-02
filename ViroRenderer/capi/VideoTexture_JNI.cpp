@@ -36,7 +36,7 @@ VRO_METHOD(VRO_REF(VROVideoTexture), nativeCreateVideoTexture)(VRO_ARGS
                                                                VRO_STRING stereoMode) {
     VRO_METHOD_PREAMBLE;
     VROStereoMode mode = VROTextureUtil::getStereoModeForString(VRO_STRING_STL(stereoMode));
-    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
+    std::weak_ptr<ViroContext> context_w = VRO_REF_GET(ViroContext, context_j);
 
     std::shared_ptr<VROVideoTexture> videoTexture;
 #if VRO_PLATFORM_ANDROID
@@ -55,21 +55,21 @@ VRO_METHOD(VRO_REF(VROVideoTexture), nativeCreateVideoTexture)(VRO_ARGS
     //TODO wasm
 #endif
 
-    return VideoTexture::jptr(videoTexture);
+    return VRO_REF_NEW(VROVideoTexture, videoTexture);
 }
 
 VRO_METHOD(VRO_REF(VideoDelegate), nativeCreateVideoDelegate)(VRO_NO_ARGS) {
 
     std::shared_ptr<VideoDelegate> delegate = std::make_shared<VideoDelegate>(obj);
-    return VideoDelegate::jptr(delegate);
+    return VRO_REF_NEW(VideoDelegate, delegate);
 }
 
 VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
                                        VRO_REF(VROVideoTexture) textureRef,
                                        VRO_REF(VideoDelegate) delegateRef) {
 
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
-    std::weak_ptr<VideoDelegate> videoDelegate_w = VideoDelegate::native(delegateRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
+    std::weak_ptr<VideoDelegate> videoDelegate_w = VRO_REF_GET(VideoDelegate, delegateRef);
 
     VROPlatformDispatchAsyncRenderer([videoTexture_w, videoDelegate_w] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
@@ -98,7 +98,7 @@ VRO_METHOD(void, nativeDeleteVideoDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativePause)(VRO_ARGS
                               VRO_REF(VROVideoTexture) textureRef) {
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
@@ -111,7 +111,7 @@ VRO_METHOD(void, nativePause)(VRO_ARGS
 VRO_METHOD(void, nativePlay)(VRO_ARGS
                              VRO_REF(VROVideoTexture) textureRef) {
 
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
@@ -125,7 +125,7 @@ VRO_METHOD(void, nativeSetMuted)(VRO_ARGS
                                  VRO_REF(VROVideoTexture) textureRef,
                                  VRO_BOOL muted) {
 
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, muted] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
@@ -139,7 +139,7 @@ VRO_METHOD(void, nativeSetVolume)(VRO_ARGS
                                   VRO_REF(VROVideoTexture) textureRef,
                                   VRO_FLOAT volume) {
 
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, volume] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
@@ -153,7 +153,7 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                 VRO_REF(VROVideoTexture) textureRef,
                                 VRO_BOOL loop) {
 
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, loop] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
@@ -167,7 +167,7 @@ VRO_METHOD(void, nativeSeekToTime)(VRO_ARGS
                                    VRO_REF(VROVideoTexture) textureRef,
                                    VRO_FLOAT seconds) {
 
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, seconds] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
@@ -185,8 +185,8 @@ VRO_METHOD(void, nativeLoadSource)(VRO_ARGS
 
     // Grab required objects from the RenderContext required for initialization
     std::string strVideoSource = VRO_STRING_STL(source);
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
-    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
+    std::weak_ptr<ViroContext> context_w = VRO_REF_GET(ViroContext, context_j);
 
     VROPlatformDispatchAsyncRenderer([videoTexture_w, context_w, strVideoSource] {
         std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();

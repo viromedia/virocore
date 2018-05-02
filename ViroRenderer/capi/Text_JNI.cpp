@@ -129,7 +129,7 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
     VROTextClipMode clipMode = getTextClipModeEnum(VRO_STRING_STL(clipMode_j));
 
     std::string fontFamily = VRO_STRING_STL(fontFamily_j);
-    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
 
     std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, fontFamily, size,
@@ -146,7 +146,7 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
         vroText->update();
     });
 
-    return Text::jptr(vroText);
+    return VRO_REF_NEW(VROText, vroText);
 }
 
 VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
@@ -161,7 +161,7 @@ VRO_METHOD(void, nativeSetText)(VRO_ARGS
     std::wstring text_string;
     VRO_STRING_GET_CHARS_WIDE(text_string_j, text_string);
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, text_string] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -179,9 +179,9 @@ VRO_METHOD(void, nativeSetFont)(VRO_ARGS
                                 VRO_INT style,
                                 VRO_INT weight) {
     std::string family = VRO_STRING_STL(family_j);
-    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, family, size, style, weight] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -202,7 +202,7 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
     float b = (color_j & 0xFF) / 255.0;
     VROVector4f color(r, g, b, a);
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, color] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -216,7 +216,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF(VROText) text_j,
                                  VRO_FLOAT width) {
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, width] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -230,7 +230,7 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
                                   VRO_REF(VROText) text_j,
                                   VRO_FLOAT height) {
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, height] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -246,7 +246,7 @@ VRO_METHOD(void, nativeSetHorizontalAlignment)(VRO_ARGS
     VROTextHorizontalAlignment horizontalAlignment
             = getHorizontalAlignmentEnum(VRO_STRING_STL(horizontalAlignment_j));
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, horizontalAlignment] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -262,7 +262,7 @@ VRO_METHOD(void, nativeSetVerticalAlignment)(VRO_ARGS
     VROTextVerticalAlignment verticalAlignment
             = getVerticalAlignmentEnum(VRO_STRING_STL(verticalAlignment_j));
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, verticalAlignment] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -277,7 +277,7 @@ VRO_METHOD(void, nativeSetLineBreakMode)(VRO_ARGS
                                          VRO_STRING lineBreakMode_j) {
     VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VRO_STRING_STL(lineBreakMode_j));
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, lineBreakMode] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -294,7 +294,7 @@ VRO_METHOD(void, nativeSetClipMode)(VRO_ARGS
     // Get clip mode
     VROTextClipMode clipMode = getTextClipModeEnum(VRO_STRING_STL(clipMode_j));
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, clipMode] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {
@@ -308,7 +308,7 @@ VRO_METHOD(void, nativeSetMaxLines)(VRO_ARGS
                                     VRO_REF(VROText) text_j,
                                     VRO_INT maxLines) {
 
-    std::weak_ptr<VROText> text_w = Text::native(text_j);
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
     VROPlatformDispatchAsyncRenderer([text_w, maxLines] {
         std::shared_ptr<VROText> text = text_w.lock();
         if (!text) {

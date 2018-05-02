@@ -36,7 +36,7 @@ VRO_METHOD(VRO_REF(VROImage), nativeCreateImage)(VRO_ARGS
     //TODO wasm
 #endif
 
-    return Image::jptr(imagePtr);
+    return VRO_REF_NEW(VROImage, imagePtr);
 }
 
 VRO_METHOD(VRO_REF(VROImage), nativeCreateImageFromBitmap)(VRO_ARGS
@@ -53,17 +53,17 @@ VRO_METHOD(VRO_REF(VROImage), nativeCreateImageFromBitmap)(VRO_ARGS
     //TODO wasm
 #endif
 
-    return Image::jptr(imagePtr);
+    return VRO_REF_NEW(VROImage, imagePtr);
 }
 
 VRO_METHOD(VRO_INT, nativeGetWidth)(VRO_ARGS
                                     VRO_REF(VROImage) nativeRef) {
-    return Image::native(nativeRef).get()->getWidth();
+    return VRO_REF_GET(VROImage, nativeRef).get()->getWidth();
 }
 
 VRO_METHOD(VRO_INT, nativeGetHeight)(VRO_ARGS
                                      VRO_REF(VROImage) nativeRef) {
-    return Image::native(nativeRef).get()->getHeight();
+    return VRO_REF_GET(VROImage, nativeRef).get()->getHeight();
 }
 
 VRO_METHOD(void, nativeDestroyImage)(VRO_ARGS

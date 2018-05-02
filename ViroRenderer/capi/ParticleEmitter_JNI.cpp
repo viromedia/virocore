@@ -24,7 +24,7 @@ extern "C" {
 VRO_METHOD(VRO_REF(VROParticleEmitter), nativeCreateEmitter)(VRO_ARGS
                                                              VRO_REF(ViroContext) context_j,
                                                              VRO_REF(VROSurface) native_surface_ref) {
-    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     std::shared_ptr<VROSurface> surface = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>();
 
@@ -32,7 +32,7 @@ VRO_METHOD(VRO_REF(VROParticleEmitter), nativeCreateEmitter)(VRO_ARGS
         particleEmitter->initEmitter(context->getDriver(), surface);
     });
 
-    return ParticleEmitter::jptr(particleEmitter);
+    return VRO_REF_NEW(VROParticleEmitter, particleEmitter);
 }
 
 VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
@@ -43,7 +43,7 @@ VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
 VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
                                  VRO_REF(VROParticleEmitter) native_ref,
                                  VRO_FLOAT delay) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, delay] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -55,7 +55,7 @@ VRO_METHOD(void, nativeSetDelay)(VRO_ARGS
 VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
                                     VRO_REF(VROParticleEmitter) native_ref,
                                     VRO_FLOAT value) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -67,7 +67,7 @@ VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
 VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
                                 VRO_REF(VROParticleEmitter) native_ref,
                                 VRO_BOOL value) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -79,7 +79,7 @@ VRO_METHOD(void, nativeSetLoop)(VRO_ARGS
 VRO_METHOD(void, nativeSetRun)(VRO_ARGS
                                VRO_REF(VROParticleEmitter) native_ref,
                                VRO_BOOL value) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -91,7 +91,7 @@ VRO_METHOD(void, nativeSetRun)(VRO_ARGS
 VRO_METHOD(void, nativeSetFixedToEmitter)(VRO_ARGS
                                           VRO_REF(VROParticleEmitter) native_ref,
                                           VRO_BOOL value) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -102,7 +102,7 @@ VRO_METHOD(void, nativeSetFixedToEmitter)(VRO_ARGS
 
 VRO_METHOD(void, nativeResetEmissionCycle)(VRO_ARGS
                                            VRO_REF(VROParticleEmitter) native_ref) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -115,7 +115,7 @@ VRO_METHOD(void, nativeResetEmissionCycle)(VRO_ARGS
 VRO_METHOD(void, nativeSetEmissionRatePerSecond)(VRO_ARGS
                                                  VRO_REF(VROParticleEmitter) native_ref,
                                                  VRO_INT value1, VRO_INT value2) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -127,7 +127,7 @@ VRO_METHOD(void, nativeSetEmissionRatePerSecond)(VRO_ARGS
 VRO_METHOD(void, nativeSetEmissionRatePerMeter)(VRO_ARGS
                                                 VRO_REF(VROParticleEmitter) native_ref,
                                                 VRO_INT value1, VRO_INT value2) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -139,7 +139,7 @@ VRO_METHOD(void, nativeSetEmissionRatePerMeter)(VRO_ARGS
 VRO_METHOD(void, nativeSetParticleLifetime)(VRO_ARGS
                                             VRO_REF(VROParticleEmitter) native_ref,
                                             VRO_INT value1, VRO_INT value2) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1, value2] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -151,7 +151,7 @@ VRO_METHOD(void, nativeSetParticleLifetime)(VRO_ARGS
 VRO_METHOD(void, nativeSetMaxParticles)(VRO_ARGS
                                         VRO_REF(VROParticleEmitter) native_ref,
                                         VRO_INT value1) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, value1] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -188,7 +188,7 @@ VRO_METHOD(void, nativeSetSpawnVolume)(VRO_ARGS
     spawnVolume.shapeParams = params;
     spawnVolume.spawnOnSurface = jSpawnOnSurface;
 
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, spawnVolume] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -213,7 +213,7 @@ VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
     VROVector3f vecPos = VROVector3f(position[0], position[1], position[2]);
 
     // Apply the explosive impulse on the emitter.
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, vecPos, jImpulse, jDeccelPeriod] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -256,7 +256,7 @@ VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
         }
     }
 
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, particleBursts] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {
@@ -281,7 +281,7 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
     std::string strModifier = VRO_STRING_STL(jModifier);
 
     // Apply the modifier on the targeted property, like opacity.
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, mod, strModifier] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (!emitter) {
@@ -317,7 +317,7 @@ VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
     }
 
     // Apply the modifier on the targeted property, like opacity.
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, mode] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (!emitter) {
@@ -332,7 +332,7 @@ VRO_METHOD(bool, nativeSetParticleBlendMode)(VRO_ARGS
 VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
                                           VRO_REF(VROParticleEmitter) native_ref,
                                           VRO_FLOAT threshold) {
-    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    std::weak_ptr<VROParticleEmitter> native_w = VRO_REF_GET(VROParticleEmitter, native_ref);
     VROPlatformDispatchAsyncRenderer([native_w, threshold] {
         std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
         if (emitter) {

@@ -59,7 +59,7 @@ VRO_METHOD(VRO_REF(VROLight), nativeCreateOmniLight)(VRO_ARGS
     VROVector3f vecPosition(positionX, positionY, positionZ);
     omniLight->setPosition(vecPosition);
 
-    return OmniLight::jptr(omniLight);
+    return VRO_REF_NEW(VROLight, omniLight);
 }
 
 // Setters
@@ -67,7 +67,7 @@ VRO_METHOD(VRO_REF(VROLight), nativeCreateOmniLight)(VRO_ARGS
 VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
                                                     VRO_REF(VROLight) native_light_ref,
                                                     VRO_FLOAT attenuationStartDistance) {
-    std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationStartDistance] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -80,7 +80,7 @@ VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
 VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
                                                   VRO_REF(VROLight) native_light_ref,
                                                   VRO_FLOAT attenuationEndDistance) {
-    std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationEndDistance] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -95,7 +95,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_FLOAT positionX,
                                     VRO_FLOAT positionY,
                                     VRO_FLOAT positionZ) {
-    std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, positionX, positionY, positionZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {

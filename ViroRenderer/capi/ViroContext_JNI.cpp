@@ -31,11 +31,11 @@ VRO_METHOD(VRO_REF(ViroContext), nativeCreateViroContext)(VRO_ARGS
 
     std::shared_ptr<ViroContext> context;
 #if VRO_PLATFORM_ANDROID
-    context = std::make_shared<ViroContextAndroid>(Renderer::native(renderer_j));
+    context = std::make_shared<ViroContextAndroid>(VRO_REF_GET(VROSceneRenderer, renderer_j));
 #else
     // TODO wasm
 #endif
-    return ViroContext::jptr(context);
+    return VRO_REF_NEW(ViroContext, context);
 }
 
 VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
@@ -47,7 +47,7 @@ VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
                                              VRO_REF(ViroContext) context_j,
                                              VRO_OBJECT callback) {
     VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
-    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
+    std::weak_ptr<ViroContext> context_w = VRO_REF_GET(ViroContext, context_j);
 
     VROPlatformDispatchAsyncRenderer([context_w, weakCallback] {
         VRO_ENV env = VROPlatformGetJNIEnv();

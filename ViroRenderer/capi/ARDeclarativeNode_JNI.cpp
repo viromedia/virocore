@@ -17,7 +17,7 @@ VRO_METHOD(void, nativeSetAnchorId) (VRO_ARGS
                                      VRO_REF(VROARDeclarativeNode) node_j,
                                      VRO_STRING id_j) {
     std::string id_s = VRO_STRING_STL(id_j);
-    std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
+    std::shared_ptr<VROARDeclarativeNode> node = VRO_REF_GET(VROARDeclarativeNode, node_j);
     node->setAnchorId(id_s);
 }
 
@@ -26,9 +26,9 @@ VRO_METHOD(VRO_REF(ARDeclarativeNodeDelegate), nativeCreateARNodeDelegate) (VRO_
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<ARDeclarativeNodeDelegate> delegate = std::make_shared<ARDeclarativeNodeDelegate>(obj, env);
-    std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
+    std::shared_ptr<VROARDeclarativeNode> node = VRO_REF_GET(VROARDeclarativeNode, node_j);
     node->setARNodeDelegate(delegate);
-    return ARDeclarativeNodeDelegate::jptr(delegate);
+    return VRO_REF_NEW(ARDeclarativeNodeDelegate, delegate);
 }
 
 VRO_METHOD(void, nativeDestroyARNodeDelegate) (VRO_ARGS

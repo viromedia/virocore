@@ -49,7 +49,7 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
     }
 
     // Create a VROPhysicsBody within VRONode.
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, bodyType, mass, propPhysicsShape] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -60,7 +60,7 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
 
 VRO_METHOD(void, nativeClearPhysicsBody)(VRO_ARGS
                                          VRO_REF(VRONode) nativeRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -73,7 +73,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
                                         VRO_REF(VRONode) nativeRef,
                                         VRO_STRING shapeTypeStr,
                                         VRO_FLOAT_ARRAY shapeParams) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
 
     // Build a VROPhysicsShape if possible
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
@@ -108,7 +108,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsMass)(VRO_ARGS
                                        VRO_REF(VRONode) nativeRef,
                                        VRO_FLOAT mass) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, mass] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -121,7 +121,7 @@ VRO_METHOD(void, nativeSetPhysicsMass)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
                                           VRO_REF(VRONode) nativeRef,
                                           VRO_FLOAT_ARRAY inertiaArray) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VRO_FLOAT *inertia = VRO_FLOAT_ARRAY_GET_ELEMENTS(inertiaArray);
     VROVector3f vectorInertia = VROVector3f(inertia[0], inertia[1], inertia[2]);
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(inertiaArray, inertia);
@@ -137,7 +137,7 @@ VRO_METHOD(void, nativeSetPhysicsInertia)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsFriction)(VRO_ARGS
                                            VRO_REF(VRONode) nativeRef,
                                            VRO_FLOAT friction) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, friction] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -150,7 +150,7 @@ VRO_METHOD(void, nativeSetPhysicsRestitution)(VRO_ARGS
                                               VRO_REF(VRONode) nativeRef,
                                               VRO_FLOAT restitution) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, restitution] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -162,7 +162,7 @@ VRO_METHOD(void, nativeSetPhysicsRestitution)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsUseGravity)(VRO_ARGS
                                              VRO_REF(VRONode) nativeRef,
                                              VRO_BOOL useGravity) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, useGravity] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -173,7 +173,7 @@ VRO_METHOD(void, nativeSetPhysicsUseGravity)(VRO_ARGS
 
 VRO_METHOD(void, nativeClearPhysicsForce)(VRO_ARGS
                                           VRO_REF(VRONode) nativeRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -196,7 +196,7 @@ VRO_METHOD(void, nativeApplyPhysicsForce)(VRO_ARGS
     VROVector3f vectorPosition = VROVector3f(position[0], position[1], position[2]);
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(positionArray, force);
 
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, vectorForce, vectorPosition] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -213,7 +213,7 @@ VRO_METHOD(void, nativeApplyPhysicsTorque)(VRO_ARGS
     VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(torqueArray, torque);
 
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, vectorTorque] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -237,7 +237,7 @@ VRO_METHOD(void, nativeApplyPhysicsImpulse)(VRO_ARGS
     VROVector3f vectorPos = VROVector3f(jPos[0], jPos[1], jPos[2]);
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(positionArray, jPos);
 
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, vectorForce, vectorPos] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -250,7 +250,7 @@ VRO_METHOD(void, nativeApplyPhysicsImpulse)(VRO_ARGS
 VRO_METHOD(void, nativeApplyPhysicsTorqueImpulse)(VRO_ARGS
                                                   VRO_REF(VRONode) nativeRef,
                                                   VRO_FLOAT_ARRAY torqueArray) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VRO_FLOAT *torque = VRO_FLOAT_ARRAY_GET_ELEMENTS(torqueArray);
     VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(torqueArray, torque);
@@ -306,7 +306,7 @@ VRO_METHOD(VRO_STRING, nativeIsValidShapeType)(VRO_ARGS
 
 VRO_METHOD(VRO_REF(PhysicsDelegate_JNI), nativeSetPhysicsDelegate)(VRO_ARGS
                                                                    VRO_REF(VRONode) nativeRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     std::shared_ptr<PhysicsDelegate_JNI> delegate = std::make_shared<PhysicsDelegate_JNI>(obj);
 
     VROPlatformDispatchAsyncRenderer([node_w, delegate] {
@@ -316,13 +316,13 @@ VRO_METHOD(VRO_REF(PhysicsDelegate_JNI), nativeSetPhysicsDelegate)(VRO_ARGS
         }
     });
 
-    return PhysicsDelegate_JNI::jptr(delegate);
+    return VRO_REF_NEW(PhysicsDelegate_JNI, delegate);
 }
 
 VRO_METHOD(void, nativeClearPhysicsDelegate)(VRO_ARGS
                                              VRO_REF(VRONode) nativeRef,
                                              VRO_REF(PhysicsDelegate_JNI) delegateRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -341,7 +341,7 @@ VRO_METHOD(void, nativeSetPhysicsVelocity)(VRO_ARGS
     VROVector3f velocity = VROVector3f(jVelocity[0], jVelocity[1], jVelocity[2]);
     VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(velocityArray, jVelocity);
 
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, velocity, isConstant] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
@@ -353,7 +353,7 @@ VRO_METHOD(void, nativeSetPhysicsVelocity)(VRO_ARGS
 VRO_METHOD(void, nativeSetPhysicsEnabled)(VRO_ARGS
                                           VRO_REF(VRONode) nativeRef,
                                           VRO_BOOL enabled) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w, enabled] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {

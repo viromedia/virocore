@@ -48,7 +48,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         // pass that up as well. This enables Java SDK users to set materials on the Geometry
         VRO_REF(VROGeometry) geometryRef = 0;
         if (!isFBX && node->getGeometry()) {
-            geometryRef = Geometry::jptr(node->getGeometry());
+            geometryRef = VRO_REF_NEW(VROGeometry, node->getGeometry());
         }
 
         // Generate a map of unique jMaterials representing this 3D model.

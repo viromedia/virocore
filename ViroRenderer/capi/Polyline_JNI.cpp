@@ -62,7 +62,7 @@ VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolylineEmpty)(VRO_ARGS
                                                             VRO_FLOAT width) {
     std::shared_ptr<VROPolyline> polyline = std::make_shared<VROPolyline>();
     polyline->setThickness(width);
-    return Polyline::jptr(polyline);
+    return VRO_REF_NEW(VROPolyline, polyline);
 }
 
 VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolyline)(VRO_ARGS
@@ -72,7 +72,7 @@ VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolyline)(VRO_ARGS
 
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
     std::shared_ptr<VROPolyline> polyline = VROPolyline::createPolyline(points, width);
-    return Polyline::jptr(polyline);
+    return VRO_REF_NEW(VROPolyline, polyline);
 }
 
 VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
@@ -84,7 +84,7 @@ VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
                                     VRO_REF(VROPolyline) polyline_j,
                                     VRO_FLOAT_ARRAY point_j) {
     VRO_METHOD_PREAMBLE;
-    std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
+    std::weak_ptr<VROPolyline> polyline_w = VRO_REF_GET(VROPolyline, polyline_j);
 
     VROVector3f point = Polyline::convertPoint(env, point_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, point] {
@@ -101,7 +101,7 @@ VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
     VRO_METHOD_PREAMBLE;
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
 
-    std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
+    std::weak_ptr<VROPolyline> polyline_w = VRO_REF_GET(VROPolyline, polyline_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, points] {
         std::shared_ptr<VROPolyline> polyline = polyline_w.lock();
         if (polyline) {
@@ -114,7 +114,7 @@ VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
 VRO_METHOD(void, nativeSetThickness)(VRO_ARGS
                                      VRO_REF(VROPolyline) polyline_j,
                                      VRO_FLOAT thickness) {
-    std::weak_ptr<VROPolyline> polyline_w = Polyline::native(polyline_j);
+    std::weak_ptr<VROPolyline> polyline_w = VRO_REF_GET(VROPolyline, polyline_j);
     VROPlatformDispatchAsyncRenderer([polyline_w, thickness] {
         std::shared_ptr<VROPolyline> polyline = polyline_w.lock();
         if (polyline) {

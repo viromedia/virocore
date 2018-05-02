@@ -28,7 +28,7 @@ extern "C" {
 
 VRO_METHOD(VRO_REF(VRONodeCamera), nativeCreateCamera)(VRO_NO_ARGS) {
     std::shared_ptr<VRONodeCamera> node = std::make_shared<VRONodeCamera>();
-    return Camera::jptr(node);
+    return VRO_REF_NEW(VRONodeCamera, node);
 }
 
 VRO_METHOD(void, nativeDestroyCamera)(VRO_ARGS
@@ -38,7 +38,7 @@ VRO_METHOD(void, nativeDestroyCamera)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_REF(VRONodeCamera) nativeCamera, VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         if (camera) {
@@ -49,7 +49,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
                                          VRO_REF(VRONodeCamera) nativeCamera, VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         if (camera) {
@@ -61,7 +61,7 @@ VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
                                               VRO_REF(VRONodeCamera) nativeCamera, VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z, VRO_FLOAT w) {
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z, w] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         if (camera) {
@@ -84,7 +84,7 @@ VRO_METHOD(void, nativeSetRotationType)(VRO_ARGS
         type = VROCameraRotationType::Standard;
     }
 
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, type] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         if (camera) {
@@ -95,7 +95,7 @@ VRO_METHOD(void, nativeSetRotationType)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetOrbitFocalPoint)(VRO_ARGS
                                            VRO_REF(VRONodeCamera) nativeCamera, VRO_FLOAT x, VRO_FLOAT y, VRO_FLOAT z) {
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         if (camera) {
@@ -106,7 +106,7 @@ VRO_METHOD(void, nativeSetOrbitFocalPoint)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetFieldOfView)(VRO_ARGS
                                        VRO_REF(VRONodeCamera) camera_j, VRO_FLOAT fov) {
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(camera_j);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, camera_j);
     VROPlatformDispatchAsyncRenderer([camera_w, fov] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         if (camera) {

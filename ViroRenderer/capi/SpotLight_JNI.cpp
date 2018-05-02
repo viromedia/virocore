@@ -69,7 +69,7 @@ VRO_METHOD(VRO_REF(VROLight), nativeCreateSpotLight)(VRO_ARGS
     spotLight->setSpotInnerAngle(toDegrees(innerAngle));
     spotLight->setSpotOuterAngle(toDegrees(outerAngle));
 
-    return SpotLight::jptr(spotLight);
+    return VRO_REF_NEW(VROLight, spotLight);
 }
 
 // Setters
@@ -77,7 +77,7 @@ VRO_METHOD(VRO_REF(VROLight), nativeCreateSpotLight)(VRO_ARGS
 VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
                                                     VRO_REF(VROLight) native_light_ref,
                                                     VRO_FLOAT attenuationStartDistance) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationStartDistance] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -90,7 +90,7 @@ VRO_METHOD(void, nativeSetAttenuationStartDistance)(VRO_ARGS
 VRO_METHOD(void, nativeSetAttenuationEndDistance)(VRO_ARGS
                                                   VRO_REF(VROLight) native_light_ref,
                                                   VRO_FLOAT attenuationEndDistance) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, attenuationEndDistance] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -105,7 +105,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_FLOAT positionX,
                                     VRO_FLOAT positionY,
                                     VRO_FLOAT positionZ) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, positionX, positionY, positionZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -121,7 +121,7 @@ VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
                                      VRO_FLOAT directionX,
                                      VRO_FLOAT directionY,
                                      VRO_FLOAT directionZ) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, directionX, directionY, directionZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -135,7 +135,7 @@ VRO_METHOD(void, nativeSetDirection)(VRO_ARGS
 VRO_METHOD(void, nativeSetInnerAngle)(VRO_ARGS
                                       VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT innerAngleRadians) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, innerAngleRadians] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -148,7 +148,7 @@ VRO_METHOD(void, nativeSetInnerAngle)(VRO_ARGS
 VRO_METHOD(void, nativeSetOuterAngle)(VRO_ARGS
                                       VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT outerAngleRadians) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, outerAngleRadians] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
@@ -161,7 +161,7 @@ VRO_METHOD(void, nativeSetOuterAngle)(VRO_ARGS
 VRO_METHOD(void, nativeSetCastsShadow)(VRO_ARGS
                                        VRO_REF(VROLight) native_light_ref,
                                        VRO_BOOL castsShadow) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, castsShadow] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if(!light) {
@@ -175,7 +175,7 @@ VRO_METHOD(void, nativeSetShadowOpacity)(VRO_ARGS
                                          VRO_REF(VROLight) native_light_ref,
                                          VRO_FLOAT shadowOpacity) {
 
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, shadowOpacity] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if(!light) {
@@ -189,7 +189,7 @@ VRO_METHOD(void, nativeSetShadowMapSize)(VRO_ARGS
                                          VRO_REF(VROLight) native_light_ref,
                                          VRO_INT size) {
 
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, size] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if(!light) {
@@ -203,7 +203,7 @@ VRO_METHOD(void, nativeSetShadowBias)(VRO_ARGS
                                       VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT bias) {
 
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, bias] {
         std::shared_ptr<VROLight> light = light_w.lock();
         light->setShadowBias(bias);
@@ -214,7 +214,7 @@ VRO_METHOD(void, nativeSetShadowNearZ)(VRO_ARGS
                                        VRO_REF(VROLight) native_light_ref,
                                        VRO_FLOAT shadowNearZ) {
 
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, shadowNearZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
         light->setShadowNearZ(shadowNearZ);
@@ -225,7 +225,7 @@ VRO_METHOD(void, nativeSetShadowFarZ)(VRO_ARGS
                                       VRO_REF(VROLight) native_light_ref,
                                       VRO_FLOAT shadowFarZ) {
 
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, native_light_ref);
     VROPlatformDispatchAsyncRenderer([light_w, shadowFarZ] {
         std::shared_ptr<VROLight> light = light_w.lock();
         light->setShadowFarZ(shadowFarZ);

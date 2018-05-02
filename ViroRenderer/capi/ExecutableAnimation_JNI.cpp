@@ -25,7 +25,7 @@ VRO_METHOD(VRO_REF(VROExecutableAnimation), nativeWrapNodeAnimation)(VRO_ARGS
                                                                      VRO_REF(VRONode) nodeRef,
                                                                      VRO_STRING jkey) {
     VRO_METHOD_PREAMBLE;
-    std::shared_ptr<VRONode> node = Node::native(nodeRef);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, nodeRef);
 
     std::shared_ptr<VROExecutableAnimation> animation;
     if (!VRO_IS_STRING_EMPTY(jkey)) {
@@ -34,7 +34,7 @@ VRO_METHOD(VRO_REF(VROExecutableAnimation), nativeWrapNodeAnimation)(VRO_ARGS
     }
 
     if (animation) {
-        return ExecutableAnimation::jptr(animation);
+        return VRO_REF_NEW(VROExecutableAnimation, animation);
     }
     else {
         return 0;
@@ -50,8 +50,8 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
     // we invoke its animationDidFinish callback
     VRO_OBJECT obj_g = VRO_NEW_GLOBAL_REF(obj);
 
-    std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
-    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nodeRef);
 
     VROPlatformDispatchAsyncRenderer([animation_w, node_w, obj_g] {
         VRO_ENV env = VROPlatformGetJNIEnv();
@@ -77,7 +77,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
 
 VRO_METHOD(void, nativePauseAnimation)(VRO_ARGS
                                        VRO_REF(VROExecutableAnimation) nativeRef) {
-    std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
@@ -89,7 +89,7 @@ VRO_METHOD(void, nativePauseAnimation)(VRO_ARGS
 
 VRO_METHOD(void, nativeResumeAnimation)(VRO_ARGS
                                         VRO_REF(VROExecutableAnimation) nativeRef) {
-    std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
@@ -102,7 +102,7 @@ VRO_METHOD(void, nativeResumeAnimation)(VRO_ARGS
 VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
                                            VRO_REF(VROExecutableAnimation) nativeRef,
                                            VRO_BOOL jumpToEnd) {
-    std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
     VROPlatformDispatchAsyncRenderer([animation_w, jumpToEnd] {
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {

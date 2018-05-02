@@ -18,12 +18,12 @@
 
 extern "C" {
 
-VRO_METHOD(long, nativeBegin)(VRO_NO_ARGS_STATIC) {
+VRO_METHOD(VRO_REF(VROTransaction), nativeBegin)(VRO_NO_ARGS_STATIC) {
     std::shared_ptr<VROTransaction> transaction = std::shared_ptr<VROTransaction>(new VROTransaction());
     VROPlatformDispatchAsyncRenderer([transaction] {
         VROTransaction::add(transaction);
     });
-    return AnimationTransaction::jptr(transaction);
+    return VRO_REF_NEW(VROTransaction, transaction);
 }
 
 VRO_METHOD(void, nativeCommit)(VRO_ARGS_STATIC
@@ -92,7 +92,7 @@ VRO_METHOD(void, nativeDispose)(VRO_ARGS
 
 VRO_METHOD(void, nativePause)(VRO_ARGS
                               VRO_REF(VROTransaction) transaction_j) {
-    std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
+    std::weak_ptr<VROTransaction> transaction_w = VRO_REF_GET(VROTransaction, transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
         if (!transaction) {
@@ -104,7 +104,7 @@ VRO_METHOD(void, nativePause)(VRO_ARGS
 
 VRO_METHOD(void, nativeResume)(VRO_ARGS
                                VRO_REF(VROTransaction) transaction_j) {
-    std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
+    std::weak_ptr<VROTransaction> transaction_w = VRO_REF_GET(VROTransaction, transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
         if (!transaction) {
@@ -116,7 +116,7 @@ VRO_METHOD(void, nativeResume)(VRO_ARGS
 
 VRO_METHOD(void, nativeTerminate)(VRO_ARGS
                                   VRO_REF(VROTransaction) transaction_j) {
-    std::weak_ptr<VROTransaction> transaction_w = AnimationTransaction::native(transaction_j);
+    std::weak_ptr<VROTransaction> transaction_w = VRO_REF_GET(VROTransaction, transaction_j);
     VROPlatformDispatchAsyncRenderer([transaction_w] {
         std::shared_ptr<VROTransaction> transaction = transaction_w.lock();
         if (!transaction) {

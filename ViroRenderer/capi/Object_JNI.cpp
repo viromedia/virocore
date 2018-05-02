@@ -47,7 +47,7 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
                 }
             };
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([isFBX, node, URL, onFinish] {
         if (isFBX) {
             VROFBXLoader::loadFBXFromResource(URL, VROResourceType::URL, node, onFinish);
@@ -85,7 +85,7 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
         hasResourceMap = true;
     }
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([isFBX, resource, hasResourceMap, resourceMap, node, onFinish] {
         if (isFBX) {
             if (!hasResourceMap) {

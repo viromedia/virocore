@@ -26,7 +26,7 @@ VRO_METHOD(VRO_REF(VROFixedParticleEmitter), nativeCreateEmitter)(VRO_ARGS
                                                                   VRO_REF(ViroContext) context_j,
                                                                   VRO_REF(VROSurface) native_surface_ref) {
     std::shared_ptr<VROFixedParticleEmitter> particleEmitter = std::make_shared<VROFixedParticleEmitter>();
-    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     std::shared_ptr<VROSurface> surface = nullptr;
     if (native_surface_ref != 0){
         surface = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
@@ -36,7 +36,7 @@ VRO_METHOD(VRO_REF(VROFixedParticleEmitter), nativeCreateEmitter)(VRO_ARGS
         particleEmitter->initEmitter(context->getDriver(), surface);
     });
 
-    return FixedParticleEmitter::jptr(particleEmitter);
+    return VRO_REF_NEW(VROFixedParticleEmitter, particleEmitter);
 }
 
 VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
@@ -57,7 +57,7 @@ VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
         VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(vec3Value, vec3ValueArray);
     }
 
-    std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
+    std::weak_ptr<VROFixedParticleEmitter> emitter_w = VRO_REF_GET(VROFixedParticleEmitter, emitter_j);
     VROPlatformDispatchAsyncRenderer([emitter_w, initialValues] {
         std::shared_ptr<VROFixedParticleEmitter> emitter = emitter_w.lock();
         emitter->setParticleTransforms(initialValues);
@@ -66,7 +66,7 @@ VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
 
 VRO_METHOD(void, nativeClearParticles)(VRO_ARGS
                                        VRO_REF(VROFixedParticleEmitter) emitter_j) {
-    std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
+    std::weak_ptr<VROFixedParticleEmitter> emitter_w = VRO_REF_GET(VROFixedParticleEmitter, emitter_j);
     VROPlatformDispatchAsyncRenderer([emitter_w] {
         std::shared_ptr<VROFixedParticleEmitter> emitter = emitter_w.lock();
         emitter->forceClearParticles();
@@ -76,7 +76,7 @@ VRO_METHOD(void, nativeClearParticles)(VRO_ARGS
 VRO_METHOD(void, nativeSetEmitterSurface)(VRO_ARGS
                                           VRO_REF(VROFixedParticleEmitter) emitter_j,
                                           VRO_REF(VROSurface) native_surface_ref) {
-    std::weak_ptr<VROFixedParticleEmitter> emitter_w = FixedParticleEmitter::native(emitter_j);
+    std::weak_ptr<VROFixedParticleEmitter> emitter_w = VRO_REF_GET(VROFixedParticleEmitter, emitter_j);
     std::weak_ptr<VROSurface> surface_w = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
 
     VROPlatformDispatchAsyncRenderer([emitter_w, surface_w] {

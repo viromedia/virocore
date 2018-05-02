@@ -21,7 +21,7 @@ extern "C" {
 
 VRO_METHOD(VRO_REF(VROLazyMaterialJNI), nativeCreateLazyMaterial)(VRO_NO_ARGS) {
     std::shared_ptr<VROLazyMaterialJNI> materialPtr = std::make_shared<VROLazyMaterialJNI>(obj);
-    return LazyMaterial::jptr(materialPtr);
+    return VRO_REF_NEW(VROLazyMaterialJNI, materialPtr);
 }
 
 VRO_METHOD(void, nativeDestroyLazyMaterial)(VRO_ARGS

@@ -48,7 +48,7 @@ VRO_METHOD(VRO_REF(VROARImageTarget), nativeCreateARImageTarget)(VRO_ARGS
     // TODO wasm
 #endif
 
-    return ARImageTarget::jptr(target);
+    return VRO_REF_NEW(VROARImageTarget, target);
 }
 
 VRO_METHOD(void, nativeDestroyARImageTarget)(VRO_ARGS

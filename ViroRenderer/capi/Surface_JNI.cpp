@@ -33,7 +33,7 @@ VRO_METHOD(VRO_REF(VROSurface), nativeCreateSurface)(VRO_ARGS
                                                      VRO_FLOAT u0, VRO_FLOAT v0,
                                                      VRO_FLOAT u1, VRO_FLOAT v1) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
-    return Surface::jptr(surface);
+    return VRO_REF_NEW(VROSurface, surface);
 }
 
 VRO_METHOD(VRO_REF(VROSurface), nativeCreateSurfaceFromSurface)(VRO_ARGS
@@ -43,11 +43,11 @@ VRO_METHOD(VRO_REF(VROSurface), nativeCreateSurfaceFromSurface)(VRO_ARGS
                                                                 VRO_FLOAT u1, VRO_FLOAT v1,
                                                                 VRO_REF(VROSurface) oldSurface) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
-    std::vector<std::shared_ptr<VROMaterial>> materials = Surface::native(oldSurface)->getMaterials();
+    std::vector<std::shared_ptr<VROMaterial>> materials = VRO_REF_GET(VROSurface, oldSurface)->getMaterials();
     if (materials.size() > 0) {
         surface->setMaterials(materials);
     }
-    return Surface::jptr(surface);
+    return VRO_REF_NEW(VROSurface, surface);
 }
 
 VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
@@ -58,7 +58,7 @@ VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF(VROSurface) nativeSurface,
                                  VRO_FLOAT width) {
-    std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, width] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
         if (!surface) {
@@ -71,7 +71,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
                                   VRO_REF(VROSurface) nativeSurface,
                                   VRO_FLOAT height) {
-    std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, height] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
         if (!surface) {
@@ -84,8 +84,8 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
                                         VRO_REF(VROSurface) surfaceRef,
                                         VRO_REF(VROVideoTexture) textureRef) {
-    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
 
     VROPlatformDispatchAsyncRenderer([surface_w, videoTexture_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -107,8 +107,8 @@ VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
 VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
                                         VRO_REF(VROSurface) surfaceRef,
                                         VRO_REF(VROTexture) textureRef) {
-    std::weak_ptr<VROTexture> imageTexture_w = Texture::native(textureRef);
-    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
+    std::weak_ptr<VROTexture> imageTexture_w = VRO_REF_GET(VROTexture, textureRef);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
 
     VROPlatformDispatchAsyncRenderer([surface_w, imageTexture_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -128,7 +128,7 @@ VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
 
 VRO_METHOD(void, nativeClearMaterial)(VRO_ARGS
                                       VRO_REF(VROSurface) surfaceRef) {
-    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
     VROPlatformDispatchAsyncRenderer([surface_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
         if (!surface) {

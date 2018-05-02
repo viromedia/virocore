@@ -164,7 +164,7 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateRadianceHDRTexture)(VRO_ARGS_STATIC
         return textureRef;
     }
 
-    textureRef = Texture::jptr(texture);
+    textureRef = VRO_REF_NEW(VROTexture, texture);
     return textureRef;
 }
 
@@ -172,14 +172,14 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateCubeTexture)(VRO_ARGS
                                                          VRO_REF(VROImage) px, VRO_REF(VROImage) nx,
                                                          VRO_REF(VROImage) py, VRO_REF(VROImage) ny,
                                                          VRO_REF(VROImage) pz, VRO_REF(VROImage) nz) {
-    std::vector<std::shared_ptr<VROImage>> cubeImages = {Image::native(px),
-                                                         Image::native(nx),
-                                                         Image::native(py),
-                                                         Image::native(ny),
-                                                         Image::native(pz),
-                                                         Image::native(nz)};
+    std::vector<std::shared_ptr<VROImage>> cubeImages = {VRO_REF_GET(VROImage, px),
+                                                         VRO_REF_GET(VROImage, nx),
+                                                         VRO_REF_GET(VROImage, py),
+                                                         VRO_REF_GET(VROImage, ny),
+                                                         VRO_REF_GET(VROImage, pz),
+                                                         VRO_REF_GET(VROImage, nz)};
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(true, cubeImages);
-    return Texture::jptr(texturePtr);
+    return VRO_REF_NEW(VROTexture, texturePtr);
 }
 
 VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTexture)(VRO_ARGS
@@ -189,9 +189,9 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTexture)(VRO_ARGS
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
-                                                                          Image::native(image),
+                                                                          VRO_REF_GET(VROImage, image),
                                                                           mode);
-    return Texture::jptr(texturePtr);
+    return VRO_REF_NEW(VROTexture, texturePtr);
 }
 
 VRO_METHOD(VRO_REF(VROTexture), nativeCreateCubeTextureBitmap)(VRO_ARGS
@@ -215,7 +215,7 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateCubeTextureBitmap)(VRO_ARGS
 #endif
 
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(true, cubeImages);
-    return Texture::jptr(texturePtr);
+    return VRO_REF_NEW(VROTexture, texturePtr);
 }
 
 VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTextureBitmap)(VRO_ARGS
@@ -236,7 +236,7 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTextureBitmap)(VRO_ARGS
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
                                                                           image, mode);
-    return Texture::jptr(texturePtr);
+    return VRO_REF_NEW(VROTexture, texturePtr);
 }
 
 VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTextureData)(VRO_ARGS
@@ -258,7 +258,7 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTextureData)(VRO_ARGS
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(VROTextureType::Texture2D, inputFormat, storageFormat, sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
                                                                           dataVec, width, height, mipSizes, stereoMode);
-    return Texture::jptr(texturePtr);
+    return VRO_REF_NEW(VROTexture, texturePtr);
 }
 
 VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTextureVHD)(VRO_ARGS
@@ -283,18 +283,18 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateImageTextureVHD)(VRO_ARGS
                                                                        VROMipmapMode::None,
                                                                        dataVec, texWidth, texHeight,
                                                                        mipSizes);
-    return Texture::jptr(texture);
+    return VRO_REF_NEW(VROTexture, texture);
 }
 
 VRO_METHOD(VRO_INT, nativeGetTextureWidth)(VRO_ARGS
                                            VRO_REF(VROTexture) texture_j) {
-    std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, texture_j);
     return texture->getWidth();
 }
 
 VRO_METHOD(VRO_INT, nativeGetTextureHeight)(VRO_ARGS
                                             VRO_REF(VROTexture) texture_j) {
-    std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, texture_j);
     return texture->getHeight();
 }
 
@@ -302,7 +302,7 @@ VRO_METHOD(void, nativeSetWrapS)(VRO_ARGS
                                  VRO_REF(VROTexture) nativeRef,
                                  VRO_STRING wrapS) {
     VRO_METHOD_PREAMBLE;
-    std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
     texture->setWrapS(Texture::getWrapMode(env, wrapS));
 }
 
@@ -310,7 +310,7 @@ VRO_METHOD(void, nativeSetWrapT)(VRO_ARGS
                                  VRO_REF(VROTexture) nativeRef,
                                  VRO_STRING wrapT) {
     VRO_METHOD_PREAMBLE;
-    std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
     texture->setWrapT(Texture::getWrapMode(env, wrapT));
 }
 
@@ -318,7 +318,7 @@ VRO_METHOD(void, nativeSetMinificationFilter)(VRO_ARGS
                                               VRO_REF(VROTexture) nativeRef,
                                               VRO_STRING minFilter) {
     VRO_METHOD_PREAMBLE;
-    std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
     texture->setMinificationFilter(Texture::getFilterMode(env, minFilter));
 }
 
@@ -326,7 +326,7 @@ VRO_METHOD(void, nativeSetMagnificationFilter)(VRO_ARGS
                                                VRO_REF(VROTexture) nativeRef,
                                                VRO_STRING magFilter) {
     VRO_METHOD_PREAMBLE;
-    std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
     texture->setMagnificationFilter(Texture::getFilterMode(env, magFilter));
 }
 
@@ -334,7 +334,7 @@ VRO_METHOD(void, nativeSetMipFilter)(VRO_ARGS
                                      VRO_REF(VROTexture) nativeRef,
                                      VRO_STRING mipFilter) {
     VRO_METHOD_PREAMBLE;
-    std::shared_ptr<VROTexture> texture = Texture::native(nativeRef);
+    std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
     texture->setMipFilter(Texture::getFilterMode(env, mipFilter));
 }
 

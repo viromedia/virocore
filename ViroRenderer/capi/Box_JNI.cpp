@@ -40,7 +40,7 @@ VRO_METHOD(VRO_REF(VROBox), nativeCreateBox)(VRO_ARGS
                                              VRO_FLOAT height,
                                              VRO_FLOAT length) {
     std::shared_ptr<VROBox> box = VROBox::createBox(width, height, length);
-    return Box::jptr(box);
+    return VRO_REF_NEW(VROBox, box);
 }
 
 VRO_METHOD(void, nativeDestroyBox)(VRO_ARGS
@@ -51,7 +51,7 @@ VRO_METHOD(void, nativeDestroyBox)(VRO_ARGS
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF(VROBox) native_box_ref,
                                  VRO_FLOAT width) {
-    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
+    std::weak_ptr<VROBox> box_w = VRO_REF_GET(VROBox, native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, width] {
         std::shared_ptr<VROBox> box = box_w.lock();
         if (box) {
@@ -63,7 +63,7 @@ VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
 VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
                                   VRO_REF(VROBox) native_box_ref,
                                   VRO_FLOAT height) {
-    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
+    std::weak_ptr<VROBox> box_w = VRO_REF_GET(VROBox, native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, height] {
         std::shared_ptr<VROBox> box = box_w.lock();
         if (box) {
@@ -75,7 +75,7 @@ VRO_METHOD(void, nativeSetHeight)(VRO_ARGS
 VRO_METHOD(void, nativeSetLength)(VRO_ARGS
                                   VRO_REF(VROBox) native_box_ref,
                                   VRO_FLOAT length) {
-    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
+    std::weak_ptr<VROBox> box_w = VRO_REF_GET(VROBox, native_box_ref);
     VROPlatformDispatchAsyncRenderer([box_w, length] {
         std::shared_ptr<VROBox> box = box_w.lock();
         if (box) {

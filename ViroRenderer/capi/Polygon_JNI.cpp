@@ -36,7 +36,7 @@ VRO_METHOD(VRO_REF(VROPolygon), nativeCreateSurface)(VRO_ARGS
     }
 
     std::shared_ptr<VROPolygon> surface  = VROPolygon::createPolygon(initialValues, u0, v0, u1, v1);
-    return Polygon::jptr(surface);
+    return VRO_REF_NEW(VROPolygon, surface);
 }
 
 VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS

@@ -60,7 +60,7 @@ VRO_METHOD(VRO_REF(VROAnimationGroup), nativeCreateAnimationGroup)(VRO_ARGS
 
     std::vector<std::shared_ptr<VROLazyMaterial>> materialAnimations;
     if (lazyMaterialRef != 0) {
-        std::shared_ptr<VROLazyMaterial> lazyMaterial = LazyMaterial::native(lazyMaterialRef);
+        std::shared_ptr<VROLazyMaterial> lazyMaterial = VRO_REF_GET(VROLazyMaterial, lazyMaterialRef);
         materialAnimations.push_back(lazyMaterial);
     }
 
@@ -68,13 +68,13 @@ VRO_METHOD(VRO_REF(VROAnimationGroup), nativeCreateAnimationGroup)(VRO_ARGS
     std::shared_ptr<VROAnimationGroup> animationGroup = VROAnimationGroup::parse(durationSeconds, delaySeconds,
                                                                                  functionTypeStr, animationProperties,
                                                                                  materialAnimations);
-    return AnimationGroup::jptr(animationGroup);
+    return VRO_REF_NEW(VROAnimationGroup, animationGroup);
 }
 
 VRO_METHOD(VRO_REF(VROAnimationGroup), nativeCopyAnimation)(VRO_ARGS
                                                             VRO_REF(VROAnimationGroup) nativeRef) {
-    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
-    return AnimationGroup::jptr(std::dynamic_pointer_cast<VROAnimationGroup>(group->copy()));
+    std::shared_ptr<VROAnimationGroup> group = VRO_REF_GET(VROAnimationGroup, nativeRef);
+    return VRO_REF_NEW(VROAnimationGroup, std::dynamic_pointer_cast<VROAnimationGroup>(group->copy()));
 }
 
 VRO_METHOD(void, nativeDestroyAnimationGroup)(VRO_ARGS

@@ -41,12 +41,12 @@ extern "C" {
 
 VRO_METHOD(VRO_REF(VRONode), nativeCreateNode)(VRO_NO_ARGS) {
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    return Node::jptr(node);
+    return VRO_REF_NEW(VRONode, node);
 }
 
 VRO_METHOD(VRO_INT, nativeGetUniqueIdentifier)(VRO_ARGS
                                                VRO_REF(VRONode) node_j) {
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     return node->getUniqueID();
 }
 
@@ -60,8 +60,8 @@ VRO_METHOD(void, nativeAddChildNode)(VRO_ARGS
                                      VRO_REF(VRONode) native_node_ref,
                                      VRO_REF(VRONode) child_node_ref) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-    std::shared_ptr<VRONode> childNode = Node::native(child_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+    std::shared_ptr<VRONode> childNode = VRO_REF_GET(VRONode, child_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, childNode] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -72,7 +72,7 @@ VRO_METHOD(void, nativeAddChildNode)(VRO_ARGS
 
 VRO_METHOD(void, nativeRemoveAllChildNodes)(VRO_ARGS
                                             VRO_REF(VRONode) native_node_ref) {
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         node->removeAllChildren();
@@ -82,7 +82,7 @@ VRO_METHOD(void, nativeRemoveAllChildNodes)(VRO_ARGS
 VRO_METHOD(void, nativeRemoveFromParent)(VRO_ARGS
                                          VRO_REF(VRONode) native_node_ref) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -95,7 +95,7 @@ VRO_METHOD(void, nativeSetTag)(VRO_ARGS
                                VRO_REF(VRONode) native_node_ref,
                                VRO_STRING tag) {
     std::string strBodyType = VRO_STRING_STL(tag);
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, strBodyType] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -107,8 +107,8 @@ VRO_METHOD(void, nativeSetTag)(VRO_ARGS
 VRO_METHOD(void, nativeSetGeometry)(VRO_ARGS
                                     VRO_REF(VRONode) node_j,
                                     VRO_REF(VROGeometry) geo_j) {
-    std::weak_ptr<VROGeometry> geo_w = Geometry::native(geo_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VROGeometry> geo_w = VRO_REF_GET(VROGeometry, geo_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([geo_w, node_w] {
         std::shared_ptr<VROGeometry> geo = geo_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -121,7 +121,7 @@ VRO_METHOD(void, nativeSetGeometry)(VRO_ARGS
 
 VRO_METHOD(void, nativeClearGeometry)(VRO_ARGS
                                       VRO_REF(VRONode) node_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -133,8 +133,8 @@ VRO_METHOD(void, nativeClearGeometry)(VRO_ARGS
 VRO_METHOD(void, nativeSetFixedParticleEmitter)(VRO_ARGS
                                                 VRO_REF(VRONode) node_j,
                                                 VRO_REF(VROFixedParticleEmitter) particle_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
-    std::weak_ptr<VROFixedParticleEmitter> particle_w = FixedParticleEmitter::native(particle_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
+    std::weak_ptr<VROFixedParticleEmitter> particle_w = VRO_REF_GET(VROFixedParticleEmitter, particle_j);
     VROPlatformDispatchAsyncRenderer([node_w, particle_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         std::shared_ptr<VROFixedParticleEmitter> particle = particle_w.lock();
@@ -153,8 +153,8 @@ VRO_METHOD(void, nativeSetFixedParticleEmitter)(VRO_ARGS
 VRO_METHOD(void, nativeSetParticleEmitter)(VRO_ARGS
                                            VRO_REF(VRONode) node_j,
                                            VRO_REF(VROParticleEmitter) particle_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
-    std::weak_ptr<VROParticleEmitter> particle_w = ParticleEmitter::native(particle_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
+    std::weak_ptr<VROParticleEmitter> particle_w = VRO_REF_GET(VROParticleEmitter, particle_j);
     VROPlatformDispatchAsyncRenderer([node_w, particle_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         std::shared_ptr<VROParticleEmitter> particle = particle_w.lock();
@@ -172,7 +172,7 @@ VRO_METHOD(void, nativeSetParticleEmitter)(VRO_ARGS
 
 VRO_METHOD(void, nativeRemoveParticleEmitter)(VRO_ARGS
                                               VRO_REF(VRONode) node_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -184,8 +184,8 @@ VRO_METHOD(void, nativeRemoveParticleEmitter)(VRO_ARGS
 VRO_METHOD(void, nativeAddLight)(VRO_ARGS
                                  VRO_REF(VRONode) node_j,
                                  VRO_REF(VROLight) light_j) {
-    std::weak_ptr<VROLight> light_w = Light::native(light_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, light_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([light_w, node_w] {
         std::shared_ptr<VROLight> light = light_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -199,8 +199,8 @@ VRO_METHOD(void, nativeAddLight)(VRO_ARGS
 VRO_METHOD(void, nativeRemoveLight)(VRO_ARGS
                                     VRO_REF(VRONode) node_j,
                                     VRO_REF(VROLight) light_j) {
-    std::weak_ptr<VROLight> light_w = Light::native(light_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VROLight> light_w = VRO_REF_GET(VROLight, light_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([light_w, node_w] {
         std::shared_ptr<VROLight> light = light_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -213,7 +213,7 @@ VRO_METHOD(void, nativeRemoveLight)(VRO_ARGS
 
 VRO_METHOD(void, nativeRemoveAllLights)(VRO_ARGS
                                         VRO_REF(VRONode) node_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -225,8 +225,8 @@ VRO_METHOD(void, nativeRemoveAllLights)(VRO_ARGS
 VRO_METHOD(void, nativeAddSound)(VRO_ARGS
                                  VRO_REF(VRONode) node_j,
                                  VRO_REF(VROSoundGVR) sound_j) {
-    std::weak_ptr<VROSoundGVR> sound_w = SpatialSound::native(sound_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VROSoundGVR> sound_w = VRO_REF_GET(VROSoundGVR, sound_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([sound_w, node_w] {
         std::shared_ptr<VROSoundGVR> sound = sound_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -240,8 +240,8 @@ VRO_METHOD(void, nativeAddSound)(VRO_ARGS
 VRO_METHOD(void, nativeRemoveSound)(VRO_ARGS
                                     VRO_REF(VRONode) node_j,
                                     VRO_REF(VROSoundGVR) sound_j) {
-    std::weak_ptr<VROSoundGVR> sound_w = SpatialSound::native(sound_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VROSoundGVR> sound_w = VRO_REF_GET(VROSoundGVR, sound_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([sound_w, node_w] {
         std::shared_ptr<VROSoundGVR> sound = sound_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -254,7 +254,7 @@ VRO_METHOD(void, nativeRemoveSound)(VRO_ARGS
 
 VRO_METHOD(void, nativeRemoveAllSounds)(VRO_ARGS
                                         VRO_REF(VRONode) node_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -266,8 +266,8 @@ VRO_METHOD(void, nativeRemoveAllSounds)(VRO_ARGS
 VRO_METHOD(void, nativeSetCamera)(VRO_ARGS
                                   VRO_REF(VRONode) node_j,
                                   VRO_REF(VRONodeCamera) camera_j) {
-    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(camera_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, camera_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([camera_w, node_w] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -280,7 +280,7 @@ VRO_METHOD(void, nativeSetCamera)(VRO_ARGS
 
 VRO_METHOD(void, nativeClearCamera)(VRO_ARGS
                                     VRO_REF(VRONode) node_j) {
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -295,7 +295,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_FLOAT positionY,
                                     VRO_FLOAT positionZ) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, positionX, positionY, positionZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -309,7 +309,7 @@ VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
                                          VRO_FLOAT rotationRadiansX,
                                          VRO_FLOAT rotationRadiansY,
                                          VRO_FLOAT rotationRadiansZ) {
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -326,7 +326,7 @@ VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
                                               VRO_FLOAT quatY,
                                               VRO_FLOAT quatZ,
                                               VRO_FLOAT quatW) {
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, quatX, quatY, quatZ, quatW] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -342,7 +342,7 @@ VRO_METHOD(void, nativeSetScale)(VRO_ARGS
                                  VRO_FLOAT scaleY,
                                  VRO_FLOAT scaleZ) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, scaleX, scaleY, scaleZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -357,7 +357,7 @@ VRO_METHOD(void, nativeSetRotationPivot)(VRO_ARGS
                                          VRO_FLOAT pivotY,
                                          VRO_FLOAT pivotZ) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -374,7 +374,7 @@ VRO_METHOD(void, nativeSetScalePivot)(VRO_ARGS
                                       VRO_FLOAT pivotY,
                                       VRO_FLOAT pivotZ) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -388,28 +388,28 @@ VRO_METHOD(void, nativeSetScalePivot)(VRO_ARGS
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetPosition)(VRO_ARGS
                                                VRO_REF(VRONode) node_j) {
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalPosition());
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetScale)(VRO_ARGS
                                             VRO_REF(VRONode) node_j) {
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalScale());
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetRotationEuler)(VRO_ARGS
                                                     VRO_REF(VRONode) node_j) {
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalRotation().toEuler());
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetRotationQuaternion)(VRO_ARGS
                                                          VRO_REF(VRONode) node_j) {
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROQuaternion quaternion = node->getLastLocalRotation();
 
     VRO_FLOAT_ARRAY array_j = VRO_NEW_FLOAT_ARRAY(4);
@@ -422,7 +422,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetRotationQuaternion)(VRO_ARGS
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetBoundingBox)(VRO_ARGS
                                                   VRO_REF(VRONode) node_j) {
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     return ARUtilsCreateFloatArrayFromBoundingBox(node->getLastUmbrellaBoundingBox());
 }
 
@@ -430,7 +430,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertLocalPositionToWorldSpace)(VRO_ARGS
                                                                     VRO_REF(VRONode) node_j,
                                                                     float x, float y, float z) {
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROVector3f localPosition(x, y, z);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().invert().multiply(localPosition));
 }
@@ -439,7 +439,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertWorldPositionToLocalSpace)(VRO_ARGS
                                                                     VRO_REF(VRONode) node_j,
                                                                     float x, float y, float z) {
 
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROVector3f worldPosition(x, y, z);
     return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().multiply(worldPosition));
 }
@@ -448,7 +448,7 @@ VRO_METHOD(void, nativeSetOpacity)(VRO_ARGS
                                    VRO_REF(VRONode) native_node_ref,
                                    VRO_FLOAT opacity) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, opacity] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -461,7 +461,7 @@ VRO_METHOD(void, nativeSetLightReceivingBitMask)(VRO_ARGS
                                                  VRO_REF(VRONode) native_node_ref,
                                                  VRO_INT bitMask,
                                                  VRO_BOOL recursive) {
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, bitMask, recursive] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -474,7 +474,7 @@ VRO_METHOD(void, nativeSetShadowCastingBitMask)(VRO_ARGS
                                                 VRO_REF(VRONode) native_node_ref,
                                                 VRO_INT bitMask,
                                                 VRO_BOOL recursive) {
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, bitMask, recursive] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -486,14 +486,14 @@ VRO_METHOD(void, nativeSetShadowCastingBitMask)(VRO_ARGS
 VRO_METHOD(void, nativeSetHighAccuracyGaze)(VRO_ARGS
                                             VRO_REF(VRONode) native_node_ref,
                                             VRO_BOOL enabled) {
-    Node::native(native_node_ref)->setHighAccuracyGaze(enabled);
+    VRO_REF_GET(VRONode, native_node_ref)->setHighAccuracyGaze(enabled);
 }
 
 VRO_METHOD(void, nativeSetVisible)(VRO_ARGS
                                    VRO_REF(VRONode) native_node_ref,
                                    VRO_BOOL visible) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, visible] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -506,7 +506,7 @@ VRO_METHOD(void, nativeSetDragType)(VRO_ARGS
                                     VRO_REF(VRONode) native_node_ref,
                                     VRO_STRING dragType) {
     VRO_METHOD_PREAMBLE;
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
 
     // default type to FixedDistance if we don't recognize the given string
     VRODragType type = VRODragType::FixedDistance;
@@ -530,7 +530,7 @@ VRO_METHOD(void, nativeSetIgnoreEventHandling)(VRO_ARGS
                                                VRO_REF(VRONode) native_node_ref,
                                                VRO_BOOL ignoreEventHandling) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, ignoreEventHandling] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -543,7 +543,7 @@ VRO_METHOD(void, nativeSetHierarchicalRendering)(VRO_ARGS
                                                  VRO_REF(VRONode) native_node_ref,
                                                  VRO_BOOL hierarchicalRendering) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, hierarchicalRendering] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -577,7 +577,7 @@ VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
     }
 
     // Post set the constraints into the node
-    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeNodeRef);
     VROPlatformDispatchAsyncRenderer([node_w, tempConstraints] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -592,7 +592,7 @@ VRO_METHOD(void, nativeSetTransformBehaviors)(VRO_ARGS
 VRO_METHOD(VRO_STRING_ARRAY, nativeGetAnimationKeys)(VRO_ARGS
                                                      VRO_REF(VRONode) nativeRef) {
 
-    std::shared_ptr<VRONode> node = Node::native(nativeRef);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, nativeRef);
     std::set<std::string> keys = node->getAnimationKeys(true);
     VRO_STRING_ARRAY array = VRO_NEW_STRING_ARRAY(keys.size());
 
@@ -608,8 +608,8 @@ VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
                                          VRO_REF(VRONode) nativeRef,
                                          VRO_REF(EventDelegate_JNI) delegateRef) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
-    std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(delegateRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
+    std::shared_ptr<EventDelegate_JNI> delegate = VRO_REF_GET(EventDelegate_JNI, delegateRef);
     VROPlatformDispatchAsyncRenderer([node_w, delegate] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -621,19 +621,19 @@ VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
 VRO_METHOD(VRO_REF(TransformDelegate_JNI), nativeSetTransformDelegate)(VRO_ARGS
                                                                        VRO_REF(VRONode) nativeRef,
                                                                        VRO_DOUBLE distanceFilter) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     std::shared_ptr<TransformDelegate_JNI> delegate = std::make_shared<TransformDelegate_JNI>(obj, distanceFilter);
     VROPlatformDispatchAsyncRenderer([node_w, delegate] {
         std::shared_ptr<VRONode> node = node_w.lock();
         node->setTransformDelegate(delegate);
     });
-    return TransformDelegate_JNI::jptr(delegate);
+    return VRO_REF_NEW(TransformDelegate_JNI, delegate);
 }
 
 VRO_METHOD(void, nativeRemoveTransformDelegate)(VRO_ARGS
                                                 VRO_REF(VRONode) nativeRef,
                                                 VRO_REF(TransformDelegate_JNI) delegateRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         node->setTransformDelegate(nullptr);
@@ -645,7 +645,7 @@ VRO_METHOD(void, nativeRemoveTransformDelegate)(VRO_ARGS
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetWorldTransform)(VRO_ARGS
                                                      VRO_REF(VRONode) node_j) {
-    std::shared_ptr<VRONode> node = Node::native(node_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     return ARUtilsCreateFloatArrayFromMatrix(node->getLastWorldTransform());
 }
 
@@ -654,7 +654,7 @@ VRO_METHOD(void, nativeSetName(VRO_ARGS
                                VRO_STRING name_j)) {
     VRO_METHOD_PREAMBLE;
     std::string name = VRO_STRING_STL(name_j);
-    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
 
     VROPlatformDispatchAsyncRenderer([node_w, name] {
         std::shared_ptr<VRONode> node = node_w.lock();

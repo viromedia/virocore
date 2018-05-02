@@ -28,18 +28,18 @@ extern "C" {
         // the env)
         VROPlatformSetEnv(env);
         std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(path, VROResourceType::URL);
-        return SoundData::jptr(data);
+        return VRO_REF_NEW(VROSoundDataGVR, data);
     }
 
     VRO_METHOD(VRO_REF(VROSoundDataDelegate_JNI), nativeSetSoundDataDelegate)(VRO_ARGS
                                                                               VRO_REF(VROSoundDataGVR) nativeRef) {
         VRO_METHOD_PREAMBLE;
 
-        std::shared_ptr<VROSoundDataGVR> data = SoundData::native(nativeRef);
+        std::shared_ptr<VROSoundDataGVR> data = VRO_REF_GET(VROSoundDataGVR, nativeRef);
         std::shared_ptr<VROSoundDataDelegate_JNI> delegateRef
                 = std::make_shared<VROSoundDataDelegate_JNI>(obj, env);
         data->setDelegate(delegateRef);
-        return SoundDataDelegate::jptr(delegateRef);
+        return VRO_REF_NEW(VROSoundDataDelegate_JNI, delegateRef);
     }
 
     VRO_METHOD(void, nativeDestroySoundData)(VRO_ARGS

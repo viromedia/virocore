@@ -25,8 +25,8 @@ extern "C" {
 VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
                                          VRO_REF(ViroContext) render_context_ref,
                                          VRO_REF(EventDelegate_JNI) native_delegate_ref) {
-    std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
-    std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_delegate_ref);
+    std::weak_ptr<ViroContext> nativeContext_w = VRO_REF_GET(ViroContext,  render_context_ref);
+    std::weak_ptr<EventDelegate_JNI> delegate_w = VRO_REF_GET(EventDelegate_JNI, native_delegate_ref);
 
     VROPlatformDispatchAsyncRenderer([nativeContext_w, delegate_w] {
         std::shared_ptr<ViroContext> nativeContext = nativeContext_w.lock();
@@ -43,7 +43,7 @@ VRO_METHOD(void, nativeSetEventDelegate)(VRO_ARGS
 VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
                                       VRO_REF(ViroContext) render_context_ref,
                                       VRO_BOOL enable) {
-    std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
+    std::weak_ptr<ViroContext> nativeContext_w = VRO_REF_GET(ViroContext, render_context_ref);
 
     VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {
         std::shared_ptr<ViroContext> nativeContext = nativeContext_w.lock();
@@ -62,7 +62,7 @@ VRO_METHOD(void, nativeEnableReticle)(VRO_ARGS
 VRO_METHOD(void, nativeEnableController)(VRO_ARGS
                                          VRO_REF(ViroContext) render_context_ref,
                                          VRO_BOOL enable) {
-    std::weak_ptr<ViroContext> nativeContext_w = ViroContext::native(render_context_ref);
+    std::weak_ptr<ViroContext> nativeContext_w = VRO_REF_GET(ViroContext, render_context_ref);
 
     VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {
         std::shared_ptr<ViroContext> nativeContext = nativeContext_w.lock();
@@ -77,7 +77,7 @@ VRO_METHOD(void, nativeEnableController)(VRO_ARGS
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetControllerForwardVector)(VRO_ARGS
                                                               VRO_REF(ViroContext) context_j) {
-    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     VROVector3f position = context->getInputController()->getPresenter()->getLastKnownForward();
     return ARUtilsCreateFloatArrayFromVector3f(position);
 }
@@ -86,7 +86,7 @@ VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
                                                         VRO_REF(ViroContext) native_render_context_ref,
                                                         VRO_OBJECT callback) {
     VRO_WEAK weakCallback = VRO_NEW_WEAK_GLOBAL_REF(callback);
-    std::weak_ptr<ViroContext> helperContext_w = ViroContext::native(native_render_context_ref);
+    std::weak_ptr<ViroContext> helperContext_w = VRO_REF_GET(ViroContext, native_render_context_ref);
 
     VROPlatformDispatchAsyncApplication([helperContext_w, weakCallback] {
         VRO_ENV env = VROPlatformGetJNIEnv();

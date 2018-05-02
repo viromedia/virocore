@@ -35,7 +35,7 @@ VRO_METHOD(VRO_REF(VROARSceneController), nativeCreateARSceneController)(VRO_NO_
     std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(arSceneController->getScene());
     scene->initImperativeSession();
 
-    return ARSceneController::jptr(arSceneController);
+    return VRO_REF_NEW(VROARSceneController, arSceneController);
 }
 
 VRO_METHOD(VRO_REF(VROARSceneController), nativeCreateARSceneControllerDeclarative)(VRO_NO_ARGS) {
@@ -43,20 +43,20 @@ VRO_METHOD(VRO_REF(VROARSceneController), nativeCreateARSceneControllerDeclarati
     std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(arSceneController->getScene());
     scene->initDeclarativeSession();
 
-    return ARSceneController::jptr(arSceneController);
+    return VRO_REF_NEW(VROARSceneController, arSceneController);
 }
 
 VRO_METHOD(VRO_REF(VROARSceneDelegate), nativeCreateARSceneDelegate)(VRO_ARGS
                                                                      VRO_REF(VROARSceneController) arSceneControllerPtr) {
     VRO_METHOD_PREAMBLE;
 
-    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(ARSceneController::native(arSceneControllerPtr)->getScene());
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
     if (arScene->getDeclarativeSession()) {
         std::shared_ptr<ARDeclarativeSceneDelegate> delegate = std::make_shared<ARDeclarativeSceneDelegate>(obj, env);
         arScene->setDelegate(delegate);
         arScene->getDeclarativeSession()->setDelegate(delegate);
 
-        return ARDeclarativeSceneDelegate::jptr(delegate);
+        return VRO_REF_NEW(VROARSceneDelegate, delegate);
     }
     else {
         passert (arScene->getImperativeSession() != nullptr);
@@ -64,7 +64,7 @@ VRO_METHOD(VRO_REF(VROARSceneDelegate), nativeCreateARSceneDelegate)(VRO_ARGS
         arScene->setDelegate(delegate);
         arScene->getImperativeSession()->setDelegate(delegate);
 
-        return ARImperativeSceneDelegate::jptr(delegate);
+        return VRO_REF_NEW(VROARSceneDelegate, delegate);
     }
 }
 
@@ -77,7 +77,7 @@ VRO_METHOD(void, nativeDisplayPointCloud)(VRO_ARGS
                                           VRO_REF(VROARSceneController) arSceneControllerPtr,
                                           VRO_BOOL displayPointCloud) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w, displayPointCloud] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
 
@@ -90,7 +90,7 @@ VRO_METHOD(void, nativeDisplayPointCloud)(VRO_ARGS
 VRO_METHOD(void, nativeResetPointCloudSurface)(VRO_ARGS
                                                VRO_REF(VROARSceneController) arSceneControllerPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
 
@@ -104,8 +104,8 @@ VRO_METHOD(void, nativeSetPointCloudSurface)(VRO_ARGS
                                              VRO_REF(VROARSceneController) arSceneControllerPtr,
                                              VRO_REF(VROSurface) pointCloudSurface) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROSurface> surface_w = Surface::native(pointCloudSurface);
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, pointCloudSurface);
     VROPlatformDispatchAsyncRenderer([arScene_w, surface_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -120,7 +120,7 @@ VRO_METHOD(void, nativeSetPointCloudSurfaceScale)(VRO_ARGS
                                                   VRO_REF(VROARSceneController) arSceneControllerPtr,
                                                   VRO_FLOAT scaleX, VRO_FLOAT scaleY, VRO_FLOAT scaleZ) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w, scaleX, scaleY, scaleZ] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
 
@@ -134,7 +134,7 @@ VRO_METHOD(void, nativeSetPointCloudMaxPoints)(VRO_ARGS
                                                VRO_REF(VROARSceneController) arSceneControllerPtr,
                                                VRO_INT maxPoints) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
     VROPlatformDispatchAsyncRenderer([arScene_w, maxPoints] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
 
@@ -148,7 +148,7 @@ VRO_METHOD(void, nativeSetAnchorDetectionTypes)(VRO_ARGS
                                                 VRO_REF(VROARSceneController) sceneRef,
                                                 VRO_STRING_ARRAY typeStrArray) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(sceneRef)->getScene());
+            VRO_REF_GET(VROARSceneController, sceneRef)->getScene());
     std::set<VROAnchorDetection> types;
 
     int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
@@ -176,8 +176,8 @@ VRO_METHOD(void, nativeAddARNode)(VRO_ARGS
                                   VRO_REF(VROARSceneController) scene_j,
                                   VRO_REF(VROARDeclarativeNode) node_j) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(scene_j)->getScene());
-    std::weak_ptr<VROARDeclarativeNode> node_w = ARDeclarativeNode::native(node_j);
+            VRO_REF_GET(VROARSceneController, scene_j)->getScene());
+    std::weak_ptr<VROARDeclarativeNode> node_w = VRO_REF_GET(VROARDeclarativeNode, node_j);
 
     VROPlatformDispatchAsyncRenderer([node_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -193,8 +193,8 @@ VRO_METHOD(void, nativeUpdateARNode)(VRO_ARGS
                                      VRO_REF(VROARSceneController) scene_j,
                                      VRO_REF(VROARDeclarativeNode) node_j) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(scene_j)->getScene());
-    std::weak_ptr<VROARDeclarativeNode> node_w = ARDeclarativeNode::native(node_j);
+            VRO_REF_GET(VROARSceneController, scene_j)->getScene());
+    std::weak_ptr<VROARDeclarativeNode> node_w = VRO_REF_GET(VROARDeclarativeNode, node_j);
 
     VROPlatformDispatchAsyncRenderer([node_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -210,8 +210,8 @@ VRO_METHOD(void, nativeRemoveARNode)(VRO_ARGS
                                      VRO_REF(VROARSceneController) arSceneControllerPtr,
                                      VRO_REF(VROARDeclarativeNode) arPlanePtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARDeclarativeNode> arPlane_w = ARDeclarativeNode::native(arPlanePtr);
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARDeclarativeNode> arPlane_w = VRO_REF_GET(VROARDeclarativeNode, arPlanePtr);
 
     VROPlatformDispatchAsyncRenderer([arPlane_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -227,8 +227,8 @@ VRO_METHOD(void, nativeAddARImageTarget)(VRO_ARGS
                                          VRO_REF(VROARSceneController) arSceneControllerPtr,
                                          VRO_REF(VROARImageTarget) arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = VRO_REF_GET(VROARImageTarget, arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -244,8 +244,8 @@ VRO_METHOD(void, nativeRemoveARImageTarget)(VRO_ARGS
                                             VRO_REF(VROARSceneController) arSceneControllerPtr,
                                             VRO_REF(VROARImageTarget) arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = VRO_REF_GET(VROARImageTarget, arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -261,8 +261,8 @@ VRO_METHOD(void, nativeAddARImageTargetDeclarative)(VRO_ARGS
                                                     VRO_REF(VROARSceneController) arSceneControllerPtr,
                                                     VRO_REF(VROARImageTarget) arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = VRO_REF_GET(VROARImageTarget, arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -278,8 +278,8 @@ VRO_METHOD(void, nativeRemoveARImageTargetDeclarative)(VRO_ARGS
                                                        VRO_REF(VROARSceneController) arSceneControllerPtr,
                                                        VRO_REF(VROARImageTarget) arImageTargetPtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARImageTarget> arImageTarget_w = ARImageTarget::native(arImageTargetPtr);
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROARImageTarget> arImageTarget_w = VRO_REF_GET(VROARImageTarget, arImageTargetPtr);
 
     VROPlatformDispatchAsyncRenderer([arImageTarget_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
@@ -447,7 +447,7 @@ void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> a
         }
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VRO_REF(VROARNode) node_j = ARNode::jptr(node);
+        VRO_REF(VROARNode) node_j = VRO_REF_NEW(VROARNode, node);
         VROPlatformCallHostFunction(localObj, "onAnchorFound",
                                     "(Lcom/viro/core/ARAnchor;J)V",
                                     janchor, node_j);

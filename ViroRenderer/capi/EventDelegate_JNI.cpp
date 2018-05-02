@@ -24,7 +24,7 @@ extern "C" {
 VRO_METHOD(VRO_REF(EventDelegate_JNI), nativeCreateDelegate)(VRO_NO_ARGS) {
    VRO_METHOD_PREAMBLE;
    std::shared_ptr<EventDelegate_JNI> delegate = std::make_shared<EventDelegate_JNI>(obj, env);
-   return EventDelegate::jptr(delegate);
+   return VRO_REF_NEW(EventDelegate_JNI, delegate);
 }
 
 VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
@@ -40,7 +40,7 @@ VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
                                     VRO_INT eventTypeId,
                                     VRO_BOOL enabled) {
 
-    std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
+    std::weak_ptr<EventDelegate_JNI> delegate_w = VRO_REF_GET(EventDelegate_JNI, native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, eventTypeId, enabled] {
         std::shared_ptr<EventDelegate_JNI> delegate = delegate_w.lock();
         if (!delegate) {
@@ -54,7 +54,7 @@ VRO_METHOD(void, nativeEnableEvent)(VRO_ARGS
 VRO_METHOD(void, nativeSetTimeToFuse)(VRO_ARGS
                                       VRO_REF(EventDelegate_JNI) native_node_ref,
                                       VRO_FLOAT durationInMillis) {
-    std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
+    std::weak_ptr<EventDelegate_JNI> delegate_w = VRO_REF_GET(EventDelegate_JNI, native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, durationInMillis] {
         std::shared_ptr<EventDelegate_JNI> delegate = delegate_w.lock();
         if (!delegate) {

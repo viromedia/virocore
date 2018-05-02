@@ -51,25 +51,25 @@ VRO_METHOD(VRO_REF(VROAnimationChain), nativeCreateAnimationChain)(VRO_ARGS
     }
 
     std::shared_ptr<VROAnimationChain> animationChain = std::make_shared<VROAnimationChain>(emptyChain, execution);
-    return AnimationChain::jptr(animationChain);
+    return VRO_REF_NEW(VROAnimationChain, animationChain);
 }
 
 VRO_METHOD(VRO_REF(VROAnimationChain), nativeCopyAnimation)(VRO_ARGS
                                                             VRO_REF(VROAnimationChain) nativeRef) {
-    std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
-    return AnimationChain::jptr(std::dynamic_pointer_cast<VROAnimationChain>(chain->copy()));
+    std::shared_ptr<VROAnimationChain> chain = VRO_REF_GET(VROAnimationChain, nativeRef);
+    return VRO_REF_NEW(VROAnimationChain, std::dynamic_pointer_cast<VROAnimationChain>(chain->copy()));
 }
 
 VRO_METHOD(void, nativeAddAnimationChain)(VRO_ARGS
                                           VRO_REF(VROAnimationChain) nativeRef,
                                           VRO_REF(VROAnimationChain) chainRef) {
-    AnimationChain::native(nativeRef)->addAnimation(AnimationChain::native(chainRef));
+    VRO_REF_GET(VROAnimationChain, nativeRef)->addAnimation(VRO_REF_GET(VROAnimationChain, chainRef));
 }
 
 VRO_METHOD(void, nativeAddAnimationGroup)(VRO_ARGS
                                           VRO_REF(VROAnimationChain) nativeRef,
                                           VRO_REF(AnimationGroup) groupRef) {
-    AnimationChain::native(nativeRef)->addAnimation(AnimationGroup::native(groupRef));
+    VRO_REF_GET(VROAnimationChain, nativeRef)->addAnimation(VRO_REF_GET(VROAnimationGroup, groupRef));
 }
 
 VRO_METHOD(void, nativeDestroyAnimationChain)(VRO_ARGS

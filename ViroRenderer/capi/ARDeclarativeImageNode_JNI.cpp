@@ -21,14 +21,14 @@ extern "C" {
 
 VRO_METHOD(VRO_REF(VROARDeclarativeImageNode), nativeCreateARImageTargetNode)(VRO_NO_ARGS) {
     std::shared_ptr<VROARDeclarativeImageNode> arImageNode = std::make_shared<VROARDeclarativeImageNode>();
-    return ARDeclarativeImageNode::jptr(arImageNode);
+    return VRO_REF_NEW(VROARDeclarativeImageNode, arImageNode);
 }
 
 VRO_METHOD(void, nativeSetARImageTarget)(VRO_ARGS
                                          VRO_REF(VROARDeclarativeImageNode) nativeARImageNode,
                                          VRO_REF(VROARImageTarget) nativeARImageTarget) {
-    std::shared_ptr<VROARDeclarativeImageNode> arImageNode = ARDeclarativeImageNode::native(nativeARImageNode);
-    std::shared_ptr<VROARImageTarget> arImageTarget = ARImageTarget::native(nativeARImageTarget);
+    std::shared_ptr<VROARDeclarativeImageNode> arImageNode = VRO_REF_GET(VROARDeclarativeImageNode, nativeARImageNode);
+    std::shared_ptr<VROARImageTarget> arImageTarget = VRO_REF_GET(VROARImageTarget, nativeARImageTarget);
     arImageNode->setImageTarget(arImageTarget);
 }
 

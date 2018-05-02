@@ -20,11 +20,11 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeCreateARPlane)(VRO_ARGS
-                                         VRO_FLOAT minWidth,
-                                         VRO_FLOAT minHeight) {
+VRO_METHOD(VRO_REF(VROARPlaneNode), nativeCreateARPlane)(VRO_ARGS
+                                                         VRO_FLOAT minWidth,
+                                                         VRO_FLOAT minHeight) {
     std::shared_ptr<VROARPlaneNode> arPlane = std::make_shared<VROARPlaneNode>(minWidth, minHeight);
-    return ARPlane::jptr(arPlane);
+    return VRO_REF_NEW(VROARPlaneNode, arPlane);
 }
 
 VRO_METHOD(void, nativeDestroyARPlane)(VRO_ARGS
@@ -32,12 +32,12 @@ VRO_METHOD(void, nativeDestroyARPlane)(VRO_ARGS
     delete reinterpret_cast<PersistentRef<VROARPlaneNode> *>(nativeARPlane);
 }
 
-VRO_METHOD(VRO_REF, nativeCreateARPlaneDelegate)(VRO_ARGS
+VRO_METHOD(VRO_REF(ARPlaneDelegate), nativeCreateARPlaneDelegate)(VRO_ARGS
                                                  VRO_REF(VROARPlaneNode) nativeNodeRef) {
     std::shared_ptr<ARPlaneDelegate> delegate = std::make_shared<ARPlaneDelegate>(object, env);
-    std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeNodeRef);
+    std::shared_ptr<VROARPlaneNode> arPlane = VRO_REF_GET(VROARPlaneNode, nativeNodeRef);
     arPlane->setARNodeDelegate(delegate);
-    return ARPlaneDelegate::jptr(delegate);
+    return VRO_REF_NEW(ARPlaneDelegate, delegate);
 }
 
 VRO_METHOD(void, nativeDestroyARPlaneDelegate)(VRO_ARGS
@@ -49,28 +49,28 @@ VRO_METHOD(void, nativeDestroyARPlaneDelegate)(VRO_ARGS
 VRO_METHOD(void, nativeSetMinWidth)(VRO_ARGS
                                     VRO_REF(VROARPlaneNode) nativeARPlane,
                                     VRO_FLOAT minWidth) {
-    std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
+    std::shared_ptr<VROARPlaneNode> arPlane = VRO_REF_GET(VROARPlaneNode, nativeARPlane);
     arPlane->setMinWidth(minWidth);
 }
 
 VRO_METHOD(void, nativeSetMinHeight)(VRO_ARGS
                                      VRO_REF(VROARPlaneNode) nativeARPlane,
                                      VRO_FLOAT minHeight) {
-    std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
+    std::shared_ptr<VROARPlaneNode> arPlane = VRO_REF_GET(VROARPlaneNode, nativeARPlane);
     arPlane->setMinHeight(minHeight);
 }
 
 VRO_METHOD(void, nativeSetAnchorId)(VRO_ARGS
                                     VRO_REF(VROARPlaneNode) nativeARPlane,
                                     VRO_STRING id) {
-    std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
+    std::shared_ptr<VROARPlaneNode> arPlane = VRO_REF_GET(VROARPlaneNode, nativeARPlane);
     arPlane->setId(VRO_STRING_STL(id));
 }
 
 VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
                                         VRO_REF(VROARPlaneNode) nativeARPlane,
                                         VRO_BOOL pauseUpdates) {
-    std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(nativeARPlane);
+    std::weak_ptr<VROARPlaneNode> arPlane_w = VRO_REF_GET(VROARPlaneNode, nativeARPlane);
     VROPlatformDispatchAsyncRenderer([arPlane_w, pauseUpdates] {
         std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();
         arPlane->setPauseUpdates(pauseUpdates);

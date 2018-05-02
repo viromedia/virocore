@@ -49,7 +49,7 @@ VRO_METHOD(VRO_REF(VROLight), nativeCreateAmbientLight)(VRO_ARGS
     VROVector3f vecColor(r, g, b);
     ambientLight->setColor(vecColor);
     ambientLight->setIntensity(intensity);
-    return AmbientLight::jptr(ambientLight);
+    return VRO_REF_NEW(VROLight, ambientLight);
 }
 
 } // extern "C"

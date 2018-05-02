@@ -20,7 +20,7 @@ extern "C" {
 
 VRO_METHOD(VRO_REF(VROPortalFrame), nativeCreatePortal)(VRO_NO_ARGS) {
     std::shared_ptr<VROPortalFrame> portal = std::make_shared<VROPortalFrame>();
-    return Portal::jptr(portal);
+    return VRO_REF_NEW(VROPortalFrame, portal);
 }
 
 VRO_METHOD(void, nativeDestroyPortal)(VRO_ARGS
