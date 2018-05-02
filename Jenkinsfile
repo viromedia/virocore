@@ -21,7 +21,8 @@ fastlane renderer_viro_react_lib'''
     }
     stage('archive viroreact-release.aar') {
       steps {
-        archiveArtifacts 'android/viroreact/build/outputs/aar/viroreact-release.aar'
+        sh '''cd android
+fastlane renderer_cp_viro_react_lib_to_tmp'''
       }
     }
   }
