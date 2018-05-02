@@ -11,7 +11,6 @@
 
 #include <memory>
 #include "VROTexture.h"
-#include "PersistentRef.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
@@ -21,15 +20,6 @@ namespace Texture {
     VROTextureInternalFormat getFormat(VRO_ENV env, VRO_STRING jformat);
     VRO_OBJECT createJTexture(std::shared_ptr<VROTexture> texture);
 
-    inline VRO_REF(VROTexture) jptr(std::shared_ptr<VROTexture> ptr) {
-        PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROTexture> native(VRO_REF(VROTexture) ptr) {
-        PersistentRef<VROTexture> *persistentRef = reinterpret_cast<PersistentRef<VROTexture> *>(ptr);
-        return persistentRef->get();
-    }
 }
 
 #endif

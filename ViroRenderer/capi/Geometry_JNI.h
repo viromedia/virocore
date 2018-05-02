@@ -7,23 +7,8 @@
 
 #include <memory>
 #include "VRONode.h"
-#include "PersistentRef.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
-
-namespace Geometry {
-    inline VRO_REF(VROGeometry) jptr(std::shared_ptr<VROGeometry> shared_geo) {
-        PersistentRef<VROGeometry> *native_geo = new PersistentRef<VROGeometry>(shared_geo);
-        return reinterpret_cast<intptr_t>(native_geo);
-    }
-
-    inline std::shared_ptr<VROGeometry> native(VRO_REF(VROGeometry) ptr) {
-        PersistentRef<VROGeometry> *persistentGeo = reinterpret_cast<PersistentRef<VROGeometry> *>(ptr);
-        return persistentGeo->get();
-    }
-}
-
-
 
 #endif //ANDROID_GEOMETRY_JNI_H

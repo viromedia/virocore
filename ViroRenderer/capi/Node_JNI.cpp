@@ -10,7 +10,6 @@
 #include <VROBillboardConstraint.h>
 #include "VROGeometry.h"
 #include "VRONode.h"
-#include "PersistentRef.h"
 #include "Node_JNI.h"
 #include "Material_JNI.h"
 #include "Geometry_JNI.h"

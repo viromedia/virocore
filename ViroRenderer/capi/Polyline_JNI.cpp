@@ -6,7 +6,6 @@
 //
 
 #include "VROPolyline.h"
-#include "PersistentRef.h"
 #include "VROPlatformUtil.h"
 #include "Node_JNI.h"
 
@@ -20,15 +19,6 @@
 #endif
 
 namespace Polyline {
-    inline VRO_REF(VROPolyline) jptr(std::shared_ptr<VROPolyline> shared_node) {
-        PersistentRef<VROPolyline> *native_line = new PersistentRef<VROPolyline>(shared_node);
-        return reinterpret_cast<intptr_t>(native_line);
-    }
-
-    inline std::shared_ptr<VROPolyline> native(VRO_REF(VROPolyline) ptr) {
-        PersistentRef<VROPolyline> *persistentLine = reinterpret_cast<PersistentRef<VROPolyline> *>(ptr);
-        return persistentLine->get();
-    }
 
     VROVector3f convertPoint(VRO_ENV env, VRO_FLOAT_ARRAY point_j) {
         int numCoordinates = VRO_ARRAY_LENGTH(point_j);

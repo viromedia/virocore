@@ -5,7 +5,6 @@
 #include <memory>
 #include <VROPortalFrame.h>
 #include "Portal_JNI.h"
-#include "PersistentRef.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

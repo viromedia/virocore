@@ -8,23 +8,12 @@
 #ifndef ANDROID_VIDEO_DELEGATE_JNI_H
 #define ANDROID_VIDEO_DELEGATE_JNI_H
 
-#include "PersistentRef.h"
 #include "VROVideoDelegateInternal.h"
 
 class VideoDelegate : public VROVideoDelegateInternal {
     public:
     VideoDelegate(VRO_OBJECT videoJavaObject);
     ~VideoDelegate();
-
-    static VRO_REF(VideoDelegate) jptr(std::shared_ptr<VideoDelegate> shared_node) {
-        PersistentRef<VideoDelegate> *native_surface = new PersistentRef<VideoDelegate>(shared_node);
-        return reinterpret_cast<intptr_t>(native_surface);
-    }
-
-    static std::shared_ptr<VideoDelegate> native(VRO_REF(VideoDelegate) ptr) {
-        PersistentRef<VideoDelegate> *persistentSurface = reinterpret_cast<PersistentRef<VideoDelegate> *>(ptr);
-        return persistentSurface->get();
-    }
 
     /*
      * Notification mechanism to let the bridge know that the surface has been created

@@ -6,7 +6,6 @@
 //
 
 #include <memory>
-#include "PersistentRef.h"
 #include "VROTypeface.h"
 #include "VROTypefaceCollection.h"
 #include "VROStringUtil.h"
@@ -24,18 +23,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type Text_##method_name
 #endif
-
-namespace Text {
-    inline VRO_REF(VROText) jptr(std::shared_ptr<VROText> shared_node) {
-        PersistentRef<VROText> *native_text = new PersistentRef<VROText>(shared_node);
-        return reinterpret_cast<intptr_t>(native_text);
-    }
-
-    inline std::shared_ptr<VROText> native(VRO_REF(VROText) ptr) {
-        PersistentRef<VROText> *persistentText = reinterpret_cast<PersistentRef<VROText> *>(ptr);
-        return persistentText->get();
-    }
-}
 
 VROTextHorizontalAlignment getHorizontalAlignmentEnum(const std::string& strName) {
     // Depending on string, return the right enum

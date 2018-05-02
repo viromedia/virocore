@@ -13,23 +13,10 @@
 #include "VROCamera.h"
 #include "VROPlatformUtil.h"
 #include "VROTime.h"
-#include "PersistentRef.h"
 #include "ARUtils_JNI.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
-
-namespace Camera {
-    inline VRO_REF(VRONodeCamera) jptr(std::shared_ptr<VRONodeCamera> shared_camera) {
-        PersistentRef<VRONodeCamera> *native_camera = new PersistentRef<VRONodeCamera>(shared_camera);
-        return reinterpret_cast<intptr_t>(native_camera);
-    }
-
-    inline std::shared_ptr<VRONodeCamera> native(VRO_REF(VRONodeCamera) ptr) {
-        PersistentRef<VRONodeCamera> *persistentCamera = reinterpret_cast<PersistentRef<VRONodeCamera> *>(ptr);
-        return persistentCamera->get();
-    }
-}
 
 class CameraDelegateJNI : public VROCameraDelegate {
 public:

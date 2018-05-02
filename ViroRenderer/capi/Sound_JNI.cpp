@@ -9,7 +9,6 @@
 #include "VRORenderContext.h"
 #include "VROSoundGVR.h"
 #include "VROSoundDataGVR.h"
-#include "PersistentRef.h"
 #include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
@@ -27,19 +26,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type Sound_##method_name
 #endif
-
-// TODO: when GVR audio supports the seekToTime, etc, then change the native object to a VROSound.
-namespace Sound {
-    inline VRO_REF(VROAudioPlayer) jptr(std::shared_ptr<VROAudioPlayer> ptr) {
-        PersistentRef<VROAudioPlayer> *persistentRef = new PersistentRef<VROAudioPlayer>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROAudioPlayer> native(VRO_REF(VROAudioPlayer) ptr) {
-        PersistentRef<VROAudioPlayer> *persistentRef = reinterpret_cast<PersistentRef<VROAudioPlayer> *>(ptr);
-        return persistentRef->get();
-    }
-}
 
 extern "C" {
 

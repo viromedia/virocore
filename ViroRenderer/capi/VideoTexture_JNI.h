@@ -14,15 +14,4 @@
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
 
-namespace VideoTexture {
-    inline VRO_REF(VROVideoTexture) jptr(std::shared_ptr<VROVideoTexture> ptr) {
-        PersistentRef<VROVideoTexture> *persistentRef = new PersistentRef<VROVideoTexture>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROVideoTexture> native(VRO_REF(VROVideoTexture) ptr) {
-        PersistentRef<VROVideoTexture> *persistentRef = reinterpret_cast<PersistentRef<VROVideoTexture> *>(ptr);
-        return persistentRef->get();
-    }
-}
 #endif

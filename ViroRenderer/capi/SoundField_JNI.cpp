@@ -8,7 +8,6 @@
 #include <memory>
 #include <VROSound.h>
 #include <VROSoundGVR.h>
-#include "PersistentRef.h"
 #include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
@@ -23,18 +22,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type SoundField_##method_name
 #endif
-
-namespace SoundField {
-    inline VRO_REF(VROSoundGVR) jptr(std::shared_ptr<VROSoundGVR> ptr) {
-        PersistentRef<VROSoundGVR> *persistentRef = new PersistentRef<VROSoundGVR>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROSoundGVR> native(VRO_REF(VROSoundGVR) ptr) {
-        PersistentRef<VROSoundGVR> *persistentRef = reinterpret_cast<PersistentRef<VROSoundGVR> *>(ptr);
-        return persistentRef->get();
-    }
-}
 
 extern "C" {
 

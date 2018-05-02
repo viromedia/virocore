@@ -10,7 +10,6 @@
 #include "VRONode.h"
 #include "VROScene.h"
 #include "VROSceneController.h"
-#include "PersistentRef.h"
 #include "VideoTexture_JNI.h"
 #include "SceneController_JNI.h"
 #include "Texture_JNI.h"

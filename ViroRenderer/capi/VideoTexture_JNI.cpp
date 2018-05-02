@@ -10,7 +10,6 @@
 #include <VROTextureUtil.h>
 #include "VRONode.h"
 #include "VROMaterial.h"
-#include "PersistentRef.h"
 #include "VROFrameSynchronizer.h"
 #include "VROPlatformUtil.h"
 #include "ViroContext_JNI.h"

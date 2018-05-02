@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <VROSoundDataGVR.h>
-#include "PersistentRef.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
@@ -25,29 +24,5 @@ public:
 private:
     VRO_OBJECT _javaObject;
 };
-
-namespace SoundData {
-    inline VRO_REF(VROSoundDataGVR) jptr(std::shared_ptr<VROSoundDataGVR> ptr) {
-        PersistentRef<VROSoundDataGVR> *persistentRef = new PersistentRef<VROSoundDataGVR>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROSoundDataGVR> native(VRO_REF(VROSoundDataGVR) ptr) {
-        PersistentRef<VROSoundDataGVR> *persistentRef = reinterpret_cast<PersistentRef<VROSoundDataGVR> *>(ptr);
-        return persistentRef->get();
-    }
-}
-
-namespace SoundDataDelegate {
-    inline VRO_REF(VROSoundDataDelegate_JNI) jptr(std::shared_ptr<VROSoundDataDelegate_JNI> ptr) {
-        PersistentRef<VROSoundDataDelegate_JNI> *persistentRef = new PersistentRef<VROSoundDataDelegate_JNI>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROSoundDataDelegate_JNI> native(VRO_REF(VROSoundDataDelegate_JNI) ptr) {
-        PersistentRef<VROSoundDataDelegate_JNI> *persistentRef = reinterpret_cast<PersistentRef<VROSoundDataDelegate_JNI> *>(ptr);
-        return persistentRef->get();
-    }
-}
 
 #endif

@@ -14,7 +14,6 @@
 #include "VRONode.h"
 #include "VROBillboardConstraint.h"
 #include "VROPlatformUtil.h"
-#include "PersistentRef.h"
 #include "VROGeometry.h"
 #include "VRONode.h"
 #include "VROARHitTestResult.h"
@@ -62,19 +61,5 @@ public:
 private:
     VRO_OBJECT _javaObject;
 };
-
-namespace EventDelegate{
-    inline VRO_REF(EventDelegate_JNI) jptr(std::shared_ptr<EventDelegate_JNI> delegate) {
-        PersistentRef<EventDelegate_JNI> *nativeDelegate
-                = new PersistentRef<EventDelegate_JNI>(delegate);
-        return reinterpret_cast<intptr_t>(nativeDelegate);
-    }
-
-    inline std::shared_ptr<EventDelegate_JNI> native(VRO_REF(EventDelegate_JNI) ptr) {
-        PersistentRef<EventDelegate_JNI> *persistentObject
-                = reinterpret_cast<PersistentRef<EventDelegate_JNI> *>(ptr);
-        return persistentObject->get();
-    }
-}
 
 #endif

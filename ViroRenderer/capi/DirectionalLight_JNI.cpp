@@ -5,7 +5,6 @@
 // Copyright © 2016 Viro Media. All rights reserved.
 
 #include "VROLight.h"
-#include "PersistentRef.h"
 #include "VRONode.h"
 #include "VROPlatformUtil.h"
 #include "Node_JNI.h"
@@ -18,18 +17,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type DirectionalLight_##method_name
 #endif
-
-namespace DirectionalLight {
-    inline VRO_REF(VROLight) jptr(std::shared_ptr<VROLight> shared_node) {
-        PersistentRef<VROLight> *native_light = new PersistentRef<VROLight>(shared_node);
-        return reinterpret_cast<intptr_t>(native_light);
-    }
-
-    inline std::shared_ptr<VROLight> native(VRO_REF(VROLight) ptr) {
-        PersistentRef<VROLight> *persistentBox = reinterpret_cast<PersistentRef<VROLight> *>(ptr);
-        return persistentBox->get();
-    }
-}
 
 extern "C" {
 

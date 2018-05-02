@@ -269,7 +269,7 @@ VRO_METHOD(void, nativeSetSceneController)(VRO_ARGS
     }
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(native_scene_controller_ref);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, native_scene_controller_ref);
 
     VROPlatformDispatchAsyncRenderer([renderer_w, sceneController_w] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -293,7 +293,7 @@ VRO_METHOD(void, nativeSetSceneControllerWithAnimation)(VRO_ARGS
     }
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(native_scene_controller_ref);
+    std::weak_ptr<VROSceneController> sceneController_w = VRO_REF_GET(VROSceneController, native_scene_controller_ref);
 
     VROPlatformDispatchAsyncRenderer([renderer_w, sceneController_w, duration] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -314,7 +314,7 @@ VRO_METHOD(void, nativeSetPointOfView)(VRO_ARGS
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
     std::shared_ptr<VRONode> node;
     if (native_node_ref != 0) {
-        node = Node::native(native_node_ref);
+        node = VRO_REF_GET(VRONode, native_node_ref);
     }
 
     VROPlatformDispatchAsyncRenderer([renderer_w, node] {
@@ -424,7 +424,7 @@ VRO_METHOD(void, nativeAddFrameListener)(VRO_ARGS
                                          jlong native_renderer, jlong frame_listener) {
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
+    std::weak_ptr<VROFrameListener> frameListener_w = VRO_REF_GET(VROFrameListener, frame_listener);
 
     VROPlatformDispatchAsyncRenderer([renderer_w, frameListener_w] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -443,7 +443,7 @@ VRO_METHOD(void, nativeAddFrameListener)(VRO_ARGS
 VRO_METHOD(void, nativeRemoveFrameListener)(VRO_ARGS
                                             jlong native_renderer, jlong frame_listener) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
+    std::weak_ptr<VROFrameListener> frameListener_w  = VRO_REF_GET(VROFrameListener, frame_listener);
 
     VROPlatformDispatchAsyncRenderer([renderer_w, frameListener_w] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();

@@ -9,7 +9,6 @@
 #define ANDROID_VIDEO_DELEGATE_JNI_H
 
 #include <memory>
-#include "PersistentRef.h"
 #include "VROSoundDelegateInternal.h"
 
 #include "VRODefines.h"
@@ -20,14 +19,6 @@ class SoundDelegate : public VROSoundDelegateInternal {
 public:
     SoundDelegate(VRO_OBJECT soundObjectJava);
     ~SoundDelegate();
-
-    static VRO_REF(SoundDelegate) jptr(std::shared_ptr<SoundDelegate> delegate) {
-        return reinterpret_cast<intptr_t>(new PersistentRef<SoundDelegate>(delegate));
-    }
-
-    static std::shared_ptr<SoundDelegate> native(VRO_REF(SoundDelegate) ptr) {
-        return reinterpret_cast<PersistentRef<SoundDelegate> *>(ptr)->get();
-    }
 
     // VROSoundDelegateInternal
     virtual void soundIsReady();

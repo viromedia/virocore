@@ -6,7 +6,6 @@
 //
 
 #include <memory>
-#include "PersistentRef.h"
 #include "ViroContext_JNI.h"
 #include "VROPlatformUtil.h"
 #include "VROVector3f.h"

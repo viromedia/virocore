@@ -7,7 +7,6 @@
 
 #include <memory>
 #include "VROAnimationChain.h"
-#include "PersistentRef.h"
 #include "VROStringUtil.h"
 #include "AnimationGroup_JNI.h"
 #include "Node_JNI.h"
@@ -25,18 +24,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type AnimationChain_##method_name
 #endif
-
-namespace AnimationChain {
-    inline VRO_REF(VROAnimationChain) jptr(std::shared_ptr<VROAnimationChain> ptr) {
-        PersistentRef<VROAnimationChain> *persistentRef = new PersistentRef<VROAnimationChain>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROAnimationChain> native(VRO_REF(VROAnimationChain) ptr) {
-        PersistentRef<VROAnimationChain> *persistentRef = reinterpret_cast<PersistentRef<VROAnimationChain> *>(ptr);
-        return persistentRef->get();
-    }
-}
 
 extern "C" {
 

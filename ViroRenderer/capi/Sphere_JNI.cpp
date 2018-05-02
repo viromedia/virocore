@@ -11,7 +11,6 @@
 #include <VROPlatformUtil.h>
 #include "VROMaterial.h"
 #include "VRONode.h"
-#include "PersistentRef.h"
 #include "VROMaterialVisual.h"
 #include "VideoTexture_JNI.h"
 #include "Node_JNI.h"
@@ -24,18 +23,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type Sphere_##method_name
 #endif
-
-namespace Sphere{
-    inline VRO_REF(VROSphere) jptr(std::shared_ptr<VROSphere> ptr) {
-        PersistentRef<VROSphere> *persistentRef = new PersistentRef<VROSphere>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROSphere> native(VRO_REF(VROSphere) ptr) {
-        PersistentRef<VROSphere> *persistentRef = reinterpret_cast<PersistentRef<VROSphere> *>(ptr);
-        return persistentRef->get();
-    }
-}
 
 extern "C" {
 

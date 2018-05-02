@@ -9,7 +9,6 @@
 #include <VROPlatformUtil.h>
 #include "VROBox.h"
 #include "VROMaterial.h"
-#include "PersistentRef.h"
 #include "Node_JNI.h"
 
 #if VRO_PLATFORM_ANDROID
@@ -20,18 +19,6 @@
 #define VRO_METHOD(return_type, method_name) \
     return_type Box_##method_name
 #endif
-
-namespace Box {
-    inline VRO_REF(VROBox) jptr(std::shared_ptr<VROBox> shared_node) {
-        PersistentRef<VROBox> *native_box = new PersistentRef<VROBox>(shared_node);
-        return reinterpret_cast<intptr_t>(native_box);
-    }
-
-    inline std::shared_ptr<VROBox> native(VRO_REF(VROBox) ptr) {
-        PersistentRef<VROBox> *persistentBox = reinterpret_cast<PersistentRef<VROBox> *>(ptr);
-        return persistentBox->get();
-    }
-}
 
 extern "C" {
 

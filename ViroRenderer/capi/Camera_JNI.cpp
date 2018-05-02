@@ -9,7 +9,6 @@
 #include <iostream>
 #include <memory>
 #include <VROPlatformUtil.h>
-#include "PersistentRef.h"
 #include "VRONodeCamera.h"
 #include "VROCamera.h"
 #include "VROStringUtil.h"

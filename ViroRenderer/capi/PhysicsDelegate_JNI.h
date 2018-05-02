@@ -8,7 +8,6 @@
 #ifndef ANDROID_PHYSICS_DELEGATE_JNI_H
 #define ANDROID_PHYSICS_DELEGATE_JNI_H
 
-#include "PersistentRef.h"
 #include "VROPhysicsBodyDelegate.h"
 
 #include "VRODefines.h"
@@ -24,16 +23,6 @@ class PhysicsDelegate_JNI : public VROPhysicsBodyDelegate {
 public:
     PhysicsDelegate_JNI(VRO_OBJECT videoJavaObject);
     ~PhysicsDelegate_JNI();
-
-    static VRO_REF(PhysicsDelegate_JNI) jptr(std::shared_ptr<PhysicsDelegate_JNI> shared_node) {
-        PersistentRef<PhysicsDelegate_JNI> *native_surface = new PersistentRef<PhysicsDelegate_JNI>(shared_node);
-        return reinterpret_cast<intptr_t>(native_surface);
-    }
-
-    static std::shared_ptr<PhysicsDelegate_JNI> native(VRO_REF(PhysicsDelegate_JNI) ptr) {
-        PersistentRef<PhysicsDelegate_JNI> *persistentSurface = reinterpret_cast<PersistentRef<PhysicsDelegate_JNI> *>(ptr);
-        return persistentSurface->get();
-    }
 
     void onCollided(std::string key, VROPhysicsBody::VROCollision collision);
 
