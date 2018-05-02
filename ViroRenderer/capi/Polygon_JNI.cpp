@@ -22,7 +22,7 @@
 extern "C" {
 
 VRO_METHOD(VRO_REF, nativeCreateSurface)(VRO_ARGS
-                                         VRO_ARRAY jpoints,
+                                         VRO_ARRAY(VRO_FLOAT_ARRAY) jpoints,
                                          VRO_FLOAT u0, VRO_FLOAT v0,
                                          VRO_FLOAT u1, VRO_FLOAT v1) {
     std::vector<VROVector3f> initialValues;

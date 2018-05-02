@@ -44,8 +44,8 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
         VRO_STRING type = VRO_NEW_STRING(typeArr);
 
         return VROPlatformConstructHostObject("com/viro/core/ARPlaneAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F[F)V",
-                                              VRO_STRING_POD(anchorId), VRO_STRING_POD(type), positionArray, rotationArray,
-                                              scaleArray, VRO_STRING_POD(alignment), extentArray, centerArray,
+                                              anchorId, type, positionArray, rotationArray,
+                                              scaleArray, alignment, extentArray, centerArray,
                                               polygonPointsArray);
     }
 
@@ -59,7 +59,7 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
         const char *typeArr = "image";
         VRO_STRING type = VRO_NEW_STRING(typeArr);
         return VROPlatformConstructHostObject("com/viro/core/ARImageAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
-                                              VRO_STRING_POD(anchorId), VRO_STRING_POD(type), positionArray, rotationArray,
+                                              anchorId, type, positionArray, rotationArray,
                                               scaleArray);
     }
 
@@ -71,7 +71,7 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
     const char *typeArr = "anchor";
     VRO_STRING type = VRO_NEW_STRING(typeArr);
     return VROPlatformConstructHostObject("com/viro/core/ARAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
-                                          VRO_STRING_POD(anchorId), VRO_STRING_POD(type), positionArray, rotationArray,
+                                          anchorId, type, positionArray, rotationArray,
                                           scaleArray);
 }
 
@@ -157,7 +157,7 @@ VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
 
     jtypeString = VRO_NEW_STRING(typeString);
     return VROPlatformConstructHostObject("com/viro/core/ARHitTestResult", "(Ljava/lang/String;[F[F[F)V",
-                                          VRO_STRING_POD(jtypeString), jposition, jscale, jrotation);
+                                          jtypeString, jposition, jscale, jrotation);
 }
 
 VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {

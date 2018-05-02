@@ -305,7 +305,7 @@ void ARDeclarativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onTrackingUpdated", "(II)V", state, reason);
+        VROPlatformCallHostFunction(localObj, "onTrackingUpdated", "(II)V", state, reason);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -322,7 +322,7 @@ void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensit
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onAmbientLightUpdate", "(FF)V",
+        VROPlatformCallHostFunction(localObj, "onAmbientLightUpdate", "(FF)V",
                                     ambientLightIntensity, colorTemperature);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
@@ -342,9 +342,9 @@ void ARDeclarativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> 
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         VRO_REF nodeNativeRef = 0;
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound",
+        VROPlatformCallHostFunction(localObj, "onAnchorFound",
                                     "(Lcom/viro/core/ARAnchor;J)V",
-                                    VRO_OBJECT_POD(janchor), nodeNativeRef);
+                                    janchor, nodeNativeRef);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -366,9 +366,9 @@ void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> an
         }
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated",
+        VROPlatformCallHostFunction(localObj, "onAnchorUpdated",
                                     "(Lcom/viro/core/ARAnchor;I)V",
-                                    VRO_OBJECT_POD(janchor), 0);
+                                    janchor, 0);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -386,9 +386,9 @@ void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> a
         }
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved",
+        VROPlatformCallHostFunction(localObj, "onAnchorRemoved",
                                     "(Lcom/viro/core/ARAnchor;I)V",
-                                    VRO_OBJECT_POD(janchor), 0);
+                                    janchor, 0);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -410,7 +410,7 @@ void ARImperativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onTrackingUpdated", "(II)V", state, reason);
+        VROPlatformCallHostFunction(localObj, "onTrackingUpdated", "(II)V", state, reason);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -428,7 +428,7 @@ void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onAmbientLightUpdate", "(FF)V",
+        VROPlatformCallHostFunction(localObj, "onAmbientLightUpdate", "(FF)V",
                                     ambientLightIntensity, colorTemperature);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
@@ -448,9 +448,9 @@ void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> a
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         VRO_REF node_j = ARNode::jptr(node);
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound",
+        VROPlatformCallHostFunction(localObj, "onAnchorFound",
                                     "(Lcom/viro/core/ARAnchor;J)V",
-                                    VRO_OBJECT_POD(janchor), node_j);
+                                    janchor, node_j);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -472,9 +472,9 @@ void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anc
         }
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated",
+        VROPlatformCallHostFunction(localObj, "onAnchorUpdated",
                                     "(Lcom/viro/core/ARAnchor;I)V",
-                                    VRO_OBJECT_POD(janchor), node->getUniqueID());
+                                    janchor, node->getUniqueID());
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -492,9 +492,9 @@ void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> an
         }
 
         VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved",
+        VROPlatformCallHostFunction(localObj, "onAnchorRemoved",
                                     "(Lcom/viro/core/ARAnchor;I)V",
-                                    VRO_OBJECT_POD(janchor), node->getUniqueID());
+                                    janchor, node->getUniqueID());
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });

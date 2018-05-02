@@ -224,7 +224,7 @@ VRO_METHOD(void, nativeSetExplosiveImpulse)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetParticleBursts)(VRO_ARGS
                                           VRO_REF native_ref,
-                                          VRO_ARRAY jBursts) {
+                                          VRO_ARRAY(VRO_DOUBLE_ARRAY) jBursts) {
 
     // Grab and create a list of bursts if any.
     std::vector<VROParticleEmitter::VROParticleBurst> particleBursts;
@@ -269,9 +269,9 @@ VRO_METHOD(void, nativeSetParticleModifier)(VRO_ARGS
                                             VRO_REF native_ref,
                                             VRO_STRING jModifier,
                                             VRO_STRING jFactor,
-                                            VRO_ARRAY jInitialValues,
-                                            VRO_ARRAY jInterpolatedIntervalWindows,
-                                            VRO_ARRAY jInterpolatedPoints) {
+                                            VRO_ARRAY(VRO_FLOAT_ARRAY) jInitialValues,
+                                            VRO_ARRAY(VRO_FLOAT_ARRAY) jInterpolatedIntervalWindows,
+                                            VRO_ARRAY(VRO_FLOAT_ARRAY) jInterpolatedPoints) {
     VRO_METHOD_PREAMBLE;
     // Construct a modifier with the given initialValues and interpolation values.
     std::shared_ptr<VROParticleModifier> mod = ParticleEmitter::getParticleModifier(env, jFactor,

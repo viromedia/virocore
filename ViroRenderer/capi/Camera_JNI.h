@@ -66,7 +66,7 @@ public:
             VRO_FLOAT_ARRAY jPos = ARUtilsCreateFloatArrayFromVector3f(pos);
             VRO_FLOAT_ARRAY jRot = ARUtilsCreateFloatArrayFromVector3f(rot);
             VRO_FLOAT_ARRAY jForward = ARUtilsCreateFloatArrayFromVector3f(forward);
-            VROPlatformCallJavaFunction(localObj, "onCameraTransformationUpdate", "([F[F[F)V",
+            VROPlatformCallHostFunction(localObj, "onCameraTransformationUpdate", "([F[F[F)V",
                                         jPos, jRot, jForward);
             VRO_DELETE_LOCAL_REF(localObj);
             VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);

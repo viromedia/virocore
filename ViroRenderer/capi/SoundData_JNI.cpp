@@ -74,7 +74,7 @@ void VROSoundDataDelegate_JNI::dataIsReady(){
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "dataIsReady", "()V");
+        VROPlatformCallHostFunction(localObj, "dataIsReady", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
@@ -93,7 +93,7 @@ void VROSoundDataDelegate_JNI::dataError(std::string error){
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
-        VROPlatformCallJavaFunction(localObj, "dataError", "(Ljava/lang/String;)V", VRO_STRING_POD(jerror));
+        VROPlatformCallHostFunction(localObj, "dataError", "(Ljava/lang/String;)V", jerror);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
         VRO_DELETE_LOCAL_REF(jerror);

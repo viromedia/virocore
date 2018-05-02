@@ -99,7 +99,7 @@ void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool 
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onHover", "(IIZ[F)V", source, nodeId, isHovering, positionArray);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -131,7 +131,7 @@ void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, Click
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onClick", "(III[F)V", source, nodeId, clickState, positionArray);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -150,7 +150,7 @@ void EventDelegate_JNI::onTouch(int source, std::shared_ptr<VRONode> node, Touch
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onTouch", "(IIIFF)V", source, nodeId, touchState, x, y);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -172,7 +172,7 @@ void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) 
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onControllerStatus", "(II)V", source, status);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -195,7 +195,7 @@ void EventDelegate_JNI::onSwipe(int source, std::shared_ptr<VRONode> node, Swipe
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onSwipe", "(III)V", source, nodeId, swipeState);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -214,7 +214,7 @@ void EventDelegate_JNI::onScroll(int source, std::shared_ptr<VRONode> node, floa
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onScroll", "(IIFF)V", source, nodeId, x, y);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -233,7 +233,7 @@ void EventDelegate_JNI::onDrag(int source, std::shared_ptr<VRONode> node, VROVec
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onDrag", "(IIFFF)V", source, nodeId, newPosition.x, newPosition.y,
                                     newPosition.z);
         VRO_DELETE_LOCAL_REF(localObj);
@@ -262,7 +262,7 @@ void EventDelegate_JNI::onFuse(int source, std::shared_ptr<VRONode> node, float 
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onFuse", "(II)V", source, nodeId, timeToFuseRatio);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -281,7 +281,7 @@ void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onPinch", "(IIFI)V", source, nodeId, scaleFactor, pinchState);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -300,7 +300,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
         }
 
         int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onRotate", "(IIFI)V", source, nodeId, rotationRadians, rotateState);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -325,7 +325,7 @@ void EventDelegate_JNI::onCameraARHitTest(std::vector<VROARHitTestResult> result
             VRO_OBJECT_ARRAY_SET(resultsArray, i, jresult);
         }
 
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "onCameraARHitTest", "([Lcom/viro/core/ARHitTestResult;)V", resultsArray);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -351,7 +351,7 @@ void EventDelegate_JNI::onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> po
         }
 
         VRO_OBJECT jPointCloud = ARUtilsCreateARPointCloud(pointCloud);
-        VROPlatformCallJavaFunction(localObj, "onARPointCloudUpdate", "(Lcom/viro/core/ARPointCloud;)V", VRO_OBJECT_POD(jPointCloud));
+        VROPlatformCallHostFunction(localObj, "onARPointCloudUpdate", "(Lcom/viro/core/ARPointCloud;)V", jPointCloud);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });

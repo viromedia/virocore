@@ -811,7 +811,7 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
         sRendererQueue.push_back(task);
         return;
     }
-    VROPlatformCallJavaFunction(sPlatformUtil,
+    VROPlatformCallHostFunction(sPlatformUtil,
                                 "dispatchRenderer", "(I)V", task);
 }
 
@@ -821,7 +821,7 @@ void VROPlatformDispatchAsyncApplication(std::function<void()> fcn){
         sAsyncQueue.push_back(task);
         return;
     }
-    VROPlatformCallJavaFunction(sPlatformUtil,
+    VROPlatformCallHostFunction(sPlatformUtil,
                                 "dispatchApplication", "(I)V", task);
 }
 
@@ -839,13 +839,13 @@ void VROPlatformFlushTaskQueues() {
     sBackgroundQueue.clear();
 
     for (int task : sRendererQueue) {
-        VROPlatformCallJavaFunction(sPlatformUtil,
+        VROPlatformCallHostFunction(sPlatformUtil,
                                     "dispatchRenderer", "(I)V", task);
     }
     sRendererQueue.clear();
 
     for (int task : sAsyncQueue) {
-        VROPlatformCallJavaFunction(sPlatformUtil,
+        VROPlatformCallHostFunction(sPlatformUtil,
                                     "dispatchApplication", "(I)V", task);
     }
     sAsyncQueue.clear();
@@ -883,97 +883,6 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
     jni->DeleteLocalRef(jclassName);
 
     return cls;
-}
-
-void VROPlatformCallJavaFunction(jobject javaObject,
-                                 std::string functionName,
-                                 std::string methodID, ...) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    env->ExceptionClear();
-
-    jclass viroClass = env->GetObjectClass(javaObject);
-    if (viroClass == nullptr) {
-        perr("Unable to find class for making java calls [function %s, method %s]",
-             functionName.c_str(), methodID.c_str());
-        return;
-    }
-    
-    jmethodID method = env->GetMethodID(viroClass, functionName.c_str(), methodID.c_str());
-    if (method == nullptr) {
-        perr("Unable to find method %s callback.", functionName.c_str());
-        return;
-    }
-    
-    va_list args;
-    va_start(args, methodID);
-    env->CallVoidMethodV(javaObject, method, args);
-    if (env->ExceptionOccurred()) {
-        perr("Exception occurred when calling %s.", functionName.c_str());
-        env->ExceptionDescribe();
-        std::string errorString = "A java exception has been thrown when calling " + functionName;
-        throw std::runtime_error(errorString.c_str());
-    }
-    va_end(args);
-    
-    env->DeleteLocalRef(viroClass);
-}
-
- jlong VROPlatformCallJavaLongFunction(jobject javaObject,
-                                       std::string functionName,
-                                       std::string methodID, ...) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    env->ExceptionClear();
-
-    jclass viroClass = env->GetObjectClass(javaObject);
-    if (viroClass == nullptr) {
-        perr("Unable to find class for making java calls [function %s, method %s]",
-             functionName.c_str(), methodID.c_str());
-        return 0;
-    }
-
-    jmethodID method = env->GetMethodID(viroClass, functionName.c_str(), methodID.c_str());
-    if (method == nullptr) {
-        perr("Unable to find method %s callback.", functionName.c_str());
-        return 0;
-    }
-
-    va_list args;
-    va_start(args, methodID);
-    jlong result = env->CallLongMethodV(javaObject, method, args);
-    if (env->ExceptionOccurred()) {
-        perr("Exception occurred when calling %s.", functionName.c_str());
-        env->ExceptionDescribe();
-        std::string errorString = "A java exception has been thrown when calling " + functionName;
-        throw std::runtime_error(errorString.c_str());
-    }
-    va_end(args);
-
-    env->DeleteLocalRef(viroClass);
-    return result;
-}
-
-VRO_OBJECT VROPlatformConstructHostObject(std::string className,
-                                          std::string constructorSig, ...) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    env->ExceptionClear();
-
-    jclass cls = env->FindClass(className.c_str());
-    jmethodID constructor = env->GetMethodID(cls, "<init>", constructorSig.c_str());
-
-    va_list args;
-    va_start(args, constructorSig);
-    jobject object = env->NewObjectV(cls, constructor, args);
-    if (env->ExceptionOccurred()) {
-        perr("Exception occurred when calling constructor %s", constructorSig.c_str());
-        env->ExceptionDescribe();
-
-        std::string errorString = "A java exception has been thrown when calling constructor " + constructorSig;
-        throw std::runtime_error(errorString.c_str());
-    }
-    va_end(args);
-
-    env->DeleteLocalRef(cls);
-    return object;
 }
 
 void VROPlatformSetBool(JNIEnv *env, jobject jObj, const char *fieldName, jboolean value) {
@@ -1103,6 +1012,8 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 #elif VRO_PLATFORM_WASM
 
 #include "emscripten.h"
+#include "emscripten/bind.h"
+#include "emscripten/val.h"
 #include "VROImageWasm.h"
 
 std::string VROPlatformRandomString(size_t length) {
@@ -1204,23 +1115,6 @@ void VROPlatformSetEnv(VRO_ENV env) {
 
 VRO_ENV VROPlatformGetJNIEnv() {
     return nullptr;
-}
-
-void VROPlatformCallJavaFunction(VRO_OBJECT object,
-                                 std::string functionName,
-                                 std::string methodID, ...) {
-
-}
-
-VRO_LONG VROPlatformCallJavaLongFunction(VRO_OBJECT object,
-                                         std::string functionName,
-                                         std::string methodID, ...) {
-    return 0;
-}
-
-VRO_OBJECT VROPlatformConstructHostObject(std::string className,
-                                          std::string constructorSig, ...) {
-    return VRO_OBJECT_NULL;
 }
 
 void VROPlatformSetFloat(VRO_ENV env, VRO_OBJECT obj, const char *fieldName, VRO_FLOAT value) {

@@ -7,6 +7,7 @@
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
+#include "VROPlatformUtil.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
@@ -21,7 +22,8 @@ extern "C" {
 
 VRO_METHOD(VRO_REF, nativeTestMethod)(VRO_NO_ARGS) {
     pinfo("Invoked C method");
-    obj.call<void>("callJSMethod", 0);
+
+    VROPlatformCallHostFunction(obj, "callJSMethod", "", 5, 7);
     return 0;
 }
 

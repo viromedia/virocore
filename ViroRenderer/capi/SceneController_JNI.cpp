@@ -281,7 +281,7 @@ VRO_METHOD(void, findCollisionsWithRayAsync)(VRO_ARGS
                 return;
             }
 
-            VROPlatformCallJavaFunction(jCallback, "onComplete", "(Z)V", hitSomething);
+            VROPlatformCallHostFunction(jCallback, "onComplete", "(Z)V", hitSomething);
             VRO_DELETE_LOCAL_REF(jCallback);
             VRO_DELETE_WEAK_GLOBAL_REF(weakCallback);
         });
@@ -352,7 +352,7 @@ VRO_METHOD(void, findCollisionsWithShapeAsync)(VRO_ARGS
                 return;
             }
 
-            VROPlatformCallJavaFunction(jCallback, "onComplete", "(Z)V", hitSomething);
+            VROPlatformCallHostFunction(jCallback, "onComplete", "(Z)V", hitSomething);
             VRO_DELETE_LOCAL_REF(jCallback);
             VRO_DELETE_WEAK_GLOBAL_REF(weakCallback);
         });
@@ -387,7 +387,7 @@ void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName)
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     functionName, "()V");
         VRO_DELETE_LOCAL_REF(localObj);
     });

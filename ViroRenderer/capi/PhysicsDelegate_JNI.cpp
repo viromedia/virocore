@@ -34,8 +34,8 @@ void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollisi
         }
 
         VRO_STRING jCollidedBodyTag = VRO_NEW_STRING(collision.collidedBodyTag.c_str());
-        VROPlatformCallJavaFunction(localObj, "onCollided", "(Ljava/lang/String;FFFFFF)V",
-                                    VRO_STRING_POD(jCollidedBodyTag),
+        VROPlatformCallHostFunction(localObj, "onCollided", "(Ljava/lang/String;FFFFFF)V",
+                                    jCollidedBodyTag,
                                     collision.collidedPoint.x,
                                     collision.collidedPoint.y,
                                     collision.collidedPoint.z,

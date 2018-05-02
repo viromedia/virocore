@@ -93,7 +93,7 @@ void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak wea
     VROPlatformDispatchAsyncApplication([weakCallback, globalArrayRef] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject callback = env->NewLocalRef(weakCallback);
-        VROPlatformCallJavaFunction(callback, "onHitTestFinished",
+        VROPlatformCallHostFunction(callback, "onHitTestFinished",
                                     "([Lcom/viro/core/ARHitTestResult;)V",
                                     globalArrayRef);
         env->DeleteGlobalRef(globalArrayRef);
@@ -107,7 +107,7 @@ void invokeEmptyARResultsCallback(jweak weakCallback) {
         jobject callback = env->NewLocalRef(weakCallback);
         jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
         jobjectArray emptyArray = env->NewObjectArray(0, arHitTestResultClass, NULL);
-        VROPlatformCallJavaFunction(callback, "onHitTestFinished",
+        VROPlatformCallHostFunction(callback, "onHitTestFinished",
                                     "([Lcom/viro/core/ARHitTestResult;)V", emptyArray);
         env->DeleteWeakGlobalRef(weakCallback);
     });

@@ -66,7 +66,7 @@ VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS
         VROVector3f forward = camera.getForward();
         VROVector3f up = camera.getUp();
 
-        VROPlatformCallJavaFunction(jCallback,
+        VROPlatformCallHostFunction(jCallback,
                                     "onGetCameraOrientation", "(FFFFFFFFFFFF)V",
                                     position.x, position.y, position.z,
                                     rotation.x, rotation.y, rotation.z,

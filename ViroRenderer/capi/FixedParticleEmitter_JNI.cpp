@@ -46,7 +46,7 @@ VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetParticles)(VRO_ARGS
                                      VRO_REF emitter_j,
-                                     VRO_ARRAY jPositions) {
+                                     VRO_ARRAY(VRO_FLOAT_ARRAY) jPositions) {
     std::vector<VROVector4f> initialValues;
     int numberOfValues = VRO_ARRAY_LENGTH(jPositions);
     for (int i = 0; i < numberOfValues; i++) {

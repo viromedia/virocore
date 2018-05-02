@@ -34,7 +34,7 @@ VRO_METHOD(void, nativeInitPhysicsBody)(VRO_ARGS
 
     // Build a VROPhysicsShape if possible
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
-    if (shapeTypeStr != NULL) {
+    if (!VRO_IS_STRING_EMPTY(shapeTypeStr)) {
         std::string strShapeType = VRO_STRING_STL(shapeTypeStr);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
@@ -77,7 +77,7 @@ VRO_METHOD(void, nativeSetPhysicsShape)(VRO_ARGS
 
     // Build a VROPhysicsShape if possible
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
-    if (shapeTypeStr != NULL) {
+    if (!VRO_IS_STRING_EMPTY(shapeTypeStr)) {
         // Get the shape type
         std::string strShapeType = VRO_STRING_STL(shapeTypeStr);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);

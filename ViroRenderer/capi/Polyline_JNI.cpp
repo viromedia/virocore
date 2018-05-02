@@ -45,7 +45,7 @@ namespace Polyline {
         return point;
     }
 
-    std::vector<VROVector3f> convertPoints(VRO_ENV env, VRO_ARRAY points_j) {
+    std::vector<VROVector3f> convertPoints(VRO_ENV env, VRO_ARRAY(VRO_FLOAT_ARRAY) points_j) {
         std::vector<VROVector3f> points;
         int numPoints = VRO_ARRAY_LENGTH(points_j);
         for (int i = 0; i < numPoints; i++) {
@@ -67,7 +67,7 @@ VRO_METHOD(VRO_REF, nativeCreatePolylineEmpty)(VRO_ARGS
 }
 
 VRO_METHOD(VRO_REF, nativeCreatePolyline)(VRO_ARGS
-                                          VRO_ARRAY points_j,
+                                          VRO_ARRAY(VRO_FLOAT_ARRAY) points_j,
                                           VRO_FLOAT width) {
     VRO_METHOD_PREAMBLE;
 
@@ -98,7 +98,7 @@ VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetPoints)(VRO_ARGS
                                   VRO_REF polyline_j,
-                                  VRO_ARRAY points_j) {
+                                  VRO_ARRAY(VRO_FLOAT_ARRAY) points_j) {
     VRO_METHOD_PREAMBLE;
     std::vector<VROVector3f> points = Polyline::convertPoints(env, points_j);
 

@@ -66,7 +66,7 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
         }
         animation->execute(node, [obj_g] {
             VROPlatformDispatchAsyncApplication([obj_g] {
-                VROPlatformCallJavaFunction(obj_g, "animationDidFinish", "()V");
+                VROPlatformCallHostFunction(obj_g, "animationDidFinish", "()V");
                 VRO_ENV env = VROPlatformGetJNIEnv();
                 VRO_DELETE_GLOBAL_REF(obj_g);
             });

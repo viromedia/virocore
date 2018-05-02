@@ -35,7 +35,7 @@ VRO_METHOD(void, nativeCommit)(VRO_ARGS_STATIC
 
             VROPlatformDispatchAsyncApplication([jGlobalObj, terminate] {
                 VRO_ENV env = VROPlatformGetJNIEnv();
-                VROPlatformCallJavaFunction(jGlobalObj, "onAnimationFinished", "()V");
+                VROPlatformCallHostFunction(jGlobalObj, "onAnimationFinished", "()V");
                 if (terminate) {
                     VRO_DELETE_GLOBAL_REF(jGlobalObj);
                 }

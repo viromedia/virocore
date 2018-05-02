@@ -39,7 +39,7 @@ public:
             return nullptr;
         }
 
-        VRO_REF jptr = VROPlatformCallJavaLongFunction(localObj, "get", "()J");
+        VRO_REF jptr = VROPlatformCallHostLongFunction(localObj, "get", "()J");
         VRO_DELETE_LOCAL_REF(localObj);
         return Material::native(jptr);
     }

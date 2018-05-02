@@ -30,9 +30,9 @@ namespace ParticleEmitter {
 
     inline std::shared_ptr<VROParticleModifier> getParticleModifier(VRO_ENV env,
                                                                     VRO_STRING jFactor,
-                                                                    VRO_ARRAY jInitialValue,
-                                                                    VRO_ARRAY jInterpolatedIntervals,
-                                                                    VRO_ARRAY jInterpolatedValues) {
+                                                                    VRO_ARRAY(VRO_FLOAT_ARRAY) jInitialValue,
+                                                                    VRO_ARRAY(VRO_FLOAT_ARRAY) jInterpolatedIntervals,
+                                                                    VRO_ARRAY(VRO_FLOAT_ARRAY) jInterpolatedValues) {
         // Parse out the initial values for this modifier
         std::vector<VROVector3f> initialValues;
         int numberOfValues = VRO_ARRAY_LENGTH(jInitialValue);

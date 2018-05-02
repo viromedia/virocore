@@ -34,7 +34,7 @@ void VideoDelegate::videoWillBuffer() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "playerWillBuffer", "()V");
+        VROPlatformCallHostFunction(localObj, "playerWillBuffer", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
@@ -51,7 +51,7 @@ void VideoDelegate::videoDidBuffer() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "playerDidBuffer", "()V");
+        VROPlatformCallHostFunction(localObj, "playerDidBuffer", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
@@ -68,7 +68,7 @@ void VideoDelegate::videoDidFinish() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "playerDidFinishPlaying", "()V");
+        VROPlatformCallHostFunction(localObj, "playerDidFinishPlaying", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
@@ -86,7 +86,7 @@ void VideoDelegate::videoDidFail(std::string error) {
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
-        VROPlatformCallJavaFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", VRO_STRING_POD(jerror));
+        VROPlatformCallHostFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", jerror);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_LOCAL_REF(jerror);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -104,7 +104,7 @@ void VideoDelegate::onReady() {
             return;
         }
 
-        VROPlatformCallJavaFunction(weakObj, "onReady", "()V");
+        VROPlatformCallHostFunction(weakObj, "onReady", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
@@ -121,7 +121,7 @@ void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTi
             return;
         }
 
-        VROPlatformCallJavaFunction(weakObj, "onVideoUpdatedTime", "(FF)V",
+        VROPlatformCallHostFunction(weakObj, "onVideoUpdatedTime", "(FF)V",
                                     currentTimeInSeconds, totalTimeInSeconds);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);

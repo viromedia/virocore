@@ -28,7 +28,7 @@ void PortalDelegate::onPortalEnter() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onPortalEnter", "()V");
+        VROPlatformCallHostFunction(localObj, "onPortalEnter", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
@@ -47,7 +47,7 @@ void PortalDelegate::onPortalExit() {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "onPortalExit", "()V");
+        VROPlatformCallHostFunction(localObj, "onPortalExit", "()V");
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });

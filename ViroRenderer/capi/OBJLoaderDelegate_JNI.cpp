@@ -29,7 +29,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
     // If the request is antiquated, clear the node
-    VRO_LONG activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
+    VRO_LONG activeRequestID = VROPlatformCallHostLongFunction(_javaObject, "getActiveRequestID", "()J");
     if (activeRequestID != requestId) {
         pinfo("Received antiquated Object3D load, discarding");
         node->removeAllChildren();
@@ -73,7 +73,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
 
         // Call the nodeDidFinishCreation callback.
         VRO_REF jGeometryRef = geometryRef;
-        VROPlatformCallJavaFunction(localObj,
+        VROPlatformCallHostFunction(localObj,
                                     "nodeDidFinishCreation",
                                     "([Lcom/viro/core/Material;ZJ)V",
                                     materialArray, isFBX, jGeometryRef);
@@ -128,7 +128,7 @@ void OBJLoaderDelegate::objFailed(std::string error) {
         }
 
         VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
-        VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", VRO_STRING_POD(jerror));
+        VROPlatformCallHostFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
 
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_LOCAL_REF(jerror);

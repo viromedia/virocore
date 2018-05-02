@@ -16,8 +16,8 @@ var viro;
         TestAPI.prototype.callNativeMethod = function (arg) {
             Module.nativeTestMethod(this);
         };
-        TestAPI.prototype.callJSMethod = function (arg) {
-            alert("JS method was called");
+        TestAPI.prototype.callJSMethod = function (number1, number2) {
+            alert("JS method was called with number " + number1 + " and " + number2);
         };
 
         return TestAPI;

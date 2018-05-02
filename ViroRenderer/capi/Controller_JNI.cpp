@@ -99,7 +99,7 @@ VRO_METHOD(void, nativeGetControllerForwardVectorAsync)(VRO_ARGS
             return;
         }
         VROVector3f position = helperContext->getInputController()->getPresenter()->getLastKnownForward();
-        VROPlatformCallJavaFunction(jCallback,
+        VROPlatformCallHostFunction(jCallback,
                                     "onGetForwardVector", "(FFF)V", position.x, position.y, position.z);
         VRO_DELETE_LOCAL_REF(jCallback);
         VRO_DELETE_WEAK_GLOBAL_REF(weakCallback);

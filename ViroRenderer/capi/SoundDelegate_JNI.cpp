@@ -21,13 +21,13 @@ SoundDelegate::~SoundDelegate() {
 }
 
 void SoundDelegate::soundIsReady() {
-    VROPlatformCallJavaFunction(_javaObject, "soundIsReady", "()V");
+    VROPlatformCallHostFunction(_javaObject, "soundIsReady", "()V");
 }
 
 void SoundDelegate::soundDidFinish() {
-    VROPlatformCallJavaFunction(_javaObject, "soundDidFinish", "()V");
+    VROPlatformCallHostFunction(_javaObject, "soundDidFinish", "()V");
 }
 
 void SoundDelegate::soundDidFail(std::string error) {
-    VROPlatformCallJavaFunction(_javaObject, "soundDidFail", "(Ljava/lang/String;)V");
+    VROPlatformCallHostFunction(_javaObject, "soundDidFail", "(Ljava/lang/String;)V");
 }

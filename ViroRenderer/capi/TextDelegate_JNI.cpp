@@ -29,7 +29,7 @@ void TextDelegate::textCreated(VRO_REF nativeTextRef) {
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "textDidFinishCreation", "(J)V", nativeTextRef);
+        VROPlatformCallHostFunction(localObj, "textDidFinishCreation", "(J)V", nativeTextRef);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
