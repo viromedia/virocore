@@ -32,7 +32,7 @@ VRO_METHOD(VRO_REF(VROBox), nativeCreateBox)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyBox)(VRO_ARGS
                                    VRO_REF(VROBox) nativeBoxRef) {
-    delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
+    VRO_REF_DELETE(VROBox, nativeBoxRef);
 }
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS

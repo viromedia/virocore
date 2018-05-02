@@ -329,7 +329,7 @@ VRO_METHOD(void, nativeClearPhysicsDelegate)(VRO_ARGS
             node->getPhysicsBody()->setPhysicsDelegate(nullptr);
         }
     });
-    delete reinterpret_cast<PersistentRef<PhysicsDelegate_JNI> *>(delegateRef);
+    VRO_REF_DELETE(PhysicsDelegate_JNI, delegateRef);
 }
 
 

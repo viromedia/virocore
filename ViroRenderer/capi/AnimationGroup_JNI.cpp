@@ -79,7 +79,7 @@ VRO_METHOD(VRO_REF(VROAnimationGroup), nativeCopyAnimation)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyAnimationGroup)(VRO_ARGS
                                               VRO_REF(VROAnimationGroup) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
+    VRO_REF_DELETE(VROAnimationGroup, nativeRef);
 }
 
 } // extern "C"

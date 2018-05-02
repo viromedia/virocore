@@ -138,7 +138,7 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
                                     VRO_REF(VROText) text_j) {
-    delete reinterpret_cast<PersistentRef<VROText> *>(text_j);
+    VRO_REF_DELETE(VROText, text_j);
 }
 
 VRO_METHOD(void, nativeSetText)(VRO_ARGS

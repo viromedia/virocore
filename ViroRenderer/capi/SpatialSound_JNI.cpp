@@ -120,7 +120,7 @@ VRO_METHOD(void, nativeSetDistanceRolloff)(VRO_ARGS
 VRO_METHOD(void, nativeDestroySpatialSound)(VRO_ARGS
                                             VRO_REF(VROSoundGVR) nativeRef) {
     VRO_REF_GET(VROSoundGVR, nativeRef)->setDelegate(nullptr);
-    delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
+    VRO_REF_DELETE(VROSoundGVR, nativeRef);
 }
 
 }  // extern "C"

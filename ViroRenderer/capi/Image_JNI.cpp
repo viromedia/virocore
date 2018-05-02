@@ -68,7 +68,7 @@ VRO_METHOD(VRO_INT, nativeGetHeight)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyImage)(VRO_ARGS
                                      VRO_REF(VROImage) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROImage> *>(nativeRef);
+    VRO_REF_DELETE(VROImage, nativeRef);
 }
 
 } // extern "C"

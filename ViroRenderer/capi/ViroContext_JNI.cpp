@@ -39,7 +39,7 @@ VRO_METHOD(VRO_REF(ViroContext), nativeCreateViroContext)(VRO_ARGS
 
 VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
                                           VRO_REF(ViroContext) context_j) {
-    delete reinterpret_cast<PersistentRef<ViroContext> *>(context_j);
+    VRO_REF_DELETE(ViroContext, context_j);
 }
 
 VRO_METHOD(void, nativeGetCameraOrientation)(VRO_ARGS

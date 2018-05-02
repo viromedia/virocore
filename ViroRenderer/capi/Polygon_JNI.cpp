@@ -41,7 +41,7 @@ VRO_METHOD(VRO_REF(VROPolygon), nativeCreateSurface)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
                                        VRO_REF(VROPolygon) nativeSurface) {
-    delete reinterpret_cast<PersistentRef<VROPolygon> *>(nativeSurface);
+    VRO_REF_DELETE(VROPolygon, nativeSurface);
 }
 
 }  // extern "C"

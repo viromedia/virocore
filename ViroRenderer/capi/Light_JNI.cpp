@@ -18,7 +18,7 @@ extern "C" {
 
 VRO_METHOD(void, nativeDestroyLight)(VRO_ARGS
                                      VRO_REF(VROLight) native_light_ref) {
-    delete reinterpret_cast<PersistentRef<VROLight> *>(native_light_ref);
+    VRO_REF_DELETE(VROLight, native_light_ref);
 }
 
 VRO_METHOD(void, nativeSetColor)(VRO_ARGS

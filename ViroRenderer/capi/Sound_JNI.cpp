@@ -102,7 +102,7 @@ extern "C" {
 
     VRO_METHOD(void, nativeDestroySound)(VRO_ARGS
                                          VRO_REF(VROAudioPlayer) nativeRef) {
-        delete reinterpret_cast<PersistentRef<VROAudioPlayer> *>(nativeRef);
+        VRO_REF_DELETE(VROAudioPlayer, nativeRef);
     }
 
 }  // extern "C"

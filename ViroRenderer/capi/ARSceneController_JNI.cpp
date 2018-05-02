@@ -70,7 +70,7 @@ VRO_METHOD(VRO_REF(VROARSceneDelegate), nativeCreateARSceneDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyARSceneDelegate)(VRO_ARGS
                                                VRO_REF(VROARSceneDelegate) arSceneDelegatePtr) {
-    delete reinterpret_cast<PersistentRef<VROARSceneDelegate> *>(arSceneDelegatePtr);
+    VRO_REF_DELETE(VROARSceneDelegate, arSceneDelegatePtr);
 }
 
 VRO_METHOD(void, nativeDisplayPointCloud)(VRO_ARGS

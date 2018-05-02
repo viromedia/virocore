@@ -33,7 +33,7 @@ VRO_METHOD(VRO_REF(ARDeclarativeNodeDelegate), nativeCreateARNodeDelegate) (VRO_
 
 VRO_METHOD(void, nativeDestroyARNodeDelegate) (VRO_ARGS
                                                VRO_REF(ARDeclarativeNodeDelegate) delegateRef) {
-    delete reinterpret_cast<PersistentRef<ARDeclarativeNodeDelegate> *>(delegateRef);
+    VRO_REF_DELETE(ARDeclarativeNodeDelegate, delegateRef);
 }
 
 }

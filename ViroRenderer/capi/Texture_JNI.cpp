@@ -340,7 +340,7 @@ VRO_METHOD(void, nativeSetMipFilter)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyTexture)(VRO_ARGS
                                        VRO_REF(VROTexture) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROTexture> *>(nativeRef);
+    VRO_REF_DELETE(VROTexture, nativeRef);
 }
 
 } // extern "C"

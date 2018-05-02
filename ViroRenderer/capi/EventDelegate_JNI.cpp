@@ -31,7 +31,7 @@ VRO_METHOD(void, nativeDestroyDelegate)(VRO_ARGS
                                         VRO_REF(EventDelegate_JNI) native_node_ref) {
     // TODO: figure out why this is needed
     VROPlatformDispatchAsyncRenderer([native_node_ref]{
-        delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
+        VRO_REF_DELETE(VRONode, native_node_ref);
     });
 }
 

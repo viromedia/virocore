@@ -53,12 +53,12 @@ VRO_METHOD(VRO_REF(SceneControllerDelegate), nativeCreateSceneControllerDelegate
 
 VRO_METHOD(void, nativeDestroySceneController)(VRO_ARGS
                                                VRO_REF(VROSceneController) native_object_ref) {
-    delete reinterpret_cast<PersistentRef<VROSceneController> *>(native_object_ref);
+    VRO_REF_DELETE(VROSceneController, native_object_ref);
 }
 
 VRO_METHOD(void, nativeDestroySceneControllerDelegate)(VRO_ARGS
                                                        VRO_REF(SceneControllerDelegate) native_delegate_object_ref) {
-    delete reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(native_delegate_object_ref);
+    VRO_REF_DELETE(SceneControllerDelegate, native_delegate_object_ref);
 }
 
 VRO_METHOD(void, nativeSetBackgroundTexture)(VRO_ARGS

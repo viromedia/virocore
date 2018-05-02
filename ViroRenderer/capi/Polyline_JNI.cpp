@@ -67,7 +67,7 @@ VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolyline)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
                                         VRO_REF(VROPolyline) nativePolylineRef) {
-    delete reinterpret_cast<PersistentRef<VROPolyline> *>(nativePolylineRef);
+    VRO_REF_DELETE(VROPolyline, nativePolylineRef);
 }
 
 VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS

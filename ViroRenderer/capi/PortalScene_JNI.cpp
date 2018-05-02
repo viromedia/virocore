@@ -26,7 +26,7 @@ VRO_METHOD(VRO_REF(VROPortal), nativeCreatePortalScene)(VRO_NO_ARGS) {
 
 VRO_METHOD(void, nativeDestroyPortalScene)(VRO_ARGS
                                            VRO_REF(VROPortal) portalRef) {
-    delete reinterpret_cast<PersistentRef<VROPortal> *>(portalRef);
+    VRO_REF_DELETE(VROPortal, portalRef);
 }
 
 VRO_METHOD(void, nativeSetPassable)(VRO_ARGS
@@ -49,7 +49,7 @@ VRO_METHOD(VRO_REF(PortalDelegate), nativeCreatePortalDelegate)(VRO_NO_ARGS) {
 
 VRO_METHOD(void, nativeDestroyPortalDelegate)(VRO_ARGS
                                               VRO_REF(PortalDelegate) delegateRef) {
-    delete reinterpret_cast<PersistentRef<PortalDelegate> *>(delegateRef);
+    VRO_REF_DELETE(PortalDelegate, delegateRef);
 }
 
 

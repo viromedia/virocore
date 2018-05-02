@@ -52,7 +52,7 @@ VRO_METHOD(VRO_REF(VROSurface), nativeCreateSurfaceFromSurface)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
                                        VRO_REF(VROSurface) nativeSurface) {
-    delete reinterpret_cast<PersistentRef<VROSurface> *>(nativeSurface);
+    VRO_REF_DELETE(VROSurface, nativeSurface);
 }
 
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS

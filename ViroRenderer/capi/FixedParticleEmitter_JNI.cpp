@@ -41,7 +41,7 @@ VRO_METHOD(VRO_REF(VROFixedParticleEmitter), nativeCreateEmitter)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyEmitter)(VRO_ARGS
                                        VRO_REF(VROFixedParticleEmitter) nativeParticleEmitterRef) {
-    delete reinterpret_cast<PersistentRef<VROFixedParticleEmitter> *>(nativeParticleEmitterRef);
+    VRO_REF_DELETE(VROFixedParticleEmitter, nativeParticleEmitterRef);
 }
 
 VRO_METHOD(void, nativeSetParticles)(VRO_ARGS

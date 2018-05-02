@@ -46,7 +46,7 @@ VRO_METHOD(VRO_REF(VROSphere), nativeCreateSphereParameterized)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroySphere)(VRO_ARGS
                                       VRO_REF(VROSphere) nativeNode) {
-    delete reinterpret_cast<PersistentRef<VROSphere> *>(nativeNode);
+    VRO_REF_DELETE(VROSphere, nativeNode);
 }
 
 VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS

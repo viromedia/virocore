@@ -29,7 +29,7 @@ VRO_METHOD(VRO_REF(VROARPlaneNode), nativeCreateARPlane)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyARPlane)(VRO_ARGS
                                        VRO_REF(VROARPlaneNode) nativeARPlane) {
-    delete reinterpret_cast<PersistentRef<VROARPlaneNode> *>(nativeARPlane);
+    VRO_REF_DELETE(VROARPlaneNode, nativeARPlane);
 }
 
 VRO_METHOD(VRO_REF(ARPlaneDelegate), nativeCreateARPlaneDelegate)(VRO_ARGS
@@ -42,7 +42,7 @@ VRO_METHOD(VRO_REF(ARPlaneDelegate), nativeCreateARPlaneDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyARPlaneDelegate)(VRO_ARGS
                                                VRO_REF(ARPlaneDelegate) delegateRef) {
-    delete reinterpret_cast<PersistentRef<ARPlaneDelegate> *>(delegateRef);
+    VRO_REF_DELETE(ARPlaneDelegate, delegateRef);
 }
 
 

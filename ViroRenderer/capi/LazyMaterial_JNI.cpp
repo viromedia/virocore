@@ -26,7 +26,7 @@ VRO_METHOD(VRO_REF(VROLazyMaterialJNI), nativeCreateLazyMaterial)(VRO_NO_ARGS) {
 
 VRO_METHOD(void, nativeDestroyLazyMaterial)(VRO_ARGS
                                             VRO_REF(VROLazyMaterialJNI) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROLazyMaterialJNI> *>(nativeRef);
+    VRO_REF_DELETE(VROLazyMaterialJNI, nativeRef);
 }
 
 }  // extern "C"

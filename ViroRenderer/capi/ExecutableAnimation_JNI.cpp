@@ -114,7 +114,7 @@ VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyAnimation)(VRO_ARGS
                                          VRO_REF(VROExecutableAnimation) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROExecutableAnimation> *>(nativeRef);
+    VRO_REF_DELETE(VROExecutableAnimation, nativeRef);
 }
 
 } // extern "C"

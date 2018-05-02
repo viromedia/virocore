@@ -96,7 +96,7 @@ VRO_METHOD(void, nativeSetRotation)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroySoundField)(VRO_ARGS
                                           VRO_REF(VROSoundGVR) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
+    VRO_REF_DELETE(VROSoundGVR, nativeRef);
 }
 
 }  // extern "C"

@@ -87,12 +87,12 @@ VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeDeleteVideoTexture)(VRO_ARGS
                                            VRO_REF(VROVideoTexture) textureRef) {
-    delete reinterpret_cast<PersistentRef<VROVideoTexture> *>(textureRef);
+    VRO_REF_DELETE(VROVideoTexture, textureRef);
 }
 
 VRO_METHOD(void, nativeDeleteVideoDelegate)(VRO_ARGS
                                             VRO_REF(VideoDelegate) delegateRef) {
-    delete reinterpret_cast<PersistentRef<VideoDelegate> *>(delegateRef);
+    VRO_REF_DELETE(VideoDelegate, delegateRef);
 }
 
 VRO_METHOD(void, nativePause)(VRO_ARGS

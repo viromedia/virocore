@@ -361,7 +361,7 @@ VRO_METHOD(void, nativeSetBloomThreshold)(VRO_ARGS
 
 VRO_METHOD(void, nativeDestroyMaterial)(VRO_ARGS
                                         VRO_REF(VROMaterial) nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROMaterial> *>(nativeRef);
+    VRO_REF_DELETE(VROMaterial, nativeRef);
 }
 
 VRO_METHOD(void, nativeSetShadowMode(VRO_ARGS

@@ -24,7 +24,7 @@ VRO_METHOD(VRO_REF(VROPortalFrame), nativeCreatePortal)(VRO_NO_ARGS) {
 
 VRO_METHOD(void, nativeDestroyPortal)(VRO_ARGS
                                       VRO_REF(VROPortalFrame) native_ref) {
-    delete reinterpret_cast<PersistentRef<VROPortalFrame> *>(native_ref);
+    VRO_REF_DELETE(VROPortalFrame, native_ref);
 }
 
 }

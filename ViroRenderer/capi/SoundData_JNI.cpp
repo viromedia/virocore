@@ -44,12 +44,12 @@ extern "C" {
 
     VRO_METHOD(void, nativeDestroySoundData)(VRO_ARGS
                                              VRO_REF(VROSoundDataGVR) nativeRef) {
-        delete reinterpret_cast<PersistentRef<VROSoundDataGVR> *>(nativeRef);
+        VRO_REF_DELETE(VROSoundDataGVR, nativeRef);
     }
 
     VRO_METHOD(void, nativeDestroySoundDataDelegate)(VRO_ARGS
                                                      VRO_REF(VROSoundDataDelegate_JNI) nativeRef) {
-        delete reinterpret_cast<PersistentRef<VROSoundDataDelegate_JNI> *>(nativeRef);
+        VRO_REF_DELETE(VROSoundDataDelegate_JNI, nativeRef);
     }
 } // extern "C"
 

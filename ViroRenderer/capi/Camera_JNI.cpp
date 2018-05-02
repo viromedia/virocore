@@ -32,7 +32,7 @@ VRO_METHOD(VRO_REF(VRONodeCamera), nativeCreateCamera)(VRO_NO_ARGS) {
 
 VRO_METHOD(void, nativeDestroyCamera)(VRO_ARGS
                                       VRO_REF(VRONodeCamera) native_node_ref) {
-    delete reinterpret_cast<PersistentRef<VRONodeCamera> *>(native_node_ref);
+    VRO_REF_DELETE(VRONodeCamera, native_node_ref);
 }
 
 VRO_METHOD(void, nativeSetPosition)(VRO_ARGS

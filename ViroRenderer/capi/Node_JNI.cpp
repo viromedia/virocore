@@ -52,7 +52,7 @@ VRO_METHOD(VRO_INT, nativeGetUniqueIdentifier)(VRO_ARGS
 VRO_METHOD(void, nativeDestroyNode)(VRO_ARGS
                                     VRO_REF(VRONode) native_node_ref) {
 
-    delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
+    VRO_REF_DELETE(VRONode, native_node_ref);
 }
 
 VRO_METHOD(void, nativeAddChildNode)(VRO_ARGS
@@ -638,7 +638,7 @@ VRO_METHOD(void, nativeRemoveTransformDelegate)(VRO_ARGS
         node->setTransformDelegate(nullptr);
     });
 
-    delete reinterpret_cast<PersistentRef<TransformDelegate_JNI> *>(delegateRef);
+    VRO_REF_DELETE(TransformDelegate_JNI, delegateRef);
 }
 
 

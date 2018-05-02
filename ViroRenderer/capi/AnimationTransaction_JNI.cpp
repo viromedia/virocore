@@ -87,7 +87,7 @@ VRO_METHOD(void, nativeSetTimingFunction)(VRO_ARGS_STATIC
 
 VRO_METHOD(void, nativeDispose)(VRO_ARGS
                                 VRO_REF(VROTransaction) transaction_j) {
-    delete reinterpret_cast<PersistentRef<VROTransaction> *>(transaction_j);
+    VRO_REF_DELETE(VROTransaction, transaction_j);
 }
 
 VRO_METHOD(void, nativePause)(VRO_ARGS
