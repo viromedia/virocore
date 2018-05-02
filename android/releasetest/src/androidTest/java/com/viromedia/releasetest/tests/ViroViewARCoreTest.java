@@ -2,8 +2,10 @@ package com.viromedia.releasetest.tests;
 
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
+import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableException;
+import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.viro.core.ViroViewARCore;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
@@ -47,12 +49,6 @@ public class ViroViewARCoreTest {
              */
             assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isDeviceCompatible(mActivity));
             return;
-        } catch (UnavailableArcoreNotInstalledException e) {
-            e.printStackTrace();
-        } catch (UnavailableSdkTooOldException e) {
-            e.printStackTrace();
-        } catch (UnavailableApkTooOldException e) {
-            e.printStackTrace();
         }
     }
 }
