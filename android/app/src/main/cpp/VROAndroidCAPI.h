@@ -101,14 +101,15 @@
     env->ReleaseDoubleArrayElements(array, elements, 0)
 
 #define VRO_INT_ARRAY jintArray
-#define VRO_LONG_ARRAY jlongArray
-#define VRO_NEW_LONG_ARRAY(size) \
+
+#define VRO_REF_ARRAY(type) jlongArray
+#define VRO_NEW_REF_ARRAY(size, type) \
     env->NewLongArray(size)
-#define VRO_LONG_ARRAY_SET(dest, start, len, src) \
+#define VRO_REF_ARRAY_SET(dest, start, len, src) \
     env->SetLongArrayRegion(dest, start, len, src)
-#define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
+#define VRO_REF_ARRAY_GET_ELEMENTS(array) \
     env->GetLongArrayElements(array, 0)
-#define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
+#define VRO_REF_ARRAY_RELEASE_ELEMENTS(array, elements) \
     env->ReleaseLongArrayElements(array, elements, 0)
 
 #define VRO_STRING_ARRAY jobjectArray

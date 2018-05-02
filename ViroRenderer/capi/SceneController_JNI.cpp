@@ -133,15 +133,16 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
                                                VRO_REF(VROSceneController) scene_j,
                                                VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROSceneController> scene_w = VRO_REF_GET(VROSceneController, scene_j);
-    VRO_REF(VROTexture) texture_ref = texture_j;
-    VROPlatformDispatchAsyncRenderer([scene_w, texture_ref] {
+
+    VROPlatformDispatchAsyncRenderer([scene_w, texture_j] {
         std::shared_ptr<VROSceneController> scene = scene_w.lock();
-        if (!scene){
+        if (!scene) {
             return;
         }
 
-        if (texture_ref != 0){
-            scene->getScene()->getRootNode()->setLightingEnvironment(VRO_REF_GET(VROTexture, texture_ref));
+        std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, texture_j);
+        if (texture) {
+            scene->getScene()->getRootNode()->setLightingEnvironment(texture);
         } else {
             scene->getScene()->getRootNode()->setLightingEnvironment(nullptr);
         }

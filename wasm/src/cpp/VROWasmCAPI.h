@@ -14,13 +14,17 @@
 #define VRO_NO_ARGS emscripten::val obj
 #define VRO_NO_ARGS_STATIC VRO_ENV env
 #define VRO_METHOD_PREAMBLE void *env
-#define VRO_REF int
 #define VRO_BOOL bool
 #define VRO_INT int
 #define VRO_LONG uint64_t
 #define VRO_FLOAT float
 #define VRO_DOUBLE double
 #define VRO_CHAR_WIDE wchar_t
+
+#define VRO_REF(type) std::shared_ptr<type>
+#define VRO_REF_NEW(type, ptr) ptr
+#define VRO_REF_GET(type, ref) ref
+#define VRO_REF_DELETE(type, ref)
 
 #define VRO_OBJECT emscripten::val
 #define VRO_OBJECT_NULL emscripten::val::null()
@@ -87,14 +91,15 @@
 
 
 #define VRO_INT_ARRAY std::shared_ptr<std::vector<int>>
-#define VRO_LONG_ARRAY std::shared_ptr<std::vector<uint64_t>>
-#define VRO_NEW_LONG_ARRAY(size) \
-    std::make_shared<std::vector<uint64_t>>(size)
-#define VRO_LONG_ARRAY_SET(dest, start, len, src) \
+
+#define VRO_REF_ARRAY(type) std::shared_ptr<std::vector<std::shared_ptr<type>>>
+#define VRO_NEW_REF_ARRAY(size, type) \
+    std::make_shared<std::vector<std::shared_ptr<type>>>(size)
+#define VRO_REF_ARRAY_SET(dest, start, len, src) \
     dest->insert(dest->begin() + start, &src[0], &src[len])
-#define VRO_LONG_ARRAY_GET_ELEMENTS(array) \
+#define VRO_REF_ARRAY_GET_ELEMENTS(array) \
     array->data()
-#define VRO_LONG_ARRAY_RELEASE_ELEMENTS(array, elements) \
+#define VRO_REF_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
 #define VRO_STRING_ARRAY std::shared_ptr<std::vector<std::string>>
 #define VRO_NEW_STRING_ARRAY(size) \

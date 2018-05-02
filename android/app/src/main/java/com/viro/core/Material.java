@@ -560,7 +560,7 @@ public class Material {
      */
     public void setDiffuseTexture(Texture texture) {
         mDiffuseTexture = texture;
-        long nativeRef = (texture != null) ? texture.mNativeRef : -1;
+        long nativeRef = (texture != null) ? texture.mNativeRef : 0;
         nativeSetTexture(mNativeRef, nativeRef, "diffuseTexture");
     }
 

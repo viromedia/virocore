@@ -38,9 +38,16 @@ public:
             return nullptr;
         }
 
+#if VRO_PLATFORM_ANDROID
         VRO_REF(VROMaterial) jptr = VROPlatformCallHostLongFunction(localObj, "get", "()J");
         VRO_DELETE_LOCAL_REF(localObj);
         return VRO_REF_GET(VROMaterial, jptr);
+#else
+        // TODO wasm
+        // Create a new function, VROPlatformCallHostRefFunction
+        return nullptr;
+#endif
+
     }
 
 private:

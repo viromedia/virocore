@@ -127,9 +127,8 @@ namespace Texture {
             return VRO_OBJECT_NULL;
         }
 
-        // Create a persistent native reference that would represent the jTexture object.
-        PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(texture);
-        VRO_REF(VROTexture) matRef = reinterpret_cast<VRO_REF(VROTexture)>(persistentRef);
+        // Create a persistent native reference that would represent the jTexture object
+        VRO_REF(VROTexture) matRef = VRO_REF_NEW(VROTexture, texture);
 
         // Create our Texture.java object with the native reference.
         VRO_OBJECT jTexture = VROPlatformConstructHostObject("com/viro/core/Texture", "(J)V", matRef);
@@ -159,8 +158,8 @@ VRO_METHOD(VRO_REF(VROTexture), nativeCreateRadianceHDRTexture)(VRO_ARGS_STATIC
         VROPlatformDeleteFile(path);
     }
 
-    VRO_REF(VROTexture) textureRef = -1;
-    if (texture == nullptr){
+    VRO_REF(VROTexture) textureRef = 0;
+    if (texture == nullptr) {
         return textureRef;
     }
 

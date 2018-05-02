@@ -159,7 +159,7 @@ VRO_METHOD(void, nativeSetTexture)(VRO_ARGS
     std::string strName = VRO_STRING_STL(materialPropertyName);
 
     std::shared_ptr<VROTexture> texture;
-    if (textureRef != -1) {
+    if (textureRef) {
         texture = VRO_REF_GET(VROTexture, textureRef);
     }
     std::weak_ptr<VROMaterial> material_w = VRO_REF_GET(VROMaterial, material_j);

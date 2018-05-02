@@ -55,7 +55,7 @@ VRO_METHOD(void, nativeDestroyPortalDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
                                        VRO_REF(VROPortal) portalRef,
-                                       VRO_REF(VROPortalDelegate) delegateRef) {
+                                       VRO_REF(PortalDelegate) delegateRef) {
 
     std::weak_ptr<VROPortal> portal_w = VRO_REF_GET(VROPortal, portalRef);
     std::weak_ptr<PortalDelegate> portalDelegate_w = VRO_REF_GET(PortalDelegate, delegateRef);
@@ -163,15 +163,16 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
                                                VRO_REF(VROPortal) portal_j,
                                                VRO_REF(VROTexture) texture_j) {
     std::weak_ptr<VROPortal> portal_w = VRO_REF_GET(VROPortal, portal_j);
-    long texture_ref = texture_j;
-    VROPlatformDispatchAsyncRenderer([portal_w, texture_ref] {
+
+    VROPlatformDispatchAsyncRenderer([portal_w, texture_j] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();
-        if (!portal){
+        if (!portal) {
             return;
         }
 
-        if (texture_ref != 0){
-            portal->setLightingEnvironment(VRO_REF_GET(VROTexture, texture_ref));
+        std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, texture_j);
+        if (texture) {
+            portal->setLightingEnvironment(texture);
         } else {
             portal->setLightingEnvironment(nullptr);
         }

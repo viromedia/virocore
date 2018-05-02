@@ -266,7 +266,7 @@ public class Texture {
     public static Texture loadRadianceHDRTexture(Uri uri) {
         Texture texture = new Texture();
         long ref = nativeCreateRadianceHDRTexture(uri.toString());
-        if (ref == -1L){
+        if (ref == 0) {
             return null;
         }
 

@@ -25,6 +25,8 @@
 
 extern "C" {
 
+#if VRO_PLATFORM_ANDROID
+    // TODO wasm
 VRO_METHOD(VRO_REF(ViroContext), nativeCreateViroContext)(VRO_ARGS
                                                           VRO_REF(VROSceneRenderer) renderer_j) {
 
@@ -36,6 +38,7 @@ VRO_METHOD(VRO_REF(ViroContext), nativeCreateViroContext)(VRO_ARGS
 #endif
     return VRO_REF_NEW(ViroContext, context);
 }
+#endif
 
 VRO_METHOD(void, nativeDeleteViroContext)(VRO_ARGS
                                           VRO_REF(ViroContext) context_j) {

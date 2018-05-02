@@ -7,7 +7,8 @@
 
 #include <memory>
 #include "TextDelegate_JNI.h"
-#include <VROPlatformUtil.h>
+#include "VROPlatformUtil.h"
+#include "VROText.h"
 
 TextDelegate::TextDelegate(VRO_OBJECT textJavaObject, VRO_ENV env) :
     _javaObject(VRO_NEW_WEAK_GLOBAL_REF(textJavaObject)) {

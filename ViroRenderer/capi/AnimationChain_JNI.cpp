@@ -55,7 +55,7 @@ VRO_METHOD(void, nativeAddAnimationChain)(VRO_ARGS
 
 VRO_METHOD(void, nativeAddAnimationGroup)(VRO_ARGS
                                           VRO_REF(VROAnimationChain) nativeRef,
-                                          VRO_REF(AnimationGroup) groupRef) {
+                                          VRO_REF(VROAnimationGroup) groupRef) {
     VRO_REF_GET(VROAnimationChain, nativeRef)->addAnimation(VRO_REF_GET(VROAnimationGroup, groupRef));
 }
 

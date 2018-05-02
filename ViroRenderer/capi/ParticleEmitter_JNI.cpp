@@ -25,7 +25,7 @@ VRO_METHOD(VRO_REF(VROParticleEmitter), nativeCreateEmitter)(VRO_ARGS
                                                              VRO_REF(ViroContext) context_j,
                                                              VRO_REF(VROSurface) native_surface_ref) {
     std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
-    std::shared_ptr<VROSurface> surface = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
+    std::shared_ptr<VROSurface> surface = VRO_REF_GET(VROSurface, native_surface_ref);
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>();
 
     VROPlatformDispatchAsyncRenderer([particleEmitter, context, surface] {
