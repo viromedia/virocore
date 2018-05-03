@@ -720,7 +720,7 @@ public class Texture {
 
         private Bitmap image;
         private Format storageFormat;
-        private boolean sRGB;
+        private boolean sRGB = true;
         private boolean generateMipmaps;
         private StereoMode stereoMode;
         private ByteBuffer data;
@@ -940,15 +940,24 @@ public class Texture {
          * @return The built {@link Texture}.
          */
         public Texture build() {
+            Texture texture;
             if (builderType.equals(BuilderType.CUBE_MAP)) {
-                return new Texture(px, nx, py, ny, pz, nz, storageFormat);
+                texture = new Texture(px, nx, py, ny, pz, nz, storageFormat);
             } else if (builderType.equals(BuilderType.IMAGE)) {
-                return new Texture(image, storageFormat, sRGB, generateMipmaps, stereoMode);
+                texture = new Texture(image, storageFormat, sRGB, generateMipmaps, stereoMode);
             } else if (builderType.equals(BuilderType.IMAGE) && inputFormat != null) {
-                return new Texture(data, width, height, inputFormat, storageFormat, sRGB, generateMipmaps, stereoMode);
+                texture = new Texture(data, width, height, inputFormat, storageFormat, sRGB, generateMipmaps, stereoMode);
             } else {
-                return new Texture(data, stereoMode);
+                texture = new Texture(data, stereoMode);
             }
+
+            texture.setMinificationFilter(minificationFilter);
+            texture.setMagnificationFilter(magnificationFilter);
+            texture.setMipFilter(mipFilter);
+            texture.setWrapS(wrapS);
+            texture.setWrapT(wrapT);
+
+            return texture;
         }
 
     }

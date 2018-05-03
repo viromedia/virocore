@@ -17,8 +17,8 @@ public:
     virtual ~VRODriverOpenGLAndroidOVR() { }
 
     /*
-     OVR most likely works with an sRGB framebuffer but we have not yet
-     enabled this, so use software conversion.
+     OVR devices will always use sRGB texture buffers (this is setup in
+     VROSceneRendererOVR).
      */
     virtual VROColorRenderingMode getColorRenderingMode() {
         return VROColorRenderingMode::Linear;
