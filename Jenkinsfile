@@ -25,9 +25,9 @@ fastlane renderer_viro_react_lib'''
 fastlane renderer_cp_viro_react_lib_to_tmp'''
       }
     }
-    stage('') {
+    stage('start react-viro') {
       steps {
-        build 'react-viro'
+        build(job: 'react-viro', propagate: true)
       }
     }
   }
