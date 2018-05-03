@@ -19,7 +19,7 @@
                       android:required="false"/>
         <activity
             android:name="com.viro.nativetest.ViroNativeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
             android:enableVrMode="false">
 
             <intent-filter>

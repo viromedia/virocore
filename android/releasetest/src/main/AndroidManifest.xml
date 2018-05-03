@@ -23,7 +23,7 @@
             android:value="7EEDCB99-2C3B-4681-AE17-17BC165BF792" />
         <activity
             android:name="com.viromedia.releasetest.ViroReleaseTestActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
             android:enableVrMode="false"
             android:screenOrientation="sensor">
             <intent-filter>

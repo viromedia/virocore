@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MemoryLeakTest"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
             android:enableVrMode="false"
             android:screenOrientation="portrait"
             >

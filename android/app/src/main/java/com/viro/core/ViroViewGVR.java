@@ -208,7 +208,7 @@ public class ViroViewGVR extends ViroView {
      */
     public ViroViewGVR(@NonNull final Context context, @Nullable final StartupListener startupListener, @Nullable final Runnable vrExitListener) {
         super(context, null);
-        init(context, startupListener, vrExitListener);
+        init(context, startupListener, vrExitListener, true);
     }
 
     /**
@@ -225,7 +225,26 @@ public class ViroViewGVR extends ViroView {
     public ViroViewGVR(@NonNull final Context context, @Nullable final StartupListener startupListener,
                        @Nullable final Runnable vrExitListener, @Nullable RendererConfiguration config) {
         super(context, config);
-        init(context, startupListener, vrExitListener);
+        init(context, startupListener, vrExitListener, true);
+    }
+
+    /**
+     * Create a new ViroViewGVR with the given {@link RendererConfiguration}, which determines
+     * the rendering techniques and rendering fidelity to use for this View.
+     *
+     * @param context         The activity context.
+     * @param startupListener Listener to respond to startup success or failure. Will be notified of
+     *                        any errors encountered while initializing Viro. Optional, may be null.
+     * @param vrExitListener  Runnable to invoke when the user manually exits VR mode by tapping on
+     *                        GVR's close button. Optional, may be null.
+     * @param config          The {@link RendererConfiguration} to use.
+     * @param vrMode          Whether to initialize this view in VR (stereo) mode or 360 (mono) mode.
+     */
+    public ViroViewGVR(@NonNull final Context context, @Nullable final StartupListener startupListener,
+                       @Nullable final Runnable vrExitListener, @Nullable RendererConfiguration config,
+                       final boolean vrMode) {
+        super(context, config);
+        init(context, startupListener, vrExitListener, vrMode);
     }
 
     /**
@@ -259,12 +278,12 @@ public class ViroViewGVR extends ViroView {
         if (ContextUtils.getActivity(context) == null) {
             throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
         } else {
-            init(context, null, null);
+            init(context, null, null, true);
         }
 
     }
 
-    private void init(final Context context, final StartupListener startupListener, final Runnable vrExitListener) {
+    private void init(final Context context, final StartupListener startupListener, final Runnable vrExitListener, final boolean vrMode) {
         mGVRLayout = new GvrLayout(context);
 
         // Turn on async reprojection (which skews existing frames and fills them in when we're
@@ -296,17 +315,6 @@ public class ViroViewGVR extends ViroView {
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mStartupListener = startupListener;
 
-        // We want Android's VR mode on as long as the app is in either release or the device
-        // is using Daydream. We don't want this on in Debug mode because it this option turns
-        // off the "Draw over other apps" permission that React Native requires during development.
-        // The renderer (library) is always in release, so we use BuildInfo to check the debug
-        // status of the app we're compiled into.
-        if (!BuildInfo.isDebug(context) || !getHeadset().equalsIgnoreCase("cardboard")) {
-            // According to the GVR documentation, this only sets the activity to "VR mode" and is only
-            // supported on Android Nougat and up.
-            AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
-        }
-
         // Add the GLSurfaceView to the GvrLayout.
         mGVRLayout.setPresentationView(glSurfaceView);
 
@@ -319,7 +327,7 @@ public class ViroViewGVR extends ViroView {
         }
 
         // Default the mode to VR
-        setVRModeEnabled(true);
+        setVRModeEnabled(vrMode);
 
         if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
             validateAPIKeyFromManifest();
@@ -411,6 +419,19 @@ public class ViroViewGVR extends ViroView {
         mGVRLayout.setStereoModeEnabled(vrModeEnabled);
         mGVRLayout.getUiLayout().setEnabled(vrModeEnabled);
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
+
+
+        // We want Android's VR mode on when the app is in VR and release build OR always when
+        // using Daydream. We don't want this on in Debug mode because it this option turns
+        // off the "Draw over other apps" permission that React Native requires for the dev menu.
+        // The renderer (library) is always in release, so we use BuildInfo to check the debug
+        // status of the app we're compiled into.
+        if ((vrModeEnabled && !BuildInfo.isDebug(getContext())) || getHeadset().equalsIgnoreCase("daydream")) {
+            AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
+        } else {
+            AndroidCompat.setVrModeEnabled((Activity) getContext(), false);
+
+        }
     }
 
     /**
