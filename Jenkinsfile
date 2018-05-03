@@ -25,6 +25,11 @@ fastlane renderer_viro_react_lib'''
 fastlane renderer_cp_viro_react_lib_to_tmp'''
       }
     }
+    stage('') {
+      steps {
+        build 'react-viro'
+      }
+    }
   }
   environment {
     LC_ALL = 'en_US.UTF-8'
