@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <limits>
 #include <cstring>
+#include "glm/glm.hpp"
+#include "glm/gtc/color_space.hpp"
 
 VROMatrix4f matrix_from_scale(float sx, float sy, float sz) {
     VROMatrix4f m;
@@ -1312,5 +1314,18 @@ VROBoundingBox VROMathGetBoundingBox(std::vector<VROVector3f> &vertices) {
     
     return VROBoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
 }
+
+VROVector3f VROMathConvertSRGBToLinearColor(VROVector3f sRGB) {
+    glm::vec3 rgbSRGB(sRGB.x, sRGB.y, sRGB.z);
+    glm::vec3 rgbLinear = glm::convertSRGBToLinear(rgbSRGB);
+    return { rgbLinear.x, rgbLinear.y, rgbLinear.z };
+}
+
+VROVector4f VROMathConvertSRGBToLinearColor(VROVector4f sRGB) {
+    glm::vec3 rgbSRGB(sRGB.x, sRGB.y, sRGB.z);
+    glm::vec3 rgbLinear = glm::convertSRGBToLinear(rgbSRGB);
+    return { rgbLinear.x, rgbLinear.y, rgbLinear.z, sRGB.w };
+}
+
 
 

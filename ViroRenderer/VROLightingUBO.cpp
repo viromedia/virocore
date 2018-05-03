@@ -61,13 +61,18 @@ void VROLightingUBO::bind() {
 
 void VROLightingUBO::updateLightsFragment() {
     pglpush("Lights [Fragment]");
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     VROVector3f ambientLight;
     
     VROLightingFragmentData data;
     data.num_lights = 0;
-    
+
     for (const std::shared_ptr<VROLight> &light : _lights) {
-        VROVector3f color = light->getColor() * light->getColorFromTemperature();
+        VROVector3f lightColor = light->getColor();
+        if (driver && driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear) {
+            lightColor = VROMathConvertSRGBToLinearColor(lightColor);
+        }
+        VROVector3f color = lightColor * light->getColorFromTemperature();
         
         // Ambient lights have no diffuse color; instead they are added
         // to the aggregate ambient light color, which is passed as a single

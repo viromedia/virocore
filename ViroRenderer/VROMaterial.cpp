@@ -278,7 +278,7 @@ void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
     driver->setDepthReadingEnabled(_readsFromDepthBuffer);
     driver->setDepthWritingEnabled(_writesToDepthBuffer);
     driver->setBlendingMode(_blendMode);
-    getSubstrate(driver)->bindProperties();
+    getSubstrate(driver)->bindProperties(driver);
 }
 
 void VROMaterial::bindShader(int lightsHash,

@@ -37,9 +37,9 @@ VROMaterialSubstrateOpenGL::~VROMaterialSubstrateOpenGL() {
 
 #pragma mark - Binding Materials
 
-void VROMaterialSubstrateOpenGL::bindProperties() {
+void VROMaterialSubstrateOpenGL::bindProperties(std::shared_ptr<VRODriver> &driver) {
     passert(_activeBinding != nullptr);
-    _activeBinding->bindMaterialUniforms(_material);
+    _activeBinding->bindMaterialUniforms(_material, driver);
 }
 
 void VROMaterialSubstrateOpenGL::bindGeometry(float opacity, const VROGeometry &geometry){

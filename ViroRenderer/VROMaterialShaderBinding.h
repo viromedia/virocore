@@ -16,6 +16,7 @@
 class VROVector3f;
 class VROMatrix4f;
 class VROGeometry;
+class VRODriver;
 class VROTextureReference;
 class VROUniform;
 class VROShaderProgram;
@@ -51,7 +52,8 @@ public:
     void bindViewUniforms(VROMatrix4f &modelMatrix, VROMatrix4f &viewMatrix,
                           VROMatrix4f &projectionMatrix, VROMatrix4f &normalMatrix,
                           VROVector3f &cameraPosition, VROEyeType &eyeType);
-    void bindMaterialUniforms(const VROMaterial &material);
+    void bindMaterialUniforms(const VROMaterial &material,
+                              std::shared_ptr<VRODriver> &driver);
     void bindGeometryUniforms(float opacity, const VROGeometry &geometry, const VROMaterial &material);
     
     std::shared_ptr<VROShaderProgram> &getProgram() {

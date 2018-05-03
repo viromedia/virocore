@@ -14,7 +14,9 @@
 #include "VROMatrix4f.h"
 #include "VROMaterial.h"
 #include "VROEye.h"
+#include "VRODriver.h"
 #include "VROTextureReference.h"
+#include "VROMath.h"
 
 VROMaterialShaderBinding::VROMaterialShaderBinding(std::shared_ptr<VROShaderProgram> program,
                                                    VROLightingShaderCapabilities capabilities,
@@ -144,9 +146,14 @@ void VROMaterialShaderBinding::bindViewUniforms(VROMatrix4f &modelMatrix, VROMat
     }
 }
 
-void VROMaterialShaderBinding::bindMaterialUniforms(const VROMaterial &material) {
+void VROMaterialShaderBinding::bindMaterialUniforms(const VROMaterial &material,
+                                                    std::shared_ptr<VRODriver> &driver) {
     if (_diffuseSurfaceColorUniform != nullptr) {
-        _diffuseSurfaceColorUniform->setVec4(material.getDiffuse().getColor());
+        VROVector4f color = material.getDiffuse().getColor();
+        if (driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear) {
+            color = VROMathConvertSRGBToLinearColor(color);
+        }
+        _diffuseSurfaceColorUniform->setVec4(color);
     }
     if (_diffuseIntensityUniform != nullptr) {
         _diffuseIntensityUniform->setFloat(material.getDiffuse().getIntensity());
