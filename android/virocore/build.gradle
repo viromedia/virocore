@@ -87,8 +87,8 @@ dependencies {
 // Before assembling release, compile :viroar:assembleRelease, which will place its .so
 // products in its build/natives folder. The jniLibs source set above will ensure these
 // .so files are included in our final AAR.
-tasks.whenTaskAdded {
-    task-> if (task.name.contains("external") && !task.name.contains("Clean")) {
+tasks.whenTaskAdded { task->
+    if (task.name == "assembleRelease" || task.name == "assembleRelease") {
         task.dependsOn ':viroar:assembleRelease'
     }
 }
