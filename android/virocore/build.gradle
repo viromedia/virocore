@@ -50,6 +50,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
+            libraryVariants.all { variant ->
+                variant.outputs.all { output ->
+                    //TODO This variable will come from maven-push.gradle when we integrate pushing
+                    // maven in our builds. This is temporary.
+                    def version = '-v_1_6_0'
+                    def newName = output.outputFile.name
+                    outputFileName = newName.replace("-release", "-release" + version)
+                    //outputFileName = new File(output.outputFile.parent, newName)
+                }
+            }
         }
         debug {
             minifyEnabled false
