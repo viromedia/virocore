@@ -91,7 +91,6 @@ bool VROShaderModifier::isVariableDeclaration(std::string &line) {
            VROStringUtil::startsWith(line, "in ") ||
            VROStringUtil::startsWith(line, "out ") ||
            VROStringUtil::startsWith(line, "layout ") ||
-           VROStringUtil::startsWith(line, "const ") ||
            VROStringUtil::startsWith(line, "#include");
 }
 

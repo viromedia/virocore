@@ -819,10 +819,10 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createChromaKeyModifier(VRO
     }
 
     std::vector<std::string> modifierCode = {
-            "const highp float chroma_threshold_sensitivity = 0.4;",
-            "const highp float smoothing = 0.1;",
             "uniform highp vec3 color_to_replace;",
 
+            "const highp float chroma_threshold_sensitivity = 0.4;",
+            "const highp float smoothing = 0.1;",
             "highp float mask_y = 0.2989 * color_to_replace.r + 0.5866 * color_to_replace.g + 0.1145 * color_to_replace.b;",
             "highp float mask_cr = 0.7132 * (color_to_replace.r - mask_y);",
             "highp float mask_cb = 0.5647 * (color_to_replace.b - mask_y);",
