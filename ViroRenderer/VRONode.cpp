@@ -72,6 +72,9 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _shadowCastingBitMask(1),
     _ignoreEventHandling(false),
     _dragType(VRODragType::FixedDistance),
+    _dragPlanePoint({0,0,0}),
+    _dragPlaneNormal({0,0,0}),
+    _dragMaxDistance(10),
     _lastComputedTransform(VROMatrix4f()) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -99,6 +102,9 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _shadowCastingBitMask(node._shadowCastingBitMask),
     _ignoreEventHandling(node._ignoreEventHandling),
     _dragType(node._dragType),
+    _dragPlanePoint(node._dragPlanePoint),
+    _dragPlaneNormal(node._dragPlaneNormal),
+    _dragMaxDistance(node._dragMaxDistance),
     _lastComputedTransform(VROMatrix4f()) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);

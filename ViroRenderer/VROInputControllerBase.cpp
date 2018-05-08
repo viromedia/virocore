@@ -194,31 +194,105 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
 }
 
 void VROInputControllerBase::processDragging(int source) {
-    // Calculate the new drag location
-    VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
-    VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
-    VROVector3f draggedOffset = newSimulatedHitPosition - _lastDraggedNode->_originalHitLocation;
-    VROVector3f draggedToLocation = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
     std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
-    draggedNode->setPosition(draggedToLocation);
-    
+
+    VROVector3f draggedToPosition;
+    switch(draggedNode->getDragType()) {
+        case VRODragType::FixedToPlane:
+            draggedToPosition = getDragPositionFixedToPlane();
+            break;
+        case VRODragType::FixedToWorld: // this is only supported in AR, so default to FixedDistance here
+        case VRODragType::FixedDistance:
+            draggedToPosition = getDragPositionFixedDistance();
+            break;
+    }
+
+    draggedNode->setPosition(draggedToPosition);
+
     /*
      To avoid spamming the JNI / JS bridge, throttle the notification
      of onDrag delegates to a certain degree of accuracy.
      */
-    float distance = draggedToLocation.distance(_lastDraggedNodePosition);
+    float distance = draggedToPosition.distance(_lastDraggedNodePosition);
     if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
         return;
     }
-    
+
     // Update last known dragged position and notify delegates
-    _lastDraggedNodePosition = draggedToLocation;
+    _lastDraggedNodePosition = draggedToPosition;
     if (draggedNode != nullptr && draggedNode->getEventDelegate()) {
-        draggedNode->getEventDelegate()->onDrag(source, draggedNode, draggedToLocation);
+        draggedNode->getEventDelegate()->onDrag(source, draggedNode, draggedToPosition);
     }
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
-        delegate->onDrag(source, draggedNode, draggedToLocation);
+        delegate->onDrag(source, draggedNode, draggedToPosition);
     }
+}
+
+VROVector3f VROInputControllerBase::getDragPositionFixedDistance() {
+    // This is the forward plus the offset from the camera to the controller
+    VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
+
+    // camera position + adjustedForward scaled by the distanceFromController (to maintain fixed distance)
+    VROVector3f dragPositionWorld = _lastKnownPosition + (adjustedForward * _lastDraggedNode->_draggedDistanceFromController);
+
+    // The offset is the new drag location minus the original HitTest location
+    VROVector3f draggedOffset = dragPositionWorld - _lastDraggedNode->_originalHitLocation;
+
+    // Finally, the position returned is the "starting" position of the dragged object + the offset.
+    return _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
+}
+
+VROVector3f VROInputControllerBase::getDragPositionFixedToPlane() {
+    // get the information from the node (set by the dev)
+    std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
+    VROVector3f planePoint = draggedNode->getDragPlanePoint();
+    VROVector3f planeNormal = draggedNode->getDragPlaneNormal();
+    float maxDistance = draggedNode->getDragMaxDistance();
+
+    // if the plane info hasn't been set, then just return the current position.
+    if (planeNormal.isZero()) { // we don't check if planePoint is zero because that's a "valid" point
+        return draggedNode->getPosition();
+    }
+
+    // Find the intersection between the plane and the controller forward
+    VROVector3f intersectionPoint;
+    bool success = _lastKnownForward.rayIntersectPlane(planePoint, planeNormal,
+                                                       _lastKnownPosition, &intersectionPoint);
+
+    // if there wasn't an intersection point OR the intersectionPoint was too far from the controller's
+    // position, then we want to compute the plane position at maxDistance from the controller's
+    // position along the controller's forward. (this is the circle you get b/t intersection of a
+    // sphere and a plane).
+    if (!success || intersectionPoint.distance(_lastKnownPosition) > maxDistance) {
+
+        // first, project the controller's position onto the plane
+        VROVector3f controllerProj;
+        success = _lastKnownPosition.projectOnPlane(planePoint, planeNormal, &controllerProj);
+        if (!success) {
+            return draggedNode->getPosition();
+        }
+
+        // second, project the controller's position + forward onto the plane
+        VROVector3f forwardProj;
+        success = _lastKnownPosition.add(_lastKnownForward).projectOnPlane(planePoint, planeNormal, &forwardProj);
+        if (!success) {
+            return draggedNode->getPosition();
+        }
+
+        // find the length of the 3rd side of the right handed triangle formed by the controller's
+        // position, it's projected point, and the position on the plane "maxDistance" from the controller
+        float length = sqrtf(powf(maxDistance, 2) - (powf(_lastKnownPosition.distance(controllerProj), 2)));
+
+        // finally, calculate the intersection point b/t the plane and sphere along the user's forward
+        intersectionPoint = controllerProj.add(forwardProj.subtract(controllerProj).normalize().scale(length));
+    }
+
+    // The offset is the intersectionPoint minus the original HitTest location
+    VROVector3f draggedOffset = intersectionPoint - _lastDraggedNode->_originalHitLocation;
+
+    // Finally, the position returned is the "starting" position of the dragged object + the offset.
+    // This positions the dragged node relative to its parent.
+    return _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
 }
 
 void VROInputControllerBase::onPinch(int source, float scaleFactor, VROEventDelegate::PinchState pinchState) {

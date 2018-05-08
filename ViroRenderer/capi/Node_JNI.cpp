@@ -514,13 +514,71 @@ VRO_METHOD(void, nativeSetDragType)(VRO_ARGS
     if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistance")) {
         type = VRODragType::FixedDistance;
     } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedToWorld")) {
-        type = VRODragType ::FixedToWorld;
+        type = VRODragType::FixedToWorld;
+    } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedToPlane")) {
+        type = VRODragType::FixedToPlane;
     }
 
     VROPlatformDispatchAsyncRenderer([node_w, type] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
             node->setDragType(type);
+        }
+    });
+}
+
+VRO_METHOD(void, nativeSetDragPlanePoint)(VRO_ARGS
+                                          VRO_REF(VRONode) native_node_ref,
+                                          VRO_FLOAT_ARRAY planePoint) {
+    VRO_METHOD_PREAMBLE;
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+
+    VROVector3f planePointVec;
+    VRO_FLOAT *planePointArr = VRO_FLOAT_ARRAY_GET_ELEMENTS(planePoint);
+    planePointVec.x = planePointArr[0];
+    planePointVec.y = planePointArr[1];
+    planePointVec.z = planePointArr[2];
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(planePoint, planePointArr);
+
+    VROPlatformDispatchAsyncRenderer([node_w, planePointVec] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setDragPlanePoint(planePointVec);
+        }
+    });
+}
+
+VRO_METHOD(void, nativeSetDragPlaneNormal)(VRO_ARGS
+                                           VRO_REF(VRONode) native_node_ref,
+                                           VRO_FLOAT_ARRAY planeNormal) {
+    VRO_METHOD_PREAMBLE;
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+
+    VROVector3f planeNormalVec;
+    VRO_FLOAT *planeNormalArr = VRO_FLOAT_ARRAY_GET_ELEMENTS(planeNormal);
+    planeNormalVec.x = planeNormalArr[0];
+    planeNormalVec.y = planeNormalArr[1];
+    planeNormalVec.z = planeNormalArr[2];
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(planeNormal, planeNormalArr);
+
+    VROPlatformDispatchAsyncRenderer([node_w, planeNormalVec] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setDragPlaneNormal(planeNormalVec);
+        }
+    });
+}
+
+VRO_METHOD(void, nativeSetDragMaxDistance)(VRO_ARGS
+                                           VRO_REF(VRONode) native_node_ref,
+                                           VRO_FLOAT maxDistance) {
+    VRO_METHOD_PREAMBLE;
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+
+    VROPlatformDispatchAsyncRenderer([node_w, maxDistance] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setDragMaxDistance(maxDistance);
         }
     });
 }

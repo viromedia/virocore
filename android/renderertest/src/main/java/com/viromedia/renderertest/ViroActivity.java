@@ -338,9 +338,12 @@ public class ViroActivity extends AppCompatActivity {
 
             }
         });
-        boxNode.setDragType(Node.DragType.FIXED_TO_WORLD);
+        boxNode.setDragType(Node.DragType.FIXED_TO_PLANE);
+        boxNode.setDragPlanePoint(new Vector(0,-1,0));
+        boxNode.setDragPlaneNormal(new Vector(0,1,0));
+        boxNode.setDragMaxDistance(5);
 
-        nodes.addAll(testImperativePlane(scene));
+        //nodes.addAll(testImperativePlane(scene));
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {

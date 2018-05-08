@@ -100,7 +100,7 @@ void VROInputControllerAR::processDragging(int source) {
 void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
         std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
 
-    if (draggedNode->getDragType() == VRODragType::FixedDistance) {
+    if (draggedNode->getDragType() != VRODragType::FixedToWorld) {
         VROInputControllerBase::processDragging(source);
         return;
     }
@@ -120,12 +120,18 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
             VROInputControllerBase::processDragging(source);
             return;
         }
-    
+
         // only process AR drag if we have a session and we've waited long enough since the last time we processed drag OR
         // if alwaysRun is true.
         if ((VROTimeCurrentMillis() - _lastProcessDragTimeMillis > kARProcessDragInterval) || alwaysRun) {
 
             VROVector3f position = getNextDragPosition(results);
+
+            // The offset is the intersectionPoint minus the original HitTest location
+            VROVector3f draggedOffset = position - _lastDraggedNode->_originalHitLocation;
+
+            // Finally, the position is set to the "starting" position of the dragged object + the offset.
+           position = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
             
             // TODO: since we're animating position... the position passed back below won't necessarily
             // reflect its real position.
@@ -137,7 +143,7 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
             if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
                 return;
             }
-            
+
             // if we're already animating, then "cancel" it at the current position vs terminating
             // which causes the object to "jump" to the end.
             if (draggedNode->isAnimatingDrag() && draggedNode->getDragAnimation()) {
@@ -183,6 +189,8 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
    the position because if you drag an object from the table to the floor, there's no intermediary position.
  - Parse the point cloud ourselves to more directly influence the estimates.
  - "Shotgun" the area with hit tests to find the best position.
+
+ Note: This function returns the position in WORLD coordinates, NOT dragged-node coordinates
  */
 VROVector3f VROInputControllerAR::getNextDragPosition(std::vector<VROARHitTestResult> results) {
     VROVector3f cameraPos = _latestCamera.getPosition();

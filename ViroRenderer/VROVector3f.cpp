@@ -85,6 +85,23 @@ bool VROVector3f::rayIntersectPlane(const VROVector3f &point, const VROVector3f 
     return true;
 }
 
+bool VROVector3f::projectOnPlane(const VROVector3f &point, const VROVector3f &normal, VROVector3f *projPoint) {
+    VROVector3f v = subtract(point);
+
+    VROVector3f normalizedNormal = normal.normalize();
+
+    float dist = v.dot(normalizedNormal);
+    if (dist < 0) {
+        return false;
+    }
+
+    projPoint->x = x - dist * normalizedNormal.x;
+    projPoint->y = y - dist * normalizedNormal.y;
+    projPoint->z = z - dist * normalizedNormal.z;
+
+    return true;
+}
+
 VROVector3f VROVector3f::rotateZ(float angleRad) const {
     float sincosr[2];
     VROMathFastSinCos(VROMathNormalizeAnglePI(angleRad), sincosr);

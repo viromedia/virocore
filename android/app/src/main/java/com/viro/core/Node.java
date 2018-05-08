@@ -84,7 +84,13 @@ public class Node implements EventDelegate.EventDelegateCallback {
          * AR. This setting is used when ou wish to drag a Node off a table and onto the ground,
          * for example.
          */
-        FIXED_TO_WORLD("FixedToWorld");
+        FIXED_TO_WORLD("FixedToWorld"),
+
+        /**
+         * Dragging is limited to a user defined plane (specified by a point on the plane and its
+         * normal vector) and max distance from the camera/controller.
+         */
+        FIXED_TO_PLANE("FixedToPlane");
 
         private String mStringValue;
         private DragType(String value) {
@@ -190,6 +196,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private float mOpacity = DEFAULT_OPACITY;
     private boolean mVisible = DEFAULT_VISIBLE;
     private DragType mDragType = DEFAULT_DRAGTYPE;
+    private Vector mDragPlanePoint = new Vector();
+    private Vector mDragPlaneNormal = new Vector();
+    private float mDragMaxDistance = 10;
     protected int mLightReceivingBitMask = DEFAULT_LIGHT_RECEIVING_BIT_MASK;
     protected int mShadowCastingBitMask = DEFAULT_SHADOW_CASTING_BIT_MASK;
     private boolean mHighAccuracyGaze = DEFAULT_HIGH_ACCURACY_GAZE;
@@ -622,10 +631,68 @@ public class Node implements EventDelegate.EventDelegateCallback {
 
     /**
      * Get the dragging behavior for this Node.
+     *
      * @return The {@link DragType} for this Node.
      */
     public DragType getDragType() {
         return mDragType;
+    }
+
+    /**
+     * Set a point on the plane for {@link DragType#FIXED_TO_PLANE}.
+     *
+     * @param planePoint The {@link Vector} containing the point.
+     */
+    public void setDragPlanePoint(Vector planePoint) {
+        mDragPlanePoint = planePoint;
+        nativeSetDragPlanePoint(mNativeRef, planePoint.toArray());
+    }
+
+    /**
+     * Get the point on the plane for {@link DragType#FIXED_TO_PLANE}.
+     *
+     * @return The {@link Vector} containing the point.
+     */
+    public Vector getDragPlanePoint() {
+        return mDragPlanePoint;
+    }
+
+    /**
+     * Set the plane's normal for {@link DragType#FIXED_TO_PLANE}.
+     *
+     * @param planeNormal The {@link Vector} containing the normal.
+     */
+    public void setDragPlaneNormal(Vector planeNormal) {
+        mDragPlaneNormal = planeNormal;
+        nativeSetDragPlaneNormal(mNativeRef, planeNormal.toArray());
+    }
+
+    /**
+     * Get the plane's normal for {@link DragType#FIXED_TO_PLANE}
+     *
+     * @return The {@link Vector} containing the plane's normal.
+     */
+    public Vector getDragPlaneNormal() {
+        return mDragPlaneNormal;
+    }
+
+    /**
+     * Set the max drag distance from the camera/controller for {@link DragType#FIXED_TO_PLANE}.
+     *
+     * @param maxDistance The max drag distance from the camera/controller
+     */
+    public void setDragMaxDistance(float maxDistance) {
+        mDragMaxDistance = maxDistance;
+        nativeSetDragMaxDistance(mNativeRef, maxDistance);
+    }
+
+    /**
+     * Get the max drag distance from the camera/controller for {@link DragType#FIXED_TO_PLANE}.
+     *
+     * @return The max drag distance.
+     */
+    public float getDragMaxDistance() {
+        return mDragMaxDistance;
     }
 
     /**
@@ -1530,6 +1597,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetDragType(long nodeReference, String dragType);
+    private native void nativeSetDragPlanePoint(long nodeReference, float[] planePoint);
+    private native void nativeSetDragPlaneNormal(long nodeReference, float[] planeNormal);
+    private native void nativeSetDragMaxDistance(long nodeReference, float maxDistance);
     private native void nativeSetIgnoreEventHandling(long nodeReference, boolean visible);
     private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
