@@ -34,6 +34,5 @@ fastlane renderer_cp_viro_react_lib_to_tmp'''
   environment {
     LC_ALL = 'en_US.UTF-8'
     LANG = 'en_US.UTF-8'
-    ANDROID_HOME = '/Users/halliday/Library/Android/sdk'
   }
 }
