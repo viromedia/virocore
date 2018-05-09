@@ -186,6 +186,8 @@
 		8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */; };
 		8F2657461F0E808C0031DE17 /* VROCompress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2657441F0E808C0031DE17 /* VROCompress.cpp */; };
 		8F2657471F0E808C0031DE17 /* VROCompress.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2657451F0E808C0031DE17 /* VROCompress.h */; };
+		8F292BC820A38F2F00635C0D /* VROToneMappingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F292BC620A38F2E00635C0D /* VROToneMappingTest.cpp */; };
+		8F292BC920A38F2F00635C0D /* VROToneMappingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F292BC720A38F2F00635C0D /* VROToneMappingTest.h */; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
 		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
@@ -1061,6 +1063,8 @@
 		8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = gorilla.vrx; path = ViroSample/gorilla.vrx; sourceTree = "<group>"; };
 		8F2657441F0E808C0031DE17 /* VROCompress.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCompress.cpp; sourceTree = "<group>"; };
 		8F2657451F0E808C0031DE17 /* VROCompress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCompress.h; sourceTree = "<group>"; };
+		8F292BC620A38F2E00635C0D /* VROToneMappingTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROToneMappingTest.cpp; sourceTree = "<group>"; };
+		8F292BC720A38F2F00635C0D /* VROToneMappingTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROToneMappingTest.h; sourceTree = "<group>"; };
 		8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkinner.cpp; sourceTree = "<group>"; };
 		8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkinner.h; sourceTree = "<group>"; };
 		8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBone.cpp; sourceTree = "<group>"; };
@@ -2632,6 +2636,8 @@
 		8FD2A5571F813C6300E831A6 /* Test Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				8F292BC720A38F2F00635C0D /* VROToneMappingTest.h */,
+				8F292BC620A38F2E00635C0D /* VROToneMappingTest.cpp */,
 				8FD2A5581F817D4100E831A6 /* VROPhysicsTest.h */,
 				8FD2A5591F817D4100E831A6 /* VROPhysicsTest.cpp */,
 				8FD2A51B1F813C3C00E831A6 /* VROARDraggableNodeTest.h */,
@@ -3271,6 +3277,7 @@
 				8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */,
 				8F31CCB31F2FA8CA003EFB4B /* VROPortal.h in Headers */,
 				8FCB100B1DD12BDF00FE425C /* VRODriverOpenGLiOS.h in Headers */,
+				8F292BC920A38F2F00635C0D /* VROToneMappingTest.h in Headers */,
 				8FCB10031DD0062300FE425C /* VRORenderDelegateInternal.h in Headers */,
 				8FE382121EF06FED005038CB /* VROARCamera.h in Headers */,
 				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
@@ -3992,6 +3999,7 @@
 				8FD4DF011C18ED2C003DC425 /* VROMaterialSubstrateMetal.cpp in Sources */,
 				8F5CAA181F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp in Sources */,
 				8FCD02B51FD6F8E0001813D8 /* VRODriverOpenGLiOS.cpp in Sources */,
+				8F292BC820A38F2F00635C0D /* VROToneMappingTest.cpp in Sources */,
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */,

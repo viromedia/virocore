@@ -157,11 +157,6 @@ void VROBoxTest::build(std::shared_ptr<VRORenderer> renderer,
     
     boxParentNode->setRotationEulerZ(M_PI_2);
     VROTransaction::commit();
-    
-    _eventDelegate = std::make_shared<VROBoxEventDelegate>(scene);
-    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
-    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
-    boxParentNode->setEventDelegate(_eventDelegate);
 }
 
 std::shared_ptr<VRONode> VROBoxTest::buildTransparentFrontBox() {
@@ -199,27 +194,5 @@ std::shared_ptr<VRONode> VROBoxTest::buildTransparentFrontBox() {
     std::vector<std::shared_ptr<VROMaterial>> materials = { boxMaterial, mat1, mat2, mat3, mat4, mat5 };
     box->setMaterials(materials);
     return boxNode;
-}
-
-void VROBoxEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
-                                  std::vector<float> position) {
-    std::shared_ptr<VROScene> scene = _scene.lock();
-    if (scene && clickState == ClickState::Clicked) {
-        VROToneMappingMethod method = scene->getToneMappingMethod();
-        if (method == VROToneMappingMethod::Hable) {
-            scene->setToneMappingMethod(VROToneMappingMethod::HableLuminanceOnly);
-            pinfo("HABLE (Luminance Only) tone-mapping");
-        }
-        else if (method == VROToneMappingMethod::HableLuminanceOnly) {
-            scene->setToneMappingMethod(VROToneMappingMethod::Disabled);
-            pinfo("DISABLED tone-mapping");
-        }
-        else if (method == VROToneMappingMethod::Disabled) {
-            scene->setToneMappingMethod(VROToneMappingMethod::Hable);
-            pinfo("HABLE tone-mapping");
-        }
-        //scene->setToneMappingExposure(1.5);
-        //scene->setToneMappingWhitePoint(5.0);
-    }
 }
 

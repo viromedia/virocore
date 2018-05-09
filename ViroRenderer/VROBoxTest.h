@@ -11,16 +11,6 @@
 
 #include "VRORendererTest.h"
 
-class VROBoxEventDelegate : public VROEventDelegate {
-public:
-    VROBoxEventDelegate(std::shared_ptr<VROScene> scene) : _scene(scene) {};
-    virtual ~VROBoxEventDelegate() {};
-    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
-    
-private:
-    std::weak_ptr<VROScene> _scene;
-};
-
 class VROBoxTest : public VRORendererTest {
 public:
     
@@ -41,7 +31,6 @@ private:
 
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
-    std::shared_ptr<VROEventDelegate> _eventDelegate;
     
     std::shared_ptr<VRONode> buildTransparentFrontBox();
 };
