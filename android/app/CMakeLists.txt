@@ -78,6 +78,7 @@ add_library( # Sets the name of the library.
              ${VIRO_CAPI_SRC}/SpotLight_JNI.cpp
              ${VIRO_CAPI_SRC}/DirectionalLight_JNI.cpp
              ${VIRO_CAPI_SRC}/OmniLight_JNI.cpp
+             ${VIRO_CAPI_SRC}/Quad_JNI.cpp
              ${VIRO_CAPI_SRC}/Sound_JNI.cpp
              ${VIRO_CAPI_SRC}/SoundField_JNI.cpp
              ${VIRO_CAPI_SRC}/SpatialSound_JNI.cpp

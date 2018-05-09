@@ -20,23 +20,29 @@
 #include "VideoTexture_JNI.h"
 #include "Material_JNI.h"
 
-#define JNI_METHOD(return_type, method_name) \
+#if VRO_PLATFORM_ANDROID
+#define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_Quad_##method_name
+#else
+#define VRO_METHOD(return_type, method_name) \
+    return_type Quad_##method_name
+#endif
+
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateQuad)(JNIEnv *env,
+VRO_METHOD(VRO_REF(VROSurface), nativeCreateQuad)(JNIEnv *env,
                                        jobject object,
                                        jfloat width,
                                        jfloat height,
                                        jfloat u0, jfloat v0,
                                        jfloat u1, jfloat v1) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
-    return Quad::jptr(surface);
+    return VRO_REF_NEW(VROSurface, surface);
 }
 
-JNI_METHOD(jlong, nativeCreateQuadFromQuad)(JNIEnv *env,
+VRO_METHOD(VRO_REF(VROSurface), nativeCreateQuadFromQuad)(JNIEnv *env,
                                                   jobject object,
                                                   jfloat width,
                                                   jfloat height,
@@ -44,24 +50,25 @@ JNI_METHOD(jlong, nativeCreateQuadFromQuad)(JNIEnv *env,
                                                   jfloat u1, jfloat v1,
                                                   jlong oldSurface) {
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
-    std::vector<std::shared_ptr<VROMaterial>> materials = Quad::native(oldSurface)->getMaterials();
+    std::vector<std::shared_ptr<VROMaterial>> materials = VRO_REF_GET(VROSurface, oldSurface)->getMaterials();
     if (materials.size() > 0) {
         surface->setMaterials(materials);
     }
-    return Quad::jptr(surface);
+
+    return VRO_REF_NEW(VROSurface, surface);
 }
 
-JNI_METHOD(void, nativeDestroyQuad)(JNIEnv *env,
+VRO_METHOD(void, nativeDestroyQuad)(JNIEnv *env,
                                        jclass clazz,
                                        jlong nativeSurface) {
-    delete reinterpret_cast<PersistentRef<VROSurface> *>(nativeSurface);
+    VRO_REF_DELETE(VROSurface, nativeSurface);
 }
 
-JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
+VRO_METHOD(void, nativeSetWidth)(JNIEnv *env,
                                  jclass clazz,
                                  jlong nativeSurface,
                                  jfloat width) {
-    std::weak_ptr<VROSurface> surface_w = Quad::native(nativeSurface);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, width] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
         if (!surface) {
@@ -71,11 +78,11 @@ JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
+VRO_METHOD(void, nativeSetHeight)(JNIEnv *env,
                                   jclass clazz,
                                   jlong nativeSurface,
                                   jfloat height) {
-    std::weak_ptr<VROSurface> surface_w = Quad::native(nativeSurface);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, nativeSurface);
     VROPlatformDispatchAsyncRenderer([surface_w, height] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
         if (!surface) {
@@ -85,12 +92,13 @@ JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
+VRO_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                                         jobject obj,
                                         jlong surfaceRef,
                                         jlong textureRef) {
-    std::weak_ptr<VROSurface> surface_w = Quad::native(surfaceRef);
-    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
+
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VRO_REF_GET(VROVideoTexture, textureRef);
 
     VROPlatformDispatchAsyncRenderer([surface_w, videoTexture_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -109,12 +117,12 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
+VRO_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
                                         jobject obj,
                                         jlong surfaceRef,
                                         jlong textureRef) {
-    std::weak_ptr<VROTexture> imageTexture_w = Texture::native(textureRef);
-    std::weak_ptr<VROSurface> surface_w = Quad::native(surfaceRef);
+    std::weak_ptr<VROTexture> imageTexture_w = VRO_REF_GET(VROTexture, textureRef);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
 
     VROPlatformDispatchAsyncRenderer([surface_w, imageTexture_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
@@ -132,10 +140,10 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeClearMaterial)(JNIEnv *env,
+VRO_METHOD(void, nativeClearMaterial)(JNIEnv *env,
                                       jobject obj,
                                       jlong surfaceRef) {
-    std::weak_ptr<VROSurface> surface_w = Quad::native(surfaceRef);
+    std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
     VROPlatformDispatchAsyncRenderer([surface_w] {
         std::shared_ptr<VROSurface> surface = surface_w.lock();
         if (!surface) {
