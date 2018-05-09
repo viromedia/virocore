@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 };
 
 static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::ARDraggableNode;
+static const VRORendererTestType kRendererTest = VRORendererTestType::ToneMapping;
 
 @interface VROTestViewController ()
 

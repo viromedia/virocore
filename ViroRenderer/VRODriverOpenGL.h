@@ -27,6 +27,7 @@
 #include "VROShaderFactory.h"
 #include <list>
 
+static const bool kEnableStencilCopy = true;
 static const int kResourcePurgeFrameInterval = 120;
 static const int kResourcePurgeForceFrameInterval = 1200;
 
@@ -262,11 +263,17 @@ public:
                 target->bind();
             }
             else if (unbindOp == VRORenderTargetUnbindOp::CopyStencilAndInvalidate) {
-                std::shared_ptr<VRODriver> driver = std::dynamic_pointer_cast<VRODriver>(shared_from_this());
+                if (kEnableStencilCopy) {
+                    std::shared_ptr<VRODriver> driver = std::dynamic_pointer_cast<VRODriver>(shared_from_this());
                 
-                target->bind();
-                boundRenderTarget->blitStencil(target, false, driver);
-                boundRenderTarget->invalidate();
+                    target->bind();
+                    boundRenderTarget->blitStencil(target, false, driver);
+                    boundRenderTarget->invalidate();
+                }
+                else {
+                    boundRenderTarget->invalidate();
+                    target->bind();
+                }
             }
         }
         else {
