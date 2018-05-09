@@ -3810,7 +3810,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\ncp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n";
+			shellScript = "\ncp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\nmkdir -p /tmp/react_viro_kit\ncp -r $CODESIGNING_FOLDER_PATH /tmp/react_viro_kit\ncp -r $PROJECT_DIR/ViroKit.podspec /tmp/react_viro_kit";
 		};
 		C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
