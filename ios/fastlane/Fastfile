@@ -24,8 +24,6 @@ platform :ios do
 
   desc "Build ViroKit framework (release)"
   lane :release_virokit_framework do
-    ensure_git_status_clean
-    git_pull
      Dir.chdir("../") do
        # clean
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release clean | xcpretty -c")
