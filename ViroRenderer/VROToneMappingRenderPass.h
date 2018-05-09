@@ -16,6 +16,8 @@ class VRODriver;
 class VROImagePostProcess;
 
 const std::string kToneMappingHDRInput = "TM_Input";
+const float kToneMappingDefaultExposure = 1.5;
+const float kToneMappingDefaultWhitePoint = 5.0;
 
 enum class VROToneMappingMethod {
     Disabled,
@@ -73,7 +75,8 @@ private:
     bool _gammaCorrectionEnabled;
     
     std::shared_ptr<VROImagePostProcess> _postProcess;
-    std::shared_ptr<VROImagePostProcess> createPostProcess(std::shared_ptr<VRODriver> driver);
+    std::shared_ptr<VROImagePostProcess> createPostProcess(std::shared_ptr<VRODriver> driver,
+                                                           VROToneMappingMethod method);
     
 };
 

@@ -19,8 +19,8 @@
 VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingMethod method, bool gammaCorrectSoftware,
                                                    std::shared_ptr<VRODriver> driver) :
     _method(method),
-    _exposure(1.5),
-    _whitePoint(11.2),
+    _exposure(kToneMappingDefaultExposure),
+    _whitePoint(kToneMappingDefaultWhitePoint),
     _gammaCorrectionEnabled(gammaCorrectSoftware) {
   
 }
@@ -29,7 +29,8 @@ VROToneMappingRenderPass::~VROToneMappingRenderPass() {
     
 }
 
-std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess(std::shared_ptr<VRODriver> driver) {
+std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess(std::shared_ptr<VRODriver> driver,
+                                                                                 VROToneMappingMethod method) {
     std::vector<std::string> samplers = { "hdr_texture" };
     std::vector<std::string> code = {
         "uniform sampler2D hdr_texture;",
@@ -40,18 +41,19 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
      Perform tone-mapping.
      */
     std::vector<std::string> toneMappingCode;
-    if (_method == VROToneMappingMethod::Disabled) {
+    if (method == VROToneMappingMethod::Disabled) {
         toneMappingCode = {
             "highp vec3 mapped = hdr_color.rgb;",
         };
     }
-    else if (_method == VROToneMappingMethod::Reinhard) {
+    else if (method == VROToneMappingMethod::Reinhard) {
         toneMappingCode = {
-            "uniform lowp float exposure;",
-            "highp vec3 mapped = hdr_color.rgb / (hdr_color.rgb + vec3(1.0));",
+            "uniform highp float exposure;",
+            "highp vec3 H = hdr_color.rgb * pow(2.0, exposure);",
+            "highp vec3 mapped = clamp(H / (H + vec3(1.0)), 0.0, 1.0);",
         };
     }
-    else if (_method == VROToneMappingMethod::Hable) {
+    else if (method == VROToneMappingMethod::Hable) {
         toneMappingCode = {
             "uniform highp float white_point;",
             "uniform highp float exposure;",
@@ -61,14 +63,15 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
             "highp float D = 0.20;",
             "highp float E = 0.02;",
             "highp float F = 0.30;",
+            
             "highp vec3 H = hdr_color.rgb * pow(2.0, exposure);",
             "highp vec3 W = vec3(white_point);",
-            "highp vec3 hdr_mapped   = ((H * (A * H + C * B) + D * E) / (H * (A * H + B) + D * F)) - E / F;",
-            "highp vec3 white_mapped = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;",
-            "highp vec3 mapped = hdr_mapped / white_mapped;",
+            "highp vec3 hdr_mapped   = max(((H * (A * H + C * B) + D * E) / (H * (A * H + B) + D * F)) - E / F, vec3(0.0));",
+            "highp vec3 white_mapped = max(((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F, vec3(0.0));",
+            "highp vec3 mapped = clamp(hdr_mapped / white_mapped, 0.0, 1.0);",
         };
     }
-    else if (_method == VROToneMappingMethod::HableLuminanceOnly) {
+    else if (method == VROToneMappingMethod::HableLuminanceOnly) {
         toneMappingCode = {
             "uniform highp float white_point;",
             "uniform highp float exposure;",
@@ -78,15 +81,16 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
             "highp float D = 0.20;",
             "highp float E = 0.02;",
             "highp float F = 0.30;",
+            
             "highp vec3 H = hdr_color.rgb * pow(2.0, exposure);",
             "highp vec3 W = vec3(white_point);",
             "highp float luminance_H = dot(H, vec3(0.2126, 0.7152, 0.0722));",
             "highp float luminance_W = dot(W, vec3(0.2126, 0.7152, 0.0722));",
-            "highp float hdr_mapped_L   = ((luminance_H * (A * luminance_H + C * B) + D * E) / (luminance_H * (A * luminance_H + B) + D * F)) - E / F;",
-            "highp float white_mapped_L = ((luminance_W * (A * luminance_W + C * B) + D * E) / (luminance_W * (A * luminance_W + B) + D * F)) - E / F;",
+            "highp float hdr_mapped_L   = max(((luminance_H * (A * luminance_H + C * B) + D * E) / (luminance_H * (A * luminance_H + B) + D * F)) - E / F, 0.0);",
+            "highp float white_mapped_L = max(((luminance_W * (A * luminance_W + C * B) + D * E) / (luminance_W * (A * luminance_W + B) + D * F)) - E / F, 0.0);",
             "highp vec3 hdr_mapped   = (hdr_mapped_L / luminance_H) * H;",
             "highp vec3 white_mapped = (white_mapped_L / luminance_W) * W;",
-            "highp vec3 mapped = hdr_mapped / white_mapped;",
+            "highp vec3 mapped = clamp(hdr_mapped / white_mapped, 0.0, 1.0);",
         };
     }
     else {
@@ -115,7 +119,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
     
-    if (_method == VROToneMappingMethod::Exposure || _method == VROToneMappingMethod::Hable || _method == VROToneMappingMethod::HableLuminanceOnly) {
+    if (method == VROToneMappingMethod::Exposure || method == VROToneMappingMethod::Hable || method == VROToneMappingMethod::HableLuminanceOnly) {
         std::weak_ptr<VROToneMappingRenderPass> weakSelf = std::dynamic_pointer_cast<VROToneMappingRenderPass>(shared_from_this());
         modifier->setUniformBinder("exposure", [weakSelf] (VROUniform *uniform, GLuint location,
                                                            const VROGeometry *geometry, const VROMaterial *material) {
@@ -125,7 +129,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
             }
         });
     }
-    if (_method == VROToneMappingMethod::Hable || _method == VROToneMappingMethod::HableLuminanceOnly) {
+    if (method == VROToneMappingMethod::Hable || method == VROToneMappingMethod::HableLuminanceOnly) {
         std::weak_ptr<VROToneMappingRenderPass> weakSelf = std::dynamic_pointer_cast<VROToneMappingRenderPass>(shared_from_this());
         modifier->setUniformBinder("white_point", [weakSelf] (VROUniform *uniform, GLuint location,
                                                               const VROGeometry *geometry, const VROMaterial *material) {
@@ -148,7 +152,7 @@ void VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene,
                                       VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
     if (!_postProcess) {
-        _postProcess = createPostProcess(driver);
+        _postProcess = createPostProcess(driver, _method);
     }
     
     std::shared_ptr<VROTexture> hdrInput = inputs.textures[kToneMappingHDRInput];

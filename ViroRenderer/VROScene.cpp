@@ -24,8 +24,8 @@ VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer),
     _postProcessingEffectsUpdated(false),
     _toneMappingEnabled(true),
     _toneMappingMethod(VROToneMappingMethod::HableLuminanceOnly),
-    _toneMappingExposure(1.5),
-    _toneMappingWhitePoint(11.2),
+    _toneMappingExposure(kToneMappingDefaultExposure),
+    _toneMappingWhitePoint(kToneMappingDefaultWhitePoint),
     _toneMappingUpdated(false) {
         
     _rootNode = std::make_shared<VROPortal>();
