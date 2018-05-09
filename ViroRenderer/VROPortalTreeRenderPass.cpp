@@ -118,7 +118,8 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             // Only render the portal silhouette over the area covered
             // by the parent portal. Clip the rest (we don't want a portal
             // within a portal to bleed outside of its parent).
-            target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
+            target->setPortalStencilPassFunction(portalFrame->getActiveFace(isExit), VROStencilFunc::Equal,
+                                                 portal->getRecursionLevel() - 1);
             portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, nullptr,
                                            context, driver);
             
@@ -146,7 +147,8 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         // 2. It ensures that no objects at this level are drawn into any upper
         //    levels. An object at level 2 will not be drawn into an area
         //    belonging to level 1.
-        target->setStencilPassBits(VROFace::FrontAndBack, portal->getRecursionLevel(), true);
+        target->setPortalStencilPassFunction(VROFace::FrontAndBack, VROStencilFunc::LessOrEqual,
+                                             portal->getRecursionLevel());
         if (renderBackgrounds) {
             if (outgoingTopPortal != nullptr && i == 0) {
                 outgoingTopPortal->renderBackground(context, driver);
@@ -167,7 +169,8 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             
             driver->setColorWritingEnabled(false);
             target->enablePortalStencilRemoval(portalFrame->getActiveFace(isExit));
-            target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel(), true);
+            target->setPortalStencilPassFunction(portalFrame->getActiveFace(isExit), VROStencilFunc::LessOrEqual,
+                                                 portal->getRecursionLevel());
             portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, nullptr,
                                            context, driver);
             driver->unbindShader();
@@ -181,7 +184,8 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             pglpush("Portal Frame");
             driver->setColorWritingEnabled(true);
             target->disablePortalStencilWriting(VROFace::FrontAndBack);
-            target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, true);
+            target->setPortalStencilPassFunction(portalFrame->getActiveFace(isExit), VROStencilFunc::LessOrEqual,
+                                                 portal->getRecursionLevel() - 1);
             portal->renderPortal(context, driver);
             driver->unbindShader();
             pglpop();

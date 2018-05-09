@@ -45,6 +45,20 @@ enum class VRORenderTargetType {
 };
 
 /*
+ Possible stencil functions. Stenciling is owned by the render target.
+ */
+enum class VROStencilFunc {
+    Never,
+    Less,
+    LessOrEqual,
+    Greater,
+    GreaterOrEqual,
+    Equal,
+    NotEqual,
+    Always
+};
+
+/*
  Represents a render target, with any number of color, stencil, or depth attachments.
  In OpenGL, this is represented by an FBO.
  */
@@ -225,19 +239,27 @@ public:
     /*
      Enable portal stencil functions. When writing, we INCR the stencil
      buffer. When removing, we DECR the buffer. Finally when reading, we
-     make the stencil buffer read-only.
+     make the stencil buffer read-only. Portal stencil functions only
+     operate on the lower 4 stencil bits (stencil mask 0x0F).
      */
     virtual void enablePortalStencilWriting(VROFace face) = 0;
     virtual void enablePortalStencilRemoval(VROFace face) = 0;
     virtual void disablePortalStencilWriting(VROFace face) = 0;
     
     /*
-     Set the reference bits for the stencil test. If passIfLess is
-     false, we pass the stencil test if ref equals the value in the
-     stencil buffer. If passIsLess is true, we pass the stencil test
-     if ref <= value in stencil buffer.
+     Set the pass function and reference bits for the portal stencil test. The
+     func parameter controls the stencil function that is used. The test is passed
+     if func, applied to the ref and the value in the stencil buffer, equates to
+     true. For example, if func is 'Less' and ref < stencil value, then the test
+     passes.
+     
+     Note: only the lower four bits of ref and the lower four bits in the stencil buffer
+           are used for this comparison. The upper four bits are reserved for other
+           stencil operations, like per-pixel tone mapping. In other words, this call is
+           equivalent to using glStencilFunc with a mask of 0x0F. (Additionally, any bits
+           in the upper four region for the passed-in ref are flipped to 1).
      */
-    virtual void setStencilPassBits(VROFace face, int bits, bool passIfLess) = 0;
+    virtual void setPortalStencilPassFunction(VROFace face, VROStencilFunc func, int ref) = 0;
     
 protected:
     

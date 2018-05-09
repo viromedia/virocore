@@ -30,7 +30,9 @@ VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAt
     _colorbuffer(0),
     _numImages(numImages),
     _mipmapsEnabled(enableMipmaps),
-    _driver(driver) {
+    _driver(driver),
+    _stencilRef(0xFF),
+    _stencilFunc(VROStencilFunc::Always) {
 
     // Adreno330 or older does not support offscreen render targets
     if (type != VRORenderTargetType::Display) {
@@ -63,6 +65,7 @@ void VRORenderTargetOpenGL::bind() {
      Prevent logical buffer load by immediately clearing.
      */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glStencilFuncSeparate(GL_FRONT_AND_BACK, GL_ALWAYS, 0xFF, 0xFF);
 }
 
 void VRORenderTargetOpenGL::invalidate() {
@@ -762,12 +765,35 @@ GLenum toGL(VROFace face) {
     }
 }
 
+GLenum toGL(VROStencilFunc func) {
+    switch (func) {
+        case VROStencilFunc::Never:
+            return GL_NEVER;
+        case VROStencilFunc::Less:
+            return GL_LESS;
+        case VROStencilFunc::LessOrEqual:
+            return GL_LEQUAL;
+        case VROStencilFunc::Greater:
+            return GL_GREATER;
+        case VROStencilFunc::GreaterOrEqual:
+            return GL_GEQUAL;
+        case VROStencilFunc::Equal:
+            return GL_EQUAL;
+        case VROStencilFunc::NotEqual:
+            return GL_NOTEQUAL;
+        case VROStencilFunc::Always:
+            return GL_ALWAYS;
+        default:
+            return GL_ALWAYS;
+    }
+}
+
 void VRORenderTargetOpenGL::enablePortalStencilWriting(VROFace face) {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setStencilTestEnabled(true);
         glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR);   // Increment stencil buffer when pass
-        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
+        glStencilMaskSeparate(toGL(face), 0x0F);                      // Allow writing to the lower four bits in stencil buffer
     }
 }
 
@@ -776,7 +802,7 @@ void VRORenderTargetOpenGL::enablePortalStencilRemoval(VROFace face) {
     if (driver) {
         driver->setStencilTestEnabled(true);
         glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR);   // Decrement stencil buffer when pass
-        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
+        glStencilMaskSeparate(toGL(face), 0x0F);                      // Allow writing to the lower four bits in stencil buffer
     }
 }
 
@@ -785,19 +811,18 @@ void VRORenderTargetOpenGL::disablePortalStencilWriting(VROFace face) {
     if (driver) {
         driver->setStencilTestEnabled(true);
         glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP);   // Do not write to stencil buffer
-        glStencilMaskSeparate(toGL(face), 0x00);                      // Protect all stencil bits from writing
     }
 }
 
-void VRORenderTargetOpenGL::setStencilPassBits(VROFace face, int bits, bool passIfLess) {
+void VRORenderTargetOpenGL::setPortalStencilPassFunction(VROFace face, VROStencilFunc func, int ref) {
+    // The bits set here are for the portal stencil ref; e.g. only the bottom four bits. The upper
+    // four bits are kept as 1111; they are used for controlling other masking operations.
+    _stencilRef = (0xF0 | (0x0F & ref));
+    _stencilFunc = func;
+    
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setStencilTestEnabled(true);
-        if (passIfLess) {
-            glStencilFuncSeparate(toGL(face), GL_LEQUAL, bits, 0xFF); // Only pass stencil test if bits <= stencil buffer
-        }
-        else {
-            glStencilFuncSeparate(toGL(face), GL_EQUAL, bits, 0xFF);  // Only pass stencil test if bits == stencil buffer
-        }
+        glStencilFuncSeparate(toGL(face), toGL(_stencilFunc), _stencilRef, 0x0F);
     }
 }

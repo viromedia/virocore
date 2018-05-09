@@ -62,7 +62,7 @@ public:
     void enablePortalStencilWriting(VROFace face);
     void enablePortalStencilRemoval(VROFace face);
     void disablePortalStencilWriting(VROFace face);
-    void setStencilPassBits(VROFace face, int bits, bool passIfLess);
+    void setPortalStencilPassFunction(VROFace face, VROStencilFunc func, int ref);
     
 protected:
     
@@ -99,6 +99,13 @@ private:
      setTextureCubeFace.
      */
     bool _mipmapsEnabled;
+    
+    /*
+     The setting for passing the stencil test operation. These are determined by the
+     active portal settings.
+     */
+    int _stencilRef;
+    VROStencilFunc _stencilFunc;
     
     /*
      The storage type used for the depth/stencil renderbuffer (e.g. GL_DEPTH24_STENCIL8).
