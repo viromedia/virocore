@@ -133,13 +133,17 @@ void VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
     
     for (int i = 0; i < _numBlurIterations; i++) {
         if (i == 0) {
-            _gaussianBlur->blitOpt({ input->getTexture(1) }, bufferA, driver);
+            // Don't invalidate the input buffer (the caller may need its stencil contents)
+            driver->bindRenderTarget(bufferA, VRORenderTargetUnbindOp::None);
+            _gaussianBlur->blitOpt({ input->getTexture(1) }, driver);
         }
         else if (i % 2 == 1) {
-            _gaussianBlur->blitOpt({ bufferA->getTexture(0) }, bufferB, driver);
+            driver->bindRenderTarget(bufferB, VRORenderTargetUnbindOp::Invalidate);
+            _gaussianBlur->blitOpt({ bufferA->getTexture(0) }, driver);
         }
         else {
-            _gaussianBlur->blitOpt({ bufferB->getTexture(0) }, bufferA, driver);
+            driver->bindRenderTarget(bufferA, VRORenderTargetUnbindOp::Invalidate);
+            _gaussianBlur->blitOpt({ bufferB->getTexture(0) }, driver);
         }
         _horizontal = !_horizontal;
     }

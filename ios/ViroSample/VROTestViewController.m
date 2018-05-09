@@ -26,6 +26,9 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ARDraggabl
 
 - (void)loadView {
     VRORendererConfiguration config;
+    config.enableHDR = YES;
+    config.enablePBR = YES;
+    config.enableBloom = YES;
     
     if (kTestType == VROTestSceneType::VR) {
         VROViewGVR *view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds
@@ -55,10 +58,6 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ARDraggabl
         //[self testScreenshot];
     }
     else {
-        config.enableHDR = YES;
-        config.enablePBR = YES;
-        config.enableBloom = YES;
-        
         CGRect screenBounds = [UIScreen mainScreen].bounds;
         CGRect viroBounds = CGRectInset(screenBounds, 50, 50);
         

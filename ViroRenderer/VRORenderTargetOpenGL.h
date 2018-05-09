@@ -30,9 +30,11 @@ public:
 #pragma mark - VRORenderTarget Implementation
     
     void bind();
-    virtual void unbind();
-    void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
-                   std::shared_ptr<VRODriver> driver);
+    virtual void invalidate();
+    virtual void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
+                           std::shared_ptr<VRODriver> driver);
+    virtual void blitStencil(std::shared_ptr<VRORenderTarget> destination, bool flipY,
+                             std::shared_ptr<VRODriver> driver);
     
     virtual bool setViewport(VROViewport viewport);
     int getWidth() const;
@@ -133,6 +135,14 @@ private:
      Create a depth render-to-texture target with a color render buffer.
      */
     bool createDepthTextureTarget();
+    
+    /*
+     Blit the given attachment to the given destination target.
+     */
+    void blitAttachment(GLenum attachment, GLbitfield mask, GLenum filter,
+                        std::shared_ptr<VRORenderTarget> destination,
+                        bool flipY, std::shared_ptr<VRODriver> driver);
+    
     
 };
 

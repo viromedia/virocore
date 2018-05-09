@@ -27,6 +27,10 @@ public:
     
 #pragma mark - Unsupported by Displays
     
+    void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
+                   std::shared_ptr<VRODriver> driver) { pabort(); }
+    void blitStencil(std::shared_ptr<VRORenderTarget> destination, bool flipY,
+                     std::shared_ptr<VRODriver> driver) { pabort(); }
     void clearTextures() { pabort(); }
     bool attachNewTextures() { pabort(); return false; }
     void setTextureImageIndex(int index, int attachment) { pabort(); }

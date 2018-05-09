@@ -51,7 +51,7 @@ void VROBRDFRenderPass::render(std::shared_ptr<VROScene> scene,
     pglpush("BRDF");
 
     // Bind the destination render target
-    driver->bindRenderTarget(_BRDFRenderTarget);
+    driver->bindRenderTarget(_BRDFRenderTarget, VRORenderTargetUnbindOp::Invalidate);
 
     // Setup for rendering the quad
     driver->setDepthWritingEnabled(true);

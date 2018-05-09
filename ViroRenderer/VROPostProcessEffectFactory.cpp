@@ -97,8 +97,8 @@ void VROPostProcessEffectFactory::clearAllEffects(){
 };
 
 bool VROPostProcessEffectFactory::handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
-                                            std::shared_ptr<VRORenderTarget> destination,
-                                            std::shared_ptr<VRODriver> driver) {
+                                                       std::shared_ptr<VRORenderTarget> destination,
+                                                       std::shared_ptr<VRODriver> driver) {
     if (_cachedPrograms.size() > 0) {
         renderEffects(source, destination, driver);
         return true;
@@ -108,16 +108,18 @@ bool VROPostProcessEffectFactory::handlePostProcessing(std::shared_ptr<VRORender
 }
 
 void VROPostProcessEffectFactory::renderEffects(std::shared_ptr<VRORenderTarget> input,
-                                             std::shared_ptr<VRORenderTarget> output,
-                                             std::shared_ptr<VRODriver> driver) {
+                                                std::shared_ptr<VRORenderTarget> output,
+                                                std::shared_ptr<VRODriver> driver) {
     // Compound post process effects by blitting ping-pong style between input and output targets.
     bool ping = true;
     for (int i = 0; i < _cachedPrograms.size(); i ++){
-        if (ping){
-            _cachedPrograms[i].second->blit({ input->getTexture(0) }, output, driver);
+        if (ping) {
+            driver->bindRenderTarget(output, VRORenderTargetUnbindOp::CopyStencilAndInvalidate);
+            _cachedPrograms[i].second->blit({ input->getTexture(0) }, driver);
             ping = false;
         } else {
-            _cachedPrograms[i].second->blit({ output->getTexture(0) }, input,  driver);
+            driver->bindRenderTarget(input, VRORenderTargetUnbindOp::CopyStencilAndInvalidate);
+            _cachedPrograms[i].second->blit({ output->getTexture(0) },  driver);
             ping = true;
         }
     }
@@ -125,8 +127,9 @@ void VROPostProcessEffectFactory::renderEffects(std::shared_ptr<VRORenderTarget>
     // Ensure the final result always blits into the output target.
     // Note: Consider expanding the renderEffects signature if the cost of performing a final blit
     // here is too great.
-    if (ping){
-        sEmptyEffect->blit({ input->getTexture(0) }, output, driver);
+    if (ping) {
+        driver->bindRenderTarget(output, VRORenderTargetUnbindOp::CopyStencilAndInvalidate);
+        sEmptyEffect->blit({ input->getTexture(0) }, driver);
     }
 }
 

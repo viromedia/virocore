@@ -28,13 +28,12 @@ public:
     virtual void setVerticalFlip(bool flip) = 0;
     
     /*
-     Bind the given textures and blit to the destination render target, using the
-     post-process shader.
+     Bind the given textures and blit to the currently bound render target, using
+     the post-process shader.
      
      The provided textures will be bound to samplers (texture units) 0 to N.
      */
     virtual void blit(std::vector<std::shared_ptr<VROTexture>> textures,
-                      std::shared_ptr<VRORenderTarget> destination,
                       std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
@@ -47,7 +46,6 @@ public:
      */
     virtual void begin(std::shared_ptr<VRODriver> &driver) = 0;
     virtual void blitOpt(std::vector<std::shared_ptr<VROTexture>> textures,
-                         std::shared_ptr<VRORenderTarget> destination,
                          std::shared_ptr<VRODriver> &driver) = 0;
     virtual void end(std::shared_ptr<VRODriver> &driver) = 0;
     

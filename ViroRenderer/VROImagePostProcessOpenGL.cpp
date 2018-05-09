@@ -50,17 +50,16 @@ void VROImagePostProcessOpenGL::setVerticalFlip(bool flip) {
 }
 
 void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> textures,
-                                     std::shared_ptr<VRORenderTarget> destination,
                                      std::shared_ptr<VRODriver> &driver) {
     
-    // Bind the source textures and destination render target
-    if (!bind(textures, destination, driver)) {
+    // Bind the source textures
+    if (!bind(textures, driver)) {
         return;
     }
     
     driver->setDepthWritingEnabled(false);
     driver->setDepthReadingEnabled(false);
-    driver->setStencilTestEnabled(false);
+    driver->setStencilTestEnabled(true);
     
     // Compile and bind the shader and its corresponding uniforms
     if (!_shader->isHydrated()) {
@@ -78,7 +77,7 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
 void VROImagePostProcessOpenGL::begin(std::shared_ptr<VRODriver> &driver) {
     driver->setDepthWritingEnabled(false);
     driver->setDepthReadingEnabled(false);
-    driver->setStencilTestEnabled(false);
+    driver->setStencilTestEnabled(true);
     
     // Compile and bind the shader
     if (!_shader->isHydrated()) {
@@ -88,11 +87,10 @@ void VROImagePostProcessOpenGL::begin(std::shared_ptr<VRODriver> &driver) {
 }
 
 void VROImagePostProcessOpenGL::blitOpt(std::vector<std::shared_ptr<VROTexture>> textures,
-                                        std::shared_ptr<VRORenderTarget> destination,
                                         std::shared_ptr<VRODriver> &driver) {
     
-    // Bind the source textures and destination render target
-    if (!bind(textures, destination, driver)) {
+    // Bind the source textures
+    if (!bind(textures, driver)) {
         return;
     }
     for (VROUniform *uniform : _shaderModifierUniforms) {
@@ -106,7 +104,6 @@ void VROImagePostProcessOpenGL::end(std::shared_ptr<VRODriver> &driver) {
 }
 
 bool VROImagePostProcessOpenGL::bind(std::vector<std::shared_ptr<VROTexture>> textures,
-                                     std::shared_ptr<VRORenderTarget> destination,
                                      std::shared_ptr<VRODriver> &driver) {
     
     // Bind textures to their units
@@ -115,9 +112,6 @@ bool VROImagePostProcessOpenGL::bind(std::vector<std::shared_ptr<VROTexture>> te
         VRORenderUtil::bindTexture(unit, texture, driver);
         ++unit;
     }
-    
-    // Bind the destination render target
-    driver->bindRenderTarget(destination);
     return true;
 }
 

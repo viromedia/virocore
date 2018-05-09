@@ -55,7 +55,7 @@ void VROEquirectangularToCubeRenderPass::render(std::shared_ptr<VROScene> scene,
     VRORenderUtil::bindTexture(0, inputs.textures[kEquirectangularToCubeHDRTextureInput], driver);
     
     // Bind the destination render target
-    driver->bindRenderTarget(_cubeRenderTarget);
+    driver->bindRenderTarget(_cubeRenderTarget, VRORenderTargetUnbindOp::Invalidate);
     
     // Setup for rendering the cube
     driver->setDepthWritingEnabled(true);

@@ -426,7 +426,8 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
     _context->setZNear(kZNear);
     _context->setZFar(getFarClippingPlane());
     _context->setInputController(_inputController);
-
+    
+    driver->willRenderEye(*_context.get());
     if (_sceneController) {
        if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
             _choreographer->render(eye, _sceneController->getScene(), _outgoingSceneController->getScene(),
@@ -440,11 +441,11 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
 
     if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
         _lastLeftEyeView = eyeView;
-    }
-    else {
+    } else {
         _lastRightEyeView = eyeView;
     }
-
+    driver->didRenderEye(*_context.get());
+    
     // This unbinds the last shader to even out our pglpush and pops
     driver->unbindShader();
     pglpop();

@@ -20,7 +20,6 @@
 #include "VROFrameScheduler.h"
 
 class VROFrameSynchronizer;
-class VRORenderTarget;
 class VROTexture;
 class VROPencil;
 class VROInputControllerBase;
@@ -141,13 +140,6 @@ public:
         return _previousCamera;
     }
     
-    void setRenderTarget(std::shared_ptr<VRORenderTarget> target) {
-        _renderTarget = target;
-    }
-    const std::shared_ptr<VRORenderTarget> getRenderTarget() const {
-        return _renderTarget;
-    }
-    
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() const {
         return _frameSynchronizer;
     }
@@ -189,11 +181,6 @@ private:
     VROEyeType _eye;
     double _fps;
     bool _pbrEnabled;
-    
-    /*
-     The target to which we are currently rendering.
-     */
-    std::shared_ptr<VRORenderTarget> _renderTarget;
     
     /*
      The standard view and projection matrices. The view matrix is specific for

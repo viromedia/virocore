@@ -56,7 +56,7 @@ void VROIrradianceRenderPass::render(std::shared_ptr<VROScene> scene,
     VRORenderUtil::bindTexture(0, inputs.textures[kIrradianceLightingEnvironmentInput], driver);
     
     // Bind the destination render target
-    driver->bindRenderTarget(_irradianceRenderTarget);
+    driver->bindRenderTarget(_irradianceRenderTarget, VRORenderTargetUnbindOp::Invalidate);
     
     // Setup for rendering the cube
     driver->setDepthWritingEnabled(true);

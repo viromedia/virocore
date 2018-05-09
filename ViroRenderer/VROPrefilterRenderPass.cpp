@@ -53,7 +53,7 @@ void VROPrefilterRenderPass::render(std::shared_ptr<VROScene> scene,
     VRORenderUtil::bindTexture(0, inputs.textures[kPrefilterLightingEnvironmentInput], driver);
 
     // Bind the destination render target
-    driver->bindRenderTarget(_prefilterRenderTarget);
+    driver->bindRenderTarget(_prefilterRenderTarget, VRORenderTargetUnbindOp::Invalidate);
 
     // Setup for rendering the cube
     driver->setDepthWritingEnabled(true);

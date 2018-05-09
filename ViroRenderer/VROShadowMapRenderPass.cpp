@@ -73,7 +73,7 @@ void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
     
     driver->setDepthWritingEnabled(true);
     driver->setColorWritingEnabled(false);
-    driver->bindRenderTarget(target);
+    driver->bindRenderTarget(target, VRORenderTargetUnbindOp::Invalidate);
     target->clearDepth();
     
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;

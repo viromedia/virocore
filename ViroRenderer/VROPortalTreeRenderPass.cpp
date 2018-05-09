@@ -38,7 +38,7 @@ void VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene,
 
     std::shared_ptr<VRORenderTarget> target = inputs.outputTarget;
     passert (target);
-    driver->bindRenderTarget(target);
+    driver->bindRenderTarget(target, VRORenderTargetUnbindOp::Invalidate);
 
     driver->setColorWritingEnabled(true);
     target->clearDepthAndColor();

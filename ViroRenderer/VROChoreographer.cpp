@@ -224,12 +224,16 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.outputTarget = _blurTargetB;
             _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
             
+            // Blit the stencil buffer from the original target over to the postProcessTarget
+            driver->bindRenderTarget(_postProcessTarget, VRORenderTargetUnbindOp::Invalidate);
+            _hdrTarget->blitStencil(_postProcessTarget, false, driver);
+            
             // Additively blend the bloom back into the image, store in _postProcessTarget. Note we
             // have to set the blend mode to PremultiplyAlpha because the input texture (the blur
             // texture, has alpha premultiplied -- so we don't want OpenGL to multiply its colors
             // by alpha *again*.
             driver->setBlendingMode(VROBlendMode::PremultiplyAlpha);
-            _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), _blurTargetB->getTexture(0) }, _postProcessTarget, driver);
+            _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), _blurTargetB->getTexture(0) }, driver);
             driver->setBlendingMode(VROBlendMode::Alpha);
 
             // Run additional post-processing on the normal HDR image
@@ -316,6 +320,7 @@ void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODrive
 void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
                                                  std::shared_ptr<VRODriver> driver) {
     // Flip/render the image to the RTT target
+    _renderToTextureTarget->bind();
     input->blitColor(_renderToTextureTarget, true, driver);
 
     if (_renderToTextureDelegate) {
@@ -325,7 +330,8 @@ void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget
     // Blit direct to the display. We can't use the blitColor method here
     // because the display is multisampled (blitting to a multisampled buffer
     // is not supported).
-    _blitPostProcess->blit({ input->getTexture(0) }, driver->getDisplay(), driver);
+    driver->bindRenderTarget(driver->getDisplay(), VRORenderTargetUnbindOp::Invalidate);
+    _blitPostProcess->blit({ input->getTexture(0) }, driver);
     if (_renderToTextureCallback) {
         _renderToTextureCallback();
     }

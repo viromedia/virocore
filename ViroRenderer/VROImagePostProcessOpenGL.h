@@ -24,12 +24,10 @@ public:
     void setVerticalFlip(bool flip);
 
     void blit(std::vector<std::shared_ptr<VROTexture>> textures,
-              std::shared_ptr<VRORenderTarget> destination,
               std::shared_ptr<VRODriver> &driver);
     
     void begin(std::shared_ptr<VRODriver> &driver);
     void blitOpt(std::vector<std::shared_ptr<VROTexture>> textures,
-                 std::shared_ptr<VRORenderTarget> destination,
                  std::shared_ptr<VRODriver> &driver);
     void end(std::shared_ptr<VRODriver> &driver);
     
@@ -61,7 +59,6 @@ private:
      if the bind was successful.
      */
     bool bind(std::vector<std::shared_ptr<VROTexture>> textures,
-              std::shared_ptr<VRORenderTarget> destination,
               std::shared_ptr<VRODriver> &driver);
     
     /*

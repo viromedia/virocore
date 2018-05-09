@@ -48,7 +48,7 @@ VRORenderTargetOpenGL::~VRORenderTargetOpenGL() {
 }
 
 void VRORenderTargetOpenGL::bind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer);
     
     /*
      Bind the viewport and scissor when the render target changes. The scissor
@@ -65,7 +65,7 @@ void VRORenderTargetOpenGL::bind() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void VRORenderTargetOpenGL::unbind() {
+void VRORenderTargetOpenGL::invalidate() {
     switch (_type) {
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureRG16:
@@ -96,28 +96,33 @@ void VRORenderTargetOpenGL::unbind() {
 
 void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
                                       std::shared_ptr<VRODriver> driver) {
-    
-    driver->unbindRenderTarget();
+    blitAttachment(GL_COLOR_ATTACHMENT0, GL_COLOR_BUFFER_BIT, GL_LINEAR, destination, flipY, driver);
+}
+
+void VRORenderTargetOpenGL::blitStencil(std::shared_ptr<VRORenderTarget> destination, bool flipY, std::shared_ptr<VRODriver> driver) {
+    blitAttachment(GL_COLOR_ATTACHMENT0, GL_STENCIL_BUFFER_BIT, GL_NEAREST, destination, flipY, driver);
+}
+
+void VRORenderTargetOpenGL::blitAttachment(GLenum attachment, GLbitfield mask, GLenum filter,
+                                           std::shared_ptr<VRORenderTarget> destination,
+                                           bool flipY, std::shared_ptr<VRODriver> driver) {
     passert (_viewport.getWidth() == destination->getWidth());
     passert (_viewport.getHeight() == destination->getHeight());
     
     VRORenderTargetOpenGL *t = (VRORenderTargetOpenGL *) destination.get();
-    GLenum attachment = GL_COLOR_ATTACHMENT0;
-
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
     glReadBuffer(attachment);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, t->_framebuffer);
     glDrawBuffers(1, &attachment);
     
     if (flipY) {
         glBlitFramebuffer(   _viewport.getX(),  _viewport.getY(), _viewport.getX() + _viewport.getWidth(), _viewport.getY() + _viewport.getHeight(),
                           t->_viewport.getX(), t->_viewport.getY() + t->_viewport.getHeight(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY(),
-                          GL_COLOR_BUFFER_BIT, GL_LINEAR);
+                          mask, filter);
     }
     else {
         glBlitFramebuffer(   _viewport.getX(),    _viewport.getY(),    _viewport.getX() +    _viewport.getWidth(),    _viewport.getY() +    _viewport.getHeight(),
                           t->_viewport.getX(), t->_viewport.getY(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY() + t->_viewport.getHeight(),
-                          GL_COLOR_BUFFER_BIT, GL_LINEAR);
+                          mask, filter);
     }
 }
 

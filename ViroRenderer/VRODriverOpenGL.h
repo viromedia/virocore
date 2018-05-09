@@ -87,6 +87,21 @@ public:
         _lastPurgeFrame = context.getFrame();
     }
     
+    void willRenderEye(const VRORenderContext &context) {
+        
+    }
+    
+    void didRenderEye(const VRORenderContext &context) {
+        /*
+         Unbind the currently bound render target, as it's not clear what the
+         platform will do with the bound framebuffer between rendering eyes.
+         
+         (For example, on Android Axon devices the underlying render target
+         does get switched external to the VRODriver between eyes.
+         */
+        unbindRenderTarget();
+    }
+    
     void setDepthWritingEnabled(bool enabled) {
         if (_depthWritingEnabled == enabled) {
             return;
@@ -232,32 +247,44 @@ public:
         }
     }
     
-    void bindRenderTarget(std::shared_ptr<VRORenderTarget> target) {
+    void bindRenderTarget(std::shared_ptr<VRORenderTarget> target, VRORenderTargetUnbindOp unbindOp) {
         std::shared_ptr<VRORenderTarget> boundRenderTarget = _boundRenderTarget.lock();
-        /*
-         We intentionally leave out a check to see if we're binding the same
-         target over again. Including this check causes only the left eye to be
-         rendered on Android Axon devices, which is odd: on that device the
-         underlying render target must be getting switched external to the
-         VRODriver *between* eyes; so when the renderer tries to bind the render
-         target for the screen again it's rejected as a no-op.
-
-         To prevent this we just always bind the target we're passed in, and
-         don't use our boundRenderTarget to prevent redundant binds.
-         */
-        if (boundRenderTarget) {
-            boundRenderTarget->unbind();
+        if (boundRenderTarget == target) {
+            return;
         }
-        target->bind();
+        
+        if (boundRenderTarget) {
+            if (unbindOp == VRORenderTargetUnbindOp::None) {
+                target->bind();
+            }
+            else if (unbindOp == VRORenderTargetUnbindOp::Invalidate) {
+                boundRenderTarget->invalidate();
+                target->bind();
+            }
+            else if (unbindOp == VRORenderTargetUnbindOp::CopyStencilAndInvalidate) {
+                std::shared_ptr<VRODriver> driver = std::dynamic_pointer_cast<VRODriver>(shared_from_this());
+                
+                target->bind();
+                boundRenderTarget->blitStencil(target, false, driver);
+                boundRenderTarget->invalidate();
+            }
+        }
+        else {
+            target->bind();
+        }
         _boundRenderTarget = target;
     }
     
     void unbindRenderTarget() {
         std::shared_ptr<VRORenderTarget> boundRenderTarget = _boundRenderTarget.lock();
         if (boundRenderTarget) {
-            boundRenderTarget->unbind();
+            boundRenderTarget->invalidate();
         }
         _boundRenderTarget.reset();
+    }
+    
+    std::shared_ptr<VRORenderTarget> getRenderTarget() {
+        return _boundRenderTarget.lock();
     }
     
     virtual bool isBloomSupported() {
