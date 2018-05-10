@@ -206,8 +206,7 @@ void VROChoreographer::render(VROEyeType eye,
         _renderTargetsChanged = false;
     }
     
-    if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
-        context->setPBREnabled(_hdrEnabled && _pbrEnabled);
+    if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {        
         for (std::shared_ptr<VROPreprocess> &preprocess : _preprocesses) {
             preprocess->execute(scene, context, driver);
         }

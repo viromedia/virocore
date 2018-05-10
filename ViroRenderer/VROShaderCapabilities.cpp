@@ -142,6 +142,7 @@ VROLightingShaderCapabilities VROShaderCapabilities::deriveLightingCapabilitiesK
                                                                                    const VRORenderContext &context) {
     VROLightingShaderCapabilities cap;
     cap.shadows = false;
+    cap.hdr = context.isHDREnabled();
     cap.pbr = context.isPBREnabled();
     cap.diffuseIrradiance = false;
     cap.specularIrradiance = false;

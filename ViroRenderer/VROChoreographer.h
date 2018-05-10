@@ -60,6 +60,7 @@ public:
      Defaults to true if supported by the device.
      */
     bool setHDREnabled(bool enableHDR);
+    bool isHDREnabled() const { return _hdrEnabled; }
     
     /*
      Enable or disable PBR rendering. If PBR is disabled, then objects using
@@ -70,6 +71,7 @@ public:
      Defaults to true if supported by the device.
      */
     bool setPBREnabled(bool enablePBR);
+    bool isPBREnabled() const { return _hdrEnabled && _pbrEnabled; }
     
     /*
      Enable or disable rendering shadows. If shadows are disabled here, shadow

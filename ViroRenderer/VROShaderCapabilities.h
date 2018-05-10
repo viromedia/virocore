@@ -70,22 +70,25 @@ struct VROMaterialShaderCapabilities {
  */
 struct VROLightingShaderCapabilities {
     bool shadows;
+    bool hdr;
     bool pbr;
     bool diffuseIrradiance;
     bool specularIrradiance;
     
     bool operator< (const VROLightingShaderCapabilities &r) const {
-        return std::tie(  shadows,   pbr,   diffuseIrradiance,   specularIrradiance)
-             < std::tie(r.shadows, r.pbr, r.diffuseIrradiance, r.specularIrradiance);
+        return std::tie(  shadows,   hdr,   pbr,   diffuseIrradiance,   specularIrradiance)
+             < std::tie(r.shadows, r.hdr, r.pbr, r.diffuseIrradiance, r.specularIrradiance);
     }
     bool operator== (const VROLightingShaderCapabilities& r) const {
         return shadows == r.shadows &&
+               hdr == r.hdr &&
                pbr == r.pbr &&
                diffuseIrradiance == r.diffuseIrradiance &&
                specularIrradiance == r.specularIrradiance;
     }
     bool operator!= (const VROLightingShaderCapabilities& r) const {
         return shadows != r.shadows ||
+               hdr != r.hdr ||
                pbr != r.pbr ||
                diffuseIrradiance != r.diffuseIrradiance ||
                specularIrradiance != r.specularIrradiance;

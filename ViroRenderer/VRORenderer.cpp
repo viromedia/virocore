@@ -353,6 +353,8 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     _frameStartTime = VROTimeCurrentMillis();
     VROTransaction::update();
 
+    _context->setHDREnabled(_choreographer->isHDREnabled());
+    _context->setPBREnabled(_choreographer->isPBREnabled());
     _context->setFrame(frame);
     _context->setFPS(getFPS());
     notifyFrameStart();

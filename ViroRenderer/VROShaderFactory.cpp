@@ -244,10 +244,12 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         samplers.push_back("shadow_map");
     }
     
-    // Bloom
-    modifiers.push_back(createToneMappingMaskModifier());
-    if (materialCapabilities.bloom && driver->isBloomSupported()) {
-        modifiers.push_back(createBloomModifier());
+    // Tone Mapping + Bloom
+    if (lightingCapabilities.hdr) {
+        modifiers.push_back(createToneMappingMaskModifier());
+        if (materialCapabilities.bloom && driver->isBloomSupported()) {
+            modifiers.push_back(createBloomModifier());
+        }
     }
     
     // Custom material modifiers. These are added to the back of the modifiers list

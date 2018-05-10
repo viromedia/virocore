@@ -41,6 +41,7 @@ public:
         _frame(0),
         _frameSynchronizer(synchronizer),
         _frameScheduler(scheduler),
+        _hdrEnabled(true),
         _pbrEnabled(true) {
         
     }
@@ -168,6 +169,13 @@ public:
         return _inputController;
     }
     
+    void setHDREnabled(bool enabled) {
+        _hdrEnabled = enabled;
+    }
+    bool isHDREnabled() const {
+        return _hdrEnabled;
+    }
+    
     void setPBREnabled(bool enabled) {
         _pbrEnabled = enabled;
     }
@@ -180,6 +188,7 @@ private:
     int _frame;
     VROEyeType _eye;
     double _fps;
+    bool _hdrEnabled;
     bool _pbrEnabled;
     
     /*
