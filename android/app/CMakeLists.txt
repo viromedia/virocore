@@ -307,6 +307,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VRODiffuseIrradianceTest.cpp
              ${VIRO_RENDERER_SRC}/VROPhotometricLightTest.cpp
              ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
+             ${VIRO_RENDERER_SRC}/VROToneMappingTest.cpp
              )
 
 # Add pre-built libraries

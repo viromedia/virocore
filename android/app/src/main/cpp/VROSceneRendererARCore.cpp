@@ -228,6 +228,7 @@ void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr
     material->setLightingModel(VROLightingModel::Constant);
     material->getDiffuse().setTexture(_session->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
+    material->setNeedsToneMapping(false);
 
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
     passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
