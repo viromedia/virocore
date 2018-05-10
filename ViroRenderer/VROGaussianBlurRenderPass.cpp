@@ -120,7 +120,7 @@ void VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
         initPostProcess(driver);
     }
     
-    std::shared_ptr<VRORenderTarget> input  =  inputs.targets[kGaussianInput];
+    std::shared_ptr<VROTexture> input  =  inputs.textures[kGaussianInput];
     std::shared_ptr<VRORenderTarget> bufferA = inputs.targets[kGaussianPingPong];
     std::shared_ptr<VRORenderTarget> bufferB = inputs.outputTarget;
     
@@ -133,9 +133,8 @@ void VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
     
     for (int i = 0; i < _numBlurIterations; i++) {
         if (i == 0) {
-            // Don't invalidate the input buffer (the caller may need its stencil contents)
-            driver->bindRenderTarget(bufferA, VRORenderTargetUnbindOp::None);
-            _gaussianBlur->blitOpt({ input->getTexture(1) }, driver);
+            driver->bindRenderTarget(bufferA, VRORenderTargetUnbindOp::Invalidate);
+            _gaussianBlur->blitOpt({ input }, driver);
         }
         else if (i % 2 == 1) {
             driver->bindRenderTarget(bufferB, VRORenderTargetUnbindOp::Invalidate);

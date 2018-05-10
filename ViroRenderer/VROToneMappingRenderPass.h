@@ -16,6 +16,7 @@ class VRODriver;
 class VROImagePostProcess;
 
 const std::string kToneMappingHDRInput = "TM_Input";
+const std::string kToneMappingMaskInput = "TM_Mask";
 const float kToneMappingDefaultExposure = 1.5;
 const float kToneMappingDefaultWhitePoint = 5.0;
 

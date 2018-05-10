@@ -13,13 +13,14 @@
 
 class VROToneMappingEventDelegate : public VROEventDelegate {
 public:
-    VROToneMappingEventDelegate(std::shared_ptr<VROScene> scene, std::shared_ptr<VROText> text) : _scene(scene), _text(text) {};
+    VROToneMappingEventDelegate(std::shared_ptr<VROScene> scene, std::shared_ptr<VROText> text) : _scene(scene), _text(text), _state(0) {};
     virtual ~VROToneMappingEventDelegate() {};
     void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
     
 private:
     std::weak_ptr<VROScene> _scene;
     std::shared_ptr<VROText> _text;
+    int _state;
 };
 
 class VROToneMappingTest : public VRORendererTest {

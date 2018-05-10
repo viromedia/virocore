@@ -274,9 +274,10 @@ private:
     std::shared_ptr<VROPostProcessEffectFactory> _postProcessEffectFactory;
 
     /*
-     Intermediate target used for post-processing effects.
+     Intermediate targets used for post-processing effects.
      */
-    std::shared_ptr<VRORenderTarget> _postProcessTarget;
+    std::shared_ptr<VRORenderTarget> _postProcessTargetA;
+    std::shared_ptr<VRORenderTarget> _postProcessTargetB;
     
 #pragma mark - Preprocessing
     

@@ -12,6 +12,7 @@
 #include "VROText.h"
 #include "VROTypeface.h"
 #include "VROToneMappingRenderPass.h"
+#include "VROPostProcessEffectFactory.h"
 
 VROToneMappingTest::VROToneMappingTest() :
     VRORendererTest(VRORendererTestType::Box) {
@@ -129,24 +130,29 @@ void VROToneMappingEventDelegate::onClick(int source, std::shared_ptr<VRONode> n
                                           std::vector<float> position) {
     std::shared_ptr<VROScene> scene = _scene.lock();
     if (scene && clickState == ClickState::Clicked) {
-        VROToneMappingMethod method = scene->getToneMappingMethod();
-        if (method == VROToneMappingMethod::Hable) {
+        _state = (_state + 1) % 5;
+        
+        if (_state == 0) {
             scene->setToneMappingMethod(VROToneMappingMethod::HableLuminanceOnly);
-            pinfo("HABLE (Luminance Only) tone-mapping");
+            scene->setPostProcessingEffects({ });
             _text->setText(L"Hable (Luminance Only) tone-mapping");
         }
-        else if (method == VROToneMappingMethod::HableLuminanceOnly) {
+        else if (_state == 1) {
             scene->setToneMappingMethod(VROToneMappingMethod::Disabled);
-            pinfo("DISABLED tone-mapping");
             _text->setText(L"Disabled tone-mapping");
         }
-        else if (method == VROToneMappingMethod::Disabled) {
+        else if (_state == 2) {
             scene->setToneMappingMethod(VROToneMappingMethod::Hable);
-            pinfo("HABLE tone-mapping");
             _text->setText(L"Hable tone-mapping");
         }
-        //scene->setToneMappingExposure(1.5);
-        //scene->setToneMappingWhitePoint(5.0);
+        else if (_state == 3) {
+            scene->setPostProcessingEffects({ "sepia" });
+            _text->setText(L"Hable + Sepia");
+        }
+        else if (_state == 4) {
+            scene->setPostProcessingEffects({ "sepia", "baralleldistortion" });
+            _text->setText(L"Hable + Sepia + Barrel");
+        }
     }
 }
 
