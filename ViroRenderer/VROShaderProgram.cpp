@@ -156,16 +156,21 @@ bool VROShaderProgram::hydrate() {
     }
 #endif
 
+    // If compiling and linking fails, we set this to true so that the renderer will try again
+    // later. Note we only retry because of driver bugs: specifically, the Adreno 530 fails
+    // to link with multiple render targets something around 50% of the time. Retrying fixes
+    // the issue.
     if (!compileAndLink()) {
         _failedToLink = true;
         return false;
+    } else {
+        _failedToLink = false;
     }
-
     return true;
 }
 
 bool VROShaderProgram::isHydrated() const {
-    return _program != 0;
+    return _program != 0 && !_failedToLink;
 }
 
 void VROShaderProgram::evict() {
@@ -305,6 +310,7 @@ bool VROShaderProgram::compileAndLink() {
      Link the program.
      */
     if (!linkProgram(_program)) {
+        pinfo("Failed to link program %d, name %s", _program, _shaderName.c_str());
         if (vertShader) {
             glDeleteShader(vertShader);
             vertShader = 0;
@@ -318,7 +324,6 @@ bool VROShaderProgram::compileAndLink() {
             _program = 0;
         }
         
-        pabort("Failed to link program %d, name %s", _program, _shaderName.c_str());
         return false;
     }
 

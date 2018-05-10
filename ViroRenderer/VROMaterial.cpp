@@ -284,11 +284,11 @@ void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
     getSubstrate(driver)->bindProperties(driver);
 }
 
-void VROMaterial::bindShader(int lightsHash,
+bool VROMaterial::bindShader(int lightsHash,
                              const std::vector<std::shared_ptr<VROLight>> &lights,
                              const VRORenderContext &context,
                              std::shared_ptr<VRODriver> &driver) {
-    getSubstrate(driver)->bindShader(lightsHash, lights, context, driver);
+    return getSubstrate(driver)->bindShader(lightsHash, lights, context, driver);
 }
 
 bool VROMaterial::hasDiffuseAlpha() const {

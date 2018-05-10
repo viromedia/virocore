@@ -107,8 +107,10 @@ public:
      Lights are passed into bindShader because the shader used by a material
      is a function both of that material's properties and of the desired lighting
      configuration.
+     
+     Returns false if the shader could not be bound.
      */
-    void bindShader(int lightsHash,
+    bool bindShader(int lightsHash,
                     const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
                     std::shared_ptr<VRODriver> &driver);

@@ -151,7 +151,9 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
             std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
-            material->bindShader(_computedLightsHash, _computedLights, context, driver);
+            if (!material->bindShader(_computedLightsHash, _computedLights, context, driver)) {
+                continue;
+            }
             material->bindProperties(driver);
 
             // We render the material if at least one of the following is true:
@@ -188,7 +190,9 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
                 for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
                     std::shared_ptr<VROTexture> texture = _geometry->getMaterialForElement(i)->getDiffuse().getTexture();
                     if (material->getDiffuse().swapTexture(texture)) {
-                        material->bindShader(0, {}, context, driver);
+                        if (!material->bindShader(0, {}, context, driver)) {
+                            continue;
+                        }
                         material->bindProperties(driver);
                     }
                     _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);

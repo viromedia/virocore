@@ -95,13 +95,13 @@ void VROPortal::renderBackground(const VRORenderContext &context,
                                  std::shared_ptr<VRODriver> &driver) {
     if (_background) {
         const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
-        material->bindShader(0, {}, context, driver);
-        material->bindProperties(driver);
-        
-        VROMatrix4f transform;
-        transform = _backgroundTransform.multiply(transform);
-        
-        _background->render(0, material, transform, {}, 1.0, context, driver);
+        if (material->bindShader(0, {}, context, driver)) {
+            material->bindProperties(driver);
+            
+            VROMatrix4f transform;
+            transform = _backgroundTransform.multiply(transform);
+            _background->render(0, material, transform, {}, 1.0, context, driver);
+        }
     }
 }
 
@@ -139,7 +139,10 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
             // TODO Perhaps we can check if the shader changed, and if so bind
             //      properties? We could also meld these two methods into one, simplifying
             //      the API?
-            material->bindShader(key.lights, node->getComputedLights(), context, driver);
+            if (!material->bindShader(key.lights, node->getComputedLights(), context, driver)) {
+                pinfo("Failed to bind shader: will not render associated geometry");
+                continue;
+            }
             material->bindProperties(driver);
 
             // If we're rendering a hierarchical object -- meaning, an object that's part of a close-knit

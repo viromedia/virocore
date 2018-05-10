@@ -47,13 +47,20 @@ void VROMaterialSubstrateOpenGL::bindGeometry(float opacity, const VROGeometry &
     _activeBinding->bindGeometryUniforms(opacity, geometry, _material);
 }
 
-void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
+bool VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
                                             const std::vector<std::shared_ptr<VROLight>> &lights,
                                             const VRORenderContext &context,
                                             std::shared_ptr<VRODriver> &driver) {
     
     _activeBinding = getShaderBindingForLights(lights, context, driver);
-    driver->bindShader(_activeBinding->getProgram());
+    
+    std::shared_ptr<VROShaderProgram> &shader = _activeBinding->getProgram();
+    if (!shader->isHydrated()) {
+        if (!shader->hydrate()) {
+            return false;
+        }
+    }
+    driver->bindShader(shader);
     
     VRODriverOpenGL &glDriver = (VRODriverOpenGL &)(*driver.get());
     for (const std::shared_ptr<VROLight> &light : lights) {
@@ -68,6 +75,7 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
         }
     }
     _lightingUBO->bind();
+    return true;
 }
 
 void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,

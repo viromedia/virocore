@@ -45,8 +45,10 @@ public:
      
      The shader used is a function both of the underlying material properties
      and of the desired lighting configuration.
+     
+     Returns false if the shader could not be bound.
      */
-    void bindShader(int lightsHash,
+    bool bindShader(int lightsHash,
                     const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
                     std::shared_ptr<VRODriver> &driver);
