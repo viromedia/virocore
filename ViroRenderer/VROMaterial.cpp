@@ -37,6 +37,7 @@ VROMaterial::VROMaterial() :
     _castsShadows(true),
     _chromaKeyFilteringEnabled(false),
     _chromaKeyFilteringColor({ 0, 1, 0 }),
+    _needsToneMapping(true),
     _substrate(nullptr) {
     
     _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |
@@ -81,6 +82,7 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
  _castsShadows(material->_castsShadows),
  _chromaKeyFilteringEnabled(material->_chromaKeyFilteringEnabled),
  _chromaKeyFilteringColor(material->_chromaKeyFilteringColor),
+ _needsToneMapping(material->needsToneMapping()),
  _substrate(nullptr) {
  
      _diffuse = new VROMaterialVisual(*material->_diffuse);
@@ -143,6 +145,7 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _castsShadows = material->_castsShadows;
     _chromaKeyFilteringEnabled = material->_chromaKeyFilteringEnabled;
     _chromaKeyFilteringColor = material->_chromaKeyFilteringColor;
+    _needsToneMapping = material->_needsToneMapping;
     
     _substrate = nullptr;
     
@@ -306,4 +309,8 @@ void VROMaterial::setChromaKeyFilteringEnabled(bool enabled) {
 void VROMaterial::setChromaKeyFilteringColor(VROVector3f color) {
     _chromaKeyFilteringColor = color;
     updateSubstrate();
+}
+
+void VROMaterial::setNeedsToneMapping(bool needsToneMapping) {
+    _needsToneMapping = needsToneMapping;
 }

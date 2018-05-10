@@ -106,7 +106,7 @@ public:
     
     bool operator< (const VROShaderCapabilities& r) const {
         return std::tie(materialCapabilities, lightingCapabilities) <
-        std::tie(r.materialCapabilities, r.lightingCapabilities);
+               std::tie(r.materialCapabilities, r.lightingCapabilities);
     }
     
     /*

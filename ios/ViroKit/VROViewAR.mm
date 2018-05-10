@@ -695,6 +695,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     material->setLightingModel(VROLightingModel::Constant);
     material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
+    material->setNeedsToneMapping(false);
     
     _arSession->setViewport(viewport);
     _arSession->run();

@@ -281,6 +281,7 @@ void VROText::buildText(std::wstring &text,
         std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, true);
         
         std::shared_ptr<VROMaterial> whitespaceMaterial = std::make_shared<VROMaterial>();
+        whitespaceMaterial->setNeedsToneMapping(false);
         whitespaceMaterial->getDiffuse().setColor(color);
         whitespaceMaterial->getDiffuse().setTexture(whitespaceGlyph->getTexture());
         
@@ -308,6 +309,7 @@ void VROText::buildText(std::wstring &text,
                 std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, true);
                 
                 std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+                material->setNeedsToneMapping(false);
                 material->getDiffuse().setColor(color);
                 material->getDiffuse().setTexture(glyph->getTexture());
                 

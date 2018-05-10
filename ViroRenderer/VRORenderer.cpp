@@ -571,7 +571,7 @@ void VRORenderer::updateSceneEffects(std::shared_ptr<VRODriver> driver, std::sha
         std::shared_ptr<VROPostProcessEffectFactory> postProcess = _choreographer->getPostProcessEffectFactory();
         postProcess->clearAllEffects();
         
-        for (std::string &strEffect : effects){
+        for (std::string &strEffect : effects) {
             VROPostProcessEffect effect = postProcess->getEffectForString(strEffect);
             if (effect != VROPostProcessEffect::None) {
                 postProcess->enableEffect(effect, driver);
