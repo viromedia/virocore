@@ -14,13 +14,27 @@
 #include "arcore_c_api.h"
 
 namespace arcore {
-
     class ConfigNative : public Config {
     public:
         ConfigNative(ArConfig *config) : _config(config) {}
         virtual ~ConfigNative();
+        virtual void setAugmentedImageDatabase(AugmentedImageDatabase *database);
 
         ArConfig *_config;
+    };
+
+    class AugmentedImageDatabaseNative : public AugmentedImageDatabase {
+    public:
+        AugmentedImageDatabaseNative(ArAugmentedImageDatabase *database, ArSession *session) :
+            _database(database),
+            _session(session) {}
+        virtual ~AugmentedImageDatabaseNative();
+        virtual AugmentedImageDatabaseStatus addImageWithPhysicalSize(const char *image_name, const uint8_t *image_grayscale_pixels,
+                                                                      int32_t image_width_in_pixels, int32_t image_height_in_pixels,
+                                                                      int32_t image_stride_in_pixels, float image_width_in_meters,
+                                                                      int32_t *out_index);
+        ArAugmentedImageDatabase *_database;
+        ArSession *_session;
     };
 
     class PoseNative : public Pose {
@@ -94,6 +108,26 @@ namespace arcore {
         ArSession *_session;
     };
 
+    class AugmentedImageNative : public AugmentedImage {
+    public:
+        AugmentedImageNative(ArAugmentedImage *image, ArSession *session);
+        virtual ~AugmentedImageNative();
+
+        virtual Anchor *acquireAnchor(Pose *pose);
+        virtual TrackingState getTrackingState();
+        virtual TrackableType getType();
+
+        virtual char *getName();
+        virtual void getCenterPose(Pose *outPose);
+        virtual float getExtentX();
+        virtual float getExtentZ();
+        virtual int32_t getIndex();
+    private:
+        ArTrackable *_trackable;
+        ArAugmentedImage *_image;
+        ArSession *_session;
+    };
+
     class LightEstimateNative : public LightEstimate {
     public:
         LightEstimateNative(ArLightEstimate *lightEstimate, ArSession *session) : _lightEstimate(lightEstimate), _session(session) {}
@@ -135,7 +169,7 @@ namespace arcore {
         virtual void hitTest(float x, float y, HitResultList *outList);
         virtual int64_t getTimestampNs();
         virtual void getUpdatedAnchors(AnchorList *outList);
-        virtual void getUpdatedPlanes(TrackableList *outList);
+        virtual void getUpdatedTrackables(TrackableList *outList, TrackableType type);
         virtual void getBackgroundTexcoords(float *outTexcoords);
         virtual PointCloud *acquirePointCloud();
         virtual ImageRetrievalStatus acquireCameraImage(Image **outImage);
@@ -193,6 +227,7 @@ namespace arcore {
 
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
                                      UpdateMode updateMode);
+        virtual AugmentedImageDatabase *createAugmentedImageDatabase();
         virtual Pose *createPose();
         virtual AnchorList *createAnchorList();
         virtual TrackableList *createTrackableList();

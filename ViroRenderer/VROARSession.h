@@ -65,8 +65,9 @@ enum class VROVideoQuality {
  The implementation of image tracking to use.
  */
 enum class VROImageTrackingImpl {
+    ARCore,
     ARKit,
-    Viro // not available for devs to use yet.
+    Viro
 };
 
 /*
@@ -77,8 +78,15 @@ public:
     
     VROARSession(VROTrackingType trackingType, VROWorldAlignment worldAlignment) :
         _trackingType(trackingType),
-        _worldAlignment(worldAlignment),
-        _imageTrackingImpl(VROImageTrackingImpl::ARKit) {}
+        _worldAlignment(worldAlignment) {
+#if ENABLE_OPENCV
+        _imageTrackingImpl = VROImageTrackingImpl::Viro;
+#elif VRO_PLATFORM_IOS
+        _imageTrackingImpl = VROImageTrackingImpl::ARKit;
+#elif VRO_PLATFORM_ANDROID
+        _imageTrackingImpl = VROImageTrackingImpl::ARCore;
+#endif
+    }
     virtual ~VROARSession() {}
     
     VROTrackingType getTrackingType() const {

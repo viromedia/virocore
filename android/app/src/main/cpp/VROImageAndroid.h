@@ -32,12 +32,15 @@ public:
     int getWidth() const;
     int getHeight() const;
     unsigned char *getData(size_t *length);
+    unsigned char *getGrayscaleData(size_t *length, size_t *stride);
 
 private:
 
     int _width, _height;
     int _dataLength;
     unsigned char *_data;
+
+    void convertRgbaToGrayscale(int32_t stride, uint8_t** out_grayscale_buffer);
 
 };
 

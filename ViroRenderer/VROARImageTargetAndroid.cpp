@@ -29,5 +29,7 @@ void VROARImageTargetAndroid::initWithTrackingImpl(VROImageTrackingImpl impl) {
         cv::Mat temp(_image->getHeight(), _image->getWidth(), CV_8UC4, _image->getData(&length));
         setTargetMat(temp);
 #endif
+    } else if (impl == VROImageTrackingImpl::ARCore) {
+        // no-op
     }
 }

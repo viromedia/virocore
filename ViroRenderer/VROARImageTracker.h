@@ -376,4 +376,12 @@ private:
 
 #endif /* VROARImageTracker_h */
 
+#else
+
+class VROARImageTrackerListener {
+public:
+    virtual ~VROARImageTrackerListener() {}
+
+};
+
 #endif /* ENABLE_OPENCV */

@@ -72,9 +72,11 @@ public:
     void enableTracking(bool shouldTrack);
 
 
+#if ENABLE_OPENCV
     // -- VROARImageTrackerListener Functions --
     void onImageFound(VROARImageTrackerOutput output);
     void onFindTargetFinished();
+#endif /* ENABLE_OPENCV */
 
 private:
 

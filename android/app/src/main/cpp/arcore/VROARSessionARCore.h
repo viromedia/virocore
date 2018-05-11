@@ -152,6 +152,8 @@ private:
     arcore::PlaneFindingMode _planeFindingMode;
     arcore::UpdateMode  _updateMode;
 
+    arcore::AugmentedImageDatabase *_currentARCoreImageDatabase;
+
     /*
      Map of ARCore anchors ("native" anchors) to their Viro representation.
      Required so we can update VROARAnchors when their ARCore counterparts are
@@ -203,6 +205,17 @@ private:
     void processUpdatedAnchors(VROARFrameARCore *frame);
     void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
     void updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, arcore::Plane *planeAR);
+    void updateImageAnchorFromARCore(std::shared_ptr<VROARImageAnchor> imageAnchor, arcore::AugmentedImage *imageAR);
+
+    /*
+     This is a helper function that synchronously adds the target to the database. This function should not
+     be called on the render thread though (as per ARCore guidance).
+     */
+    void addTargetToDatabase(std::shared_ptr<VROARImageTarget> target,
+                             arcore::AugmentedImageDatabase *database);
+
+    // This is needed for VROTrackingType::ARCore
+    std::vector<std::shared_ptr<VROARImageTarget>> _imageTargets;
 };
 
 #endif /* VROARSessionARCore_h */

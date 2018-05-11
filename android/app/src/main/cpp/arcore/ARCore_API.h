@@ -20,6 +20,7 @@ namespace arcore {
     class HitResultList;
     class PointCloud;
     class HitResult;
+    class AugmentedImageDatabase;
 
     enum class ConfigStatus {
         Success,
@@ -36,12 +37,18 @@ namespace arcore {
         UnknownError
     };
 
+    enum class AugmentedImageDatabaseStatus {
+        Success,
+        ImageInsufficientQuality
+    };
+
     enum class TrackingState {
         NotTracking,
         Tracking
     };
 
     enum class TrackableType {
+        Image,
         Plane,
         Point
     };
@@ -67,7 +74,20 @@ namespace arcore {
 
     class Config {
     public:
-       virtual ~Config() {}
+        virtual ~Config() {}
+        virtual void setAugmentedImageDatabase(AugmentedImageDatabase *database) = 0;
+
+    };
+
+    class AugmentedImageDatabase {
+    public:
+        virtual ~AugmentedImageDatabase() {}
+        // The guidance from ARCore is that this function be called on the background thread!
+        virtual AugmentedImageDatabaseStatus addImageWithPhysicalSize(const char *image_name, const uint8_t *image_grayscale_pixels,
+                                                                      int32_t image_width_in_pixels, int32_t image_height_in_pixels,
+                                                                      int32_t image_stride_in_pixels, float image_width_in_meters,
+                                                                      int32_t *out_index) = 0;
+
     };
 
     class Pose {
@@ -123,6 +143,16 @@ namespace arcore {
         virtual int getPolygonSize() = 0;
     };
 
+    class AugmentedImage : public Trackable {
+    public:
+        virtual ~AugmentedImage() {}
+        virtual char *getName() = 0;
+        virtual void getCenterPose(Pose *outPose) = 0;
+        virtual float getExtentX() = 0;
+        virtual float getExtentZ() = 0;
+        virtual int32_t getIndex() = 0;
+    };
+
     class LightEstimate {
     public:
         virtual ~LightEstimate() {}
@@ -155,7 +185,7 @@ namespace arcore {
         virtual void hitTest(float x, float y, HitResultList *outList) = 0;
         virtual int64_t getTimestampNs() = 0;
         virtual void getUpdatedAnchors(AnchorList *outList) = 0;
-        virtual void getUpdatedPlanes(TrackableList *outList) = 0;
+        virtual void getUpdatedTrackables(TrackableList *outList, TrackableType type) = 0;
         virtual void getBackgroundTexcoords(float *outTexcoords) = 0;
         virtual PointCloud *acquirePointCloud() = 0;
         virtual ImageRetrievalStatus acquireCameraImage(Image **outImage) = 0;
@@ -197,6 +227,7 @@ namespace arcore {
 
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
                                      UpdateMode updateMode) = 0;
+        virtual AugmentedImageDatabase *createAugmentedImageDatabase() = 0;
         virtual Pose *createPose() = 0;
         virtual AnchorList *createAnchorList() = 0;
         virtual TrackableList *createTrackableList() = 0;

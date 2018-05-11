@@ -36,7 +36,6 @@ void VROARTrackingSession::init(VROARFrameARCore *frame,
                                 GLuint cameraTextureId, int width, int height) {
 #if ENABLE_OPENCV
     _tracker->setListener(shared_from_this());
-#endif // ENABLE_OPENCV
 
     // if we are reinitializing, stop the previous texture reader!
     stopTextureReader();
@@ -80,6 +79,7 @@ void VROARTrackingSession::init(VROARFrameARCore *frame,
     if (_shouldTrack && _haveActiveTargets) {
         startTextureReader();
     }
+#endif // ENABLE_OPENCV
 }
 
 void VROARTrackingSession::updateFrame(VROARFrame *frame) {
@@ -139,6 +139,7 @@ void VROARTrackingSession::removeARImageTarget(std::shared_ptr<VROARImageTarget>
     }
 }
 
+#if ENABLE_OPENCV
 #pragma mark - VROARImageTrackerListener
 void VROARTrackingSession::onImageFound(VROARImageTrackerOutput output) {
     // assume we're on a background thread!
@@ -196,6 +197,8 @@ void VROARTrackingSession::onFindTargetFinished() {
         _readyForTracking = true;
     });
 }
+
+#endif /* ENABLE_OPENCV */
 
 void VROARTrackingSession::startTextureReader() {
     if (!_isTextureReaderStarted && _frameSynchronizer && _cameraTextureReader) {

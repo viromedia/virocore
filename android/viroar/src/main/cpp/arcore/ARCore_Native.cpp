@@ -18,6 +18,35 @@ namespace arcore {
         ArConfig_destroy(_config);
     }
 
+    void ConfigNative::setAugmentedImageDatabase(AugmentedImageDatabase *database) {
+        ArConfig_setAugmentedImageDatabase(((AugmentedImageDatabaseNative *)database)->_session,
+                                           _config,
+                                           ((AugmentedImageDatabaseNative *)database)->_database);
+    }
+
+#pragma mark - AugmentedImageDatabse
+    AugmentedImageDatabaseNative::~AugmentedImageDatabaseNative() {
+        ArAugmentedImageDatabase_destroy(_database);
+    }
+
+    AugmentedImageDatabaseStatus AugmentedImageDatabaseNative::addImageWithPhysicalSize(const char *image_name,
+                                                                                        const uint8_t *image_grayscale_pixels,
+                                                                                        int32_t image_width_in_pixels,
+                                                                                        int32_t image_height_in_pixels,
+                                                                                        int32_t image_stride_in_pixels,
+                                                                                        float image_width_in_meters,
+                                                                                        int32_t *out_index) {
+        ArStatus status = ArAugmentedImageDatabase_addImageWithPhysicalSize(_session, _database, image_name, image_grayscale_pixels,
+                                                            image_width_in_pixels, image_height_in_pixels,
+                                                            image_stride_in_pixels, image_width_in_meters, out_index);
+
+        if (status == AR_ERROR_IMAGE_INSUFFICIENT_QUALITY) {
+            return AugmentedImageDatabaseStatus::ImageInsufficientQuality;
+        } else {
+            return AugmentedImageDatabaseStatus::Success;
+        }
+    }
+
 #pragma mark - Pose
 
     PoseNative::~PoseNative() {
@@ -93,8 +122,9 @@ namespace arcore {
         ArTrackable_getType(_session, trackable, &type);
         if (type == AR_TRACKABLE_PLANE) {
             return new PlaneNative(ArAsPlane(trackable), _session);
-        }
-        else {
+        } else if (type == AR_TRACKABLE_AUGMENTED_IMAGE) {
+            return new AugmentedImageNative(ArAsAugmentedImage(trackable), _session);
+        } else {
             return nullptr;
         }
     }
@@ -149,7 +179,7 @@ namespace arcore {
     }
 
     void PlaneNative::getCenterPose(Pose *outPose) {
-        return ArPlane_getCenterPose(_session, _plane, ((PoseNative *) outPose)->_pose);
+        ArPlane_getCenterPose(_session, _plane, ((PoseNative *) outPose)->_pose);
     }
 
     float PlaneNative::getExtentX() {
@@ -214,6 +244,71 @@ namespace arcore {
         return (bool) result;
     }
 
+#pragma mark - AugmentedImage
+
+    AugmentedImageNative::AugmentedImageNative(ArAugmentedImage *image, ArSession *session) :
+            _trackable(ArAsTrackable(image)), _image(image), _session(session) {
+    }
+
+    AugmentedImageNative::~AugmentedImageNative() {
+        ArTrackable_release(_trackable);
+    }
+
+    Anchor *AugmentedImageNative::acquireAnchor(Pose *pose) {
+        ArAnchor *anchor;
+        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *)pose)->_pose, &anchor);
+        return new AnchorNative(anchor, _session);
+    }
+
+    TrackingState AugmentedImageNative::getTrackingState() {
+        ArTrackingState trackingState;
+        ArTrackable_getTrackingState(_session, _trackable, &trackingState);
+
+        if (trackingState == AR_TRACKING_STATE_TRACKING) {
+            return TrackingState::Tracking;
+        } else {
+            return TrackingState::NotTracking;
+        }
+    }
+
+    TrackableType AugmentedImageNative::getType() {
+        ArTrackableType type;
+        ArTrackable_getType(_session, _trackable, &type);
+
+        if (type == AR_TRACKABLE_AUGMENTED_IMAGE) {
+            return TrackableType::Image;
+        } else {
+            return TrackableType::Point;
+        }
+    }
+
+    char *AugmentedImageNative::getName() {
+        char *name;
+        ArAugmentedImage_acquireName(_session, _image, &name);
+        return name;
+    }
+
+    void AugmentedImageNative::getCenterPose(Pose *outPose) {
+        ArAugmentedImage_getCenterPose(_session, _image, ((PoseNative *) outPose)->_pose);
+    }
+
+    float AugmentedImageNative::getExtentX() {
+        float extent;
+        ArAugmentedImage_getExtentX(_session, _image, &extent);
+        return extent;
+    }
+
+    float AugmentedImageNative::getExtentZ() {
+        float extent;
+        ArAugmentedImage_getExtentZ(_session, _image, &extent);
+        return extent;
+    }
+
+    int32_t AugmentedImageNative::getIndex() {
+        int32_t index;
+        ArAugmentedImage_getIndex(_session, _image, &index);
+        return index;
+    }
 #pragma mark - LightEstimate
 
     LightEstimateNative::~LightEstimateNative() {
@@ -353,9 +448,14 @@ namespace arcore {
         ArFrame_getUpdatedAnchors(_session, _frame, ((AnchorListNative *) outList)->_anchorList);
     }
 
-    void FrameNative::getUpdatedPlanes(TrackableList *outList) {
-        ArFrame_getUpdatedTrackables(_session, _frame, AR_TRACKABLE_PLANE,
-                                     ((TrackableListNative *) outList)->_trackableList);
+    void FrameNative::getUpdatedTrackables(TrackableList *outList, TrackableType type) {
+        if (type == TrackableType::Plane) {
+            ArFrame_getUpdatedTrackables(_session, _frame, AR_TRACKABLE_PLANE,
+                                         ((TrackableListNative *) outList)->_trackableList);
+        } else if (type == TrackableType::Image) {
+            ArFrame_getUpdatedTrackables(_session, _frame, AR_TRACKABLE_AUGMENTED_IMAGE,
+                                         ((TrackableListNative *) outList)->_trackableList);
+        }
     }
 
     bool FrameNative::hasDisplayGeometryChanged() {
@@ -569,6 +669,13 @@ namespace arcore {
         }
         ArConfig_setUpdateMode(_session, config, arUpdateMode);
         return new ConfigNative(config);
+    }
+
+    AugmentedImageDatabase *SessionNative::createAugmentedImageDatabase() {
+        ArAugmentedImageDatabase *database;
+        ArAugmentedImageDatabase_create(_session, &database);
+
+        return new AugmentedImageDatabaseNative(database, _session);
     }
 
     Pose *SessionNative::createPose() {

@@ -18,6 +18,8 @@
 #include <VROCameraTexture.h>
 #include "VROPlatformUtil.h"
 #include <VROStringUtil.h>
+#include <VROARImageTargetAndroid.h>
+#include <VROImageAndroid.h>
 #include "VROARHitTestResult.h"
 
 VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) :
@@ -33,13 +35,20 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _session = nullptr;
     _frame = nullptr;
 
-    _arTrackingSession = std::make_shared<VROARTrackingSession>();
+    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
+        _arTrackingSession = std::make_shared<VROARTrackingSession>();
+    }
     _frameCount = 0;
     _hasTrackingSessionInitialized = false;
 }
 
 void VROARSessionARCore::setARCoreSession(arcore::Session *session) {
     _session = session;
+
+    if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
+        _currentARCoreImageDatabase = _session->createAugmentedImageDatabase();
+    }
+
     _frame = _session->createFrame();
 }
 
@@ -79,6 +88,10 @@ VROARSessionARCore::~VROARSessionARCore() {
     }
     if (_rotatedImageData != nullptr) {
         free (_rotatedImageData);
+    }
+
+    if (_currentARCoreImageDatabase != nullptr) {
+        delete(_currentARCoreImageDatabase);
     }
 }
 
@@ -151,7 +164,9 @@ void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int w
 }
 
 void VROARSessionARCore::enableTracking(bool shouldTrack) {
-    _arTrackingSession->enableTracking(shouldTrack);
+    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
+        _arTrackingSession->enableTracking(shouldTrack);
+    }
 }
 
 bool VROARSessionARCore::configure(arcore::LightingMode lightingMode, arcore::PlaneFindingMode planeFindingMode,
@@ -167,6 +182,11 @@ bool VROARSessionARCore::updateARCoreConfig() {
     passert_msg(_session != nullptr, "ARCore must be installed before configuring session");
 
     arcore::Config *config = _session->createConfig(_lightingMode, _planeFindingMode, _updateMode);
+
+    if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore && _currentARCoreImageDatabase) {
+        config->setAugmentedImageDatabase(_currentARCoreImageDatabase);
+    }
+
     bool supported = _session->checkSupported(config);
     if (!supported) {
         pinfo("Failed to configure AR session: configuration not supported");
@@ -211,12 +231,66 @@ void VROARSessionARCore::setDelegate(std::shared_ptr<VROARSessionDelegate> deleg
 
 void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
     // on Android we always use Viro tracking implementation
-    target->initWithTrackingImpl(VROImageTrackingImpl::Viro);
-    _arTrackingSession->addARImageTarget(target);
+    target->initWithTrackingImpl(getImageTrackingImpl());
+    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
+        _arTrackingSession->addARImageTarget(target);
+    } else if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
+        _imageTargets.push_back(target);
+        std::weak_ptr<VROARSessionARCore> w_arsession = shared_from_this();
+        VROPlatformDispatchAsyncBackground([target, w_arsession] {
+            std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+            if (arsession) {
+                arsession->addTargetToDatabase(target, arsession->_currentARCoreImageDatabase);
+                arsession->updateARCoreConfig();
+            }
+        });
+    }
 }
 
 void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
-    _arTrackingSession->removeARImageTarget(target);
+    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
+        _arTrackingSession->removeARImageTarget(target);
+    } else if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
+        // First, we remove the target from the list of targets
+        _imageTargets.erase(std::remove_if(_imageTargets.begin(), _imageTargets.end(),
+                                           [target](std::shared_ptr<VROARImageTarget> candidate) {
+                                               return candidate == target;
+                                           }), _imageTargets.end());
+
+        arcore::AugmentedImageDatabase *oldDatabase = _currentARCoreImageDatabase;
+        _currentARCoreImageDatabase = _session->createAugmentedImageDatabase();
+        std::weak_ptr<VROARSessionARCore> w_arsession = shared_from_this();
+        VROPlatformDispatchAsyncBackground([w_arsession, target] {
+            std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+            if (arsession) {
+                // Now add all the targets back into the database...
+                for (int i = 0; i < arsession->_imageTargets.size(); i++) {
+                    arsession->addTargetToDatabase(target, arsession->_currentARCoreImageDatabase);
+                }
+                // then "update" the config with the new target database.
+                arsession->updateARCoreConfig();
+            }
+        });
+
+        delete(oldDatabase);
+    }
+}
+
+// Note: this function should be called on a background thread (as per guidance by ARCore for the
+//       addImageWithPhysicalSize function).
+void VROARSessionARCore::addTargetToDatabase(std::shared_ptr<VROARImageTarget> target,
+                                             arcore::AugmentedImageDatabase *database) {
+    std::shared_ptr<VROARImageTargetAndroid> targetAndroid = std::dynamic_pointer_cast<VROARImageTargetAndroid>(target);
+    std::shared_ptr<VROImageAndroid> imageAndroid = std::dynamic_pointer_cast<VROImageAndroid>(targetAndroid->getImage());
+
+    size_t length;
+    size_t stride;
+    const uint8_t *grayscaleImage = imageAndroid->getGrayscaleData(&length, &stride);
+    int32_t outIndex;
+
+    database->addImageWithPhysicalSize(targetAndroid->getId().c_str(), grayscaleImage,
+                                       imageAndroid->getWidth(), imageAndroid->getHeight(),
+                                       (int32_t) stride, target->getPhysicalWidth(), &outIndex);
 }
 
 void VROARSessionARCore::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
@@ -276,12 +350,14 @@ std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
     processUpdatedAnchors(arFrame);
 
     // TODO: VIRO-3283 we have a bug where we need to wait a few frames before initializing
-    _frameCount++;
-    if (!_hasTrackingSessionInitialized && _frameCount == 10) {
-        // we need at least 1 frame to initialize the tracking session!
-        initTrackingSession();
+    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
+        _frameCount++;
+        if (!_hasTrackingSessionInitialized && _frameCount == 10) {
+            // we need at least 1 frame to initialize the tracking session!
+            initTrackingSession();
+        }
+        _arTrackingSession->updateFrame(arFrame);
     }
-    _arTrackingSession->updateFrame(arFrame);
 
     return _currentFrame;
 }
@@ -319,7 +395,7 @@ void VROARSessionARCore::onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anc
 #pragma mark - Internal Methods
 
 void VROARSessionARCore::initTrackingSession() {
-    if (_currentFrame && _synchronizer && _arTrackingSession) {
+    if (_currentFrame && _synchronizer && _arTrackingSession && getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
         VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
         _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
         _arTrackingSession->setListener(shared_from_this());
@@ -343,9 +419,9 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
     frame->getUpdatedAnchors(anchorList);
     int anchorsSize = anchorList->size();
 
-    arcore::TrackableList *planesList = _session->createTrackableList();
-    frame->getUpdatedPlanes(planesList);
-    int planesSize = planesList->size();
+    arcore::TrackableList *planeList = _session->createTrackableList();
+    frame->getUpdatedTrackables(planeList, arcore::TrackableType::Plane);
+    int planeSize = planeList->size();
 
     // Find all new and updated anchors, update/create new ones and notify this class.
     // Note: this should be 0 until we allow users to add their own anchors to the system.
@@ -373,9 +449,9 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
     }
 
     // Find all new and updated planes, update/create new ones and notify this class
-    if (planesSize > 0) {
-        for (int i = 0; i < planesSize; i++) {
-            arcore::Trackable *trackable = planesList->acquireItem(i);
+    if (planeSize > 0) {
+        for (int i = 0; i < planeSize; i++) {
+            arcore::Trackable *trackable = planeList->acquireItem(i);
             arcore::Plane *plane = (arcore::Plane *)trackable;
             arcore::Plane *newPlane = plane->acquireSubsumedBy();
             std::shared_ptr<VROARPlaneAnchor> vAnchor;
@@ -419,8 +495,59 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
         }
     }
 
+    // Process updated/new images if the tracking implementation is ARCore.
+    if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
+        arcore::TrackableList *imageList = _session->createTrackableList();
+        frame->getUpdatedTrackables(imageList, arcore::TrackableType::Image);
+        int imageSize = imageList->size();
+
+        if (imageSize > 0) {
+            for (int i = 0; i < imageSize; i++) {
+                arcore::Trackable *trackable = imageList->acquireItem(i);
+                arcore::AugmentedImage *image = (arcore::AugmentedImage *)trackable;
+                bool imageIsTracked = trackable->getTrackingState() == arcore::TrackingState::Tracking;
+                std::string key(image->getName());
+
+                std::shared_ptr<VROARImageAnchor> vAnchor;
+                if (imageIsTracked) {
+                    auto it = _nativeAnchorMap.find(key);
+                    if (it != _nativeAnchorMap.end()) {
+                        vAnchor = std::dynamic_pointer_cast<VROARImageAnchor>(it->second);
+                        if (vAnchor) {
+                            updateImageAnchorFromARCore(vAnchor, image);
+                            updateAnchor(vAnchor);
+                        } else {
+                            pwarn("[Viro] expected to find an ImageAnchor");
+                        }
+                    } else {
+                        std::shared_ptr<VROARImageTargetAndroid> target;
+                        for (int j = 0; j < _imageTargets.size(); j++) {
+                            target = std::dynamic_pointer_cast<VROARImageTargetAndroid>(_imageTargets[j]);
+                            if (key == target->getId()) {
+                                vAnchor = std::make_shared<VROARImageAnchor>(_imageTargets[j]);
+                                updateImageAnchorFromARCore(vAnchor, image);
+                                vAnchor->setId(target->getId());
+                                addAnchor(vAnchor);
+                            }
+                        }
+                    }
+                } else {
+                    // Subsumed, so remove the plane
+                    auto it = _nativeAnchorMap.find(key);
+                    if (it != _nativeAnchorMap.end()) {
+                        vAnchor = std::dynamic_pointer_cast<VROARImageAnchor>(it->second);
+                        if (vAnchor) {
+                            removeAnchor(vAnchor);
+                        }
+                    }
+                }
+            }
+        }
+        delete (imageList);
+    }
+
     delete (anchorList);
-    delete (planesList);
+    delete (planeList);
 }
 
 void VROARSessionARCore::updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR) {
@@ -494,6 +621,19 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
     }
 
     plane->setBoundaryVertices(boundaryVertices);
+}
+
+void VROARSessionARCore::updateImageAnchorFromARCore(std::shared_ptr<VROARImageAnchor> imageAnchor,
+                                                     arcore::AugmentedImage *imageAR) {
+    arcore::Pose *pose = _session->createPose();
+    imageAR->getCenterPose(pose);
+
+    float newTransformMtx[16];
+    pose->toMatrix(newTransformMtx);
+    VROMatrix4f newTransform(newTransformMtx);
+    imageAnchor->setTransform(newTransform);
+
+    delete (pose);
 }
 
 uint8_t *VROARSessionARCore::getRotatedCameraImageData(int size) {

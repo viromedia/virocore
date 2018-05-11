@@ -344,7 +344,7 @@ public class ViroActivity extends AppCompatActivity {
         boxNode.setDragMaxDistance(5);
 
         //nodes.addAll(testImperativePlane(scene));
-        //nodes.addAll(testARImageTarget(scene));
+        nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
@@ -949,13 +949,13 @@ public class ViroActivity extends AppCompatActivity {
 
         targetImage = getBitmapFromAssets("tracker_assets/poster_computer.jpg");
         // store this in a field so it doesn't get destroyed before we can use it!
-        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .1905f);
+        mARImageTarget = new ARImageTarget(targetImage, ARImageTarget.Orientation.Up, .19f);
         arScene.addARImageTarget(mARImageTarget);
 
         // Add a 2nd tracker to test threading
         Bitmap tempImage = getBitmapFromAssets("tracker_assets/variety_magazine.jpg");
         final ARImageTarget varietyTarget = new ARImageTarget(tempImage, ARImageTarget.Orientation.Up, .19f);
-        arScene.addARImageTarget(varietyTarget);
+//        arScene.addARImageTarget(varietyTarget);
 
         mImageMarkerTestNode = new Node();
         mImageMarkerTestNode.addChildNode(boxNode);
