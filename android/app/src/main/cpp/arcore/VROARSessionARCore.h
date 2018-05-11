@@ -20,7 +20,6 @@
 #include <VROARPlaneAnchor.h>
 #include <VROARTrackingSession.h>
 
-
 enum class VROARDisplayRotation {
     R0,
     R90,
@@ -45,11 +44,12 @@ public:
      Configure this ARCore session with the given modes. Returns true if supported.
      */
     bool configure(arcore::LightingMode lightingMode, arcore::PlaneFindingMode planeFindingMode,
-                   arcore::UpdateMode updateMode);
+                   arcore::UpdateMode updateMode, arcore::CloudAnchorMode cloudAnchorMode);
     
     void setScene(std::shared_ptr<VROScene> scene);
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
     bool setAnchorDetection(std::set<VROAnchorDetection> types);
+    void setCloudAnchorProvider(VROCloudAnchorProvider provider);
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
@@ -150,7 +150,8 @@ private:
 
     arcore::LightingMode _lightingMode;
     arcore::PlaneFindingMode _planeFindingMode;
-    arcore::UpdateMode  _updateMode;
+    arcore::UpdateMode _updateMode;
+    arcore::CloudAnchorMode _cloudAnchorMode;
 
     arcore::AugmentedImageDatabase *_currentARCoreImageDatabase;
 

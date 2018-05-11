@@ -70,6 +70,11 @@ enum class VROImageTrackingImpl {
     Viro
 };
 
+enum class VROCloudAnchorProvider {
+    None,
+    ARCore,
+};
+
 /*
  Manages the device camera and motion tracking for AR.
  */
@@ -149,6 +154,11 @@ public:
      if the device supports these forms of anchor detection).
      */
     virtual bool setAnchorDetection(std::set<VROAnchorDetection> types) = 0;
+
+    /*
+     Set the provider to use for hosting and resolving cloud anchors.
+     */
+    virtual void setCloudAnchorProvider(VROCloudAnchorProvider provider) = 0;
     
     /*
      Adds an image target that should be tracked by this session.

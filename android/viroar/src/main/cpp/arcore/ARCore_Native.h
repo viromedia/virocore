@@ -66,8 +66,10 @@ namespace arcore {
         virtual uint64_t getId();
         virtual void getPose(Pose *outPose);
         virtual TrackingState getTrackingState();
+        virtual void acquireCloudAnchorId(char **outCloudAnchorId);
+        virtual CloudAnchorState getCloudAnchorState();
         virtual void detach();
-    private:
+
         ArAnchor *_anchor;
         ArSession *_session;
     };
@@ -226,7 +228,7 @@ namespace arcore {
         virtual void update(Frame *frame);
 
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                                     UpdateMode updateMode);
+                                     UpdateMode updateMode, CloudAnchorMode cloudAnchorMode);
         virtual AugmentedImageDatabase *createAugmentedImageDatabase();
         virtual Pose *createPose();
         virtual AnchorList *createAnchorList();
@@ -235,6 +237,9 @@ namespace arcore {
         virtual LightEstimate *createLightEstimate();
         virtual Frame *createFrame();
         virtual HitResult *createHitResult();
+        virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor);
+        virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId);
+
     private:
         ArSession *_session;
     };

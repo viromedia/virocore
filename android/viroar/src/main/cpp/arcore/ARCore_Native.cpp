@@ -19,26 +19,33 @@ namespace arcore {
     }
 
     void ConfigNative::setAugmentedImageDatabase(AugmentedImageDatabase *database) {
-        ArConfig_setAugmentedImageDatabase(((AugmentedImageDatabaseNative *)database)->_session,
+        ArConfig_setAugmentedImageDatabase(((AugmentedImageDatabaseNative *) database)->_session,
                                            _config,
-                                           ((AugmentedImageDatabaseNative *)database)->_database);
+                                           ((AugmentedImageDatabaseNative *) database)->_database);
     }
 
-#pragma mark - AugmentedImageDatabse
+#pragma mark - AugmentedImageDatabase
+
     AugmentedImageDatabaseNative::~AugmentedImageDatabaseNative() {
         ArAugmentedImageDatabase_destroy(_database);
     }
 
-    AugmentedImageDatabaseStatus AugmentedImageDatabaseNative::addImageWithPhysicalSize(const char *image_name,
-                                                                                        const uint8_t *image_grayscale_pixels,
-                                                                                        int32_t image_width_in_pixels,
-                                                                                        int32_t image_height_in_pixels,
-                                                                                        int32_t image_stride_in_pixels,
-                                                                                        float image_width_in_meters,
-                                                                                        int32_t *out_index) {
-        ArStatus status = ArAugmentedImageDatabase_addImageWithPhysicalSize(_session, _database, image_name, image_grayscale_pixels,
-                                                            image_width_in_pixels, image_height_in_pixels,
-                                                            image_stride_in_pixels, image_width_in_meters, out_index);
+    AugmentedImageDatabaseStatus
+    AugmentedImageDatabaseNative::addImageWithPhysicalSize(const char *image_name,
+                                                           const uint8_t *image_grayscale_pixels,
+                                                           int32_t image_width_in_pixels,
+                                                           int32_t image_height_in_pixels,
+                                                           int32_t image_stride_in_pixels,
+                                                           float image_width_in_meters,
+                                                           int32_t *out_index) {
+        ArStatus status = ArAugmentedImageDatabase_addImageWithPhysicalSize(_session, _database,
+                                                                            image_name,
+                                                                            image_grayscale_pixels,
+                                                                            image_width_in_pixels,
+                                                                            image_height_in_pixels,
+                                                                            image_stride_in_pixels,
+                                                                            image_width_in_meters,
+                                                                            out_index);
 
         if (status == AR_ERROR_IMAGE_INSUFFICIENT_QUALITY) {
             return AugmentedImageDatabaseStatus::ImageInsufficientQuality;
@@ -90,7 +97,7 @@ namespace arcore {
     }
 
     void AnchorNative::getPose(Pose *outPose) {
-        ArAnchor_getPose(_session, _anchor, ((PoseNative *)outPose)->_pose);
+        ArAnchor_getPose(_session, _anchor, ((PoseNative *) outPose)->_pose);
     }
 
     TrackingState AnchorNative::getTrackingState() {
@@ -101,6 +108,43 @@ namespace arcore {
             return TrackingState::Tracking;
         } else {
             return TrackingState::NotTracking;
+        }
+    }
+
+    void AnchorNative::acquireCloudAnchorId(char **outCloudAnchorId) {
+        ArAnchor_acquireCloudAnchorId(_session, _anchor, outCloudAnchorId);
+    }
+
+    CloudAnchorState AnchorNative::getCloudAnchorState() {
+        ArCloudAnchorState state;
+        ArAnchor_getCloudAnchorState(_session, _anchor, &state);
+        switch (state) {
+            case AR_CLOUD_ANCHOR_STATE_NONE:
+                return CloudAnchorState::None;
+            case AR_CLOUD_ANCHOR_STATE_TASK_IN_PROGRESS:
+                return CloudAnchorState::TaskInProgress;
+            case AR_CLOUD_ANCHOR_STATE_SUCCESS:
+                return CloudAnchorState::Success;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_INTERNAL:
+                return CloudAnchorState::ErrorInternal;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_NOT_AUTHORIZED:
+                return CloudAnchorState::ErrorNotAuthorized;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_SERVICE_UNAVAILABLE:
+                return CloudAnchorState::ErrorServiceUnavailable;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_RESOURCE_EXHAUSTED:
+                return CloudAnchorState::ErrorResourceExhausted;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_HOSTING_DATASET_PROCESSING_FAILED:
+                return CloudAnchorState::ErrorDatasetProcessingFailed;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_CLOUD_ID_NOT_FOUND:
+                return CloudAnchorState::ErrorCloudIDNotFound;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_RESOLVING_LOCALIZATION_NO_MATCH:
+                return CloudAnchorState::ErrorResolvingLocalizationNoMatch;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_RESOLVING_SDK_VERSION_TOO_OLD:
+                return CloudAnchorState::ErrorResolvingSDKVersionTooOld;
+            case AR_CLOUD_ANCHOR_STATE_ERROR_RESOLVING_SDK_VERSION_TOO_NEW:
+                return CloudAnchorState::ErrorResolvingSDKVersionTooNew;
+            default:
+                return CloudAnchorState::ErrorInternal;
         }
     }
 
@@ -138,7 +182,7 @@ namespace arcore {
 #pragma mark - Plane
 
     PlaneNative::PlaneNative(ArPlane *plane, ArSession *session) :
-        _trackable(ArAsTrackable(plane)), _plane(plane), _session(session) {
+            _trackable(ArAsTrackable(plane)), _plane(plane), _session(session) {
 
     }
 
@@ -148,7 +192,7 @@ namespace arcore {
 
     Anchor *PlaneNative::acquireAnchor(Pose *pose) {
         ArAnchor *anchor;
-        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *)pose)->_pose, &anchor);
+        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *) pose)->_pose, &anchor);
         return new AnchorNative(anchor, _session);
     }
 
@@ -215,11 +259,11 @@ namespace arcore {
 
     bool PlaneNative::isPoseInExtents(const Pose *pose) {
         int result;
-        ArPlane_isPoseInExtents(_session, _plane, ((PoseNative *)pose)->_pose, &result);
+        ArPlane_isPoseInExtents(_session, _plane, ((PoseNative *) pose)->_pose, &result);
         return (bool) result;
     }
 
-    float* PlaneNative::getPolygon() {
+    float *PlaneNative::getPolygon() {
         int32_t polygon_length;
         ArPlane_getPolygonSize(_session, _plane, &polygon_length);
 
@@ -240,7 +284,7 @@ namespace arcore {
 
     bool PlaneNative::isPoseInPolygon(const Pose *pose) {
         int result;
-        ArPlane_isPoseInPolygon(_session, _plane, ((PoseNative *)pose)->_pose, &result);
+        ArPlane_isPoseInPolygon(_session, _plane, ((PoseNative *) pose)->_pose, &result);
         return (bool) result;
     }
 
@@ -256,7 +300,7 @@ namespace arcore {
 
     Anchor *AugmentedImageNative::acquireAnchor(Pose *pose) {
         ArAnchor *anchor;
-        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *)pose)->_pose, &anchor);
+        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *) pose)->_pose, &anchor);
         return new AnchorNative(anchor, _session);
     }
 
@@ -309,11 +353,12 @@ namespace arcore {
         ArAugmentedImage_getIndex(_session, _image, &index);
         return index;
     }
+
 #pragma mark - LightEstimate
 
     LightEstimateNative::~LightEstimateNative() {
-            ArLightEstimate_destroy(_lightEstimate);
-     }
+        ArLightEstimate_destroy(_lightEstimate);
+    }
 
     float LightEstimateNative::getPixelIntensity() {
         float intensity;
@@ -485,21 +530,16 @@ namespace arcore {
         ArStatus status = ArFrame_acquireCameraImage(_session, _frame, &arImage);
         if (status == AR_ERROR_INVALID_ARGUMENT) {
             return ImageRetrievalStatus::InvalidArgument;
-        }
-        else if (status == AR_ERROR_DEADLINE_EXCEEDED) {
+        } else if (status == AR_ERROR_DEADLINE_EXCEEDED) {
             return ImageRetrievalStatus::DeadlineExceeded;
-        }
-        else if (status == AR_ERROR_RESOURCE_EXHAUSTED) {
+        } else if (status == AR_ERROR_RESOURCE_EXHAUSTED) {
             return ImageRetrievalStatus::ResourceExhausted;
-        }
-        else if (status == AR_ERROR_NOT_YET_AVAILABLE) {
+        } else if (status == AR_ERROR_NOT_YET_AVAILABLE) {
             return ImageRetrievalStatus::NotYetAvailable;
-        }
-        else if (status == AR_SUCCESS) {
+        } else if (status == AR_SUCCESS) {
             *outImage = new ImageNative(arImage);
             return ImageRetrievalStatus::Success;
-        }
-        else {
+        } else {
             return ImageRetrievalStatus::UnknownError;
         }
     }
@@ -563,8 +603,7 @@ namespace arcore {
         ArTrackable_getType(_session, trackable, &type);
         if (type == AR_TRACKABLE_PLANE) {
             return new PlaneNative(ArAsPlane(trackable), _session);
-        }
-        else {
+        } else {
             return nullptr;
         }
     }
@@ -578,7 +617,7 @@ namespace arcore {
 #pragma mark - Session
 
     SessionNative::SessionNative(void *applicationContext, JNIEnv *env) {
-            ArSession_create(env, applicationContext, &_session);
+        ArSession_create(env, applicationContext, &_session);
     }
 
     SessionNative::~SessionNative() {
@@ -598,7 +637,7 @@ namespace arcore {
     }
 
     bool SessionNative::checkSupported(Config *config) {
-        return ArSession_checkSupported(_session, ((ConfigNative *)config)->_config) == AR_SUCCESS;
+        return ArSession_checkSupported(_session, ((ConfigNative *) config)->_config) == AR_SUCCESS;
     }
 
     void
@@ -619,11 +658,12 @@ namespace arcore {
     }
 
     void SessionNative::update(Frame *frame) {
-        ArSession_update(_session, ((FrameNative *)frame)->_frame);
+        ArSession_update(_session, ((FrameNative *) frame)->_frame);
     }
 
-    Config *SessionNative::createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                                        UpdateMode updateMode) {
+    Config *
+    SessionNative::createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
+                                UpdateMode updateMode, CloudAnchorMode cloudAnchorMode) {
         ArConfig *config;
         ArConfig_create(_session, &config);
 
@@ -668,6 +708,19 @@ namespace arcore {
             }
         }
         ArConfig_setUpdateMode(_session, config, arUpdateMode);
+
+        // Set cloud anchor mode
+        ArCloudAnchorMode arCloudAnchorMode;
+        switch (cloudAnchorMode) {
+            case CloudAnchorMode::Disabled:
+                arCloudAnchorMode = AR_CLOUD_ANCHOR_MODE_DISABLED;
+                break;
+            case CloudAnchorMode::Enabled:
+                arCloudAnchorMode = AR_CLOUD_ANCHOR_MODE_ENABLED;
+                break;
+        }
+        ArConfig_setCloudAnchorMode(_session, config, arCloudAnchorMode);
+
         return new ConfigNative(config);
     }
 
@@ -718,6 +771,19 @@ namespace arcore {
         ArFrame *frame;
         ArFrame_create(_session, &frame);
         return new FrameNative(frame, _session);
+    }
+
+    Anchor *SessionNative::hostAndAcquireNewCloudAnchor(const Anchor *anchor) {
+        ArAnchor *cloudAnchor;
+        ArSession_hostAndAcquireNewCloudAnchor(_session, ((AnchorNative *) anchor)->_anchor,
+                                               &cloudAnchor);
+        return new AnchorNative(cloudAnchor, _session);
+    }
+
+    Anchor *SessionNative::resolveAndAcquireNewCloudAnchor(const char *anchorId) {
+        ArAnchor *cloudAnchor;
+        ArSession_resolveAndAcquireNewCloudAnchor(_session, anchorId, &cloudAnchor);
+        return new AnchorNative(cloudAnchor, _session);
     }
 
 }

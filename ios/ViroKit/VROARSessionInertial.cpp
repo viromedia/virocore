@@ -50,6 +50,10 @@ bool VROARSessionInertial::setAnchorDetection(std::set<VROAnchorDetection> types
     return true;
 }
 
+void VROARSessionInertial::setCloudAnchorProvider(VROCloudAnchorProvider provider) {
+    // Unsupported
+}
+
 void VROARSessionInertial::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
     // Unsupported
 }

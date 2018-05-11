@@ -159,6 +159,10 @@ bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
     return true;
 }
 
+void VROARSessioniOS::setCloudAnchorProvider(VROCloudAnchorProvider provider) {
+    // TODO iOS ARCore Cloud Anchor implementation
+}
+
 void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
     VROARSession::setScene(scene);
 

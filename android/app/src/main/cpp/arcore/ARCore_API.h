@@ -42,6 +42,26 @@ namespace arcore {
         ImageInsufficientQuality
     };
 
+    enum class CloudAnchorMode {
+        Disabled,
+        Enabled
+    };
+
+    enum class CloudAnchorState {
+        None,
+        TaskInProgress,
+        Success,
+        ErrorInternal,
+        ErrorNotAuthorized,
+        ErrorServiceUnavailable,
+        ErrorResourceExhausted,
+        ErrorDatasetProcessingFailed,
+        ErrorCloudIDNotFound,
+        ErrorResolvingLocalizationNoMatch,
+        ErrorResolvingSDKVersionTooOld,
+        ErrorResolvingSDKVersionTooNew
+    };
+
     enum class TrackingState {
         NotTracking,
         Tracking
@@ -76,7 +96,6 @@ namespace arcore {
     public:
         virtual ~Config() {}
         virtual void setAugmentedImageDatabase(AugmentedImageDatabase *database) = 0;
-
     };
 
     class AugmentedImageDatabase {
@@ -110,6 +129,8 @@ namespace arcore {
         virtual uint64_t getId() = 0;
         virtual void getPose(Pose *outPose) = 0;
         virtual TrackingState getTrackingState() = 0;
+        virtual void acquireCloudAnchorId(char **outCloudAnchorId) = 0;
+        virtual CloudAnchorState getCloudAnchorState() = 0;
         virtual void detach() = 0;
     };
 
@@ -226,7 +247,7 @@ namespace arcore {
         virtual void update(Frame *frame) = 0;
 
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                                     UpdateMode updateMode) = 0;
+                                     UpdateMode updateMode, CloudAnchorMode cloudAnchorMode) = 0;
         virtual AugmentedImageDatabase *createAugmentedImageDatabase() = 0;
         virtual Pose *createPose() = 0;
         virtual AnchorList *createAnchorList() = 0;
@@ -235,6 +256,8 @@ namespace arcore {
         virtual LightEstimate *createLightEstimate() = 0;
         virtual Frame *createFrame() = 0;
         virtual HitResult *createHitResult() = 0;
+        virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor) = 0;
+        virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId) = 0;
     };
 }
 

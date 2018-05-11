@@ -26,6 +26,7 @@ public:
     void resetSession(bool resetTracking, bool removeAnchors);
     
     bool setAnchorDetection(std::set<VROAnchorDetection> types);
+    void setCloudAnchorProvider(VROCloudAnchorProvider provider);
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);

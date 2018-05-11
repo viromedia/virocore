@@ -27,6 +27,7 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _lightingMode(arcore::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
+    _cloudAnchorMode(arcore::CloudAnchorMode::Disabled),
     _cameraTextureId(0),
     _displayRotation(VROARDisplayRotation::R0),
     _rotatedImageDataLength(0),
@@ -148,6 +149,16 @@ bool VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) 
     return updateARCoreConfig();
 }
 
+void VROARSessionARCore::setCloudAnchorProvider(VROCloudAnchorProvider provider) {
+    if (provider == VROCloudAnchorProvider::None) {
+        _cloudAnchorMode = arcore::CloudAnchorMode::Disabled;
+    }
+    else {
+        _cloudAnchorMode = arcore::CloudAnchorMode::Enabled;
+    }
+    updateARCoreConfig();
+}
+
 void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int width, int height) {
     _width = width;
     _height = height;
@@ -170,10 +181,11 @@ void VROARSessionARCore::enableTracking(bool shouldTrack) {
 }
 
 bool VROARSessionARCore::configure(arcore::LightingMode lightingMode, arcore::PlaneFindingMode planeFindingMode,
-                                   arcore::UpdateMode updateMode) {
+                                   arcore::UpdateMode updateMode, arcore::CloudAnchorMode cloudAnchorMode) {
     _lightingMode = lightingMode;
     _planeFindingMode = planeFindingMode;
     _updateMode = updateMode;
+    _cloudAnchorMode = cloudAnchorMode;
 
     return updateARCoreConfig();
 }
@@ -181,7 +193,8 @@ bool VROARSessionARCore::configure(arcore::LightingMode lightingMode, arcore::Pl
 bool VROARSessionARCore::updateARCoreConfig() {
     passert_msg(_session != nullptr, "ARCore must be installed before configuring session");
 
-    arcore::Config *config = _session->createConfig(_lightingMode, _planeFindingMode, _updateMode);
+    arcore::Config *config = _session->createConfig(_lightingMode, _planeFindingMode, _updateMode,
+                                                    _cloudAnchorMode);
 
     if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore && _currentARCoreImageDatabase) {
         config->setAugmentedImageDatabase(_currentARCoreImageDatabase);
