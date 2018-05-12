@@ -252,6 +252,8 @@ namespace arcore {
             return PlaneType::HorizontalDownward;
         } else if (type == AR_PLANE_HORIZONTAL_UPWARD_FACING) {
             return PlaneType::HorizontalUpward;
+        } else if (type == AR_PLANE_VERTICAL) {
+            return PlaneType::Vertical;
         } else {
             return PlaneType::NonHorizontal;
         }
@@ -684,14 +686,18 @@ namespace arcore {
         // Set plane finding mode
         ArPlaneFindingMode arPlaneFindingMode;
         switch (planeFindingMode) {
-            case PlaneFindingMode::Disabled: {
+            case PlaneFindingMode::Disabled:
                 arPlaneFindingMode = AR_PLANE_FINDING_MODE_DISABLED;
                 break;
-            }
-            case PlaneFindingMode::Horizontal: {
+            case PlaneFindingMode::Horizontal:
                 arPlaneFindingMode = AR_PLANE_FINDING_MODE_HORIZONTAL;
                 break;
-            }
+            case PlaneFindingMode::HorizontalAndVertical:
+                arPlaneFindingMode = AR_PLANE_FINDING_MODE_HORIZONTAL_AND_VERTICAL;
+                break;
+            case PlaneFindingMode::Vertical:
+                arPlaneFindingMode = AR_PLANE_FINDING_MODE_VERTICAL;
+                break;
         }
         ArConfig_setPlaneFindingMode(_session, config, arPlaneFindingMode);
 

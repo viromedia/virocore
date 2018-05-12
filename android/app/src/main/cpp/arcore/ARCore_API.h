@@ -77,6 +77,7 @@ namespace arcore {
         NonHorizontal,
         HorizontalUpward,
         HorizontalDownward,
+        Vertical,
     };
 
     enum class LightingMode {
@@ -85,7 +86,9 @@ namespace arcore {
     };
     enum class PlaneFindingMode {
         Disabled,
-        Horizontal
+        Horizontal,
+        HorizontalAndVertical,
+        Vertical
     };
     enum class UpdateMode {
         Blocking,

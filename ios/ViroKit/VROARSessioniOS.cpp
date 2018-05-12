@@ -131,7 +131,7 @@ void VROARSessioniOS::resetSession(bool resetTracking, bool removeAnchors) {
 }
 
 bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
-    if (types.find(VROAnchorDetection::None) != types.end() || types.size() == 0){
+    if (types.size() == 0){
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
             ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = ARPlaneDetectionNone;
         }

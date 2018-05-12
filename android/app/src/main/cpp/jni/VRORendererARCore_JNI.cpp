@@ -71,12 +71,27 @@ VRO_METHOD(void, nativeSetARDisplayGeometry)(VRO_ARGS
     arRenderer->setDisplayGeometry(rotation, width, height);
 }
 
-VRO_METHOD(void, nativeSetPlaneFindingMode)(VRO_ARGS
-                                            jlong renderer_j,
-                                            jboolean enabled) {
+VRO_METHOD(void, nativeSetAnchorDetectionTypes)(VRO_ARGS
+                                                jlong renderer_j,
+                                                VRO_STRING_ARRAY typeStrArray) {
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(renderer_j);
     std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
-    arRenderer->setPlaneFindingMode(enabled);
+
+    std::set<VROAnchorDetection> types;
+
+    int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
+    for (int i = 0; i < stringCount; i++) {
+        std::string typeString = VRO_STRING_STL(VRO_STRING_ARRAY_GET(typeStrArray, i));
+
+        if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {
+            types.insert(VROAnchorDetection::PlanesHorizontal);
+        } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesVertical")) {
+            types.insert(VROAnchorDetection::PlanesVertical);
+        }
+    }
+
+    arRenderer->setAnchorDetectionTypes(types);
+
 }
 
 void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {

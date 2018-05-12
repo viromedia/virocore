@@ -383,12 +383,8 @@ void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int hei
     _session->setDisplayGeometry((VROARDisplayRotation) rotation, width, height);
 }
 
-bool VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
-    if (enabled) {
-        _detectionTypes = {VROAnchorDetection::PlanesHorizontal};
-    } else {
-        _detectionTypes = {VROAnchorDetection::None};
-    }
+void VROSceneRendererARCore::setAnchorDetectionTypes(std::set<VROAnchorDetection> types) {
+    _detectionTypes = types;
 
     if (_sceneController) {
         std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
@@ -396,7 +392,6 @@ bool VROSceneRendererARCore::setPlaneFindingMode(bool enabled) {
             scene->setAnchorDetectionTypes(_detectionTypes);
         }
     }
-    return true;
 }
 
 void VROSceneRendererARCore::enableTracking(bool shouldTrack) {

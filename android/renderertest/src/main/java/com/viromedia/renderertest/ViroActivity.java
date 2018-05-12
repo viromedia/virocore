@@ -343,8 +343,8 @@ public class ViroActivity extends AppCompatActivity {
         boxNode.setDragPlaneNormal(new Vector(0,1,0));
         boxNode.setDragMaxDistance(5);
 
-        //nodes.addAll(testImperativePlane(scene));
-        nodes.addAll(testARImageTarget(scene));
+        nodes.addAll(testImperativePlane(scene));
+        //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
@@ -866,6 +866,10 @@ public class ViroActivity extends AppCompatActivity {
     }
 
     private List<Node> testImperativePlane(final ARScene arScene) {
+        EnumSet<ViroViewARCore.AnchorDetectionType> types = EnumSet.of(ViroViewARCore.AnchorDetectionType.PLANES_HORIZONTAL,
+                ViroViewARCore.AnchorDetectionType.PLANES_VERTICAL);
+        ((ViroViewARCore) mViroView).setAnchorDetectionTypes(types);
+
         arScene.setListener(new ARScene.Listener() {
             @Override
             public void onTrackingInitialized() {

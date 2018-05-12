@@ -39,7 +39,6 @@ enum class VROTrackingType {
  to detect. A VROARAnchor is created for each detected object.
  */
 enum class VROAnchorDetection {
-    None,
     PlanesHorizontal,
     PlanesVertical
 };

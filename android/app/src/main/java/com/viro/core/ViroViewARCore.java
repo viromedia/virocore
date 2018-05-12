@@ -160,17 +160,15 @@ public class ViroViewARCore extends ViroView {
      * of one of these enabled types is found.
      */
     public enum AnchorDetectionType {
-
-        /**
-         * Anchor detection will be entirely disabled. This setting results in optimal performance
-         * and should be used in applications where anchors are not required.
-         */
-        NONE("None"),
-
         /**
          * Horizontal planes will be detected by the AR tracking system.
          */
-        PLANES_HORIZONTAL("PlanesHorizontal");
+        PLANES_HORIZONTAL("PlanesHorizontal"),
+
+        /**
+         * Vertical planes will be detected by the AR tracking system.
+         */
+        PLANES_VERTICAL("PlanesVertical");
 
         private String mStringValue;
         private AnchorDetectionType(String value) {

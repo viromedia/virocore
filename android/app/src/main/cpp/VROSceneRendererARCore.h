@@ -105,10 +105,9 @@ public:
     void setDisplayGeometry(int rotation, int width, int height);
 
     /*
-     Set the anchor detection mode used by ARCore. Returns false if not supported. Currently
-     this is a simplistic planes on/off but can be changed in the future.
+     Set the anchor detection mode used by ARCore.
      */
-    bool setPlaneFindingMode(bool enabled);
+    void setAnchorDetectionTypes(std::set<VROAnchorDetection> types);
 
     /*
      This is a function that enables/disables tracking (for debug purposes!)

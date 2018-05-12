@@ -41,16 +41,14 @@ public class RendererARCore extends Renderer {
     }
 
     public void setAnchorDetectionTypes(EnumSet<ViroViewARCore.AnchorDetectionType> types) {
-        if (types.size() == 0) {
-            nativeSetPlaneFindingMode(mNativeRef, false);
-        }
+        String[] detectionTypes = new String[types.size()];
+        int i = 0;
         for (ViroViewARCore.AnchorDetectionType type : types) {
-            if (type == ViroViewARCore.AnchorDetectionType.NONE) {
-                nativeSetPlaneFindingMode(mNativeRef, false);
-            } else if (type == ViroViewARCore.AnchorDetectionType.PLANES_HORIZONTAL) {
-                nativeSetPlaneFindingMode(mNativeRef, true);
-            }
+            detectionTypes[i] = type.getStringValue();
+            i++;
         }
+
+        nativeSetAnchorDetectionTypes(mNativeRef, detectionTypes);
     }
 
     public void performARHitTestWithRay(float[] ray, ARHitTestListener callback) {
@@ -73,7 +71,7 @@ public class RendererARCore extends Renderer {
                                                    AssetManager assets, PlatformUtil platformUtil,
                                                    boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native void nativeSetARDisplayGeometry(long nativeRef, int rotation, int width, int height);
-    private native void nativeSetPlaneFindingMode(long nativeRef, boolean enabled);
+    private native void nativeSetAnchorDetectionTypes(long nativeRef, String[] detectionTypes);
     private native long nativeCreateARCoreSession(Context context);
     private native void nativeSetARCoreSession(long nativeRef, long sessionRef);
     private native int nativeGetCameraTextureId(long nativeRenderer);

@@ -154,9 +154,7 @@ VRO_METHOD(void, nativeSetAnchorDetectionTypes)(VRO_ARGS
     int stringCount = VRO_ARRAY_LENGTH(typeStrArray);
     for (int i = 0; i < stringCount; i++) {
         std::string typeString = VRO_STRING_STL(VRO_STRING_ARRAY_GET(typeStrArray, i));
-        if (VROStringUtil::strcmpinsensitive(typeString, "None")) {
-            types.insert(VROAnchorDetection::None);
-        } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {
+        if (VROStringUtil::strcmpinsensitive(typeString, "PlanesHorizontal")) {
             types.insert(VROAnchorDetection::PlanesHorizontal);
         } else if (VROStringUtil::strcmpinsensitive(typeString, "PlanesVertical")) {
             types.insert(VROAnchorDetection::PlanesVertical);

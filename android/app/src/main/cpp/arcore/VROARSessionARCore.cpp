@@ -128,22 +128,29 @@ void VROARSessionARCore::resetSession(bool resetTracking, bool removeAnchors) {
 
 bool VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) {
     std::set<VROAnchorDetection>::iterator it;
+
+    bool planesHorizontal = false;
+    bool planesVertical = false;
+
     for (it = types.begin(); it != types.end(); it++) {
         VROAnchorDetection type = *it;
         switch (type) {
-            case VROAnchorDetection::None:
-                _planeFindingMode = arcore::PlaneFindingMode::Disabled;
-                break;
             case VROAnchorDetection::PlanesHorizontal:
-                _planeFindingMode = arcore::PlaneFindingMode::Horizontal;
+                planesHorizontal = true;
                 break;
-            default:
-                _planeFindingMode = arcore::PlaneFindingMode::Horizontal;
+            case VROAnchorDetection::PlanesVertical:
+                planesVertical = true;
                 break;
         }
     }
 
-    if (types.size() == 0) {
+    if (planesHorizontal && planesVertical) {
+        _planeFindingMode = arcore::PlaneFindingMode::HorizontalAndVertical;
+    } else if (planesHorizontal) {
+        _planeFindingMode = arcore::PlaneFindingMode::Horizontal;
+    } else if (planesVertical) {
+        _planeFindingMode = arcore::PlaneFindingMode::Vertical;
+    } else {
         _planeFindingMode = arcore::PlaneFindingMode::Disabled;
     }
     return updateARCoreConfig();
@@ -676,6 +683,9 @@ void VROARSessionARCore::updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor>
             break;
         case arcore::PlaneType::HorizontalDownward :
             plane->setAlignment(VROARPlaneAlignment::HorizontalDownward);
+            break;
+        case arcore::PlaneType ::Vertical :
+            plane->setAlignment(VROARPlaneAlignment::Vertical);
             break;
         default:
             plane->setAlignment(VROARPlaneAlignment::Horizontal);
