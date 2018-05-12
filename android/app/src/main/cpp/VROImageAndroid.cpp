@@ -45,10 +45,14 @@ VROImageAndroid::VROImageAndroid(jobject jbitmap) {
     _format = VROPlatformGetBitmapFormat(jbitmap);
     bool hasAlpha;
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height, &hasAlpha);
+    _grayscaleData = nullptr;
 }
 
 VROImageAndroid::~VROImageAndroid() {
     free(_data);
+    if (_grayscaleData != nullptr) {
+        free(_grayscaleData);
+    }
 }
 
 int VROImageAndroid::getWidth() const {
@@ -70,15 +74,16 @@ unsigned char *VROImageAndroid::getData(size_t *length) {
  format.
  */
 unsigned char *VROImageAndroid::getGrayscaleData(size_t *length, size_t *stride) {
-    *length = _dataLength;
+    *length = _dataLength / 4; // the length is 1/4th because RGBA -> Grayscale (1 byte)
 
-    // we can make this assumption because VROPlatformConvertBitmap computes _dataLength = _stride * _height
-    int32_t rgbastride = _dataLength / _height;
-    *stride = rgbastride / 4;
+    if (_grayscaleData == nullptr) {
+        // we can make this assumption because VROPlatformConvertBitmap computes _dataLength = _stride * _height
+        int32_t rgbastride = _dataLength / _height;
+        *stride = rgbastride / 4;
 
-    unsigned char *returnArr;
-    convertRgbaToGrayscale(rgbastride, &returnArr);
-    return returnArr;
+        convertRgbaToGrayscale(rgbastride, &_grayscaleData);
+    }
+    return _grayscaleData;
 }
 
 /*

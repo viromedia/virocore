@@ -39,6 +39,7 @@ private:
     int _width, _height;
     int _dataLength;
     unsigned char *_data;
+    unsigned char *_grayscaleData;
 
     void convertRgbaToGrayscale(int32_t stride, uint8_t** out_grayscale_buffer);
 

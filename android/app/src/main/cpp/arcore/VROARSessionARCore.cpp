@@ -298,12 +298,84 @@ void VROARSessionARCore::addTargetToDatabase(std::shared_ptr<VROARImageTarget> t
 
     size_t length;
     size_t stride;
-    const uint8_t *grayscaleImage = imageAndroid->getGrayscaleData(&length, &stride);
+    uint8_t *grayscaleImage = imageAndroid->getGrayscaleData(&length, &stride);
     int32_t outIndex;
 
+    int width = imageAndroid->getWidth();
+    int height = imageAndroid->getHeight();
+    rotateImageForOrientation(&grayscaleImage, &width, &height, &stride, target->getOrientation());
+
     database->addImageWithPhysicalSize(targetAndroid->getId().c_str(), grayscaleImage,
-                                       imageAndroid->getWidth(), imageAndroid->getHeight(),
-                                       (int32_t) stride, target->getPhysicalWidth(), &outIndex);
+                                       width, height, (int32_t) stride,
+                                       target->getPhysicalWidth(), &outIndex);
+
+    // Free that grayscaleImage now that we're done with it.
+    free(grayscaleImage);
+}
+
+void VROARSessionARCore::rotateImageForOrientation(uint8_t **grayscaleImage, int *width, int *height,
+                                                   size_t *stride, VROImageOrientation orientation) {
+    int length = (*width) * (*height);
+    if (orientation == VROImageOrientation::Up) {
+        *stride = (size_t) *width;
+        uint8_t *rotatedImage = new uint8_t[length];
+        memcpy(rotatedImage, *grayscaleImage, (size_t) length);
+        *grayscaleImage = rotatedImage;
+        return;
+    } else if (orientation == VROImageOrientation::Down) {
+        // if the image is "upside down" then just reverse it...
+        *stride = (size_t) *width;
+        uint8_t *rotatedImage = new uint8_t[length];
+        int index;
+        for (int i = 0; i < *height; i++) {
+            for (int j = 0; j < *width; j++) {
+                index = j + i * *width;
+                rotatedImage[index] = (*grayscaleImage)[length - 1 - index];
+            }
+        }
+        *grayscaleImage = rotatedImage;
+    } else if (orientation == VROImageOrientation::Left) {
+        // if the image is to the "Left" then rotate it CW by 90 degrees
+        uint8_t *rotatedImage = new uint8_t[length];
+
+        for (int i = 0; i < *width; i++) {
+            for (int j = 0; j < *height; j++) {
+                rotatedImage[j + i * *height] = (*grayscaleImage)[(*height - 1 - j) * *width + i];
+            }
+        }
+
+        // since we rotated, swap the width and height.
+        int tempWidth = *width;
+        *width = *height;
+        *height = tempWidth;
+
+        // set the stride to the new width
+        *stride = (size_t) *width;
+
+        // set the grayscaleImage to the rotatedImage.
+        *grayscaleImage = rotatedImage;
+
+    } else if (orientation == VROImageOrientation::Right) {
+        // if the image is to the "Right" then rotate it CCW by 90 degrees
+        uint8_t *rotatedImage = new uint8_t[length];
+
+        for (int i = 0; i < *width; i++) {
+            for (int j = 0; j < *height; j++) {
+                rotatedImage[j + i * *height] = (*grayscaleImage)[(*width) * (j + 1) - i - 1];
+            }
+        }
+
+        // since we rotated, swap the width and height.
+        int tempWidth = *width;
+        *width = *height;
+        *height = tempWidth;
+
+        // set the stride to the new width
+        *stride = (size_t) *width;
+
+        // set the grayscaleImage to the rotatedImage.
+        *grayscaleImage = rotatedImage;
+    }
 }
 
 void VROARSessionARCore::addAnchor(std::shared_ptr<VROARAnchor> anchor) {

@@ -215,6 +215,13 @@ private:
     void addTargetToDatabase(std::shared_ptr<VROARImageTarget> target,
                              arcore::AugmentedImageDatabase *database);
 
+    /*
+     This function rotates the given grayscaleImage so that the image is "Up" based on the given
+     orientation. This function sets the given pointers to their new values (keep in mind that
+     the caller should free the rotated grayscaleImage when they're done with it).
+     */
+    void rotateImageForOrientation(uint8_t **grayscaleImage, int *width, int *height, size_t *stride, VROImageOrientation orientation);
+
     // This is needed for VROTrackingType::ARCore
     std::vector<std::shared_ptr<VROARImageTarget>> _imageTargets;
 };
