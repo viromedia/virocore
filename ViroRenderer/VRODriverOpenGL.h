@@ -441,6 +441,12 @@ protected:
     virtual std::shared_ptr<VROTypefaceCollection> createTypefaceCollection(std::string typefaces, int size, VROFontStyle style,
                                                                             VROFontWeight weight) = 0;
 
+    /*
+     Get the graphics context used by the underlying platform. Not all platforms will
+     implement this.
+     */
+    virtual void *getGraphicsContext() { return nullptr; }
+    
 private:
 
     VROGPUType _gpuType;

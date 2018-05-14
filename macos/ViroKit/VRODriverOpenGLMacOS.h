@@ -79,6 +79,10 @@ public:
     void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
                       std::string ceilingMaterial, std::string floorMaterial) {}
     
+    void *getGraphicsContext() {
+        return (__bridge void *) _glContext;
+    }
+    
 protected:
     
     NSOpenGLContext *_glContext;

@@ -13,6 +13,8 @@
 #import <ViroKit/VROSceneController.h>
 #import <ViroKit/VROView.h>
 #import <ViroKit/VROViewScene.h>
+#import <ViroKit/VROChoreographer.h>
+#import <ViroKit/VRORenderToTextureDelegate.h>
 #import <ViroKit/VRORendererConfiguration.h>
 #import <ViroKit/VRORenderDelegate.h>
 #import <ViroKit/VRORenderContext.h>
