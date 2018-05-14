@@ -193,6 +193,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)reshape {
+    [_openGLContext update];
     if (_inputController) {
         _inputController->setViewportSize(self.frame.size.width,
                                           self.frame.size.height);

@@ -25,9 +25,9 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 
 - (void)loadView {
     VRORendererConfiguration config;
-    config.enableHDR = NO;
-    config.enablePBR = NO;
-    config.enableBloom = NO;
+    config.enableHDR = YES;
+    config.enablePBR = YES;
+    config.enableBloom = YES;
     
     VROViewScene *view = [[VROViewScene alloc] initWithFrame:NSMakeRect(20, 20, 600, 600)
                                                       config:config

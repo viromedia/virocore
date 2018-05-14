@@ -18,6 +18,7 @@
 #import <ViroKit/VRORendererConfiguration.h>
 #import <ViroKit/VRORenderDelegate.h>
 #import <ViroKit/VRORenderContext.h>
+#import <ViroKit/VRORenderTarget.h>
 #import <ViroKit/VRODriver.h>
 #import <ViroKit/VRORenderParameters.h>
 #import <ViroKit/VROFrameListener.h>
@@ -46,6 +47,8 @@
 #import <ViroKit/VROMaterial.h>
 #import <ViroKit/VROMaterialVisual.h>
 #import <ViroKit/VROTexture.h>
+#import <ViroKit/VROImagePostProcess.h>
+#import <ViroKit/VROImageShaderProgram.h>
 #import <ViroKit/VROLight.h>
 #import <ViroKit/VROImage.h>
 #import <ViroKit/VROImageMacOS.h>

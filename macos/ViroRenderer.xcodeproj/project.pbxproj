@@ -55,7 +55,7 @@
 		8F04372F201AA74000D98D26 /* cylinder_pbr.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F04372E201AA74000D98D26 /* cylinder_pbr.vrx */; };
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */; };
+		8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E931F3B4E170007AD03 /* VRORenderTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0E5E981F3B52480007AD03 /* VRORenderTargetOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5E961F3B52480007AD03 /* VRORenderTargetOpenGL.cpp */; };
 		8F0E5E991F3B52480007AD03 /* VRORenderTargetOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E971F3B52480007AD03 /* VRORenderTargetOpenGL.h */; };
 		8F0E5E9C1F3BA9120007AD03 /* VROChoreographer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5E9A1F3BA9120007AD03 /* VROChoreographer.cpp */; };
@@ -124,6 +124,7 @@
 		8F292BD020A913F500635C0D /* VROToneMappingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F292BCE20A913F400635C0D /* VROToneMappingTest.cpp */; };
 		8F292BD120A913F500635C0D /* VROToneMappingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F292BCF20A913F500635C0D /* VROToneMappingTest.h */; };
 		8F292BD520A91EED00635C0D /* ViroKit.framework in Copy Framework  */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
+		8F292C2020A9E78100635C0D /* VROTextureSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F152A7F1C121A0E00A211F8 /* VROTextureSubstrate.h */; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
 		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
@@ -279,8 +280,8 @@
 		8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F8755372064B353002D9BF8 /* VROSparseBitSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F87517B206298C2002D9BF8 /* VROSparseBitSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */; };
-		8F9209151F3CAF72003305C8 /* VROImageShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */; };
-		8F9209191F3CCF9D003305C8 /* VROImagePostProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */; };
+		8F9209151F3CAF72003305C8 /* VROImageShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F9209191F3CCF9D003305C8 /* VROImagePostProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F92091C1F3CE241003305C8 /* VROImagePostProcessOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F92091A1F3CE241003305C8 /* VROImagePostProcessOpenGL.cpp */; };
 		8F92091D1F3CE241003305C8 /* VROImagePostProcessOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F92091B1F3CE241003305C8 /* VROImagePostProcessOpenGL.h */; };
 		8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */; };
@@ -2594,6 +2595,7 @@
 				8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */,
 				8ADC38D51F0AFAF2006DD653 /* VROARDeclarativeNodeDelegate.h in Headers */,
 				8F37D9F41F4CD6810029D23E /* VRODisplayOpenGLMacOS.h in Headers */,
+				8F292C2020A9E78100635C0D /* VROTextureSubstrate.h in Headers */,
 				8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */,
 				8F2657471F0E808C0031DE17 /* VROCompress.h in Headers */,
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
