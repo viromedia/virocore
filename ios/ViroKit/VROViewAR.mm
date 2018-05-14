@@ -543,6 +543,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     return _renderer;
 }
 
+- (std::shared_ptr<VROChoreographer>)choreographer {
+    return _renderer->getChoreographer();
+}
+
 #pragma mark - Rendering
 
 - (void)drawRect:(CGRect)rect {

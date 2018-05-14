@@ -17,6 +17,7 @@ class VROScene;
 class VROReticle;
 class VRONode;
 class VRORenderer;
+class VROChoreographer;
 class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
 
@@ -28,6 +29,7 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
 
 @property (nonatomic, weak) IBOutlet id <VRORenderDelegate> renderDelegate;
 @property (readonly, nonatomic) std::shared_ptr<VRORenderer> renderer;
+@property (readonly, nonatomic) std::shared_ptr<VROChoreographer> choreographer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneController> sceneController;
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController;

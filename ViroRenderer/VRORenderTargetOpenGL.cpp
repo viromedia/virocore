@@ -33,7 +33,8 @@ VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAt
     _driver(driver),
     _stencilRef(0xFF),
     _stencilFunc(VROStencilFunc::Always) {
-
+    _clearColor.set(0.0, 0.0, 0.0, 1.0);
+        
     // Adreno330 or older does not support offscreen render targets
     if (type != VRORenderTargetType::Display) {
         passert (driver->getGPUType() != VROGPUType::Adreno330OrOlder);

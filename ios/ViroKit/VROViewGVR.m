@@ -356,6 +356,10 @@
     return _renderer;
 }
 
+- (std::shared_ptr<VROChoreographer>)choreographer {
+    return _renderer->getChoreographer();
+}
+
 - (NSString *)getPlatform {
     return @"gvr";
 }

@@ -75,6 +75,10 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     driver->readGPUType();
     driver->readDisplayFramebuffer();
 
+    _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
+    _choreographer->setClearColor(_clearColor, driver);
+    _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
+    
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
     if (delegate) {
         delegate->setupRendererWithDriver(driver);
@@ -82,10 +86,6 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _debugHUD->initRenderer(driver);
 #endif
-    
-    _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
-    _choreographer->setClearColor(_clearColor, driver);
-    _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
 }
 
 void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate) {
