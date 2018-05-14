@@ -16,7 +16,7 @@ class VROViewport;
 
 /*
  The VRORenderToTextureDelegate is notified at the end of each frame with a VRORenderTarget
- that contains the fully rendered scene. This can be used to pass the rendered scene on to
+ containing the fully rendered scene. This can be used to pass the rendered scene on to
  other processes.
  */
 class VRORenderToTextureDelegate : public std::enable_shared_from_this<VRORenderToTextureDelegate> {
@@ -25,11 +25,11 @@ public:
     virtual ~VRORenderToTextureDelegate() {};
 
     /*
-     Called to notify delegates with the final renderTarget containing the texture representing
-     the output frame that is rendered on the screen.
+     Called to notify delegates that a frame has been rendered to the given renderedTarget,
+     which contains the final output of the scene.
      */
-    virtual void renderedFrameTexture(std::shared_ptr<VRORenderTarget> renderedTarget,
-                                      std::shared_ptr<VRODriver> driver) = 0;
+    virtual void didRenderFrame(std::shared_ptr<VRORenderTarget> renderedTarget,
+                                std::shared_ptr<VRODriver> driver) = 0;
 };
 
 #endif //VRO_RENDER_TO_TEXTURE_DELEGATE_H

@@ -24,9 +24,9 @@ public:
 
     virtual ~VRORenderToTextureDelegateAndroid() {};
 
-    void renderedFrameTexture(std::shared_ptr<VRORenderTarget> input, std::shared_ptr<VRODriver> driver) {
+    void didRenderFrame(std::shared_ptr<VRORenderTarget> input, std::shared_ptr<VRODriver> driver) {
         std::shared_ptr<VROAVRecorderAndroid> recorder = _w_recorder.lock();
-        if(recorder) {
+        if (recorder) {
             recorder->onRenderedFrameTexture(input, driver);
         }
     }

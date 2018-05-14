@@ -89,25 +89,20 @@ public:
     bool setBloomEnabled(bool enableBloom);
     
     /*
-     Enable or disable RTT. When RTT is enabled, the scene is rendered first
-     to an offscreen buffer. Then it is flipped and blitted over to the provided
-     texture. This enables other systems to process the rendered scene. The RTT
-     callback is invoked each time a frame is rendered.
+     Sets a delegate that is invoked each time a frame has been rendered. The delegate
+     reeives a reference to the final VRORenderTarget, which contains a texture representing
+     the rendered scene.
      
-     Note the flip is required so that the texture appears right-side-up in the
-     RTT texture.
-
-     TODO VIRO-2025: Remove these functions in favor of setting a VRORenderToTextureDelgateiOS.
+     Set to nullptr to disable render to texture.
      */
-    void setRenderToTextureEnabled(bool enabled);
-    void setRenderTexture(std::shared_ptr<VROTexture> texture);
-    void setRenderToTextureCallback(std::function<void()> callback);
+    void setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate);
     
     /*
      Render targets need to be recreated when the viewport size is changed. They
      also need to be able to set their viewport when bound.
      */
     void setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver);
+    VROViewport getViewport() const { return _viewport ? *_viewport : VROViewport(0, 0, 0, 0); }
     
     /*
      Retrieve the configurable tone mapping pass.
@@ -119,12 +114,6 @@ public:
      in VROChoreographer::renderBasePass().
      */
     std::shared_ptr<VROPostProcessEffectFactory> getPostProcessEffectFactory();
-
-    /*
-     Sets a delegate that is invoked each time a frame has been rendered and passes it
-     a reference to the final VRORenderTarget containing a texture representing the rendered scene.
-     */
-    void setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate);
 
     /*
      Updates the main set of render targets used in the rendering pipeline with the
@@ -203,14 +192,7 @@ private:
                      VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 #pragma mark - Render to Texture
-    
-    /*
-     RTT variables.
-     */
-    bool _renderToTexture;
-    std::shared_ptr<VRORenderTarget> _renderToTextureTarget;
-    std::function<void()> _renderToTextureCallback;
-    
+
     /*
      Render the given tone-mapped and gamma-corrected input to the
      video texture and display.

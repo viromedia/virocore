@@ -33,7 +33,6 @@ VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_
     _driver(driver),
     _clearColor({ 0, 0, 0, 1 }),
     _renderTargetsChanged(false),
-    _renderToTexture(false),
     _blurScaling(0.25) {
 
     // Derive supported features on this GPU
@@ -72,7 +71,6 @@ void VROChoreographer::createRenderTargets() {
     
     _blitPostProcess.reset();
     _blitTarget.reset();
-    _renderToTextureTarget.reset();
     _postProcessTargetA.reset();
     _postProcessTargetB.reset();
     _hdrTarget.reset();
@@ -94,7 +92,6 @@ void VROChoreographer::createRenderTargets() {
         std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
         _blitPostProcess = driver->newImagePostProcess(blitShader);
         _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
-        _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1, false);
 
         _preprocesses.clear();
         if (_shadowsEnabled) {
@@ -177,9 +174,6 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
     if (_postProcessTargetB) {
         _postProcessTargetB->setViewport(rtViewport);
     }
-    if (_renderToTextureTarget) {
-        _renderToTextureTarget->setViewport(rtViewport);
-    }
     if (_hdrTarget) {
         _hdrTarget->setViewport(rtViewport);
     }
@@ -250,7 +244,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.textures[kToneMappingHDRInput] = postProcessTarget->getTexture(0);
             inputs.textures[kToneMappingMaskInput] = _hdrTarget->getTexture(1);
             
-            if (_renderToTexture) {
+            if (_renderToTextureDelegate) {
                 std::shared_ptr<VRORenderTarget> toneMappingTarget = postProcessTarget == _blitTarget ? _postProcessTargetA : _blitTarget;
                 
                 inputs.outputTarget = toneMappingTarget;
@@ -277,7 +271,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.textures[kToneMappingHDRInput] = postProcessTarget->getTexture(0);
             inputs.textures[kToneMappingMaskInput] = _hdrTarget->getTexture(1);
 
-            if (_renderToTexture) {
+            if (_renderToTextureDelegate) {
                 inputs.outputTarget = _blitTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_blitTarget, driver);
@@ -288,7 +282,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             }
         }
     }
-    else if (_mrtSupported && _renderToTexture) {
+    else if (_mrtSupported && _renderToTextureDelegate) {
         inputs.outputTarget = _blitTarget;
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
         renderToTextureAndDisplay(_blitTarget, driver);
@@ -328,34 +322,14 @@ void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODrive
 
 void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
                                                  std::shared_ptr<VRODriver> driver) {
-    // Flip/render the image to the RTT target
-    _renderToTextureTarget->bind();
-    input->blitColor(_renderToTextureTarget, true, driver);
 
-    if (_renderToTextureDelegate) {
-        _renderToTextureDelegate->renderedFrameTexture(input, driver);
-    }
+    _renderToTextureDelegate->didRenderFrame(input, driver);
 
     // Blit direct to the display. We can't use the blitColor method here
     // because the display is multisampled (blitting to a multisampled buffer
     // is not supported).
     driver->bindRenderTarget(driver->getDisplay(), VRORenderTargetUnbindOp::Invalidate);
     _blitPostProcess->blit({ input->getTexture(0) }, driver);
-    if (_renderToTextureCallback) {
-        _renderToTextureCallback();
-    }
-}
-
-void VROChoreographer::setRenderToTextureEnabled(bool enabled) {
-    _renderToTexture = enabled;
-}
-
-void VROChoreographer::setRenderToTextureCallback(std::function<void()> callback) {
-    _renderToTextureCallback = callback;
-}
-
-void VROChoreographer::setRenderTexture(std::shared_ptr<VROTexture> texture) {
-    _renderToTextureTarget->attachTexture(texture, 0);
 }
 
 std::shared_ptr<VROToneMappingRenderPass> VROChoreographer::getToneMapping() {

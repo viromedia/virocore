@@ -43,7 +43,7 @@ public:
 
     /*
      Called by by VROChoreographer when a frame is rendered onto the texture of the
-     given VRORenderTarget output, where we then handle the swaping of framebuffer data needed
+     given VRORenderTarget output, where we then handle the swapping of framebuffer data needed
      for screen capturing and recording.
      */
     bool onRenderedFrameTexture(std::shared_ptr<VRORenderTarget> output,

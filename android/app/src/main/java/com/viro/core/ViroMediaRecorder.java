@@ -476,7 +476,7 @@ public class ViroMediaRecorder {
             cleanupSucceded = mInputSurface.destroy();
             mRecorder.release();
         } catch(RuntimeException ex) {
-            Log.e("Viro","Viro media recorder cleanup failed.");
+            Log.e("Viro","Viro media recorder cleanup failed", ex);
             cleanupSucceded = false;
         }
 

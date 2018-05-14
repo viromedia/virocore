@@ -74,7 +74,6 @@ void MediaRecorder_JNI::nativeCreateRecorder(std::shared_ptr<VROSceneRenderer> r
     // Attach the recorder's renderToTextureDelegate for inputing recording data to our choreographer.
     std::shared_ptr<VRORenderToTextureDelegateAndroid> delegate = _nativeMediaRecorder->getRenderToTextureDelegate();
     renderer->getRenderer()->getChoreographer()->setRenderToTextureDelegate(delegate);
-    renderer->getRenderer()->getChoreographer()->setRenderToTextureEnabled(true);
 }
 
 void MediaRecorder_JNI::nativeEnableFrameRecording(bool isRecording) {

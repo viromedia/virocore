@@ -15,6 +15,7 @@
 #import "VROTexture.h"
 #import "VROTextureSubstrate.h"
 #import "VROChoreographer.h"
+#import "VRORenderTarget.h"
 
 @interface VROViewRecorder () {
     
@@ -35,6 +36,7 @@
     std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
     std::shared_ptr<VRODriver> _driver;
     std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VROViewRecorderRTTDelegate> _rttDelegate;
     __weak GLKView *_view;
 }
 
@@ -411,17 +413,10 @@
     bool sRGB = _driver->getColorRenderingMode() == VROColorRenderingMode::Linear;
     std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer, sRGB);
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
-    _renderer->getChoreographer()->setRenderToTextureEnabled(true);
-    _renderer->getChoreographer()->setRenderTexture(texture);
     
-    __weak VROViewRecorder *weakSelf = self;
-    _renderer->getChoreographer()->setRenderToTextureCallback([weakSelf] {
-        VROViewRecorder *strongSelf = weakSelf;
-        if (strongSelf) {
-            CVPixelBufferLockBaseAddress(strongSelf->_videoPixelBuffer, 0);
-        }
-    });
-    
+    _rttDelegate = std::make_shared<VROViewRecorderRTTDelegate>(self, texture, _renderer, _driver);
+    _renderer->getChoreographer()->setRenderToTextureDelegate(_rttDelegate);
+
     _isRecording = YES;
     _isFirstRecordingFrame = YES;
     _videoLoopTimer = [NSTimer timerWithTimeInterval:0.03 target:self selector:@selector(recordFrame) userInfo:nil repeats:YES];
@@ -462,7 +457,7 @@
     [_videoLoopTimer invalidate];
     
     // Turn off RTT in the choreographer
-    _renderer->getChoreographer()->setRenderToTextureEnabled(false);
+    _renderer->getChoreographer()->setRenderToTextureDelegate(nullptr);
     
     [_videoWriterInput markAsFinished];
     if (_videoWriter.status == AVAssetWriterStatusWriting) {
@@ -510,4 +505,44 @@
     return pixelBuffer;
 }
 
+- (void)lockPixelBuffer {
+    CVPixelBufferLockBaseAddress(_videoPixelBuffer, 0);
+}
+
 @end
+
+VROViewRecorderRTTDelegate::VROViewRecorderRTTDelegate(VROViewRecorder *recorder,
+                                                       std::shared_ptr<VROTexture> texture,
+                                                       std::shared_ptr<VRORenderer> renderer,
+                                                       std::shared_ptr<VRODriver> driver) :
+    _texture(texture),
+    _renderer(renderer) {
+    _recorder = recorder;
+    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false);
+    _renderToTextureTarget->attachTexture(_texture, 0);
+};
+
+void VROViewRecorderRTTDelegate::didRenderFrame(std::shared_ptr<VRORenderTarget> target,
+                                                std::shared_ptr<VRODriver> driver) {
+    std::shared_ptr<VRORenderer> renderer = _renderer.lock();
+    if (!renderer) {
+        return;
+    }
+    VROViewRecorder *recorder = _recorder;
+    if (!recorder) {
+        return;
+    }
+    
+    VROViewport viewport = renderer->getChoreographer()->getViewport();
+    VROViewport rtViewport = VROViewport(0, 0, viewport.getWidth(), viewport.getHeight());
+    
+    // If the viewport changed, re-attach the video texture
+    if (_renderToTextureTarget->setViewport(rtViewport)) {
+        _renderToTextureTarget->attachTexture(_texture, 0);
+    }
+
+    // Flip/render the image to the RTT target
+    driver->bindRenderTarget(_renderToTextureTarget, VRORenderTargetUnbindOp::Invalidate);
+    target->blitColor(_renderToTextureTarget, true, driver);
+    [recorder lockPixelBuffer];
+}
