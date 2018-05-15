@@ -13,7 +13,7 @@
 class VRODriver;
 
 /*
- Display Render target for egl surfaces that are backed by a VROVRecorderAndroid component.
+ Display Render target for EGL surfaces that are backed by a VROAVRecorderAndroid component.
  */
 class VRORecorderEglSurfaceDisplay : public VRODisplayOpenGL {
 public:
@@ -38,14 +38,14 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    void unbind() {
+    void invalidate() {
         std::shared_ptr<VROAVRecorderAndroid> recorder = _w_recorder.lock();
         if (!recorder) {
             return;
         }
 
         recorder->eglSwap();
-        recorder->unBindFromEGLSurface();
+        recorder->unbindFromEGLSurface();
     }
 
 private:

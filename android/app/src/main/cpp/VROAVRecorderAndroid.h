@@ -36,6 +36,11 @@ public:
     void scheduleScreenCapture();
 
     /*
+     True if this recorder is currently recording video.
+     */
+    bool isRecordingVideo() const {return _isRecording; }
+
+    /*
      Returns a VRORenderToTextureDelegate, implemented by this VROAVRecorderAndroid,
      to be set on VROChoreographer for driving video input when recording.
      */
@@ -53,7 +58,7 @@ public:
      Binds and unbinds the underlying egl _recorderDisplay for recording.
      */
     void bindToEglSurface();
-    void unBindFromEGLSurface();
+    void unbindFromEGLSurface();
 
     /*
      Performs an implicit flush operation onto the bounded egl _recorderDisplay that effectively

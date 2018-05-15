@@ -22,7 +22,7 @@ public:
         _framebuffer = framebuffer;
     }
     virtual ~VRODisplayOpenGL() {}
-    virtual void unbind() {};
+    virtual void invalidate() {};
     bool setViewport(VROViewport viewport) { _viewport = viewport; return true; }
     
 #pragma mark - Unsupported by Displays

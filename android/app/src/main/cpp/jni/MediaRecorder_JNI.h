@@ -23,7 +23,9 @@ namespace MediaRecorder {
         return persistentDelegate->get();
     }
 }
+
 class VROSceneRenderer;
+class VROChoreographer;
 
 class MediaRecorder_JNI : public std::enable_shared_from_this<MediaRecorder_JNI> {
 public:
@@ -37,13 +39,15 @@ public:
 
     // Native to java calls
     void onBindToEGLSurface();
-    void onUnBindFromEGLSurface();
+    void onUnbindFromEGLSurface();
     void onEnableFrameRecording(bool enabled);
     void onEglSwap();
     void onTakeScreenshot();
 
 private:
     std::shared_ptr<VROAVRecorderAndroid> _nativeMediaRecorder;
+    std::weak_ptr<VROChoreographer> _choreographer;
+    std::weak_ptr<VRODriver> _driver;
     VRO_OBJECT _javaMediaRecorder;
 };
 

@@ -1215,7 +1215,7 @@ public class ViroActivity extends AppCompatActivity {
                 mViroView.getRecorder().stopRecordingAsync(new ViroMediaRecorder.VideoRecordingFinishListener() {
                     @Override
                     public void onSuccess(String filePath) {
-                        Log.i("Viro", "Written to path " + filePath);
+                        Log.i("Viro", "Wrote video to path " + filePath);
                     }
 
                     @Override
@@ -1224,14 +1224,14 @@ public class ViroActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, 6000);
+        }, 5000);
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.i("Viro", "STARTING RECORDING (2)");
 
-                mViroView.getRecorder().startRecordingAsync("file1", true, new ViroMediaRecorder.RecordingErrorListener() {
+                mViroView.getRecorder().startRecordingAsync("file2", true, new ViroMediaRecorder.RecordingErrorListener() {
                     @Override
                     public void onRecordingFailed(ViroMediaRecorder.Error errorCode) {
                         Log.i("Viro", "Failed " + errorCode);
@@ -1243,12 +1243,12 @@ public class ViroActivity extends AppCompatActivity {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.i("Viro", "STOPPING RECORDING(2)");
+                Log.i("Viro", "STOPPING RECORDING (2)");
 
                 mViroView.getRecorder().stopRecordingAsync(new ViroMediaRecorder.VideoRecordingFinishListener() {
                     @Override
                     public void onSuccess(String filePath) {
-                        Log.i("Viro", "Written to path " + filePath);
+                        Log.i("Viro", "Wrote video to path " + filePath);
                     }
 
                     @Override
@@ -1257,7 +1257,45 @@ public class ViroActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, 10000);
+        }, 11000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Viro", "TAKING SCREENSHOT");
+
+                mViroView.getRecorder().takeScreenShotAsync("file3", true, new ViroMediaRecorder.ScreenshotFinishListener() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap, String filePath) {
+                        Log.i("Viro", "Wrote screenshot to path " + filePath);
+                    }
+
+                    @Override
+                    public void onError(ViroMediaRecorder.Error errorCode) {
+                        Log.i("Viro", "Failed to take screenshot: " + errorCode);
+                    }
+                });
+            }
+        }, 13000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Viro", "TAKING SCREENSHOT (2)");
+
+                mViroView.getRecorder().takeScreenShotAsync("file4", true, new ViroMediaRecorder.ScreenshotFinishListener() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap, String filePath) {
+                        Log.i("Viro", "Wrote screenshot (2) to path " + filePath);
+                    }
+
+                    @Override
+                    public void onError(ViroMediaRecorder.Error errorCode) {
+                        Log.i("Viro", "Failed to take screenshot (2): " + errorCode);
+                    }
+                });
+            }
+        }, 15000);
     }
 
     private EventDelegate getGenericDelegate(final String delegateTag){

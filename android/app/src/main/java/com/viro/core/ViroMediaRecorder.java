@@ -795,7 +795,7 @@ public class ViroMediaRecorder {
      * and is usually called after recording a frame.
      * @hide
      */
-    public void onNativeUnBindEGLSurface() {
+    public void onNativeUnbindEGLSurface() {
         if(!mInputSurface.restoreRenderState()) {
             stopVideoRecordingAsyncWithError(Error.WRITE_TO_FILE, mVideoRecordingErrorDelegate);
         }
@@ -838,7 +838,7 @@ public class ViroMediaRecorder {
     /*
      Native calls to the renderer.
      */
-    private native long nativeCreateNativeRecorder(long nativeRecorderRef);
+    private native long nativeCreateNativeRecorder(long sceneRendererRef);
     private native void nativeDeleteNativeRecorder(long nativeRecorderRef);
     private native void nativeEnableFrameRecording(long nativeRecorderRef, boolean enabled);
     private native void nativeScheduleScreenCapture(long nativeRecorderRef);

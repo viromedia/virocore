@@ -88,13 +88,13 @@ void VROAVRecorderAndroid::bindToEglSurface() {
     jRecorder->onBindToEGLSurface();
 }
 
-void VROAVRecorderAndroid::unBindFromEGLSurface() {
+void VROAVRecorderAndroid::unbindFromEGLSurface() {
     std::shared_ptr<MediaRecorder_JNI> jRecorder = _w_mediaRecorderJNI.lock();
     if (!jRecorder) {
         return;
     }
 
-    jRecorder->onUnBindFromEGLSurface();
+    jRecorder->onUnbindFromEGLSurface();
 }
 
 void VROAVRecorderAndroid::eglSwap() {
