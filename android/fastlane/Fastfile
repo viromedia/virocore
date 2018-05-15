@@ -49,6 +49,15 @@ platform :android do
     sh("mkdir -p /tmp/viro_react_lib/")
     sh("cp ../viroreact/build/outputs/aar/viroreact-release.aar /tmp/viro_react_lib/viro_renderer-release.aar")
   end
+
+  lane :renderer_memoryleaktest do
+    gradle(task: ":memoryleaktest:assembleArcoreDebug")
+  end
+  
+  lane :renderer_releasetest do
+    gradle(task: ":releasetest:assembleArcoreDebug")
+  end
+
   desc "Build all artifacts for rendererTest (ovr, gvr, arcore, scene)"
   lane :release_renderer_rendererTest do
     gradle(task: ":rendererTest:assembleRelease")

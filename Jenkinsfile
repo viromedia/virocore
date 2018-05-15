@@ -25,6 +25,18 @@ fastlane renderer_viro_react_lib'''
 fastlane renderer_cp_viro_react_lib_to_tmp'''
       }
     }
+    stage('releasetest') {
+      steps {
+        sh '''cd android
+fastlane renderer_releasetest'''
+      }
+    }
+    stage('memoryleaktest') {
+      steps {
+        sh '''cd android
+fastlane renderer_memoryleaktest'''
+      }
+    }
     stage('start react-viro') {
       steps {
         build(job: 'react-viro/master', propagate: true, wait: true)
