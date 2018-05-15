@@ -54,7 +54,7 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ToneMappin
         self.renderDelegate.test = kRendererTest;
         self.view = view;
         
-        //[self testVideoRecording];
+        [self testVideoRecording];
         //[self testScreenshot];
     }
     else {
@@ -92,6 +92,19 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ToneMappin
         [arView startVideoRecording:filename saveToCameraRoll:YES errorBlock:nil];
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        NSLog(@"[VROTestViewController] stopped video recording");
+        [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
+            if (url) {
+                [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+            }
+        }];
+    });
+    
+    NSString *filename2 = [NSString stringWithFormat:@"testvideo%d", rand];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [arView startVideoRecording:filename2 saveToCameraRoll:YES errorBlock:nil];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         NSLog(@"[VROTestViewController] stopped video recording");
         [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
             if (url) {

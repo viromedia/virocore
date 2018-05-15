@@ -33,6 +33,7 @@ import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.RendererConfiguration;
+import com.viro.core.ViroMediaRecorder;
 import com.viro.core.ViroViewScene;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
@@ -353,6 +354,8 @@ public class ViroActivity extends AppCompatActivity {
 
         // Updating the scene.
         mViroView.setScene(scene);
+
+        testVideoRecording();
         //scene.displayPointCloud(true);
     }
 
@@ -1188,6 +1191,73 @@ public class ViroActivity extends AppCompatActivity {
         }, 4000);
 
         return node1;
+    }
+
+    private void testVideoRecording() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Viro", "STARTING RECORDING");
+                mViroView.getRecorder().startRecordingAsync("file1", true, new ViroMediaRecorder.RecordingErrorListener() {
+                    @Override
+                    public void onRecordingFailed(ViroMediaRecorder.Error errorCode) {
+                        Log.i("Viro", "Failed " + errorCode);
+                    }
+                });
+            }
+        }, 2000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Viro", "STOPPING RECORDING");
+
+                mViroView.getRecorder().stopRecordingAsync(new ViroMediaRecorder.VideoRecordingFinishListener() {
+                    @Override
+                    public void onSuccess(String filePath) {
+                        Log.i("Viro", "Written to path " + filePath);
+                    }
+
+                    @Override
+                    public void onError(ViroMediaRecorder.Error errorCode) {
+                        Log.i("Viro", "Failed to stop video recorder (1): " + errorCode);
+                    }
+                });
+            }
+        }, 6000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Viro", "STARTING RECORDING (2)");
+
+                mViroView.getRecorder().startRecordingAsync("file1", true, new ViroMediaRecorder.RecordingErrorListener() {
+                    @Override
+                    public void onRecordingFailed(ViroMediaRecorder.Error errorCode) {
+                        Log.i("Viro", "Failed " + errorCode);
+                    }
+                });
+            }
+        }, 8000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Viro", "STOPPING RECORDING(2)");
+
+                mViroView.getRecorder().stopRecordingAsync(new ViroMediaRecorder.VideoRecordingFinishListener() {
+                    @Override
+                    public void onSuccess(String filePath) {
+                        Log.i("Viro", "Written to path " + filePath);
+                    }
+
+                    @Override
+                    public void onError(ViroMediaRecorder.Error errorCode) {
+                        Log.i("Viro", "Failed to stop video recorder (2): " + errorCode);
+                    }
+                });
+            }
+        }, 10000);
     }
 
     private EventDelegate getGenericDelegate(final String delegateTag){
