@@ -10,7 +10,9 @@
 #include "VROPlatformUtil.h"
 #include <stdlib.h>
 
-VROImageAndroid::VROImageAndroid(std::string asset, VROTextureInternalFormat internalFormat) {
+VROImageAndroid::VROImageAndroid(std::string asset, VROTextureInternalFormat internalFormat) :
+    _grayscaleData(nullptr) {
+
     jobject jbitmap = VROPlatformLoadBitmapFromAsset(asset, internalFormat);
     bool hasAlpha;
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height, &hasAlpha);
@@ -27,7 +29,9 @@ VROImageAndroid::VROImageAndroid(std::string asset, VROTextureInternalFormat int
     }
 }
 
-VROImageAndroid::VROImageAndroid(jobject jbitmap, VROTextureInternalFormat internalFormat) {
+VROImageAndroid::VROImageAndroid(jobject jbitmap, VROTextureInternalFormat internalFormat) :
+    _grayscaleData(nullptr) {
+
     bool hasAlpha = false;
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height, &hasAlpha);
     if (internalFormat == VROTextureInternalFormat::RGB565) {
@@ -41,7 +45,9 @@ VROImageAndroid::VROImageAndroid(jobject jbitmap, VROTextureInternalFormat inter
     }
 }
 
-VROImageAndroid::VROImageAndroid(jobject jbitmap) {
+VROImageAndroid::VROImageAndroid(jobject jbitmap) :
+    _grayscaleData(nullptr) {
+
     _format = VROPlatformGetBitmapFormat(jbitmap);
     bool hasAlpha;
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height, &hasAlpha);
@@ -90,18 +96,18 @@ unsigned char *VROImageAndroid::getGrayscaleData(size_t *length, size_t *stride)
  This function comes from the augmented_image_c example provided by ARCore (util.h's
  ConvertRgbaToGrayscale function).
  */
-void VROImageAndroid::convertRgbaToGrayscale(int32_t stride, uint8_t** out_grayscale_buffer) {
-  int32_t grayscale_stride = stride / 4;  // Only support RGBA_8888 format
-  uint8_t* grayscale_buffer = new uint8_t[grayscale_stride * _height];
-  for (int h = 0; h < _height; ++h) {
-    for (int w = 0; w < _width; ++w) {
-      const uint8_t* pixel = &_data[w * 4 + h * stride];
-      uint8_t r = *pixel;
-      uint8_t g = *(pixel + 1);
-      uint8_t b = *(pixel + 2);
-      grayscale_buffer[w + h * grayscale_stride] =
-          static_cast<uint8_t>(0.213f * r + 0.715 * g + 0.072 * b);
+void VROImageAndroid::convertRgbaToGrayscale(int32_t stride, uint8_t **out_grayscale_buffer) {
+    int32_t grayscale_stride = stride / 4;  // Only support RGBA_8888 format
+    uint8_t *grayscale_buffer = new uint8_t[grayscale_stride * _height];
+    for (int h = 0; h < _height; ++h) {
+        for (int w = 0; w < _width; ++w) {
+            const uint8_t *pixel = &_data[w * 4 + h * stride];
+            uint8_t r = *pixel;
+            uint8_t g = *(pixel + 1);
+            uint8_t b = *(pixel + 2);
+            grayscale_buffer[w + h * grayscale_stride] =
+                    static_cast<uint8_t>(0.213f * r + 0.715 * g + 0.072 * b);
+        }
     }
-  }
-  *out_grayscale_buffer = grayscale_buffer;
+    *out_grayscale_buffer = grayscale_buffer;
 }
