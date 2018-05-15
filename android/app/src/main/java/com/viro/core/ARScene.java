@@ -289,6 +289,30 @@ public class ARScene extends Scene {
     }
 
     /**
+     * Get the estimated intensity of the lighting in the real-world, in lumens. This value can
+     * be applied to an {@link AmbientLight} to make the ambient lighting of your virtual
+     * objects closely resemble the ambient lighting detected in the real-world.
+     *
+     * @return The estimated intensity of the ambient light, in lumens.
+     */
+    public float getEstimatedAmbientLightIntensity() {
+        return nativeGetAmbientLightIntensity(mNativeRef);
+    }
+
+    /**
+     * Get the estimated color of the lighting in the real-world, as an RGB vector with values
+     * ranging from 0 to 1. The returned color can be applied to an {@link AmbientLight} to make
+     * the ambient lighting of your virtual objects closely resemble the ambient lighting detected
+     * in the real-world.
+     *
+     * @return The estimated color of the ambient light, in an RGB [0,1] {@link Vector}.
+     */
+    public Vector getEstimatedAmbientLightColor() {
+        float[] color = nativeGetAmbientLightColor(mNativeRef);
+        return new Vector(color[0], color[1], color[2]);
+    }
+
+    /**
      * @hide
      */
     public void setAnchorDetectionTypes(EnumSet<ViroViewARCore.AnchorDetectionType> enumTypes) {
@@ -384,6 +408,8 @@ public class ARScene extends Scene {
     private native void nativeRemoveARImageTarget(long sceneControllerRef, long arImageTargetRef);
     private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
     private native void nativeRemoveARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
+    private native float nativeGetAmbientLightIntensity(long sceneControllerRef);
+    private native float[] nativeGetAmbientLightColor(long sceneControllerRef);
 
     // Called by JNI
 

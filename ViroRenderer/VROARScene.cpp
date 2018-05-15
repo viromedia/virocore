@@ -223,6 +223,9 @@ void VROARScene::setTrackingState(VROARTrackingState state, VROARTrackingStateRe
 }
 
 void VROARScene::updateAmbientLight(float intensity, VROVector3f color) {
+    _ambientLightIntensity.store(intensity);
+    _ambientLightColor.store(color);
+
     std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
     if (delegate) {
         delegate->onAmbientLightUpdate(intensity, color);

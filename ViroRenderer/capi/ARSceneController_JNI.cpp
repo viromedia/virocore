@@ -289,6 +289,20 @@ VRO_METHOD(void, nativeRemoveARImageTargetDeclarative)(VRO_ARGS
     });
 }
 
+VRO_METHOD(VRO_FLOAT, nativeGetAmbientLightIntensity)(VRO_ARGS
+                                                      VRO_REF(VROARSceneController) sceneController_j) {
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, sceneController_j)->getScene());
+    return scene->getAmbientLightIntensity();
+}
+
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetAmbientLightColor)(VRO_ARGS
+                                                        VRO_REF(VROARSceneController) sceneController_j) {
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, sceneController_j)->getScene());
+    return ARUtilsCreateFloatArrayFromVector3f(scene->getAmbientLightColor());
+}
+
 }  // extern "C"
 
 void ARDeclarativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,

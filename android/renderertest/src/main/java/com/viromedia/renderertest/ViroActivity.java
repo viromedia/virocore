@@ -884,7 +884,7 @@ public class ViroActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAmbientLightUpdate(final float lightIntensity, final float colorTemperature) {
+            public void onAmbientLightUpdate(final float lightIntensity, Vector lightColor) {
 
             }
 
@@ -980,7 +980,7 @@ public class ViroActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAmbientLightUpdate(final float lightIntensity, final float colorTemperature) {
+            public void onAmbientLightUpdate(final float lightIntensity, Vector color) {
 
             }
 
