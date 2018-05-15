@@ -14,6 +14,13 @@
 #include "VROVector4f.h"
 #include "VROLight.h"
 
+// ARCore color corrections are generally returned in the range 0.5 to 1.5; since they
+// go above 1.0, they are not compatible with with hexadecimal color representations
+// used in React. To compensate for this, rebalance the color corrections by multiplying
+// by this factor. Since doing this will reduce the intensity of the light, we also have
+// to then multiply the estimated intensity by the *inverse* of this factor
+static const float kLightEstimateIntensityRebalance = 0.5f;
+
 VROARFrameARCore::VROARFrameARCore(arcore::Frame *frame,
                                    VROViewport viewport,
                                    std::shared_ptr<VROARSessionARCore> session) :
@@ -164,8 +171,10 @@ float VROARFrameARCore::getAmbientLightIntensity() const {
         intensity = 1.0;
     }
     delete (estimate);
-    // multiply by 1000 because pixel intensity ranges from 0 to 1
-    return intensity * 1000;
+    // Multiply by 1000 because pixel intensity ranges from 0 to 1. Multiply by the inverse of
+    // the rebalancing factor to compensate for the brightness reduction caused by rebalancing
+    // color correction
+    return intensity * 1000 * 1.0 / kLightEstimateIntensityRebalance;
 }
 
 VROVector3f VROARFrameARCore::getAmbientLightColor() const {
@@ -185,9 +194,13 @@ VROVector3f VROARFrameARCore::getAmbientLightColor() const {
     }
     delete (estimate);
 
-    // ARCore returns light values in gamma space
+    // ARCore returns light values in gamma space in the range 0.5 to 1.5. First convert
+    // to linear color, then rebalance so the values do not breach 1.0. The brightness is
+    // diminished but this is compensated by multiplying estimated intensity by the inverse
+    // of the rebalance constant.
     VROVector3f gammaColor = { correction[0], correction[1], correction[2] };
-    return VROLight::convertGammaToLinear(gammaColor);
+    VROVector3f linearColor = VROLight::convertGammaToLinear(gammaColor);
+    return linearColor.scale(kLightEstimateIntensityRebalance);
 }
 
 std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
