@@ -15,6 +15,7 @@ package com.viro.core;
 
 import android.net.Uri;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -46,14 +47,59 @@ public class Object3D extends Node {
          * OBJ model format. MTL files are also supported. MTL and textures should reside in the
          * same folder as the OBJ file. This format supports diffuse, specular, and normal maps.
          */
-        OBJ,
+        OBJ(1),
 
         /**
          * FBX model format. FBX files need to be converted to VRX via the ViroFBX script. Textures
          * should reside in the same folder as the VRX file. This format supports skeletal and
          * keyframe animation, and diffuse, specular, and normal maps.
          */
-        FBX
+        FBX(2),
+
+        /**
+         * GLTF model format. GLTF files do not need ViroFBX script conversion. Associated resources
+         * like textures should reside in the same relative file path that as specified in the
+         * .gltf JSON structured file. This format currently only supports static GLTF models.
+         */
+        GLTF(3),
+
+        /**
+         * A GLTF model that is in a GLB (binary) format. Like GLTF, GLB files do not need
+         * ViroFBX script conversion. Associated resources like textures should reside in the same
+         * relative file path that is specified by the JSON GLTF manifest that has been base64
+         * encoded into this file. This format currently only supports static GLTF models.
+         */
+        GLB(4);
+
+        Type(int assignedID) {
+            id = assignedID;
+        }
+
+        public final int id;
+        private static Map<Integer, Type> map = new HashMap<Integer, Type>();
+        static {
+            for (Type modelType : Type.values()) {
+                map.put(modelType.id, modelType);
+            }
+        }
+
+        public static Type valueOf(int id) {
+            return map.get(id);
+        }
+
+        public static Type fromString(String sType) {
+            if (sType.equalsIgnoreCase("OBJ")) {
+                return Object3D.Type.OBJ;
+            } else if (sType.equalsIgnoreCase("VRX")) {
+                return Object3D.Type.FBX;
+            } else if (sType.equalsIgnoreCase("GLTF")) {
+                return Object3D.Type.GLTF;
+            } else if (sType.equalsIgnoreCase("GLB")) {
+                return Object3D.Type.GLB;
+            } else {
+                throw new IllegalArgumentException("String [" + sType + "] is not a valid object type.");
+            }
+        }
     }
 
     /**
@@ -79,7 +125,7 @@ public class Object3D extends Node {
     public void loadModel(ViroContext viroContext, Uri uri, Type type, AsyncObject3DListener asyncListener) {
         removeAllChildNodes();
         long requestID = mActiveRequestID.incrementAndGet();
-        nativeLoadModelFromURL(uri.toString(), mNativeRef, viroContext.mNativeRef, type == Type.FBX, requestID);
+        nativeLoadModelFromURL(uri.toString(), mNativeRef, viroContext.mNativeRef, type.id, requestID);
         mAsyncListener = asyncListener;
     }
 
@@ -102,7 +148,7 @@ public class Object3D extends Node {
 
         long requestID = mActiveRequestID.incrementAndGet();
         nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, viroContext.mNativeRef,
-                                    type == Type.FBX, requestID);
+                                                    type.id, requestID);
         mAsyncListener = asyncObjListener;
     }
     //#ENDIF
@@ -138,26 +184,26 @@ public class Object3D extends Node {
     /**
      * Called from JNI upon successful loading of an Object3D into this Node.
      *
-     * @param isFBX True if the model loaded is FBX, false if OBJ.
      * @hide
      */
-    void nodeDidFinishCreation(Material[] materials, boolean isFBX, long geometryRef) {
+    void nodeDidFinishCreation(Material[] materials, int modelType, long geometryRef) {
         if (mDestroyed) {
             return;
         }
 
+        Type type = Type.valueOf(modelType);
         /*
          If the model loaded is OBJ, create a Java Geometry to wrap the native Geometry.
          This enables developers to set/manipulate materials on the Geometry.
          */
-        if (!isFBX && geometryRef != 0) {
+        if (type == Type.OBJ && geometryRef != 0) {
             setGeometry(new Geometry(geometryRef));
         }
 
         mMaterialList = Arrays.asList(materials);
 
         if (mAsyncListener != null) {
-            mAsyncListener.onObject3DLoaded(this, isFBX ? Type.FBX : Type.OBJ);
+            mAsyncListener.onObject3DLoaded(this, type);
         }
     }
 
@@ -197,6 +243,6 @@ public class Object3D extends Node {
         return mActiveRequestID.get();
     }
 
-    private native void nativeLoadModelFromURL(String url, long nodeRef, long contextRef, boolean isFBX, long requestID);
-    private native void nativeLoadModelFromResources(String modelResource, Map<String, String> assetResources, long nodeRef, long contextRef, boolean isFBX, long requestID);
+    private native void nativeLoadModelFromURL(String url, long nodeRef, long contextRef,int modelType, long requestID);
+    private native void nativeLoadModelFromResources(String modelResource, Map<String, String> assetResources, long nodeRef, long contextRef, int modelType, long requestID);
 }

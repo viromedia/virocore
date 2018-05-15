@@ -241,6 +241,21 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
     return std::make_shared<VROImageiOS>(image, format);
 }
 
+std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsigned char> rawData, VROTextureInternalFormat format) {
+    NSData *data = [NSData dataWithBytes:rawData.data() length:rawData.size()];
+    if (!data) {
+        pwarn("Error when processing buffered image data.");
+        return nullptr;
+    }
+
+    UIImage *tmp = [UIImage imageWithData:data];
+    if (!tmp) {
+        pwarn("Error when processing buffered UI Image.");
+        return nullptr;
+    }
+    return std::make_shared<VROImageiOS>(tmp, format);
+}
+
 #pragma mark - MacOS
 
 #elif VRO_PLATFORM_MACOS
@@ -648,6 +663,31 @@ jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat
     env->DeleteLocalRef(string);
     env->DeleteLocalRef(cls);
     return jbitmap;
+}
+
+
+std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsigned char> rawData,
+                                                               VROTextureInternalFormat format) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls,
+                                         "loadBitmapFromByteBuffer",
+                                         "(Ljava/nio/ByteBuffer;Z)Landroid/graphics/Bitmap;");
+    jobject jbuffer = env->NewDirectByteBuffer((void*) rawData.data(), rawData.size());
+    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, jbuffer,
+                                            format == VROTextureInternalFormat::RGB565);
+
+    env->DeleteLocalRef(jbuffer);
+    env->DeleteLocalRef(cls);
+
+    if (jbitmap == NULL) {
+        pwarn("Error when processing buffered image data.");
+        return nullptr;
+    }
+
+    return std::make_shared<VROImageAndroid>(jbitmap, format);
 }
 
 VROTextureFormat VROPlatformGetBitmapFormat(jobject jbitmap) {

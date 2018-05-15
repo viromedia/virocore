@@ -134,6 +134,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROStringUtil.cpp
              ${VIRO_RENDERER_SRC}/VROPlatformUtil.cpp
              ${VIRO_RENDERER_SRC}/VROFBXLoader.cpp
+             ${VIRO_RENDERER_SRC}/VROGLTFLoader.cpp
              ${VIRO_RENDERER_SRC}/VROModelIOUtil.cpp
              ${VIRO_RENDERER_SRC}/VROOBJLoader.cpp
              ${VIRO_RENDERER_SRC}/VROHDRLoader.cpp

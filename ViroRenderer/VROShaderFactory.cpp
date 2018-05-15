@@ -325,7 +325,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createRoughnessTextureModif
     if (!sRoughnessTextureModifier) {
         std::vector<std::string> modifierCode =  {
             "uniform sampler2D roughness_map;",
-            "_surface.roughness = max(0.04, texture(roughness_map, _surface.diffuse_texcoord).r);"
+            "_surface.roughness = max(0.04, texture(roughness_map, _surface.diffuse_texcoord).g);"
         };
         sRoughnessTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                         modifierCode);
@@ -338,7 +338,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createMetalnessTextureModif
     if (!sMetalnessTextureModifier) {
         std::vector<std::string> modifierCode =  {
             "uniform sampler2D metalness_map;",
-            "_surface.metalness = texture(metalness_map, _surface.diffuse_texcoord).r;"
+            "_surface.metalness = texture(metalness_map, _surface.diffuse_texcoord).b;"
         };
         sMetalnessTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                         modifierCode);

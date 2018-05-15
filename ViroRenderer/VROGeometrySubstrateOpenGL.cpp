@@ -22,7 +22,7 @@
 VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
                                                        std::shared_ptr<VRODriverOpenGL> driver) :
     _driver(driver) {
-    
+
     readGeometryElements(geometry.getGeometryElements());
         
     std::vector<std::shared_ptr<VROGeometrySource>> sources = geometry.getGeometrySources();
@@ -42,6 +42,7 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
     for (VROGeometryElementOpenGL &element : _elements) {
         buffers.push_back(element.buffer);
     }
+
     for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
         buffers.push_back(vd.buffer);
     }
@@ -51,6 +52,13 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
         glDeleteBuffers((int) buffers.size(), buffers.data());
         glDeleteVertexArrays((int) _vaos.size(), _vaos.data());
     }
+
+    std::map<int, std::vector<VROVertexDescriptorOpenGL>>::iterator it;
+    for (it = _elementToDescriptorsMap.begin(); it != _elementToDescriptorsMap.end(); it++) {
+        it->second.clear();
+    }
+    _elementToDescriptorsMap.clear();
+    _elements.clear();
 }
 
 void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
@@ -67,15 +75,13 @@ void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::sha
         elementOGL.indexCount = indexCount;
         elementOGL.indexType = (element->getBytesPerIndex() == 2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
         elementOGL.indexBufferOffset = 0;
-        
         _elements.push_back(elementOGL);
     }
 }
 
 void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shared_ptr<VROGeometrySource>> &sources) {
-    std::shared_ptr<VROGeometrySource> source = sources.front();
     std::map<std::shared_ptr<VROData>, std::vector<std::shared_ptr<VROGeometrySource>>> dataMap;
-    
+
     /*
      Sort the sources into groups defined by the data array they're using.
      */
@@ -102,7 +108,8 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
         int dataSize = 0;
         for (std::shared_ptr<VROGeometrySource> source : group) {
             int size = source->getVertexCount() * source->getDataStride();
-            dataSize = std::max(dataSize, size);
+            int offsetSize = source->getDataOffset();
+            dataSize = std::max(dataSize, size + offsetSize);
         }
         
         VROVertexDescriptorOpenGL vd;
@@ -119,15 +126,21 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
         for (int i = 0; i < group.size(); i++) {
             std::shared_ptr<VROGeometrySource> source = group[i];
             int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
-            
             std::pair<GLuint, int> format = parseVertexFormat(source);
             vd.attributes[vd.numAttributes].index = attrIdx;
             vd.attributes[vd.numAttributes].size = format.second;
             vd.attributes[vd.numAttributes].type = format.first;
             vd.attributes[vd.numAttributes].offset = source->getDataOffset();
-            
             vd.numAttributes++;
             passert (source->getDataStride() == vd.stride);
+
+            int elementIndex = source->getGeometryElementIndex();
+            if (elementIndex != -1) {
+                if (_elementToDescriptorsMap.find(elementIndex) == _elementToDescriptorsMap.end()) {
+                    _elementToDescriptorsMap[elementIndex] = std::vector<VROVertexDescriptorOpenGL>();
+                }
+                _elementToDescriptorsMap[elementIndex].push_back(vd);
+            }
         }
         
         _vertexDescriptors.push_back(vd);
@@ -140,8 +153,13 @@ void VROGeometrySubstrateOpenGL::createVAO() {
     
     for (int i = 0; i < _elements.size(); i++) {
         glBindVertexArray(vaos[i]);
-        
-        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
+        std::vector<VROVertexDescriptorOpenGL> &vertexDescriptors = _vertexDescriptors;
+        if (_elementToDescriptorsMap.size() > 0
+                && _elementToDescriptorsMap.find(i) != _elementToDescriptorsMap.end()) {
+            vertexDescriptors = _elementToDescriptorsMap[i];
+        }
+
+        for (VROVertexDescriptorOpenGL &vd : vertexDescriptors) {
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
             
             for (int i = 0; i < vd.numAttributes; i++) {
@@ -224,7 +242,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                                         const std::shared_ptr<VROMaterial> &material,
                                         const VRORenderContext &context,
                                         std::shared_ptr<VRODriver> &driver) {
-    
     VROMatrix4f viewMatrix = context.getViewMatrix();
     VROMatrix4f projectionMatrix = context.getProjectionMatrix();
     
@@ -288,9 +305,9 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             ++activeTexture;
             continue;
         }
-        
+
         const std::shared_ptr<VROTexture> &texture = reference.getTexture(context);
-        
+
         for (int s = 0; s < texture->getNumSubstrates(); s++) {
             VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(s, driver, context.getFrameScheduler().get());
             if (!substrate) {

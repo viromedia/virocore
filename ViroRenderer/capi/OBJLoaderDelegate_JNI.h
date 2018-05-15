@@ -11,6 +11,15 @@
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
 
+enum class ModelType {
+    Unknown = -1,
+    OBJ = 1,
+    FBX = 2,
+    GLTF = 3,
+    GLB = 4,
+};
+ModelType VROGetModelType(VRO_INT jModelType);
+
 class VRONode;
 class VROMaterial;
 class OBJLoaderDelegate {
@@ -18,7 +27,7 @@ public:
     OBJLoaderDelegate(VRO_OBJECT nodeJavaObject, VRO_ENV env);
     ~OBJLoaderDelegate();
 
-    void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO_LONG requestId);
+    void objLoaded(std::shared_ptr<VRONode> node, ModelType type, VRO_LONG requestId);
     void objFailed(std::string error);
 private:
     VRO_OBJECT _javaObject;

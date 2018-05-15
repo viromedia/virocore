@@ -9,6 +9,7 @@
 #ifndef VROGeometrySubstrateOpenGL_h
 #define VROGeometrySubstrateOpenGL_h
 
+#include <map>
 #include "VROGeometrySubstrate.h"
 #include "VROOpenGL.h"
 
@@ -79,8 +80,9 @@ private:
     
     std::vector<GLuint> _vaos;
     std::vector<VROGeometryElementOpenGL> _elements;
+    std::map<int, std::vector<VROVertexDescriptorOpenGL>> _elementToDescriptorsMap;
     std::vector<VROVertexDescriptorOpenGL> _vertexDescriptors;
-    
+
     /*
      Parse the given geometry elements and populate the _elements vector with the
      results.

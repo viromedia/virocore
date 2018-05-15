@@ -24,7 +24,7 @@ OBJLoaderDelegate::~OBJLoaderDelegate() {
     VRO_DELETE_WEAK_GLOBAL_REF(_javaObject);
 }
 
-void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO_LONG requestId) {
+void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, ModelType modelType, VRO_LONG requestId) {
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
@@ -36,7 +36,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         return;
     }
 
-    VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
+    VROPlatformDispatchAsyncApplication([weakObj, node, modelType] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
         if (VRO_IS_OBJECT_NULL(localObj)) {
@@ -47,7 +47,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         // If the request was for an OBJ, create a persistent ref for the Java Geometry and
         // pass that up as well. This enables Java SDK users to set materials on the Geometry
         VRO_REF(VROGeometry) geometryRef = 0;
-        if (!isFBX && node->getGeometry()) {
+        if (modelType == ModelType::OBJ && node->getGeometry()) {
             geometryRef = VRO_REF_NEW(VROGeometry, node->getGeometry());
         }
 
@@ -75,8 +75,8 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, VRO
         VRO_REF(VROGeometry) jGeometryRef = geometryRef;
         VROPlatformCallHostFunction(localObj,
                                     "nodeDidFinishCreation",
-                                    "([Lcom/viro/core/Material;ZJ)V",
-                                    materialArray, isFBX, jGeometryRef);
+                                    "([Lcom/viro/core/Material;IJ)V",
+                                    materialArray, (int)modelType, jGeometryRef);
 
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
@@ -134,4 +134,18 @@ void OBJLoaderDelegate::objFailed(std::string error) {
         VRO_DELETE_LOCAL_REF(jerror);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
+}
+
+ModelType VROGetModelType(VRO_INT jModelType) {
+    if (jModelType == (int) ModelType::FBX) {
+        return ModelType::FBX;
+    } else if (jModelType == (int) ModelType::OBJ) {
+        return ModelType::OBJ;
+    } else if (jModelType == (int) ModelType::GLTF) {
+        return ModelType::GLTF;
+    } else if (jModelType == (int) ModelType::GLB) {
+        return ModelType::GLB;
+    }
+
+    return ModelType::Unknown;
 }

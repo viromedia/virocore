@@ -730,6 +730,9 @@
 		A517D2CC1F41A16400A22219 /* cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = A517D2CB1F41A16400A22219 /* cloud.png */; };
 		A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = A517D2D51F44AC5500A22219 /* VROParticle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A523E7A420AB43E500D24B42 /* VROGLTFLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A523E7A320AB43E500D24B42 /* VROGLTFLoader.cpp */; };
+		A523E7A820AB469F00D24B42 /* VROGLTFLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A523E7A320AB43E500D24B42 /* VROGLTFLoader.cpp */; };
+		A523E7A920AB46AD00D24B42 /* VROGLTFLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A523E7A220AB43E400D24B42 /* VROGLTFLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A56529A41EFD8051008097D7 /* VROTransformDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1625,6 +1628,10 @@
 		A517D2CB1F41A16400A22219 /* cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cloud.png; path = ViroSample/cloud.png; sourceTree = "<group>"; };
 		A517D2D51F44AC5500A22219 /* VROParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticle.h; sourceTree = "<group>"; };
 		A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticleModifier.h; sourceTree = "<group>"; };
+		A523E7A020AB43CF00D24B42 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
+		A523E7A120AB43D000D24B42 /* tiny_gltf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tiny_gltf.h; sourceTree = "<group>"; };
+		A523E7A220AB43E400D24B42 /* VROGLTFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGLTFLoader.h; sourceTree = "<group>"; };
+		A523E7A320AB43E500D24B42 /* VROGLTFLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGLTFLoader.cpp; sourceTree = "<group>"; };
 		A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegateiOS.h; sourceTree = "<group>"; };
 		A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsContactResultCallback.h; sourceTree = "<group>"; };
 		A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsMotionState.h; sourceTree = "<group>"; };
@@ -1926,6 +1933,8 @@
 				8F4DCE3B1BFBE54200061DD7 /* VROGeometryElement.cpp */,
 				8F4DCE3F1BFBE97600061DD7 /* VROGeometrySource.h */,
 				8F4DCE3E1BFBE97600061DD7 /* VROGeometrySource.cpp */,
+				A523E7A320AB43E500D24B42 /* VROGLTFLoader.cpp */,
+				A523E7A220AB43E400D24B42 /* VROGLTFLoader.h */,
 				8F4DCE331BFBCB5400061DD7 /* VROMaterial.h */,
 				8F4DCE321BFBCB5400061DD7 /* VROMaterial.cpp */,
 				8F4DCE391BFBD19B00061DD7 /* VROMaterialVisual.h */,
@@ -2606,6 +2615,8 @@
 		8FCB6C851C3C826C00C14158 /* IO */ = {
 			isa = PBXGroup;
 			children = (
+				A523E7A020AB43CF00D24B42 /* json.hpp */,
+				A523E7A120AB43D000D24B42 /* tiny_gltf.h */,
 				8FEACEE2201697810082D18B /* stb_image.h */,
 				8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */,
 				8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */,
@@ -3285,6 +3296,7 @@
 				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
 				8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */,
 				8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */,
+				A523E7A920AB46AD00D24B42 /* VROGLTFLoader.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
 				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
 				8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */,
@@ -3860,6 +3872,7 @@
 				A5B433EC204E64A600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */,
 				8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */,
 				8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */,
+				A523E7A420AB43E500D24B42 /* VROGLTFLoader.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 			);
@@ -3934,6 +3947,7 @@
 				8FD2A5151F81335C00E831A6 /* VROTestUtil.cpp in Sources */,
 				8ABEDD3820115EC7003E8AFF /* VROTrackingHelper.mm in Sources */,
 				8F4054191F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp in Sources */,
+				A523E7A820AB469F00D24B42 /* VROGLTFLoader.cpp in Sources */,
 				8F790CB41F3419C4009A2020 /* VROPortalTraversalListener.cpp in Sources */,
 				8FA2E1601C45DD270070DB26 /* VROReticle.cpp in Sources */,
 				8F0E5E981F3B52480007AD03 /* VRORenderTargetOpenGL.cpp in Sources */,
@@ -4467,8 +4481,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -4485,8 +4505,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -4569,8 +4601,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -4590,8 +4628,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

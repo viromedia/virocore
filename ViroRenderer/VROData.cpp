@@ -22,11 +22,13 @@ VROData::VROData(void *data, int dataLength, VRODataOwnership ownership) :
     }
 }
 
-VROData::VROData(const void *data, int dataLength) :
+VROData::VROData(const void *data, int dataLength, int byteOffset) :
     _ownership(VRODataOwnership::Copy) {
     _data = malloc(dataLength);
     _dataLength = dataLength;
-    memcpy(_data, data, dataLength);
+
+    const void *startingDataPoint = ((char*)data) + byteOffset;
+    memcpy(_data, startingDataPoint, dataLength);
 }
 
 VROData::~VROData() {

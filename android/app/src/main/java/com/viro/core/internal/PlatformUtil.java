@@ -282,7 +282,6 @@ public class PlatformUtil {
     // Accessed by Native code (VROPlatformUtil.cpp)
     public String copyAssetToFile(String asset) throws IOException {
         File file = new File(mContext.getCacheDir(), asset + "_" + mRandomStringGenerator.nextString());
-
         InputStream in = null;
         FileOutputStream out = null;
         try {
@@ -470,6 +469,24 @@ public class PlatformUtil {
                 e.printStackTrace();
             }
         }
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public Bitmap loadBitmapFromByteBuffer(ByteBuffer data, boolean rgb565) throws IOException {
+        Bitmap bitmap = null;
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = rgb565 ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888;
+            ByteBuffer dataBuffer = ByteBuffer.allocate(data.capacity());
+            dataBuffer.put(data);
+            dataBuffer.rewind();
+            bitmap = BitmapFactory.decodeByteArray(dataBuffer.array(), 0 , dataBuffer.capacity());
+        } catch(Exception e) {
+            Log.w(TAG, "Unknown error loading bitmap", e);
+            return null;
+        }
+
+        return bitmap;
     }
 
     private void flipVertical(ByteBuffer buf, int width, int height) {
