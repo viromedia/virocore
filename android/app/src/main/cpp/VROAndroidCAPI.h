@@ -49,9 +49,13 @@
 #define VRO_IS_STRING_EMPTY(str) \
     (str == NULL || env->GetStringLength(str) == 0)
 #define VRO_STRING_STL(str) ({ \
-    const char *str_c = VRO_STRING_GET_CHARS(str); \
-    std::string str_s(str_c); \
-    VRO_STRING_RELEASE_CHARS(str, str_c); str_s; })
+    std::string str_s = ""; \
+    if (str != NULL) { \
+        const char *str_c = VRO_STRING_GET_CHARS(str); \
+        str_s = std::string(str_c); \
+        VRO_STRING_RELEASE_CHARS(str, str_c); \
+    } \
+    str_s; })
 
 #define VRO_STRING_WIDE jstring
 #define VRO_IS_WIDE_STRING_EMPTY(str) \
