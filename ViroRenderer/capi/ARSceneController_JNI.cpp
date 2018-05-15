@@ -309,10 +309,10 @@ void ARDeclarativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
     });
 }
 
-void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature) {
+void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float intensity, VROVector3f color) {
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak, ambientLightIntensity, colorTemperature] {
+    VROPlatformDispatchAsyncApplication([jObjWeak, intensity, color] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
         if (VRO_IS_OBJECT_NULL(localObj)) {
@@ -320,8 +320,8 @@ void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensit
             return;
         }
 
-        VROPlatformCallHostFunction(localObj, "onAmbientLightUpdate", "(FF)V",
-                                    ambientLightIntensity, colorTemperature);
+        VROPlatformCallHostFunction(localObj, "onAmbientLightUpdate", "(FFFF)V",
+                                    intensity, color.x, color.y, color.z);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });
@@ -414,11 +414,11 @@ void ARImperativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
     });
 }
 
-void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity,
-                                                     float colorTemperature) {
+void ARImperativeSceneDelegate::onAmbientLightUpdate(float intensity,
+                                                     VROVector3f color) {
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak, ambientLightIntensity, colorTemperature] {
+    VROPlatformDispatchAsyncApplication([jObjWeak, intensity, color] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
         if (VRO_IS_OBJECT_NULL(localObj)) {
@@ -426,8 +426,8 @@ void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity
             return;
         }
 
-        VROPlatformCallHostFunction(localObj, "onAmbientLightUpdate", "(FF)V",
-                                    ambientLightIntensity, colorTemperature);
+        VROPlatformCallHostFunction(localObj, "onAmbientLightUpdate", "(FFFF)V",
+                                    intensity, color.x, color.y, color.z);
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
     });

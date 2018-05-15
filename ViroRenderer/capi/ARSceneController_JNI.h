@@ -29,7 +29,7 @@ public:
     }
 
     void onTrackingUpdated(VROARTrackingState state, VROARTrackingStateReason reason);
-    void onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature);
+    void onAmbientLightUpdate(float intensity, VROVector3f color);
     void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor);
     void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor);
     void anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor);
@@ -51,7 +51,7 @@ public:
     }
 
     void onTrackingUpdated(VROARTrackingState state, VROARTrackingStateReason reason);
-    void onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature);
+    void onAmbientLightUpdate(float intensity, VROVector3f color);
     void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node);
     void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node);
     void anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node);

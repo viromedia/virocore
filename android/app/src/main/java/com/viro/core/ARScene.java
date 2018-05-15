@@ -62,10 +62,10 @@ public class ARScene extends Scene {
          * updated. These values can be pumped into an {@link AmbientLight} to match the
          * lighting used by the virtual world to the lighting observed in the real world.
          *
-         * @param lightIntensity   The light intensity detected.
-         * @param colorTemperature The color temperature detected.
+         * @param intensity The light intensity detected, in lumens.
+         * @param color     The color of the light detected in RGB [0, 1].
          */
-        void onAmbientLightUpdate(float lightIntensity, float colorTemperature);
+        void onAmbientLightUpdate(float intensity, Vector color);
 
         /**
          * Invoked when a real-world {@link ARAnchor} is detected. You can associate virtual
@@ -438,10 +438,10 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
-    void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+    void onAmbientLightUpdate(float intensity, float r, float g, float b) {
         Listener delegate;
         if (mListener != null) {
-            mListener.onAmbientLightUpdate(lightIntensity, colorTemperature);
+            mListener.onAmbientLightUpdate(intensity, new Vector(r, g, b));
         }
     }
     /**

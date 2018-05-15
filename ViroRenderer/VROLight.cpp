@@ -67,7 +67,7 @@ void VROLight::setTemperature(float temperature) {
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float t) {
         VROLight *light = (VROLight *)animatable;
         light->_temperature = t;
-        light->_colorFromTemperature = light->deriveRGBFromTemperature(t);
+        light->_colorFromTemperature = VROLight::deriveRGBFromTemperature(t);
         light->_updatedFragmentData = true;
     }, _temperature, temperature));
 }
@@ -272,4 +272,18 @@ VROVector3f VROLight::deriveRGBFromTemperature(float temperature) {
              (float) (VROMathClamp(green, 0, 255.0) / 255.0),
              (float) (VROMathClamp(blue,  0, 255.0) / 255.0) };
 }
+
+VROVector3f VROLight::convertGammaToLinear(VROVector3f color) {
+    float array[3] = { color.x, color.y, color.z };
+    for (int i = 0; i < 3; i++) {
+        bool lowlight = array[i] < 0.082;
+        if (lowlight) {
+            array[i] = array[i] / 4.5f;
+        } else {
+            array[i] = pow(array[i] + 0.099 / 1.099, 2.2);
+        }
+    }
+    return { array[0], array[1], array[2] };
+}
+
 

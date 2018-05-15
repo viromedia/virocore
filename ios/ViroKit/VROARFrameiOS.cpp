@@ -17,6 +17,7 @@
 #include "VROConvert.h"
 #include "VROVector4f.h"
 #include "VROARHitTestResult.h"
+#include "VROLight.h"
 
 VROARFrameiOS::VROARFrameiOS(ARFrame *frame, VROViewport viewport, VROCameraOrientation orientation,
                              std::shared_ptr<VROARSessioniOS> session) :
@@ -153,8 +154,8 @@ float VROARFrameiOS::getAmbientLightIntensity() const {
     return _frame.lightEstimate.ambientIntensity;
 }
 
-float VROARFrameiOS::getAmbientLightColorTemperature() const {
-    return _frame.lightEstimate.ambientColorTemperature;
+VROVector3f VROARFrameiOS::getAmbientLightColor() const {
+    return VROLight::deriveRGBFromTemperature(_frame.lightEstimate.ambientColorTemperature);
 }
 
 std::shared_ptr<VROARPointCloud> VROARFrameiOS::getPointCloud() {

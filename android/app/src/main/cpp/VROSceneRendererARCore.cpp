@@ -180,7 +180,7 @@ void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamer
      Notify scene of the updated ambient light estimates
      */
     std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_session->getScene());
-    scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
+    scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColor());
 }
 
 void VROSceneRendererARCore::renderWaitingForTracking(VROViewport viewport) {

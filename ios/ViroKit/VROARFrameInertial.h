@@ -25,7 +25,7 @@ public:
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;
-    float getAmbientLightColorTemperature() const;
+    VROVector3f getAmbientLightColor() const;
 
     std::shared_ptr<VROARPointCloud> getPointCloud();
     

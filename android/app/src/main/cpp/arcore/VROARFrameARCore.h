@@ -29,7 +29,7 @@ public:
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;
-    float getAmbientLightColorTemperature() const;
+    VROVector3f getAmbientLightColor() const;
 
     bool hasDisplayGeometryChanged();
     void getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR);

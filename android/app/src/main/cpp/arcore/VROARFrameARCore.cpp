@@ -12,6 +12,7 @@
 #include "VROARHitTestResult.h"
 #include "VROPlatformUtil.h"
 #include "VROVector4f.h"
+#include "VROLight.h"
 
 VROARFrameARCore::VROARFrameARCore(arcore::Frame *frame,
                                    VROViewport viewport,
@@ -159,8 +160,7 @@ float VROARFrameARCore::getAmbientLightIntensity() const {
     _frame->getLightEstimate(estimate);
     if (estimate->isValid()) {
         intensity = estimate->getPixelIntensity();
-    }
-    else {
+    } else {
         intensity = 1.0;
     }
     delete (estimate);
@@ -168,8 +168,26 @@ float VROARFrameARCore::getAmbientLightIntensity() const {
     return intensity * 1000;
 }
 
-float VROARFrameARCore::getAmbientLightColorTemperature() const {
-    return 1.0;
+VROVector3f VROARFrameARCore::getAmbientLightColor() const {
+    VROVector3f color = { 1, 1, 1 };
+
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return color;
+    }
+
+    arcore::LightEstimate *estimate = session->getSessionInternal()->createLightEstimate();
+    _frame->getLightEstimate(estimate);
+
+    float correction[4];
+    if (estimate->isValid()) {
+        estimate->getColorCorrection(correction);
+    }
+    delete (estimate);
+
+    // ARCore returns light values in gamma space
+    VROVector3f gammaColor = { correction[0], correction[1], correction[2] };
+    return VROLight::convertGammaToLinear(gammaColor);
 }
 
 std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {

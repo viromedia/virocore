@@ -73,7 +73,7 @@ public class ViroARNodeTest extends ViroBaseTest {
             }
 
             @Override
-            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+            public void onAmbientLightUpdate(float lightIntensity, Vector color) {
 
             }
 

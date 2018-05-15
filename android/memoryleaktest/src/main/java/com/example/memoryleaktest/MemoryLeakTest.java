@@ -616,7 +616,7 @@ public class MemoryLeakTest extends AppCompatActivity {
             }
 
             @Override
-            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+            public void onAmbientLightUpdate(float lightIntensity, Vector color) {
 
             }
 

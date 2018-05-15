@@ -641,7 +641,7 @@ static VROVector3f const kZeroVector = VROVector3f();
      Notify scene of the updated ambient light estimates.
      */
     std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_arSession->getScene());
-    scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
+    scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColor());
 }
 
 - (void)renderWithTracking:(const std::shared_ptr<VROARCamera>) camera

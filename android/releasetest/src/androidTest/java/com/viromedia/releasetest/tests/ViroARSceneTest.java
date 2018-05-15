@@ -73,9 +73,9 @@ public class ViroARSceneTest extends ViroBaseTest {
             }
 
             @Override
-            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+            public void onAmbientLightUpdate(float lightIntensity, Vector color) {
                 if(mAmbientLightUpdateTestStarted) {
-                    mTestText.setText("Ambient light intensity:" + lightIntensity + ", colorTemp: " + colorTemperature);
+                    mTestText.setText("Ambient light intensity:" + lightIntensity + ", color: " + color);
                     mAmbientLight.setIntensity(lightIntensity);
                 }
             }
