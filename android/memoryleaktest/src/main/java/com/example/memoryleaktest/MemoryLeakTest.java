@@ -544,7 +544,7 @@ public class MemoryLeakTest extends AppCompatActivity {
 
         Object3D objectNode = new Object3D();
         objectNode.setPosition(new Vector(-2, 0, -3));
-        objectNode.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, null);
+        objectNode.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, null);
 
         Node textNode = new Node();
         textNode.setPosition(new Vector(0, -1, -3));
