@@ -16,7 +16,7 @@
 class VROInputControllerCardboard : public VROInputControllerBase {
 
 public:
-    VROInputControllerCardboard(){}
+    VROInputControllerCardboard(std::shared_ptr<VRODriver> driver) : VROInputControllerBase(driver) {}
     virtual ~VROInputControllerCardboard(){}
 
     virtual VROVector3f getDragForwardOffset();
@@ -34,7 +34,7 @@ public:
     void updateScreenTouch(int touchAction);
 
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter(){
+    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRODriver> driver) {
         return std::make_shared<VROInputPresenterCardboard>();
     }
 

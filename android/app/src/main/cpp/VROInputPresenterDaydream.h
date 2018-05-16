@@ -24,13 +24,13 @@
 
 class VROInputPresenterDaydream : public VROInputPresenter {
 public:
-    VROInputPresenterDaydream() {
+    VROInputPresenterDaydream(std::shared_ptr<VRODriver> driver) {
         _rightHanded = true;
         // Initial values required for arm model
         _forwardVector = VROVector3f(0,0,-1);
         attachElbowNode();
-        attachControllerNode();
-        attachLaserToController();
+        attachControllerNode(driver);
+        attachLaserToController(driver);
 
         std::shared_ptr<VROTexture> reticleTexture
                 = std::make_shared<VROTexture>(true,
@@ -50,7 +50,7 @@ public:
         getRootNode()->addChildNode(_elbowNode);
     }
 
-    void attachControllerNode() {
+    void attachControllerNode(std::shared_ptr<VRODriver> driver) {
         // Textures needed by the controller model representing different controller UI states
         _controllerIdleTexture = std::make_shared<VROTexture>(true,
                                                               VROMipmapMode::Runtime,
@@ -95,7 +95,7 @@ public:
         _elbowNode->addChildNode(_controllerNode);
     }
 
-    void attachLaserToController() {
+    void attachLaserToController(std::shared_ptr<VRODriver> driver) {
         _laserTexture = std::make_shared<VROTexture>(true,
                                                      VROMipmapMode::Runtime,
                                                      VROPlatformLoadImageFromAsset("ddLaserTexture.jpg", VROTextureInternalFormat::RGBA8));

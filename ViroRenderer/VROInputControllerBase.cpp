@@ -11,7 +11,8 @@
 
 static bool sSceneBackgroundAdd = true;
 
-VROInputControllerBase::VROInputControllerBase() {
+VROInputControllerBase::VROInputControllerBase(std::shared_ptr<VRODriver> driver) :
+    _driver(driver) {
     _lastKnownPosition = VROVector3f(0,0,0);
     _lastDraggedNodePosition = VROVector3f(0,0,0);
     _lastClickedNode = nullptr;

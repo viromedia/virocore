@@ -13,7 +13,7 @@
 class VROInputControllerARAndroid : public VROInputControllerAR {
 
 public:
-    VROInputControllerARAndroid(float viewportWidth, float viewportHeight);
+    VROInputControllerARAndroid(float viewportWidth, float viewportHeight, std::shared_ptr<VRODriver> driver);
     virtual ~VROInputControllerARAndroid() {}
 
     void onTouchEvent(int action, float x, float y);

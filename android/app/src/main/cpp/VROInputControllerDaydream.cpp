@@ -6,8 +6,10 @@
 //
 #include "VROInputControllerDaydream.h"
 
-VROInputControllerDaydream::VROInputControllerDaydream(gvr_context *gvr_context) :
+VROInputControllerDaydream::VROInputControllerDaydream(gvr_context *gvr_context, std::shared_ptr<VRODriver> driver) :
+    VROInputControllerBase(driver),
     _gvr_controller(new gvr::ControllerApi) {
+
     // Initialize default options for the controller API.
     int32_t options = gvr::ControllerApi::DefaultOptions();
     _hasInitalized = _gvr_controller->Init(options, gvr_context);

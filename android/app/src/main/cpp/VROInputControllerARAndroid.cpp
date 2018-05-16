@@ -9,8 +9,9 @@
 #include "VROInputControllerARAndroid.h"
 
 VROInputControllerARAndroid::VROInputControllerARAndroid(float viewportWidth,
-                                                         float viewportHeight) :
-    VROInputControllerAR(viewportHeight, viewportWidth) {
+                                                         float viewportHeight,
+                                                         std::shared_ptr<VRODriver> driver) :
+    VROInputControllerAR(viewportHeight, viewportWidth, driver) {
     // no-op
 }
 

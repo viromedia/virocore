@@ -39,22 +39,23 @@ VROSceneRendererGVR::VROSceneRendererGVR(VRORendererConfiguration config,
     _vrModeEnabled(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()) {
 
+    _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
+
     // Create corresponding controllers - cardboard, or daydream if supported.
     std::shared_ptr<VROInputControllerBase> controller;
     _viewerType = _gvr->GetViewerType();
 
     if (_viewerType == GVR_VIEWER_TYPE_DAYDREAM) {
-        controller = std::make_shared<VROInputControllerDaydream>(gvr_context);
+        controller = std::make_shared<VROInputControllerDaydream>(gvr_context, _driver);
     } else if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD){
-        controller = std::make_shared<VROInputControllerCardboard>();
+        controller = std::make_shared<VROInputControllerCardboard>(_driver);
     } else {
         perror("Unrecognized Viewer type! Falling back to Cardboard Controller as default.");
-        controller = std::make_shared<VROInputControllerCardboard>();
+        controller = std::make_shared<VROInputControllerCardboard>(_driver);
     }
 
     // Create renderer and attach the controller to it.
     _renderer = std::make_shared<VRORenderer>(config, controller);
-    _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
 }
 
 VROSceneRendererGVR::~VROSceneRendererGVR() {

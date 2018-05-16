@@ -23,7 +23,7 @@ const double kARMaxDragDistance = 5; // meters
 
 class VROInputControllerAR : public VROInputControllerBase {
 public:
-    VROInputControllerAR(float viewportWidth, float viewportHeight);
+    VROInputControllerAR(float viewportWidth, float viewportHeight, std::shared_ptr<VRODriver> driver);
     virtual ~VROInputControllerAR() {}
     
     void setViewportSize(float width, float height) {
@@ -94,7 +94,7 @@ public:
     std::string getController();
     
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter() {
+    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRODriver> driver) {
         return std::make_shared<VROInputPresenterAR>();
     }
 

@@ -136,7 +136,7 @@
      Create Viro renderer objects.
      */
     _driver = std::make_shared<VRODriverOpenGLiOSGVR>(self, self.context);
-    _renderer = std::make_shared<VRORenderer>(config, std::make_shared<VROInputControllerCardboardiOS>());
+    _renderer = std::make_shared<VRORenderer>(config, std::make_shared<VROInputControllerCardboardiOS>(_driver));
     _sceneRenderer = std::make_shared<VROSceneRendererGVR>(self.bounds.size.width * self.contentScaleFactor,
                                                            self.bounds.size.height * self.contentScaleFactor,
                                                            [[UIApplication sharedApplication] statusBarOrientation],

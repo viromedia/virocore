@@ -49,7 +49,7 @@ VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
     _session = std::make_shared<VROARSessionARCore>(_driver);
 
     // instantiate the input controller w/ viewport size (0,0) and update it later.
-    std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0,0);
+    std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0, 0, _driver);
 
     _renderer = std::make_shared<VRORenderer>(config, controller);
     controller->setSession(_session);

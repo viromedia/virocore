@@ -16,7 +16,7 @@
 class VROInputControllerOVR : public VROInputControllerBase {
 
 public:
-    VROInputControllerOVR(){}
+    VROInputControllerOVR(std::shared_ptr<VRODriver> driver) : VROInputControllerBase(driver) {}
     virtual ~VROInputControllerOVR(){}
 
     virtual VROVector3f getDragForwardOffset();
@@ -34,7 +34,7 @@ public:
     }
 
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter(){
+    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRODriver> driver) {
         return std::make_shared<VROInputPresenterOVR>();
     }
 

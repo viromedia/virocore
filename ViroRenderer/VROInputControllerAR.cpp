@@ -12,7 +12,9 @@
 #include "VROARFrame.h"
 #include "VROARCamera.h"
 
-VROInputControllerAR::VROInputControllerAR(float viewportWidth, float viewportHeight) :
+VROInputControllerAR::VROInputControllerAR(float viewportWidth, float viewportHeight,
+                                           std::shared_ptr<VRODriver> driver) :
+    VROInputControllerBase(driver),
     _viewportWidth(viewportWidth),
     _viewportHeight(viewportHeight),
     _isTouchOngoing(false),

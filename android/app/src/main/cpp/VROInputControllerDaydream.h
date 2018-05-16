@@ -26,7 +26,7 @@
 class VROInputControllerDaydream : public VROInputControllerBase {
 
 public:
-    VROInputControllerDaydream(gvr_context *gvr_context);
+    VROInputControllerDaydream(gvr_context *gvr_context, std::shared_ptr<VRODriver> driver);
     virtual ~VROInputControllerDaydream();
 
     virtual VROVector3f getDragForwardOffset();
@@ -44,8 +44,8 @@ public:
     }
 
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter(){
-        _daydreamPresenter = std::make_shared<VROInputPresenterDaydream>();
+    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRODriver> driver) {
+        _daydreamPresenter = std::make_shared<VROInputPresenterDaydream>(driver);
         return _daydreamPresenter;
     }
 
