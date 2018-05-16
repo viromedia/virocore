@@ -3377,7 +3377,7 @@
 				8FD4DECB1C18ECD4003DC425 /* Resources */,
 				8AE44C932021084A00CE8394 /* Copy GLM Files to Framework */,
 				C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */,
-				8A8B69DD2036344C00D98723 /* Copy Framework to Bridge */,
+				8A8B69DD2036344C00D98723 /* Lipo Framework and Copy to Bridge */,
 			);
 			buildRules = (
 			);
@@ -3803,19 +3803,20 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8A8B69DD2036344C00D98723 /* Copy Framework to Bridge */ = {
+		8A8B69DD2036344C00D98723 /* Lipo Framework and Copy to Bridge */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Framework to Bridge";
+			name = "Lipo Framework and Copy to Bridge";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\ncp -r $CODESIGNING_FOLDER_PATH $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\nmkdir -p /tmp/react_viro_kit\ncp -r $CODESIGNING_FOLDER_PATH /tmp/react_viro_kit\ncp -r $PROJECT_DIR/ViroKit.podspec /tmp/react_viro_kit";
+			shellScript = "VIRO_FRAMEWORK_PATH=$PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to react-viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit.framework/ViroKit ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit.framework/ViroKit ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit.framework/ViroKit $VIRO_DEVICE_FRAMEWORK/ViroKit.framework/ViroKit -create -output $VIRO_FRAMEWORK_PATH/ViroKit.framework/ViroKit\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n\nmkdir -p /tmp/react_viro_kit\ncp -r $CODESIGNING_FOLDER_PATH /tmp/react_viro_kit\ncp -r $PROJECT_DIR/ViroKit.podspec /tmp/react_viro_kit";
+			showEnvVarsInLog = 0;
 		};
 		C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4458,8 +4459,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -4476,8 +4483,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -4560,8 +4579,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -4581,8 +4606,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
