@@ -19,7 +19,11 @@ void VROARShadow::apply(std::shared_ptr<VROMaterial> material) {
     createLightingModifier();
     createFragmentModifier();
 
-    material->setLightingModel(VROLightingModel::Lambert);
+    // Set the lighting model to PBR because we want to take irradiance
+    // (PBR ambient light) into account when computing how much to diminish
+    // the shadow on the transparent surface. Note that for non-PBR devices
+    // this will automatically regress to Phong/Blinn.
+    material->setLightingModel(VROLightingModel::PhysicallyBased);
     material->setWritesToDepthBuffer(false);
     material->setCastsShadows(false);
 
@@ -75,10 +79,11 @@ std::shared_ptr<VROShaderModifier> VROARShadow::createFragmentModifier() {
         // comes from normal shadows when increasing ambient light. This does not
         // cover the softness that comes from other shadow-casting lights.
         std::vector<std::string> modifierCode = {
-            "if (totalShadow != 0.0) {\n",
-            "  _output_color = vec4(0, 0, 0, max(min(1.0, totalShadow) - _ambient.r, 0.0));\n",
+            "if (totalShadow != 0.0) {",
+            "    highp float ambient_brightness = dot(_ambient.rgb, vec3(0.2126, 0.7152, 0.0722));",
+            "    _output_color = vec4(0, 0, 0, max(min(1.0, totalShadow) - ambient_brightness, 0.0));",
             "} else {\n",
-            "  _output_color = vec4(0, 0, 0, 0);\n",
+            "    _output_color = vec4(0, 0, 0, 0);",
             "}",
         };
         sShadowARFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,

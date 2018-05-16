@@ -47,12 +47,12 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     light->setAttenuationEndDistance(50);
     light->setSpotInnerAngle(35);
     light->setSpotOuterAngle(60);
-    light->setCastsShadow(false);
+    light->setCastsShadow(true);
     light->setIntensity(1000);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(30);
+    ambient->setIntensity(100);
     
     std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
     //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");

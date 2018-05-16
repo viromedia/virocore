@@ -643,10 +643,13 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFra
             // In this shader there is no irradiance, we only have constant ambient light,
             // represented by _ambient. The effect of this light on a PBR surface is determined
             // by just multiplying it by by the surface color (albedo) and the surface ambient
-            // occlusion texture (_surface.ao)
-            "highp vec3 surface_ambient = _ambient * albedo * _surface.ao;",
-            "highp vec3 rgb_color = surface_ambient + _diffuse;",
-            "_output_color = vec4(rgb_color, _output_color.a);",
+            // occlusion texture (_surface.ao).
+            
+            // Because the _ambient term is used by AR shadows to compute how much to
+            // diminish a shadow (in VROARShadow), we have to set this term to the final
+            // ambient contribution.
+            "_ambient = _ambient * albedo * _surface.ao;",
+            "_output_color = vec4(_ambient + _diffuse, _output_color.a);",
         };
         sPBRConstantAmbientFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                                   modifierCode);
@@ -667,11 +670,14 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseIrradianceF
 
                 // In this shader we have diffuse ambiance, represented by ambient_KD, and
                 // constant ambient light represented by _ambient. Constant ambient light is
-                // just multiplied by albedo and _surface_ao to get its contribution. Diffuse
+                // multiplied by albedo and _surface_ao to get its contribution. Diffuse
                 // irradiance must also be multiplied by the irradiance term.
-                "highp vec3 surface_ambient = (_ambient * albedo + ambient_kD * irradiance * albedo) * _surface.ao;",
-                "highp vec3 rgb_color = surface_ambient + _diffuse;",
-                "_output_color = vec4(rgb_color, _output_color.a);",
+            
+                // Because the _ambient term is used by AR shadows to compute how much to
+                // diminish a shadow (in VROARShadow), we have to set this term to the final
+                // ambient contribution.
+                "_ambient = (_ambient * albedo + ambient_kD * irradiance * albedo) * _surface.ao;",
+                "_output_color = vec4(_ambient + _diffuse, _output_color.a);",
         };
         sPBRDiffuseIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                                     modifierCode);
@@ -707,9 +713,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseAndSpecular
                 // Combine both specular and diffuse computations into _output_color. The constant ambient
                 // (_ambient) term is only multiplied by the surface color (albedo) to get its constribution.
                 // The ambient_KD term is also multiplied by the irradiance to get the diffuse contribution.
-                "highp vec3 surface_ambient = (_ambient * albedo + ambient_kD * irradiance * albedo + ambient_specular) * _surface.ao;",
-                "highp vec3 rgb_color = surface_ambient + _diffuse;",
-                "_output_color = vec4(rgb_color, _output_color.a);",
+            
+                // Because the _ambient term is used by AR shadows to compute how much to diminish a shadow
+                // (in VROARShadow), we have to set this term to the final ambient contribution.
+                "_ambient = (_ambient * albedo + ambient_kD * irradiance * albedo + ambient_specular) * _surface.ao;",
+                "_output_color = vec4(_ambient + _diffuse, _output_color.a);",
         };
         sPBRDiffuseAndSpecularIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                                     modifierCode);

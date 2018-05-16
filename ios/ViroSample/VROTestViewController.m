@@ -15,8 +15,9 @@ enum class VROTestSceneType {
     Scene,
 };
 
-static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::ToneMapping;
+static const VROTestSceneType kTestType = VROTestSceneType::Scene;
+static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
+static const bool kSceneCheckeredBackground = NO;
 
 @interface VROTestViewController ()
 
@@ -59,11 +60,12 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ToneMappin
     }
     else {
         CGRect screenBounds = [UIScreen mainScreen].bounds;
-        CGRect viroBounds = CGRectInset(screenBounds, 50, 50);
-        
-        UIView *backingView = [[UIView alloc] initWithFrame:screenBounds];
-        backingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        backingView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"check"]];
+        CGRect viroBounds;
+        if (kSceneCheckeredBackground) {
+            viroBounds = CGRectInset(screenBounds, 50, 50);
+        } else {
+            viroBounds = screenBounds;
+        }
         
         VROViewScene *view = [[VROViewScene alloc] initWithFrame:viroBounds
                                                           config:config
@@ -76,8 +78,16 @@ static const VRORendererTestType kRendererTest = VRORendererTestType::ToneMappin
         self.renderDelegate.view = view;
         self.renderDelegate.test = kRendererTest;
         
-        [backingView addSubview:view];
-        self.view = backingView;
+        if (kSceneCheckeredBackground) {
+            UIView *backingView = [[UIView alloc] initWithFrame:screenBounds];
+            backingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            backingView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"check"]];
+            [backingView addSubview:view];
+            
+            self.view = backingView;
+        } else {
+            self.view = view;
+        }
     }
 }
 
