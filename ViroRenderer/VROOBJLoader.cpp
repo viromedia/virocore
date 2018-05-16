@@ -24,11 +24,12 @@
 
 void VROOBJLoader::loadOBJFromResource(std::string resource, VROResourceType type,
                                        std::shared_ptr<VRONode> node,
+                                       std::shared_ptr<VRODriver> driver,
                                        std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     VROModelIOUtil::retrieveResourceAsync(resource, type,
-          [resource, type, node, onFinish](std::string path, bool isTemp) {
+          [resource, type, node, driver, onFinish](std::string path, bool isTemp) {
               // onSuccess() (note: callbacks from retrieveResourceAsync occur on rendering thread)
-              readOBJFileAsync(resource, type, node, path, isTemp, false, {}, onFinish);
+              readOBJFileAsync(resource, type, node, path, isTemp, false, {}, driver, onFinish);
           },
           [node, onFinish]() {
               // onFailure()
@@ -39,11 +40,12 @@ void VROOBJLoader::loadOBJFromResource(std::string resource, VROResourceType typ
 void VROOBJLoader::loadOBJFromResources(std::string resource, VROResourceType type,
                                         std::shared_ptr<VRONode> node,
                                         std::map<std::string, std::string> resourceMap,
+                                        std::shared_ptr<VRODriver> driver,
                                         std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     VROModelIOUtil::retrieveResourceAsync(resource, type,
-          [resource, type, node, resourceMap, onFinish](std::string path, bool isTemp) {
+          [resource, type, node, resourceMap, driver, onFinish](std::string path, bool isTemp) {
               // onSuccess() (note: callbacks from retrieveResourceAsync occur on rendering thread)
-              readOBJFileAsync(resource, type, node, path, isTemp, true, resourceMap, onFinish);
+              readOBJFileAsync(resource, type, node, path, isTemp, true, resourceMap, driver, onFinish);
           },
           [node, onFinish]() {
               // onFailure()
@@ -54,8 +56,9 @@ void VROOBJLoader::loadOBJFromResources(std::string resource, VROResourceType ty
 void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, std::shared_ptr<VRONode> node,
                                     std::string path, bool isTemp, bool loadingTexturesFromResourceMap,
                                     std::map<std::string, std::string> resourceMap,
+                                    std::shared_ptr<VRODriver> driver,
                                     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
-    VROPlatformDispatchAsyncBackground([resource, type, node, path, resourceMap, onFinish, isTemp, loadingTexturesFromResourceMap] {
+    VROPlatformDispatchAsyncBackground([resource, type, node, path, resourceMap, driver, onFinish, isTemp, loadingTexturesFromResourceMap] {
         pinfo("Loading OBJ from file %s", path.c_str());
         std::string base = resource.substr(0, resource.find_last_of('/'));
 
@@ -80,7 +83,7 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
                          type == VROResourceType::URL, // base is URL?
                          loadingTexturesFromResourceMap ? fileMap : nullptr,
                          [err, node, attrib, shapes, materials, resource, type, loadingTexturesFromResourceMap,
-                          fileMap, onFinish](bool ret) {
+                          fileMap, driver, onFinish](bool ret) {
                              if (!err.empty()) {
                                  pinfo("OBJ loading warning [%s]", err.c_str());
                              }
@@ -99,8 +102,8 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
                                  
                                  // Run all the async tasks. When they're complete, inject the finished FBX into the
                                  // node
-                                 taskQueue->processTasksAsync([geo, node, attrib, shapes, materials, fileMap, textureCache, onFinish] {
-                                     injectOBJ(geo, node, onFinish);
+                                 taskQueue->processTasksAsync([geo, node, attrib, shapes, materials, fileMap, textureCache, driver, onFinish] {
+                                     injectOBJ(geo, node, driver, onFinish);
                                      delete (textureCache);
                                      delete (attrib);
                                      delete (shapes);
@@ -126,6 +129,7 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
 
 void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
                              std::shared_ptr<VRONode> node,
+                             std::shared_ptr<VRODriver> driver,
                              std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
  
     if (geometry) {

@@ -56,6 +56,7 @@ public:
     
 private:
 
+    std::shared_ptr<VRODriver> _driver;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VRONode> _fbxContainerNode;

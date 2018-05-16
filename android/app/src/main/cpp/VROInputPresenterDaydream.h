@@ -72,7 +72,7 @@ public:
         // Create Controller Obj Node
         std::string controllerObjAsset = VROPlatformCopyAssetToFile("ddcontroller.obj");
         _controllerNode = std::make_shared<VRONode>();
-        VROOBJLoader::loadOBJFromResource(controllerObjAsset, VROResourceType::LocalFile, _controllerNode, [this](std::shared_ptr<VRONode> node, bool success) {
+        VROOBJLoader::loadOBJFromResource(controllerObjAsset, VROResourceType::LocalFile, _controllerNode, driver, [this](std::shared_ptr<VRONode> node, bool success) {
             if (!success) {
                 perr("ERROR when loading controller obj!");
                 return;
@@ -102,7 +102,7 @@ public:
         // Create our laser obj
         std::string controllerObjAsset = VROPlatformCopyAssetToFile("ddlaser.obj");
         _pointerNode = std::make_shared<VRONode>();
-        VROOBJLoader::loadOBJFromResource(controllerObjAsset, VROResourceType::LocalFile, _pointerNode, [this](std::shared_ptr<VRONode> node, bool success) {
+        VROOBJLoader::loadOBJFromResource(controllerObjAsset, VROResourceType::LocalFile, _pointerNode, driver, [this](std::shared_ptr<VRONode> node, bool success) {
             if (!success) {
                 perr("ERROR when loading controller obj!");
                 return;

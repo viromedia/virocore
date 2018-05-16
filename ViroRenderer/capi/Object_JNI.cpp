@@ -50,11 +50,14 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
             };
 
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
-    VROPlatformDispatchAsyncRenderer([isFBX, node, URL, onFinish] {
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
+    std::shared_ptr<VRODriver> driver = context->getDriver();
+
+    VROPlatformDispatchAsyncRenderer([isFBX, driver, node, URL, onFinish] {
         if (isFBX) {
-            VROFBXLoader::loadFBXFromResource(URL, VROResourceType::URL, node, onFinish);
+            VROFBXLoader::loadFBXFromResource(URL, VROResourceType::URL, node, driver, onFinish);
         } else {
-            VROOBJLoader::loadOBJFromResource(URL, VROResourceType::URL, node, onFinish);
+            VROOBJLoader::loadOBJFromResource(URL, VROResourceType::URL, node, driver, onFinish);
         }
     });
 }
@@ -89,22 +92,25 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
     }
 
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
-    VROPlatformDispatchAsyncRenderer([isFBX, resource, hasResourceMap, resourceMap, node, onFinish] {
+    std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
+    std::shared_ptr<VRODriver> driver = context->getDriver();
+
+    VROPlatformDispatchAsyncRenderer([isFBX, resource, hasResourceMap, resourceMap, node, driver, onFinish] {
         if (isFBX) {
             if (!hasResourceMap) {
                 VROFBXLoader::loadFBXFromResource(resource, VROResourceType::BundledResource, node,
-                                                  onFinish);
+                                                  driver, onFinish);
             } else {
                 VROFBXLoader::loadFBXFromResources(resource, VROResourceType::BundledResource, node,
-                                                   resourceMap, onFinish);
+                                                   resourceMap, driver, onFinish);
             }
         } else {
             if (!hasResourceMap) {
                 VROOBJLoader::loadOBJFromResource(resource, VROResourceType::BundledResource, node,
-                                                  onFinish);
+                                                  driver, onFinish);
             } else {
                 VROOBJLoader::loadOBJFromResources(resource, VROResourceType::BundledResource, node,
-                                                   resourceMap, onFinish);
+                                                   resourceMap, driver, onFinish);
             }
         }
     });

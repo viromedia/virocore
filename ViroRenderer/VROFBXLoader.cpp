@@ -122,12 +122,13 @@ void setTextureProperties(VROLightingModel lightingModel, const viro::Node::Geom
 
 void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType type,
                                        std::shared_ptr<VRONode> node,
+                                       std::shared_ptr<VRODriver> driver,
                                        std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     
     VROModelIOUtil::retrieveResourceAsync(resource, type,
-          [resource, type, node, onFinish](std::string path, bool isTemp) {
+          [resource, type, node, driver, onFinish](std::string path, bool isTemp) {
               // onSuccess() (note: callbacks from retrieveResourceAsync occur on rendering thread)
-              readFBXProtobufAsync(resource, type, node, path, isTemp, false, {}, onFinish);
+              readFBXProtobufAsync(resource, type, node, path, isTemp, false, {}, driver, onFinish);
           },
           [node, onFinish]() {
               // onFailure()
@@ -138,18 +139,21 @@ void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType typ
 void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType type,
                                         std::shared_ptr<VRONode> node,
                                         std::map<std::string, std::string> resourceMap,
+                                        std::shared_ptr<VRODriver> driver,
                                         std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     VROModelIOUtil::retrieveResourceAsync(resource, type,
-          [resource, type, node, resourceMap, onFinish](std::string path, bool isTemp) {
+          [resource, type, node, resourceMap, driver, onFinish](std::string path, bool isTemp) {
               // onSuccess (rendering thread)
-              readFBXProtobufAsync(resource, type, node, path, isTemp, true, resourceMap, onFinish);
+              readFBXProtobufAsync(resource, type, node, path, isTemp, true, resourceMap, driver, onFinish);
           },
           [node, onFinish]() {
               onFinish(node, false);
           });
 }
 
-void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<VRONode> node,
+void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode,
+                             std::shared_ptr<VRONode> node,
+                             std::shared_ptr<VRODriver> driver,
                              std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
     if (fbxNode) {
         // The top-level fbxNode is a dummy; all of the data is stored in the children, so we
@@ -178,8 +182,9 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
 void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType type, std::shared_ptr<VRONode> node,
                                         std::string path, bool isTemp, bool loadingTexturesFromResourceMap,
                                         std::map<std::string, std::string> resourceMap,
+                                        std::shared_ptr<VRODriver> driver,
                                         std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
-    VROPlatformDispatchAsyncBackground([resource, type, node, path, resourceMap, onFinish, isTemp, loadingTexturesFromResourceMap] {
+    VROPlatformDispatchAsyncBackground([resource, type, node, path, resourceMap, driver, onFinish, isTemp, loadingTexturesFromResourceMap] {
         pinfo("Loading FBX from file %s", path.c_str());
         
         std::string data_pb_gzip = VROPlatformLoadFileAsString(path);
@@ -202,7 +207,7 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                     }
 
                     VROPlatformDispatchAsyncRenderer(
-                            [node, node_pb, resource, type, loadingTexturesFromResourceMap, fileMap, onFinish] {
+                            [node, node_pb, resource, type, loadingTexturesFromResourceMap, fileMap, driver, onFinish] {
                                 std::string base = resource.substr(0, resource.find_last_of('/'));
 
                                 // Load the FBX from the protobuf on the rendering thread, accumulating additional
@@ -221,8 +226,8 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                                 // Run all the async tasks. When they're complete, inject the finished FBX into the
                                 // node
                                 taskQueue->processTasksAsync(
-                                        [fbxNode, node, textureCache, node_pb, onFinish] {
-                                            injectFBX(fbxNode, node, onFinish);
+                                        [fbxNode, node, textureCache, node_pb, driver, onFinish] {
+                                            injectFBX(fbxNode, node, driver, onFinish);
                                             delete (textureCache);
                                             delete (node_pb);
                                         });

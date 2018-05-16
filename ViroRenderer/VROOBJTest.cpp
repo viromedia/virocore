@@ -43,7 +43,7 @@ void VROOBJTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->addLight(light);
     rootNode->setBackgroundCube(VROTestUtil::loadNiagaraBackground());
 
-    std::shared_ptr<VRONode> objNode = loadOBJ();
+    std::shared_ptr<VRONode> objNode = loadOBJ(driver);
     rootNode->addChildNode(objNode);
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this](VRONode *const node, float seconds) {
@@ -56,12 +56,12 @@ void VROOBJTest::build(std::shared_ptr<VRORenderer> renderer,
     objNode->runAction(action);
 }
 
-std::shared_ptr<VRONode> VROOBJTest::loadOBJ() {
+std::shared_ptr<VRONode> VROOBJTest::loadOBJ(std::shared_ptr<VRODriver> driver) {
     std::string url = VROTestUtil::getURLForResource("cupcake", "obj");
     std::string base = url.substr(0, url.find_last_of('/'));
     
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode,
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode, driver,
                                       [](std::shared_ptr<VRONode> node, bool success) {
                                           if (!success) {
                                               return;

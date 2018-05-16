@@ -27,7 +27,7 @@ public:
         return _sceneController;
     }
     
-    std::shared_ptr<VRONode> loadOBJ();
+    std::shared_ptr<VRONode> loadOBJ(std::shared_ptr<VRODriver> driver);
     
 private:
 

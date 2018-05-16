@@ -41,7 +41,7 @@ public:
     static std::shared_ptr<VROTexture> loadHDRTexture(std::string texture);
     
     static std::shared_ptr<VRONode> loadFBXModel(std::string model, VROVector3f position, VROVector3f scale,
-                                                 int lightMask, std::string animation);
+                                                 int lightMask, std::string animation, std::shared_ptr<VRODriver> driver);
     static void setLightMasks(std::shared_ptr<VRONode> node, int value);
     
     static std::shared_ptr<VROVideoTexture> loadVideoTexture(std::shared_ptr<VRODriver> driver,

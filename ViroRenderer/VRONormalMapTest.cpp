@@ -45,7 +45,7 @@ void VRONormalMapTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->setBackgroundCube(VROTestUtil::loadNiagaraBackground());
 
     std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode,
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode, driver,
                                                                     [](std::shared_ptr<VRONode> node, bool success) {
                                                                         if (!success) {
                                                                             return;

@@ -46,13 +46,13 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VROPortal> portalNode = std::make_shared<VROPortal>();
     portalNode->setBackgroundCube(VROTestUtil::loadCloudBackground());
-    portalNode->addChildNode(VROTestUtil::loadFBXModel("aliengirl", { 0, -3, -6 }, { 0.04, 0.04, 0.04 }, 1, "Take 001"));
+    portalNode->addChildNode(VROTestUtil::loadFBXModel("aliengirl", { 0, -3, -6 }, { 0.04, 0.04, 0.04 }, 1, "Take 001", driver));
     portalNode->setPassable(true);
     portalNode->setScale({0.1, 0.1, 0.1});
     portalNode->setPosition({0, 0, -2});
     portalNode->setName("Portal");
     
-    std::shared_ptr<VROPortalFrame> portalNodeEntrance = loadPortalEntrance();
+    std::shared_ptr<VROPortalFrame> portalNodeEntrance = loadPortalEntrance(driver);
     portalNodeEntrance->setOpacity(0);
     portalNodeEntrance->setScale({0, 0, 0});
     portalNodeEntrance->setRotationEuler({ 0, 0, 0 });
@@ -90,7 +90,7 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
             innerPortalNode->setPosition(position);
             innerPortalNode->setBackgroundSphere(VROTestUtil::loadWestlakeBackground());
             
-            std::shared_ptr<VROPortalFrame> innerPortalFrame = loadPortalEntrance();
+            std::shared_ptr<VROPortalFrame> innerPortalFrame = loadPortalEntrance(driver);
             innerPortalFrame->setScale({0.25, 0.25, 0.25});
             innerPortalNode->setPortalEntrance(innerPortalFrame);
             
@@ -128,7 +128,7 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
             innerPortalNode->setPosition(position);
             innerPortalNode->setBackgroundSphere(VROTestUtil::loadWestlakeBackground());
             
-            std::shared_ptr<VROPortalFrame> innerPortalFrame = loadFBXPortalEntrance(fbxPortals[i], 0.5);
+            std::shared_ptr<VROPortalFrame> innerPortalFrame = loadFBXPortalEntrance(fbxPortals[i], 0.5, driver);
             innerPortalNode->setPortalEntrance(innerPortalFrame);
             
             std::shared_ptr<VRONode> innerPortalNodeContent = std::make_shared<VRONode>();
@@ -157,7 +157,7 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
         sidePortalNode->setPosition(sidePosition);
         sidePortalNode->setBackgroundCube(VROTestUtil::loadNiagaraBackground());
         
-        std::shared_ptr<VROPortalFrame> sidePortalFrame = loadPortalEntrance();
+        std::shared_ptr<VROPortalFrame> sidePortalFrame = loadPortalEntrance(driver);
         sidePortalFrame->setScale({0.06, 0.06, 0.06});
         sidePortalFrame->setRotationEuler({0, M_PI_4, 0});
         sidePortalNode->setPortalEntrance(sidePortalFrame);
@@ -192,13 +192,13 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
     VROTransaction::commit();
 }
 
-std::shared_ptr<VROPortalFrame> VROPortalTest::loadPortalEntrance() {
+std::shared_ptr<VROPortalFrame> VROPortalTest::loadPortalEntrance(std::shared_ptr<VRODriver> driver) {
     std::string url = VROTestUtil::getURLForResource("portal_ring", "obj");
     std::string base = url.substr(0, url.find_last_of('/'));
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, node,
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, node, driver,
                                                                  [](std::shared_ptr<VRONode> node, bool success) {
                                                                      if (!success) {
                                                                          return;
@@ -213,13 +213,14 @@ std::shared_ptr<VROPortalFrame> VROPortalTest::loadPortalEntrance() {
     return frame;
 }
 
-std::shared_ptr<VROPortalFrame> VROPortalTest::loadFBXPortalEntrance(std::string fbxResource, float scale) {
+std::shared_ptr<VROPortalFrame> VROPortalTest::loadFBXPortalEntrance(std::string fbxResource, float scale,
+                                                                     std::shared_ptr<VRODriver> driver) {
     std::string url = VROTestUtil::getURLForResource(fbxResource, "vrx");
     std::string base = url.substr(0, url.find_last_of('/'));
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node,
+    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node, driver,
                                                                  [scale](std::shared_ptr<VRONode> node, bool success) {
                                                                      if (!success) {
                                                                          return;
