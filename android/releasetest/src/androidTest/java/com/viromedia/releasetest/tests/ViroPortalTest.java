@@ -69,10 +69,10 @@ public class ViroPortalTest extends ViroBaseTest  {
 
     private void testAddPortalEntrance() {
         Object3D object3DArchway = new Object3D();
-        object3DArchway.loadModel(Uri.parse("file:///android_asset/portal_archway.vrx"), Object3D.Type.FBX, null);
+        object3DArchway.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/portal_archway.vrx"), Object3D.Type.FBX, null);
 
         Object3D object3DShip = new Object3D();
-        object3DShip.loadModel(Uri.parse("file:///android_asset/portal_ship.vrx"), Object3D.Type.FBX, null);
+        object3DShip.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/portal_ship.vrx"), Object3D.Type.FBX, null);
 
         mPortal.addChildNode(object3DArchway);
         mPortalScene.setPortalEntrance(mPortal);

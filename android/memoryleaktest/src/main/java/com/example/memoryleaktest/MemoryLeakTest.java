@@ -360,7 +360,7 @@ public class MemoryLeakTest extends AppCompatActivity {
 
         // Creation of ObjectJni to the right
         final Object3D objectJni = new Object3D();
-        objectJni.loadModel(Uri.parse("file:///android_asset/dragao_2018.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        objectJni.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/dragao_2018.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, -6));

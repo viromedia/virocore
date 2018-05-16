@@ -12,6 +12,7 @@
 #include "VRONode.h"
 #include "Node_JNI.h"
 #include "OBJLoaderDelegate_JNI.h"
+#include "ViroContext_JNI.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
@@ -30,6 +31,7 @@ extern "C" {
 VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
                                          VRO_STRING jURL,
                                          VRO_REF(VRONode) node_j,
+                                         VRO_REF(ViroContext) context_j,
                                          VRO_BOOL isFBX,
                                          VRO_LONG requestId) {
     VRO_METHOD_PREAMBLE;
@@ -61,6 +63,7 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
                                                VRO_STRING jresource,
                                                VRO_OBJECT resourceMap_j,
                                                VRO_REF(VRONode) node_j,
+                                               VRO_REF(ViroContext) context_j,
                                                VRO_BOOL isFBX,
                                                VRO_LONG requestId) {
     VRO_METHOD_PREAMBLE;

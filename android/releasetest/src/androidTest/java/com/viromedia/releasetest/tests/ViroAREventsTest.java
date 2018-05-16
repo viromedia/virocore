@@ -45,7 +45,7 @@ public class ViroAREventsTest extends ViroBaseTest {
 
         //add object node.
         objectNode = new Object3D();
-        objectNode.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, null);
+        objectNode.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, null);
         objectNode.setPosition(new Vector(0.0f, 1f, -4f));
 
         //add sphere node.

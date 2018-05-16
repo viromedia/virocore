@@ -44,8 +44,6 @@ public class Viro3DObjectTest extends ViroBaseTest {
         mAmbientLight = new AmbientLight(Color.WHITE, 1000f);
         mScene.getRootNode().addLight(mAmbientLight);
         mScene.getRootNode().addChildNode(mObject3D);
-
-
     }
 
     @Test
@@ -62,7 +60,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     public void stage1_testLoadModelFBX() {
-        mObject3D.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        mObject3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, -3));
@@ -111,7 +109,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     public void stage4_testLoadModelOBJ() {
         mObject3D.setPosition(new Vector(0, 0, -11));
         mObject3D.setScale(new Vector(0.04f, 0.04f, 0.04f));
-        mObject3D.loadModel((Uri.parse("file:///android_asset/male02.obj")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
+        mObject3D.loadModel(mViroView.getViroContext(), (Uri.parse("file:///android_asset/male02.obj")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
 
@@ -138,7 +136,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         node.setGeometry(text);
         mScene.getRootNode().addChildNode(node);
 
-        mObject3D.loadModel((Uri.parse("file:///android_asset/momentslogo.fbx")), Object3D.Type.FBX,  new AsyncObject3DListener() {
+        mObject3D.loadModel(mViroView.getViroContext(), (Uri.parse("file:///android_asset/momentslogo.fbx")), Object3D.Type.FBX,  new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
 
@@ -167,7 +165,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         node.setGeometry(text);
         mScene.getRootNode().addChildNode(node);
 
-        mObject3D.loadModel((Uri.parse("file:///android_asset/momentslogo.pong")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
+        mObject3D.loadModel(mViroView.getViroContext(), (Uri.parse("file:///android_asset/momentslogo.pong")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
 
@@ -233,7 +231,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         // Creation of ObjectJni to the right
         object3D.setPosition(new Vector(2, 0, -5));
-        object3D.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 Material mat = object.getMaterials().get(0);
@@ -300,7 +298,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(object3D);
         object3D.setPosition(new Vector(2, 0, -5));
 
-        object3D.loadModel(Uri.parse("file:///android_asset/dragao_2018.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/dragao_2018.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
             }
@@ -351,7 +349,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         final Object3D object3D = new Object3D();
         mScene.getRootNode().addChildNode(object3D);
-        object3D.loadModel(Uri.parse("file:///android_asset/dragao.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/dragao.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, -9));

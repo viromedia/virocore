@@ -58,7 +58,7 @@ public class Object3D extends Node {
 
     /**
      * Construct a new Object3D. To load 3D model data into this Node, use
-     * {@link #loadModel(Uri, Type, AsyncObject3DListener)}.
+     * {@link #loadModel(ViroContext, Uri, Type, AsyncObject3DListener)}.
      */
     public Object3D() {
         mActiveRequestID = new AtomicLong();
@@ -71,20 +71,22 @@ public class Object3D extends Node {
      * the model requires other resources (e.g. textures), those are expected to be found at the
      * same base path as the model URI.
      *
+     * @param viroContext   The {@link ViroContext} is required to load models.
      * @param uri           The URI of the model to load.
      * @param type          The type of model (FBX or OBJ).
      * @param asyncListener Listener to respond to model loading status.
      */
-    public void loadModel(Uri uri, Type type, AsyncObject3DListener asyncListener) {
+    public void loadModel(ViroContext viroContext, Uri uri, Type type, AsyncObject3DListener asyncListener) {
         removeAllChildNodes();
         long requestID = mActiveRequestID.incrementAndGet();
-        nativeLoadModelFromURL(uri.toString(), mNativeRef, type == Type.FBX, requestID);
+        nativeLoadModelFromURL(uri.toString(), mNativeRef, viroContext.mNativeRef, type == Type.FBX, requestID);
         mAsyncListener = asyncListener;
     }
 
     /**
      * Load an FBX or OBJ model from bundled application resources.
      *
+     * @param viroContext   The {@link ViroContext} is required to load models.
      * @param modelResource       The resource of the FBX or OBJ.
      * @param type                The type of model (FBX or OBJ).
      * @param asyncObjListener    Listener to respond to model loading status.
@@ -93,12 +95,14 @@ public class Object3D extends Node {
      * @hide
      */
     //#IFDEF 'viro_react'
-    public void loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener,
+    public void loadModel(ViroContext viroContext, String modelResource, Type type,
+                          AsyncObject3DListener asyncObjListener,
                           Map<String, String> resourceNamesToUris) {
         removeAllChildNodes();
 
         long requestID = mActiveRequestID.incrementAndGet();
-        nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, type == Type.FBX, requestID);
+        nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, viroContext.mNativeRef,
+                                    type == Type.FBX, requestID);
         mAsyncListener = asyncObjListener;
     }
     //#ENDIF
@@ -193,6 +197,6 @@ public class Object3D extends Node {
         return mActiveRequestID.get();
     }
 
-    private native void nativeLoadModelFromURL(String url, long nodeRef, boolean isFBX, long requestID);
-    private native void nativeLoadModelFromResources(String modelResource, Map<String, String> assetResources, long nodeRef, boolean isFBX, long requestID);
+    private native void nativeLoadModelFromURL(String url, long nodeRef, long contextRef, boolean isFBX, long requestID);
+    private native void nativeLoadModelFromResources(String modelResource, Map<String, String> assetResources, long nodeRef, long contextRef, boolean isFBX, long requestID);
 }

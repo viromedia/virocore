@@ -681,7 +681,9 @@ public class ViroActivity extends AppCompatActivity {
 
         // Creation of ObjectJni to the right
         final Object3D objectJni = new Object3D();
-        objectJni.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        objectJni.loadModel(mViroView.getViroContext(),
+                Uri.parse("file:///android_asset/object_star_anim.vrx"),
+                Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, -3));
@@ -844,7 +846,9 @@ public class ViroActivity extends AppCompatActivity {
 
     private Object3D loadObjectNode(final int bitmask) {
         final Object3D objectNode = new Object3D();
-        objectNode.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        objectNode.loadModel(mViroView.getViroContext(),
+                Uri.parse("file:///android_asset/object_star_anim.vrx"),
+                Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, 0));
