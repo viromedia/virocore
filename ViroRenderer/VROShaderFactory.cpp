@@ -640,8 +640,12 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDirectLightingModi
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRConstantAmbientFragmentModifier() {
     if (!sPBRConstantAmbientFragmentModifier) {
         std::vector<std::string> modifierCode = {
-            "highp vec3 pbr_ambient = _ambient * albedo * _surface.ao;",
-            "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+            // In this shader there is no irradiance, we only have constant ambient light,
+            // represented by _ambient. The effect of this light on a PBR surface is determined
+            // by just multiplying it by by the surface color (albedo) and the surface ambient
+            // occlusion texture (_surface.ao)
+            "highp vec3 surface_ambient = _ambient * albedo * _surface.ao;",
+            "highp vec3 rgb_color = surface_ambient + _diffuse;",
             "_output_color = vec4(rgb_color, _output_color.a);",
         };
         sPBRConstantAmbientFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
@@ -660,10 +664,13 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseIrradianceF
                 "ambient_kD *= 1.0 - _surface.metalness;",
 
                 "highp vec3 irradiance = texture(irradiance_map, N).rgb;",
-                "highp vec3 ambient_diffuse = irradiance * albedo;",
 
-                "highp vec3 pbr_ambient = (_ambient + ambient_kD * ambient_diffuse) * _surface.ao;",
-                "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+                // In this shader we have diffuse ambiance, represented by ambient_KD, and
+                // constant ambient light represented by _ambient. Constant ambient light is
+                // just multiplied by albedo and _surface_ao to get its contribution. Diffuse
+                // irradiance must also be multiplied by the irradiance term.
+                "highp vec3 surface_ambient = (_ambient * albedo + ambient_kD * irradiance * albedo) * _surface.ao;",
+                "highp vec3 rgb_color = surface_ambient + _diffuse;",
                 "_output_color = vec4(rgb_color, _output_color.a);",
         };
         sPBRDiffuseIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
@@ -697,12 +704,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPBRDiffuseAndSpecular
                 "highp vec2 brdf = texture(brdf_map, vec2(max(dot(N, V), 0.0), _surface.roughness)).xy;",
                 "highp vec3 ambient_specular = prefilteredColor * (ambient_kS * brdf.x + brdf.y);",
 
-                // Compute ambient diffuse lighting.
-                "highp vec3 ambient_diffuse = irradiance * albedo;",
-
-                // Combine both specular and diffuse computations into _output_color
-                "highp vec3 pbr_ambient = (ambient_kD * ambient_diffuse + _ambient + ambient_specular) * _surface.ao;",
-                "highp vec3 rgb_color = pbr_ambient + _diffuse;",
+                // Combine both specular and diffuse computations into _output_color. The constant ambient
+                // (_ambient) term is only multiplied by the surface color (albedo) to get its constribution.
+                // The ambient_KD term is also multiplied by the irradiance to get the diffuse contribution.
+                "highp vec3 surface_ambient = (_ambient * albedo + ambient_kD * irradiance * albedo + ambient_specular) * _surface.ao;",
+                "highp vec3 rgb_color = surface_ambient + _diffuse;",
                 "_output_color = vec4(rgb_color, _output_color.a);",
         };
         sPBRDiffuseAndSpecularIrradianceFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
