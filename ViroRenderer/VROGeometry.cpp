@@ -18,9 +18,7 @@
 #include "VRORenderMetadata.h"
 
 VROGeometry::~VROGeometry() {
-    delete (_bounds);
     delete (_substrate);
-    
     ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
@@ -126,27 +124,29 @@ void VROGeometry::getSortKeys(std::vector<VROSortKey> *outKeys) {
 }
 
 const VROBoundingBox &VROGeometry::getBoundingBox() {
-    if (_bounds) {
-        return *_bounds;
+    if (_boundingBoxComputed) {
+        return _bounds;
     }
     
     auto vertexSources = getGeometrySourcesForSemantic(VROGeometrySourceSemantic::Vertex);
     for (std::shared_ptr<VROGeometrySource> &source : vertexSources) {
         VROBoundingBox box = source->getBoundingBox();
         
-        if (!_bounds) {
-            _bounds = new VROBoundingBox(box);
+        if (!_boundingBoxComputed) {
+            _bounds = box;
+            _boundingBoxComputed = true;
         }
         else {
-            _bounds->unionDestructive(box);
+            _bounds.unionDestructive(box);
         }
     }
+    _boundingBoxComputed = true;
+    _lastBounds.store(_bounds);
+    return _bounds;
+}
 
-    // No geometry sources, return an area 0 box
-    if (!_bounds) {
-        _bounds = new VROBoundingBox();
-    }
-    return *_bounds;
+VROBoundingBox VROGeometry::getLastBoundingBox() const {
+    return _lastBounds.load();
 }
 
 VROVector3f VROGeometry::getCenter() {
@@ -175,6 +175,5 @@ void VROGeometry::updateSubstrate() {
 }
 
 void VROGeometry::updateBoundingBox(){
-    delete(_bounds);
-    _bounds = nullptr;
+    _boundingBoxComputed = false;
 }

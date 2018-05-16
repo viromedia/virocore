@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <atomic>
 #include "VRORenderContext.h"
 #include "VRODriver.h"
 #include "VROSortKey.h"
@@ -53,11 +54,12 @@ public:
         _geometryElements(elements),
         _cameraEnclosure(false),
         _screenSpace(false),
-        _bounds(nullptr),
+        _boundingBoxComputed(false),
         _substrate(nullptr),
-        _instancedUBO(nullptr){
-            
-         ALLOCATION_TRACKER_ADD(Geometry, 1);
+        _instancedUBO(nullptr) {
+
+        _bounds = VROBoundingBox();
+        ALLOCATION_TRACKER_ADD(Geometry, 1);
     }
     
     /*
@@ -67,9 +69,10 @@ public:
     VROGeometry() :
         _cameraEnclosure(false),
         _screenSpace(false),
-        _bounds(nullptr),
+        _boundingBoxComputed(false),
         _substrate(nullptr) {
-        
+
+        _bounds = VROBoundingBox();
         ALLOCATION_TRACKER_ADD(Geometry, 1);
     }
     
@@ -160,7 +163,9 @@ public:
     }
     
     const VROBoundingBox &getBoundingBox();
+    VROBoundingBox getLastBoundingBox() const;
     void updateBoundingBox();
+
     VROVector3f getCenter();
     
     bool isCameraEnclosure() const {
@@ -251,9 +256,19 @@ private:
     bool _screenSpace;
     
     /*
-     The bounding box of this geometry. Created on demand, then cached.
+     The bounding box of this geometry.
      */
-    VROBoundingBox *_bounds;
+    VROBoundingBox _bounds;
+
+    /*
+     Atomic version of the bounding box. Not used by the rendering thread.
+     */
+    std::atomic<VROBoundingBox> _lastBounds;
+
+    /*
+     True if the bounding box for this VROGeometry has been computed.
+     */
+    bool _boundingBoxComputed;
     
     /*
      Representation of this geometry in the underlying graphics library.
