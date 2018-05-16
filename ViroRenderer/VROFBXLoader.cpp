@@ -167,6 +167,9 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode,
         node->recomputeUmbrellaBoundingBox();
         node->setAtomicRenderProperties();
         node->setIgnoreEventHandling(node->getIgnoreEventHandling());
+
+        // Hydrate the geometry and all textures prior to invoking the callback
+        VROModelIOUtil::hydrateNodes(node, driver);
         
         if (onFinish) {
             onFinish(node, true);

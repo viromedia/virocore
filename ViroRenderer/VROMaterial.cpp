@@ -161,6 +161,19 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _selfIllumination->copyFrom(*material->_selfIllumination);
 }
 
+void VROMaterial::prewarm(std::shared_ptr<VRODriver> driver) {
+    getSubstrate(driver);
+    VROMaterialVisual *visuals[10] = { _diffuse, _roughness, _metalness, _specular, _normal, _reflective,
+                                       _emission, _multiply, _ambientOcclusion, _selfIllumination };
+    for (int i = 0; i < 10; i++) {
+        VROMaterialVisual *visual = visuals[i];
+        if (visual->getTextureType() != VROTextureType::None) {
+            visual->getTexture()->prewarm(driver);
+        }
+    }
+}
+
+
 void VROMaterial::setTransparency(float transparency) {
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
         ((VROMaterial *)animatable)->_transparency = v;

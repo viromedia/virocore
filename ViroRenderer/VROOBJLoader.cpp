@@ -140,6 +140,9 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
         node->recomputeUmbrellaBoundingBox();
         node->setAtomicRenderProperties();
 
+        // Hydrate the geometry and all textures prior to invoking the callback
+        VROModelIOUtil::hydrateNodes(node, driver);
+
         if (onFinish) {
             onFinish(node, true);
         }

@@ -13,6 +13,9 @@
 #include "VROLog.h"
 #include "VROTextureUtil.h"
 #include "VROStringUtil.h"
+#include "VRONode.h"
+#include "VROGeometry.h"
+#include "VROMaterial.h"
 
 const std::string kAssetURLPrefix = "file:///android_asset";
 
@@ -154,4 +157,16 @@ std::map<std::string, std::string> VROModelIOUtil::processResourceMap(const std:
     }
 };
 
+void VROModelIOUtil::hydrateNodes(std::shared_ptr<VRONode> node, std::shared_ptr<VRODriver> &driver) {
+    std::shared_ptr<VROGeometry> geometry = node->getGeometry();
+    if (geometry) {
+        geometry->prewarm(driver);
+        for (const std::shared_ptr<VROMaterial> &material : geometry->getMaterials()) {
+            material->prewarm(driver);
+        }
+    }
+    for (std::shared_ptr<VRONode> &node : node->getChildNodes()) {
+        hydrateNodes(node, driver);
+    }
+}
 
