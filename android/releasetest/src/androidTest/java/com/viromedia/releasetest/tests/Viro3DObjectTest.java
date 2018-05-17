@@ -48,6 +48,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
     @Test
     public void test(){
+        stage0_testLoadModelGLTF();
         stage1_testLoadModelFBX();
         stage2_testFBXAnimPause();
         stage3_testFBXAnimStop();
@@ -57,6 +58,58 @@ public class Viro3DObjectTest extends ViroBaseTest {
         stage6_testLoadModelOBJMaterials();
         stage7_testLoadModelVRXReplaceMaterial();
         stage8_testLoadModelAnimateVRXWithShadow();
+    }
+
+    public void stage0_testLoadModelGLTF() {
+        Node rootnode = new Node();
+        Object3D gltfModel = new Object3D();
+        Object3D gltfModelGLB = new Object3D();
+        Object3D gltfModelBase64 = new Object3D();
+        gltfModelGLB.setPosition(new Vector(-1.75,0,0));
+        gltfModelBase64.setPosition(new Vector(1.75,0,0));
+
+        rootnode.setScale(new Vector(0.15, 0.15 , 0.15));
+        rootnode.setPosition(new Vector(0,-0.7, -1));
+        rootnode.addChildNode(gltfModel);
+        rootnode.addChildNode(gltfModelBase64);
+        rootnode.addChildNode(gltfModelGLB);
+        mScene.getRootNode().addChildNode(rootnode);
+
+        gltfModelGLB.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/DuckGlb.glb"), Object3D.Type.GLB, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+            }
+        });
+
+        gltfModel.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/Duck.gltf"), Object3D.Type.GLTF, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        gltfModelBase64.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/Duck64Encoded.gltf"), Object3D.Type.GLTF, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        assertPass("You should see 3 Ducks Render in the scene.", ()->{
+            rootnode.removeFromParentNode();
+        });
     }
 
     public void stage1_testLoadModelFBX() {
