@@ -201,7 +201,8 @@ void VROReticle::renderNode(std::shared_ptr<VRONode> node, const VRORenderContex
     node->computeTransforms(identity, {});
     node->applyConstraints(context, identity, false);
     node->updateSortKeys(0, renderParams, metadata, context, driver);
-    node->setAtomicRenderProperties();
+    node->syncAtomicRenderProperties();
+    
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
     if (!geometry) {
         return;

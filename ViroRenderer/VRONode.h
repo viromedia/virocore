@@ -149,12 +149,6 @@ public:
      */
     void applyConstraints(const VRORenderContext &context, VROMatrix4f parentTransform,
                           bool parentUpdated);
-
-    /*
-     Recursively sets the atomic properties computed during a render pass. Should be
-     called after the computation occurs.
-     */
-    void setAtomicRenderProperties();
     
     /*
      Update the position of each light in this node, and add to the outLights vector.
@@ -258,13 +252,14 @@ public:
     VROVector3f getRotationEuler() const {
         return _euler;
     }
-    
+
     /*
-     The following are atomic, updated once per frame on the rendering thread. They can
+     The following are atomic, updated once per TODO frame on the rendering thread. They can
      be accessed safely from any thread to get an up-to-date state of the transform.
      */
     VROMatrix4f    getLastWorldTransform() const;
     VROVector3f    getLastWorldPosition() const;
+    VROMatrix4f    getLastWorldRotation() const;
     VROVector3f    getLastLocalPosition() const;
     VROVector3f    getLastLocalScale() const;
     VROQuaternion  getLastLocalRotation() const;
@@ -277,11 +272,6 @@ public:
     void setPosition(VROVector3f position);
     void setScale(VROVector3f scale);
     void setTransformDelegate(std::shared_ptr<VROTransformDelegate> delegate);
-
-    /*
-     Notifies attached transform delegate, if any, that a position change had occurred.
-     */
-    void notifyTransformUpdate(bool forced);
     
     /*
      Set the rotation as a vector of Euler angles. Using this method
@@ -315,6 +305,49 @@ public:
      */
     void setRotationPivot(VROMatrix4f pivot);
     void setScalePivot(VROMatrix4f pivot);
+    
+#pragma mark - Atomic Settings
+
+    // Viro platforms in general properties on the main thread and dispatch those setters
+    // to the rendering thread. This maintains thread-safety (and speed) because we don't
+    // interfere with the ongoing render cycle when setting variables. However, it's common that
+    // the user wants to set something on the UI thread and then immediately invoke some
+    // computation utilizing said variable, before it's been synchronized with the rendering
+    // thread. For this reason we copy all relevant fields from VRONode into std::atomic variables.
+    // These variables can be accessed from any thread. This way, we:
+    //
+    // 1. Maintain speed on the rendering thread (e.g. we don't have to lock or deal with atomics)
+    // 2. Maintain access of this data across threads
+    //
+    // In other words, these atomic fields are *duplicates* of rendering thread fields, but are
+    // accessible from any thread. They are set in two ways:
+    //
+    // 1. Via any atomic setter, from any thread.
+    // 2. Via automatic sync with the rendering thread, once per frame.
+
+    // The atomic setters below are only used if you want to immediately update all of a node's
+    // related atomic properties. For example, use node->setPositionAtomic() if you want to be
+    // able to immediately use the node's updated getLastWorldTransform() for another calculation.
+    // Otherwise, if you simply call node->setPosition(), the corresponding fields will be updated
+    // on the next frame after the sync.
+    void setPositionAtomic(VROVector3f position);
+    void setRotationAtomic(VROQuaternion rotation);
+    void setScaleAtomic(VROVector3f scale);
+    
+    /*
+     Automatically invoked whenever atomic position, scale, or rotation are set.
+     These are the equivalent of their non-atomic counterparts, except they
+     only operate on the atomic values.
+     */
+    void computeTransformsAtomic();
+    void computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation);
+    void doComputeTransformsAtomic(VROMatrix4f parentTransform);
+    
+    /*
+     Recursively sync the atomic properties computed during a render pass. Should be
+     called after the computation occurs in the render cycle.
+     */
+    void syncAtomicRenderProperties();
     
 #pragma mark - Render Settings
     
@@ -771,15 +804,16 @@ private:
     std::weak_ptr<VROTransformDelegate> _transformDelegate;
 
     /*
-     Because _computedTransform is computed multiple times during a single render, storing
-     the last fully computed transform is necessary to retrieve a "valid" computedTransform.
-     We also store the last *local* position, scale, and rotation atomically.
+     Atomic fields used for multi-threaded access. See the 'Atomic Settings' pragma
+     above for a more extensive description of why we need these fields.
      */
     std::atomic<VROMatrix4f> _lastComputedTransform;
     std::atomic<VROVector3f> _lastComputedPosition;
+    std::atomic<VROMatrix4f> _lastComputedRotation;
     std::atomic<VROVector3f> _lastPosition;
     std::atomic<VROVector3f> _lastScale;
     std::atomic<VROQuaternion> _lastRotation;
+    std::atomic<VROBoundingBox> _lastComputedBoundingBox;
     std::atomic<VROBoundingBox> _lastUmbrellaBoundingBox;
 
     /*
@@ -886,6 +920,11 @@ private:
     std::shared_ptr<VROTransaction> _dragAnimation;
     
 #pragma mark - Private
+
+    /*
+     Notifies attached transform delegate, if any, that a position change had occurred.
+     */
+    void notifyTransformUpdate(bool forced);
     
     /*
      Recursively set the visibility of this node and all of its children to the 

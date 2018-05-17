@@ -54,8 +54,8 @@ void VROScene::applyConstraints(const VRORenderContext &context) {
     _rootNode->applyConstraints(context, {}, false);
 }
 
-void VROScene::setAtomicRenderProperties() {
-    _rootNode->setAtomicRenderProperties();
+void VROScene::syncAtomicRenderProperties() {
+    _rootNode->syncAtomicRenderProperties();
 }
 
 void VROScene::updateParticles(const VRORenderContext &context) {

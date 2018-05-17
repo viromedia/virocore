@@ -392,7 +392,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             outgoingScene->updateParticles(context);
             outgoingScene->updateVisibility(context);
             outgoingScene->updateSortKeys(_renderMetadata, context, driver);
-            outgoingScene->setAtomicRenderProperties();
+            outgoingScene->syncAtomicRenderProperties();
         }
         _inputController->onProcess(camera);
         _inputController->setView(camera.getLookAtMatrix());
@@ -405,7 +405,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         scene->updateParticles(context);
         scene->updateVisibility(context);
         scene->updateSortKeys(_renderMetadata, context, driver);
-        scene->setAtomicRenderProperties();
+        scene->syncAtomicRenderProperties();
         updateSceneEffects(driver, scene);
     }
 

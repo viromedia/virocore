@@ -293,8 +293,9 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_FLOAT positionX,
                                     VRO_FLOAT positionY,
                                     VRO_FLOAT positionZ) {
-
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+    node_w.lock()->setPositionAtomic({ positionX, positionY, positionZ });
+
     VROPlatformDispatchAsyncRenderer([node_w, positionX, positionY, positionZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
@@ -309,12 +310,14 @@ VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
                                          VRO_FLOAT rotationRadiansY,
                                          VRO_FLOAT rotationRadiansZ) {
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+    node_w.lock()->setRotationAtomic({ rotationRadiansX, rotationRadiansY, rotationRadiansZ });
+
     VROPlatformDispatchAsyncRenderer([node_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->setRotation({rotationRadiansX,
-                               rotationRadiansY,
-                               rotationRadiansZ});
+            node->setRotation({ rotationRadiansX,
+                                rotationRadiansY,
+                                rotationRadiansZ });
         }
     });
 }
@@ -325,11 +328,14 @@ VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
                                               VRO_FLOAT quatY,
                                               VRO_FLOAT quatZ,
                                               VRO_FLOAT quatW) {
+    VROQuaternion quat(quatX, quatY, quatZ, quatW);
+
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w, quatX, quatY, quatZ, quatW] {
+    node_w.lock()->setRotationAtomic(quat);
+
+    VROPlatformDispatchAsyncRenderer([node_w, quat] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            VROQuaternion quat(quatX, quatY, quatZ, quatW);
             node->setRotation(quat);
         }
     });
@@ -340,8 +346,9 @@ VRO_METHOD(void, nativeSetScale)(VRO_ARGS
                                  VRO_FLOAT scaleX,
                                  VRO_FLOAT scaleY,
                                  VRO_FLOAT scaleZ) {
-
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+    node_w.lock()->setScaleAtomic({ scaleX, scaleY, scaleZ });
+
     VROPlatformDispatchAsyncRenderer([node_w, scaleX, scaleY, scaleZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {

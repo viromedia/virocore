@@ -165,7 +165,7 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode,
         // Recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
         // we notify the user that their FBX has finished loading
         node->recomputeUmbrellaBoundingBox();
-        node->setAtomicRenderProperties();
+        node->syncAtomicRenderProperties();
         node->setIgnoreEventHandling(node->getIgnoreEventHandling());
 
         // Hydrate the geometry and all textures prior to invoking the callback

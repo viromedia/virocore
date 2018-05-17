@@ -138,7 +138,7 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
         // recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
         // we notify the user that their OBJ has finished loading
         node->recomputeUmbrellaBoundingBox();
-        node->setAtomicRenderProperties();
+        node->syncAtomicRenderProperties();
 
         // Hydrate the geometry and all textures prior to invoking the callback
         VROModelIOUtil::hydrateNodes(node, driver);

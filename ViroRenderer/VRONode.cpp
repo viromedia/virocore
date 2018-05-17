@@ -524,6 +524,109 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
     computeTransforms(getParentNode()->getComputedTransform(), getParentNode()->getComputedRotation());
 }
 
+#pragma mark - Atomic Transforms
+
+void VRONode::setPositionAtomic(VROVector3f position) {
+    _lastPosition.store(position);
+    computeTransformsAtomic();
+}
+
+void VRONode::setRotationAtomic(VROQuaternion rotation) {
+    _lastRotation.store(rotation);
+    computeTransformsAtomic();
+}
+
+void VRONode::setScaleAtomic(VROVector3f scale) {
+    _lastScale.store(scale);
+    computeTransformsAtomic();
+}
+
+void VRONode::computeTransformsAtomic(){
+    VROMatrix4f parentTransform;
+    VROMatrix4f parentRotation;
+
+    // Note that retrieving the parent is thread-safe since it's a shared_ptr, which we then
+    // lock. However, we can only safely access atomic properties on the parent
+    std::shared_ptr<VRONode> parent = getParentNode();
+    if (parent) {
+        parentTransform = parent->getLastWorldTransform();
+        parentRotation = parent->getLastWorldRotation();
+    }
+    
+    // Trigger a computeAtomicTransforms pass to update the node's bounding boxes and as well as its
+    // children's node transforms recursively.
+    computeTransformsAtomic(parentTransform, parentRotation);
+
+    // TODO VIRO-3692 Currently it is unsafe to compute the umbrella bounding box because the
+    //                subnodes cannot be accessed
+    //VROVector3f computedPosition = _lastComputedPosition.load();
+    //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
+     //                                  computedPosition.y, computedPosition.z, computedPosition.z);
+    //computeUmbrellaBounds(&umbrellaBoundingBox);
+}
+
+void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
+    // This is identical to computeTransform, except it operates on any thread, utilizing
+    // only atomic fields
+    doComputeTransformsAtomic(parentTransform);
+    _lastComputedRotation.store(parentRotation.multiply(_lastRotation.load().getMatrix()));
+
+    // TODO VIRO-3692 Currently it is unsafe to recurse this operation down the graph because
+    //                subnodes cannot be accessed
+    //for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+    //    childNode->computeTransformsAtomic(_lastComputedTransform.load(), _lastComputedRotation.load());
+    //}
+}
+
+// This sets _lastComputedTransform, _lastComputedPosition, _lastRotation, and _lastComputedBoundingBox
+void VRONode::doComputeTransformsAtomic(VROMatrix4f parentTransform) {
+    // This is identical to doComputeTransform, except it operates on any thread, utilizing
+    // only atomic fields
+    VROMatrix4f transform;
+
+    // We ignore scale and rotation pivots since these are not supported by ViroCore or ViroReact.
+    // When support *is* added, atomic versions of _scalePivot and _rotationPivot will be necessary.
+    VROVector3f scale = _lastScale.load();
+    transform.scale(scale.x, scale.y, scale.z);
+    transform = _lastRotation.load().getMatrix() * transform;
+
+    // Handle translation as per normal
+    VROMatrix4f translate;
+    VROVector3f position = _lastPosition.load();
+    translate.translate(position.x, position.y, position.z);
+    transform = translate * transform;
+    
+    transform = parentTransform * transform;
+    VROVector3f computedPosition = { transform[12], transform[13], transform[14] };
+    _lastComputedPosition.store(computedPosition);
+    
+    if (_geometry) {
+        _lastComputedBoundingBox.store(_geometry->getLastBoundingBox().transform(transform));
+    } else {
+        // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
+        _lastComputedBoundingBox.store({ computedPosition.x, computedPosition.x, computedPosition.y,
+                                         computedPosition.y, computedPosition.z, computedPosition.z});
+    }
+    _lastComputedTransform.store(transform);
+}
+
+void VRONode::syncAtomicRenderProperties() {
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
+    _lastComputedTransform.store(_computedTransform);
+    _lastComputedPosition.store(_computedPosition);
+    _lastComputedRotation.store(_computedRotation);
+    _lastPosition.store(_position);
+    _lastRotation.store(_rotation);
+    _lastScale.store(_scale);
+    _lastComputedBoundingBox.store(_computedBoundingBox);
+    _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
+#endif
+    
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->syncAtomicRenderProperties();
+    }
+}
+
 #pragma mark - Visibility
 
 void VRONode::updateVisibility(const VRORenderContext &context) {
@@ -591,6 +694,10 @@ VROMatrix4f VRONode::getLastWorldTransform() const {
 
 VROVector3f VRONode::getLastWorldPosition() const {
     return _lastComputedPosition.load();
+}
+
+VROMatrix4f VRONode::getLastWorldRotation() const {
+    return _lastComputedRotation.load();
 }
 
 VROVector3f VRONode::getLastLocalPosition() const {
@@ -868,21 +975,6 @@ void VRONode::setHidden(bool hidden) {
 void VRONode::setHighAccuracyGaze(bool enabled) {
     passert_thread(__func__);
     _highAccuracyGaze = enabled;
-}
-
-void VRONode::setAtomicRenderProperties() {
-#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
-    _lastComputedTransform.store(_computedTransform);
-    _lastComputedPosition.store(_computedPosition);
-    _lastPosition.store(_position);
-    _lastRotation.store(_rotation);
-    _lastScale.store(_scale);
-    _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
-#endif
-    
-    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->setAtomicRenderProperties();
-    }
 }
 
 #pragma mark - Actions and Animations
