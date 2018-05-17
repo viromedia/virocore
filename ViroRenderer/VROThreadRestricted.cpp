@@ -16,7 +16,7 @@
 static std::atomic<bool> sRenderingThreadSet;
 
 // The thread-local name of the current thread.
-static thread_local VROThreadName tThreadName = VROThreadName::Undefined;
+static VROThreadName tThreadName = VROThreadName::Undefined;
 
 std::string print_thread_id(pthread_t id) {
     char buf[1024];
