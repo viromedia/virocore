@@ -221,7 +221,7 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                     }
 
                     // Once the manifest has been parsed, start constructing our Viro 3D Model.
-                    const tinygltf::Model model = gModel;
+                    const tinygltf::Model &model = gModel;
                     VROPlatformDispatchAsyncRenderer([rootNode, model, driver, onFinish] {
                         _dataCache.clear();
                         _textureCache.clear();
@@ -376,6 +376,11 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
             const tinygltf::Material &gMat = gModel.materials[gMatIndex];
             materials.push_back(getMaterial(gModel, gMat));
         }
+    }
+
+    // Apply a default material if none has been specified:
+    if (materials.size() == 0) {
+        materials.push_back(std::make_shared<VROMaterial>());
     }
 
     // Finally construct our geometry with the processed vertex and attribute data.
