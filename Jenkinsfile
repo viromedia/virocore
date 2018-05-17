@@ -20,12 +20,13 @@ fastlane renderer_cp_viro_react_lib_to_tmp'''
 fastlane renderer_viro_core_lib'''
       }
      }
-     stage('virokit_framework (ios)') {
+/*     stage('virokit_framework (ios)') {
       steps {
         sh '''cd ios
 fastlane release_virokit_framework'''
       }
     }
+*/
     stage('releasetest') {
       steps {
         sh '''cd android
