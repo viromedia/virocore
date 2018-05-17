@@ -33,6 +33,8 @@ platform :android do
                    merge_commit_filtering: "exclude_merges") 
     sh("mkdir -p /tmp/viro_core_lib/")
     sh("cp ../virocore/build/outputs/aar/virocore-*.aar /tmp/viro_core_lib/")
+    sh("mkdir -p /tmp/s3_artifacts")
+    sh("cp ../virocore/build/outputs/aar/virocore-*.aar /tmp/s3_artifacts/")
   end
 
 
