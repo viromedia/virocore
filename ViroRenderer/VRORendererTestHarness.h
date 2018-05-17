@@ -27,6 +27,7 @@ enum class VRORendererTestType {
     NormalMap,
     Stereoscopic,
     FBX,
+    GLTF,
     ARPlane,
     ARDraggableNode,
     ARImageTracking,

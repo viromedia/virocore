@@ -291,6 +291,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROBloomTest.cpp
              ${VIRO_RENDERER_SRC}/VROParticleTest.cpp
              ${VIRO_RENDERER_SRC}/VROFBXTest.cpp
+             ${VIRO_RENDERER_SRC}/VROGLTFTest.cpp
              ${VIRO_RENDERER_SRC}/VROHDRTest.cpp
              ${VIRO_RENDERER_SRC}/VRONormalMapTest.cpp
              ${VIRO_RENDERER_SRC}/VROOBJTest.cpp

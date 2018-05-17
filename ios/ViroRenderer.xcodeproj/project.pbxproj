@@ -749,6 +749,11 @@
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A57CA8DC20ADFDB700DE85A1 /* VROGLTFTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CA8D920ADFD2F00DE85A1 /* VROGLTFTest.cpp */; };
+		A57CA8E020AE027400DE85A1 /* DuckCM.png in Resources */ = {isa = PBXBuildFile; fileRef = A57CA8DD20AE027400DE85A1 /* DuckCM.png */; };
+		A57CA8E120AE027400DE85A1 /* Duck.gltf in Resources */ = {isa = PBXBuildFile; fileRef = A57CA8DE20AE027400DE85A1 /* Duck.gltf */; };
+		A57CA8E220AE027400DE85A1 /* Duck0.bin in Resources */ = {isa = PBXBuildFile; fileRef = A57CA8DF20AE027400DE85A1 /* Duck0.bin */; };
+		A57CA8E420AE050000DE85A1 /* Buggy.glb in Resources */ = {isa = PBXBuildFile; fileRef = A57CA8E320AE04FF00DE85A1 /* Buggy.glb */; };
 		A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */; };
 		A58697861E3084A400191090 /* VROInputControllerCardboardiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A58697871E3084A400191090 /* VROInputPresenterCardboardiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1645,6 +1650,12 @@
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
 		A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneDelegateiOS.h; sourceTree = "<group>"; };
 		A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegateiOS.h; sourceTree = "<group>"; };
+		A57CA8D920ADFD2F00DE85A1 /* VROGLTFTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGLTFTest.cpp; sourceTree = "<group>"; };
+		A57CA8DA20ADFD3000DE85A1 /* VROGLTFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGLTFTest.h; sourceTree = "<group>"; };
+		A57CA8DD20AE027400DE85A1 /* DuckCM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = DuckCM.png; path = ../android/nativetest/src/main/assets/DuckCM.png; sourceTree = "<group>"; };
+		A57CA8DE20AE027400DE85A1 /* Duck.gltf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Duck.gltf; path = ../android/nativetest/src/main/assets/Duck.gltf; sourceTree = "<group>"; };
+		A57CA8DF20AE027400DE85A1 /* Duck0.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = Duck0.bin; path = ../android/nativetest/src/main/assets/Duck0.bin; sourceTree = "<group>"; };
+		A57CA8E320AE04FF00DE85A1 /* Buggy.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = Buggy.glb; path = ../android/nativetest/src/main/assets/Buggy.glb; sourceTree = "<group>"; };
 		A586977E1E30843000191090 /* VROInputControllerBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROInputControllerBase.cpp; sourceTree = "<group>"; };
 		A586977F1E30843000191090 /* VROInputControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerBase.h; sourceTree = "<group>"; };
 		A58697801E30843000191090 /* VROInputPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenter.h; sourceTree = "<group>"; };
@@ -2648,6 +2659,8 @@
 		8FD2A5571F813C6300E831A6 /* Test Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				A57CA8D920ADFD2F00DE85A1 /* VROGLTFTest.cpp */,
+				A57CA8DA20ADFD3000DE85A1 /* VROGLTFTest.h */,
 				8F292BC720A38F2F00635C0D /* VROToneMappingTest.h */,
 				8F292BC620A38F2E00635C0D /* VROToneMappingTest.cpp */,
 				8FD2A5581F817D4100E831A6 /* VROPhysicsTest.h */,
@@ -2749,6 +2762,10 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A57CA8E320AE04FF00DE85A1 /* Buggy.glb */,
+				A57CA8DE20AE027400DE85A1 /* Duck.gltf */,
+				A57CA8DF20AE027400DE85A1 /* Duck0.bin */,
+				A57CA8DD20AE027400DE85A1 /* DuckCM.png */,
 				8FA9A25D207E96230022C55D /* object_bpanther_anim.vrx */,
 				8FA9A25F207E96230022C55D /* object_bpanther_Base_Color.png */,
 				8FA9A260207E96240022C55D /* object_bpanther_Metallic.png */,
@@ -3482,6 +3499,7 @@
 				8F5EEEAA20329C9C0059C9E7 /* cupcake.mtl in Resources */,
 				8F1B4A221F64B61E00156809 /* portal_archway.vrx in Resources */,
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
+				A57CA8E120AE027400DE85A1 /* Duck.gltf in Resources */,
 				8F5EEE9820325C310059C9E7 /* object_pumpkin_specular.png in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
@@ -3597,7 +3615,9 @@
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
 				8FA9A24F207E83980022C55D /* Lamborginhi_glass_Metallic.png in Resources */,
+				A57CA8E020AE027400DE85A1 /* DuckCM.png in Resources */,
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
+				A57CA8E220AE027400DE85A1 /* Duck0.bin in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
@@ -3650,6 +3670,7 @@
 				8F04372C201AA72900D98D26 /* blinn2_Metallic.png in Resources */,
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
+				A57CA8E420AE050000DE85A1 /* Buggy.glb in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
@@ -3808,7 +3829,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3845,7 +3870,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3890,6 +3919,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A57CA8DC20ADFDB700DE85A1 /* VROGLTFTest.cpp in Sources */,
 				13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */,
 				13F631B42065C21B00A74EFC /* KeenConstants.m in Sources */,
 				A5B433EE204E65B600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */,

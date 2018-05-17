@@ -19,6 +19,7 @@
 #include "VROCompress.h"
 #include "VROModelIOUtil.h"
 #include "VROHDRLoader.h"
+#include "VROGLTFLoader.h"
 
 #if VRO_PLATFORM_IOS
 #include <UIKit/UIKit.h>
@@ -35,8 +36,6 @@
 #include "VROPlatformUtil.h"
 #include "VROImageAndroid.h"
 #include "VROVideoTextureAVP.h"
-#include "VROModelIOUtil.h"
-
 #endif
 
 std::string VROTestUtil::getURLForResource(std::string resource, std::string type) {
@@ -292,12 +291,62 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     return node;
 }
 
+std::shared_ptr<VRONode> VROTestUtil::loadGLTFModel(std::string model, std::string ext, VROVector3f position, VROVector3f scale,
+                                                   int lightMask, std::string animation, std::shared_ptr<VRODriver> driver) {
+    std::string url;
+    std::string base;
+    VROResourceType resourceType = VROResourceType::URL;
+    bool isGLBType = VROStringUtil::strcmpinsensitive(ext, "glb");
+
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:model.c_str()]
+                                                        ofType:[NSString stringWithUTF8String:ext.c_str()]];
+    NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
+    url = std::string([[fbxURL description] UTF8String]);
+
+    NSString *basePath = [fbxPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    base = std::string([[baseURL description] UTF8String]);
+#elif VRO_PLATFORM_ANDROID
+    url = "file:///android_asset/" + model + "." + ext;
+    base = url.substr(0, url.find_last_of('/'));
+#else
+    url = "/" + model + ".vrx";
+    base = url.substr(0, url.find_last_of('/'));
+    resourceType = VROResourceType::LocalFile;
+#endif
+
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    VROGLTFLoader::loadGLTFFromResource(url, {}, resourceType, node, isGLBType, driver,
+                                      [scale, position, lightMask](std::shared_ptr<VRONode> node, bool success) {
+                                          if (!success) {
+                                              return;
+                                          }
+
+                                          node->setScale(scale);
+                                          node->setPosition(position);
+                                          setLightMasks(node, lightMask);
+
+                                          if (node->getGeometry()) {
+                                              node->getGeometry()->setName("GLTF Root Geometry");
+                                          }
+                                          for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
+                                              if (child->getGeometry()) {
+                                                  child->getGeometry()->setName("GLTF Geometry");
+                                              }
+                                          }
+
+                                          pinfo("GLTF HAS LOADED");
+                                      });
+    return node;
+}
+
 void VROTestUtil::animateTake(std::weak_ptr<VRONode> node_w, std::string name) {
     std::shared_ptr<VRONode> node = node_w.lock();
     if (!node) {
         return;
     }
-    
+
     node->getAnimation(name.c_str(), true)->execute(node, [node_w, name] {
         animateTake(node_w, name);
     });
