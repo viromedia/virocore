@@ -599,7 +599,6 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                 arcore::AugmentedImage *image = (arcore::AugmentedImage *)trackable;
                 bool imageIsTracked = trackable->getTrackingState() == arcore::TrackingState::Tracking;
                 std::string key(image->getName());
-
                 std::shared_ptr<VROARImageAnchor> vAnchor;
                 if (imageIsTracked) {
                     auto it = _nativeAnchorMap.find(key);
@@ -619,6 +618,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                                 vAnchor = std::make_shared<VROARImageAnchor>(_imageTargets[j]);
                                 updateImageAnchorFromARCore(vAnchor, image);
                                 vAnchor->setId(target->getId());
+                                _nativeAnchorMap[key] = vAnchor;
                                 addAnchor(vAnchor);
                             }
                         }
