@@ -438,7 +438,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertLocalPositionToWorldSpace)(VRO_ARGS
 
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROVector3f localPosition(x, y, z);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().invert().multiply(localPosition));
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().multiply(localPosition));
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertWorldPositionToLocalSpace)(VRO_ARGS
@@ -447,7 +447,7 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertWorldPositionToLocalSpace)(VRO_ARGS
 
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     VROVector3f worldPosition(x, y, z);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().multiply(worldPosition));
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().invert().multiply(worldPosition));
 }
 
 VRO_METHOD(void, nativeSetOpacity)(VRO_ARGS

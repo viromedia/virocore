@@ -72,13 +72,13 @@ public class ViroNodeTest extends ViroBaseTest {
         sphere.setMaterials(Arrays.asList(sphereMaterial));
         parentSphereNode.setGeometry(sphere);
         parentSphereNode.setPosition(new Vector(0f, 0f, -5f));
-
     }
 
     @Test
     public void testNode() {
         testNodeAddChildren();
-
+        testConvertLocalToWorld();
+        testConvertWorldToLocal();
         testNodePositionParent();
         testNodeRotationParent();
         testNodeScaleParent();
@@ -261,7 +261,14 @@ public class ViroNodeTest extends ViroBaseTest {
 
     private void testNodeRemoveAllChildren() {
         parentSphereNode.removeAllChildNodes();
-        assertPass("All nodes but middle box should be removed.");
+        assertPass("All nodes but middle box should be removed.", new TestCleanUpMethod() {
+            @Override
+            public void cleanUp() {
+                parentSphereNode.addChildNode(childOne);
+                parentSphereNode.addChildNode(childTwo);
+                parentSphereNode.addChildNode(childThree);
+            }
+        });
     }
 
     private void testTransformBehaviorX() {
@@ -339,5 +346,21 @@ public class ViroNodeTest extends ViroBaseTest {
             mYesButtonNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD_Y));
             mYesButtonNode.setPosition(new Vector(2.5f, -0.5f, -3.3f));
         });
+    }
+
+    private void testConvertLocalToWorld() {
+        parentSphereNode.setPosition(new Vector(0, 1, -1));
+        childOne.setPosition(new Vector(0, 1, 1));
+
+        Vector worldPosition = childOne.convertLocalPositionToWorldSpace(new Vector(0, -2, 0));
+        assertPass("The world position printed here " + worldPosition + " is [0, 0, 0]");
+    }
+
+    private void testConvertWorldToLocal() {
+        parentSphereNode.setPosition(new Vector(0, 2, 2));
+        childOne.setPosition(new Vector(2, 0, 0));
+
+        Vector localPosition = childOne.convertWorldPositionToLocalSpace(new Vector(1, 1, 1));
+        assertPass("The local position printed here " + localPosition + " is [-1, -1, -1]");
     }
 }

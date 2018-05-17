@@ -1433,7 +1433,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Convert the given position from world coordinates into coordinate space of this Node. The
+     * Convert the given position from world coordinates into the coordinate space of this Node. The
      * world coordinate system is the global coordinate space; e.g., the coordinate space of the
      * Scene's root Node. This Node's coordinate system is the coordinate system in which the
      * children of this Node are positioned.
