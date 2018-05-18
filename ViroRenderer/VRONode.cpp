@@ -1024,11 +1024,11 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
         _lastWorldBoundingBox.store({ worldPosition.x, worldPosition.x,
-            worldPosition.y, worldPosition.y,
-            worldPosition.z, worldPosition.z });
+                                      worldPosition.y, worldPosition.y,
+                                      worldPosition.z, worldPosition.z });
     }
     
-    // TODO VIRO-3692 Currently it is unsafe to compute the umbrella bounding box because the
+    // TODO VIRO-3701 Currently it is unsafe to compute the umbrella bounding box because the
     //                subnodes cannot be accessed
     //VROVector3f computedPosition = _lastWorldPosition.load();
     //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
