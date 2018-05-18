@@ -165,6 +165,7 @@ protected:
         std::shared_ptr<VRONode> _draggedNode;
         VROVector3f _originalHitLocation;
         VROVector3f _originalDraggedNodePosition;
+        VROQuaternion _originalDraggedNodeRotation;
         VROVector3f _forwardOffset;
         float _draggedDistanceFromController;
     };

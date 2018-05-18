@@ -132,7 +132,8 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
         draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
         draggedObject->_originalHitLocation = _hitResult->getLocation();
-        draggedObject->_originalDraggedNodePosition = draggableNode->getPosition();
+        draggedObject->_originalDraggedNodePosition = draggableNode->getComputedPosition();
+        draggedObject->_originalDraggedNodeRotation = draggableNode->getComputedRotation();
         draggedObject->_draggedNode = draggableNode;
 
         // Grab the forwardOffset (delta from the controller's forward in reference to the user).
@@ -208,7 +209,7 @@ void VROInputControllerBase::processDragging(int source) {
             break;
     }
 
-    draggedNode->setPosition(draggedToPosition);
+    draggedNode->setWorldTransform(draggedToPosition, _lastDraggedNode->_originalDraggedNodeRotation);
 
     /*
      To avoid spamming the JNI / JS bridge, throttle the notification
