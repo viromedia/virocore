@@ -22,7 +22,6 @@
 VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
                                                        std::shared_ptr<VRODriverOpenGL> driver) :
     _driver(driver) {
-
     readGeometryElements(geometry.getGeometryElements());
         
     std::vector<std::shared_ptr<VROGeometrySource>> sources = geometry.getGeometrySources();
@@ -108,9 +107,9 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
         int dataSize = 0;
         for (std::shared_ptr<VROGeometrySource> source : group) {
             int size = source->getVertexCount() * source->getDataStride();
-            int offsetSize = source->getDataOffset();
-            dataSize = std::max(dataSize, size + offsetSize);
+            dataSize = std::max(dataSize, size);
         }
+        passert (dataSize <= kv.first->getDataLength());
         
         VROVertexDescriptorOpenGL vd;
         vd.stride = group[0]->getDataStride();
@@ -212,16 +211,12 @@ GLuint VROGeometrySubstrateOpenGL::parsePrimitiveType(VROGeometryPrimitiveType p
     switch (primitive) {
         case VROGeometryPrimitiveType::Triangle:
             return GL_TRIANGLES;
-            
         case VROGeometryPrimitiveType::TriangleStrip:
             return GL_TRIANGLE_STRIP;
-            
         case VROGeometryPrimitiveType::Line:
             return GL_LINES;
-            
         case VROGeometryPrimitiveType::Point:
             return GL_POINTS;
-            
         default:
             break;
     }
