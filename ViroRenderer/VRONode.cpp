@@ -1047,26 +1047,41 @@ void VRONode::syncAppThreadProperties() {
      because there may be operations in-flight on that thread (e.g. coordinate space
      computations) and we don't want to intersect and modify these values off-thread,
      as that can create inconsistencies.
+
+     Since this function is invoked on the rendering thread, first copy all the properties
+     to local variables, then copy again via the dispatch function over to the application
+     thread.
      
      Because we insist on this, we can consider in the future making these variables
      NOT atomic.
      */
-    VROPlatformDispatchAsyncApplication([node_w] {
+    VROMatrix4f worldTransform = _worldTransform;
+    VROVector3f worldPosition = _worldPosition;
+    VROMatrix4f worldRotation = _worldRotation;
+    VROVector3f position = _position;
+    VROQuaternion rotation = _rotation;
+    VROVector3f scale = _scale;
+    VROBoundingBox worldBoundingBox = _worldBoundingBox;
+    VROBoundingBox umbrellaBoundingBox = _umbrellaBoundingBox;
+
+    VROPlatformDispatchAsyncApplication([worldTransform, worldPosition, worldRotation, position,
+                                         rotation, scale, worldBoundingBox, umbrellaBoundingBox,
+                                         node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->_lastWorldTransform.store(node->_worldTransform);
-            node->_lastWorldPosition.store(node->_worldPosition);
-            node->_lastWorldRotation.store(node->_worldRotation);
-            node->_lastPosition.store(node->_position);
-            node->_lastRotation.store(node->_rotation);
-            node->_lastScale.store(node->_scale);
-            node->_lastWorldBoundingBox.store(node->_worldBoundingBox);
-            node->_lastUmbrellaBoundingBox.store(node->_umbrellaBoundingBox);
+            node->_lastWorldTransform.store(worldTransform);
+            node->_lastWorldPosition.store(worldPosition);
+            node->_lastWorldRotation.store(worldRotation);
+            node->_lastPosition.store(position);
+            node->_lastRotation.store(rotation);
+            node->_lastScale.store(scale);
+            node->_lastWorldBoundingBox.store(worldBoundingBox);
+            node->_lastUmbrellaBoundingBox.store(umbrellaBoundingBox);
         }
     });
 #endif
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->syncAtomicRenderProperties();
+        childNode->syncAppThreadProperties();
     }
 }
 
