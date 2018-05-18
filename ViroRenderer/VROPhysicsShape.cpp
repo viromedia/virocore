@@ -14,6 +14,7 @@
 const std::string VROPhysicsShape::kSphereTag = "Sphere";
 const std::string VROPhysicsShape::kBoxTag = "Box";
 const std::string VROPhysicsShape::kAutoCompoundTag = "Compound";
+const float kMinBoxSize = 0.001f;
 
 VROPhysicsShape::VROPhysicsShape(VROShapeType type, std::vector<float> params) {
     if (type != VROShapeType::Sphere || VROShapeType::Box){
@@ -82,9 +83,9 @@ btCollisionShape* VROPhysicsShape::generateBasicBulletShape(std::shared_ptr<VRON
     } else {
         type = VROPhysicsShape::VROShapeType::Box;
         VROBoundingBox bb = geometry->getBoundingBox();
-        params.push_back(bb.getSpanX());
-        params.push_back(bb.getSpanY());
-        params.push_back(bb.getSpanZ());
+        params.push_back(std::max(bb.getSpanX(), kMinBoxSize));
+        params.push_back(std::max(bb.getSpanY(), kMinBoxSize));
+        params.push_back(std::max(bb.getSpanZ(), kMinBoxSize));
     }
 
     return generateBasicBulletShape(type, params);
