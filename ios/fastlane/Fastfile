@@ -29,7 +29,7 @@ platform :ios do
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release clean | xcpretty -c")
        # build scheme for device architecture
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos11.3 | xcpretty -c")
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator11.3 | xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator11.3 -arch x86_64| xcpretty -c")
      end
      changelog_from_git_commits(commits_count: 5,
                    pretty: "- (%ae) %s",
