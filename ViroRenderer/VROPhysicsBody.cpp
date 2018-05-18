@@ -289,23 +289,23 @@ void VROPhysicsBody::updateBulletRigidBody() {
         // is a translation.
         if (_shape->getIsGeneratedFromGeometry()){
             // Grab the computed geometric transform contained within this node
-            VROVector3f nodePosition = node->getComputedTransform().extractTranslation();
+            VROVector3f nodePosition = node->getWorldTransform().extractTranslation();
             VROVector3f geometryPosition = node->getBoundingBox().getCenter();
             VROVector3f geometryOffset = geometryPosition - nodePosition;
-            VROMatrix4f geometryComputedTransform = node->getComputedTransform();
+            VROMatrix4f geometryComputedTransform = node->getWorldTransform();
             geometryComputedTransform.translate(geometryOffset);
 
             // Calculate an offset transform between the geometry's compute transform,
             // and the node's compute transform. For example in VROText, the text geometry
             // is placed at a distance from the node's origin.
-            VROMatrix4f computedTransformInvert = node->getComputedTransform().invert();
+            VROMatrix4f computedTransformInvert = node->getWorldTransform().invert();
             VROMatrix4f offsetTransform = computedTransformInvert* geometryComputedTransform;
 
             // Finally save the re-computed transform as physicsBodyTransformOffset.
             VROVector3f pos = offsetTransform.extractTranslation();
             VROQuaternion rot = offsetTransform.extractRotation(offsetTransform.extractScale());
 
-            VROVector3f nodeScale = node->getComputedTransform().extractScale();
+            VROVector3f nodeScale = node->getWorldTransform().extractScale();
 
             btTransform offsetTransformBullet = btTransform::getIdentity();
             offsetTransformBullet.setOrigin(btVector3({pos.x * nodeScale.x,
@@ -346,8 +346,8 @@ void VROPhysicsBody::getWorldTransform(btTransform& centerOfMassWorldTrans) cons
         return;
     }
 
-    VROVector3f pos = node->getComputedPosition();
-    VROQuaternion rot = VROQuaternion(node->getComputedRotation());
+    VROVector3f pos = node->getWorldPosition();
+    VROQuaternion rot = VROQuaternion(node->getWorldRotation());
     btTransform graphicsWorldTrans
             = btTransform(btQuaternion(rot.X, rot.Y, rot.Z, rot.W), btVector3(pos.x, pos.y, pos.z));
 

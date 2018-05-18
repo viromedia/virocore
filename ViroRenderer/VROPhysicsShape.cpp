@@ -40,7 +40,7 @@ VROPhysicsShape::VROPhysicsShape(std::shared_ptr<VRONode> node, bool hasCompound
         _bulletShape = generateBasicBulletShape(node);
         _type = VROShapeType::Auto;
 
-        VROMatrix4f computedTransform = node->getComputedTransform();
+        VROMatrix4f computedTransform = node->getWorldTransform();
         VROVector3f scale = computedTransform.extractScale();
         _bulletShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
     }
@@ -111,8 +111,8 @@ void VROPhysicsShape::generateCompoundBulletShape(btCompoundShape &compoundShape
         // Bullet requires a flat structure when creating a compoundShape.
         // To achieve this, we transform each node such that they are oriented in
         // relation to the rootNode (as if the rootNode is were the origin).
-        VROMatrix4f rootTransformInverted = rootNode->getComputedTransform().invert();
-        VROMatrix4f currentNodeTransform = currentNode->getComputedTransform();
+        VROMatrix4f rootTransformInverted = rootNode->getWorldTransform().invert();
+        VROMatrix4f currentNodeTransform = currentNode->getWorldTransform();
         VROMatrix4f currentShapeTransform = rootTransformInverted * currentNodeTransform;
 
         VROVector3f pos = currentShapeTransform.extractTranslation();
@@ -127,7 +127,7 @@ void VROPhysicsShape::generateCompoundBulletShape(btCompoundShape &compoundShape
         // Note: manually apply the scale of the rootNode (compound node) across
         // the list of sub shapes that we add. This is because there is a bug
         // in the function call of bulletShape->setLocalScaling.
-        VROVector3f compoundScale = rootNode->getComputedTransform().extractScale();
+        VROVector3f compoundScale = rootNode->getWorldTransform().extractScale();
         btVector3 compoundScaleBullet = btVector3({compoundScale.x, compoundScale.y , compoundScale.z});
         btVector3 currentShapeScaleBullet = btVector3({scale.x, scale.y , scale.z});
         btMatrix3x3 transformBasis = curentShapeTransformBullet.getBasis();

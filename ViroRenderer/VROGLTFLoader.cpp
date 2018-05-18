@@ -265,7 +265,7 @@ void VROGLTFLoader::injectGLTF(std::shared_ptr<VRONode> gltfNode,
         // Recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
         // we notify the user that their FBX has finished loading
         rootNode->recomputeUmbrellaBoundingBox();
-        rootNode->syncAtomicRenderProperties();
+        rootNode->syncAppThreadProperties();
         rootNode->setIgnoreEventHandling(rootNode->getIgnoreEventHandling());
 
         // Hydrate the geometry and all textures prior to invoking the callback

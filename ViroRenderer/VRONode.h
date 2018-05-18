@@ -118,10 +118,10 @@ public:
     /*
      Recursive function that recomputes the transforms of this node. This includes:
      
-     _computedTransform,
-     _computedRotation,
-     _computedPosition,
-     _computedBoundingBox
+     _worldTransform,
+     _worldRotation,
+     _worldPosition,
+     _worldBoundingBox
      */
     void computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentRotation);
 
@@ -236,9 +236,9 @@ public:
     
 #pragma mark - Transforms
     
-    VROVector3f getComputedPosition() const;
-    VROMatrix4f getComputedRotation() const;
-    VROMatrix4f getComputedTransform() const;
+    VROVector3f getWorldPosition() const;
+    VROMatrix4f getWorldRotation() const;
+    VROMatrix4f getWorldTransform() const;
 
     VROVector3f getPosition() const {
         return _position;
@@ -316,12 +316,12 @@ public:
     VROBoundingBox getBoundingBox() const;
     VROBoundingBox getUmbrellaBoundingBox() const;
     
-#pragma mark - Atomic Settings
+#pragma mark - Application Thread Properties
 
     // Viro platforms in general properties on the main thread and dispatch those setters
     // to the rendering thread. This maintains thread-safety (and speed) because we don't
     // interfere with the ongoing render cycle when setting variables. However, it's common that
-    // the user wants to set something on the UI thread and then immediately invoke some
+    // the user wants to set something on the application thread and then immediately invoke some
     // computation utilizing said variable, before it's been synchronized with the rendering
     // thread. For this reason we copy all relevant fields from VRONode into std::atomic variables.
     // These variables can be accessed from any thread. This way, we:
@@ -337,11 +337,11 @@ public:
     //    once per frame. This mode of update is required because the renderer itself
     //    changes these variables through internal processes like physics and animation.
 
-    // The atomic setters below are only used if you want to immediately update all of a node's
-    // related atomic properties. For example, use node->setPositionAtomic() if you want to be
-    // able to immediately use the node's updated getLastWorldTransform() for another calculation.
-    // Otherwise, if you simply call node->setPosition(), the corresponding fields will be updated
-    // on the next frame after the sync.
+    // The atomic setters below will immediately update all of a node's related application
+    // thread properties. For example, node->setPositionAtomic() will immediately update the
+    // application thread's world transform, so that it can be used for other calculations on
+    // the application thread. These setters will *dispatch* to the rendering thread to set the
+    // corresponding rendering thread properties.
     void setPositionAtomic(VROVector3f position);
     void setRotationAtomic(VROQuaternion rotation);
     void setScaleAtomic(VROVector3f scale);
@@ -349,19 +349,23 @@ public:
     void setRotationPivotAtomic(VROMatrix4f rotationPivot);
     
     /*
-     Automatically invoked whenever atomic position, scale, or rotation are set. Computes
-     _lastComputedTransform, _lastComputedPosition, _lastComputedRotation, _lastComputedBoundingBox,
-     and _lastUmbrellaBoundingBox, on this node only. Requires the latest data from this node's
-     parent to make the computations.
+     Must be invoked for this node and its children (all the way down the scene graph) whenever
+     atomic position, scale, scale pivot, rotation, or rotation pivot are set. Computes _lastWorldTransform,
+     _lastWorldPosition, _lastWorldRotation, _lastWorldBoundingBox, and _lastUmbrellaBoundingBox,
+     on this node only. Requires the latest data from this node's parent to make the computations.
+
+     This does not recurse down the scene graph on its own because we do not have access to an
+     application thread copy of the scene graph. ViroCore does have such a copy in Java-land, so it
+     handles the recursive invocation of this method.
      */
     void computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation);
     
     /*
-     Recursively sync the atomic properties computed during a render pass. Should be
-     called on the rendering thread after the computation occurs in the render cycle.
-     Dispatches to the application thread.
+     Recursively sync the application thread properties with the latest values from the rendering
+     thread. Called on the rendering thread after the transform computation occurs in the render
+     cycle. Dispatches to the application thread.
      */
-    void syncAtomicRenderProperties();
+    void syncAppThreadProperties();
     
 #pragma mark - Render Settings
     
@@ -790,37 +794,36 @@ private:
      Parameters computed by descending down the tree. These are updated whenever
      any parent or this node itself is updated. For example, computedOpacity is
      the opacity of this node multiplied by the opacities of all this node's
-     ancestors. Similarly, computedTransform is the full cascaded transformation 
+     ancestors. Similarly, worldTransform is the full cascaded transformation
      matrix for the node. 
      
-     computedRotation only takes into account rotations (not scale or translation).
+     worldRotation only takes into account rotations (not scale or translation).
      computedLights are the lights that influence this node, based on distance from
      the light and light attenuation, unrelated to the scene graph (e.g. the lights
      in _computedLights may belong to any node in the scene).
      */
-    VROMatrix4f _computedTransform;
-    VROMatrix4f _computedInverseTransposeTransform;
-    VROMatrix4f _computedRotation;
+    VROMatrix4f _worldTransform;
+    VROMatrix4f _worldInverseTransposeTransform;
+    VROMatrix4f _worldRotation;
+    VROVector3f _worldPosition;
     float _computedOpacity;
     std::vector<std::shared_ptr<VROLight>> _computedLights;
     uint32_t _computedLightsHash;
-    VROVector3f _computedPosition;
     std::weak_ptr<VROTransformDelegate> _transformDelegate;
 
     /*
-     Atomic fields used for application-thread access. See the 'Atomic Settings' pragma
-     above for a more extensive description of why we need these fields. The following
-     are computed fields (not directly set by users).
+     Application-thread copies of the node's transform data. See the 'Application Thread
+     Properties' pragma above for a more extensive description of why we need these fields.
+     The following are computed fields (not directly set by users).
      */
-    std::atomic<VROMatrix4f> _lastComputedTransform;
-    std::atomic<VROVector3f> _lastComputedPosition;
-    std::atomic<VROMatrix4f> _lastComputedRotation;
-    std::atomic<VROBoundingBox> _lastComputedBoundingBox;
+    std::atomic<VROMatrix4f> _lastWorldTransform;
+    std::atomic<VROVector3f> _lastWorldPosition;
+    std::atomic<VROMatrix4f> _lastWorldRotation;
+    std::atomic<VROBoundingBox> _lastWorldBoundingBox;
     std::atomic<VROBoundingBox> _lastUmbrellaBoundingBox;
     
     /*
-     The following are directly set atomic fields. The pivots are optional so they have
-     associated booleans.
+     Directly-set application thread properties.
      */
     std::atomic<VROVector3f> _lastPosition;
     std::atomic<VROVector3f> _lastScale;
@@ -835,7 +838,7 @@ private:
      _umbrellaBoundingBox encompasses not only this geometry, but the geometries
      of all this node's children.
      */
-    VROBoundingBox _computedBoundingBox;
+    VROBoundingBox _worldBoundingBox;
     VROBoundingBox _umbrellaBoundingBox;
     VROFrustumBoxIntersectionMetadata _umbrellaBoxMetadata;
     
@@ -947,7 +950,7 @@ private:
     void setVisibilityRecursive(bool visible);
     
     /*
-     Recursively expand the given bounding box by this node's _computedBoundingBox.
+     Recursively expand the given bounding box by this node's _worldBoundingBox.
      */
     void computeUmbrellaBounds(VROBoundingBox *bounds) const;
     
@@ -955,9 +958,9 @@ private:
      Compute the transform for this node, taking into the account the parent's transform.
      Updates all related variables:
      
-     _computedTransform
-     _computedPosition
-     _computedBoundingBox
+     _worldTransform
+     _worldPosition
+     _worldBoundingBox
      */
     void doComputeTransform(VROMatrix4f parentTransform);
     

@@ -40,9 +40,9 @@ bool VROPortalFrame::intersectsLineSegment(VROLineSegment segment) const {
      Perform a line-segment intersection with the plane.
      */
     VROVector3f planeNormal(0, 0, 1);
-    planeNormal = getComputedRotation().multiply(planeNormal);
+    planeNormal = getWorldRotation().multiply(planeNormal);
     
-    VROVector3f pointOnPlane = getComputedPosition();
+    VROVector3f pointOnPlane = getWorldPosition();
     VROVector3f intersectionPt;
     bool intersection = segment.intersectsPlane(pointOnPlane, planeNormal, &intersectionPt);
     

@@ -55,7 +55,7 @@ void VROScene::applyConstraints(const VRORenderContext &context) {
 }
 
 void VROScene::syncAtomicRenderProperties() {
-    _rootNode->syncAtomicRenderProperties();
+    _rootNode->syncAppThreadProperties();
 }
 
 void VROScene::updateParticles(const VRORenderContext &context) {
@@ -111,8 +111,8 @@ void VROScene::sortSiblingPortals(tree<std::shared_ptr<VROPortal>> &node, const 
     std::vector<tree<std::shared_ptr<VROPortal>>> &portals = node.children;
     std::sort(portals.begin(), portals.end(), [context](tree<std::shared_ptr<VROPortal>> &a, tree<std::shared_ptr<VROPortal>> &b) {
         passert (a.value->getRecursionLevel() == b.value->getRecursionLevel());
-        return a.value->getComputedPosition().distance(context.getCamera().getPosition()) <
-               b.value->getComputedPosition().distance(context.getCamera().getPosition());
+        return a.value->getWorldPosition().distance(context.getCamera().getPosition()) <
+                b.value->getWorldPosition().distance(context.getCamera().getPosition());
     });
     
     for (tree<std::shared_ptr<VROPortal>> &child : portals) {

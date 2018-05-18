@@ -76,9 +76,9 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _dragPlanePoint({ 0, 0, 0 }),
     _dragPlaneNormal({ 0, 0 ,0 }),
     _dragMaxDistance(10),
-    _lastComputedTransform(VROMatrix4f::identity()),
-    _lastComputedPosition({ 0, 0, 0 }),
-    _lastComputedRotation(VROMatrix4f::identity()),
+    _lastWorldTransform(VROMatrix4f::identity()),
+    _lastWorldPosition({ 0, 0, 0 }),
+    _lastWorldRotation(VROMatrix4f::identity()),
     _lastPosition({ 0, 0, 0 }),
     _lastScale({ 1, 1, 1 }),
     _lastRotation(VROMatrix4f::identity()),
@@ -113,9 +113,9 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _dragPlanePoint(node._dragPlanePoint),
     _dragPlaneNormal(node._dragPlaneNormal),
     _dragMaxDistance(node._dragMaxDistance),
-    _lastComputedTransform(node._lastComputedTransform.load()),
-    _lastComputedPosition(node._lastComputedPosition.load()),
-    _lastComputedRotation(node._lastComputedRotation.load()),
+    _lastWorldTransform(node._lastWorldTransform.load()),
+    _lastWorldPosition(node._lastWorldPosition.load()),
+    _lastWorldRotation(node._lastWorldRotation.load()),
     _lastPosition(node._lastPosition.load()),
     _lastScale(node._lastScale.load()),
     _lastRotation(node._lastRotation.load()),
@@ -161,7 +161,7 @@ void VRONode::render(int elementIndex,
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         _geometry->render(elementIndex, material,
-                          _computedTransform, _computedInverseTransposeTransform, _computedOpacity,
+                          _worldTransform, _worldInverseTransposeTransform, _computedOpacity,
                           context, driver);
     }
 }
@@ -203,7 +203,7 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         if (!filter || filter(*this)) {
             if (mode == VROSilhouetteMode::Flat) {
-                _geometry->renderSilhouette(_computedTransform, material, context, driver);
+                _geometry->renderSilhouette(_worldTransform, material, context, driver);
             }
             else {
                 for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
@@ -214,7 +214,7 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
                         }
                         material->bindProperties(driver);
                     }
-                    _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);
+                    _geometry->renderSilhouetteTextured(i, _worldTransform, material, context, driver);
                 }
             }
         }
@@ -231,15 +231,15 @@ void VRONode::recomputeUmbrellaBoundingBox() {
     
     std::shared_ptr<VRONode> parent = getParentNode();
     if (parent) {
-        parentTransform = parent->getComputedTransform();
-        parentRotation = parent->getComputedRotation();
+        parentTransform = parent->getWorldTransform();
+        parentRotation = parent->getWorldRotation();
     }
     
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
     computeTransforms(parentTransform, parentRotation);
-    _umbrellaBoundingBox = VROBoundingBox(_computedPosition.x, _computedPosition.x, _computedPosition.y,
-                                          _computedPosition.y, _computedPosition.z, _computedPosition.z);
+    _umbrellaBoundingBox = VROBoundingBox(_worldPosition.x, _worldPosition.x, _worldPosition.y,
+                                          _worldPosition.y, _worldPosition.z, _worldPosition.z);
     computeUmbrellaBounds(&_umbrellaBoundingBox);
 }
 
@@ -251,8 +251,8 @@ void VRONode::resetDebugSortIndex() {
 
 void VRONode::collectLights(std::vector<std::shared_ptr<VROLight>> *outLights) {
     for (std::shared_ptr<VROLight> &light : _lights) {
-        light->setTransformedPosition(_computedTransform.multiply(light->getPosition()));
-        light->setTransformedDirection(_computedRotation.multiply(light->getDirection()));
+        light->setTransformedPosition(_worldTransform.multiply(light->getPosition()));
+        light->setTransformedDirection(_worldRotation.multiply(light->getDirection()));
         outLights->push_back(light);
     }
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
@@ -285,7 +285,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     /*
      Compute specific parameters for this node.
      */
-    _computedInverseTransposeTransform = _computedTransform.invert().transpose();
+    _worldInverseTransposeTransform = _worldTransform.invert().transpose();
     _computedOpacity = opacities.top() * _opacity * _opacityFromHiddenFlag;
     opacities.push(_computedOpacity);
     
@@ -349,11 +349,11 @@ void VRONode::updateSortKeys(uint32_t depth,
      */
     if (_geometry) {
         if (!isHierarchical || isTopOfHierarchy) {
-            distanceFromCamera = _computedBoundingBox.getCenter().distance(context.getCamera().getPosition());
+            distanceFromCamera = _worldBoundingBox.getCenter().distance(context.getCamera().getPosition());
             
             // TODO Using the bounding box may be preferred but currently leads to more
             //      artifacts
-            // distanceFromCamera = _computedBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
+            // distanceFromCamera = _worldBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
             
             furthestDistanceFromCamera = getBoundingBox().getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
@@ -362,13 +362,13 @@ void VRONode::updateSortKeys(uint32_t depth,
         
         if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
             pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",
-                  sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z, _renderingOrder, hierarchyDepth, depth, distanceFromCamera, hierarchyId, _computedLightsHash);
+                  sDebugSortIndex, _worldPosition.x, _worldPosition.y, _worldPosition.z, _renderingOrder, hierarchyDepth, depth, distanceFromCamera, hierarchyId, _computedLightsHash);
             _geometry->setName(VROStringUtil::toString(sDebugSortIndex));
         }
     }
     else if (kDebugSortOrder && context.getFrame() % kDebugSortOrderFrameFrequency == 0) {
         pinfo("   [%d] Ignored empty node with position [%f, %f, %f] hierarchy depth %d, distance to camera %f, actual depth %d, hierarchy ID %d",
-              sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z,
+              sDebugSortIndex, _worldPosition.x, _worldPosition.y, _worldPosition.z,
               hierarchyDepth, 0.0, depth, hierarchyId);
     }
 
@@ -416,27 +416,27 @@ void VRONode::computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentR
     /*
      Compute the rotation for this node.
      */
-    _computedRotation = parentRotation.multiply(_rotation.getMatrix());
+    _worldRotation = parentRotation.multiply(_rotation.getMatrix());
 
-    // Apply the computed transform for spatial sounds, if any.
+    // Apply the world transform for spatial sounds, if any.
     for (std::shared_ptr<VROSound> &sound : _sounds) {
-        sound->setTransformedPosition(_computedTransform.multiply(sound->getPosition()));
+        sound->setTransformedPosition(_worldTransform.multiply(sound->getPosition()));
     }
 
     /*
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->computeTransforms(_computedTransform, _computedRotation);
+        childNode->computeTransforms(_worldTransform, _worldRotation);
     }
 }
 
 void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     /*
      Compute the world transform for this node. The full formula is:
-     _computedTransform = parentTransform * T * Rpiv * R * Rpiv -1 * Spiv * S * Spiv-1
+     _worldTransform = parentTransform * T * Rpiv * R * Rpiv -1 * Spiv * S * Spiv-1
      */
-    _computedTransform.toIdentity();
+    _worldTransform.toIdentity();
     
     /*
      Scale.
@@ -444,21 +444,21 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     if (_scalePivot) {
         VROMatrix4f scale;
         scale.scale(_scale.x, _scale.y, _scale.z);
-        _computedTransform = *_scalePivot * scale * *_scalePivotInverse;
+        _worldTransform = *_scalePivot * scale * *_scalePivotInverse;
     }
     else {
-        _computedTransform.scale(_scale.x, _scale.y, _scale.z);
+        _worldTransform.scale(_scale.x, _scale.y, _scale.z);
     }
     
     /*
      Rotation.
      */
     if (_rotationPivot) {
-        _computedTransform = *_rotationPivotInverse * _computedTransform;
+        _worldTransform = *_rotationPivotInverse * _worldTransform;
     }
-    _computedTransform = _rotation.getMatrix() * _computedTransform;
+    _worldTransform = _rotation.getMatrix() * _worldTransform;
     if (_rotationPivot) {
-        _computedTransform = *_rotationPivot * _computedTransform;
+        _worldTransform = *_rotationPivot * _worldTransform;
     }
     
     /*
@@ -466,16 +466,16 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
      */
     VROMatrix4f translate;
     translate.translate(_position.x, _position.y, _position.z);
-    _computedTransform = translate * _computedTransform;
+    _worldTransform = translate * _worldTransform;
 
-    _computedTransform = parentTransform * _computedTransform;
-    _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
+    _worldTransform = parentTransform * _worldTransform;
+    _worldPosition = { _worldTransform[12], _worldTransform[13], _worldTransform[14] };
     if (_geometry) {
-        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
+        _worldBoundingBox = _geometry->getBoundingBox().transform(_worldTransform);
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
-        _computedBoundingBox.set(_computedPosition.x, _computedPosition.x, _computedPosition.y,
-                                 _computedPosition.y, _computedPosition.z, _computedPosition.z);
+        _worldBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
+                                 _worldPosition.y, _worldPosition.z, _worldPosition.z);
     }
 }
 
@@ -485,7 +485,7 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     bool updated = false;
     
     /*
-     If a parent's _computedTransform was updated by constraints, we have to recompute
+     If a parent's _worldTransform was updated by constraints, we have to recompute
      the transform for this node as well.
      */
     if (parentUpdated) {
@@ -494,17 +494,17 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
     
     /*
-     Compute constraints for this node. Do not update _computedRotation as it isn't
+     Compute constraints for this node. Do not update _worldRotation as it isn't
      necessary after the afterConstraints() phase.
      */
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
-        VROMatrix4f billboardRotation = constraint->getTransform(context, _computedTransform);
+        VROMatrix4f billboardRotation = constraint->getTransform(context, _worldTransform);
         
         // To apply the billboard rotation, translate the object to the origin, apply
-        // the rotation, then translate back to its previously computed position
-        _computedTransform.translate(_computedPosition.scale(-1));
-        _computedTransform = billboardRotation.multiply(_computedTransform);
-        _computedTransform.translate(_computedPosition);
+        // the rotation, then translate back to its previously computed world position
+        _worldTransform.translate(_worldPosition.scale(-1));
+        _worldTransform = billboardRotation.multiply(_worldTransform);
+        _worldTransform.translate(_worldPosition);
         
         updated = true;
     }
@@ -513,23 +513,23 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->applyConstraints(context, _computedTransform, updated);
+        childNode->applyConstraints(context, _worldTransform, updated);
     }
 }
 
 void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation) {
     // Create a final compute transform representing the desired, final world position and rotation.
-    VROVector3f worldScale = getComputedTransform().extractScale();
-    VROMatrix4f finalComputedTransform;
-    finalComputedTransform.toIdentity();
-    finalComputedTransform.scale(worldScale.x, worldScale.y, worldScale.z);
-    finalComputedTransform = finalRotation.getMatrix() * finalComputedTransform;
-    finalComputedTransform.translate(finalPosition);
+    VROVector3f worldScale = getWorldTransform().extractScale();
+    VROMatrix4f finalWorldTransform;
+    finalWorldTransform.toIdentity();
+    finalWorldTransform.scale(worldScale.x, worldScale.y, worldScale.z);
+    finalWorldTransform = finalRotation.getMatrix() * finalWorldTransform;
+    finalWorldTransform.translate(finalPosition);
 
     // Calculate local transformations needed to achieve the desired final compute transform
     // by applying: Parent_Trans_INV * FinalCompute = Local_Trans
-    VROMatrix4f parentTransform = getParentNode()->getComputedTransform();
-    VROMatrix4f currentTransform = parentTransform.invert() * finalComputedTransform;
+    VROMatrix4f parentTransform = getParentNode()->getWorldTransform();
+    VROMatrix4f currentTransform = parentTransform.invert() * finalWorldTransform;
 
     _scale = currentTransform.extractScale();
     _position = currentTransform.extractTranslation();
@@ -540,7 +540,7 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
     }
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
-    computeTransforms(getParentNode()->getComputedTransform(), getParentNode()->getComputedRotation());
+    computeTransforms(getParentNode()->getWorldTransform(), getParentNode()->getWorldRotation());
 }
 
 #pragma mark - Visibility
@@ -550,8 +550,8 @@ void VRONode::updateVisibility(const VRORenderContext &context) {
     
     // The umbrellaBoundingBox should be positioned at the node's position, not at [0,0,0],
     // because bounding boxes are in world coordinates
-    _umbrellaBoundingBox = VROBoundingBox(_computedPosition.x, _computedPosition.x, _computedPosition.y,
-                                          _computedPosition.y, _computedPosition.z, _computedPosition.z);
+    _umbrellaBoundingBox = VROBoundingBox(_worldPosition.x, _worldPosition.x, _worldPosition.y,
+                                          _worldPosition.y, _worldPosition.z, _worldPosition.z);
     computeUmbrellaBounds(&_umbrellaBoundingBox);
     
     VROFrustumResult result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
@@ -592,28 +592,28 @@ int VRONode::countVisibleNodes() const {
     return count;
 }
 
-VROVector3f VRONode::getComputedPosition() const {
-    return _computedPosition;
+VROVector3f VRONode::getWorldPosition() const {
+    return _worldPosition;
 }
 
-VROMatrix4f VRONode::getComputedRotation() const {
-    return _computedRotation;
+VROMatrix4f VRONode::getWorldRotation() const {
+    return _worldRotation;
 }
 
-VROMatrix4f VRONode::getComputedTransform() const {
-    return _computedTransform;
+VROMatrix4f VRONode::getWorldTransform() const {
+    return _worldTransform;
 }
 
 VROMatrix4f VRONode::getLastWorldTransform() const {
-    return _lastComputedTransform.load();
+    return _lastWorldTransform.load();
 }
 
 VROVector3f VRONode::getLastWorldPosition() const {
-    return _lastComputedPosition.load();
+    return _lastWorldPosition.load();
 }
 
 VROMatrix4f VRONode::getLastWorldRotation() const {
-    return _lastComputedRotation.load();
+    return _lastWorldRotation.load();
 }
 
 VROVector3f VRONode::getLastLocalPosition() const {
@@ -1015,22 +1015,22 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
     
     // Store the final values in the atomics
     VROVector3f worldPosition = { transform[12], transform[13], transform[14] };
-    _lastComputedPosition.store(worldPosition);
-    _lastComputedRotation.store(parentRotation.multiply(rotation.getMatrix()));
-    _lastComputedTransform.store(transform);
+    _lastWorldPosition.store(worldPosition);
+    _lastWorldRotation.store(parentRotation.multiply(rotation.getMatrix()));
+    _lastWorldTransform.store(transform);
     
     if (_geometry) {
-        _lastComputedBoundingBox.store(_geometry->getLastBoundingBox().transform(transform));
+        _lastWorldBoundingBox.store(_geometry->getLastBoundingBox().transform(transform));
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
-        _lastComputedBoundingBox.store({ worldPosition.x, worldPosition.x,
+        _lastWorldBoundingBox.store({ worldPosition.x, worldPosition.x,
             worldPosition.y, worldPosition.y,
             worldPosition.z, worldPosition.z });
     }
     
     // TODO VIRO-3692 Currently it is unsafe to compute the umbrella bounding box because the
     //                subnodes cannot be accessed
-    //VROVector3f computedPosition = _lastComputedPosition.load();
+    //VROVector3f computedPosition = _lastWorldPosition.load();
     //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
     //                                  computedPosition.y, computedPosition.z, computedPosition.z);
     //computeUmbrellaBounds(&umbrellaBoundingBox);
@@ -1038,7 +1038,7 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
 
 #pragma mark - Sync Rendering Thread <> Application Thread
 
-void VRONode::syncAtomicRenderProperties() {
+void VRONode::syncAppThreadProperties() {
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
 
@@ -1054,13 +1054,13 @@ void VRONode::syncAtomicRenderProperties() {
     VROPlatformDispatchAsyncApplication([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->_lastComputedTransform.store(node->_computedTransform);
-            node->_lastComputedPosition.store(node->_computedPosition);
-            node->_lastComputedRotation.store(node->_computedRotation);
+            node->_lastWorldTransform.store(node->_worldTransform);
+            node->_lastWorldPosition.store(node->_worldPosition);
+            node->_lastWorldRotation.store(node->_worldRotation);
             node->_lastPosition.store(node->_position);
             node->_lastRotation.store(node->_rotation);
             node->_lastScale.store(node->_scale);
-            node->_lastComputedBoundingBox.store(node->_computedBoundingBox);
+            node->_lastWorldBoundingBox.store(node->_worldBoundingBox);
             node->_lastUmbrellaBoundingBox.store(node->_umbrellaBoundingBox);
         }
     });
@@ -1202,7 +1202,7 @@ VROBoundingBox VRONode::getBoundingBox() const {
     if (_geometry && _geometry->getInstancedUBO() != nullptr){
         return _geometry->getInstancedUBO()->getInstancedBoundingBox();
     }
-    return _computedBoundingBox;
+    return _worldBoundingBox;
 }
 
 VROBoundingBox VRONode::getUmbrellaBoundingBox() const {
@@ -1226,7 +1226,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
         return;
     }
     
-    VROMatrix4f transform = _computedTransform;
+    VROMatrix4f transform = _worldTransform;
     boundsOnly = boundsOnly && !getHighAccuracyGaze();
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold && _visible) {
@@ -1324,7 +1324,7 @@ void VRONode::updateParticles(const VRORenderContext &context) {
         }
         
         // Update the emitter
-        _particleEmitter->update(context, _computedTransform);
+        _particleEmitter->update(context, _worldTransform);
     }
     
     // Recurse to children

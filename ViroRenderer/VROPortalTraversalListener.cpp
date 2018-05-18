@@ -93,7 +93,7 @@ void VROPortalTraversalListener::restorePortalFaces(const VROVector3f &cameraPos
     if (portal && portal->isPassable() &&
         portal->getActivePortalFrame() &&
         portal->getActivePortalFrame()->isTwoSided() &&
-        portal->getActivePortalFrame()->getComputedPosition().distance(cameraPosition) > kDistanceToRestoreTwoSidedPortal) {
+            portal->getActivePortalFrame()->getWorldPosition().distance(cameraPosition) > kDistanceToRestoreTwoSidedPortal) {
         portal->getActivePortalFrame()->setTwoSided(false);
     }
     for (tree<std::shared_ptr<VROPortal>> child : portalTree.children) {
