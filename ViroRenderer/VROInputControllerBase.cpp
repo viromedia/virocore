@@ -132,8 +132,8 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
         draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
         draggedObject->_originalHitLocation = _hitResult->getLocation();
-        draggedObject->_originalDraggedNodePosition = draggableNode->getComputedPosition();
-        draggedObject->_originalDraggedNodeRotation = draggableNode->getComputedRotation();
+        draggedObject->_originalDraggedNodePosition = draggableNode->getWorldPosition();
+        draggedObject->_originalDraggedNodeRotation = draggableNode->getWorldRotation();
         draggedObject->_draggedNode = draggableNode;
 
         // Grab the forwardOffset (delta from the controller's forward in reference to the user).
