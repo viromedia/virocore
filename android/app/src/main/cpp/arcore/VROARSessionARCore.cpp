@@ -207,11 +207,6 @@ bool VROARSessionARCore::updateARCoreConfig() {
         config->setAugmentedImageDatabase(_currentARCoreImageDatabase);
     }
 
-    bool supported = _session->checkSupported(config);
-    if (!supported) {
-        pinfo("Failed to configure AR session: configuration not supported");
-        return false;
-    }
     arcore::ConfigStatus status = _session->configure(config);
     delete (config);
 

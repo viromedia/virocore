@@ -242,7 +242,6 @@ namespace arcore {
     public:
         virtual ~Session() {}
         virtual ConfigStatus configure(Config *config) = 0;
-        virtual bool checkSupported(Config *config) = 0;
         virtual void setDisplayGeometry(int rotation, int width, int height) = 0;
         virtual void setCameraTextureName(int32_t textureId) = 0;
         virtual void pause() = 0;

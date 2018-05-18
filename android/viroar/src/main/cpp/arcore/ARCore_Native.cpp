@@ -638,10 +638,6 @@ namespace arcore {
         return ConfigStatus::UnsupportedConfiguration;
     }
 
-    bool SessionNative::checkSupported(Config *config) {
-        return ArSession_checkSupported(_session, ((ConfigNative *) config)->_config) == AR_SUCCESS;
-    }
-
     void
     SessionNative::setDisplayGeometry(int rotation, int width, int height) {
         ArSession_setDisplayGeometry(_session, rotation, width, height);

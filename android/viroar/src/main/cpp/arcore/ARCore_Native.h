@@ -220,7 +220,6 @@ namespace arcore {
         SessionNative(void *applicationContext, JNIEnv *env);
         virtual ~SessionNative();
         virtual ConfigStatus configure(Config *config);
-        virtual bool checkSupported(Config *config);
         virtual void setDisplayGeometry(int rotation, int width, int height);
         virtual void setCameraTextureName(int32_t textureId);
         virtual void pause();
