@@ -3,6 +3,7 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
+import android.util.Log;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.DirectionalLight;
@@ -61,54 +62,60 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     public void stage0_testLoadModelGLTF() {
-        Node rootnode = new Node();
+        Node node = new Node();
+        node.setScale(new Vector(0.15, 0.15 , 0.15));
+        node.setPosition(new Vector(0,-0.7, -1));
+
         Object3D gltfModel = new Object3D();
         Object3D gltfModelGLB = new Object3D();
         Object3D gltfModelBase64 = new Object3D();
+
         gltfModelGLB.setPosition(new Vector(-1.75,0,0));
         gltfModelBase64.setPosition(new Vector(1.75,0,0));
 
-        rootnode.setScale(new Vector(0.15, 0.15 , 0.15));
-        rootnode.setPosition(new Vector(0,-0.7, -1));
-        rootnode.addChildNode(gltfModel);
-        rootnode.addChildNode(gltfModelBase64);
-        rootnode.addChildNode(gltfModelGLB);
-        mScene.getRootNode().addChildNode(rootnode);
+        node.addChildNode(gltfModel);
+        node.addChildNode(gltfModelBase64);
+        node.addChildNode(gltfModelGLB);
+        mScene.getRootNode().addChildNode(node);
 
         gltfModelGLB.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/DuckGlb.glb"), Object3D.Type.GLB, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                Log.w("Viro", "GLTF load successful with bounds " + object.getBoundingBox() + ", type [" + type + "]");
             }
 
             @Override
             public void onObject3DFailed(final String error) {
+                Log.w("Viro", "GLTF failed to load: " + error);
             }
         });
 
         gltfModel.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/Duck.gltf"), Object3D.Type.GLTF, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                Log.w("Viro", "GLTF load successful with bounds " + object.getBoundingBox() + ", type [" + type + "]");
             }
 
             @Override
             public void onObject3DFailed(final String error) {
-
+                Log.w("Viro", "GLTF failed to load: " + error);
             }
         });
 
         gltfModelBase64.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/Duck64Encoded.gltf"), Object3D.Type.GLTF, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                Log.w("Viro", "GLTF load successful with bounds " + object.getBoundingBox() + ", type [" + type + "]");
             }
 
             @Override
             public void onObject3DFailed(final String error) {
-
+                Log.w("Viro", "GLTF failed to load: " + error);
             }
         });
 
         assertPass("You should see 3 Ducks Render in the scene.", ()->{
-            rootnode.removeFromParentNode();
+            node.removeFromParentNode();
         });
     }
 
@@ -134,6 +141,23 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     public void stage2_testFBXAnimPause() {
+        mObject3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -3));
+                object.setScale(new Vector(0.4f, 0.4f, 0.4f));
+                mAnimation = object.getAnimation("02_spin");
+                mAnimation.setDelay(2000);
+                mAnimation.setLoop(true);
+                mAnimation.play();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
         mMutableTestMethod = () -> {
             if(!mIsAnimPaused) {
                 mAnimation.pause();
@@ -154,9 +178,25 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     public void stage3_testFBXAnimStop() {
-        mMutableTestMethod = null;
-        mAnimation.stop();
-        assertPass("FBX animation stops.");
+        mObject3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -3));
+                object.setScale(new Vector(0.4f, 0.4f, 0.4f));
+                mAnimation = object.getAnimation("02_spin");
+                mAnimation.setDelay(2000);
+                mAnimation.setLoop(true);
+                mAnimation.play();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        mMutableTestMethod = () -> mAnimation.stop();
+        assertPass("FBX animation stops (after *maybe* one spin)");
     }
 
     public void stage4_testLoadModelOBJ() {

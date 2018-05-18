@@ -82,7 +82,7 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
     std::map<std::shared_ptr<VROData>, std::vector<std::shared_ptr<VROGeometrySource>>> dataMap;
 
     /*
-     Sort the sources into groups defined by the data array they're using.
+     Sort the sources into groups defined by the data buffer they're using.
      */
     for (std::shared_ptr<VROGeometrySource> source : sources) {
         std::shared_ptr<VROData> data = source->getData();
@@ -104,20 +104,13 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
     for (auto &kv : dataMap) {
         std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
         
-        int dataSize = 0;
-        for (std::shared_ptr<VROGeometrySource> source : group) {
-            int size = source->getVertexCount() * source->getDataStride();
-            dataSize = std::max(dataSize, size);
-        }
-        passert (dataSize <= kv.first->getDataLength());
-        
         VROVertexDescriptorOpenGL vd;
         vd.stride = group[0]->getDataStride();
         vd.numAttributes = 0;
         
         glGenBuffers(1, &vd.buffer);
         glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
-        glBufferData(GL_ARRAY_BUFFER, dataSize, kv.first->getData(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, kv.first->getDataLength(), kv.first->getData(), GL_STATIC_DRAW);
         
         /*
          Create an attribute for each geometry source in this group.
@@ -126,6 +119,7 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
             std::shared_ptr<VROGeometrySource> source = group[i];
             int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
             std::pair<GLuint, int> format = parseVertexFormat(source);
+            
             vd.attributes[vd.numAttributes].index = attrIdx;
             vd.attributes[vd.numAttributes].size = format.second;
             vd.attributes[vd.numAttributes].type = format.first;
