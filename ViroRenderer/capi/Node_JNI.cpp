@@ -293,15 +293,7 @@ VRO_METHOD(void, nativeSetPosition)(VRO_ARGS
                                     VRO_FLOAT positionX,
                                     VRO_FLOAT positionY,
                                     VRO_FLOAT positionZ) {
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    node_w.lock()->setPositionAtomic({ positionX, positionY, positionZ });
-
-    VROPlatformDispatchAsyncRenderer([node_w, positionX, positionY, positionZ] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            node->setPosition({positionX, positionY, positionZ});
-        }
-    });
+    VRO_REF_GET(VRONode, native_node_ref)->setPositionAtomic({ positionX, positionY, positionZ });
 }
 
 VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
@@ -309,17 +301,7 @@ VRO_METHOD(void, nativeSetRotationEuler)(VRO_ARGS
                                          VRO_FLOAT rotationRadiansX,
                                          VRO_FLOAT rotationRadiansY,
                                          VRO_FLOAT rotationRadiansZ) {
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    node_w.lock()->setRotationAtomic({ rotationRadiansX, rotationRadiansY, rotationRadiansZ });
-
-    VROPlatformDispatchAsyncRenderer([node_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            node->setRotation({ rotationRadiansX,
-                                rotationRadiansY,
-                                rotationRadiansZ });
-        }
-    });
+    VRO_REF_GET(VRONode, native_node_ref)->setRotationAtomic({ rotationRadiansX, rotationRadiansY, rotationRadiansZ });
 }
 
 VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
@@ -329,16 +311,7 @@ VRO_METHOD(void, nativeSetRotationQuaternion)(VRO_ARGS
                                               VRO_FLOAT quatZ,
                                               VRO_FLOAT quatW) {
     VROQuaternion quat(quatX, quatY, quatZ, quatW);
-
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    node_w.lock()->setRotationAtomic(quat);
-
-    VROPlatformDispatchAsyncRenderer([node_w, quat] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            node->setRotation(quat);
-        }
-    });
+    VRO_REF_GET(VRONode, native_node_ref)->setRotationAtomic(quat);
 }
 
 VRO_METHOD(void, nativeSetScale)(VRO_ARGS
@@ -346,15 +319,7 @@ VRO_METHOD(void, nativeSetScale)(VRO_ARGS
                                  VRO_FLOAT scaleX,
                                  VRO_FLOAT scaleY,
                                  VRO_FLOAT scaleZ) {
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    node_w.lock()->setScaleAtomic({ scaleX, scaleY, scaleZ });
-
-    VROPlatformDispatchAsyncRenderer([node_w, scaleX, scaleY, scaleZ] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            node->setScale({scaleX, scaleY, scaleZ});
-        }
-    });
+    VRO_REF_GET(VRONode, native_node_ref)->setScaleAtomic({ scaleX, scaleY, scaleZ });
 }
 
 VRO_METHOD(void, nativeSetRotationPivot)(VRO_ARGS
@@ -362,16 +327,9 @@ VRO_METHOD(void, nativeSetRotationPivot)(VRO_ARGS
                                          VRO_FLOAT pivotX,
                                          VRO_FLOAT pivotY,
                                          VRO_FLOAT pivotZ) {
-
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            VROMatrix4f pivotMatrix;
-            pivotMatrix.translate(pivotX, pivotY, pivotZ);
-            node->setRotationPivot(pivotMatrix);
-        }
-    });
+    VROMatrix4f pivotMatrix;
+    pivotMatrix.translate(pivotX, pivotY, pivotZ);
+    VRO_REF_GET(VRONode, native_node_ref)->setRotationPivotAtomic(pivotMatrix);
 }
 
 VRO_METHOD(void, nativeSetScalePivot)(VRO_ARGS
@@ -379,16 +337,21 @@ VRO_METHOD(void, nativeSetScalePivot)(VRO_ARGS
                                       VRO_FLOAT pivotX,
                                       VRO_FLOAT pivotY,
                                       VRO_FLOAT pivotZ) {
+    VROMatrix4f pivotMatrix;
+    pivotMatrix.translate(pivotX, pivotY, pivotZ);
+    VRO_REF_GET(VRONode, native_node_ref)->setScalePivotAtomic(pivotMatrix);
+}
 
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            VROMatrix4f pivotMatrix;
-            pivotMatrix.translate(pivotX, pivotY, pivotZ);
-            node->setScalePivot(pivotMatrix);
-        }
-    });
+VRO_METHOD(void, nativeUpdateWorldTransforms)(VRO_ARGS
+                                              VRO_REF(VRONode) node_j,
+                                              VRO_REF(VRONode) parent_j) {
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+    if (VRO_REF_NULL(parent_j)) {
+        node->computeTransformsAtomic(VROMatrix4f::identity(), VROMatrix4f::identity());
+    } else {
+        std::shared_ptr<VRONode> parent = VRO_REF_GET(VRONode, parent_j);
+        node->computeTransformsAtomic(parent->getLastWorldTransform(), parent->getLastWorldRotation());
+    }
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetPosition)(VRO_ARGS

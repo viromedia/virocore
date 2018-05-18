@@ -30,6 +30,8 @@
     persistentRef->get(); })
 #define VRO_REF_DELETE(type, ref) \
     delete reinterpret_cast<PersistentRef<type> *>(ref);
+#define VRO_REF_NULL(ref) \
+    ref == 0
 
 #define VRO_OBJECT jobject
 #define VRO_OBJECT_NULL NULL

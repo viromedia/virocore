@@ -163,6 +163,13 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     });
 }
 
+void VROPlatformDispatchAsyncApplication(std::function<void()> fcn) {
+    // On iOS the application and rendering thread are the same
+    dispatch_async(dispatch_get_main_queue(), ^{
+        fcn();
+    });
+}
+
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         fcn();

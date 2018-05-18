@@ -33,6 +33,7 @@
 #include "VROExecutableNodeAnimation.h"
 #include "VROTransformDelegate.h"
 #include "VROInstancedUBO.h"
+#include "VROPlatformUtil.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -72,10 +73,17 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _shadowCastingBitMask(1),
     _ignoreEventHandling(false),
     _dragType(VRODragType::FixedDistance),
-    _dragPlanePoint({0,0,0}),
-    _dragPlaneNormal({0,0,0}),
+    _dragPlanePoint({ 0, 0, 0 }),
+    _dragPlaneNormal({ 0, 0 ,0 }),
     _dragMaxDistance(10),
-    _lastComputedTransform(VROMatrix4f()) {
+    _lastComputedTransform(VROMatrix4f::identity()),
+    _lastComputedPosition({ 0, 0, 0 }),
+    _lastComputedRotation(VROMatrix4f::identity()),
+    _lastPosition({ 0, 0, 0 }),
+    _lastScale({ 1, 1, 1 }),
+    _lastRotation(VROMatrix4f::identity()),
+    _lastHasScalePivot(false),
+    _lastHasRotationPivot(false) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -105,7 +113,18 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _dragPlanePoint(node._dragPlanePoint),
     _dragPlaneNormal(node._dragPlaneNormal),
     _dragMaxDistance(node._dragMaxDistance),
-    _lastComputedTransform(VROMatrix4f()) {
+    _lastComputedTransform(node._lastComputedTransform.load()),
+    _lastComputedPosition(node._lastComputedPosition.load()),
+    _lastComputedRotation(node._lastComputedRotation.load()),
+    _lastPosition(node._lastPosition.load()),
+    _lastScale(node._lastScale.load()),
+    _lastRotation(node._lastRotation.load()),
+    _lastScalePivot(node._lastScalePivot.load()),
+    _lastScalePivotInverse(node._lastScalePivotInverse.load()),
+    _lastRotationPivot(node._lastRotationPivot.load()),
+    _lastRotationPivotInverse(node._lastRotationPivotInverse.load()),
+    _lastHasScalePivot(node._lastHasScalePivot.load()),
+    _lastHasRotationPivot(node._lastHasRotationPivot.load()) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -498,7 +517,7 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
 }
 
-void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation){
+void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation) {
     // Create a final compute transform representing the desired, final world position and rotation.
     VROVector3f worldScale = getComputedTransform().extractScale();
     VROMatrix4f finalComputedTransform;
@@ -522,109 +541,6 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
     computeTransforms(getParentNode()->getComputedTransform(), getParentNode()->getComputedRotation());
-}
-
-#pragma mark - Atomic Transforms
-
-void VRONode::setPositionAtomic(VROVector3f position) {
-    _lastPosition.store(position);
-    computeTransformsAtomic();
-}
-
-void VRONode::setRotationAtomic(VROQuaternion rotation) {
-    _lastRotation.store(rotation);
-    computeTransformsAtomic();
-}
-
-void VRONode::setScaleAtomic(VROVector3f scale) {
-    _lastScale.store(scale);
-    computeTransformsAtomic();
-}
-
-void VRONode::computeTransformsAtomic(){
-    VROMatrix4f parentTransform;
-    VROMatrix4f parentRotation;
-
-    // Note that retrieving the parent is thread-safe since it's a shared_ptr, which we then
-    // lock. However, we can only safely access atomic properties on the parent
-    std::shared_ptr<VRONode> parent = getParentNode();
-    if (parent) {
-        parentTransform = parent->getLastWorldTransform();
-        parentRotation = parent->getLastWorldRotation();
-    }
-    
-    // Trigger a computeAtomicTransforms pass to update the node's bounding boxes and as well as its
-    // children's node transforms recursively.
-    computeTransformsAtomic(parentTransform, parentRotation);
-
-    // TODO VIRO-3692 Currently it is unsafe to compute the umbrella bounding box because the
-    //                subnodes cannot be accessed
-    //VROVector3f computedPosition = _lastComputedPosition.load();
-    //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
-     //                                  computedPosition.y, computedPosition.z, computedPosition.z);
-    //computeUmbrellaBounds(&umbrellaBoundingBox);
-}
-
-void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
-    // This is identical to computeTransform, except it operates on any thread, utilizing
-    // only atomic fields
-    doComputeTransformsAtomic(parentTransform);
-    _lastComputedRotation.store(parentRotation.multiply(_lastRotation.load().getMatrix()));
-
-    // TODO VIRO-3692 Currently it is unsafe to recurse this operation down the graph because
-    //                subnodes cannot be accessed
-    //for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-    //    childNode->computeTransformsAtomic(_lastComputedTransform.load(), _lastComputedRotation.load());
-    //}
-}
-
-// This sets _lastComputedTransform, _lastComputedPosition, _lastRotation, and _lastComputedBoundingBox
-void VRONode::doComputeTransformsAtomic(VROMatrix4f parentTransform) {
-    // This is identical to doComputeTransform, except it operates on any thread, utilizing
-    // only atomic fields
-    VROMatrix4f transform;
-
-    // We ignore scale and rotation pivots since these are not supported by ViroCore or ViroReact.
-    // When support *is* added, atomic versions of _scalePivot and _rotationPivot will be necessary.
-    VROVector3f scale = _lastScale.load();
-    transform.scale(scale.x, scale.y, scale.z);
-    transform = _lastRotation.load().getMatrix() * transform;
-
-    // Handle translation as per normal
-    VROMatrix4f translate;
-    VROVector3f position = _lastPosition.load();
-    translate.translate(position.x, position.y, position.z);
-    transform = translate * transform;
-    
-    transform = parentTransform * transform;
-    VROVector3f computedPosition = { transform[12], transform[13], transform[14] };
-    _lastComputedPosition.store(computedPosition);
-    
-    if (_geometry) {
-        _lastComputedBoundingBox.store(_geometry->getLastBoundingBox().transform(transform));
-    } else {
-        // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
-        _lastComputedBoundingBox.store({ computedPosition.x, computedPosition.x, computedPosition.y,
-                                         computedPosition.y, computedPosition.z, computedPosition.z});
-    }
-    _lastComputedTransform.store(transform);
-}
-
-void VRONode::syncAtomicRenderProperties() {
-#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
-    _lastComputedTransform.store(_computedTransform);
-    _lastComputedPosition.store(_computedPosition);
-    _lastComputedRotation.store(_computedRotation);
-    _lastPosition.store(_position);
-    _lastRotation.store(_rotation);
-    _lastScale.store(_scale);
-    _lastComputedBoundingBox.store(_computedBoundingBox);
-    _lastUmbrellaBoundingBox.store(_umbrellaBoundingBox);
-#endif
-    
-    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->syncAtomicRenderProperties();
-    }
 }
 
 #pragma mark - Visibility
@@ -710,6 +626,22 @@ VROQuaternion VRONode::getLastLocalRotation() const {
 
 VROVector3f VRONode::getLastLocalScale() const {
     return _lastScale.load();
+}
+
+VROMatrix4f VRONode::getLastScalePivot() const {
+    if (_lastHasScalePivot.load()) {
+        return _lastScalePivot.load();
+    } else {
+        return VROMatrix4f::identity();
+    }
+}
+
+VROMatrix4f VRONode::getLastRotationPivot() const {
+    if (_lastHasRotationPivot.load()) {
+        return _lastRotationPivot.load();
+    } else {
+        return VROMatrix4f::identity();
+    }
 }
 
 VROBoundingBox VRONode::getLastUmbrellaBoundingBox() const {
@@ -820,7 +752,7 @@ void VRONode::getChildPortals(std::vector<std::shared_ptr<VROPortal>> *outPortal
     }
 }
 
-#pragma mark - Setters
+#pragma mark - Rendering Thread Setters
 
 void VRONode::setRotation(VROQuaternion rotation) {
     passert_thread(__func__);
@@ -836,6 +768,8 @@ void VRONode::setRotationEuler(VROVector3f euler) {
                                                         ((VRONode *)animatable)->_euler = VROMathNormalizeAngles2PI(r);
                                                         ((VRONode *)animatable)->_rotation = { r.x, r.y, r.z };
                                                      }, _euler, euler));
+    
+    VROQuaternion rotation = { euler.x, euler.y, euler.z };
 }
 
 void VRONode::setPosition(VROVector3f position) {
@@ -975,6 +909,165 @@ void VRONode::setHidden(bool hidden) {
 void VRONode::setHighAccuracyGaze(bool enabled) {
     passert_thread(__func__);
     _highAccuracyGaze = enabled;
+}
+
+#pragma mark - Application Thread Setters
+
+void VRONode::setPositionAtomic(VROVector3f position) {
+    _lastPosition.store(position);
+    
+    std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
+    VROPlatformDispatchAsyncRenderer([node_w, position] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setPosition(position);
+        }
+    });
+}
+
+void VRONode::setRotationAtomic(VROQuaternion rotation) {
+    _lastRotation.store(rotation);
+    
+    std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
+    VROPlatformDispatchAsyncRenderer([node_w, rotation] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setRotation(rotation);
+        }
+    });
+}
+
+void VRONode::setScaleAtomic(VROVector3f scale) {
+    _lastScale.store(scale);
+    
+    std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
+    VROPlatformDispatchAsyncRenderer([node_w, scale] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setScale(scale);
+        }
+    });
+}
+
+void VRONode::setRotationPivotAtomic(VROMatrix4f pivot) {
+    _lastHasRotationPivot.store(true);
+    _lastRotationPivot.store(pivot);
+    _lastRotationPivotInverse.store(pivot.invert());
+    
+    std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
+    VROPlatformDispatchAsyncRenderer([node_w, pivot] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setRotationPivot(pivot);
+        }
+    });
+}
+
+void VRONode::setScalePivotAtomic(VROMatrix4f pivot) {
+    _lastHasScalePivot.store(true);
+    _lastScalePivot.store(pivot);
+    _lastScalePivotInverse.store(pivot.invert());
+    
+    std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
+    VROPlatformDispatchAsyncRenderer([node_w, pivot] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setScalePivot(pivot);
+        }
+    });
+}
+
+void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
+    VROQuaternion rotation = _lastRotation.load();
+    VROVector3f position = _lastPosition.load();
+    
+    // The world transform is aggregated into this matrix
+    VROMatrix4f transform;
+    
+    // First compute scale
+    VROVector3f scale = _lastScale.load();
+    if (_lastHasScalePivot.load()) {
+        VROMatrix4f scaleMatrix;
+        scaleMatrix.scale(scale.x, scale.y, scale.z);
+        transform = _lastScalePivot.load() * scaleMatrix * _lastScalePivotInverse.load();
+    }
+    else {
+        transform.scale(scale.x, scale.y, scale.z);
+    }
+    
+    // Rotation is after scale
+    bool hasRotationPivot = _lastHasRotationPivot.load();
+    if (hasRotationPivot) {
+        transform = _lastRotationPivotInverse.load() * transform;
+    }
+    transform = rotation.getMatrix() * transform;
+    if (hasRotationPivot) {
+        transform = _lastRotationPivot.load() * transform;
+    }
+    
+    // Translation is after scale and rotation
+    VROMatrix4f translate;
+    translate.translate(position.x, position.y, position.z);
+    transform = translate * transform;
+    
+    // Finally multiply by the parent transform to get the final world transform
+    transform = parentTransform * transform;
+    
+    // Store the final values in the atomics
+    VROVector3f worldPosition = { transform[12], transform[13], transform[14] };
+    _lastComputedPosition.store(worldPosition);
+    _lastComputedRotation.store(parentRotation.multiply(rotation.getMatrix()));
+    _lastComputedTransform.store(transform);
+    
+    if (_geometry) {
+        _lastComputedBoundingBox.store(_geometry->getLastBoundingBox().transform(transform));
+    } else {
+        // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
+        _lastComputedBoundingBox.store({ worldPosition.x, worldPosition.x,
+            worldPosition.y, worldPosition.y,
+            worldPosition.z, worldPosition.z });
+    }
+    
+    // TODO VIRO-3692 Currently it is unsafe to compute the umbrella bounding box because the
+    //                subnodes cannot be accessed
+    //VROVector3f computedPosition = _lastComputedPosition.load();
+    //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
+    //                                  computedPosition.y, computedPosition.z, computedPosition.z);
+    //computeUmbrellaBounds(&umbrellaBoundingBox);
+}
+
+#pragma mark - Sync Rendering Thread <> Application Thread
+
+void VRONode::syncAtomicRenderProperties() {
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
+    std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
+
+    /*
+     The application thread properties are only updated on the application thread
+     because there may be operations in-flight on that thread (e.g. coordinate space
+     computations) and we don't want to intersect and modify these values off-thread,
+     as that can create inconsistencies.
+     
+     Because we insist on this, we can consider in the future making these variables
+     NOT atomic.
+     */
+    VROPlatformDispatchAsyncApplication([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->_lastComputedTransform.store(node->_computedTransform);
+            node->_lastComputedPosition.store(node->_computedPosition);
+            node->_lastComputedRotation.store(node->_computedRotation);
+            node->_lastPosition.store(node->_position);
+            node->_lastRotation.store(node->_rotation);
+            node->_lastScale.store(node->_scale);
+            node->_lastComputedBoundingBox.store(node->_computedBoundingBox);
+            node->_lastUmbrellaBoundingBox.store(node->_umbrellaBoundingBox);
+        }
+    });
+#endif
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->syncAtomicRenderProperties();
+    }
 }
 
 #pragma mark - Actions and Animations

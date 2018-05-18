@@ -416,6 +416,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void setPosition(Vector position) {
         nativeSetPosition(mNativeRef, position.x, position.y, position.z);
+        updateWorldTransforms();
     }
 
     /**
@@ -444,6 +445,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void setRotation(Vector rotation) {
         nativeSetRotationEuler(mNativeRef, rotation.x, rotation.y, rotation.z);
+        updateWorldTransforms();
     }
 
     /**
@@ -453,6 +455,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void setRotation(Quaternion rotation) {
         nativeSetRotationQuaternion(mNativeRef, rotation.x, rotation.y, rotation.z, rotation.w);
+        updateWorldTransforms();
     }
 
     /**
@@ -504,6 +507,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void setScale(Vector scale) {
         nativeSetScale(mNativeRef, scale.x, scale.y, scale.z);
+        updateWorldTransforms();
     }
 
     /**
@@ -532,6 +536,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void setRotationPivot(Vector pivot) {
         mRotationPivot = pivot;
         nativeSetRotationPivot(mNativeRef, pivot.x, pivot.y, pivot.z);
+        updateWorldTransforms();
     }
 
     /**
@@ -563,6 +568,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void setScalePivot(Vector pivot) {
         mScalePivot = pivot;
         nativeSetScalePivot(mNativeRef, pivot.x, pivot.y, pivot.z);
+        updateWorldTransforms();
     }
 
     /**
@@ -1451,7 +1457,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     @Override
     public void onARPointCloudUpdate(ARPointCloud pointCloud) {
-        if(mPointCloudUpdateListener != null) {
+        if (mPointCloudUpdateListener != null) {
             mPointCloudUpdateListener.onUpdate(pointCloud);
         }
     }
@@ -1594,6 +1600,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetScale(long nodeReference, float x, float y, float z);
     private native void nativeSetRotationPivot(long nodeReference, float x, float y, float z);
     private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
+    private native void nativeUpdateWorldTransforms(long nodeReference, long parentReference);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetDragType(long nodeReference, String dragType);
@@ -1612,7 +1619,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native float[] nativeGetRotationQuaternion(long nodeReference);
     private native float[] nativeGetBoundingBox(long boundingBox);
     private native String[] nativeGetAnimationKeys(long nodeReference);
-    private native Geometry nativeGetGeometry(long nodeReference);
     private native void nativeSetTag(long nodeReference, String tag);
     private native void nativeSetCamera(long nodeReference, long cameraReference);
     private native void nativeClearCamera(long nodeReference);
@@ -1700,6 +1706,26 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public static NodeBuilder<? extends Node, ? extends NodeBuilder> builder() {
         return new NodeBuilder<>();
     }
+
+    /**
+     * Recursively updates the world tranform of this node and all of its children. Invoked any
+     * time position, scale, or rotation are changed. Traverses the scene graph on the UI thread,
+     * invoking atomic operations on the native nodes.
+     */
+    private void updateWorldTransforms() {
+        long parentRef = 0;
+        if (mParent != null) {
+            Node parent = mParent.get();
+            if (parent != null) {
+                parentRef = parent.mNativeRef;
+            }
+        }
+        nativeUpdateWorldTransforms(mNativeRef, parentRef);
+        for (Node child : mChildren) {
+            child.updateWorldTransforms();
+        }
+    }
+
 // +---------------------------------------------------------------------------+
 // | NodeBuilder class for Node
 // +---------------------------------------------------------------------------+

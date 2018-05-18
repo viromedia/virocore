@@ -263,6 +263,8 @@ public:
     VROVector3f    getLastLocalPosition() const;
     VROVector3f    getLastLocalScale() const;
     VROQuaternion  getLastLocalRotation() const;
+    VROMatrix4f    getLastScalePivot() const;
+    VROMatrix4f    getLastRotationPivot() const;
     VROBoundingBox getLastUmbrellaBoundingBox() const;
     
     /*
@@ -306,6 +308,14 @@ public:
     void setRotationPivot(VROMatrix4f pivot);
     void setScalePivot(VROMatrix4f pivot);
     
+    /*
+     Get the bounding box and the umbrella bounding box. The former is the bounding box
+     of just this node and its geometry; the latter is the union of this node's bounding
+     box and that of all of its child nodes, descending recurisvely down the scene graph.
+     */
+    VROBoundingBox getBoundingBox() const;
+    VROBoundingBox getUmbrellaBoundingBox() const;
+    
 #pragma mark - Atomic Settings
 
     // Viro platforms in general properties on the main thread and dispatch those setters
@@ -320,10 +330,12 @@ public:
     // 2. Maintain access of this data across threads
     //
     // In other words, these atomic fields are *duplicates* of rendering thread fields, but are
-    // accessible from any thread. They are set in two ways:
+    // accessible from the application thread. They are set in two ways:
     //
-    // 1. Via any atomic setter, from any thread.
-    // 2. Via automatic sync with the rendering thread, once per frame.
+    // 1. By the application, via any atomic setter, from the application thread.
+    // 2. By the renderer, via automatic sync with the rendering thread counterparts,
+    //    once per frame. This mode of update is required because the renderer itself
+    //    changes these variables through internal processes like physics and animation.
 
     // The atomic setters below are only used if you want to immediately update all of a node's
     // related atomic properties. For example, use node->setPositionAtomic() if you want to be
@@ -333,19 +345,21 @@ public:
     void setPositionAtomic(VROVector3f position);
     void setRotationAtomic(VROQuaternion rotation);
     void setScaleAtomic(VROVector3f scale);
+    void setScalePivotAtomic(VROMatrix4f scalePivot);
+    void setRotationPivotAtomic(VROMatrix4f rotationPivot);
     
     /*
-     Automatically invoked whenever atomic position, scale, or rotation are set.
-     These are the equivalent of their non-atomic counterparts, except they
-     only operate on the atomic values.
+     Automatically invoked whenever atomic position, scale, or rotation are set. Computes
+     _lastComputedTransform, _lastComputedPosition, _lastComputedRotation, _lastComputedBoundingBox,
+     and _lastUmbrellaBoundingBox, on this node only. Requires the latest data from this node's
+     parent to make the computations.
      */
-    void computeTransformsAtomic();
     void computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation);
-    void doComputeTransformsAtomic(VROMatrix4f parentTransform);
     
     /*
      Recursively sync the atomic properties computed during a render pass. Should be
-     called after the computation occurs in the render cycle.
+     called on the rendering thread after the computation occurs in the render cycle.
+     Dispatches to the application thread.
      */
     void syncAtomicRenderProperties();
     
@@ -583,8 +597,6 @@ public:
     
 #pragma mark - Events
     
-    VROBoundingBox getBoundingBox() const;
-    VROBoundingBox getUmbrellaBoundingBox() const;
     std::vector<VROHitTestResult> hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
                                           bool boundsOnly = false);
     
@@ -623,13 +635,11 @@ public:
     void setTag(std::string tag) {
         _tag = tag;
     }
-
     std::string getTag() const {
         return _tag;
     }
     
     void setHighAccuracyGaze(bool enabled);
-    
     bool getHighAccuracyGaze() const {
         return _highAccuracyGaze;
     }
@@ -644,7 +654,6 @@ public:
     void setDragType(VRODragType dragType) {
         _dragType = dragType;
     }
-
     VRODragType getDragType() {
         return _dragType;
     }
@@ -652,7 +661,6 @@ public:
     void setDragPlanePoint(VROVector3f point) {
         _dragPlanePoint = point;
     }
-
     VROVector3f getDragPlanePoint() {
         return _dragPlanePoint;
     }
@@ -660,7 +668,6 @@ public:
     void setDragPlaneNormal(VROVector3f normal) {
         _dragPlaneNormal = normal;
     }
-
     VROVector3f getDragPlaneNormal() {
         return _dragPlaneNormal;
     }
@@ -668,7 +675,6 @@ public:
     void setDragMaxDistance(float maxDistance) {
         _dragMaxDistance = maxDistance;
     }
-
     float getDragMaxDistance() {
         return _dragMaxDistance;
     }
@@ -676,7 +682,6 @@ public:
     bool isAnimatingDrag() {
         return _isAnimatingDrag;
     }
-
     void setIsAnimatingDrag(bool isAnimatingDrag) {
         _isAnimatingDrag = isAnimatingDrag;
     }
@@ -684,7 +689,6 @@ public:
     std::shared_ptr<VROTransaction> getDragAnimation() {
         return _dragAnimation;
     }
-    
     void setDragAnimation(std::shared_ptr<VROTransaction> dragAnimation) {
         _dragAnimation = dragAnimation;
     }
@@ -804,17 +808,27 @@ private:
     std::weak_ptr<VROTransformDelegate> _transformDelegate;
 
     /*
-     Atomic fields used for multi-threaded access. See the 'Atomic Settings' pragma
-     above for a more extensive description of why we need these fields.
+     Atomic fields used for application-thread access. See the 'Atomic Settings' pragma
+     above for a more extensive description of why we need these fields. The following
+     are computed fields (not directly set by users).
      */
     std::atomic<VROMatrix4f> _lastComputedTransform;
     std::atomic<VROVector3f> _lastComputedPosition;
     std::atomic<VROMatrix4f> _lastComputedRotation;
+    std::atomic<VROBoundingBox> _lastComputedBoundingBox;
+    std::atomic<VROBoundingBox> _lastUmbrellaBoundingBox;
+    
+    /*
+     The following are directly set atomic fields. The pivots are optional so they have
+     associated booleans.
+     */
     std::atomic<VROVector3f> _lastPosition;
     std::atomic<VROVector3f> _lastScale;
     std::atomic<VROQuaternion> _lastRotation;
-    std::atomic<VROBoundingBox> _lastComputedBoundingBox;
-    std::atomic<VROBoundingBox> _lastUmbrellaBoundingBox;
+    std::atomic<VROMatrix4f> _lastScalePivot, _lastScalePivotInverse;
+    std::atomic<VROMatrix4f> _lastRotationPivot, _lastRotationPivotInverse;
+    std::atomic<bool> _lastHasScalePivot;
+    std::atomic<bool> _lastHasRotationPivot;
 
     /*
      The transformed bounding box containing this node's geometry. The 
