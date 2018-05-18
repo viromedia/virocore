@@ -67,8 +67,8 @@ public class ViroSoundFieldTest extends ViroBaseTest {
 
     @Test
     public void testSound() {
-        testSetDelegate();
-        testSetRotation();
+        runUITest(() -> testSetDelegate());
+        runUITest(() -> testSetRotation());
     }
 
     private void testPlayPause() {

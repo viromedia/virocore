@@ -26,7 +26,6 @@ public class ViroViewARCoreTest {
     @Before
     public void setUp() {
         mActivity = (ViroReleaseTestActivity) mActivityTestRule.getActivity();
-
     }
 
     @Test

@@ -152,10 +152,10 @@ public class ViroARNodeTest extends ViroBaseTest {
 
     @Test
     public void testARScene() {
-        testOnAnchorFound();
-        testOnAnchorUpdated();
-        testPauseUpdates();
-        testOnAnchorRemoved();
+        runUITest(() -> testOnAnchorFound());
+        runUITest(() -> testOnAnchorUpdated());
+        runUITest(() -> testPauseUpdates());
+        runUITest(() -> testOnAnchorRemoved());
     }
 
 

@@ -1,6 +1,8 @@
 package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
+import android.support.test.annotation.UiThreadTest;
+import android.util.Log;
 
 import com.viro.core.Box;
 import com.viro.core.DirectionalLight;
@@ -72,36 +74,38 @@ public class ViroNodeTest extends ViroBaseTest {
         sphere.setMaterials(Arrays.asList(sphereMaterial));
         parentSphereNode.setGeometry(sphere);
         parentSphereNode.setPosition(new Vector(0f, 0f, -5f));
-    }
 
-    @Test
-    public void testNode() {
-        testNodeAddChildren();
-        testConvertLocalToWorld();
-        testConvertWorldToLocal();
-        testNodePositionParent();
-        testNodeRotationParent();
-        testNodeScaleParent();
-        testNodeVisibilityParent();
-        testNodeOpacityParent();
-        testNodePositionChild();
-        testNodeRotationChild();
-        testNodeScaleChild();
-        testNodeVisibilityChild();
-        testNodeOpacityChild();
-        testNodeChangeGeometry();
-        testNodeRemoveFromParent();
-        testNodeRemoveAllChildren();
-        testTransformBehaviorX();
-        testTransformBehaviorY();
-        testTransformBehaviorXY();
-    }
-
-    private void testNodeAddChildren() {
         parentSphereNode.addChildNode(childOne);
         parentSphereNode.addChildNode(childTwo);
         parentSphereNode.addChildNode(childThree);
         mScene.getRootNode().addChildNode(parentSphereNode);
+    }
+
+    @Test
+    public void testNode() {
+        runUITest(() -> testNodeAddChildren());
+        runUITest(() -> testConvertLocalToWorld());
+        runUITest(() -> testConvertWorldToLocal());
+        runUITest(() -> testNodePositionParent());
+        runUITest(() -> testNodeRotationParent());
+        runUITest(() -> testNodeScaleParent());
+        runUITest(() -> testNodeVisibilityParent());
+        runUITest(() -> testNodeOpacityParent());
+        runUITest(() -> testNodePositionChild());
+        runUITest(() -> testNodeRotationChild());
+        runUITest(() -> testNodeScaleChild());
+        runUITest(() -> testNodeVisibilityChild());
+        runUITest(() -> testNodeOpacityChild());
+        runUITest(() -> testNodeChangeGeometry());
+        runUITest(() -> testNodeRemoveFromParent());
+        runUITest(() -> testNodeRemoveAllChildren());
+        runUITest(() -> testTransformBehaviorX());
+        runUITest(() -> testTransformBehaviorY());
+        runUITest(() -> testTransformBehaviorXY());
+    }
+
+    private void testNodeAddChildren() {
+        // Test the configureScene construction
         assertPass("A left, middle, right and top node appear.");
     }
 
@@ -114,7 +118,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 parentSphereNode.setPosition(newPosition);
             }
         };
-        assertPass("All nodes are moving back till -10", () -> {
+        assertPass("All nodes are moving back to -10", () -> {
             parentSphereNode.setRotation(new Vector(0f, 0f, -5f));
         });
     }
@@ -146,7 +150,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("All have smaller scale.", () -> {
+        assertPass("All have smaller scale", () -> {
             parentSphereNode.setScale(new Vector(1f, 1f, 1f));
         });
     }
@@ -158,7 +162,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("All nodes dissappear and reappear.", () -> {
+        assertPass("All nodes dissappear and reappear", () -> {
             parentSphereNode.setVisible(true);
         });
     }
@@ -170,7 +174,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("All nodes fade out.", () -> {
+        assertPass("All nodes fade out", () -> {
             parentSphereNode.setOpacity(1.0f);
         });
     }
@@ -182,7 +186,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Left node fades out.", () -> {
+        assertPass("Left node fades out", () -> {
             childOne.setOpacity(1.0f);
         });
     }
@@ -193,7 +197,7 @@ public class ViroNodeTest extends ViroBaseTest {
             childThree.setVisible(!childThree.isVisible());
         };
 
-        assertPass("Left and right nodes disappear and reappear.", () -> {
+        assertPass("Left and right nodes disappear and reappear", () -> {
             childOne.setVisible(true);
             childThree.setVisible(true);
         });
@@ -207,7 +211,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 childOne.setPosition(newPosition);
             }
         };
-        assertPass("Left node is moving back till -10", () -> {
+        assertPass("Left node is moving back to -10", () -> {
             childOne.setPosition(new Vector(-1.5f, 0f, 0f));
         });
     }
@@ -221,7 +225,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 childTwo.setRotation(newRotation);
             }
         };
-        assertPass("top node is rotating", () -> {
+        assertPass("Top node is rotating", () -> {
             childTwo.setRotation(new Vector(0f, 0f, 0f));
         });
     }
@@ -237,7 +241,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Right node scale shrinks.", () -> {
+        assertPass("Right node scale shrinks", () -> {
             childThree.setScale(new Vector(1f, 1f, 1f));
         });
     }
@@ -250,8 +254,7 @@ public class ViroNodeTest extends ViroBaseTest {
         box.setMaterials(Arrays.asList(boxMaterial));
         parentSphereNode.setGeometry(box);
         parentSphereNode.setPosition(new Vector(0f, 0f, -5f));
-        parentSphereNode.setGeometry(box);
-        assertPass("Sphere should change to box.");
+        assertPass("Center geometry should now be a box");
     }
 
     private void testNodeRemoveFromParent() {
@@ -349,6 +352,14 @@ public class ViroNodeTest extends ViroBaseTest {
     }
 
     private void testConvertLocalToWorld() {
+        parentSphereNode.removeAllChildNodes();
+        try {
+            Thread.sleep(1000);
+        }catch(InterruptedException e) {
+
+        }
+        parentSphereNode.addChildNode(childOne);
+
         parentSphereNode.setPosition(new Vector(0, 1, -1));
         childOne.setPosition(new Vector(0, 1, 1));
 
@@ -357,6 +368,14 @@ public class ViroNodeTest extends ViroBaseTest {
     }
 
     private void testConvertWorldToLocal() {
+        parentSphereNode.removeAllChildNodes();
+        try {
+            Thread.sleep(1000);
+        }catch(InterruptedException e) {
+
+        }
+        parentSphereNode.addChildNode(childOne);
+
         parentSphereNode.setPosition(new Vector(0, 2, 2));
         childOne.setPosition(new Vector(2, 0, 0));
 

@@ -75,10 +75,10 @@ public class ViroAREventsTest extends ViroBaseTest {
 
     @Test
     public void testAREvents() {
-        testEventsARDragListener();
-        testEventsDragListener();
-        testEventsGesturePinchListener();
-        testEventsGestureRotateListener();
+        runUITest(() -> testEventsARDragListener());
+        runUITest(() -> testEventsDragListener());
+        runUITest(() -> testEventsGesturePinchListener());
+        runUITest(() -> testEventsGestureRotateListener());
     }
 
     private void testEventsARDragListener() {

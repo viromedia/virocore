@@ -105,15 +105,14 @@ public class ViroARSceneTest extends ViroBaseTest {
 
     @Test
     public void testARScene() {
-            testARInitialized();
-            testARAmbientLightValues();
-            testPointCloudUpdateCallback();
-            testDisplayPointCloudOn();
-            testPointCloudScale();
-            testPointCloudSurface();
-            setPointCloudMaxPoints();
-            testDisplayPointCloudOff();
-
+        runUITest(() -> testARInitialized());
+        runUITest(() -> testARAmbientLightValues());
+        runUITest(() -> testPointCloudUpdateCallback());
+        runUITest(() -> testDisplayPointCloudOn());
+        runUITest(() -> testPointCloudScale());
+        runUITest(() -> testPointCloudSurface());
+        runUITest(() -> setPointCloudMaxPoints());
+        runUITest(() -> testDisplayPointCloudOff());
     }
 
     private void testARInitialized() {

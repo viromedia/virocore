@@ -118,14 +118,14 @@ public class ViroVideoTextureTest extends ViroBaseTest {
 
     @Test
     public void testVideoTexture() {
-        testPlayPause();
-        testSetVolume();
-        testSetMuted();
-        testSetLoop();
-        testSeekToTime();
-        testSetDelegate();
-        testSetDelegate();
-        testSetRotation();
+        runUITest(() -> testPlayPause());
+        runUITest(() -> testSetVolume());
+        runUITest(() -> testSetMuted());
+        runUITest(() -> testSetLoop());
+        runUITest(() -> testSeekToTime());
+        runUITest(() -> testSetDelegate());
+        runUITest(() -> testSetDelegate());
+        runUITest(() -> testSetRotation());
     }
 
     private void animateBox() {

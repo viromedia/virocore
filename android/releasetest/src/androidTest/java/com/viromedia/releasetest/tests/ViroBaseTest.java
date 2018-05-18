@@ -43,7 +43,6 @@ import com.viro.core.TouchState;
 import com.viromedia.releasetest.BuildConfig;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 
@@ -51,8 +50,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,7 +63,7 @@ import static org.junit.Assert.assertEquals;
  */
 
 public abstract class ViroBaseTest {
-    private static final String TAG = ViroBaseTest.class.getName();
+    private static final String TAG = "Viro";
     private static final String TEST_PASSED_TAG = "testPassed";
     private static final String TEST_FAILED_TAG = "testFailed";
     private static final Integer TEST_FAILED = -1;
@@ -80,7 +77,6 @@ public abstract class ViroBaseTest {
     public ViroActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
             = new ViroActivityTestRule(ViroReleaseTestActivity.class, true, true);
     protected MutableTestMethod mMutableTestMethod;
-    protected Timer mTimer;
     protected Scene mScene;
     protected Node mYesButtonNode;
     protected Node mNoButtonNode;
@@ -90,12 +86,16 @@ public abstract class ViroBaseTest {
     private Node mTestMethodNameNode;
     private GenericEventCallback callbackOne;
     private GenericEventCallback callbackTwo;
+    private Handler mTestThreadHander;
+    private Handler mUIThreadHandler;
+    private TestCleanUpMethod mLastCleanupMethod;
 
     @Before
     public void setUp() {
+        Log.i(TAG, "Setting up test");
+
         mActivity = (ViroReleaseTestActivity) mActivityTestRule.getActivity();
         mViroView = mActivity.getViroView();
-        mTimer = new Timer();
         await().until(glInitialized());
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
@@ -104,16 +104,25 @@ public abstract class ViroBaseTest {
             mScene = new Scene();
         }
 
-        createBaseTestScene();
-        configureTestScene();
-        mViroView.setScene(mScene);
+        Looper.prepare();
+        mTestThreadHander = new Handler();
+        mUIThreadHandler = new Handler(Looper.getMainLooper());
 
-        mTimer.schedule(new TimerTask() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                callbackEverySecond(mMutableTestMethod);
+                createBaseTestScene();
+                configureTestScene();
+                mViroView.setScene(mScene);
             }
-        }, 0, 1000);
+        });
+
+        mUIThreadHandler.postDelayed(new Runnable(){
+            public void run() {
+                callbackEverySecond(mMutableTestMethod);
+                mUIThreadHandler.postDelayed(this, 1000);
+            }
+        }, 1000);
     }
 
     private Callable<Boolean> glInitialized() {
@@ -155,7 +164,7 @@ public abstract class ViroBaseTest {
         // Add expected message card
         mExpectedMessageNode = new Node();
         final Text instructionCardText = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 16,
+                "Loading...", "Roboto", 16,
                 Color.GREEN, 2.55f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         mExpectedMessageNode.setPosition(new Vector(0.025f, -3.06f, textZ)); //1.0, -3.0
@@ -234,20 +243,29 @@ public abstract class ViroBaseTest {
 
         final Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
         instructionCardText.setText(expectedMessage);
-
-        await().atMost(TEST_MAX_DURATION_SEC, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
-        assertEquals((long) TEST_PASSED, (long) mTestResult.get());
     }
 
     protected void assertPass(final String expectedMessage, final TestCleanUpMethod method) {
         assertPass(expectedMessage);
-
-        if (method != null) {
-            method.cleanUp();
-        }
     }
 
     abstract void configureTestScene();
+
+    /**
+     * This can be overriden to customize the reset of the state. The default behavior is we
+     * destroy the scene entirely and recreate it.
+     */
+    void resetTestState() {
+        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            mScene = new ARScene();
+        } else {
+            mScene = new Scene();
+        }
+
+        createBaseTestScene();
+        configureTestScene();
+        mViroView.setScene(mScene);
+    };
 
     void callbackEverySecond(final MutableTestMethod testMethod) {
         if (testMethod == null) {
@@ -382,8 +400,44 @@ public abstract class ViroBaseTest {
         }
     }
 
-    // TODO: Remove UI-Threaded patch once VIRO-2162 has been implemented.
-    protected void runOnUiThread(Runnable runnable){
+    protected void runUITest(Runnable runnable) {
+        AtomicBoolean finishedTest = new AtomicBoolean(false);
+        Runnable test = new Runnable() {
+            @Override
+            public void run() {
+                runnable.run();
+                finishedTest.set(true);
+            }
+        };
+        mUIThreadHandler.post(test);
+
+        await().until(() -> finishedTest.get());
+        await().atMost(TEST_MAX_DURATION_SEC, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
+        assertEquals((long) TEST_PASSED, (long) mTestResult.get());
+
+        AtomicBoolean finishedCleanup = new AtomicBoolean(false);
+        Runnable cleanup = new Runnable() {
+            @Override
+            public void run() {
+                resetTestState();
+                finishedCleanup.set(true);
+            }
+        };
+        mUIThreadHandler.post(cleanup);
+
+        await().until(() -> finishedCleanup.get());
+
+        // Wait an additional half second so that the Scene transition animation concludes,
+        // before moving to the next test
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Deprecated
+    protected void runOnUiThread(Runnable runnable) {
         AtomicBoolean finishedTest = new AtomicBoolean(false);
         Runnable myRunnable = new Runnable() {
             @Override
@@ -392,7 +446,7 @@ public abstract class ViroBaseTest {
                 finishedTest.set(true);
             }
         };
-        new Handler(Looper.getMainLooper()).post(myRunnable);
+        mUIThreadHandler.post(myRunnable);
         await().until(() -> finishedTest.get());
     }
 }

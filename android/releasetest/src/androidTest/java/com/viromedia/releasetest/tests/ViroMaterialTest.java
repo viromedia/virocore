@@ -87,29 +87,29 @@ public class ViroMaterialTest extends ViroBaseTest {
 
     @Test
     public void testMaterial() {
-        testMaterialLightingModelConstant();
-        testMaterialLightingModelBlinn();
-        testMaterialLightingModelPhong();
-        testMaterialLightingModelLambert();
+        runUITest(() -> testMaterialLightingModelConstant());
+        runUITest(() -> testMaterialLightingModelBlinn());
+        runUITest(() -> testMaterialLightingModelPhong());
+        runUITest(() -> testMaterialLightingModelLambert());
 
-        testMaterialSpecularTexture();
-        testMaterialNormalMapTexture();
-        testMaterialShininess();
+        runUITest(() -> testMaterialSpecularTexture());
+        runUITest(() -> testMaterialNormalMapTexture());
+        runUITest(() -> testMaterialShininess());
 
-        testMaterialBlendNone();
-        testMaterialBlendAlpha();
-        testMaterialBlendAdd();
-        testMaterialBlendSubtract();
-        testMaterialBlendMultiply();
-        testMaterialBlendScreen();
+        runUITest(() -> testMaterialBlendNone());
+        runUITest(() -> testMaterialBlendAlpha());
+        runUITest(() -> testMaterialBlendAdd());
+        runUITest(() -> testMaterialBlendSubtract());
+        runUITest(() -> testMaterialBlendMultiply());
+        runUITest(() -> testMaterialBlendScreen());
 
-        testMaterialTransparencyModeAOne();
-        testMaterialTransparencyModeRGBZero();
+        runUITest(() -> testMaterialTransparencyModeAOne());
+        runUITest(() -> testMaterialTransparencyModeRGBZero());
 
-        testMaterialCullMode();
-        testMaterialReadsFromDepthBuffer();
-        testMaterialWritesToDepthBuffer();
-        testMaterialBloomThreshold();
+        runUITest(() -> testMaterialCullMode());
+        runUITest(() -> testMaterialReadsFromDepthBuffer());
+        runUITest(() -> testMaterialWritesToDepthBuffer());
+        runUITest(() -> testMaterialBloomThreshold());
     }
 
     private void testMaterialLightingModelConstant() {

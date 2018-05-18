@@ -60,9 +60,9 @@ public class ViroPolylineTest extends ViroBaseTest {
 
     @Test
     public void polylineTest() {
-        testAppendPoints();
-        testSetPoints();
-        testSetThickness();
+        runUITest(() -> testAppendPoints());
+        runUITest(() -> testSetPoints());
+        runUITest(() -> testSetThickness());
     }
 
     private void testAppendPoints() {

@@ -475,13 +475,13 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
 
     @Test
     public void physicsTest() {
-        testApplyImpulse();
-        testApplyForce();
-        testSetUseGravity();
-        testSetEnabled();
-        testSetMass();
-        testSetFriction();
-        testSetRestitution();
+        runUITest(() -> testApplyImpulse());
+        runUITest(() -> testApplyForce());
+        runUITest(() -> testSetUseGravity());
+        runUITest(() -> testSetEnabled());
+        runUITest(() -> testSetMass());
+        runUITest(() -> testSetFriction());
+        runUITest(() -> testSetRestitution());
     }
 
     private void testApplyImpulse() {

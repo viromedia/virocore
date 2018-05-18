@@ -50,12 +50,12 @@ public class ViroSceneTest extends ViroBaseTest {
 
     @Test
     public void sceneTest() {
-        testSceneBackgroundTexture();
-        testSceneBackgroundRotation();
-        testSceneBackgroundColor();
-        testSceneBackgroundCube();
-        testSceneBackgroundVideoTexture();
-        testSceneTransition();
+        runUITest(() -> testSceneBackgroundTexture());
+        runUITest(() -> testSceneBackgroundRotation());
+        runUITest(() -> testSceneBackgroundColor());
+        runUITest(() -> testSceneBackgroundCube());
+        runUITest(() -> testSceneBackgroundVideoTexture());
+        runUITest(() -> testSceneTransition());
     }
 
     private void testSceneBackgroundTexture() {

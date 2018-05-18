@@ -96,15 +96,15 @@ public class ViroSpotLightTest extends ViroBaseTest {
 
     @Test
     public void testSpotlight() {
-        testSetColor();
-        testSetIntensity();
-        testSetCastsShadow();
-        testSetDirection();
-        testSetPosition();
-        testSetDirection();
-        testSetInnerAngle();
-        testSetOuterAngle();
-        testTemperature();
+        runUITest(() -> testSetColor());
+        runUITest(() -> testSetIntensity());
+        runUITest(() -> testSetCastsShadow());
+        runUITest(() -> testSetDirection());
+        runUITest(() -> testSetPosition());
+        runUITest(() -> testSetDirection());
+        runUITest(() -> testSetInnerAngle());
+        runUITest(() -> testSetOuterAngle());
+        runUITest(() -> testTemperature());
     }
 
     /**

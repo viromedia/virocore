@@ -56,15 +56,15 @@ public class ViroPortalTest extends ViroBaseTest  {
 
     @Test
     public void testPortal() {
-        testAddPortalEntrance();
-        testPortalSceneBackgroundTexture();
-        testPortalSceneBackgroundVideoTexture();
-        testPortalScenesBackgroundRotation();
-        testPortalSceneBackgroundColor();
-        testPortalSceneBackgroundCube();
-        testPortalSceneIsPassableOn();
-        testPortalSceneDelegate();
-        testPortalSceneIsPassableOff();
+        runUITest(() -> testAddPortalEntrance());
+        runUITest(() -> testPortalSceneBackgroundTexture());
+        runUITest(() -> testPortalSceneBackgroundVideoTexture());
+        runUITest(() -> testPortalScenesBackgroundRotation());
+        runUITest(() -> testPortalSceneBackgroundColor());
+        runUITest(() -> testPortalSceneBackgroundCube());
+        runUITest(() -> testPortalSceneIsPassableOn());
+        runUITest(() -> testPortalSceneDelegate());
+        runUITest(() -> testPortalSceneIsPassableOff());
     }
 
     private void testAddPortalEntrance() {

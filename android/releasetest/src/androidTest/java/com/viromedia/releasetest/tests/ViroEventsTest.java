@@ -80,13 +80,13 @@ public class ViroEventsTest extends ViroBaseTest {
 
     @Test
     public void testEvents() {
-        testEventsClickListener();
-        testEventsHoverListener();
-        testEventsDragListener();
-        testEventsFuseListener();
-        testEventsTouchpadTouchListener();
-        testEventsTouchpadSwipeListener();
-        testEventsTouchpadScrollListener();
+        runUITest(() -> testEventsClickListener());
+        runUITest(() -> testEventsHoverListener());
+        runUITest(() -> testEventsDragListener());
+        runUITest(() -> testEventsFuseListener());
+        runUITest(() -> testEventsTouchpadTouchListener());
+        runUITest(() -> testEventsTouchpadSwipeListener());
+        runUITest(() -> testEventsTouchpadScrollListener());
         //TODO: need to test bubbling of events from child to parent.
     }
 

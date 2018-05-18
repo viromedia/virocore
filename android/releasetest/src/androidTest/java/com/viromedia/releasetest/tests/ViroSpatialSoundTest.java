@@ -66,14 +66,13 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
 
     @Test
     public void testSound() {
-
-        testSetPosition();
-        testPlayPause();
-        testSetVolume();
-        testSetMuted();
-        testSetLoop();
-        testSeekToTime();
-        testSetDelegate();
+        runUITest(() -> testSetPosition());
+        runUITest(() -> testPlayPause());
+        runUITest(() -> testSetVolume());
+        runUITest(() -> testSetMuted());
+        runUITest(() -> testSetLoop());
+        runUITest(() -> testSeekToTime());
+        runUITest(() -> testSetDelegate());
     }
 
     private void testSetPosition() {

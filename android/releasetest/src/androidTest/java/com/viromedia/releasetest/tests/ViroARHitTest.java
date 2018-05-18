@@ -38,10 +38,10 @@ public class ViroARHitTest extends ViroBaseTest {
 
     @Test
     public void testARHitTest() {
-        testARCameraHitTest();
-        testPerformARHitTestWithRay();
-        testPerformARHitTestWithPosition();
-        testPerformARHitTest();
+        runUITest(() -> testARCameraHitTest());
+        runUITest(() -> testPerformARHitTestWithRay());
+        runUITest(() -> testPerformARHitTestWithPosition());
+        runUITest(() -> testPerformARHitTest());
     }
 
     private void testPerformARHitTestWithRay() {

@@ -114,11 +114,11 @@ public class ViroPBRTest extends ViroBaseTest {
 
     @Test
     public void testPBR() {
-        testNewportLoftEnvironment();
-        testMansOutsideEnvironment();
-        testRidgecrestRoadEnvironment();
-        testWoodenDoorEnvironment();
-        testTextured();
+        runUITest(() -> testNewportLoftEnvironment());
+        runUITest(() -> testMansOutsideEnvironment());
+        runUITest(() -> testRidgecrestRoadEnvironment());
+        runUITest(() -> testWoodenDoorEnvironment());
+        runUITest(() -> testTextured());
     }
 
     private void testNewportLoftEnvironment() {

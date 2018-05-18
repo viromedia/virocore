@@ -99,13 +99,10 @@ public class ViroSphereTest extends ViroBaseTest {
 
     @Test
     public void sphereTest() {
-        Log.i("ViroSphereTest", "sphereTest beginning");
-        sphereHeightSegmentCount();
-        sphereWidthSegmentCount();
-        sphereRadiusCount();
-        Log.i("ViroSphereTest", "sphereTest middle");
-        sphereFaceOutward();
-        Log.i("ViroSphereTest", "sphereTest end");
+        runUITest(() -> sphereHeightSegmentCount());
+        runUITest(() -> sphereWidthSegmentCount());
+        runUITest(() -> sphereRadiusCount());
+        runUITest(() -> sphereFaceOutward());
     }
 
 

@@ -50,20 +50,20 @@ public class ViroTextTest extends ViroBaseTest {
 
     @Test
     public void testText() {
-        testSetText();
-        testSetFontFamily();
-        testSetFontSize();
-        testSetFontStyle();
-        testSetFontWeight();
-        testInternationalization();
-        testSetColor();
-        testSetWidth();
-        testSetHeight();
-        testSetHorizontalAlignment();
-        testSetVerticalAlignment();
-        testSetLineBreakMode();
-        testSetClipMode();
-        testSetMaxLines();
+        runUITest(() -> testSetText());
+        runUITest(() -> testSetFontFamily());
+        runUITest(() -> testSetFontSize());
+        runUITest(() -> testSetFontStyle());
+        runUITest(() -> testSetFontWeight());
+        runUITest(() -> testInternationalization());
+        runUITest(() -> testSetColor());
+        runUITest(() -> testSetWidth());
+        runUITest(() -> testSetHeight());
+        runUITest(() -> testSetHorizontalAlignment());
+        runUITest(() -> testSetVerticalAlignment());
+        runUITest(() -> testSetLineBreakMode());
+        runUITest(() -> testSetClipMode());
+        runUITest(() -> testSetMaxLines());
     }
 
     private void testSetLineBreakMode() {

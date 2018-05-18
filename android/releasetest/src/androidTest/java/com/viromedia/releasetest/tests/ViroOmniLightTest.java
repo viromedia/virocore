@@ -40,6 +40,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
     private Node mVSurface;
     private Node mHSurface;
     private Node mSphere;
+
     @Override
     void configureTestScene() {
         mOmniLight = new OmniLight();
@@ -95,12 +96,12 @@ public class ViroOmniLightTest extends ViroBaseTest {
 
     @Test
     public void testOmniLight() {
-        testSetColor();
-        testSetIntensity();
-        testSetInfluenceBitMask();
-        testSetPosition();
-        testSetAttenuationEndDistance();
-        testSetAttenuationStartDistance();
+        runUITest(() -> testSetColor());
+        runUITest(() -> testSetIntensity());
+        runUITest(() -> testSetInfluenceBitMask());
+        runUITest(() -> testSetPosition());
+        runUITest(() -> testSetAttenuationEndDistance());
+        runUITest(() -> testSetAttenuationStartDistance());
     }
 
     private void testSetColor() {

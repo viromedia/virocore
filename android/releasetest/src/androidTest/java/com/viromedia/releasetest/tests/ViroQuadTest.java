@@ -57,9 +57,9 @@ public class ViroQuadTest extends ViroBaseTest {
 
     @Test
     public void surfaceTest() {
-        surfaceWidth();
-        surfaceHeight();
-        surfaceUVs();
+        runUITest(() -> surfaceWidth());
+        runUITest(() -> surfaceHeight());
+        runUITest(() -> surfaceUVs());
     }
 
     public void surfaceWidth() {

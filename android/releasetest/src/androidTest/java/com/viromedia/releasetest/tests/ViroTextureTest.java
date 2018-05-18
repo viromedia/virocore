@@ -71,17 +71,16 @@ public class ViroTextureTest extends ViroBaseTest {
 
     @Test
     public void testImages() {
-        testTextureBitmapConstructorMipMapOn();
-        testBitMapTextureWrapS();
-        testBitmapTextureWrapT();
-        testBitmapMinificationFilter();
-        testBitmapMagnificationFilter();
-        testTextureBitmapConstructorMipMapOff();
-        testTextureBitMapConstructorStereoMode();
-        testTextureDataConstructor();
-        testTextureDataConstructorStereoMode();
-        testTextureCubeMap();
-
+        runUITest(() -> testTextureBitmapConstructorMipMapOn());
+        runUITest(() -> testBitMapTextureWrapS());
+        runUITest(() -> testBitmapTextureWrapT());
+        runUITest(() -> testBitmapMinificationFilter());
+        runUITest(() -> testBitmapMagnificationFilter());
+        runUITest(() -> testTextureBitmapConstructorMipMapOff());
+        runUITest(() -> testTextureBitMapConstructorStereoMode());
+        runUITest(() -> testTextureDataConstructor());
+        runUITest(() -> testTextureDataConstructorStereoMode());
+        runUITest(() -> testTextureCubeMap());
     }
 
     private void testTextureBitmapConstructorMipMapOn() {

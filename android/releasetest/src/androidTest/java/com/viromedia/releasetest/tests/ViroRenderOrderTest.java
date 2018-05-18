@@ -97,15 +97,15 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
     @Test
     public void renderOrderTest() {
-        allOpaque();
-        boxAndGreenSurfaceTransparent();
-        greenBoxTransparentFromNodeOpacity();
-        greenBoxTransparentFromDiffuseColor();
-        greenBoxTransparentFromTexture();
-        boxAndRedSurfaceTransparent();
-        greenOverRed();
-        redOverGreen();
-        lamborghini();
+        runUITest(() -> allOpaque());
+        runUITest(() -> boxAndGreenSurfaceTransparent());
+        runUITest(() -> greenBoxTransparentFromNodeOpacity());
+        runUITest(() -> greenBoxTransparentFromDiffuseColor());
+        runUITest(() -> greenBoxTransparentFromTexture());
+        runUITest(() -> boxAndRedSurfaceTransparent());
+        runUITest(() -> greenOverRed());
+        runUITest(() -> redOverGreen());
+        runUITest(() -> lamborghini());
     }
 
     public void allOpaque() {

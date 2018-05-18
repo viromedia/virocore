@@ -95,10 +95,10 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
     @Test
     public void testDirectionalLight() {
 
-        testSetColor();
-        testSetIntensity();
-        testSetCastsShadow();
-        testSetDirection();
+        runUITest(() -> testSetColor());
+        runUITest(() -> testSetIntensity());
+        runUITest(() -> testSetCastsShadow());
+        runUITest(() -> testSetDirection());
 
         // TODO Fix tests - VIRO-2428.
 //        testSetInfluenceBitMask();

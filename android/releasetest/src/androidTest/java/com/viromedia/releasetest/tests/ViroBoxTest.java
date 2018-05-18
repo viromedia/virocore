@@ -48,9 +48,9 @@ public class ViroBoxTest extends ViroBaseTest {
 
     @Test
     public void boxTest() {
-        boxWidthTest();
-        boxHeightTest();
-        boxLengthTest();
+        runUITest(() -> boxWidthTest());
+        runUITest(() -> boxHeightTest());
+        runUITest(() -> boxLengthTest());
     }
 
 

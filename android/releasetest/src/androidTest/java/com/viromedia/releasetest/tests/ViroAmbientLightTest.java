@@ -95,9 +95,9 @@ public class ViroAmbientLightTest extends ViroBaseTest {
     @Test
     public void testAmbientLight() {
         // Context of the app under test.
-        testSetColor();
-        testSetIntensity();
-        testSetInfluenceBitMask();
+        runUITest(() -> testSetColor());
+        runUITest(() -> testSetIntensity());
+        runUITest(() -> testSetInfluenceBitMask());
     }
 
     private void testSetColor() {

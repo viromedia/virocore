@@ -72,13 +72,12 @@ public class ViroSoundTest extends ViroBaseTest {
 
     @Test
     public void testSound() {
-
-        testPlayPause();
-        testSetVolume();
-        testSetMuted();
-        testSetLoop();
-        testSeekToTime();
-        testSetDelegate();
+        runUITest(() -> testPlayPause());
+        runUITest(() -> testSetVolume());
+        runUITest(() -> testSetMuted());
+        runUITest(() -> testSetLoop());
+        runUITest(() -> testSeekToTime());
+        runUITest(() -> testSetDelegate());
     }
 
     private void testPlayPause() {

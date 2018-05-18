@@ -62,11 +62,11 @@ public class ViroCameraTest extends ViroBaseTest {
 
     @Test
     public void testCamera() {
-        testCameraPosition();
-        testCameraOrbitMode();
-        testCameraRotationQuaternion();
-        testCameraRotationEuler();
-        testCameraCallbacks();
+        runUITest(() -> testCameraPosition());
+        runUITest(() -> testCameraOrbitMode());
+        runUITest(() -> testCameraRotationQuaternion());
+        runUITest(() -> testCameraRotationEuler());
+        runUITest(() -> testCameraCallbacks());
     }
 
     private void testCameraOrbitMode() {

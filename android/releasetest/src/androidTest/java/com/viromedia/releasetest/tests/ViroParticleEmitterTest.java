@@ -52,8 +52,7 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
         return new ParticleEmitter(context, nativeSurface);
     }
 
-    private
-    void runTest(Runnable test){
+    private void runTest(Runnable test) {
         prepareTest();
         test.run();
         cleanupTest();
@@ -104,14 +103,14 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
 
     @Test
     public void particleEmitterTests() {
-        runTest(()->{singleParticleTest();});
-        runTest(()->{emitterColorTest();});
-        runTest(()->{emitterScaleTest();});
-        runTest(()->{emitterRotationTest();});
-        runTest(()->{emitterOpacityTest();});
-        runTest(()->{randomizedPropertiesTest();});
-        runTest(()->{multipleIntervalTest();});
-        runTest(()->{emitterDistanceTest();});
+        runUITest(() -> runTest(()->{singleParticleTest();}));
+        runUITest(() -> runTest(()->{emitterColorTest();}));
+        runUITest(() -> runTest(()->{emitterScaleTest();}));
+        runUITest(() -> runTest(()->{emitterRotationTest();}));
+        runUITest(() -> runTest(()->{emitterOpacityTest();}));
+        runUITest(() -> runTest(()->{randomizedPropertiesTest();}));
+        runUITest(() -> runTest(()->{multipleIntervalTest();}));
+        runUITest(() -> runTest(()->{emitterDistanceTest();}));
     }
 
     public void singleParticleTest() {

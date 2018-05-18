@@ -48,16 +48,16 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
     @Test
     public void test(){
-        stage0_testLoadModelGLTF();
-        stage1_testLoadModelFBX();
-        stage2_testFBXAnimPause();
-        stage3_testFBXAnimStop();
-        stage4_testLoadModelOBJ();
-        stage5_testLoadModelFBXError();
-        stage5_testLoadModelError();
-        stage6_testLoadModelOBJMaterials();
-        stage7_testLoadModelVRXReplaceMaterial();
-        stage8_testLoadModelAnimateVRXWithShadow();
+        runUITest(() -> stage0_testLoadModelGLTF());
+        runUITest(() -> stage1_testLoadModelFBX());
+        runUITest(() -> stage2_testFBXAnimPause());
+        runUITest(() -> stage3_testFBXAnimStop());
+        runUITest(() -> stage4_testLoadModelOBJ());
+        runUITest(() -> stage5_testLoadModelFBXError());
+        runUITest(() -> stage5_testLoadModelError());
+        runUITest(() -> stage6_testLoadModelOBJMaterials());
+        runUITest(() -> stage7_testLoadModelVRXReplaceMaterial());
+        runUITest(() -> stage8_testLoadModelAnimateVRXWithShadow());
     }
 
     public void stage0_testLoadModelGLTF() {
