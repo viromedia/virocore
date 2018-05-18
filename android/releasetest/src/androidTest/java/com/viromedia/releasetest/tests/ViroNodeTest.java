@@ -7,13 +7,17 @@ import android.util.Log;
 import com.viro.core.Box;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
+import com.viro.core.Matrix;
 import com.viro.core.Node;
 import com.viro.core.Polyline;
+import com.viro.core.Quaternion;
 import com.viro.core.Sphere;
 import com.viro.core.Vector;
 
 import org.junit.Test;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -84,8 +88,11 @@ public class ViroNodeTest extends ViroBaseTest {
     @Test
     public void testNode() {
         runUITest(() -> testNodeAddChildren());
+        runUITest(() -> testEulerRotationOfChild());
         runUITest(() -> testConvertLocalToWorld());
         runUITest(() -> testConvertWorldToLocal());
+        runUITest(() -> testConvertLocalToWorldWithSleep());
+        runUITest(() -> testConvertWorldToLocalWithSleep());
         runUITest(() -> testNodePositionParent());
         runUITest(() -> testNodeRotationParent());
         runUITest(() -> testNodeScaleParent());
@@ -353,8 +360,33 @@ public class ViroNodeTest extends ViroBaseTest {
 
     private void testConvertLocalToWorld() {
         parentSphereNode.removeAllChildNodes();
+        parentSphereNode.addChildNode(childOne);
+
+        parentSphereNode.setPosition(new Vector(0, 1, -1));
+        childOne.setPosition(new Vector(0, 1, 1));
+
+        Vector worldPosition = childOne.convertLocalPositionToWorldSpace(new Vector(0, -2, 0));
+        assertPass("The world position printed here " + worldPosition + " is [0, 0, 0]");
+    }
+
+    private void testConvertWorldToLocal() {
+        parentSphereNode.removeAllChildNodes();
+        parentSphereNode.addChildNode(childOne);
+
+        parentSphereNode.setPosition(new Vector(0, 2, 2));
+        childOne.setPosition(new Vector(2, 0, 0));
+
+        Vector localPosition = childOne.convertWorldPositionToLocalSpace(new Vector(1, 1, 1));
+        assertPass("The local position printed here " + localPosition + " is [-1, -1, -1]");
+    }
+
+    private void testConvertLocalToWorldWithSleep() {
+        // The sleep here tests that the transforms are being updated even when the
+        // scene graph changes, and even after the rendering thread has had time to
+        // process those changes
+        parentSphereNode.removeAllChildNodes();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         }catch(InterruptedException e) {
 
         }
@@ -367,10 +399,13 @@ public class ViroNodeTest extends ViroBaseTest {
         assertPass("The world position printed here " + worldPosition + " is [0, 0, 0]");
     }
 
-    private void testConvertWorldToLocal() {
+    private void testConvertWorldToLocalWithSleep() {
+        // The sleep here tests that the transforms are being updated even when the
+        // scene graph changes, and even after the rendering thread has had time to
+        // process those changes
         parentSphereNode.removeAllChildNodes();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         }catch(InterruptedException e) {
 
         }
@@ -381,5 +416,20 @@ public class ViroNodeTest extends ViroBaseTest {
 
         Vector localPosition = childOne.convertWorldPositionToLocalSpace(new Vector(1, 1, 1));
         assertPass("The local position printed here " + localPosition + " is [-1, -1, -1]");
+    }
+
+    private void testEulerRotationOfChild() {
+        parentSphereNode.setRotation(new Vector(Math.toRadians(45), Math.toRadians(0), Math.toRadians(0)));
+        childOne.setRotation(new Vector(Math.toRadians(45), Math.toRadians(0), Math.toRadians(0)));
+
+        float localRotationX = childOne.getRotationEulerRealtime().x;
+        Matrix worldTransform = childOne.getWorldTransformRealTime();
+        Vector worldScale = worldTransform.extractScale();
+        Quaternion worldRotation = worldTransform.extractRotation(worldScale);
+        Vector worldEuler = worldRotation.toEuler();
+
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        assertPass("Local rotation here [" + formatter.format(Math.toDegrees(localRotationX)) + "] is ~45, world rotation ["
+                + formatter.format(Math.toDegrees(worldEuler.x)) + "] is ~90");
     }
 }
