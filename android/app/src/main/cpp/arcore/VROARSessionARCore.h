@@ -11,6 +11,7 @@
 
 #include "VROARSession.h"
 #include "VROARFrameARCore.h"
+#include "VROARAnchorARCore.h"
 #include "VROViewport.h"
 #include "VROOpenGL.h"
 #include "ARCore_API.h"
@@ -146,7 +147,7 @@ private:
     /*
      Vector of all anchors that have been added to this session.
      */
-    std::vector<std::shared_ptr<VROARAnchor>> _anchors;
+    std::vector<std::shared_ptr<VROARAnchorARCore>> _anchors;
 
     arcore::LightingMode _lightingMode;
     arcore::PlaneFindingMode _planeFindingMode;
@@ -160,7 +161,7 @@ private:
      Required so we can update VROARAnchors when their ARCore counterparts are
      updated.
      */
-    std::map<std::string, std::shared_ptr<VROARAnchor>> _nativeAnchorMap;
+    std::map<std::string, std::shared_ptr<VROARAnchorARCore>> _nativeAnchorMap;
 
     /*
      Background to be assigned to the VROScene.
@@ -191,7 +192,6 @@ private:
     int _frameCount;
     bool _hasTrackingSessionInitialized;
 
-
     /*
      Stores the RGBA8 rotated camera image data, each frame. This is kept here instead of in
      VROARCameraARCore so that it can be re-used each frame. VROARCameraARCore never exposes this
@@ -204,9 +204,20 @@ private:
     void initTrackingSession();
     bool updateARCoreConfig();
     void processUpdatedAnchors(VROARFrameARCore *frame);
-    void updateAnchorFromARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
-    void updatePlaneFromARCore(std::shared_ptr<VROARPlaneAnchor> plane, arcore::Plane *planeAR);
-    void updateImageAnchorFromARCore(std::shared_ptr<VROARImageAnchor> imageAnchor, arcore::AugmentedImage *imageAR);
+
+    /*
+     Sync a Viro anchor with the latest data from its ARCore counterpart. This method is used
+     for anchors (not trackables).
+     */
+    void syncAnchorWithARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
+
+    /*
+     These methods sync Viro anchors (representing ARCore *trackables*) with their corresponding
+     ARCore objects. The ARCore objects contain all the updated information.
+     */
+    void syncPlaneWithARCore(std::shared_ptr<VROARPlaneAnchor> plane, arcore::Plane *planeAR);
+    void symcImageAnchorWithARCore(std::shared_ptr<VROARImageAnchor> imageAnchor,
+                                   arcore::AugmentedImage *imageAR);
 
     /*
      This is a helper function that synchronously adds the target to the database. This function should not

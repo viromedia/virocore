@@ -6,15 +6,18 @@
 //
 
 #include <VROPlatformUtil.h>
-#include <VROARImageAnchor.h>
+#include "arcore/VROARAnchorARCore.h"
+#include "VROARImageAnchor.h"
 #include "ARUtils_JNI.h"
 #include "VROARPointCloud.h"
+#include "VROARPlaneAnchor.h"
 
 /**
  * Creates an ARAnchor from the given VROARPlaneAnchor.
  */
 VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor) {
     VRO_ENV env = VROPlatformGetJNIEnv();
+    std::shared_ptr<VROARAnchorARCore> vAnchor = std::dynamic_pointer_cast<VROARAnchorARCore>(anchor);
 
     const char *achorIdArr = anchor->getId().c_str();
     VRO_STRING anchorId = VRO_NEW_STRING(achorIdArr);
@@ -27,8 +30,9 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
                                                                           rotationRads.z });
     VRO_FLOAT_ARRAY scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
 
+
     // Create an ARPlaneAnchor if necessary and return.
-    std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
+    std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(vAnchor->getTrackable());
     if (plane) {
         /*
          ARPlaneAnchor's constructor has the following args:
@@ -50,7 +54,7 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
     }
 
     // Create an ARImageAnchor in necessary and return.
-    std::shared_ptr<VROARImageAnchor> imageAnchor = std::dynamic_pointer_cast<VROARImageAnchor>(anchor);
+    std::shared_ptr<VROARImageAnchor> imageAnchor = std::dynamic_pointer_cast<VROARImageAnchor>(vAnchor->getTrackable());
     if (imageAnchor) {
         /*
          ARImageAnchor's constructor has the following args:
@@ -63,7 +67,7 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
                                               scaleArray);
     }
 
-    // Create normal ARAnchor object and return it
+    // Otherwise this anchor has no associated trackable: create a normal ARAnchor object and return it
     /*
      ARAnchor's constructor has the following args:
      String anchorId, String type, float[] position, float[] rotation, float[] scale
