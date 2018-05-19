@@ -111,7 +111,6 @@ public class ARNode extends Node {
         throw new IllegalAccessError("Viro: Invalid attempt to set a rotation for an ARNode!");
     }
 
-
     private native void nativeSetPauseUpdates(long nativeRef, boolean pauseUpdates);
 
 }

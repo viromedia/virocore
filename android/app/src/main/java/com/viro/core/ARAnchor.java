@@ -19,7 +19,6 @@ public class ARAnchor {
     /**
      * Specifies the type of ARAnchor.
      */
-
     public enum Type {
         /**
          * Default type for an {@link ARAnchor}, representing a point and orientation.

@@ -75,7 +75,7 @@ public class ARScene extends Scene {
          * orientation, or position change.
          *
          * @param anchor The detected {@link ARAnchor} representing a real-world feature.
-         * @param arNode   The virtual world {@link ARNode} associated with the ARAnchor.
+         * @param arNode The virtual world {@link ARNode} associated with the ARAnchor.
          */
         void onAnchorFound(ARAnchor anchor, ARNode arNode);
 
@@ -85,7 +85,7 @@ public class ARScene extends Scene {
          * or when other underlying properties of the anchor change.
          *
          * @param anchor The {@link ARAnchor} that was updated.
-         * @param arNode   The {@link ARNode} corresponding to the anchor.
+         * @param arNode The {@link ARNode} corresponding to the anchor.
          */
         void onAnchorUpdated(ARAnchor anchor, ARNode arNode);
 
@@ -96,7 +96,7 @@ public class ARScene extends Scene {
          * separate horizontal planes are actually one larger plane.
          *
          * @param anchor The {@link ARAnchor} that was removed.
-         * @param arNode   The corresponding {@link ARNode}, which is also removed from the Scene.
+         * @param arNode The corresponding {@link ARNode}, which is also removed from the Scene.
          */
         void onAnchorRemoved(ARAnchor anchor, ARNode arNode);
     }
