@@ -6,13 +6,13 @@ pipeline {
           sh '''cd android
           fastlane build_start_notification
           fastlane clean_old_artifacts
-          fastlane save_git_log
+          fastlane save_git_log'''
       }
     }
     stage('viroreact_aar') {
       steps {
         sh '''cd android
-        fastlane virorenderer_viroreact_aar
+        fastlane virorenderer_viroreact_aar'''
       }
     }
     stage('virocore_aar') {
