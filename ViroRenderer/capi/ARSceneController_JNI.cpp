@@ -449,22 +449,31 @@ void ARImperativeSceneDelegate::onAmbientLightUpdate(float intensity,
 
 void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
+
+    VRO_WEAK object_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    std::weak_ptr<VROARAnchor> anchor_w = anchor;
+
+    VROPlatformDispatchAsyncApplication([object_w, anchor_w, node] {
         VRO_ENV env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
-        if (VRO_IS_OBJECT_NULL(localObj)) {
-            VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
+
+        VRO_OBJECT object = VRO_NEW_LOCAL_REF(object_w);
+        if (VRO_IS_OBJECT_NULL(object)) {
+            VRO_DELETE_WEAK_GLOBAL_REF(object_w);
+            return;
+        }
+        std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
+        if (!anchor_s) {
+            VRO_DELETE_WEAK_GLOBAL_REF(object_w);
             return;
         }
 
-        VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+        VRO_OBJECT anchor_j = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
         VRO_REF(VROARNode) node_j = VRO_REF_NEW(VROARNode, node);
-        VROPlatformCallHostFunction(localObj, "onAnchorFound",
+        VROPlatformCallHostFunction(object, "onAnchorFound",
                                     "(Lcom/viro/core/ARAnchor;J)V",
-                                    janchor, node_j);
-        VRO_DELETE_LOCAL_REF(localObj);
-        VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
+                                    anchor_j, node_j);
+        VRO_DELETE_LOCAL_REF(object);
+        VRO_DELETE_WEAK_GLOBAL_REF(object_w);
     });
 }
 
@@ -474,40 +483,52 @@ void ARImperativeSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> an
 
 void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
+    passert (node != nullptr);
+
+    VRO_WEAK object_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+    std::weak_ptr<VROARAnchor> anchor_w = anchor;
+
+    VROPlatformDispatchAsyncApplication([object_w, anchor_w, node] {
         VRO_ENV env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
-        if (VRO_IS_OBJECT_NULL(localObj)) {
-            VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
+
+        VRO_OBJECT object = VRO_NEW_LOCAL_REF(object_w);
+        if (VRO_IS_OBJECT_NULL(object)) {
+            VRO_DELETE_WEAK_GLOBAL_REF(object_w);
+            return;
+        }
+        std::shared_ptr<VROARAnchor> anchor_s = anchor_w.lock();
+        if (!anchor_s) {
+            VRO_DELETE_WEAK_GLOBAL_REF(object_w);
             return;
         }
 
-        VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallHostFunction(localObj, "onAnchorUpdated",
+        VRO_OBJECT anchor_j = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
+        VROPlatformCallHostFunction(object, "onAnchorUpdated",
                                     "(Lcom/viro/core/ARAnchor;I)V",
-                                    janchor, node->getUniqueID());
-        VRO_DELETE_LOCAL_REF(localObj);
-        VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
+                                    anchor_j, node->getUniqueID());
+        VRO_DELETE_LOCAL_REF(object);
+        VRO_DELETE_WEAK_GLOBAL_REF(object_w);
     });
 }
 
 void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
     VRO_ENV env = VROPlatformGetJNIEnv();
-    VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
-    VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
+    VRO_WEAK object_w = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([object_w, anchor, node] {
         VRO_ENV env = VROPlatformGetJNIEnv();
-        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
-        if (VRO_IS_OBJECT_NULL(localObj)) {
-            VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
+
+        VRO_OBJECT object = VRO_NEW_LOCAL_REF(object_w);
+        if (VRO_IS_OBJECT_NULL(object)) {
+            VRO_DELETE_WEAK_GLOBAL_REF(object_w);
             return;
         }
 
-        VRO_OBJECT janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallHostFunction(localObj, "onAnchorRemoved",
+        VRO_OBJECT anchor_j = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+        VROPlatformCallHostFunction(object, "onAnchorRemoved",
                                     "(Lcom/viro/core/ARAnchor;I)V",
-                                    janchor, node->getUniqueID());
-        VRO_DELETE_LOCAL_REF(localObj);
-        VRO_DELETE_WEAK_GLOBAL_REF(jObjWeak);
+                                    anchor_j, node->getUniqueID());
+        VRO_DELETE_LOCAL_REF(object);
+        VRO_DELETE_WEAK_GLOBAL_REF(object_w);
     });
 }

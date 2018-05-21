@@ -186,7 +186,7 @@ public:
         //No-op
     }
 
-    virtual void onCameraARHitTest(std::vector<VROARHitTestResult> results) {
+    virtual void onCameraARHitTest(std::vector<std::shared_ptr<VROARHitTestResult>> results) {
         //No-op
     }
 

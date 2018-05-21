@@ -4,6 +4,8 @@
  */
 package com.viro.core;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,20 +69,42 @@ public class ARHitTestResult {
         }
     }
 
+    private long mNativeRef;
     private Type mType;
     private Vector mPosition;
     private Vector mScale;
     private Vector mRotation;
+    private ARNode mARNode;
 
     /**
      * Invoked by Native.
      * @hide
      */
-    ARHitTestResult(String type, float[] position, float[] scale, float[] rotation) {
+    ARHitTestResult(long nativeRef, String type, float[] position, float[] scale, float[] rotation) {
+        mNativeRef = nativeRef;
         mType = Type.valueFromString(type);
         mPosition = new Vector(position);
         mScale = new Vector(scale);
         mRotation = new Vector(rotation);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
+    }
+
+    /**
+     * Release native resources associated with this ARHitTestResult.
+     */
+    public void dispose() {
+        if (mNativeRef != 0) {
+            nativeDestroyARHitTestResult(mNativeRef);
+            mNativeRef = 0;
+        }
     }
 
     /**
@@ -119,5 +143,33 @@ public class ARHitTestResult {
     public Vector getRotation() {
         return mRotation;
     }
+
+    /**
+     * Create an {@link ARNode} that will be anchored to the real-world position associated with
+     * this hit result. Anchoring a node to a hit-result will help ensure that the objects you
+     * attach to this node will track properly and remain in place.
+     * <p>
+     * Note that the returned {@link ARNode} is automatically added to the Scene, and will be
+     * continually updated to stay in the sync with its underlying anchor as the anchor's
+     * properties, orientation, or position change.
+     * <p>
+     * If there is already an ARNode associated with this hit result, that ARNode will be returned
+     * here.
+     * <p>
+     * When finished with this ARNode, you must call {@link ARNode#detach()} to remove it from
+     * the system. If you do not detach the ARNode, it will continue to receive tracking updates
+     * from the AR subsystem, adversely impacting performance.
+     * <p>
+     * @return New {@link ARNode} anchored to the hit result position.
+     */
+    public ARNode createAnchoredNode() {
+        if (mARNode == null) {
+            mARNode = new ARNode(nativeCreateAnchoredNode(mNativeRef));
+        }
+        return mARNode;
+    }
+
+    private native long nativeCreateAnchoredNode(long hitResultRef);
+    private native void nativeDestroyARHitTestResult(long hitResultRef);
 
 }

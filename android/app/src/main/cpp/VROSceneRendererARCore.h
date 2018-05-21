@@ -92,12 +92,12 @@ public:
     /*
      AR hit test using point on the screen in 2D coordinate system.
      */
-    std::vector<VROARHitTestResult> performARHitTest(float x, float y);
+    std::vector<std::shared_ptr<VROARHitTestResult>> performARHitTest(float x, float y);
 
     /*
      AR hit test using a ray from camera's position into the 3D scene.
      */
-    std::vector<VROARHitTestResult> performARHitTest(VROVector3f ray);
+    std::vector<std::shared_ptr<VROARHitTestResult>> performARHitTest(VROVector3f ray);
 
     /*
      Set the size of the parent view holding the AR screen. Invoked from ViroViewARCore.

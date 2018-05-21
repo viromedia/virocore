@@ -105,6 +105,7 @@ add_library( # Sets the name of the library.
              ${VIRO_CAPI_SRC}/ARSceneController_JNI.cpp
              ${VIRO_CAPI_SRC}/ARImageTarget_JNI.cpp
              ${VIRO_CAPI_SRC}/ARDeclarativeImageNode_JNI.cpp
+             ${VIRO_CAPI_SRC}/ARHitTestResult_JNI.cpp
 
              # Math
              ${VIRO_RENDERER_SRC}/VROLineSegment.cpp
@@ -210,6 +211,7 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/arcore/VROARFrameARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROARCameraARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROARAnchorARCore.cpp
+             ${VIRO_ANDROID_SRC}/arcore/VROARHitTestResultARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROYuvImageConverter.cpp
 
              # AR (Image Tracking)

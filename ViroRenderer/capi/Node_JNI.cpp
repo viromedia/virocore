@@ -46,6 +46,7 @@ VRO_METHOD(VRO_REF(VRONode), nativeCreateNode)(VRO_NO_ARGS) {
 VRO_METHOD(VRO_INT, nativeGetUniqueIdentifier)(VRO_ARGS
                                                VRO_REF(VRONode) node_j) {
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+    passert (node != nullptr);
     return node->getUniqueID();
 }
 

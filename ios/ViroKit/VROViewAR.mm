@@ -397,11 +397,11 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 #pragma mark - AR Functions
 
-- (std::vector<VROARHitTestResult>)performARHitTest:(VROVector3f)ray {
+- (std::vector<std::shared_ptr<VROARHitTestResult>>)performARHitTest:(VROVector3f)ray {
     // check that the ray is in front of the camera
     VROVector3f cameraForward = _renderer->getCamera().getForward();
     if (cameraForward.dot(ray) <= 0) {
-        return std::vector<VROARHitTestResult>();
+        return {};
     }
     
     VROVector3f worldPoint = _renderer->getCamera().getPosition() + ray.normalize();
@@ -410,7 +410,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     return [self performARHitTestWithPoint:screenPoint.x y:screenPoint.y];
 }
 
-- (std::vector<VROARHitTestResult>)performARHitTestWithPoint:(int)x y:(int)y {
+- (std::vector<std::shared_ptr<VROARHitTestResult>>)performARHitTestWithPoint:(int)x y:(int)y {
     int viewportArr[4] = {0, 0,
         (int) (self.bounds.size.width  * self.contentScaleFactor),
         (int) (self.bounds.size.height * self.contentScaleFactor)};
@@ -418,7 +418,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     // check the 2D point, perform and return the results from the AR hit test
     std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
     if (frame && x >= 0 && x <= viewportArr[2] && y >= 0 && y <= viewportArr[3]) {
-        std::vector<VROARHitTestResult> results = frame->hitTest(x, y,
+        std::vector<std::shared_ptr<VROARHitTestResult>> results = frame->hitTest(x, y,
                                                                  { VROARHitTestResultType::ExistingPlaneUsingExtent,
                                                                      VROARHitTestResultType::ExistingPlane,
                                                                      VROARHitTestResultType::EstimatedHorizontalPlane,
@@ -426,7 +426,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         return results;
     }
 
-    return std::vector<VROARHitTestResult>();
+    return {};
 }
 
 - (std::shared_ptr<VROARSession>)getARSession {

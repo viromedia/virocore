@@ -30,7 +30,8 @@ enum class VROARDisplayRotation {
 
 class VRODriverOpenGL;
 
-class VROARSessionARCore : public VROARSession, public VROARTrackingListener, public std::enable_shared_from_this<VROARSessionARCore> {
+class VROARSessionARCore : public VROARSession, public VROARTrackingListener,
+                           public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
     VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver);
@@ -96,6 +97,9 @@ public:
 
     std::shared_ptr<VROARAnchor> getAnchorForNative(arcore::Anchor *anchor);
 
+    std::string getKeyForTrackable(arcore::Trackable *trackable);
+    std::shared_ptr<VROARAnchorARCore> getAnchorForTrackable(arcore::Trackable *trackable);
+
     arcore::Session *getSessionInternal() {
         return _session;
     }
@@ -120,6 +124,12 @@ public:
      given size in bytes.
      */
     uint8_t *getRotatedCameraImageData(int size);
+
+    /*
+     Sync a Viro anchor with the latest data from its ARCore counterpart. This method is used
+     for anchors (not trackables).
+     */
+    void syncAnchorWithARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
 
 private:
 
@@ -206,17 +216,11 @@ private:
     void processUpdatedAnchors(VROARFrameARCore *frame);
 
     /*
-     Sync a Viro anchor with the latest data from its ARCore counterpart. This method is used
-     for anchors (not trackables).
-     */
-    void syncAnchorWithARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
-
-    /*
      These methods sync Viro anchors (representing ARCore *trackables*) with their corresponding
      ARCore objects. The ARCore objects contain all the updated information.
      */
     void syncPlaneWithARCore(std::shared_ptr<VROARPlaneAnchor> plane, arcore::Plane *planeAR);
-    void symcImageAnchorWithARCore(std::shared_ptr<VROARImageAnchor> imageAnchor,
+    void syncImageAnchorWithARCore(std::shared_ptr<VROARImageAnchor> imageAnchor,
                                    arcore::AugmentedImage *imageAR);
 
     /*

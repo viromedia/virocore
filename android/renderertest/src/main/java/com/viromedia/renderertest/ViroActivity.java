@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.viro.core.ARAnchor;
+import com.viro.core.ARHitTestListener;
 import com.viro.core.ARImageAnchor;
 import com.viro.core.ARImageTarget;
 import com.viro.core.ARPointCloud;
@@ -327,6 +329,7 @@ public class ViroActivity extends AppCompatActivity {
         //testBackgroundImage(scene);
 
         // Add a box in front of the user
+        /*
         Box box = new Box(.2f, .2f, .2f);
         box.setMaterials(Arrays.asList(new Material()));
         Node boxNode = new Node();
@@ -343,8 +346,9 @@ public class ViroActivity extends AppCompatActivity {
         boxNode.setDragPlanePoint(new Vector(0,-1,0));
         boxNode.setDragPlaneNormal(new Vector(0,1,0));
         boxNode.setDragMaxDistance(5);
-
-        nodes.addAll(testImperativePlane(scene));
+        */
+        //nodes.addAll(testImperativePlane(scene));
+        testARHitTest(scene, 0, 5);
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
@@ -355,7 +359,7 @@ public class ViroActivity extends AppCompatActivity {
         // Updating the scene.
         mViroView.setScene(scene);
 
-        testVideoRecording();
+        //testVideoRecording();
         //scene.displayPointCloud(true);
     }
 
@@ -844,7 +848,7 @@ public class ViroActivity extends AppCompatActivity {
         return list;
     }
 
-    private Object3D loadObjectNode(final int bitmask) {
+    private Object3D loadObjectNode(final int bitmask, final float scale) {
         final Object3D objectNode = new Object3D();
         objectNode.loadModel(mViroView.getViroContext(),
                 Uri.parse("file:///android_asset/object_star_anim.vrx"),
@@ -852,7 +856,7 @@ public class ViroActivity extends AppCompatActivity {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 object.setPosition(new Vector(0, 0, 0));
-                object.setScale(new Vector(0.4f, 0.4f, 0.4f));
+                object.setScale(new Vector(scale, scale, scale));
                 object.setLightReceivingBitMask(bitmask);
                 object.setShadowCastingBitMask(bitmask);
 
@@ -860,8 +864,6 @@ public class ViroActivity extends AppCompatActivity {
                 //animation.setDelay(5000);
                 animation.setLoop(true);
                 animation.play();
-
-                Log.i("Viro", "LOADED THE 3D MODEL");
             }
 
             @Override
@@ -870,6 +872,61 @@ public class ViroActivity extends AppCompatActivity {
             }
         });
         return objectNode;
+    }
+
+    private List<ARNode> anchoredNodes = new ArrayList<ARNode>();
+
+    private void testARHitTest(final ARScene scene, final int count, final int total) {
+        // Once count hits total, clear all the anchors we've found
+        if (count >= total) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("Viro", "Detaching all nodes");
+                    for (ARNode node : anchoredNodes) {
+                        node.detach();
+                    }
+                    anchoredNodes.clear();
+                }}, 2000);
+            return;
+        }
+
+        final ViroViewARCore view = (ViroViewARCore) mViroView;
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Point point = new Point((int) (view.getWidth() / 2.0), (int) (view.getHeight() / 2.0f));
+                Log.i("Viro", "Performing AR hit test at point " + point.x + ", " + point.y);
+
+                view.performARHitTest(point,
+                        new ARHitTestListener() {
+                            @Override
+                            public void onHitTestFinished(ARHitTestResult[] results) {
+                                Log.i("Viro", "Hit test complete with " + results.length + " results");
+
+                                for (ARHitTestResult result : results) {
+                                    if (result.getType() == ARHitTestResult.Type.FEATURE_POINT) {
+                                        Log.i("Viro", "   Hit feature point, creating little star");
+                                        ARNode node = result.createAnchoredNode();
+                                        node.addChildNode(loadObjectNode(1, .1f));
+
+                                        anchoredNodes.add(node);
+
+                                    } else if (result.getType() == ARHitTestResult.Type.PLANE) {
+                                        Log.i("Viro", "   Hit plane, creating big star");
+                                        ARNode node = result.createAnchoredNode();
+                                        node.addChildNode(loadObjectNode(1, .2f));
+
+                                        anchoredNodes.add(node);
+                                    }
+                                }
+
+                                testARHitTest(scene, count + 1, total);
+                            }
+                        });
+            }
+        }, 2000);
     }
 
     private List<Node> testImperativePlane(final ARScene arScene) {
@@ -894,8 +951,8 @@ public class ViroActivity extends AppCompatActivity {
 
             @Override
             public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
+                Log.i("Viro", "ANCHOR FOUND [type: " + anchor.getType().getStringValue() + "]");
 
-                Log.i("Viro", "Found anchor! Type: " + anchor.getType().getStringValue());
                 if (anchor.getType() == ARAnchor.Type.PLANE) {
                     int bitmask = 4;
                     final Spotlight spot = new Spotlight(Color.RED, 1000.0f, 1,
@@ -905,7 +962,7 @@ public class ViroActivity extends AppCompatActivity {
                     spot.setCastsShadow(true);
 
                     node.addLight(spot);
-                    node.addChildNode(loadObjectNode(bitmask | 1));
+                    node.addChildNode(loadObjectNode(bitmask | 1, .04f));
                     node.setDragListener(new DragListener() {
                         @Override
                         public void onDrag(int source, Node node, Vector worldLocation, Vector localLocation) {

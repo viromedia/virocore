@@ -43,12 +43,12 @@ class VRORendererConfiguration;
 /*
  Performs an AR hit test with the given ray assuming origin is the camera
  */
-- (std::vector<VROARHitTestResult>)performARHitTest:(VROVector3f)ray;
+- (std::vector<std::shared_ptr<VROARHitTestResult>>)performARHitTest:(VROVector3f)ray;
 
 /*
  Performs an AR hit test with the given 2D point on the screen
  */
-- (std::vector<VROARHitTestResult>)performARHitTestWithPoint:(int)x y:(int)y;
+- (std::vector<std::shared_ptr<VROARHitTestResult>>)performARHitTestWithPoint:(int)x y:(int)y;
 
 /*
  Returns the ARSession

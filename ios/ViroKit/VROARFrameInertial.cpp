@@ -31,7 +31,7 @@ const std::shared_ptr<VROARCamera> &VROARFrameInertial::getCamera() const {
     return _camera;
 }
 
-std::vector<VROARHitTestResult> VROARFrameInertial::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
+std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameInertial::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
     // Unsupported
     return {};
 }

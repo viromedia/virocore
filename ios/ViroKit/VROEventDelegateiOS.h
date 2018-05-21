@@ -24,7 +24,7 @@
 - (void)onDrag:(int)source node:(std::shared_ptr<VRONode>)node posX:(float)x posY:(float)y posZ:(float)y;
 - (void)onPinch:(int)source node:(std::shared_ptr<VRONode>)node scaleFactor:(float)scale pinchState:(VROEventDelegate::PinchState)pinchState;
 - (void)onRotate:(int)source node:(std::shared_ptr<VRONode>)node rotationRadians:(float)rotationRadians rotateState:(VROEventDelegate::RotateState)rotateState;
-- (void)onCameraARHitTest:(std::vector<VROARHitTestResult>) results;
+- (void)onCameraARHitTest:(std::vector<std::shared_ptr<VROARHitTestResult>>) results;
 - (void)onARPointCloudUpdate:(std::shared_ptr<VROARPointCloud>) pointCloud;
 @end
 
@@ -61,7 +61,7 @@ public:
         [_delegate onFuse:source node:node];
     }
     
-    virtual void onCameraARHitTest(std::vector<VROARHitTestResult> results) {
+    virtual void onCameraARHitTest(std::vector<std::shared_ptr<VROARHitTestResult>> results) {
         [_delegate onCameraARHitTest:results];
     }
     

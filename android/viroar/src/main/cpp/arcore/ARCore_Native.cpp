@@ -9,6 +9,15 @@
 #include "ARCore_Native.h"
 #include <media/NdkImage.h>
 #include <media/NdkImageReader.h>
+#include <android/log.h>
+
+#ifndef LOG_TAG
+#define LOG_TAG "Viro"
+#endif
+#define pinfo(...) \
+    do { \
+        __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__); \
+    } while (0)
 
 namespace arcore {
 
@@ -98,6 +107,14 @@ namespace arcore {
 
     void AnchorNative::getPose(Pose *outPose) {
         ArAnchor_getPose(_session, _anchor, ((PoseNative *) outPose)->_pose);
+    }
+
+    void AnchorNative::getTransform(float *outTransform) {
+        ArPose *pose;
+        ArPose_create(_session, nullptr, &pose);
+        ArAnchor_getPose(_session, _anchor, pose);
+        ArPose_getMatrix(_session, pose, outTransform);
+        ArPose_destroy(pose);
     }
 
     TrackingState AnchorNative::getTrackingState() {
@@ -595,6 +612,14 @@ namespace arcore {
 
     void HitResultNative::getPose(Pose *outPose) {
         ArHitResult_getHitPose(_session, _hitResult, ((PoseNative *) outPose)->_pose);
+    }
+
+    void HitResultNative::getTransform(float *outTransform) {
+        ArPose *pose;
+        ArPose_create(_session, nullptr, &pose);
+        ArHitResult_getHitPose(_session, _hitResult, pose);
+        ArPose_getMatrix(_session, pose, outTransform);
+        ArPose_destroy(pose);
     }
 
     Trackable *HitResultNative::acquireTrackable() {

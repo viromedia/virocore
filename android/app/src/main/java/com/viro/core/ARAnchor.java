@@ -4,8 +4,6 @@
  */
 package com.viro.core;
 
-import com.viro.core.internal.annotation.BridgeOnly;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +42,6 @@ public class ARAnchor {
         /**
          * @hide
          */
-        @BridgeOnly
         public String getStringValue() {
             return mStringValue;
         }
@@ -59,7 +56,6 @@ public class ARAnchor {
         /**
          * @hide
          */
-        @BridgeOnly
         public static Type valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -80,7 +76,6 @@ public class ARAnchor {
      * Invoked from JNI
      * @hide
      */
-    @BridgeOnly
     ARAnchor(String anchorId, String type, float[] position, float[] rotation, float[] scale) {
         mAnchorId = anchorId;
         mType = Type.valueFromString(type);

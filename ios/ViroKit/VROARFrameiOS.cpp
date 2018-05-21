@@ -86,7 +86,7 @@ VROARHitTestResultType convertResultType(ARHitTestResultType type) {
     }
 }
 
-std::vector<VROARHitTestResult> VROARFrameiOS::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
+std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameiOS::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
     /*
      Convert from viewport space to camera image space.
      */
@@ -105,14 +105,14 @@ std::vector<VROARHitTestResult> VROARFrameiOS::hitTest(int x, int y, std::set<VR
      Convert the results to VROARHitTestResult objects.
      */
     std::shared_ptr<VROARSessioniOS> session = _session.lock();
-    std::vector<VROARHitTestResult> vResults;
+    std::vector<std::shared_ptr<VROARHitTestResult>> vResults;
     for (ARHitTestResult *result in results) {
         std::shared_ptr<VROARAnchor> vAnchor;
         if (session && result.anchor) {
             vAnchor = session->getAnchorForNative(result.anchor);
         }
         
-        VROARHitTestResult vResult(convertResultType(result.type), vAnchor, result.distance,
+        std::shared_ptr<VROARHitTestResult> vResult = std::make_shared<VROARHitTestResult>(convertResultType(result.type), vAnchor, result.distance,
                                    VROConvert::toMatrix4f(result.worldTransform),
                                    VROConvert::toMatrix4f(result.localTransform));
         vResults.push_back(vResult);

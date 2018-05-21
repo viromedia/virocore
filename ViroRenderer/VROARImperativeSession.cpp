@@ -54,8 +54,13 @@ void VROARImperativeSession::removeARImageTarget(std::shared_ptr<VROARImageTarge
 
 
 void VROARImperativeSession::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARNode> node = std::make_shared<VROARNode>();
-    anchor->setARNode(node);
+    // If the anchor already has a node, use that one (this is the case with manual
+    // anchors, where we set the ARNode beforehand)
+    std::shared_ptr<VROARNode> node = anchor->getARNode();
+    if (!node) {
+        node = std::make_shared<VROARNode>();
+        anchor->setARNode(node);
+    }
     node->setAnchor(anchor);
 
     std::shared_ptr<VROARScene> scene = _scene.lock();

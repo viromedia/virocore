@@ -6,6 +6,7 @@
 //
 
 #include <VROPlatformUtil.h>
+#include "arcore/VROARHitTestResultARCore.h"
 #include "arcore/VROARAnchorARCore.h"
 #include "VROARImageAnchor.h"
 #include "ARUtils_JNI.h"
@@ -128,17 +129,17 @@ VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     return VRO_NEW_STRING(strArr);
 }
 
-VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
+VRO_OBJECT ARUtilsCreateARHitTestResult(std::shared_ptr<VROARHitTestResult> result) {
     VRO_ENV env = VROPlatformGetJNIEnv();
 
-    VRO_STRING jtypeString;
+    VRO_STRING jtype;
     VRO_FLOAT_ARRAY jposition = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT_ARRAY jscale = VRO_NEW_FLOAT_ARRAY(3);
     VRO_FLOAT_ARRAY jrotation = VRO_NEW_FLOAT_ARRAY(3);
 
-    VROVector3f positionVec = result.getWorldTransform().extractTranslation();
-    VROVector3f scaleVec = result.getWorldTransform().extractScale();
-    VROVector3f rotationVec = result.getWorldTransform().extractRotation(scaleVec).toEuler();
+    VROVector3f positionVec = result->getWorldTransform().extractTranslation();
+    VROVector3f scaleVec = result->getWorldTransform().extractScale();
+    VROVector3f rotationVec = result->getWorldTransform().extractRotation(scaleVec).toEuler();
 
     float position[3] = {positionVec.x, positionVec.y, positionVec.z};
     float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
@@ -148,20 +149,22 @@ VRO_OBJECT ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     VRO_FLOAT_ARRAY_SET(jscale, 0, 3, scale);
     VRO_FLOAT_ARRAY_SET(jrotation, 0, 3, rotation);
 
-    const char* typeString;
+    const char *type;
     // Note: ARCore currently only supports Plane & FeaturePoint. See VROARFrameARCore::hitTest.
-    switch (result.getType()) {
+    switch (result->getType()) {
         case VROARHitTestResultType::ExistingPlaneUsingExtent:
-            typeString = "ExistingPlaneUsingExtent";
+            type = "ExistingPlaneUsingExtent";
             break;
         default: // FeaturePoint
-            typeString = "FeaturePoint";
+            type = "FeaturePoint";
             break;
     }
 
-    jtypeString = VRO_NEW_STRING(typeString);
-    return VROPlatformConstructHostObject("com/viro/core/ARHitTestResult", "(Ljava/lang/String;[F[F[F)V",
-                                          jtypeString, jposition, jscale, jrotation);
+    jtype = VRO_NEW_STRING(type);
+    VRO_REF(VROARHitTestResult) ref = VRO_REF_NEW(VROARHitTestResult, result);
+    return VROPlatformConstructHostObject("com/viro/core/ARHitTestResult",
+                                          "(JLjava/lang/String;[F[F[F)V",
+                                          ref, jtype, jposition, jscale, jrotation);
 }
 
 VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {

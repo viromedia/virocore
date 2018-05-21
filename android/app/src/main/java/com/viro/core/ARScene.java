@@ -474,11 +474,13 @@ public class ARScene extends Scene {
      * @hide
      */
     void onAnchorFound(ARAnchor anchor, long nodeNativeRef) {
+        // We still process the Node even if no listener is installed, so that the Node gets
+        // added to ARNode.nodeARMap
+        ARNode node = null;
+        if (nodeNativeRef != 0) {
+            node = new ARNode(nodeNativeRef);
+        }
         if (mListener != null) {
-            ARNode node = null;
-            if (nodeNativeRef != 0) {
-                node = new ARNode(nodeNativeRef);
-            }
             mListener.onAnchorFound(anchor, node);
         }
     }
@@ -499,11 +501,13 @@ public class ARScene extends Scene {
      */
     /* Called by Native */
     void onAnchorRemoved(ARAnchor anchor, int nodeId) {
+        // We still process the Node even if no listener is installed, so that the Node gets
+        // removed from ARNode.nodeARMap
+        ARNode node = null;
+        if (nodeId != 0) {
+            node = ARNode.removeARNodeWithID(nodeId);
+        }
         if (mListener != null) {
-            ARNode node = null;
-            if (nodeId != 0) {
-                node = ARNode.removeARNodeWithID(nodeId);
-            }
             mListener.onAnchorRemoved(anchor, node);
         }
     }

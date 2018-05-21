@@ -21,6 +21,7 @@ class VROARAnchor;
  */
 class VROARNode : public VRONode {
 public:
+
     VROARNode() : _pauseUpdates(false) {}
     virtual ~VROARNode() {}
     
@@ -28,7 +29,7 @@ public:
         _anchor = anchor;
     }
     std::shared_ptr<VROARAnchor> getAnchor() {
-        return _anchor.lock();
+        return _anchor;
     }
     
     void setPauseUpdates(bool pauseUpdates);
@@ -37,8 +38,18 @@ public:
     }
     
 protected:
-    
-    std::weak_ptr<VROARAnchor> _anchor;
+
+    /*
+     There is an *intentional* strong reference cycle between VROARNode and VROARAnchor. Anchors and
+     ARNodes are managed in one of two ways:
+
+     1. By the AR subsystem (ARCore). When anchors are bound to trackables, and the bound trackable
+        disappears, VROARSessionARCore will remove the corresponding VROARAnchor and its VROARNode.
+
+     2. Manually, by attaching anchors to hit results. In this case, anchors and nodes are removed
+        together when the ARNode is detached from the system (see ARNode.detach() in Java).
+     */
+    std::shared_ptr<VROARAnchor> _anchor;
     bool _pauseUpdates;
     
 };

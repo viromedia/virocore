@@ -42,7 +42,9 @@ public:
     
     VROARHitTestResult(VROARHitTestResultType type, std::shared_ptr<VROARAnchor> anchor, float distance,
                        VROMatrix4f worldTransform, VROMatrix4f localTransform) :
-        _type(type), _anchor(anchor), _distance(distance), _worldTransform(worldTransform), _localTransform(localTransform) {}
+        _type(type), _anchor(anchor), _distance(distance), _worldTransform(worldTransform), _localTransform(localTransform) {
+    }
+    virtual ~VROARHitTestResult() {}
     
     /*
      Get the type of hit test result.
@@ -52,7 +54,7 @@ public:
     /*
      Return the anchor associated with the hit test, if any.
      */
-    const std::shared_ptr<VROARAnchor> getAnchor() const { return _anchor; }
+    const std::shared_ptr<VROARAnchor> getAnchor() const { return _anchor.lock(); }
     
     /*
      Get the distance from the camera to the hit test result.
@@ -69,11 +71,14 @@ public:
      space of the anchor. Undefined if there is no anchor associated with this result.
      */
     VROMatrix4f getLocalTransform() const { return _localTransform; }
-    
+
+protected:
+
+    std::weak_ptr<VROARAnchor> _anchor;
+
 private:
     
     VROARHitTestResultType _type;
-    std::shared_ptr<VROARAnchor> _anchor;
     float _distance;
     VROMatrix4f _worldTransform;
     VROMatrix4f _localTransform;

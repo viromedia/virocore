@@ -353,25 +353,23 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     _cameraBackground.reset();
 }
 
-std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(float x, float y) {
+std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::performARHitTest(float x, float y) {
     int viewportArr[4] = {0, 0, _surfaceSize.width, _surfaceSize.height};
 
     std::unique_ptr<VROARFrame> &frame = _session->getLastFrame();
     if (frame && x >= 0 && x <= viewportArr[2] && y >= 0 && y <= viewportArr[3]) {
-        std::vector<VROARHitTestResult> results = frame->hitTest(x, y,
-                                                                 {VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                                                  VROARHitTestResultType::ExistingPlane,
-                                                                  VROARHitTestResultType::EstimatedHorizontalPlane,
-                                                                  VROARHitTestResultType::FeaturePoint});
-        return results;
+        return frame->hitTest(x, y, { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                      VROARHitTestResultType::ExistingPlane,
+                                      VROARHitTestResultType::EstimatedHorizontalPlane,
+                                      VROARHitTestResultType::FeaturePoint });
     };
-    return std::vector<VROARHitTestResult>();
+    return {};
 }
 
-std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
+std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
     VROVector3f cameraForward = getRenderer()->getCamera().getForward();
     if (cameraForward.dot(ray) <= 0) {
-        return std::vector<VROARHitTestResult>();
+        return {};
     }
 
     VROVector3f worldPoint = getRenderer()->getCamera().getPosition() + ray.normalize();

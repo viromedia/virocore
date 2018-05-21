@@ -13,6 +13,7 @@
 #include "VROPlatformUtil.h"
 #include "VROVector4f.h"
 #include "VROLight.h"
+#include "VROARHitTestResultARCore.h"
 
 VROARFrameARCore::VROARFrameARCore(arcore::Frame *frame,
                                    VROViewport viewport,
@@ -41,41 +42,39 @@ const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
 }
 
 // TODO: VIRO-1940 filter results based on types. Right now, devs can't set this, so don't use filtering.
-std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
-    std::shared_ptr<VROARSessionARCore> session_s = _session.lock();
-    if (!session_s) {
+std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameARCore::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
         return {};
     }
-    arcore::Session *session = session_s->getSessionInternal();
+    arcore::Session *session_arc = session->getSessionInternal();
 
-    arcore::HitResultList *hitResultList = session->createHitResultList();
+    arcore::HitResultList *hitResultList = session_arc->createHitResultList();
     _frame->hitTest(x, y, hitResultList);
 
     int listSize = hitResultList->size();
-    std::vector<VROARHitTestResult> toReturn;
+    std::vector<std::shared_ptr<VROARHitTestResult>> toReturn;
 
     for (int i = 0; i < listSize; i++) {
-        arcore::HitResult *hitResult = session->createHitResult();
-        hitResultList->getItem(i, hitResult);
+        std::shared_ptr<arcore::HitResult> hitResult = std::shared_ptr<arcore::HitResult>(session_arc->createHitResult());
+        hitResultList->getItem(i, hitResult.get());
 
+        // Get the trackable associated with this hit result. Not all hit results have an
+        // associated trackable. If a hit result does not have a trackable, we can still acquire
+        // an anchor for it via hitResult->acquireAnchor(). This will create an anchor at the hit
+        // result's pose. However, we don't immediately acquire this anchor because the user may
+        // not even use the hit result. Instead we allow the user to manually acquire the anchor via
+        // ARHitTestResult.createAnchoredNode().
         arcore::Trackable *trackable = hitResult->acquireTrackable();
-        if (trackable == nullptr) {
-            delete (hitResult);
-            continue;
-        }
 
-        arcore::Pose *pose = session->createPose();
+        arcore::Pose *pose = session_arc->createPose();
         hitResult->getPose(pose);
 
-        // Determine if the Trackable is a Plane
-        bool isPlane = trackable->getType() == arcore::TrackableType::Plane;
-
-        // Create the anchor only if the Trackable is a Plane
-        std::shared_ptr<VROARAnchor> vAnchor = nullptr;
         VROARHitTestResultType type;
-        if (isPlane) {
+
+        if (trackable != nullptr && trackable->getType() == arcore::TrackableType::Plane) {
             arcore::Plane *plane = (arcore::Plane *) trackable;
-            bool inExtent = plane->isPoseInExtents(pose);
+            bool inExtent  = plane->isPoseInExtents(pose);
             bool inPolygon = plane->isPoseInPolygon(pose);
 
             if (inExtent || inPolygon) {
@@ -94,19 +93,13 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
         float worldTransformMtx[16];
         pose->toMatrix(worldTransformMtx);
         VROMatrix4f worldTransform(worldTransformMtx);
+        VROMatrix4f localTransform = VROMatrix4f::identity();
 
-        // Calculate the local transform, relative to the anchor (if anchor available).
-        // TODO: VIRO-1895 confirm this is correct. T(local) = T(world) x T(anchor)^-1
-        VROMatrix4f localTransform = VROMatrix4f();
-        if (vAnchor) {
-            VROMatrix4f inverseAnchorTransform = vAnchor->getTransform().invert();
-            localTransform = worldTransform.multiply(inverseAnchorTransform);
-        }
-
-        VROARHitTestResult vResult(type, vAnchor, distance, worldTransform, localTransform);
+        std::shared_ptr<VROARHitTestResult> vResult = std::make_shared<VROARHitTestResultARCore>(type, distance, hitResult,
+                                                                                                 worldTransform, localTransform,
+                                                                                                 session);
         toReturn.push_back(vResult);
-
-        delete (hitResult);
+        delete (pose);
         delete (trackable);
     }
 
@@ -145,7 +138,7 @@ void VROARFrameARCore::getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, 
 }
 
 const std::vector<std::shared_ptr<VROARAnchor>> &VROARFrameARCore::getAnchors() const {
-    return _anchors;
+    return _anchors; // Always empty; unused in ARCore
 }
 
 float VROARFrameARCore::getAmbientLightIntensity() const {

@@ -96,6 +96,15 @@ private:
 
     /*
      The node associated with this anchor.
+
+     There is an *intentional* strong reference cycle between VROARNode and VROARAnchor. Anchors and
+     ARNodes are managed in one of two ways:
+
+     1. By the AR subsystem (ARCore). When anchors are bound to trackables, and the bound trackable
+        disappears, VROARSessionARCore will remove the corresponding VROARAnchor and its VROARNode.
+
+     2. Manually, by attaching anchors to hit results. In this case, anchors and nodes are removed
+        together when the ARNode is detached from the system (see ARNode.detach() in Java).
      */
     std::shared_ptr<VROARNode> _node;
     

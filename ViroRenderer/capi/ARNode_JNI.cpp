@@ -1,4 +1,5 @@
 #include <VROPlatformUtil.h>
+#include <arcore/VROARAnchorARCore.h>
 #include "ARNode_JNI.h"
 #include "ARUtils_JNI.h"
 
@@ -21,6 +22,38 @@ VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
         std::shared_ptr<VROARNode> node = node_w.lock();
         node->setPauseUpdates(pauseUpdates);
     });
+}
+
+VRO_METHOD(VRO_OBJECT, nativeGetAnchor)(VRO_ARGS
+                                        VRO_REF(VROARNode) node_j) {
+    std::shared_ptr<VROARNode> node = VRO_REF_GET(VROARNode, node_j);
+    std::shared_ptr<VROARAnchor> anchor = node->getAnchor();
+    return ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+}
+
+VRO_METHOD(void, nativeDetach)(VRO_ARGS
+                               VRO_REF(VROARNode) node_j) {
+    std::weak_ptr<VROARNode> node_w = VRO_REF_GET(VROARNode, node_j);
+
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VROARNode> node = node_w.lock();
+        if (!node) {
+            return;
+        }
+        std::shared_ptr<VROARAnchorARCore> anchor = std::dynamic_pointer_cast<VROARAnchorARCore>(node->getAnchor());
+        if (anchor) {
+            anchor->detach();
+        }
+    });
+}
+
+VRO_METHOD(bool, nativeIsAnchorManaged)(VRO_ARGS
+                                        VRO_REF(VROARNode) node_j) {
+    std::shared_ptr<VROARNode> node = VRO_REF_GET(VROARNode, node_j);
+    std::shared_ptr<VROARAnchorARCore> anchor = std::dynamic_pointer_cast<VROARAnchorARCore>(node->getAnchor());
+    passert (anchor);
+
+    return anchor->isManaged();
 }
 
 }

@@ -49,7 +49,7 @@ public:
      system is viewport pixels (e.g. the coordinate system in which
      VROViewport is defined).
      */
-    virtual std::vector<VROARHitTestResult> hitTest(int x, int y, std::set<VROARHitTestResultType> types) = 0;
+    virtual std::vector<std::shared_ptr<VROARHitTestResult>> hitTest(int x, int y, std::set<VROARHitTestResultType> types) = 0;
 
     /*
      Returns the affine transform to move from viewport space to camera

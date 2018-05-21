@@ -407,8 +407,11 @@ void VROARSessionARCore::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
     _nativeAnchorMap[VROStringUtil::toString64(vAnchor->getAnchorInternal()->getId())] = vAnchor;
     _nativeAnchorMap[anchor->getId()] = vAnchor;
 
-    if (kDebugTracking) pinfo("Added new new anchor [%p -- %p]", VROStringUtil::toString64(vAnchor->getAnchorInternal()->getId()).c_str(),
-    anchor->getId().c_str());
+    if (kDebugTracking) {
+        pinfo("Added new new anchor [%p -- %p]",
+              VROStringUtil::toString64(vAnchor->getAnchorInternal()->getId()).c_str(),
+              anchor->getId().c_str());
+    }
 
     std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (delegate) {
@@ -418,6 +421,10 @@ void VROARSessionARCore::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
 }
 
 void VROARSessionARCore::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    if (kDebugTracking) {
+        pinfo("Removing anchor: anchor count %d, native anchor map size %d",
+              (int) _anchors.size(), (int) _nativeAnchorMap.size());
+    }
     _anchors.erase(std::remove_if(_anchors.begin(), _anchors.end(),
                                  [anchor](std::shared_ptr<VROARAnchor> candidate) {
                                      return candidate == anchor;
@@ -430,7 +437,11 @@ void VROARSessionARCore::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
             ++it;
         }
     }
-    
+    if (kDebugTracking) {
+        pinfo("   Anchor count after %d, native anchor map size after %d",
+              (int) _anchors.size(), (int) _nativeAnchorMap.size());
+    }
+
     std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (delegate) {
         delegate->anchorWasRemoved(anchor);
@@ -555,6 +566,7 @@ std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(arcore::Anch
  only place top-level anchors here (not the trackable anchors).
  */
 void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
+    std::shared_ptr<VROARSessionARCore> session = shared_from_this();
     arcore::Frame *frame = frameAR->getFrameInternal();
 
     arcore::AnchorList *anchorList = _session->createAnchorList();
@@ -562,10 +574,10 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
     int anchorsSize = anchorList->size();
 
     // Find all new and updated anchors, update/create new ones and notify this class.
-    // The anchors in this list are *both* those that are tied to trackables and those
-    // that were created during hit tests and tied to world coordinates. However, we only
-    // process anchors that have no trackable here. Anchors with trackables are processed
-    // below.
+    // The anchors in this list are *both* those that are tied to trackables (managed anchors)
+    // and those that were created during hit tests and tied to world coordinates (manual anchors).
+    // However, we only process manual anchors here. Anchors with trackables are processed
+    // afterward as the trackables themselves are updated.
     for (int i = 0; i < anchorsSize; i++) {
         std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(anchorList->acquireItem(i));
         std::string key = VROStringUtil::toString64(anchor->getId());
@@ -574,24 +586,30 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
         // Previously found anchor: update
         if (it != _nativeAnchorMap.end()) {
             std::shared_ptr<VROARAnchorARCore> vAnchor = it->second;
-            if (kDebugTracking) pinfo("Updating anchor %p with trackable %p", vAnchor.get(),
-                  vAnchor->getTrackable().get());
 
-            // If the anchor has a trackable, do not process it (it will be processed with its
-            // associated trackable below)
-            if (!vAnchor->getTrackable()) {
+            // Only update manual anchors. If the anchor has a trackable, do not process it
+            // (it will be processed with its associated trackable below)
+            if (!vAnchor->isManaged()) {
                 passert (anchor->getId() == vAnchor->getAnchorInternal()->getId());
                 syncAnchorWithARCore(vAnchor, anchor.get());
                 updateAnchor(vAnchor);
             }
 
-        // New anchor, not tied to any trackable
+        // New or removed anchor.
         } else {
-            pinfo("Detected new anchor [%p] not tied to any trackable", key.c_str());
+            arcore::TrackingState trackingState = anchor->getTrackingState();
 
-            std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, nullptr);
-            syncAnchorWithARCore(vAnchor, anchor.get());
-            addAnchor(vAnchor);
+            // We have a new anchor detected by ARCore that isn't tied to a trackable. This
+            // should *never* occur, because manual anchors are by invoking addAnchor() externally,
+            // and managed anchors are only ever created in response to trackable detection (below).
+            // ARCore will never magically create an anchor that isn't tied to a trackable, so emit
+            // a warning if this occurs.
+            //
+            // Note we ignore anchors that are NotTracking, as this is just ARCore telling us that
+            // a managed anchor has been removed in the last frame.
+            if (trackingState != arcore::TrackingState::NotTracking) {
+                pinfo("Warning: detected new anchor with no association [%p]", key.c_str());
+            }
         }
     }
 
@@ -612,7 +630,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
         // ARCore doesn't use ID for planes, but rather they simply return the same object, so
         // the hashcodes (which in this case are pointer addresses) should be reliable
-        std::string key = VROStringUtil::toString(plane->getHashCode());
+        std::string key = getKeyForTrackable(plane);
 
         // The plane was *NOT* subsumed by a new plane and is still tracking:
         // either add or update it
@@ -624,9 +642,6 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                 std::shared_ptr<VROARAnchorARCore> vAnchor = it->second;
 
                 if (vAnchor) {
-                    if (kDebugTracking) pinfo("Updating anchor %p with plane trackable %p", vAnchor.get(),
-                          vAnchor->getTrackable().get());
-
                     std::shared_ptr<VROARPlaneAnchor> vPlane = std::dynamic_pointer_cast<VROARPlaneAnchor>(
                             vAnchor->getTrackable());
                     syncPlaneWithARCore(vPlane, plane);
@@ -648,12 +663,12 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                 plane->getCenterPose(pose);
                 std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(plane->acquireAnchor(pose));
 
-                std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vPlane);
+                std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vPlane, session);
                 addAnchor(vAnchor);
                 delete (pose);
             }
 
-        // The plane has been subsumed or is no longer tracked: detach it and remove it
+        // The plane has been subsumed or is no longer tracked: remove it
         } else {
             auto it = _nativeAnchorMap.find(key);
             if (it != _nativeAnchorMap.end()) {
@@ -665,7 +680,6 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
                 std::shared_ptr<VROARAnchorARCore> vAnchor = it->second;
                 if (vAnchor) {
-                    vAnchor->getAnchorInternal()->detach();
                     removeAnchor(vAnchor);
                 }
             }
@@ -688,7 +702,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
             // The name of the image is used for image anchors. This enforces the condition
             // that we only detect each image once
-            std::string key(image->getName());
+            std::string key = getKeyForTrackable(image);
 
             bool imageIsTracked = (trackable->getTrackingState() == arcore::TrackingState::Tracking);
             if (imageIsTracked) {
@@ -701,10 +715,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                             vAnchor->getTrackable());
 
                     if (vAnchor) {
-                        if (kDebugTracking) pinfo("Updating anchor %p with image trackable %p", vAnchor.get(),
-                              vAnchor->getTrackable().get());
-
-                        symcImageAnchorWithARCore(imageAnchor, image);
+                        syncImageAnchorWithARCore(imageAnchor, image);
                         syncAnchorWithARCore(vAnchor, vAnchor->getAnchorInternal().get());
                         updateAnchor(vAnchor);
                     } else {
@@ -721,20 +732,20 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                             pinfo("Detected new anchor tied to image target [%s]", key.c_str());
 
                             std::shared_ptr<VROARImageAnchor> vImage = std::make_shared<VROARImageAnchor>(_imageTargets[j]);
-                            symcImageAnchorWithARCore(vImage, image);
+                            syncImageAnchorWithARCore(vImage, image);
 
                             // Create a new anchor to correspond with the found image
                             arcore::Pose *pose = _session->createPose();
                             image->getCenterPose(pose);
                             std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(image->acquireAnchor(pose));
 
-                            std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vImage);
+                            std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vImage, session);
                             addAnchor(vAnchor);
                             delete (pose);
                         }
                     }
                 }
-            // The image is no longer being tracked: detach and remove it
+            // The image is no longer being tracked: remove it
             } else {
                 auto it = _nativeAnchorMap.find(key);
                 if (it != _nativeAnchorMap.end()) {
@@ -742,7 +753,6 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
                     std::shared_ptr<VROARAnchorARCore> vAnchor = it->second;
                     if (vAnchor) {
-                        vAnchor->getAnchorInternal()->detach();
                         removeAnchor(vAnchor);
                     }
                 }
@@ -753,6 +763,34 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
     delete (anchorList);
     delete (planeList);
+}
+
+std::string VROARSessionARCore::getKeyForTrackable(arcore::Trackable *trackable) {
+    arcore::TrackableType type = trackable->getType();
+    if (type == arcore::TrackableType::Plane) {
+        arcore::Plane *plane = (arcore::Plane *) trackable;
+        return VROStringUtil::toString(plane->getHashCode());
+    }
+    else if (type == arcore::TrackableType::Image) {
+        arcore::AugmentedImage *image = (arcore::AugmentedImage *) trackable;
+        return std::string(image->getName());
+    }
+    else {
+        pwarn("Attempting to get key for invalid trackable type");
+        return "";
+    }
+}
+
+std::shared_ptr<VROARAnchorARCore> VROARSessionARCore::getAnchorForTrackable(arcore::Trackable *trackable) {
+    std::string key = getKeyForTrackable(trackable);
+    if (key.empty()) {
+        return nullptr;
+    }
+    auto it = _nativeAnchorMap.find(key);
+    if (it == _nativeAnchorMap.end()) {
+        return nullptr;
+    }
+    return it->second;
 }
 
 void VROARSessionARCore::syncAnchorWithARCore(std::shared_ptr<VROARAnchor> anchor,
@@ -833,7 +871,7 @@ void VROARSessionARCore::syncPlaneWithARCore(std::shared_ptr<VROARPlaneAnchor> p
     plane->setBoundaryVertices(boundaryVertices);
 }
 
-void VROARSessionARCore::symcImageAnchorWithARCore(std::shared_ptr<VROARImageAnchor> imageAnchor,
+void VROARSessionARCore::syncImageAnchorWithARCore(std::shared_ptr<VROARImageAnchor> imageAnchor,
                                                    arcore::AugmentedImage *imageAR) {
     arcore::Pose *pose = _session->createPose();
     imageAR->getCenterPose(pose);

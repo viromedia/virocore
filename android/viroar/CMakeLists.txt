@@ -23,6 +23,7 @@ SET_TARGET_PROPERTIES(lib-arcore
                       PROPERTIES IMPORTED_LOCATION
                       ${VIRO_AR_LIBS}/${ANDROID_ABI}/libarcore_sdk_c.so )
 
+FIND_LIBRARY(lib-log log)
 FIND_LIBRARY(lib-mediandk mediandk)
 
 TARGET_LINK_LIBRARIES(# Specifies the target library.
@@ -30,5 +31,6 @@ TARGET_LINK_LIBRARIES(# Specifies the target library.
 
                       # Libraries linked with target
                       lib-arcore
+                      ${lib-log}
                       ${lib-mediandk}
                       )

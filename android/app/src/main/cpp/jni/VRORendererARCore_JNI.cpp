@@ -94,7 +94,7 @@ VRO_METHOD(void, nativeSetAnchorDetectionTypes)(VRO_ARGS
 
 }
 
-void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {
+void invokeARResultsCallback(std::vector<std::shared_ptr<VROARHitTestResult>> &results, jweak weakCallback) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
@@ -135,7 +135,7 @@ void performARHitTest(VROVector3f rayVec, std::weak_ptr<VROSceneRendererARCore> 
         invokeEmptyARResultsCallback(weakCallback);
     }
     else {
-        std::vector<VROARHitTestResult> results = arRenderer->performARHitTest(rayVec);
+        std::vector<std::shared_ptr<VROARHitTestResult>> results = arRenderer->performARHitTest(rayVec);
         invokeARResultsCallback(results, weakCallback);
     }
 }
@@ -147,7 +147,7 @@ void performARHitTestPoint(JNIEnv *env, float x, float y, std::weak_ptr<VROScene
         invokeEmptyARResultsCallback(weakCallback);
     }
     else {
-        std::vector<VROARHitTestResult> results = arRenderer->performARHitTest(x, y);
+        std::vector<std::shared_ptr<VROARHitTestResult>> results = arRenderer->performARHitTest(x, y);
         invokeARResultsCallback(results, weakCallback);
     }
 }

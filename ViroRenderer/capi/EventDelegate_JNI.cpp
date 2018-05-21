@@ -9,6 +9,7 @@
 #include "Node_JNI.h"
 #include "ARUtils_JNI.h"
 #include "VROARPointCloud.h"
+#include "arcore/VROARHitTestResultARCore.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
@@ -307,7 +308,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
     });
 }
 
-void EventDelegate_JNI::onCameraARHitTest(std::vector<VROARHitTestResult> results) {
+void EventDelegate_JNI::onCameraARHitTest(std::vector<std::shared_ptr<VROARHitTestResult>> results) {
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 

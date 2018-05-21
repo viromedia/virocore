@@ -24,7 +24,7 @@ public:
     double getTimestamp() const;
     
     const std::shared_ptr<VROARCamera> &getCamera() const;
-    std::vector<VROARHitTestResult> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
+    std::vector<std::shared_ptr<VROARHitTestResult>> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
     VROMatrix4f getViewportToCameraImageTransform();
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
@@ -46,7 +46,7 @@ private:
     std::weak_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROARCamera> _camera;
     VROViewport _viewport;
-    std::vector<std::shared_ptr<VROARAnchor>> _anchors;
+    std::vector<std::shared_ptr<VROARAnchor>> _anchors; // Unused in ARCore
     std::shared_ptr<VROARPointCloud> _pointCloud;
 
 };

@@ -4,6 +4,8 @@
  */
 package com.viro.core.internal;
 
+import android.util.Log;
+
 import com.viro.core.Node;
 
 /**
@@ -41,6 +43,10 @@ public class ExecutableAnimation {
     }
 
     public void execute(Node node) {
+        if (node.getNativeRef() == 0) {
+            Log.i("Viro", "Node has been disposed, will not execute animation");
+            return;
+        }
         nativeExecuteAnimation(mNativeRef, node.getNativeRef());
     }
     public void pause() {

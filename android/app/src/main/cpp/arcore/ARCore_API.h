@@ -131,6 +131,7 @@ namespace arcore {
         virtual uint64_t getHashCode() = 0;
         virtual uint64_t getId() = 0;
         virtual void getPose(Pose *outPose) = 0;
+        virtual void getTransform(float *outTransform) = 0;
         virtual TrackingState getTrackingState() = 0;
         virtual void acquireCloudAnchorId(char **outCloudAnchorId) = 0;
         virtual CloudAnchorState getCloudAnchorState() = 0;
@@ -234,6 +235,7 @@ namespace arcore {
         virtual ~HitResult() {}
         virtual float getDistance() = 0;
         virtual void getPose(Pose *outPose) = 0;
+        virtual void getTransform(float *outTransform) = 0;
         virtual Trackable *acquireTrackable() = 0;
         virtual Anchor *acquireAnchor() = 0;
     };

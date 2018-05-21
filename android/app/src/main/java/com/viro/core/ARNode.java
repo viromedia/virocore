@@ -4,6 +4,8 @@
  */
 package com.viro.core;
 
+import android.util.Log;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -52,7 +54,7 @@ public class ARNode extends Node {
      * @hide
      */
     protected ARNode() {
-        super(false); // call the empty Node constructor
+        super(false);
     }
 
     /**
@@ -62,6 +64,7 @@ public class ARNode extends Node {
      */
     ARNode(long nativeRef) {
         super(false); // call the empty Node constructor.
+
         initWithNativeRef(nativeRef);
         nodeARMap.put(nativeGetUniqueIdentifier(mNativeRef), this);
     }
@@ -73,6 +76,45 @@ public class ARNode extends Node {
         } finally {
             super.finalize();
         }
+    }
+
+    /**
+     * Detaches this ARNode, removing it and all of its children from the Scene, and stopping it
+     * from receiving further AR tracking updates. After this is called, the ARNode becomes unusable.
+     * This may only be called on ARNodes that are created manually by calls to
+     * {@link ARHitTestResult#createAnchoredNode()}. Other ARNodes are created automatically when
+     * Viro detects real-world features, and are automatically detached when those features are no
+     * longer visible to the AR system.
+     */
+    public void detach() {
+        if (!nativeIsAnchorManaged(mNativeRef)) {
+            removeARNodeWithID(nativeGetUniqueIdentifier(mNativeRef));
+            nativeDetach(mNativeRef);
+        } else {
+            Log.w("Viro", "Ignoring invalid request to detach a managed ARNode");
+        }
+    }
+
+    @Override
+    public void removeFromParentNode() {
+        // ARNodes cannot be manually removed
+        throw new IllegalAccessError("Viro: Invalid attempt to remove an ARNode from the Scene");
+    }
+
+    /**
+     * Get the {@link ARAnchor} associated with this ARNode. The anchor is used to fix the
+     * virtual content of this Node to tracked object represented by the anchor. This node is
+     * automatically updated with the anchor's transformations.
+     * <p>
+     * This returns an immutable copy of the underlying anchor. The anchor returned will not
+     * be updated by the tracking system: it is snapshot of the anchor at this point in time.
+     * To get the latest transforms, you must invoke getAnchor() again.
+     * <p>
+     *
+     * @return The {@link ARAnchor} to which this ARNode is attached.
+     */
+    public ARAnchor getAnchor() {
+        return nativeGetAnchor(mNativeRef);
     }
 
     /**
@@ -111,6 +153,9 @@ public class ARNode extends Node {
         throw new IllegalAccessError("Viro: Invalid attempt to set a rotation for an ARNode!");
     }
 
+    private native ARAnchor nativeGetAnchor(long nativeRef);
+    private native void nativeDetach(long nativeRef);
     private native void nativeSetPauseUpdates(long nativeRef, boolean pauseUpdates);
+    private native boolean nativeIsAnchorManaged(long nativeRef);
 
 }
