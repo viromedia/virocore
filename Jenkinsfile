@@ -1,32 +1,32 @@
 pipeline {
   agent any
   stages {
-    stage('clean') {
+    stage('initial_setup') {
       steps {
-        sh '''cd android
-fastlane gradle_clean'''
+          sh '''cd android
+          fastlane build_start_notification
+          fastlane clean_old_artifacts
+          fastlane save_git_log
       }
     }
-    stage('viro_react_lib') {
+    stage('viroreact_aar') {
       steps {
         sh '''cd android
-fastlane renderer_viro_react_lib
-fastlane renderer_cp_viro_react_lib_to_tmp'''
+        fastlane virorenderer_viroreact_aar
       }
     }
-    stage('virocore_lib') {
+    stage('virocore_aar') {
       steps {
         sh '''cd android
-fastlane renderer_viro_core_lib'''
+        fastlane virorenderer_virocore_aar'''
       }
      }
-/*     stage('virokit_framework (ios)') {
+    stage('virokit_framework (ios)') {
       steps {
         sh '''cd ios
-fastlane release_virokit_framework'''
+        fastlane virorender_viroreact_virokit'''
       }
     }
-*/
     stage('releasetest') {
       steps {
         sh '''cd android
