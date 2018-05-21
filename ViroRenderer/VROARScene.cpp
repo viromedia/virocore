@@ -51,8 +51,7 @@ void VROARScene::initImperativeSession() {
 std::shared_ptr<VROARSessionDelegate> VROARScene::getSessionDelegate() {
     if (_declarativeSession) {
         return _declarativeSession;
-    }
-    else {
+    } else {
         return _imperativeSession;
     }
 }
@@ -81,7 +80,6 @@ void VROARScene::setARSession(std::shared_ptr<VROARSession> arSession) {
     if (_declarativeSession) {
         _declarativeSession->setARSession(arSession);
     }
-
     if (_imperativeSession) {
         _imperativeSession->setARSession(arSession);
     }

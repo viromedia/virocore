@@ -16,6 +16,7 @@
 #include "Surface_JNI.h"
 #include "ARImageTarget_JNI.h"
 #include "VROPlatformUtil.h"
+#include "arcore/VROARSessionARCore.h"
 
 #if VRO_PLATFORM_ANDROID
 #include "VROARImageTargetAndroid.h"
@@ -303,7 +304,103 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetAmbientLightColor)(VRO_ARGS
     return ARUtilsCreateFloatArrayFromVector3f(scene->getAmbientLightColor());
 }
 
+VRO_METHOD(void, nativeHostCloudAnchor)(VRO_ARGS
+                                        VRO_REF(VROARSceneController) sceneController_j,
+                                        VRO_STRING anchorId_j) {
+    VRO_METHOD_PREAMBLE;
+
+    std::weak_ptr<VROARScene> scene_w = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, sceneController_j)->getScene());
+
+    std::string localAnchorId = VRO_STRING_STL(anchorId_j);
+    VRO_WEAK obj_w = VRO_NEW_WEAK_GLOBAL_REF(obj);
+
+    VROPlatformDispatchAsyncRenderer([obj_w, localAnchorId, scene_w] {
+        VRO_ENV env = VROPlatformGetJNIEnv();
+
+        std::shared_ptr<VROARScene> scene = scene_w.lock();
+        if (!scene) {
+            VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+            return;
+        }
+        std::shared_ptr<VROARSessionARCore> session = std::dynamic_pointer_cast<VROARSessionARCore>(scene->getARSession());
+        if (!session) {
+            VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+            return;
+        }
+
+        std::shared_ptr<VROARAnchor> anchor = session->getAnchorWithId(localAnchorId);
+        scene->getARSession()->hostCloudAnchor(anchor,
+           [obj_w, localAnchorId](std::shared_ptr<VROARAnchor> cloudAnchor) {
+               // Success callback
+               VRO_ENV env = VROPlatformGetJNIEnv();
+
+               VRO_OBJECT obj_j = VRO_NEW_LOCAL_REF(obj_w);
+               if (VRO_IS_OBJECT_NULL(obj_j)) {
+                   VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+                   return;
+               }
+
+               VRO_STRING localAnchorId_j = VRO_NEW_STRING(localAnchorId.c_str());
+               VRO_OBJECT anchor_j = ARUtilsCreateJavaARAnchorFromAnchor(cloudAnchor);
+               int nodeId = cloudAnchor->getARNode()->getUniqueID();
+               VROPlatformCallHostFunction(obj_j, "onHostSuccess",
+                                           "(Ljava/lang/String;Lcom/viro/core/ARAnchor;I)V",
+                                           localAnchorId_j, anchor_j, nodeId);
+
+               VRO_DELETE_LOCAL_REF(obj_j);
+               VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+           },
+           [obj_w, localAnchorId](std::string error) {
+               // Failure callback
+               VRO_ENV env = VROPlatformGetJNIEnv();
+
+               VRO_OBJECT obj_j = VRO_NEW_LOCAL_REF(obj_w);
+               if (VRO_IS_OBJECT_NULL(obj_j)) {
+                   VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+                   return;
+               }
+
+               VRO_STRING localAnchorId_j = VRO_NEW_STRING(localAnchorId.c_str());
+               VRO_STRING error_j = VRO_NEW_STRING(error.c_str());
+               VROPlatformCallHostFunction(obj_j, "onHostFailure", "(Ljava/lang/String;Ljava/lang/String;)V", localAnchorId_j, error_j);
+
+               VRO_DELETE_LOCAL_REF(obj_j);
+               VRO_DELETE_LOCAL_REF(error_j);
+               VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+           });
+    });
+}
+
+VRO_METHOD(void, nativeResolveCloudAnchor)(VRO_ARGS
+                                           VRO_REF(VROARSceneController) sceneController_j,
+                                           VRO_STRING anchorId_j) {
+    VRO_METHOD_PREAMBLE;
+
+    std::weak_ptr<VROARScene> scene_w = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, sceneController_j)->getScene());
+    std::string anchorId = VRO_STRING_STL(anchorId_j);
+
+    VROPlatformDispatchAsyncRenderer([anchorId, scene_w] {
+        std::shared_ptr<VROARScene> scene = scene_w.lock();
+        if (!scene) {
+            return;
+        }
+        std::shared_ptr<VROARSession> session = scene->getARSession();
+        if (!session) {
+            return;
+        }
+
+        VRO_ENV env = VROPlatformGetJNIEnv();
+
+    });
+}
+
 }  // extern "C"
+
+// +---------------------------------------------------------------------------+
+// | Declarative Delegate
+// +---------------------------------------------------------------------------+
 
 void ARDeclarativeSceneDelegate::onTrackingUpdated(VROARTrackingState state,
                                                    VROARTrackingStateReason reason) {

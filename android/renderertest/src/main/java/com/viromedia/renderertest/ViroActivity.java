@@ -348,7 +348,8 @@ public class ViroActivity extends AppCompatActivity {
         boxNode.setDragMaxDistance(5);
         */
         //nodes.addAll(testImperativePlane(scene));
-        testARHitTest(scene, 0, 5);
+        //testARHitTest(scene, 0, 5);
+        testHostCloudAnchors(scene, 0, 2);
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
@@ -848,14 +849,14 @@ public class ViroActivity extends AppCompatActivity {
         return list;
     }
 
-    private Object3D loadObjectNode(final int bitmask, final float scale) {
+    private Object3D loadObjectNode(final int bitmask, final float scale, final Vector position) {
         final Object3D objectNode = new Object3D();
         objectNode.loadModel(mViroView.getViroContext(),
                 Uri.parse("file:///android_asset/object_star_anim.vrx"),
                 Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
-                object.setPosition(new Vector(0, 0, 0));
+                object.setPosition(position);
                 object.setScale(new Vector(scale, scale, scale));
                 object.setLightReceivingBitMask(bitmask);
                 object.setShadowCastingBitMask(bitmask);
@@ -909,14 +910,14 @@ public class ViroActivity extends AppCompatActivity {
                                     if (result.getType() == ARHitTestResult.Type.FEATURE_POINT) {
                                         Log.i("Viro", "   Hit feature point, creating little star");
                                         ARNode node = result.createAnchoredNode();
-                                        node.addChildNode(loadObjectNode(1, .1f));
+                                        node.addChildNode(loadObjectNode(1, .1f, new Vector(0, 0, 0)));
 
                                         anchoredNodes.add(node);
 
                                     } else if (result.getType() == ARHitTestResult.Type.PLANE) {
                                         Log.i("Viro", "   Hit plane, creating big star");
                                         ARNode node = result.createAnchoredNode();
-                                        node.addChildNode(loadObjectNode(1, .2f));
+                                        node.addChildNode(loadObjectNode(1, .2f, new Vector(0, 0, 0)));
 
                                         anchoredNodes.add(node);
                                     }
@@ -927,6 +928,54 @@ public class ViroActivity extends AppCompatActivity {
                         });
             }
         }, 2000);
+    }
+
+    private void testHostCloudAnchors(final ARScene scene, final int count, final int total) {
+        if (count >= total) {
+            return;
+        }
+
+        final ViroViewARCore view = (ViroViewARCore) mViroView;
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Point point = new Point((int) (view.getWidth() / 2.0), (int) (view.getHeight() / 2.0f));
+                Log.i("Viro", "Performing AR hit test at point " + point.x + ", " + point.y);
+
+                view.performARHitTest(point,
+                        new ARHitTestListener() {
+                            @Override
+                            public void onHitTestFinished(ARHitTestResult[] results) {
+                                Log.i("Viro", "Hit test complete with " + results.length + " results");
+
+                                for (ARHitTestResult result : results) {
+                                    Log.i("Viro", "   Successful hit, creating little star and hosting anchor");
+                                    ARNode node = result.createAnchoredNode();
+                                    node.addChildNode(loadObjectNode(1, .1f, new Vector(0, 0, 0)));
+
+                                    scene.hostCloudAnchor(node.getAnchor(), new ARScene.CloudAnchorHostListener() {
+                                        @Override
+                                        public void onSuccess(ARAnchor anchor, ARNode arNode) {
+                                            Log.i("Viro", "Host successful, adding a big star to the right");
+                                            arNode.addChildNode(loadObjectNode(1, 0.2f, new Vector(0.5f, 0, 0)));
+                                        }
+
+                                        @Override
+                                        public void onFailure(String error) {
+                                            Log.i("Viro", "Host failure: " + error);
+                                        }
+                                    });
+
+                                    // We only care about hosting the first result's anchor for this test
+                                    break;
+                                }
+
+                                testHostCloudAnchors(scene, count + 1, total);
+                            }
+                        });
+            }
+        }, 4000);
     }
 
     private List<Node> testImperativePlane(final ARScene arScene) {
@@ -962,7 +1011,7 @@ public class ViroActivity extends AppCompatActivity {
                     spot.setCastsShadow(true);
 
                     node.addLight(spot);
-                    node.addChildNode(loadObjectNode(bitmask | 1, .04f));
+                    node.addChildNode(loadObjectNode(bitmask | 1, .04f, new Vector(0, 0, 0)));
                     node.setDragListener(new DragListener() {
                         @Override
                         public void onDrag(int source, Node node, Vector worldLocation, Vector localLocation) {

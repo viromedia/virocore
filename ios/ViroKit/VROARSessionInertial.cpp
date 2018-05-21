@@ -74,14 +74,14 @@ void VROARSessionInertial::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     // Unsupported
 }
 
-void VROARSessionInertial::hostAnchor(std::shared_ptr<VROARAnchor> anchor,
-                                      std::function<void(std::string anchorId)> onSuccess,
-                                      std::function<void(std::string error)> onFailure) {
+void VROARSessionInertial::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
+                                           std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
+                                           std::function<void(std::string error)> onFailure) {
     // Unsupproted
 }
-void VROARSessionInertial::resolveAnchor(std::string anchorId,
-                                         std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
-                                         std::function<void(std::string error)> onFailure) {
+void VROARSessionInertial::resolveCloudAnchor(std::string anchorId,
+                                              std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                                              std::function<void(std::string error)> onFailure) {
     // Unsupported
 }
 

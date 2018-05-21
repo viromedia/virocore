@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.viromedia.renderertest">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Required to read the paired viewer's distortion parameters -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
@@ -29,12 +31,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="***REMOVED***"
-            />
+            android:value="***REMOVED***" />
 
         <meta-data android:name="com.google.ar.core" android:value="optional" />
+        <meta-data
+            android:name="com.google.android.ar.API_KEY"
+            android:value="AIzaSyCZy6wqu20yo-r6mUCne3KH0YrR18mP2QI" />
+
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

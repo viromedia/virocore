@@ -16,6 +16,22 @@
 #include "ARCore_API.h"
 
 class VROARAnchor;
+class VROARAnchorARCore;
+class VROARSessionARCore;
+
+class VROCloudAnchorHostTask {
+public:
+    std::shared_ptr<VROARAnchor> originalAnchor;
+    std::shared_ptr<VROARAnchorARCore> cloudAnchor;
+    std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess;
+    std::function<void(std::string error)> onFailure;
+};
+
+class VROCloudAnchorResolveTask {
+public:
+    std::function<void(std::string anchorId)> onSuccess;
+    std::function<void(std::string error)> onFailure;
+};
 
 /*
  Manages the hosting and resolution of cloud anchors from ARCore.
@@ -24,43 +40,49 @@ class VROCloudAnchorProviderARCore : public VROFrameListener {
 
 public:
 
-    VROCloudAnchorProviderARCore();
+    VROCloudAnchorProviderARCore(std::shared_ptr<VROARSessionARCore> session);
     virtual ~VROCloudAnchorProviderARCore();
 
     /*
      Host an anchor on the cloud anchor provider we're using. Hosting an anchor is an
-     asynchronous process that will eventually return an anchor ID to the
+     asynchronous process that will eventually return the hosted cloud anchor to the
      given callback.
      */
-    void hostAnchor(std::shared_ptr<VROARAnchor> anchor,
-                    arcore::Session *session,
-                    std::function<void(std::string anchorId)> onSuccess,
-                    std::function<void(std::string error)> onFailure);
+    void hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
+                         std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
+                         std::function<void(std::string error)> onFailure);
 
     /*
      Resolve an anchor with the given ID from the cloud anchor. This is an
      asynchronous process. If found, the anchor will be returned in the given
      callback.
      */
-    void resolveAnchor(std::string anchorId,
-                       arcore::Session *session,
-                       std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
-                       std::function<void(std::string error)> onFailure);
+    void resolveCloudAnchor(std::string anchorId,
+                            std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                            std::function<void(std::string error)> onFailure);
 
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
 
 private:
 
+    std::weak_ptr<VROARSessionARCore> _session;
+
     /*
      Vector of cloud anchors that we are attempting to host.
      */
-    std::vector<std::shared_ptr<VROARAnchor>> _queuedHosting;
+    std::vector<VROCloudAnchorHostTask> _queuedHosting;
 
     /*
      Vector of cloud anchors that we are attempting to resolve.
      */
-    std::vector<std::shared_ptr<VROARAnchor>> _queuedResolving;
+    std::vector<VROCloudAnchorResolveTask> _queuedResolving;
+
+    /*
+     Handle successful / failed hosting.
+     */
+    void onHostTaskSuccessful(VROCloudAnchorHostTask &task);
+    void onHostTaskFailed(VROCloudAnchorHostTask &task, std::string error);
 
 };
 

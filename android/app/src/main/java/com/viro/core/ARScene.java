@@ -7,7 +7,10 @@ package com.viro.core;
 //#IFDEF 'viro_react'
 import com.viro.core.internal.ARDeclarativeNode;
 //#ENDIF
+import android.util.Log;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ARScene blends virtual 3D content with the device camera's view of the real world. Similar to a
@@ -101,6 +104,16 @@ public class ARScene extends Scene {
         void onAnchorRemoved(ARAnchor anchor, ARNode arNode);
     }
 
+    public interface CloudAnchorHostListener {
+        public void onSuccess(ARAnchor anchor, ARNode arNode);
+        public void onFailure(String error);
+    }
+
+    public interface CloudAnchorResolveListener {
+        public void onSuccess(ARAnchor anchor, ARNode arNode);
+        public void onFailure(String error);
+    }
+
     /**
      * Values representing position tracking quality. You can respond to changes in AR tracking
      * quality through {@link Listener#onTrackingUpdated(TrackingState, TrackingStateReason)}.
@@ -163,6 +176,8 @@ public class ARScene extends Scene {
     private Listener mListener = null;
     private long mNativeARDelegateRef;
     private boolean mHasTrackingInitialized = false;
+    private Map<String, CloudAnchorHostListener> mCloudAnchorHostCallbacks = new HashMap<>();
+    private Map<String, CloudAnchorResolveListener> mCloudAnchorResolveCallbacks = new HashMap<>();
 
     /**
      * Construct a new ARScene.
@@ -391,6 +406,52 @@ public class ARScene extends Scene {
     }
     //#ENDIF
 
+    public void hostCloudAnchor(ARAnchor anchor, CloudAnchorHostListener callback) {
+        if (mCloudAnchorHostCallbacks.containsKey(anchor.getAnchorId())) {
+            Log.e("Viro", "Ignoring redundant cloud anchor hosting request: we are already processing anchor ["
+                    + anchor.getAnchorId() + "]");
+            return;
+        }
+        mCloudAnchorHostCallbacks.put(anchor.getAnchorId(), callback);
+        nativeHostCloudAnchor(mNativeRef, anchor.getAnchorId());
+    }
+
+    public void resolveCloudAnchor(String anchorId, CloudAnchorResolveListener callback) {
+        if (mCloudAnchorResolveCallbacks.containsKey(anchorId)) {
+            Log.e("Viro", "Ignoring redundant cloud anchor resolve request: we are already processing anchor ["
+                    + anchorId + "]");
+            return;
+        }
+        mCloudAnchorResolveCallbacks.put(anchorId, callback);
+        nativeResolveCloudAnchor(mNativeRef, anchorId);
+    }
+
+    // Called by native
+    void onHostSuccess(String originalAnchorId, ARAnchor cloudAnchor, int arNodeId) {
+        CloudAnchorHostListener callback = mCloudAnchorHostCallbacks.get(originalAnchorId);
+        if (callback != null) {
+            ARNode node = ARNode.getARNodeWithID(arNodeId);
+            if (node == null) {
+                node = new ARNode(arNodeId);
+            }
+            callback.onSuccess(cloudAnchor, node);
+        } else {
+            Log.e("Viro", "Cloud anchor host successful, but no callback found to invoke [anchor ID: "
+                    + originalAnchorId + "]");
+        }
+    }
+
+    // Called by native
+    void onHostFailure(String originalAnchorId, String error) {
+        CloudAnchorHostListener callback = mCloudAnchorHostCallbacks.get(originalAnchorId);
+        if (callback != null) {
+            callback.onFailure(error);
+        } else {
+            Log.e("Viro", "Cloud anchor host failed, and no callback found to invoke [anchor ID: "
+                    + originalAnchorId + "]");
+        }
+    }
+
     private native long nativeCreateARSceneController();
     private native long nativeCreateARSceneControllerDeclarative();
     private native long nativeCreateARSceneDelegate(long sceneControllerRef);
@@ -408,6 +469,8 @@ public class ARScene extends Scene {
     private native void nativeRemoveARImageTarget(long sceneControllerRef, long arImageTargetRef);
     private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
     private native void nativeRemoveARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
+    private native void nativeHostCloudAnchor(long sceneRef, String anchorId);
+    private native void nativeResolveCloudAnchor(long sceneRef, String anchorId);
     private native float nativeGetAmbientLightIntensity(long sceneControllerRef);
     private native float[] nativeGetAmbientLightColor(long sceneControllerRef);
 

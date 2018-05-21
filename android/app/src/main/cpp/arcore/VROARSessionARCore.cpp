@@ -15,12 +15,14 @@
 #include "VROTextureSubstrateOpenGL.h"
 #include "VROLog.h"
 #include <algorithm>
-#include <VROCameraTexture.h>
+#include "VROCameraTexture.h"
 #include "VROPlatformUtil.h"
-#include <VROStringUtil.h>
-#include <VROARImageTargetAndroid.h>
+#include "VROStringUtil.h"
+#include "VROARImageTargetAndroid.h"
 #include <VROImageAndroid.h>
 #include "VROARHitTestResult.h"
+#include "VROFrameSynchronizer.h"
+#include "VROCloudAnchorProviderARCore.h"
 
 static bool kDebugTracking = false;
 
@@ -29,7 +31,7 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _lightingMode(arcore::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
-    _cloudAnchorMode(arcore::CloudAnchorMode::Disabled),
+    _cloudAnchorMode(arcore::CloudAnchorMode::Enabled),
     _cameraTextureId(0),
     _displayRotation(VROARDisplayRotation::R0),
     _rotatedImageDataLength(0),
@@ -45,13 +47,17 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _hasTrackingSessionInitialized = false;
 }
 
-void VROARSessionARCore::setARCoreSession(arcore::Session *session) {
+void VROARSessionARCore::setARCoreSession(arcore::Session *session,
+                                          std::shared_ptr<VROFrameSynchronizer> synchronizer) {
     _session = session;
+    _synchronizer = synchronizer;
 
     if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
         _currentARCoreImageDatabase = _session->createAugmentedImageDatabase();
     }
 
+    _cloudAnchorProvider = std::make_shared<VROCloudAnchorProviderARCore>(shared_from_this());
+    _synchronizer->addFrameListener(_cloudAnchorProvider);
     _frame = _session->createFrame();
 }
 
@@ -459,17 +465,25 @@ void VROARSessionARCore::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     }
 }
 
-void VROARSessionARCore::hostAnchor(std::shared_ptr<VROARAnchor> anchor,
-                                    std::function<void(std::string anchorId)> onSuccess,
-                                    std::function<void(std::string error)> onFailure) {
-    // Unsupported
+void VROARSessionARCore::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
+                                         std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
+                                         std::function<void(std::string error)> onFailure) {
+    if (_cloudAnchorMode == arcore::CloudAnchorMode::Disabled) {
+        pwarn("Cloud anchors are disabled, ignoring anchor host request");
+        return;
+    }
+    _cloudAnchorProvider->hostCloudAnchor(anchor, onSuccess, onFailure);
 }
 
-void VROARSessionARCore::resolveAnchor(std::string anchorId,
-                                       std::function<void(
-                                       std::shared_ptr<VROARAnchor> anchor)> onSuccess,
-                                       std::function<void(std::string error)> onFailure) {
-    // Unsupported
+void VROARSessionARCore::resolveCloudAnchor(std::string anchorId,
+                                            std::function<void(
+                                            std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                                            std::function<void(std::string error)> onFailure) {
+    if (_cloudAnchorMode == arcore::CloudAnchorMode::Disabled) {
+        pwarn("Cloud anchors are disabled, ignoring anchor resolve request");
+        return;
+    }
+    _cloudAnchorProvider->resolveCloudAnchor(anchorId, onSuccess, onFailure);
 }
 
 #pragma mark - AR Frames
@@ -523,6 +537,15 @@ void VROARSessionARCore::initTrackingSession() {
         VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
         _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
         _arTrackingSession->setListener(shared_from_this());
+    }
+}
+
+std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorWithId(std::string anchorId) {
+    auto it = _nativeAnchorMap.find(anchorId);
+    if (it != _nativeAnchorMap.end()) {
+        return it->second;
+    } else {
+        return nullptr;
     }
 }
 
@@ -612,16 +635,14 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
         } else {
             arcore::TrackingState trackingState = anchor->getTrackingState();
 
-            // We have a new anchor detected by ARCore that isn't tied to a trackable. This
-            // should *never* occur, because manual anchors are by invoking addAnchor() externally,
-            // and managed anchors are only ever created in response to trackable detection (below).
-            // ARCore will never magically create an anchor that isn't tied to a trackable, so emit
-            // a warning if this occurs.
+            // We have a new anchor detected by ARCore that isn't tied to a trackable.
+            // ARCore will never magically create an anchor that isn't tied to a trackable,
+            // except when acquiring new cloud anchors to host.
             //
             // Note we ignore anchors that are NotTracking, as this is just ARCore telling us that
             // a managed anchor has been removed in the last frame.
             if (trackingState != arcore::TrackingState::NotTracking) {
-                pinfo("Warning: detected new anchor with no association [%p]", key.c_str());
+                pinfo("Detected new anchor with no association (may be cloud anchor) [%p]", key.c_str());
             }
         }
     }

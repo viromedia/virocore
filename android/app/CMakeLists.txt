@@ -213,6 +213,7 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/arcore/VROARAnchorARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROARHitTestResultARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROYuvImageConverter.cpp
+             ${VIRO_ANDROID_SRC}/arcore/VROCloudAnchorProviderARCore.cpp
 
              # AR (Image Tracking)
              ../../ViroRenderer/VROARTrackingSession.cpp

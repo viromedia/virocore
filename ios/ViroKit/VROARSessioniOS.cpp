@@ -282,14 +282,14 @@ void VROARSessioniOS::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     }
 }
 
-void VROARSessioniOS::hostAnchor(std::shared_ptr<VROARAnchor> anchor,
-                                 std::function<void(std::string anchorId)> onSuccess,
-                                 std::function<void(std::string error)> onFailure) {
+void VROARSessioniOS::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
+                                      std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
+                                      std::function<void(std::string error)> onFailure) {
     // Unsupproted
 }
-void VROARSessioniOS::resolveAnchor(std::string anchorId,
-                                    std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
-                                    std::function<void(std::string error)> onFailure) {
+void VROARSessioniOS::resolveCloudAnchor(std::string anchorId,
+                                         std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                                         std::function<void(std::string error)> onFailure) {
     // Unsupported
 }
 
