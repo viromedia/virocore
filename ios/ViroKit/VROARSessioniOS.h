@@ -45,6 +45,12 @@ public:
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
+    void hostAnchor(std::shared_ptr<VROARAnchor> anchor,
+                    std::function<void(std::string anchorId)> onSuccess,
+                    std::function<void(std::string error)> onFailure);
+    void resolveAnchor(std::string anchorId,
+                       std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                       std::function<void(std::string error)> onFailure);
     
     std::unique_ptr<VROARFrame> &updateFrame();
     std::unique_ptr<VROARFrame> &getLastFrame();

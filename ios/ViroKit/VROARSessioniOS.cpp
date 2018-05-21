@@ -26,9 +26,10 @@
 #include "VROPortal.h"
 #include "VROBox.h"
 #include "VROProjector.h"
-
 #include "VROARCameraiOS.h"
 #include "VROARImageTracker.h"
+
+#pragma mark - Lifecycle and Initialization
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment worldAlignment, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, worldAlignment),
@@ -103,8 +104,6 @@ VROARSessioniOS::~VROARSessioniOS() {
 
 }
 
-#pragma mark - VROARSession implementation
-
 void VROARSessioniOS::run() {
     _sessionPaused = false;
     std::shared_ptr<VROARSessioniOS> shared = shared_from_this();
@@ -129,6 +128,90 @@ void VROARSessioniOS::resetSession(bool resetTracking, bool removeAnchors) {
         [_session runWithConfiguration:_sessionConfiguration options:options];
     }
 }
+
+#pragma mark - Settings
+
+void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
+    VROARSession::setScene(scene);
+    
+#if ENABLE_OPENCV
+    // when we add a scene, make sure that we add this node to it.
+    scene->getRootNode()->addChildNode(_imageResultsContainer);
+#endif /* ENABLE_OPENCV */
+}
+
+void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate) {
+    VROARSession::setDelegate(delegate);
+    // When we add a new delegate, notify it of all the anchors we've found thus far
+    if (delegate) {
+        for (auto it = _anchors.begin(); it != _anchors.end();it++) {
+            delegate->anchorWasDetected(*it);
+        }
+    }
+}
+
+void VROARSessioniOS::setAutofocus(bool enabled) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+    if (@available(iOS 11.3, *)) {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).autoFocusEnabled = enabled;
+            [_session runWithConfiguration:_sessionConfiguration];
+        }
+    }
+#endif
+}
+
+void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+    if (@available(iOS 11.3, *)) {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            NSArray<ARVideoFormat *> *videoFormats = ARWorldTrackingConfiguration.supportedVideoFormats;
+            if (quality == VROVideoQuality::High) {
+                ARVideoFormat *highestFormat;
+                float high = 0;
+                for (ARVideoFormat *format in videoFormats) {
+                    if (format.imageResolution.height > high) {
+                        high = format.imageResolution.height;
+                        highestFormat = format;
+                    }
+                }
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = highestFormat;
+            } else {
+                ARVideoFormat *lowestFormat;
+                float low = CGFLOAT_MAX;
+                for (ARVideoFormat *format in videoFormats) {
+                    if (format.imageResolution.height < low) {
+                        low = format.imageResolution.height;
+                        lowestFormat = format;
+                    }
+                }
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = lowestFormat;
+            }
+        }
+        [_session runWithConfiguration:_sessionConfiguration];
+    }
+#endif
+}
+
+void VROARSessioniOS::setViewport(VROViewport viewport) {
+    _viewport = viewport;
+}
+
+void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
+    _orientation = orientation;
+}
+
+void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+    if (@available(iOS 11.3, *)) {
+        if (_session) {
+            [_session setWorldOrigin:VROConvert::toMatrixFloat4x4(relativeTransform)];
+        }
+    }
+#endif
+}
+
+#pragma mark - Anchors
 
 bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
     if (types.size() == 0){
@@ -163,24 +246,128 @@ void VROARSessioniOS::setCloudAnchorProvider(VROCloudAnchorProvider provider) {
     // TODO iOS ARCore Cloud Anchor implementation
 }
 
-void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
-    VROARSession::setScene(scene);
-
-#if ENABLE_OPENCV
-    // when we add a scene, make sure that we add this node to it.
-    scene->getRootNode()->addChildNode(_imageResultsContainer);
-#endif /* ENABLE_OPENCV */
+void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
+    if (!delegate) {
+        return;
+    }
+    
+    delegate->anchorWasDetected(anchor);
+    _anchors.push_back(anchor);
 }
 
-void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate) {
-    VROARSession::setDelegate(delegate);
-    // When we add a new delegate, notify it of all the anchors we've found thus far
+void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    _anchors.erase(std::remove_if(_anchors.begin(), _anchors.end(),
+                                 [anchor](std::shared_ptr<VROARAnchor> candidate) {
+                                     return candidate == anchor;
+                                 }), _anchors.end());
+    
+    auto it = _nativeAnchorMap.find(anchor->getId());
+    _nativeAnchorMap.erase(it);
+    
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (delegate) {
-        for (auto it = _anchors.begin(); it != _anchors.end();it++) {
-            delegate->anchorWasDetected(*it);
-        }
+        delegate->anchorWasRemoved(anchor);
     }
 }
+
+void VROARSessioniOS::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
+    if (delegate) {
+        delegate->anchorWillUpdate(anchor);
+    }
+    anchor->updateNodeTransform();
+    if (delegate) {
+        delegate->anchorDidUpdate(anchor);
+    }
+}
+
+void VROARSessioniOS::hostAnchor(std::shared_ptr<VROARAnchor> anchor,
+                                 std::function<void(std::string anchorId)> onSuccess,
+                                 std::function<void(std::string error)> onFailure) {
+    // Unsupproted
+}
+void VROARSessioniOS::resolveAnchor(std::string anchorId,
+                                    std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                                    std::function<void(std::string error)> onFailure) {
+    // Unsupported
+}
+
+#pragma mark - Frames
+
+std::shared_ptr<VROTexture> VROARSessioniOS::getCameraBackgroundTexture() {
+    return _background;
+}
+
+std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
+    VROARFrameiOS *frameiOS = (VROARFrameiOS *)_currentFrame.get();
+
+    /*
+     Update the background image.
+     */
+    std::vector<std::unique_ptr<VROTextureSubstrate>> substrates = _videoTextureCache->createYCbCrTextureSubstrates(frameiOS->getImage());
+    _background->setSubstrate(0, std::move(substrates[0]));
+    _background->setSubstrate(1, std::move(substrates[1]));
+
+#if ENABLE_OPENCV
+    if (isReady()) {
+
+        // Get and set intrinsic matrix
+        std::shared_ptr<VROARCameraiOS> arCameraiOS = std::dynamic_pointer_cast<VROARCameraiOS>(frameiOS->getCamera());
+        float* intrinsics = arCameraiOS->getIntrinsics();
+        [_trackingHelper setIntrinsics:intrinsics];
+
+        // fetch camera pointer
+        std::shared_ptr<VROARCamera> lastCamera = getLastFrame()->getCamera();
+        
+        [_trackingHelper processPixelBufferRef:frameiOS->getImage()
+                                      forceRun:false
+                                        camera:arCameraiOS
+                                    completion:
+         ^(VROTrackingHelperOutput *output) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (_trackerOutputView != nil && [output getImageTrackerOutput].found) {
+                    [_trackerOutputView setImage:[output getOutputImage]];
+                }
+                VROARImageTrackerOutput trackerOutput = [output getImageTrackerOutput];
+                if (trackerOutput.found) {
+                    
+                    VROMatrix4f endTransformation = trackerOutput.worldTransform;
+                    
+                    _imageTrackingResultNode->setHidden(false);
+                    _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
+                    _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
+                    
+                    VROVector3f pos = endTransformation.extractTranslation();
+                    VROVector3f rot = endTransformation.extractRotation({1,1,1}).toEuler();
+                    
+                    pinfo("[Viro] the world position was: %f, %f, %f", pos.x, pos.y, pos.z);
+                    pinfo("[Viro] the world rotation was: %f, %f, %f", toDegrees(rot.x), toDegrees(rot.y), toDegrees(rot.z));
+                    
+                    if (_trackerOutputText != nil) {
+                        VROVector3f camPos = arCameraiOS->getPosition();
+                        NSString *outputText = [NSString stringWithFormat:@"Camera Pos: [%.03f, %.03f, %.03f]\nImage Pos: [%.03f, %.03f, %.03f]\nWorld Pos: [%.03f, %.03f, %.03f]",
+                                                camPos.x, camPos.y, camPos.z,
+                                                trackerOutput.translation.at<double>(0,0),
+                                                - trackerOutput.translation.at<double>(1,0), // because Y and Z axis are flipped in OpenCV.
+                                                - trackerOutput.translation.at<double>(2,0),
+                                                pos.x, pos.y, pos.z];
+                        _trackerOutputText.text = outputText;
+                    }
+                }
+            });
+        }];
+    }
+#endif /* ENABLE_OPENCV */
+
+    return _currentFrame;
+}
+
+std::unique_ptr<VROARFrame> &VROARSessioniOS::getLastFrame() {
+    return _currentFrame;
+}
+
+#pragma mark - Image Targets
 
 void VROARSessioniOS::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
@@ -237,7 +424,7 @@ void VROARSessioniOS::removeARImageTarget(std::shared_ptr<VROARImageTarget> targ
                 
                 // delete the ARReferenceImage from the set of images to detect
                 [_arKitImageDetectionSet removeObject:refImage];
-
+                
                 ((ARWorldTrackingConfiguration *) _sessionConfiguration).detectionImages = _arKitImageDetectionSet;
                 [_session runWithConfiguration:_sessionConfiguration];
             }
@@ -249,183 +436,12 @@ void VROARSessioniOS::removeARImageTarget(std::shared_ptr<VROARImageTarget> targ
 #endif
 }
 
-void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
-    if (!delegate) {
-        return;
-    }
-    
-    delegate->anchorWasDetected(anchor);
-    _anchors.push_back(anchor);
-}
-
-void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    _anchors.erase(std::remove_if(_anchors.begin(), _anchors.end(),
-                                 [anchor](std::shared_ptr<VROARAnchor> candidate) {
-                                     return candidate == anchor;
-                                 }), _anchors.end());
-    
-    auto it = _nativeAnchorMap.find(anchor->getId());
-    _nativeAnchorMap.erase(it);
-    
-    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
-    if (delegate) {
-        delegate->anchorWasRemoved(anchor);
-    }
-}
-
-void VROARSessioniOS::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
-    if (delegate) {
-        delegate->anchorWillUpdate(anchor);
-    }
-    anchor->updateNodeTransform();
-    if (delegate) {
-        delegate->anchorDidUpdate(anchor);
-    }
-}
-
-std::shared_ptr<VROTexture> VROARSessioniOS::getCameraBackgroundTexture() {
-    return _background;
-}
-
-std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
-    VROARFrameiOS *frameiOS = (VROARFrameiOS *)_currentFrame.get();
-
-    /*
-     Update the background image.
-     */
-    std::vector<std::unique_ptr<VROTextureSubstrate>> substrates = _videoTextureCache->createYCbCrTextureSubstrates(frameiOS->getImage());
-    _background->setSubstrate(0, std::move(substrates[0]));
-    _background->setSubstrate(1, std::move(substrates[1]));
-
-#if ENABLE_OPENCV
-
-    if (isReady()) {
-
-        // Get and set intrinsic matrix
-        std::shared_ptr<VROARCameraiOS> arCameraiOS = std::dynamic_pointer_cast<VROARCameraiOS>(frameiOS->getCamera());
-        float* intrinsics = arCameraiOS->getIntrinsics();
-        [_trackingHelper setIntrinsics:intrinsics];
-
-        // fetch camera pointer
-        std::shared_ptr<VROARCamera> lastCamera = getLastFrame()->getCamera();
-        
-        [_trackingHelper processPixelBufferRef:frameiOS->getImage()
-                                      forceRun:false
-                                        camera:arCameraiOS
-                                    completion:
-         ^(VROTrackingHelperOutput *output) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (_trackerOutputView != nil && [output getImageTrackerOutput].found) {
-                    [_trackerOutputView setImage:[output getOutputImage]];
-                }
-                VROARImageTrackerOutput trackerOutput = [output getImageTrackerOutput];
-                if (trackerOutput.found) {
-                    
-                    VROMatrix4f endTransformation = trackerOutput.worldTransform;
-                    
-                    _imageTrackingResultNode->setHidden(false);
-                    _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
-                    _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
-                    
-                    VROVector3f pos = endTransformation.extractTranslation();
-                    VROVector3f rot = endTransformation.extractRotation({1,1,1}).toEuler();
-                    
-                    pinfo("[Viro] the world position was: %f, %f, %f", pos.x, pos.y, pos.z);
-                    pinfo("[Viro] the world rotation was: %f, %f, %f", toDegrees(rot.x), toDegrees(rot.y), toDegrees(rot.z));
-                    
-                    if (_trackerOutputText != nil) {
-                        VROVector3f camPos = arCameraiOS->getPosition();
-                        NSString *outputText = [NSString stringWithFormat:@"Camera Pos: [%.03f, %.03f, %.03f]\nImage Pos: [%.03f, %.03f, %.03f]\nWorld Pos: [%.03f, %.03f, %.03f]",
-                                                camPos.x, camPos.y, camPos.z,
-                                                trackerOutput.translation.at<double>(0,0),
-                                                - trackerOutput.translation.at<double>(1,0), // because Y and Z axis are flipped in OpenCV.
-                                                - trackerOutput.translation.at<double>(2,0),
-                                                pos.x, pos.y, pos.z];
-                        _trackerOutputText.text = outputText;
-                    }
-                }
-            });
-        }];
-    }
-#endif /* ENABLE_OPENCV */
-
-    return _currentFrame;
-}
-
 #if ENABLE_OPENCV
 void VROARSessioniOS::outputTextTapped() {
     BOOL tracking = [_trackingHelper toggleTracking];
     _trackerOutputText.text = tracking ? @"Started Tracking!" : @"Not Tracking!";
 }
 #endif /* ENABLE_OPENCV */
-
-
-std::unique_ptr<VROARFrame> &VROARSessioniOS::getLastFrame() {
-    return _currentFrame;
-}
-
-void VROARSessioniOS::setViewport(VROViewport viewport) {
-    _viewport = viewport;
-}
-
-void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
-    _orientation = orientation;
-}
-
-void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-    if (@available(iOS 11.3, *)) {
-        if (_session) {
-            [_session setWorldOrigin:VROConvert::toMatrixFloat4x4(relativeTransform)];
-        }
-    }
-#endif
-}
-
-void VROARSessioniOS::setAutofocus(bool enabled) {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-    if (@available(iOS 11.3, *)) {
-        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-            ((ARWorldTrackingConfiguration *) _sessionConfiguration).autoFocusEnabled = enabled;
-            [_session runWithConfiguration:_sessionConfiguration];
-        }
-    }
-#endif
-}
-
-void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-    if (@available(iOS 11.3, *)) {
-        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-            NSArray<ARVideoFormat *> *videoFormats = ARWorldTrackingConfiguration.supportedVideoFormats;
-            if (quality == VROVideoQuality::High) {
-                ARVideoFormat *highestFormat;
-                float high = 0;
-                for (ARVideoFormat *format in videoFormats) {
-                    if (format.imageResolution.height > high) {
-                        high = format.imageResolution.height;
-                        highestFormat = format;
-                    }
-                }
-                ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = highestFormat;
-            } else {
-                ARVideoFormat *lowestFormat;
-                float low = CGFLOAT_MAX;
-                for (ARVideoFormat *format in videoFormats) {
-                    if (format.imageResolution.height < low) {
-                        low = format.imageResolution.height;
-                        lowestFormat = format;
-                    }
-                }
-                ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = lowestFormat;
-            }
-        }
-        [_session runWithConfiguration:_sessionConfiguration];
-    }
-#endif
-}
 
 #pragma mark - Internal Methods
 

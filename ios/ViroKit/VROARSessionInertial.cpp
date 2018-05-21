@@ -74,6 +74,17 @@ void VROARSessionInertial::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     // Unsupported
 }
 
+void VROARSessionInertial::hostAnchor(std::shared_ptr<VROARAnchor> anchor,
+                                      std::function<void(std::string anchorId)> onSuccess,
+                                      std::function<void(std::string error)> onFailure) {
+    // Unsupproted
+}
+void VROARSessionInertial::resolveAnchor(std::string anchorId,
+                                         std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                                         std::function<void(std::string error)> onFailure) {
+    // Unsupported
+}
+
 std::shared_ptr<VROTexture> VROARSessionInertial::getCameraBackgroundTexture() {
     return _camera->getBackgroundTexture();
 }

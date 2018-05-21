@@ -459,6 +459,19 @@ void VROARSessionARCore::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     }
 }
 
+void VROARSessionARCore::hostAnchor(std::shared_ptr<VROARAnchor> anchor,
+                                    std::function<void(std::string anchorId)> onSuccess,
+                                    std::function<void(std::string error)> onFailure) {
+    // Unsupported
+}
+
+void VROARSessionARCore::resolveAnchor(std::string anchorId,
+                                       std::function<void(
+                                       std::shared_ptr<VROARAnchor> anchor)> onSuccess,
+                                       std::function<void(std::string error)> onFailure) {
+    // Unsupported
+}
+
 #pragma mark - AR Frames
 
 std::shared_ptr<VROTexture> VROARSessionARCore::getCameraBackgroundTexture() {
