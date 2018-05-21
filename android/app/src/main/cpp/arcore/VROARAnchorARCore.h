@@ -39,6 +39,11 @@ public:
     }
 
     /*
+     Sync this anchor with the latest data in its underlying ARCore anchor.
+     */
+    void sync();
+
+    /*
      Detach this anchor from the session, so that it no longer receives updates. This will
      also remove the corresponding ARNode from the scene.
 

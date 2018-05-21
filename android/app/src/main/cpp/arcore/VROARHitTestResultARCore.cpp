@@ -47,7 +47,7 @@ std::shared_ptr<VROARAnchor> VROARHitTestResultARCore::createAnchorAtHitLocation
     node->setThreadRestrictionEnabled(true);
 
     // Sync the anchor's transforms and add it to session for updates
-    session->syncAnchorWithARCore(anchor, anchor_arc.get());
+    anchor->sync();
 
     // Adding anchors to the session requires the rendering thread
     VROPlatformDispatchAsyncRenderer([session, anchor] {

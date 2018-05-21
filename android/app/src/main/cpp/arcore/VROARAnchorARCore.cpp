@@ -33,6 +33,12 @@ VROARAnchorARCore::~VROARAnchorARCore() {
     });
 }
 
+void VROARAnchorARCore::sync() {
+    float mtx[16];
+    _anchor->getTransform(mtx);
+    setTransform({mtx});
+}
+
 void VROARAnchorARCore::detach() {
     std::shared_ptr<VROARSessionARCore> session = _session.lock();
     if (!session) {

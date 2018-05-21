@@ -604,7 +604,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
             // (it will be processed with its associated trackable below)
             if (!vAnchor->isManaged()) {
                 passert (anchor->getId() == vAnchor->getAnchorInternal()->getId());
-                syncAnchorWithARCore(vAnchor, anchor.get());
+                vAnchor->sync();
                 updateAnchor(vAnchor);
             }
 
@@ -658,7 +658,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                     std::shared_ptr<VROARPlaneAnchor> vPlane = std::dynamic_pointer_cast<VROARPlaneAnchor>(
                             vAnchor->getTrackable());
                     syncPlaneWithARCore(vPlane, plane);
-                    syncAnchorWithARCore(vAnchor, vAnchor->getAnchorInternal().get());
+                    vAnchor->sync();
                     updateAnchor(vAnchor);
                 } else {
                     pwarn("Anchor processing error: expected to find a plane");
@@ -729,7 +729,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
                     if (vAnchor) {
                         syncImageAnchorWithARCore(imageAnchor, image);
-                        syncAnchorWithARCore(vAnchor, vAnchor->getAnchorInternal().get());
+                        vAnchor->sync();
                         updateAnchor(vAnchor);
                     } else {
                         pwarn("Anchor processing error: expected to find an image anchor");
@@ -804,17 +804,6 @@ std::shared_ptr<VROARAnchorARCore> VROARSessionARCore::getAnchorForTrackable(arc
         return nullptr;
     }
     return it->second;
-}
-
-void VROARSessionARCore::syncAnchorWithARCore(std::shared_ptr<VROARAnchor> anchor,
-                                              arcore::Anchor *anchorAR) {
-    arcore::Pose *pose = _session->createPose();
-    anchorAR->getPose(pose);
-
-    float mtx[16];
-    pose->toMatrix(mtx);
-    anchor->setTransform({ mtx });
-    delete (pose);
 }
 
 void VROARSessionARCore::syncPlaneWithARCore(std::shared_ptr<VROARPlaneAnchor> plane,

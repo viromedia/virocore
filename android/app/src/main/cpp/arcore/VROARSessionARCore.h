@@ -133,11 +133,6 @@ public:
      */
     uint8_t *getRotatedCameraImageData(int size);
 
-    /*
-     Sync a Viro anchor with the latest data from its ARCore counterpart. This method is used
-     for anchors (not trackables).
-     */
-    void syncAnchorWithARCore(std::shared_ptr<VROARAnchor> anchor, arcore::Anchor *anchorAR);
 
 private:
 
