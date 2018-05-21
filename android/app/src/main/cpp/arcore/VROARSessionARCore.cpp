@@ -475,7 +475,7 @@ void VROARSessionARCore::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
     _cloudAnchorProvider->hostCloudAnchor(anchor, onSuccess, onFailure);
 }
 
-void VROARSessionARCore::resolveCloudAnchor(std::string anchorId,
+void VROARSessionARCore::resolveCloudAnchor(std::string cloudAnchorId,
                                             std::function<void(
                                             std::shared_ptr<VROARAnchor> anchor)> onSuccess,
                                             std::function<void(std::string error)> onFailure) {
@@ -483,7 +483,7 @@ void VROARSessionARCore::resolveCloudAnchor(std::string anchorId,
         pwarn("Cloud anchors are disabled, ignoring anchor resolve request");
         return;
     }
-    _cloudAnchorProvider->resolveCloudAnchor(anchorId, onSuccess, onFailure);
+    _cloudAnchorProvider->resolveCloudAnchor(cloudAnchorId, onSuccess, onFailure);
 }
 
 #pragma mark - AR Frames

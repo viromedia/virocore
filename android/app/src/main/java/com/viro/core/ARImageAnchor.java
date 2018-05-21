@@ -16,7 +16,7 @@ public class ARImageAnchor extends ARAnchor {
      * @hide
      */
     ARImageAnchor(String anchorId, String type, float[] position, float[] rotation, float[] scale) {
-        super(anchorId, type, position, rotation, scale);
+        super(anchorId, null, type, position, rotation, scale);
     }
 
 }

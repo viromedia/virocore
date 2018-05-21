@@ -82,7 +82,7 @@ public class ARPlaneAnchor extends ARAnchor {
                   float[] extent,
                   float[] center,
                   float[] boundaryVerticesArray) {
-        super(anchorId, type, position, rotation, scale);
+        super(anchorId, null, type, position, rotation, scale);
         mAlignment = Alignment.valueFromString(alignment);
         mExtent = new Vector(extent);
         mCenter = new Vector(center);

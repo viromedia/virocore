@@ -416,16 +416,6 @@ public class ARScene extends Scene {
         nativeHostCloudAnchor(mNativeRef, anchor.getAnchorId());
     }
 
-    public void resolveCloudAnchor(String anchorId, CloudAnchorResolveListener callback) {
-        if (mCloudAnchorResolveCallbacks.containsKey(anchorId)) {
-            Log.e("Viro", "Ignoring redundant cloud anchor resolve request: we are already processing anchor ["
-                    + anchorId + "]");
-            return;
-        }
-        mCloudAnchorResolveCallbacks.put(anchorId, callback);
-        nativeResolveCloudAnchor(mNativeRef, anchorId);
-    }
-
     // Called by native
     void onHostSuccess(String originalAnchorId, ARAnchor cloudAnchor, int arNodeId) {
         CloudAnchorHostListener callback = mCloudAnchorHostCallbacks.get(originalAnchorId);
@@ -452,6 +442,47 @@ public class ARScene extends Scene {
         }
     }
 
+    public void resolveCloudAnchor(String cloudAnchorId, CloudAnchorResolveListener callback) {
+        if (mCloudAnchorResolveCallbacks.containsKey(cloudAnchorId)) {
+            Log.e("Viro", "Ignoring redundant cloud anchor resolve request: we are already processing anchor ["
+                    + cloudAnchorId + "]");
+            return;
+        }
+        mCloudAnchorResolveCallbacks.put(cloudAnchorId, callback);
+        nativeResolveCloudAnchor(mNativeRef, cloudAnchorId);
+    }
+
+    // Called by native
+    void onResolveSuccess(String cloudAnchorId, ARAnchor cloudAnchor, int arNodeId) {
+        if (!cloudAnchorId.equals(cloudAnchor.getCloudAnchorId())) {
+            throw new IllegalStateException("Resolved cloud anchor ID [" + cloudAnchor.getCloudAnchorId() +
+                    "] does not match requested ID [" + cloudAnchorId + "]!");
+        }
+
+        CloudAnchorResolveListener callback = mCloudAnchorResolveCallbacks.get(cloudAnchorId);
+        if (callback != null) {
+            ARNode node = ARNode.getARNodeWithID(arNodeId);
+            if (node == null) {
+                node = new ARNode(arNodeId);
+            }
+            callback.onSuccess(cloudAnchor, node);
+        } else {
+            Log.e("Viro", "Cloud anchor resolve successful, but no callback found to invoke [anchor ID: "
+                    + cloudAnchorId + "]");
+        }
+    }
+
+    // Called by native
+    void onResolveFailure(String originalAnchorId, String error) {
+        CloudAnchorResolveListener callback = mCloudAnchorResolveCallbacks.get(originalAnchorId);
+        if (callback != null) {
+            callback.onFailure(error);
+        } else {
+            Log.e("Viro", "Cloud anchor resolve failed, and no callback found to invoke [anchor ID: "
+                    + originalAnchorId + "]");
+        }
+    }
+
     private native long nativeCreateARSceneController();
     private native long nativeCreateARSceneControllerDeclarative();
     private native long nativeCreateARSceneDelegate(long sceneControllerRef);
@@ -470,7 +501,7 @@ public class ARScene extends Scene {
     private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
     private native void nativeRemoveARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
     private native void nativeHostCloudAnchor(long sceneRef, String anchorId);
-    private native void nativeResolveCloudAnchor(long sceneRef, String anchorId);
+    private native void nativeResolveCloudAnchor(long sceneRef, String cloudAnchorId);
     private native float nativeGetAmbientLightIntensity(long sceneControllerRef);
     private native float[] nativeGetAmbientLightColor(long sceneControllerRef);
 

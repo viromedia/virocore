@@ -63,7 +63,7 @@ public:
     void hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
                          std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
                          std::function<void(std::string error)> onFailure);
-    void resolveCloudAnchor(std::string anchorId,
+    void resolveCloudAnchor(std::string cloudAnchorId,
                             std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
                             std::function<void(std::string error)> onFailure);
 

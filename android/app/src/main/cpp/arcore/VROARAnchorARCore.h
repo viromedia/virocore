@@ -51,6 +51,13 @@ public:
      */
     void detach();
 
+    /*
+     Get the cloud identifier for this anchor. This is only valid for anchors that have been
+     hosted to the cloud or resolved from the cloud.
+     */
+    std::string getCloudAnchorId() const;
+    void loadCloudAnchorId();
+
     std::shared_ptr<VROARAnchor> getTrackable();
     std::shared_ptr<arcore::Anchor> getAnchorInternal();
 
@@ -59,6 +66,7 @@ private:
     std::shared_ptr<arcore::Anchor> _anchor;
     std::shared_ptr<VROARAnchor> _trackable;
     std::weak_ptr<VROARSessionARCore> _session;
+    std::string _cloudAnchorId;
 
 };
 

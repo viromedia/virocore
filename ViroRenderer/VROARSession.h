@@ -196,11 +196,10 @@ public:
                                  std::function<void(std::string error)> onFailure) = 0;
     
     /*
-     Resolve an anchor with the given ID from the cloud anchor. This is an
-     asynchronous process. If found, the anchor will be returned in the given
-     callback.
+     Resolve an anchor with the given cloud identifier. This is an asynchronous process. If found,
+     the anchor will be returned in the given callback.
      */
-    virtual void resolveCloudAnchor(std::string anchorId,
+    virtual void resolveCloudAnchor(std::string cloudAnchorId,
                                     std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
                                     std::function<void(std::string error)> onFailure) = 0;
     

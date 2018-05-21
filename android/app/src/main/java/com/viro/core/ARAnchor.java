@@ -63,25 +63,26 @@ public class ARAnchor {
 
     // All ARAnchors have these props
     private String mAnchorId;
-
     private Type mType;
-
     private Vector mPosition; // world transform of the anchor
-
     private Vector mRotation; // in radians
-
     private Vector mScale;
+
+    // Cloud anchor properties
+    private String mCloudAnchorId;
 
     /**
      * Invoked from JNI
      * @hide
      */
-    ARAnchor(String anchorId, String type, float[] position, float[] rotation, float[] scale) {
+    ARAnchor(String anchorId, String cloudAnchorId, String type,
+             float[] position, float[] rotation, float[] scale) {
         mAnchorId = anchorId;
         mType = Type.valueFromString(type);
         mPosition = new Vector(position);
         mRotation = new Vector(rotation);
         mScale = new Vector(scale);
+        mCloudAnchorId = cloudAnchorId;
     }
 
     @Override
@@ -101,6 +102,18 @@ public class ARAnchor {
     public String getAnchorId() {
         return mAnchorId;
     }
+
+    /**
+     * Return the cloud identifier of this anchor. This identifier is only present if this anchor
+     * is hosted on the cloud or was resolved from the cloud. If this anchor is not a cloud anchor,
+     * this method will return null.
+     * <p>
+     * You use the cloud anchor ID to resolve anchors that other devices have hosted. See
+     * {@link ARScene#resolveCloudAnchor(String, ARScene.CloudAnchorResolveListener)}.
+     * <p>
+     * @return The cloud anchor ID of this anchor, or null if this anchor is not in the cloud.
+     */
+    public String getCloudAnchorId() { return mCloudAnchorId; }
 
     /**
      * Return the {@link Type} of this ARAnchor.

@@ -39,6 +39,17 @@ void VROARAnchorARCore::sync() {
     setTransform({mtx});
 }
 
+std::string VROARAnchorARCore::getCloudAnchorId() const {
+    return _cloudAnchorId;
+}
+
+void VROARAnchorARCore::loadCloudAnchorId() {
+    char *cloudAnchorId;
+    _anchor->acquireCloudAnchorId(&cloudAnchorId);
+    _cloudAnchorId = std::string(cloudAnchorId);
+    // TODO Release the generated cloudAnchorId by exposing ArString_release()
+}
+
 void VROARAnchorARCore::detach() {
     std::shared_ptr<VROARSessionARCore> session = _session.lock();
     if (!session) {

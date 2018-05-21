@@ -29,7 +29,9 @@ public:
 
 class VROCloudAnchorResolveTask {
 public:
-    std::function<void(std::string anchorId)> onSuccess;
+    std::string cloudAnchorId;
+    std::shared_ptr<VROARAnchorARCore> cloudAnchor;
+    std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess;
     std::function<void(std::string error)> onFailure;
 };
 
@@ -57,7 +59,7 @@ public:
      asynchronous process. If found, the anchor will be returned in the given
      callback.
      */
-    void resolveCloudAnchor(std::string anchorId,
+    void resolveCloudAnchor(std::string cloudAnchorId,
                             std::function<void(std::shared_ptr<VROARAnchor> anchor)> onSuccess,
                             std::function<void(std::string error)> onFailure);
 
@@ -79,10 +81,21 @@ private:
     std::vector<VROCloudAnchorResolveTask> _queuedResolving;
 
     /*
+     Retrieve an error string from an ARCore error code.
+     */
+    std::string getError(arcore::CloudAnchorState state);
+
+    /*
      Handle successful / failed hosting.
      */
     void onHostTaskSuccessful(VROCloudAnchorHostTask &task);
     void onHostTaskFailed(VROCloudAnchorHostTask &task, std::string error);
+
+    /*
+     Handle successful / failed resolving.
+     */
+    void onResolveTaskSuccessful(VROCloudAnchorResolveTask &task);
+    void onResolveTaskFailed(VROCloudAnchorResolveTask &task, std::string error);
 
 };
 

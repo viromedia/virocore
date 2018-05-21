@@ -349,7 +349,8 @@ public class ViroActivity extends AppCompatActivity {
         */
         //nodes.addAll(testImperativePlane(scene));
         //testARHitTest(scene, 0, 5);
-        testHostCloudAnchors(scene, 0, 2);
+        //testHostCloudAnchors(scene, 0, 2);
+        testResolveCloudAnchor(scene, "ua-6ba00ee523fae4219f42e4da013cd256");
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
@@ -957,7 +958,7 @@ public class ViroActivity extends AppCompatActivity {
                                     scene.hostCloudAnchor(node.getAnchor(), new ARScene.CloudAnchorHostListener() {
                                         @Override
                                         public void onSuccess(ARAnchor anchor, ARNode arNode) {
-                                            Log.i("Viro", "Host successful, adding a big star to the right");
+                                            Log.i("Viro", "Host successful [Cloud ID: " + anchor.getCloudAnchorId() + "]: adding a big star to the right");
                                             arNode.addChildNode(loadObjectNode(1, 0.2f, new Vector(0.5f, 0, 0)));
                                         }
 
@@ -974,6 +975,28 @@ public class ViroActivity extends AppCompatActivity {
                                 testHostCloudAnchors(scene, count + 1, total);
                             }
                         });
+            }
+        }, 4000);
+    }
+
+    private void testResolveCloudAnchor(final ARScene scene, final String cloudAnchorId) {
+        final ViroViewARCore view = (ViroViewARCore) mViroView;
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scene.resolveCloudAnchor(cloudAnchorId, new ARScene.CloudAnchorResolveListener() {
+                    @Override
+                    public void onSuccess(ARAnchor anchor, ARNode arNode) {
+                        Log.i("Viro", "Resolve successful [Cloud ID: " + anchor.getCloudAnchorId() + "]: adding star");
+                        arNode.addChildNode(loadObjectNode(1, 0.2f, new Vector(0, 0, 0)));
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        Log.i("Viro", "Resolve failure: " + error);
+                    }
+                });
             }
         }, 4000);
     }

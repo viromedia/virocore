@@ -20,8 +20,14 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
     VRO_ENV env = VROPlatformGetJNIEnv();
     std::shared_ptr<VROARAnchorARCore> vAnchor = std::dynamic_pointer_cast<VROARAnchorARCore>(anchor);
 
-    const char *achorIdArr = anchor->getId().c_str();
-    VRO_STRING anchorId = VRO_NEW_STRING(achorIdArr);
+    const char *anchorId_c = anchor->getId().c_str();
+    VRO_STRING anchorId = VRO_NEW_STRING(anchorId_c);
+
+    VRO_STRING cloudAnchorId = NULL;
+    std::string cloudAnchorId_s = vAnchor->getCloudAnchorId();
+    if (!cloudAnchorId_s.empty()) {
+        cloudAnchorId = VRO_NEW_STRING(cloudAnchorId_s.c_str());
+    }
 
     VROMatrix4f transform = anchor->getTransform();
     VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
@@ -75,8 +81,9 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
      */
     const char *typeArr = "anchor";
     VRO_STRING type = VRO_NEW_STRING(typeArr);
-    return VROPlatformConstructHostObject("com/viro/core/ARAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
-                                          anchorId, type, positionArray, rotationArray,
+    return VROPlatformConstructHostObject("com/viro/core/ARAnchor",
+                                          "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
+                                          anchorId, cloudAnchorId, type, positionArray, rotationArray,
                                           scaleArray);
 }
 
