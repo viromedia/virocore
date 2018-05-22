@@ -3,28 +3,41 @@ pipeline {
   stages {
     stage('initial_setup') {
       steps {
-          sh '''cd android
+        sh '''cd android
           fastlane build_start_notification
           fastlane clean_old_artifacts
           fastlane save_git_log'''
       }
     }
     stage('viroreact_aar') {
-      steps {
-        sh '''cd android
+      parallel {
+        stage('viroreact_aar') {
+          steps {
+            sh '''cd android
         fastlane virorenderer_viroreact_aar'''
+          }
+        }
+        stage('virokit_framework (ios)') {
+          steps {
+            sh '''cd ios
+        fastlane virorender_viroreact_virokit'''
+          }
+        }
       }
     }
     stage('virocore_aar') {
-      steps {
-        sh '''cd android
+      parallel {
+        stage('virocore_aar') {
+          steps {
+            sh '''cd android
         fastlane virorenderer_virocore_aar'''
-      }
-     }
-    stage('virokit_framework (ios)') {
-      steps {
-        sh '''cd ios
-        fastlane virorender_viroreact_virokit'''
+          }
+        }
+        stage('start react-viro') {
+          steps {
+            build(job: 'react-viro', propagate: true, wait: true)
+          }
+        }
       }
     }
     stage('releasetest') {
@@ -37,11 +50,6 @@ fastlane renderer_releasetest'''
       steps {
         sh '''cd android
 fastlane renderer_memoryleaktest'''
-      }
-    }
-    stage('start react-viro') {
-      steps {
-        build(job: 'react-viro/master', propagate: true, wait: true)
       }
     }
   }
