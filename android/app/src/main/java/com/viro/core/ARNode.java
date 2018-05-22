@@ -98,7 +98,8 @@ public class ARNode extends Node {
     @Override
     public void removeFromParentNode() {
         // ARNodes cannot be manually removed
-        throw new IllegalAccessError("Viro: Invalid attempt to remove an ARNode from the Scene");
+        // TODO Apparently ViroReact does this all the time. Figure it out.
+        //throw new IllegalAccessError("Viro: Invalid attempt to remove an ARNode from the Scene");
     }
 
     /**

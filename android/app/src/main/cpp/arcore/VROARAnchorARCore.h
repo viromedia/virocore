@@ -21,7 +21,7 @@ class VROARSessionARCore;
  these are known as "managed" anchors. Managed anchors own the actual internal (ARCore) anchor,
  and maintain a link to the corresponding trackable (which is *also* a subclass of VRARAnchor).
  */
-class VROARAnchorARCore : public VROARAnchor, public std::enable_shared_from_this<VROARAnchorARCore> {
+class VROARAnchorARCore : public VROARAnchor {
 public:
     
     VROARAnchorARCore(std::string key,
@@ -36,6 +36,17 @@ public:
      */
     bool isManaged() const {
         return _trackable != nullptr;
+    }
+
+    /*
+     ARCore anchors use a different anchor for the actual trackable.
+     */
+    std::shared_ptr<VROARAnchor> getAnchorForTrackable() {
+        if (_trackable) {
+            return _trackable;
+        } else {
+            return shared_from_this();
+        }
     }
 
     /*
