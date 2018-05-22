@@ -111,7 +111,6 @@ public class ARNode extends Node {
      */
     public void detach() {
         if (!nativeIsAnchorManaged(mNativeRef)) {
-            removeARNodeWithID(nativeGetUniqueIdentifier(mNativeRef));
             nativeDetach(mNativeRef);
         } else {
             Log.w("Viro", "Ignoring invalid request to detach a managed ARNode");
