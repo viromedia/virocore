@@ -311,18 +311,39 @@ VRO_METHOD(VRO_REF(VROARNode), nativeCreateAnchoredNode)(VRO_ARGS
 
     std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(
             VRO_REF_GET(VROARSceneController, sceneController_j)->getScene());
-    std::shared_ptr<VROARSessionARCore> session = std::dynamic_pointer_cast<VROARSessionARCore>(scene->getARSession());
-    if (!session) {
-        return 0;
-    }
 
-    arcore::Pose *pose = session->getSessionInternal()->createPose(posX, posY, posZ, quatX, quatY, quatZ, quatW);
+    std::shared_ptr<VROARNode> node = std::make_shared<VROARNode>();
+
+    // Set the position and rotation of the ARNode so this data can be accessed
+    // immediately from the application (UI) thread. This node is added to the root
+    // node so we can compute its transforms with identity parent matrices.
+    node->setPositionAtomic({ posX, posY, posZ });
+    node->setRotationAtomic({ quatX, quatY, quatZ, quatW });
+    node->computeTransformsAtomic({}, {});
+
+    // Acquire the anchor from the session. If tracking is limited then this can
+    // fail, in which case we return null.
+    std::shared_ptr<VROARSessionARCore> session = std::dynamic_pointer_cast<VROARSessionARCore>(scene->getARSession());
+    arcore::Pose *pose = session->getSessionInternal()->createPose(posX, posY, posZ,
+                                                                   quatX, quatY, quatZ, quatW);
     std::shared_ptr<arcore::Anchor> anchor_arc = std::shared_ptr<arcore::Anchor>(
             session->getSessionInternal()->acquireNewAnchor(pose));
     delete (pose);
 
-    std::shared_ptr<VROARNode> node = session->createAnchoredNode(anchor_arc);
-    return VRO_REF_NEW(VROARNode, node);
+    if (anchor_arc) {
+        std::weak_ptr<VROARSessionARCore> session_w = session;
+        VROPlatformDispatchAsyncRenderer([node, anchor_arc, session_w] {
+            std::shared_ptr<VROARSessionARCore> session_s = session_w.lock();
+            if (!session_s) {
+                return;
+            }
+            session_s->addManualAnchor(anchor_arc, node);
+        });
+        return VRO_REF_NEW(VROARNode, node);
+    } else {
+        pinfo("Failed to acquire anchor from world position: no anchored node will be created");
+        return 0;
+    }
 }
 
 VRO_METHOD(void, nativeHostCloudAnchor)(VRO_ARGS

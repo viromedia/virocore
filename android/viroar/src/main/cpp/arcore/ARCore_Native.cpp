@@ -93,6 +93,9 @@ namespace arcore {
 
 #pragma mark - Anchor
 
+    AnchorNative::AnchorNative(ArAnchor *anchor, ArSession *session) : _anchor(anchor), _session(session) {
+    }
+
     AnchorNative::~AnchorNative() {
         ArAnchor_release(_anchor);
     }
@@ -209,8 +212,12 @@ namespace arcore {
 
     Anchor *PlaneNative::acquireAnchor(Pose *pose) {
         ArAnchor *anchor;
-        ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *) pose)->_pose, &anchor);
-        return new AnchorNative(anchor, _session);
+        ArStatus status = ArTrackable_acquireNewAnchor(_session, _trackable, ((PoseNative *) pose)->_pose, &anchor);
+        if (status == AR_SUCCESS) {
+            return new AnchorNative(anchor, _session);
+        } else {
+            return nullptr;
+        };
     }
 
     TrackingState PlaneNative::getTrackingState() {
@@ -468,7 +475,6 @@ namespace arcore {
     void FrameNative::getViewMatrix(float *outMatrix) {
         ArCamera *camera;
         ArFrame_acquireCamera(_session, _frame, &camera);
-        float matrix[16];
         ArCamera_getViewMatrix(_session, camera, outMatrix);
         ArCamera_release(camera);
     }
@@ -637,8 +643,12 @@ namespace arcore {
 
     Anchor *HitResultNative::acquireAnchor() {
         ArAnchor *anchor;
-        ArHitResult_acquireNewAnchor(_session, _hitResult, &anchor);
-        return new AnchorNative(anchor, _session);
+        ArStatus status = ArHitResult_acquireNewAnchor(_session, _hitResult, &anchor);
+        if (status == AR_SUCCESS) {
+            return new AnchorNative(anchor, _session);
+        } else {
+            return nullptr;
+        };
     }
 
 #pragma mark - Session
@@ -809,8 +819,12 @@ namespace arcore {
 
     Anchor *SessionNative::acquireNewAnchor(const Pose *pose) {
         ArAnchor *anchor;
-        ArSession_acquireNewAnchor(_session, ((PoseNative *)pose)->_pose, &anchor);
-        return new AnchorNative(anchor, _session);
+        ArStatus status = ArSession_acquireNewAnchor(_session, ((PoseNative *)pose)->_pose, &anchor);
+        if (status == AR_SUCCESS) {
+            return new AnchorNative(anchor, _session);
+        } else {
+            return nullptr;
+        };
     }
 
     Anchor *SessionNative::hostAndAcquireNewCloudAnchor(const Anchor *anchor) {

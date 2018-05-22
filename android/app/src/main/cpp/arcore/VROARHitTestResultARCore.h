@@ -14,7 +14,7 @@
 
 class VROARSessionARCore;
 
-class VROARHitTestResultARCore : public VROARHitTestResult {
+class VROARHitTestResultARCore : public VROARHitTestResult, public std::enable_shared_from_this<VROARHitTestResultARCore> {
 public:
 
     VROARHitTestResultARCore(VROARHitTestResultType type,

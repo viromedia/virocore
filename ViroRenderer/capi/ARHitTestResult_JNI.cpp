@@ -30,7 +30,11 @@ VRO_METHOD(VRO_REF(VROARNode), nativeCreateAnchoredNode)(VRO_ARGS
     passert (hit->getAnchor() == nullptr);
 
     std::shared_ptr<VROARNode> node = hit->createAnchoredNodeAtHitLocation();
-    return VRO_REF_NEW(VROARNode, node);
+    if (node) {
+        return VRO_REF_NEW(VROARNode, node);
+    } else {
+        return 0;
+    }
 }
 
 VRO_METHOD(void, nativeDestroyARHitTestResult)(VRO_ARGS

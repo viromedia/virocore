@@ -60,7 +60,7 @@ namespace arcore {
 
     class AnchorNative : public Anchor {
     public:
-        AnchorNative(ArAnchor *anchor, ArSession *session) : _anchor(anchor), _session(session) {}
+        AnchorNative(ArAnchor *anchor, ArSession *session);
         virtual ~AnchorNative();
         virtual uint64_t getHashCode();
         virtual uint64_t getId();

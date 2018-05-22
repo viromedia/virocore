@@ -465,33 +465,23 @@ void VROARSessionARCore::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     }
 }
 
-std::shared_ptr<VROARNode> VROARSessionARCore::createAnchoredNode(std::shared_ptr<arcore::Anchor> anchor_arc) {
+void VROARSessionARCore::addManualAnchor(std::shared_ptr<arcore::Anchor> anchor_arc,
+                                         std::shared_ptr<VROARNode> node) {
     std::shared_ptr<VROARSessionARCore> session = shared_from_this();
-    std::shared_ptr<VROARNode> node = std::make_shared<VROARNode>();
 
     // Create a Viro|ARCore anchor
     std::string key = VROStringUtil::toString64(anchor_arc->getId());
     std::shared_ptr<VROARAnchorARCore> anchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
+
+    // Associate the node and anchor
     node->setAnchor(anchor);
-
-    // Set the node on the anchor. Disable thread restriction as we're on the UI thread and this
-    // sets the initial rotation, scale, and position of the node.
-    node->setThreadRestrictionEnabled(false);
-    anchor->setARNode(node);
-    node->setThreadRestrictionEnabled(true);
-
-    // Sync the anchor's transforms and add it to session for updates
     anchor->sync();
 
-    // Adding anchors to the session requires the rendering thread
-    std::weak_ptr<VROARSession> session_w = session;
-    VROPlatformDispatchAsyncRenderer([session_w, anchor] {
-        std::shared_ptr<VROARSession> session_s = session_w.lock();
-        if (session_s) {
-            session_s->addAnchor(anchor);
-        }
-    });
-    return node;
+    // Set the node *after* the sync so that the anchor has the latest transforms to pass to the node
+    anchor->setARNode(node);
+
+    // Add the anchor to the session so all updates are propagated to Viro
+    addAnchor(anchor);
 }
 
 void VROARSessionARCore::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
@@ -726,8 +716,14 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                 plane->getCenterPose(pose);
                 std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(plane->acquireAnchor(pose));
 
-                std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vPlane, session);
-                addAnchor(vAnchor);
+                // If the anchor could not be created, just continue. We'll try again when this trackable
+                // is update next frame
+                if (anchor) {
+                    std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vPlane, session);
+                    addAnchor(vAnchor);
+                } else {
+                    pinfo("Failed to create anchor for trackable plane: will try again later");
+                }
                 delete (pose);
             }
 
@@ -800,10 +796,14 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                             // Create a new anchor to correspond with the found image
                             arcore::Pose *pose = _session->createPose();
                             image->getCenterPose(pose);
-                            std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(image->acquireAnchor(pose));
 
-                            std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vImage, session);
-                            addAnchor(vAnchor);
+                            std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(image->acquireAnchor(pose));
+                            if (anchor) {
+                                std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vImage, session);
+                                addAnchor(vAnchor);
+                            } else {
+                                pinfo("Failed to create anchor for trackable image target: will try again later");
+                            }
                             delete (pose);
                         }
                     }

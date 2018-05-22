@@ -29,7 +29,9 @@ VROARAnchorARCore::~VROARAnchorARCore() {
     // result).
     std::shared_ptr<arcore::Anchor> anchor = _anchor;
     VROPlatformDispatchAsyncRenderer([anchor] {
-        anchor->detach();
+        if (anchor) {
+            anchor->detach();
+        }
     });
 }
 
