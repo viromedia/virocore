@@ -45,7 +45,7 @@ platform :android do
 
   lane :clean_old_artifacts do
     begin
-      sh("rm -rf %{BUILD_INTERMEDIATES}*")
+      sh("rm -rf #{BUILD_INTERMEDIATES}*")
       sh("mkdir -p #{BUILD_INTERMEDIATES}")
       sh("mkdir -p #{BUILD_INTERMEDIATES}s3_artifacts")
     rescue => exception
