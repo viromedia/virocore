@@ -350,9 +350,9 @@ public class ViroActivity extends AppCompatActivity {
         */
         //nodes.addAll(testImperativePlane(scene));
         //testARHitTest(scene, 0, 5);
-        testAddArbitraryAnchors(scene, 0, 5);
+        //testAddArbitraryAnchors(scene, 0, 5);
         //testHostCloudAnchors(scene, 0, 2);
-        //testResolveCloudAnchor(scene, "ua-6ba00ee523fae4219f42e4da013cd256");
+        testResolveCloudAnchor(scene, "ua-ceb1cbf2825bf3545b4ef91650fbeff2");
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
@@ -1029,9 +1029,16 @@ public class ViroActivity extends AppCompatActivity {
             public void run() {
                 scene.resolveCloudAnchor(cloudAnchorId, new ARScene.CloudAnchorResolveListener() {
                     @Override
-                    public void onSuccess(ARAnchor anchor, ARNode arNode) {
+                    public void onSuccess(final ARAnchor anchor, final ARNode arNode) {
                         Log.i("Viro", "Resolve successful [Cloud ID: " + anchor.getCloudAnchorId() + "]: adding star");
-                        arNode.addChildNode(loadObjectNode(1, 0.2f, new Vector(0, 0, 0)));
+                        arNode.addChildNode(loadObjectNode(1, 0.1f, new Vector(0, 0, 0)));
+
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {
+                                Log.i("Viro", "Detaching the resolved cloud anchor");
+                                arNode.detach();
+                            }
+                        }, 16000);
                     }
 
                     @Override
