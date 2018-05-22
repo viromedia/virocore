@@ -43,9 +43,10 @@ platform :ios do
      Dir.chdir("../") do
        # clean
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release clean | xcpretty -c")
-       # build scheme for device architecture
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos11.3 | xcpretty -c")
+       # build scheme for simulator
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator11.3 -arch x86_64| xcpretty -c")
+       # build scheme for devices
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos11.3 | xcpretty -c")
      end
     rescue => exception
            on_error(exception)
