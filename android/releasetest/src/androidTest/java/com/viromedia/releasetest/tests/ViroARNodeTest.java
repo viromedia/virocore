@@ -2,6 +2,7 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.viro.core.ARAnchor;
 import com.viro.core.ARNode;
@@ -46,18 +47,19 @@ public class ViroARNodeTest extends ViroBaseTest {
 
         final Bitmap bobaBitmap = getBitmapFromAssets(mActivity, "boba.png");
         final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
+
         final Material material = new Material();
         material.setDiffuseTexture(bobaTexture);
         material.setLightingModel(Material.LightingModel.BLINN);
+
         Box box = new Box(1, 1, 1);
         box.setMaterials(Arrays.asList(material));
         mBoxNode = new Node();
         mBoxNode.setGeometry(box);
         mBoxNode.setPosition(new Vector(0, 0, -4));
-        //mScene.getRootNode().addChildNode(mBoxNode);
 
         mTestText = new Text(mViroView.getViroContext(),
-                "No input yet.", "Roboto", 12,
+                "No input yet", "Roboto", 12,
                 Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 
@@ -79,7 +81,8 @@ public class ViroARNodeTest extends ViroBaseTest {
 
             @Override
             public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
-                if(mAnchorFoundTestStarted) {
+                Log.i("Viro", "Anchor found for node " + arNode.getNativeRef());
+                if (mAnchorFoundTestStarted) {
                     Text text  = new Text(mViroView.getViroContext(),
                             "Text attached to ARNODE!", "Roboto", 12,
                             Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
@@ -91,7 +94,8 @@ public class ViroARNodeTest extends ViroBaseTest {
                     Material material = new Material();
                     material.setDiffuseColor(Color.RED);
                     material.setLightingModel(Material.LightingModel.BLINN);
-                    if(anchor instanceof ARPlaneAnchor) {
+
+                    if (anchor instanceof ARPlaneAnchor) {
                         ARPlaneAnchor arPlaneAnchor  = (ARPlaneAnchor)anchor;
                         Surface surface = new Surface(arPlaneAnchor.getExtent().x, arPlaneAnchor.getExtent().z);
                         surface.setMaterials(Arrays.asList(material));
@@ -102,16 +106,23 @@ public class ViroARNodeTest extends ViroBaseTest {
                         surfaceNode.setRotation(new Vector(-Math.toRadians(90.0), 0, 0));
                         arNode.addChildNode(surfaceNode);
                     }
+
                     arNode.addChildNode(textNode);
                 }
             }
 
             @Override
             public void onAnchorUpdated(ARAnchor anchor, ARNode arNode) {
-                if(mAnchorUpdatedTestStarted) {
+                Log.i("Viro", "Updating anchor for node " + arNode.getNativeRef());
+
+                if (mAnchorUpdatedTestStarted) {
+                    Log.i("Viro", "Inside If block");
                     List<Node> childNodes = arNode.getChildNodes();
+                    Log.i("Viro", "Number of child nodes " + arNode.getChildNodes().size());
+
                     for (Node childNode : childNodes) {
-                        if(childNode.getGeometry() instanceof Text) {
+                        if (childNode.getGeometry() instanceof Text) {
+                            Log.i("Viro", "Foudn text node");
                             Text text = (Text) childNode.getGeometry();
                             String anchorString = "";
 
@@ -123,7 +134,9 @@ public class ViroARNodeTest extends ViroBaseTest {
                             text.setText(anchorString);
                         }
 
-                        if(childNode.getGeometry() instanceof Surface) {
+                        if (childNode.getGeometry() instanceof Surface) {
+                            Log.i("Viro", "Found surface");
+
                             ARPlaneAnchor planeAnchor = (ARPlaneAnchor)anchor;
                             Surface surface = (Surface)childNode.getGeometry();
                             surface.setWidth(planeAnchor.getExtent().x);
@@ -150,6 +163,17 @@ public class ViroARNodeTest extends ViroBaseTest {
         });
     }
 
+    @Override
+    void resetTestState() {
+        /*
+         This test must be run in order, because it relies on an anchor being found, then updates
+         the anchor, etc.
+         */
+        mAnchorFoundTestStarted = false;
+        mAnchorUpdatedTestStarted = false;
+        mNodePauseUpdatesTestStarted = false;
+    }
+
     @Test
     public void testARScene() {
         runUITest(() -> testOnAnchorFound());
@@ -161,21 +185,17 @@ public class ViroARNodeTest extends ViroBaseTest {
 
     private void testOnAnchorFound() {
         mAnchorFoundTestStarted = true;
-        assertPass("Anchors with ARNodes are found with text displaying above them. Red Spheres display for anchor points and red squares for planes.", ()-> {
-            mAnchorFoundTestStarted = false;
-        });
+        assertPass("Red planes are created where planar surfaces are found, with anchored text");
     }
 
     private void testOnAnchorUpdated() {
         mAnchorUpdatedTestStarted = true;
-        assertPass("Anchors are updated with anchor info showing up in text.", ()-> {
-            mAnchorUpdatedTestStarted = false;
-        });
+        assertPass("Anchors are updated with anchor information showing up in text");
     }
 
     private void testOnAnchorRemoved() {
         mAnchorUpdatedTestStarted = true;
-        assertPass("Move around till anchor removed message appears where init message appeared. Plane should disappear.");
+        assertPass("Move around until anchor removed message appears where init message appeared. Plane should disappear.");
     }
 
     private void testPauseUpdates() {

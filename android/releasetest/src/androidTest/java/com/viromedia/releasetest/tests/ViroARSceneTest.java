@@ -125,12 +125,14 @@ public class ViroARSceneTest extends ViroBaseTest {
     }
 
     private void testPointCloudScale() {
-        final List<Float> scaleSizes= Arrays.asList(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
+        mARScene.displayPointCloud(true);
+        final List<Float> scaleSizes = Arrays.asList(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
         final Iterator<Float> itr = Iterables.cycle(scaleSizes).iterator();
-       mMutableTestMethod = ()->{
+
+        mMutableTestMethod = () -> {
             Float scaleNum = itr.next();
             mARScene.setPointCloudSurfaceScale(new Vector(scaleNum, scaleNum, scaleNum));
-       };
+        };
         assertPass("Point cloud scale should change over time.", () -> {
             mARScene.resetPointCloudSurface();
         });
@@ -142,7 +144,6 @@ public class ViroARSceneTest extends ViroBaseTest {
     }
 
     private void testPointCloudUpdateCallback() {
-
         final Text pointCloudText = new Text(mViroView.getViroContext(),
                 "Waiting for cloud updates.", "Roboto", 12,
                 Color.WHITE, 4f, 4f, Text.HorizontalAlignment.LEFT,
@@ -177,6 +178,7 @@ public class ViroARSceneTest extends ViroBaseTest {
     }
 
     private void testPointCloudSurface() {
+        mARScene.displayPointCloud(true);
         Surface surfaceOne = new Surface(.1f, .1f);
         Surface surfaceTwo = new Surface(.1f, .1f);
 
@@ -202,6 +204,7 @@ public class ViroARSceneTest extends ViroBaseTest {
     }
 
     private void setPointCloudMaxPoints() {
+        mARScene.displayPointCloud(true);
         final List<Integer> maxPoints = Arrays.asList(1, 5, 200);
         final Iterator<Integer> itr = Iterables.cycle(maxPoints).iterator();
 
@@ -214,7 +217,10 @@ public class ViroARSceneTest extends ViroBaseTest {
     }
 
     private void testDisplayPointCloudOff() {
-        mARScene.displayPointCloud(false);
-        assertPass("Display point cloud is OFF.");
+        mARScene.displayPointCloud(true);
+        mMutableTestMethod = ()->{
+            mARScene.displayPointCloud(false);
+        };
+        assertPass("Display point cloud turns OFF");
     }
 }

@@ -140,24 +140,32 @@ public abstract class ViroBaseTest {
             addThumbButtonsOnGlass();
         }
 
-        final float textX = 0.58f;
-        final float textZ = -3.3f;
+        int textSize = 18;
+        float textX = 0.58f;
+        float textY = 2.82f;
+        float textZ = -3.3f;
+
+        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            textX = 1.35f;
+            textY = .92f;
+            textSize = 16;
+        }
 
         // Add class name
         mTestClassNameNode = new Node();
         final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
-                "Roboto", 18, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", textSize, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        mTestClassNameNode.setPosition(new Vector(textX, 2.82f, textZ));
+        mTestClassNameNode.setPosition(new Vector(textX, textY, textZ));
         mTestClassNameNode.setGeometry(testClassNameText);
         rootNode.addChildNode(mTestClassNameNode);
 
         mTestMethodNameNode = new Node();
         final Text testMethodNameText = new Text(mViroView.getViroContext(),
                 "Loading...",
-                "Roboto", 16, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", textSize - 2, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        mTestMethodNameNode.setPosition(new Vector(textX, 2.57f, textZ));
+        mTestMethodNameNode.setPosition(new Vector(textX, textY - 0.25f, textZ));
         mTestMethodNameNode.setGeometry(testMethodNameText);
         rootNode.addChildNode(mTestMethodNameNode);
 
@@ -405,6 +413,7 @@ public abstract class ViroBaseTest {
         Runnable test = new Runnable() {
             @Override
             public void run() {
+                mMutableTestMethod = null;
                 runnable.run();
                 finishedTest.set(true);
             }

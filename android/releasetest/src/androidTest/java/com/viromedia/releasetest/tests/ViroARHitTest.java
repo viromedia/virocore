@@ -32,8 +32,6 @@ public class ViroARHitTest extends ViroBaseTest {
         AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
         mScene.getRootNode().addLight(light);
         mViewARCore = (ViroViewARCore)mViroView;
-
-
     }
 
     @Test
@@ -66,7 +64,7 @@ public class ViroARHitTest extends ViroBaseTest {
             });
         };
 
-        assertPass("Should see rendered results from AR HIT with ray (green balls).");
+        assertPass("Should see periodic rendered results from AR hit tests using the forward ray (green balls)");
     }
 
     private void testARCameraHitTest() {
@@ -87,7 +85,7 @@ public class ViroARHitTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Should see rendered results from Camera AR HIT Test in Red.", ()->{
+        assertPass("Should see *continuous* rendered results from Camera AR HIT Test in red", ()->{
             mViewARCore.setCameraARHitTestListener(null);
         });
 
@@ -111,7 +109,7 @@ public class ViroARHitTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Should see rendered results from AR HIT with position.", ()->{
+        assertPass("Should see a SINGLE rendered result (green ball) from an AR hit test fired toward (0, 0, -3)", ()->{
 
         });
     }
@@ -144,7 +142,7 @@ public class ViroARHitTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Should see rendered results from touching screen.");
+        assertPass("Tap to see a blue ball appear from firing a ray toward tapped location");
 
     }
 
