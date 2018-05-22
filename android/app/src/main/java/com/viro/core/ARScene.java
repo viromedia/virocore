@@ -255,6 +255,57 @@ public class ARScene extends Scene {
     }
 
     /**
+     * Create an {@link ARNode} that will be anchored to the given real-world position.
+     * Attaching objects to an anchored node is recommended in AR, because the world coordinate system
+     * used by the underlying tracking technology may not be stable. By using an {@link ARNode}, you
+     * ensure that said node is continually tracked, maintaining its position in the real world.
+     * Normal {@link Node} objects can be added as children to the ARNode, and they too will maintain
+     * their position relative to the real-world.
+     * <p>
+     * Note that the returned {@link ARNode} is automatically added to the Scene, and will be
+     * continually updated to stay in the sync with its underlying anchor as the anchor's
+     * properties, orientation, or position change.
+     * <p>
+     * When finished with this ARNode, you must call {@link ARNode#detach()} to remove it from
+     * the system. If you do not detach the ARNode, it will continue to receive tracking updates
+     * from the AR subsystem, adversely impacting performance.
+     * <p>
+     * @return New {@link ARNode} anchored to the given position.
+     */
+    public ARNode createAnchoredNode(Vector position) {
+        return createAnchoredNode(position, Quaternion.makeIdentity());
+    }
+
+    /**
+     * Create an {@link ARNode} that will be anchored to the given real-world position and rotation.
+     * Attaching objects to an anchored node is recommended in AR, because the world coordinate system
+     * used by the underlying tracking technology may not be stable. By using an {@link ARNode}, you
+     * ensure that said node is continually tracked, maintaining its position in the real world.
+     * Normal {@link Node} objects can be added as children to the ARNode, and they too will maintain
+     * their position relative to the real-world.
+     * <p>
+     * Note that the returned {@link ARNode} is automatically added to the Scene, and will be
+     * continually updated to stay in the sync with its underlying anchor as the anchor's
+     * properties, orientation, or position change.
+     * <p>
+     * When finished with this ARNode, you must call {@link ARNode#detach()} to remove it from
+     * the system. If you do not detach the ARNode, it will continue to receive tracking updates
+     * from the AR subsystem, adversely impacting performance.
+     * <p>
+     * @return New {@link ARNode} anchored to the given position, with the given rotation.
+     */
+    public ARNode createAnchoredNode(Vector position, Quaternion quaternion) {
+        long nodeRef = nativeCreateAnchoredNode(mNativeRef, position.x, position.y, position.z,
+                quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+        if (nodeRef != 0) {
+            return new ARNode(nodeRef);
+        } else {
+            Log.e("Viro", "Failed to create an anchored node at position " + position);
+            return null;
+        }
+    }
+
+    /**
      * Reset the point cloud surface to the default values. The point cloud surface is the
      * {@link Surface} that will be used to render each point in the point cloud.
      */
@@ -500,9 +551,11 @@ public class ARScene extends Scene {
     private native void nativeRemoveARImageTarget(long sceneControllerRef, long arImageTargetRef);
     private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
     private native void nativeRemoveARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
-    private native void nativeHostCloudAnchor(long sceneRef, String anchorId);
-    private native void nativeResolveCloudAnchor(long sceneRef, String cloudAnchorId);
+    private native void nativeHostCloudAnchor(long sceneControllerRef, String anchorId);
+    private native void nativeResolveCloudAnchor(long sceneControllerRef, String cloudAnchorId);
     private native float nativeGetAmbientLightIntensity(long sceneControllerRef);
+    private native long nativeCreateAnchoredNode(long sceneControllerRef, float px, float py, float pz,
+                                                 float qx, float qy, float qz, float qw);
     private native float[] nativeGetAmbientLightColor(long sceneControllerRef);
 
     // Called by JNI

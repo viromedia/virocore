@@ -29,8 +29,7 @@ VRO_METHOD(VRO_REF(VROARNode), nativeCreateAnchoredNode)(VRO_ARGS
     // This should never be called on a hit result with an existing anchor
     passert (hit->getAnchor() == nullptr);
 
-    std::shared_ptr<VROARNode> node = std::make_shared<VROARNode>();
-    std::shared_ptr<VROARAnchor> anchor = hit->createAnchorAtHitLocation(node);
+    std::shared_ptr<VROARNode> node = hit->createAnchoredNodeAtHitLocation();
     return VRO_REF_NEW(VROARNode, node);
 }
 

@@ -465,6 +465,35 @@ void VROARSessionARCore::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     }
 }
 
+std::shared_ptr<VROARNode> VROARSessionARCore::createAnchoredNode(std::shared_ptr<arcore::Anchor> anchor_arc) {
+    std::shared_ptr<VROARSessionARCore> session = shared_from_this();
+    std::shared_ptr<VROARNode> node = std::make_shared<VROARNode>();
+
+    // Create a Viro|ARCore anchor
+    std::string key = VROStringUtil::toString64(anchor_arc->getId());
+    std::shared_ptr<VROARAnchorARCore> anchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
+    node->setAnchor(anchor);
+
+    // Set the node on the anchor. Disable thread restriction as we're on the UI thread and this
+    // sets the initial rotation, scale, and position of the node.
+    node->setThreadRestrictionEnabled(false);
+    anchor->setARNode(node);
+    node->setThreadRestrictionEnabled(true);
+
+    // Sync the anchor's transforms and add it to session for updates
+    anchor->sync();
+
+    // Adding anchors to the session requires the rendering thread
+    std::weak_ptr<VROARSession> session_w = session;
+    VROPlatformDispatchAsyncRenderer([session_w, anchor] {
+        std::shared_ptr<VROARSession> session_s = session_w.lock();
+        if (session_s) {
+            session_s->addAnchor(anchor);
+        }
+    });
+    return node;
+}
+
 void VROARSessionARCore::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
                                          std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
                                          std::function<void(std::string error)> onFailure) {
@@ -563,7 +592,7 @@ std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(arcore::Anch
  This method does most of the ARCore processing. ARCore consists of two concepts: trackable and
  anchor. Trackables are detected real-world objects, like horizontal and vertical planes, or image
  targets. Anchors are virtual objects that are attached to the real world, either relative to a
- trackable or relative to an AR hit result.
+ trackable, relative to an AR hit result, or relative to an arbirary position.
 
  Unlike ARCore, Viro (and ARKit) merge these concepts together: trackables *are* anchors.
  In order to bridge this conceptual difference with ARCore, this method will create one ARCore anchor
@@ -611,9 +640,9 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
     // Find all new and updated anchors, update/create new ones and notify this class.
     // The anchors in this list are *both* those that are tied to trackables (managed anchors)
-    // and those that were created during hit tests and tied to world coordinates (manual anchors).
-    // However, we only process manual anchors here. Anchors with trackables are processed
-    // afterward as the trackables themselves are updated.
+    // and those that were created at arbirary world positions or in response to hit tests
+    // (manual anchors). However, we only process manual anchors here. Anchors with trackables are
+    // processed afterward as the trackables themselves are updated.
     for (int i = 0; i < anchorsSize; i++) {
         std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(anchorList->acquireItem(i));
         std::string key = VROStringUtil::toString64(anchor->getId());

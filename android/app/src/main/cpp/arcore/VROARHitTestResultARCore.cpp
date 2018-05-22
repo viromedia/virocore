@@ -26,34 +26,15 @@ VROARHitTestResultARCore::~VROARHitTestResultARCore() {
 
 }
 
-std::shared_ptr<VROARAnchor> VROARHitTestResultARCore::createAnchorAtHitLocation(std::shared_ptr<VROARNode> node) {
+std::shared_ptr<VROARNode> VROARHitTestResultARCore::createAnchoredNodeAtHitLocation() {
     std::shared_ptr<VROARSessionARCore> session = _session.lock();
     if (!session) {
         return nullptr;
     }
 
-    // Acquire an ARCore anchor
     std::shared_ptr<arcore::Anchor> anchor_arc = std::shared_ptr<arcore::Anchor>(_hitResult->acquireAnchor());
+    std::shared_ptr<VROARNode> node = session->createAnchoredNode(anchor_arc);
 
-    // Create a Viro|ARCore anchor
-    std::string key = VROStringUtil::toString64(anchor_arc->getId());
-    std::shared_ptr<VROARAnchorARCore> anchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
-    node->setAnchor(anchor);
-
-    // Set the node on the anchor. Disable thread restriction as we're on the UI thread and this
-    // sets the initial rotation, scale, and position of the node.
-    node->setThreadRestrictionEnabled(false);
-    anchor->setARNode(node);
-    node->setThreadRestrictionEnabled(true);
-
-    // Sync the anchor's transforms and add it to session for updates
-    anchor->sync();
-
-    // Adding anchors to the session requires the rendering thread
-    VROPlatformDispatchAsyncRenderer([session, anchor] {
-        session->addAnchor(anchor);
-    });
-
-    _anchor = anchor;
-    return anchor;
+    _anchor = node->getAnchor();
+    return node;
 }

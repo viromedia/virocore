@@ -4,25 +4,48 @@
  */
 package com.viro.core;
 
+import android.graphics.Point;
 import android.util.Log;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * ARNode is a specialized {@link Node} that corresponds to a detected {@link ARAnchor}. ARNodes are
- * automatically created by Viro and added to the {@link Scene} as they are detected, and by default
- * hold no content and have no children. Each ARNode is continually updated to stay in sync with its
- * corresponding ARAnchor: if the anchor's position, orientation, or other detected properties
- * change, the ARNode will be changed as well.
+ * ARNode is a specialized {@link Node} that corresponds to a detected or manually created {@link
+ * ARAnchor}. ARNodes are automatically created by Viro and added to the {@link Scene} as anchors
+ * are created, and by default hold no content and have no children. Each ARNode is continually
+ * updated to stay in sync with its corresponding ARAnchor: if the anchor's position, orientation,
+ * or other detected properties change, the ARNode will be changed as well.
  * <p>
  * ARNode is the mechanism through which you can attach virtual content to real-world objects. For
  * example, if an {@link ARPlaneAnchor} is detected, you can add a 3D model to that plane by loading
- * the {@link Object3D} and making it a child of the ARNode.
+ * the {@link Object3D} and making it a child of the anchor's ARNode.
  * <p>
- * To get an ARNode, attach a {@link ARScene.Listener} to the {@link ARScene},
- * and listen for {@link ARScene.Listener#onAnchorFound(ARAnchor, ARNode)},
- * which is invoked each time a new {@link ARAnchor} is found, with its corresponding {@link
- * ARNode}.
+ * While normal {@link Node}s can be used in AR, it is highly recommended to ensure that all nodes
+ * descend from an ARNode. This is because the world coordinate system used by the underlying
+ * tracking technology may not be stable. By using an {@link ARNode}, you ensure that said node is
+ * continually tracked, maintaining its position in the real world. Normal {@link Node} objects can
+ * be added as children to the ARNode, and they too will maintain their position relative to the
+ * real-world.
+ * <p>
+ * There are three ways to acquire ARNodes: <ol> <li>Real-world feature detection. Every real-world
+ * feature detected will trigger a callback giving you an ARNode corresponding to that feature. This
+ * can used to add content to real-world features like planes or images. To do this, attach a {@link
+ * ARScene.Listener} to the {@link ARScene}, and listen for {@link ARScene.Listener#onAnchorFound(ARAnchor,
+ * ARNode)}. </li> <li>Hit-test results. Perform a hit-test using {@link
+ * ViroViewARCore#performARHitTest(Point, ARHitTestListener)}, {@link
+ * ViroViewARCore#performARHitTestWithPosition(Vector, ARHitTestListener)}, or {@link
+ * ViroViewARCore#performARHitTestWithRay(Vector, ARHitTestListener)}. These functions will return
+ * an {@link ARHitTestResult} for each intersected real-world. You can retrieve an ARNode
+ * corresponding to any hit location via {@link ARHitTestResult#createAnchoredNode()}.</li>
+ * <li>Arbitrary real-world location. You can create an ARNode at any world coordinate position by
+ * invoking {@link ARScene#createAnchoredNode(Vector)}. Note that world coordinates are in
+ * meters.</li>
+ * <p>
+ * <p>
+ * Finally, when finished with a manually constructed ARNode (methods 2 or 3 above), you must call
+ * {@link ARNode#detach()} to remove it from the system. If you do not detach the ARNode, it will
+ * continue to receive tracking updates from the AR subsystem, adversely impacting performance.
+ * Nodes that are automatically detected (method 1 above), do not need to be detached.
  */
 public class ARNode extends Node {
 

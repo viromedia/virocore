@@ -764,6 +764,13 @@ namespace arcore {
         return new PoseNative(pose, _session);
     }
 
+    Pose *SessionNative::createPose(float px, float py, float pz, float qx, float qy, float qz, float qw) {
+        ArPose *pose;
+        float poseRaw[7] = { qx, qy, qz, qw, px, py, pz };
+        ArPose_create(_session, poseRaw, &pose);
+        return new PoseNative(pose, _session);
+    }
+
     AnchorList *SessionNative::createAnchorList() {
         ArAnchorList *list;
         ArAnchorList_create(_session, &list);
@@ -798,6 +805,12 @@ namespace arcore {
         ArFrame *frame;
         ArFrame_create(_session, &frame);
         return new FrameNative(frame, _session);
+    }
+
+    Anchor *SessionNative::acquireNewAnchor(const Pose *pose) {
+        ArAnchor *anchor;
+        ArSession_acquireNewAnchor(_session, ((PoseNative *)pose)->_pose, &anchor);
+        return new AnchorNative(anchor, _session);
     }
 
     Anchor *SessionNative::hostAndAcquireNewCloudAnchor(const Anchor *anchor) {

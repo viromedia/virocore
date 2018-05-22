@@ -232,12 +232,14 @@ namespace arcore {
                                      UpdateMode updateMode, CloudAnchorMode cloudAnchorMode);
         virtual AugmentedImageDatabase *createAugmentedImageDatabase();
         virtual Pose *createPose();
+        virtual Pose *createPose(float px, float py, float pz, float qx, float qy, float qz, float qw);
         virtual AnchorList *createAnchorList();
         virtual TrackableList *createTrackableList();
         virtual HitResultList *createHitResultList();
         virtual LightEstimate *createLightEstimate();
         virtual Frame *createFrame();
         virtual HitResult *createHitResult();
+        virtual Anchor *acquireNewAnchor(const Pose *pose);
         virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor);
         virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId);
 

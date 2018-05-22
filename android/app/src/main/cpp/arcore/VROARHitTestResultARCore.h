@@ -31,11 +31,11 @@ public:
     /*
      Create an ARAnchor at the position of this hit result, and add the anchor to the
      VROARSessionARCore for continued tracking and updates. The anchor will be assigned
-     to the provided ARNode.
+     to the returned ARNode.
 
      This is expected to be called from the Application thread.
      */
-    std::shared_ptr<VROARAnchor> createAnchorAtHitLocation(std::shared_ptr<VROARNode> node);
+    std::shared_ptr<VROARNode> createAnchoredNodeAtHitLocation();
 
 private:
 

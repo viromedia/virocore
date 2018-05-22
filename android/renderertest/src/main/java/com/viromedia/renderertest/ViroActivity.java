@@ -34,6 +34,7 @@ import com.viro.core.ARPointCloud;
 import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
+import com.viro.core.Quaternion;
 import com.viro.core.RendererConfiguration;
 import com.viro.core.ViroMediaRecorder;
 import com.viro.core.ViroViewScene;
@@ -349,8 +350,9 @@ public class ViroActivity extends AppCompatActivity {
         */
         //nodes.addAll(testImperativePlane(scene));
         //testARHitTest(scene, 0, 5);
+        testAddArbitraryAnchors(scene, 0, 5);
         //testHostCloudAnchors(scene, 0, 2);
-        testResolveCloudAnchor(scene, "ua-6ba00ee523fae4219f42e4da013cd256");
+        //testResolveCloudAnchor(scene, "ua-6ba00ee523fae4219f42e4da013cd256");
         //nodes.addAll(testARImageTarget(scene));
 
         for (final Node node : nodes) {
@@ -927,6 +929,46 @@ public class ViroActivity extends AppCompatActivity {
                                 testARHitTest(scene, count + 1, total);
                             }
                         });
+            }
+        }, 2000);
+    }
+
+    private Vector mAnchorPosition = new Vector(0, 0, -0.5);
+    private Vector mAnchorRotation = new Vector(0, 0, 0);
+
+    private void testAddArbitraryAnchors(final ARScene scene, final int count, final int total) {
+        // Once count hits total, clear all the anchors we've found
+        if (count >= total) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("Viro", "Detaching all nodes");
+                    for (ARNode node : anchoredNodes) {
+                        node.detach();
+                    }
+                    anchoredNodes.clear();
+                }}, 2000);
+            return;
+        }
+
+        final ViroViewARCore view = (ViroViewARCore) mViroView;
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Point point = new Point((int) (view.getWidth() / 2.0), (int) (view.getHeight() / 2.0f));
+                Log.i("Viro", "Adding arbitrary anchor at position " + mAnchorPosition + " with rotation "
+                        + mAnchorRotation);
+
+                    ARNode node = scene.createAnchoredNode(mAnchorPosition, new Quaternion(mAnchorRotation));
+                    node.addChildNode(loadObjectNode(1, .1f, new Vector(0, 0, 0)));
+
+                    anchoredNodes.add(node);
+
+                    mAnchorPosition.x += 0.25f;
+                    mAnchorPosition.z -= 0.25f;
+                    mAnchorRotation.y += (Math.toRadians(30));
+
+                    testAddArbitraryAnchors(scene, count + 1, total);
             }
         }, 2000);
     }

@@ -128,6 +128,15 @@ public:
 
 #pragma mark - [Internal] Anchors
 
+    /*
+     Create a new Viro Anchor that wraps the given ARCore anchor, add it to the session
+     for continual updates, and create and return its corresponding ARNode. The ARNode
+     will be added to the scene.
+
+     This is expected to be called from the Application thread.
+     */
+    std::shared_ptr<VROARNode> createAnchoredNode(std::shared_ptr<arcore::Anchor> anchor_arc);
+
     std::shared_ptr<VROARAnchor> getAnchorWithId(std::string anchorId);
     std::shared_ptr<VROARAnchor> getAnchorForNative(arcore::Anchor *anchor);
     std::string getKeyForTrackable(arcore::Trackable *trackable);

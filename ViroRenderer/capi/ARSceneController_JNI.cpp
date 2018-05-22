@@ -304,6 +304,27 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetAmbientLightColor)(VRO_ARGS
     return ARUtilsCreateFloatArrayFromVector3f(scene->getAmbientLightColor());
 }
 
+VRO_METHOD(VRO_REF(VROARNode), nativeCreateAnchoredNode)(VRO_ARGS
+                                                         VRO_REF(VROARSceneController) sceneController_j,
+                                                         float posX, float posY, float posZ,
+                                                         float quatX, float quatY, float quatZ, float quatW) {
+
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, sceneController_j)->getScene());
+    std::shared_ptr<VROARSessionARCore> session = std::dynamic_pointer_cast<VROARSessionARCore>(scene->getARSession());
+    if (!session) {
+        return 0;
+    }
+
+    arcore::Pose *pose = session->getSessionInternal()->createPose(posX, posY, posZ, quatX, quatY, quatZ, quatW);
+    std::shared_ptr<arcore::Anchor> anchor_arc = std::shared_ptr<arcore::Anchor>(
+            session->getSessionInternal()->acquireNewAnchor(pose));
+    delete (pose);
+
+    std::shared_ptr<VROARNode> node = session->createAnchoredNode(anchor_arc);
+    return VRO_REF_NEW(VROARNode, node);
+}
+
 VRO_METHOD(void, nativeHostCloudAnchor)(VRO_ARGS
                                         VRO_REF(VROARSceneController) sceneController_j,
                                         VRO_STRING anchorId_j) {
