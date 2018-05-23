@@ -891,13 +891,14 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createToneMappingMaskModifier() {
     /*
-     Modifier that writes bloom regions to an output variable _bright_color.
+     Modifier that writes out the specific pixels that we wish to tone-map. We tone-map
+     all non-transparent parts of the object.
      */
     if (!sToneMappingMaskModifier) {
         std::vector<std::string> modifierCode =  {
             "layout (location = 1) out lowp vec4 tone_mapping_mask;",
             "uniform lowp float tone_mapped;",
-            "tone_mapping_mask = vec4(tone_mapped);",
+            "tone_mapping_mask = vec4(tone_mapped * _output_color.a);",
         };
         sToneMappingMaskModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
         sToneMappingMaskModifier->setUniformBinder("tone_mapped", [](VROUniform *uniform, GLuint location,
