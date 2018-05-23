@@ -39,19 +39,8 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
         "highp vec4 hdr_color = texture(hdr_texture, v_texcoord).rgba;",
         "lowp float tone_mapped = texture(tone_mapping_mask, v_texcoord).r;",
 
-        // The tone-mapping value stored in the texture is the material's tone mapping setting
-        // (1.0 to tone-map, 0.0 to not), multiplied by the pixel's alpha. Therefore, if the
-        // tone-mapping mask is less than 0.2, either the material is set to not tone-map,
-        // or we're in a mostly transparent area of a tone-mapped object. In this latter case
-        // we choose not to tone-map, because it's likely the thing behind us is the camera
-        // background -- which is not tone-mapped. (See VROShaderFactory::createToneMappingMaskModifier)
-
-        // This is not ideal behavior, but fixes the worst case (alpha squares over the camera
-        // background.
-
-        // TODO VIRO-3747 Find a better solution for this.
         "highp vec3 mapped;",
-        "if (tone_mapped < 0.2) {",
+        "if (tone_mapped < 0.5) {",
         "    mapped = hdr_color.rgb;",
         "} else {",
     };

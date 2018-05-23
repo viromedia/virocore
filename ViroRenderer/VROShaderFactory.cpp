@@ -898,7 +898,10 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createToneMappingMaskModifi
         std::vector<std::string> modifierCode =  {
             "layout (location = 1) out lowp vec4 tone_mapping_mask;",
             "uniform lowp float tone_mapped;",
-            "tone_mapping_mask = vec4(tone_mapped * _output_color.a);",
+
+            "if (_output_color.a > 0.2) {",
+            "    tone_mapping_mask = vec4(tone_mapped);",
+            "}",
         };
         sToneMappingMaskModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
         sToneMappingMaskModifier->setUniformBinder("tone_mapped", [](VROUniform *uniform, GLuint location,
