@@ -428,6 +428,7 @@ public abstract class ViroBaseTest {
         Runnable cleanup = new Runnable() {
             @Override
             public void run() {
+                mMutableTestMethod = null;
                 resetTestState();
                 finishedCleanup.set(true);
             }

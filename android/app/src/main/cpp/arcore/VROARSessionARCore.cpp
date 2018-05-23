@@ -465,25 +465,6 @@ void VROARSessionARCore::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     }
 }
 
-void VROARSessionARCore::addManualAnchor(std::shared_ptr<arcore::Anchor> anchor_arc,
-                                         std::shared_ptr<VROARNode> node) {
-    std::shared_ptr<VROARSessionARCore> session = shared_from_this();
-
-    // Create a Viro|ARCore anchor
-    std::string key = VROStringUtil::toString64(anchor_arc->getId());
-    std::shared_ptr<VROARAnchorARCore> anchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
-
-    // Associate the node and anchor
-    node->setAnchor(anchor);
-    anchor->sync();
-
-    // Set the node *after* the sync so that the anchor has the latest transforms to pass to the node
-    anchor->setARNode(node);
-
-    // Add the anchor to the session so all updates are propagated to Viro
-    addAnchor(anchor);
-}
-
 void VROARSessionARCore::hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
                                          std::function<void(std::shared_ptr<VROARAnchor>)> onSuccess,
                                          std::function<void(std::string error)> onFailure) {

@@ -37,6 +37,8 @@ import java.util.List;
 public class ViroARAnchorTest extends ViroBaseTest {
 
     private ViroViewARCore mViewARCore;
+    private List<String> mHostedAnchors = new ArrayList<>();
+    private List<ARNode> mAnchoredNodes = new ArrayList<>();
 
     @Override
     void configureTestScene() {
@@ -81,32 +83,35 @@ public class ViroARAnchorTest extends ViroBaseTest {
         });
     }
 
+    @Override
+    void resetTestState() {
+        for (ARNode node : mAnchoredNodes) {
+            node.detach();
+        }
+        mAnchoredNodes.clear();
+        super.resetTestState();
+    }
+
     @Test
     public void testARHitTest() {
         runUITest(() -> testHitResultAnchors());
         runUITest(() -> testAddArbitraryAnchors());
-        //runUITest(() -> testPerformARHitTestWithPosition());
-        //runUITest(() -> testPerformARHitTest());
+        runUITest(() -> testHostCloudAnchors());
+        runUITest(() -> testResolveCloudAnchors());
     }
 
     private void testHitResultAnchors() {
         final ViroViewARCore view = (ViroViewARCore) mViroView;
         Point point = new Point((int) (view.getWidth() / 2.0), (int) (view.getHeight() / 2.0f));
 
+        final int total = 15;
         final int[] count = new int[1];
         count[0] = 0;
 
-        final List<ARNode> anchoredNodes = new ArrayList<>();
-
         mMutableTestMethod = () -> {
-            if (count[0] == 20) {
-                for (ARNode node : anchoredNodes) {
-                    node.detach();
-                }
-                anchoredNodes.clear();
+            if (count[0] >= total) {
                 return;
             }
-
             view.performARHitTest(point,
                     new ARHitTestListener() {
                         @Override
@@ -116,14 +121,14 @@ public class ViroARAnchorTest extends ViroBaseTest {
                                     ARNode node = result.createAnchoredNode();
                                     if (node != null) {
                                         node.addChildNode(loadObjectNode(1, .1f, new Vector(0, 0, 0), Color.WHITE));
-                                        anchoredNodes.add(node);
+                                        mAnchoredNodes.add(node);
                                     }
 
                                 } else if (result.getType() == ARHitTestResult.Type.PLANE) {
                                     ARNode node = result.createAnchoredNode();
                                     if (node != null) {
                                         node.addChildNode(loadObjectNode(1, .1f, new Vector(0, 0, 0), Color.RED));
-                                        anchoredNodes.add(node);
+                                        mAnchoredNodes.add(node);
                                     }
                                 }
                             }
@@ -132,34 +137,28 @@ public class ViroARAnchorTest extends ViroBaseTest {
             count[0]++;
         };
 
-        assertPass("20 hit tests are performed: a yellow star is created for point intersections, a reddish star for plane intersections. After the tests, all the stars are detached.");
+        assertPass(total + " hit tests are performed: a yellow star is created for point intersections, a reddish star for plane intersections.");
     }
 
     private void testAddArbitraryAnchors() {
-        final ViroViewARCore view = (ViroViewARCore) mViroView;
         final ARScene scene = (ARScene) mScene;
-        Point point = new Point((int) (view.getWidth() / 2.0), (int) (view.getHeight() / 2.0f));
 
+        final int total = 10;
         final int[] count = new int[1];
         count[0] = 0;
 
         final Vector anchorPosition = new Vector(0, -0.5, -0.5);
         final Vector anchorRotation = new Vector(0, 0, 0);
-        final List<ARNode> anchoredNodes = new ArrayList<>();
 
         mMutableTestMethod = () -> {
-            if (count[0] == 20) {
-                for (ARNode node : anchoredNodes) {
-                    node.detach();
-                }
-                anchoredNodes.clear();
+            if (count[0] >= total) {
                 return;
             }
 
             ARNode node = scene.createAnchoredNode(anchorPosition, new Quaternion(anchorRotation));
             if (node != null) {
                 node.addChildNode(loadObjectNode(1, .075f, new Vector(0, 0, 0), Color.WHITE));
-                anchoredNodes.add(node);
+                mAnchoredNodes.add(node);
 
                 anchorPosition.y += 0.10f;
                 anchorPosition.z -= 0.10f;
@@ -168,7 +167,79 @@ public class ViroARAnchorTest extends ViroBaseTest {
             }
         };
 
-        assertPass("1 anchor is created each second with a star. Each successive anchor is rotated more about the Y axis, and pushed further up and further away. All detach after 20 added.");
+        assertPass("10 anchors are created, one per second, with a star. Each successive anchor is rotated more about the Y axis, and pushed further up and further away.");
+    }
+
+    private void testHostCloudAnchors() {
+        final ViroViewARCore view = (ViroViewARCore) mViroView;
+        final ARScene scene = (ARScene) mScene;
+
+        Point point = new Point((int) (view.getWidth() / 2.0), (int) (view.getHeight() / 2.0f));
+        mMutableTestMethod = () -> {
+            if (mAnchoredNodes.size() >= 2) {
+                return;
+            }
+
+            view.performARHitTest(point,
+                    new ARHitTestListener() {
+                        @Override
+                        public void onHitTestFinished(ARHitTestResult[] results) {
+                            Log.i("Viro", "Hit test received " + results.length + " results");
+                            for (ARHitTestResult result : results) {
+                                ARNode node = result.createAnchoredNode();
+                                if (node == null) {
+                                    continue;
+                                }
+
+                                final Object3D star = loadObjectNode(1, .1f, new Vector(0, 0, 0), Color.WHITE);
+                                node.addChildNode(star);
+                                mAnchoredNodes.add(node);
+
+                                scene.hostCloudAnchor(node.getAnchor(), new ARScene.CloudAnchorHostListener() {
+                                    @Override
+                                    public void onSuccess(ARAnchor anchor, ARNode arNode) {
+                                        star.getMaterials().get(0).setDiffuseColor(Color.RED);
+                                        mHostedAnchors.add(anchor.getCloudAnchorId());
+                                    }
+
+                                    @Override
+                                    public void onFailure(String error) {
+                                        star.getMaterials().get(0).setDiffuseColor(Color.BLACK);
+                                    }
+                                });
+                                // We only care about hosting the first result per hit-test
+                                break;
+                            }
+                        }
+                    });
+        };
+        assertPass("Hit tests are performed until two stars are created. The stars turn red when they are hosted, black if hosting fails.");
+    }
+
+    private void testResolveCloudAnchors() {
+        if (mHostedAnchors.size() < 2) {
+            assertPass("This test cannot be run unless testHostCloudAnchors succeeds");
+            return;
+        }
+
+        final ARScene scene = (ARScene) mScene;
+        for (int i = 0; i < mHostedAnchors.size(); i++) {
+            String cloudAnchorId = mHostedAnchors.get(i);
+            scene.resolveCloudAnchor(cloudAnchorId, new ARScene.CloudAnchorResolveListener() {
+                @Override
+                public void onSuccess(final ARAnchor anchor, final ARNode arNode) {
+                    Log.i("Viro", "Resolve success");
+                    arNode.addChildNode(loadObjectNode(1, 0.1f, new Vector(0, 0, 0), Color.WHITE));
+                    mAnchoredNodes.add(arNode);
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Log.i("Viro", "Resolve failure: " + error);
+                }
+            });
+        }
+        assertPass("The anchors hosted in the last test are resolved: they appear as yellow stars");
     }
 
     private Object3D loadObjectNode(final int bitmask, final float scale, final Vector position, final int color) {

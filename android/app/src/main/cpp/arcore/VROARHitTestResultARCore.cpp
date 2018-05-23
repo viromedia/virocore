@@ -52,14 +52,26 @@ std::shared_ptr<VROARNode> VROARHitTestResultARCore::createAnchoredNodeAtHitLoca
     // Acquire the anchor from the hit result. If tracking is limited then this can
     // fail, in which case we return null.
     std::shared_ptr<arcore::Anchor> anchor_arc = std::shared_ptr<arcore::Anchor>(_hitResult->acquireAnchor());
+
     if (anchor_arc) {
+        // Create a Viro|ARCore anchor
+        std::string key = VROStringUtil::toString64(anchor_arc->getId());
+        std::shared_ptr<VROARAnchorARCore> anchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
+        node->setAnchor(anchor);
+
         std::weak_ptr<VROARSessionARCore> session_w = session;
-        VROPlatformDispatchAsyncRenderer([session_w, anchor_arc, node] {
+        VROPlatformDispatchAsyncRenderer([session_w, anchor, node] {
             std::shared_ptr<VROARSessionARCore> session_s = session_w.lock();
             if (!session_s) {
                 return;
             }
-            session_s->addManualAnchor(anchor_arc, node);
+
+            // Set the node *after* the sync so that the anchor has the latest transforms to pass to the node
+            anchor->sync();
+            anchor->setARNode(node);
+
+            // Add the anchor to the session so all updates are propagated to Viro
+            session_s->addAnchor(anchor);
         });
         return node;
     } else {

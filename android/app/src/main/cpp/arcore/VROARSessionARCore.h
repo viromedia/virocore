@@ -128,18 +128,6 @@ public:
 
 #pragma mark - [Internal] Anchors
 
-    /*
-     Create a new Viro Anchor that wraps the given ARCore anchor, add it to the session
-     for continual updates, and associate it with the given ARNode. The ARNode
-     will be added to the scene.
-
-     This is used to add "manual" anchors to the session. Manual anchors are created directly
-     by the user, either from hit results or directly from the scene at a specified world
-     coordinate position.
-     */
-    void addManualAnchor(std::shared_ptr<arcore::Anchor> anchor_arc,
-                         std::shared_ptr<VROARNode> node);
-
     std::shared_ptr<VROARAnchor> getAnchorWithId(std::string anchorId);
     std::shared_ptr<VROARAnchor> getAnchorForNative(arcore::Anchor *anchor);
     std::string getKeyForTrackable(arcore::Trackable *trackable);
