@@ -494,6 +494,11 @@ public class ViroViewARCore extends ViroView {
                     break;
             }
 
+            // This is HACKY, but on some devices (Pixel 2), even when Google says ARCore is
+            // installed, it really isn't, and creating the Session will fail with "Device
+            // not compatible" error
+            Thread.sleep(100);
+
             // Create a dummy session just to check if it's possible
             new Session(activity);
             mARCoreInstalled.set(true);
@@ -525,7 +530,7 @@ public class ViroViewARCore extends ViroView {
 
         } catch (Exception e) {
             error = StartupError.ARCORE_UNKNOWN;
-            Log.i(TAG, "Error: Unknown error when installing ARCore: " + e.getMessage());
+            Log.i(TAG, "Error: Unknown error when installing ARCore", e);
             message = "This device does not support AR";
         }
 
