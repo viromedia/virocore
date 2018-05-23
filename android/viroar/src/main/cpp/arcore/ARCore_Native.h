@@ -240,8 +240,8 @@ namespace arcore {
         virtual Frame *createFrame();
         virtual HitResult *createHitResult();
         virtual Anchor *acquireNewAnchor(const Pose *pose);
-        virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor);
-        virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId);
+        virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor, AnchorAcquireStatus *status);
+        virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId, AnchorAcquireStatus *status);
 
     private:
         ArSession *_session;

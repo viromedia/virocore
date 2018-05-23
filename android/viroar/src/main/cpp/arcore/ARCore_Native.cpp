@@ -21,6 +21,29 @@
 
 namespace arcore {
 
+#pragma mark - Conversion
+
+    AnchorAcquireStatus convertAnchorStatus(ArStatus status) {
+        switch (status) {
+            case AR_SUCCESS:
+                return AnchorAcquireStatus::Success;
+            case AR_ERROR_NOT_TRACKING:
+                return AnchorAcquireStatus::ErrorNotTracking;
+            case AR_ERROR_SESSION_PAUSED:
+                return AnchorAcquireStatus::ErrorSessionPaused;
+            case AR_ERROR_RESOURCE_EXHAUSTED:
+                return AnchorAcquireStatus::ErrorResourceExhausted;
+            case AR_ERROR_DEADLINE_EXCEEDED:
+                return AnchorAcquireStatus::ErrorDeadlineExceeded;
+            case AR_ERROR_CLOUD_ANCHORS_NOT_CONFIGURED:
+                return AnchorAcquireStatus::ErrorCloudAnchorsNotConfigured;
+            case AR_ERROR_ANCHOR_NOT_SUPPORTED_FOR_HOSTING:
+                return AnchorAcquireStatus::ErrorAnchorNotSupportedForHosting;
+            default:
+                return AnchorAcquireStatus::ErrorUnknown;
+        }
+    }
+
 #pragma mark - Config
 
     ConfigNative::~ConfigNative() {
@@ -827,17 +850,29 @@ namespace arcore {
         };
     }
 
-    Anchor *SessionNative::hostAndAcquireNewCloudAnchor(const Anchor *anchor) {
+    Anchor *SessionNative::hostAndAcquireNewCloudAnchor(const Anchor *anchor, AnchorAcquireStatus *status_v) {
         ArAnchor *cloudAnchor;
-        ArSession_hostAndAcquireNewCloudAnchor(_session, ((AnchorNative *) anchor)->_anchor,
-                                               &cloudAnchor);
-        return new AnchorNative(cloudAnchor, _session);
+        ArStatus status = ArSession_hostAndAcquireNewCloudAnchor(_session, ((AnchorNative *) anchor)->_anchor,
+                                                                 &cloudAnchor);
+        if (status == AR_SUCCESS) {
+            *status_v = AnchorAcquireStatus::Success;
+            return new AnchorNative(cloudAnchor, _session);
+        } else {
+            *status_v = convertAnchorStatus(status);
+            return nullptr;
+        };
     }
 
-    Anchor *SessionNative::resolveAndAcquireNewCloudAnchor(const char *anchorId) {
+    Anchor *SessionNative::resolveAndAcquireNewCloudAnchor(const char *anchorId, AnchorAcquireStatus *status_v) {
         ArAnchor *cloudAnchor;
-        ArSession_resolveAndAcquireNewCloudAnchor(_session, anchorId, &cloudAnchor);
-        return new AnchorNative(cloudAnchor, _session);
+        ArStatus status = ArSession_resolveAndAcquireNewCloudAnchor(_session, anchorId, &cloudAnchor);
+        if (status == AR_SUCCESS) {
+            *status_v = AnchorAcquireStatus::Success;
+            return new AnchorNative(cloudAnchor, _session);
+        } else {
+            *status_v = convertAnchorStatus(status);
+            return nullptr;
+        };
     }
 
 }

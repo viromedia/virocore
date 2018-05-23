@@ -22,6 +22,17 @@ namespace arcore {
     class HitResult;
     class AugmentedImageDatabase;
 
+    enum class AnchorAcquireStatus {
+        Success,
+        ErrorNotTracking,
+        ErrorSessionPaused,
+        ErrorResourceExhausted,
+        ErrorDeadlineExceeded,
+        ErrorCloudAnchorsNotConfigured,
+        ErrorAnchorNotSupportedForHosting,
+        ErrorUnknown
+    };
+
     enum class ConfigStatus {
         Success,
         UnsupportedConfiguration,
@@ -262,8 +273,8 @@ namespace arcore {
         virtual Frame *createFrame() = 0;
         virtual HitResult *createHitResult() = 0;
         virtual Anchor *acquireNewAnchor(const Pose *pose) = 0;
-        virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor) = 0;
-        virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId) = 0;
+        virtual Anchor *hostAndAcquireNewCloudAnchor(const Anchor *anchor, AnchorAcquireStatus *status) = 0;
+        virtual Anchor *resolveAndAcquireNewCloudAnchor(const char *anchorId, AnchorAcquireStatus *status) = 0;
     };
 }
 

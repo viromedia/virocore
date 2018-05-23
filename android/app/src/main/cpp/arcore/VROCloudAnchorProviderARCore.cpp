@@ -29,8 +29,15 @@ void VROCloudAnchorProviderARCore::hostCloudAnchor(std::shared_ptr<VROARAnchor> 
     arcore::Session *session_arc = session->getSessionInternal();
 
     std::shared_ptr<VROARAnchorARCore> anchor_v = std::dynamic_pointer_cast<VROARAnchorARCore>(anchor);
+
+    arcore::AnchorAcquireStatus status;
     std::shared_ptr<arcore::Anchor> anchor_arc = std::shared_ptr<arcore::Anchor>(
-            session_arc->hostAndAcquireNewCloudAnchor(anchor_v->getAnchorInternal().get()));
+            session_arc->hostAndAcquireNewCloudAnchor(anchor_v->getAnchorInternal().get(), &status));
+    if (!anchor_arc) {
+        // ARCore can immediately fail to host a cloud anchor for a number of reasons
+        onFailure("Failed to host cloud anchor [error: " + getAnchorStatusErrorMessage(status) + "]");
+        return;
+    }
 
     std::string key = VROStringUtil::toString64(anchor_arc->getId());
     std::shared_ptr<VROARAnchorARCore> cloudAnchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
@@ -75,8 +82,15 @@ void VROCloudAnchorProviderARCore::resolveCloudAnchor(std::string cloudAnchorId,
     }
     arcore::Session *session_arc = session->getSessionInternal();
 
+    arcore::AnchorAcquireStatus status;
     std::shared_ptr<arcore::Anchor> anchor_arc = std::shared_ptr<arcore::Anchor>(
-            session_arc->resolveAndAcquireNewCloudAnchor(cloudAnchorId.c_str()));
+            session_arc->resolveAndAcquireNewCloudAnchor(cloudAnchorId.c_str(), &status));
+    if (!anchor_arc) {
+        // ARCore can immediately fail to resolve a cloud anchor for a number of reasons
+        onFailure("Failed to resolve cloud anchor [error: " + getAnchorStatusErrorMessage(status) + "]");
+        return;
+    }
+
     std::string key = VROStringUtil::toString64(anchor_arc->getId());
     std::shared_ptr<VROARAnchorARCore> cloudAnchor = std::make_shared<VROARAnchorARCore>(key, anchor_arc, nullptr, session);
 
@@ -208,5 +222,28 @@ std::string VROCloudAnchorProviderARCore::getError(arcore::CloudAnchorState stat
             return "SDK Version Too New";
         default:
             return "Unknown Error";
+    }
+}
+
+std::string VROCloudAnchorProviderARCore::getAnchorStatusErrorMessage(arcore::AnchorAcquireStatus status) {
+    switch (status) {
+        case arcore::AnchorAcquireStatus::ErrorUnknown:
+            return "Unknown error";
+        case arcore::AnchorAcquireStatus::ErrorNotTracking:
+            return "Tracking limited or not tracking, try again in better conditions";
+        case arcore::AnchorAcquireStatus::ErrorAnchorNotSupportedForHosting:
+            return "Anchor is not supported for hosting";
+        case arcore::AnchorAcquireStatus::ErrorCloudAnchorsNotConfigured:
+            return "Cloud anchors are not configured";
+        case arcore::AnchorAcquireStatus::ErrorDeadlineExceeded:
+            return "Deadline exceeded to create anchor";
+        case arcore::AnchorAcquireStatus::ErrorResourceExhausted:
+            return "Resources exhausted: too many anchors";
+        case arcore::AnchorAcquireStatus::ErrorSessionPaused:
+            return "Session paused";
+        case arcore::AnchorAcquireStatus::Success:
+            return "Success";
+        default:
+            return "Unknown error";
     }
 }

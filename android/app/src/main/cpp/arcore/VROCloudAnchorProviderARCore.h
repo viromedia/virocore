@@ -97,6 +97,11 @@ private:
     void onResolveTaskSuccessful(VROCloudAnchorResolveTask &task);
     void onResolveTaskFailed(VROCloudAnchorResolveTask &task, std::string error);
 
+    /*
+     Convert anchor status to error messages.
+     */
+    std::string getAnchorStatusErrorMessage(arcore::AnchorAcquireStatus status);
+
 };
 
 
