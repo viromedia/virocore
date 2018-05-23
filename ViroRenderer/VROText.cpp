@@ -259,7 +259,12 @@ void VROText::buildText(std::wstring &text,
                         std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                         std::vector<std::shared_ptr<VROMaterial>> &materials,
                         float *outRealizedWidth, float *outRealizedHeight) {
-    
+    if (text.size() == 0) {
+        *outRealizedWidth = 0;
+        *outRealizedHeight = 0;
+        return;
+    }
+
     /*
      Create a glyph, material, and vector of indices for each character
      in the text string. If a character appears multiple times in the text,
