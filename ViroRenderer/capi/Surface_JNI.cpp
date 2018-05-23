@@ -121,8 +121,17 @@ VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
         }
         passert (!surface->getMaterials().empty());
 
-        const std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
+        std::vector<std::shared_ptr<VROMaterial>> tempMaterials;
+        for (int i = 0; i < surface->getMaterials().size(); i++) {
+            // Always copy materials from the material manager, as they may be
+            // modified by animations, etc. and we don't want these changes to
+            // propagate to the reference material held by the material manager
+            tempMaterials.push_back(std::make_shared<VROMaterial>(surface->getMaterials()[i]));
+        }
+
+        const std::shared_ptr<VROMaterial> &material = tempMaterials.front();
         material->getDiffuse().setTexture(imageTexture);
+        surface->setMaterials(tempMaterials);
     });
 }
 

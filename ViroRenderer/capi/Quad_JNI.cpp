@@ -117,10 +117,9 @@ VRO_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     });
 }
 
-VRO_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
-                                        jobject obj,
-                                        jlong surfaceRef,
-                                        jlong textureRef) {
+VRO_METHOD(void, nativeSetImageTexture)(VRO_ARGS
+                                        VRO_REF(VROSurface) surfaceRef,
+                                        VRO_REF(VROTexture) textureRef) {
     std::weak_ptr<VROTexture> imageTexture_w = VRO_REF_GET(VROTexture, textureRef);
     std::weak_ptr<VROSurface> surface_w = VRO_REF_GET(VROSurface, surfaceRef);
 
@@ -135,8 +134,17 @@ VRO_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
         }
         passert (!surface->getMaterials().empty());
 
-        const std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
+        std::vector<std::shared_ptr<VROMaterial>> tempMaterials;
+        for (int i = 0; i < surface->getMaterials().size(); i++) {
+            // Always copy materials from the material manager, as they may be
+            // modified by animations, etc. and we don't want these changes to
+            // propagate to the reference material held by the material manager
+            tempMaterials.push_back(std::make_shared<VROMaterial>(surface->getMaterials()[i]));
+        }
+
+        const std::shared_ptr<VROMaterial> &material = tempMaterials.front();
         material->getDiffuse().setTexture(imageTexture);
+        surface->setMaterials(tempMaterials);
     });
 }
 
