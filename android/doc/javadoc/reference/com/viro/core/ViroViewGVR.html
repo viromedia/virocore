@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -820,6 +823,25 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   </tr>
   
 
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroViewGVR.html#ViroViewGVR(android.content.Context, com.viro.core.ViroViewGVR.StartupListener, java.lang.Runnable, com.viro.core.RendererConfiguration, boolean)">ViroViewGVR</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, <a href="../../../../reference/com/viro/core/ViroViewGVR.StartupListener.html">ViroViewGVR.StartupListener</a> startupListener, <a href="http://d.android.com/reference/java/lang/Runnable.html">Runnable</a> vrExitListener, <a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a> config, boolean vrMode)
+      </code>
+      
+        <p>Create a new ViroViewGVR with the given <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>, which determines
+ the rendering techniques and rendering fidelity to use for this View.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
 
 </table>
 
@@ -1061,6 +1083,63 @@ ViroViewGVR (<a href="http://d.android.com/reference/android/content/Context.htm
         <td><code>config</code></td>
         <td width="100%">
           <code>RendererConfiguration</code>: The <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code> to use.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="ViroViewGVR(android.content.Context, com.viro.core.ViroViewGVR.StartupListener, java.lang.Runnable, com.viro.core.RendererConfiguration, boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ViroViewGVR</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+ViroViewGVR (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, 
+                <a href="../../../../reference/com/viro/core/ViroViewGVR.StartupListener.html">ViroViewGVR.StartupListener</a> startupListener, 
+                <a href="http://d.android.com/reference/java/lang/Runnable.html">Runnable</a> vrExitListener, 
+                <a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a> config, 
+                boolean vrMode)</pre>
+    
+    
+
+    
+  <p>Create a new ViroViewGVR with the given <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code>, which determines
+ the rendering techniques and rendering fidelity to use for this View.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>context</code></td>
+        <td width="100%">
+          <code>Context</code>: The activity context.</p></td>
+      </tr>
+      <tr>
+        <td><code>startupListener</code></td>
+        <td width="100%">
+          <code>ViroViewGVR.StartupListener</code>: Listener to respond to startup success or failure. Will be notified of
+                        any errors encountered while initializing Viro. Optional, may be null.</p></td>
+      </tr>
+      <tr>
+        <td><code>vrExitListener</code></td>
+        <td width="100%">
+          <code>Runnable</code>: Runnable to invoke when the user manually exits VR mode by tapping on
+                        GVR's close button. Optional, may be null.</p></td>
+      </tr>
+      <tr>
+        <td><code>config</code></td>
+        <td width="100%">
+          <code>RendererConfiguration</code>: The <code><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></code> to use.</p></td>
+      </tr>
+      <tr>
+        <td><code>vrMode</code></td>
+        <td width="100%">
+          <code>boolean</code>: Whether to initialize this view in VR (stereo) mode or 360 (mono) mode.
 </p></td>
       </tr>
     </table>
