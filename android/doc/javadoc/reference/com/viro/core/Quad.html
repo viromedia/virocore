@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Geometry | Android Developers
+  <title>Quad | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -264,7 +264,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
@@ -295,7 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -565,7 +565,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Geometry</h1>
+<h1 class="api-title">Quad</h1>
 <p>
 <code class="api-signature">
   public
@@ -573,14 +573,20 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  Geometry
+  Quad
 </code>
 <br>
 
 
 <code class="api-signature">
   
-    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
+  
+  
+</code>
+
+<code class="api-signature">
+  
+    extends <a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a>
   
   
   
@@ -597,7 +603,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -606,114 +612,23 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Geometry
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Geometry.html">com.viro.core.Geometry</a>
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Quad
     </td>
   </tr>
   
 
 </table>
-  <table class="jd-sumtable jd-sumtable-subclasses">
-    <tr>
-      <td style="border:none;margin:0;padding:0;">
-          <span>Known Direct Subclasses</span>
-          
-  <div id="subclasses-direct">
-    <div id="subclasses-direct-list" class="jd-inheritedlinks"
-         style="display: none;" > <a href="../../../../reference/com/viro/core/Box.html">Box</a>,<a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a>,<a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a>,<a href="../../../../reference/com/viro/core/Quad.html">Quad</a>,<a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a>,<a href="../../../../reference/com/viro/core/Surface.html">Surface</a>,<a href="../../../../reference/com/viro/core/Text.html">Text</a>
-    </div>
-    <div id="subclasses-direct-summary" >
-      
-  
-  <table class="jd-sumtable-expando">
-    
-      <tr class="alt-color api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Box.html">Box</a></td>
-        <td class="jd-descrcol" width="100%">
-          Box is a simple shape representing a six-sided geometry, defined by width, height, and length.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class=" api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Polygon.html">Polygon</a></td>
-        <td class="jd-descrcol" width="100%">
-          Polygon represents a one-sided plane whose boundary is defined by a list of vertices.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class="alt-color api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></td>
-        <td class="jd-descrcol" width="100%">
-          Polyline defines a multi-point line.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class=" api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></td>
-        <td class="jd-descrcol" width="100%">
-          Quad represents a one-sided plane defined by a width and height.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class="alt-color api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a></td>
-        <td class="jd-descrcol" width="100%">
-          Sphere defines a spherical shape, e.g.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class=" api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></td>
-        <td class="jd-descrcol" width="100%">
-          <em>
-      This class is deprecated.
-    Use <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> in place of this class.
-</em>&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class="alt-color api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.html">Text</a></td>
-        <td class="jd-descrcol" width="100%">
-          Text is a Geometry that renders strings of text.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-  </table>
-
-    </div>
-  </div>
-      </td>
-    </tr>
-  </table>
-  
   
 
     
@@ -721,8 +636,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Geometry is the top-level class for any displayable 3D model with <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects that
- define its appearance. Geometry objects can be simple shapes (e.g. <code><a href="../../../../reference/com/viro/core/Box.html">Box</a></code> or <code><a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a></code>), full 3D models (e.g. <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code>), or UI components (e.g. <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code>).
+  <p>Quad represents a one-sided plane defined by a width and height.
 </p>
 
 
@@ -757,6 +671,52 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="responsive constructors">
+<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
+
+
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quad.html#Quad(float, float)">Quad</a>(float width, float height)
+      </code>
+      
+        <p>Construct a new Quad with the given width and height.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quad.html#Quad(float, float, float, float, float, float)">Quad</a>(float width, float height, float u0, float v0, float u1, float v1)
+      </code>
+      
+        <p>Construct a new Quad with custom texture coordinates.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+
+</table>
+
+
 
 
 
@@ -777,15 +737,69 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        <a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt;</code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Geometry.html#getMaterials()">getMaterials</a>()
+      <a href="../../../../reference/com/viro/core/Quad.html#dispose()">dispose</a>()
       </code>
       
-        <p>Get the <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects used by this Geometry.
+        <p>Release native resources associated with this Quad.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quad.html#getHeight()">getHeight</a>()
+      </code>
+      
+        <p>Get the height of this Quad.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quad.html#getWidth()">getWidth</a>()
+      </code>
+      
+        <p>Get the width of this Quad.
         
     
 </p>
@@ -809,10 +823,37 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials</a>(<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; materials)
+      <a href="../../../../reference/com/viro/core/Quad.html#setHeight(float)">setHeight</a>(float height)
       </code>
       
-        <p>Set the <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects that define the Geometry's appearance.
+        <p>Set the height of this Quad.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quad.html#setWidth(float)">setWidth</a>(float width)
+      </code>
+      
+        <p>Set the width of this Quad.
         
     
 </p>
@@ -846,6 +887,124 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2 class="api-section">Public constructors</h2>
+
+
+
+<A NAME="Quad(float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Quad</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Quad (float width, 
+                float height)</pre>
+    
+    
+
+    
+  <p>Construct a new Quad with the given width and height.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>width</code></td>
+        <td width="100%">
+          <code>float</code>: The extent of the Quad along its horizontal axis (X).</p></td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td width="100%">
+          <code>float</code>: The extent of the Quad along its vertical axis (Y).
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Quad(float, float, float, float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Quad</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Quad (float width, 
+                float height, 
+                float u0, 
+                float v0, 
+                float u1, 
+                float v1)</pre>
+    
+    
+
+    
+  <p>Construct a new Quad with custom texture coordinates. Texture coordinates specify how to
+ tile a <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> across the Quad's geometry.
+ <p>
+ Texture coordinates are represented on 2D U and V axes (essentially the X and Y axes of the
+ image). The left edge of a texture is U = 0.0 and the right edge of the texture is U = 1.0.
+ Similarly, the top edge of a texture is V=0.0 and the bottom edge of the texture is V=1.0.
+ <p>
+ Specifying greater than 1.0 on either the U or V axis will cause the tile to repeat itself or
+ clamp, depending on the Texture's <code><a href="../../../../reference/com/viro/core/Texture.html#setWrapS(com.viro.core.Texture.WrapMode)">setWrapS(Texture.WrapMode)</a></code>. Specifying less
+ than 1.0 on the U or V axis will render that texture partially over the entire quad.
+ <p>
+ For example, specifying u0,v0 as (0,0) and (u1,v2) as (2,2) will tile the Texture twice over
+ the width and height of the Quad, effectively displaying 4 textures on the Quad.
+ Alternatively, setting (u1,v1) as (0.5, 0.5) will display a quarter of the texture over the
+ entire quad.
+ <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>width</code></td>
+        <td width="100%">
+          <code>float</code>: The extent of the Quad along its horizontal axis (X).</p></td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td width="100%">
+          <code>float</code>: The extent of the Quad along its vertical axis (Y).</p></td>
+      </tr>
+      <tr>
+        <td><code>u0</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the start <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> left edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>v0</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the start <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> top edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>u1</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the end <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> left edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>v1</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the end <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> top edge.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+
+
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -859,10 +1018,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="getMaterials()"></A>
+<A NAME="dispose()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getMaterials</h3>
+    <h3 class="api-name">dispose</h3>
     <div class="api-level">
       <div></div>
       
@@ -870,17 +1029,39 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; getMaterials ()</pre>
+void dispose ()</pre>
     
     
 
     
-  <p>Get the <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects used by this Geometry.</p></p>
+  <p>Release native resources associated with this Quad.
+</p></p>
+
+</div>
+
+
+<A NAME="getHeight()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getHeight</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getHeight ()</pre>
+    
+    
+
+    
+  <p>Get the height of this Quad.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt;</code></td>
-        <td width="100%">List containing each <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> used by this Geometry.
+        <td><code>float</code></td>
+        <td width="100%">The extent of this Quad along its vertical axis.
 </p></td>
       </tr>
     </table>
@@ -888,10 +1069,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 </div>
 
 
-<A NAME="setMaterials(java.util.List<com.viro.core.Material>)"></A>
+<A NAME="getWidth()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setMaterials</h3>
+    <h3 class="api-name">getWidth</h3>
     <div class="api-level">
       <div></div>
       
@@ -899,24 +1080,77 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setMaterials (<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; materials)</pre>
+float getWidth ()</pre>
     
     
 
     
-  <p>Set the <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects that define the Geometry's appearance.
- <p>
- Materials consist of a variety of visual properties, including colors and textures, that
- define how the Geometry interacts with the Lights in a Scene to render each pixel.
- <p>
- Geometries may contain multiple Materials; how those Materials map to the surfaces of a
- Geometry is determined by each individual Geometry.</p></p>
+  <p>Get the width of this Quad.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The extent of this Quad along its horizontal axis.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setHeight(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setHeight</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setHeight (float height)</pre>
+    
+    
+
+    
+  <p>Set the height of this Quad.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>materials</code></td>
+        <td><code>height</code></td>
         <td width="100%">
-          <code>List</code>: The list of Materials to use for this Geometry.
+          <code>float</code>: The extent of the Quad along its vertical axis.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setWidth(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setWidth</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setWidth (float width)</pre>
+    
+    
+
+    
+  <p>Set the width of this Quad.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>width</code></td>
+        <td width="100%">
+          <code>float</code>: The extent of the Quad along its horizontal axis.
 </p></td>
       </tr>
     </table>

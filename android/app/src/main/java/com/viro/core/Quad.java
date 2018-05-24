@@ -6,7 +6,7 @@
 /*
  * Java JNI wrapper for linking the following classes below across the bridge.
  *
- * Cpp JNI wrapper      : Surface_JNI.cpp
+ * Cpp JNI wrapper      : Quad_JNI.cpp
  * Cpp Object           : VROSurface.cpp
  */
 package com.viro.core;
@@ -15,17 +15,16 @@ import java.util.Arrays;
 
 /**
  * Quad represents a one-sided plane defined by a width and height.
- *
  */
 public class Quad extends Geometry {
 
     private float mWidth, mHeight;
 
     /**
-     * Construct a new Surface with the given width and height.
+     * Construct a new Quad with the given width and height.
      *
-     * @param width  The extent of the Surface along its horizontal axis (X).
-     * @param height The extent of the Surface along its vertical axis (Y).
+     * @param width  The extent of the Quad along its horizontal axis (X).
+     * @param height The extent of the Quad along its vertical axis (Y).
      */
     public Quad(float width, float height) {
         this(width, height, 0, 0, 1, 1);
@@ -33,8 +32,8 @@ public class Quad extends Geometry {
 
 
     /**
-     * Construct a new Surface with custom texture coordinates. Texture coordinates specify how to
-     * tile a {@link Texture} across the Surface's geometry.
+     * Construct a new Quad with custom texture coordinates. Texture coordinates specify how to
+     * tile a {@link Texture} across the Quad's geometry.
      * <p>
      * Texture coordinates are represented on 2D U and V axes (essentially the X and Y axes of the
      * image). The left edge of a texture is U = 0.0 and the right edge of the texture is U = 1.0.
@@ -42,16 +41,16 @@ public class Quad extends Geometry {
      * <p>
      * Specifying greater than 1.0 on either the U or V axis will cause the tile to repeat itself or
      * clamp, depending on the Texture's {@link Texture#setWrapS(Texture.WrapMode)}. Specifying less
-     * than 1.0 on the U or V axis will render that texture partially over the entire surface.
+     * than 1.0 on the U or V axis will render that texture partially over the entire quad.
      * <p>
      * For example, specifying u0,v0 as (0,0) and (u1,v2) as (2,2) will tile the Texture twice over
-     * the width and height of the Surface, effectively displaying 4 textures on the Surface.
+     * the width and height of the Quad, effectively displaying 4 textures on the Quad.
      * Alternatively, setting (u1,v1) as (0.5, 0.5) will display a quarter of the texture over the
-     * entire surface.
+     * entire quad.
      * <p>
      *
-     * @param width  The extent of the Surface along its horizontal axis (X).
-     * @param height The extent of the Surface along its vertical axis (Y).
+     * @param width  The extent of the Quad along its horizontal axis (X).
+     * @param height The extent of the Quad along its vertical axis (Y).
      * @param u0     The texture coordinate that specifies the start {@link Texture} left edge.
      * @param v0     The texture coordinate that specifies the start {@link Texture} top edge.
      * @param u1     The texture coordinate that specifies the end {@link Texture} left edge.
@@ -83,7 +82,7 @@ public class Quad extends Geometry {
     }
 
     /**
-     * Release native resources associated with this Surface.
+     * Release native resources associated with this Quad.
      */
     public void dispose(){
         if (mNativeRef != 0) {
@@ -93,9 +92,9 @@ public class Quad extends Geometry {
     }
 
     /**
-     * Set the width of this Surface.
+     * Set the width of this Quad.
      *
-     * @param width The extent of the Surface along its horizontal axis.
+     * @param width The extent of the Quad along its horizontal axis.
      */
     public void setWidth(float width) {
         mWidth = width;
@@ -103,18 +102,18 @@ public class Quad extends Geometry {
     }
 
     /**
-     * Get the width of this Surface.
+     * Get the width of this Quad.
      *
-     * @return The extent of this Surface along its horizontal axis.
+     * @return The extent of this Quad along its horizontal axis.
      */
     public float getWidth() {
         return mWidth;
     }
 
     /**
-     * Set the height of this Surface.
+     * Set the height of this Quad.
      *
-     * @param height The extent of the Surface along its vertical axis.
+     * @param height The extent of the Quad along its vertical axis.
      */
     public void setHeight(float height) {
         mHeight = height;
@@ -122,9 +121,9 @@ public class Quad extends Geometry {
     }
 
     /**
-     * Get the height of this surface.
+     * Get the height of this Quad.
      *
-     * @return The extent of this Surface along its vertical axis.
+     * @return The extent of this Quad along its vertical axis.
      */
     public float getHeight() {
         return mHeight;
@@ -134,12 +133,12 @@ public class Quad extends Geometry {
     private native long nativeCreateQuadFromQuad(float width, float height,
                                                        float u0, float v0, float u1, float v1,
                                                        long oldSurfaceRef);
-    private native void nativeDestroyQuad(long surfaceRef);
-    private native void nativeSetWidth(long surfaceRef, float width);
-    private native void nativeSetHeight(long surfaceRef, float height);
-    private native void nativeSetVideoTexture(long surfaceRef, long textureRef);
-    private native void nativeSetImageTexture(long surfaceRef, long textureRef);
-    private native void nativeClearMaterial(long surfaceRef);
+    private native void nativeDestroyQuad(long quadRef);
+    private native void nativeSetWidth(long quadRef, float width);
+    private native void nativeSetHeight(long quadRef, float height);
+    private native void nativeSetVideoTexture(long quadRef, long textureRef);
+    private native void nativeSetImageTexture(long quadRef, long textureRef);
+    private native void nativeClearMaterial(long quadRef);
 
     /**
      * @hide

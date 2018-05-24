@@ -16,7 +16,8 @@ import java.util.Arrays;
 
 /**
  * Surface represents a one-sided plane defined by a width and height.
- * This class has been deprecated, please use {@link Quad}
+ *
+ * @deprecated Use {@link Quad} in place of this class.
  */
 @Deprecated
 public class Surface extends Geometry {
