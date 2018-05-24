@@ -104,13 +104,67 @@ public class ARScene extends Scene {
         void onAnchorRemoved(ARAnchor anchor, ARNode arNode);
     }
 
+    /**
+     * Callback interface for responding to anchor hosting requests. See {@link
+     * #hostCloudAnchor(ARAnchor, CloudAnchorHostListener)} for more details.
+     */
     public interface CloudAnchorHostListener {
-        public void onSuccess(ARAnchor anchor, ARNode arNode);
+
+        /**
+         * Invoked upon the successful hosting of a cloud anchor. When a local {@link ARAnchor} is
+         * hosted, it replaced by a new "cloud" ARAnchor, which is provided in this callback. The
+         * cloud anchor has a unique cloud anchor ID which you can retrieve via {@link
+         * ARAnchor#getCloudAnchorId()}. Other clients can use this ID with {@link
+         * #resolveCloudAnchor(String, CloudAnchorResolveListener)} to pull down this same anchor,
+         * creating a shared AR experience.
+         * <p>
+         * You can also use this callback to add additional content to the given ARNode in response
+         * to its successful hosting. The ARNode provided here is the same ARNode that was
+         * associated with the local ARAnchor that was hosted: it contains all the content it
+         * had previously, except now it belongs to the cloud anchor.
+         * <p>
+         *
+         * @param cloudAnchor The new, successfully hosted, cloud anchor.
+         * @param arNode      The ARNode that is attached and synchronized to the cloud anchor, to
+         *                    which you can add virtual content. This is the same ARNode that was
+         *                    associated with the local ARAnchor prior to its hosting.
+         */
+        public void onSuccess(ARAnchor cloudAnchor, ARNode arNode);
+
+        /**
+         * Invoked when hosting fails. Hosting can fail for a number of reasons: no network access,
+         * limited AR tracking, or misconfiguration. The error message is provided in the callback.
+         *
+         * @param error The error message.
+         */
         public void onFailure(String error);
     }
 
+    /**
+     * Callback interface for responding to anchor resolution requests. See {@link
+     * #resolveCloudAnchor(String, CloudAnchorResolveListener)} for more details.
+     */
     public interface CloudAnchorResolveListener {
+
+        /**
+         * Invoked upon the successful resolution of a cloud anchor. The provided ARAnchor has
+         * been found and synchronized with the cloud, and the given ARNode has been attached
+         * to it. You can use the ARNode to start adding content that will remain synchronized
+         * with the cloud anchor.
+         *
+         * @param anchor The new, successfully resolved, cloud anchor.
+         * @param arNode The ARNode attached and synchronized to the cloud anchor, to which you
+         *               can add virtual content.
+         */
         public void onSuccess(ARAnchor anchor, ARNode arNode);
+
+        /**
+         * Invoked when the system fails to resolve an anchor. Anchor resolution can fail for a
+         * number of reasons: invalid anchor ID, no network access, limited AR tracking, or
+         * misconfiguration. The error message is provided in the callback.
+         *
+         * @param error The error message.
+         */
         public void onFailure(String error);
     }
 
@@ -465,6 +519,32 @@ public class ARScene extends Scene {
     }
     //#ENDIF
 
+    /**
+     * Host the given {@link ARAnchor} to the cloud so it can be shared with other users. The given
+     * callback will be invoked if the operation succeeds or fails.
+     * <p>
+     * The ARAnchor received in the callback upon a successful hosting will contain a cloud anchor
+     * ID, accessible via {@link ARAnchor#getCloudAnchorId()}. Other clients can use this ID with
+     * {@link #resolveCloudAnchor(String, CloudAnchorResolveListener)} to pull down the hosted
+     * anchor, creating a shared AR experience.
+     * <p>
+     * If the operation fails, an error message will be sent to the callback.
+     * <p>
+     * Note that to use cloud anchors, you must have a Google AR API key in the application section
+     * of your AndroidManifest. This is of the form:
+     * <p>
+     * <pre>
+     * &#60;meta-data android:name="com.google.android.ar.API_KEY"
+     *            android:value="Your-API-Key" /&#62;
+     * </pre>
+     * <p>
+     *
+     * @param anchor   The {@link ARAnchor} to host. You can retrieve an ARAnchor to host either
+     *                 from the ARScene {@link Listener}, in response to detected planes, images, or
+     *                 other real-world features, or from any {@link ARNode} through {@link
+     *                 ARNode#getAnchor()}.
+     * @param callback The callback to invoke on success or failure.
+     */
     public void hostCloudAnchor(ARAnchor anchor, CloudAnchorHostListener callback) {
         if (mCloudAnchorHostCallbacks.containsKey(anchor.getAnchorId())) {
             Log.e("Viro", "Ignoring redundant cloud anchor hosting request: we are already processing anchor ["
@@ -501,6 +581,30 @@ public class ARScene extends Scene {
         }
     }
 
+    /**
+     * Resolve the {@link ARAnchor} with the given cloud identifier. If the given anchor is
+     * successfully found in the cloud and synchronized with this client, it will be returned in the
+     * provided callback. The ARAnchor received will be associated with a new {@link ARNode}, to
+     * which you can add virtual content. That content will remain synchronized with the location
+     * and pose of the cloud anchor.
+     * <p>
+     * If the operation fails, an error message will be sent to the callback.
+     * <p>
+     * Note that to use cloud anchors, you must have a Google AR API key in the application section
+     * of your AndroidManifest. This is of the form:
+     * <p>
+     * <pre>
+     * &#60;meta-data android:name="com.google.android.ar.API_KEY"
+     *            android:value="Your-API-Key" /&#62;
+     * </pre>
+     * <p>
+     *
+     * @param cloudAnchorId The unique cloud identifier of the anchor to resolve. This ID can be
+     *                      retrieved from {@link ARAnchor#getCloudAnchorId()}, but some form of
+     *                      remote data transmission is typically required to move that ID from
+     *                      client to client.
+     * @param callback      The callback to invoke on success or failure.
+     */
     public void resolveCloudAnchor(String cloudAnchorId, CloudAnchorResolveListener callback) {
         if (mCloudAnchorResolveCallbacks.containsKey(cloudAnchorId)) {
             Log.e("Viro", "Ignoring redundant cloud anchor resolve request: we are already processing anchor ["
