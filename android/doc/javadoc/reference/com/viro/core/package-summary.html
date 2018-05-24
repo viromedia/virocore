@@ -184,6 +184,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+        <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+        <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -274,6 +276,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+        <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
         <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -597,6 +600,28 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></td>
         <td class="jd-descrcol" width="100%">
           Callback interface for responding to AR hit-test results.&nbsp;
+          
+    
+
+        </td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></td>
+        <td class="jd-descrcol" width="100%">
+          &nbsp;
+          
+    
+
+        </td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></td>
+        <td class="jd-descrcol" width="100%">
+          &nbsp;
           
     
 
@@ -1095,7 +1120,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></td>
         <td class="jd-descrcol" width="100%">
-          ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.&nbsp;
+          ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected or manually created <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.&nbsp;
           
     
 
@@ -1575,6 +1600,17 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       
     
       <tr class=" api apilevel-" >
+        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></td>
+        <td class="jd-descrcol" width="100%">
+          Quad represents a one-sided plane defined by a width and height.&nbsp;
+          
+    
+
+        </td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></td>
         <td class="jd-descrcol" width="100%">
           Represents a 4-component floating-point quaternion.&nbsp;
@@ -1585,7 +1621,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></td>
         <td class="jd-descrcol" width="100%">
           RendererConfiguration allows you to set which rendering properties and algorithms will be
@@ -1597,7 +1633,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></td>
         <td class="jd-descrcol" width="100%">
           Scene represents a scene graph - a hierarchy of <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code>s that together represent the 3D
@@ -1609,7 +1645,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">Scene.SceneBuilder</a>&lt;R&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.html">Scene</a>,&nbsp;B&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Scene.SceneBuilder.html">SceneBuilder</a>&lt;R,&nbsp;B&gt;&gt;</td>
         <td class="jd-descrcol" width="100%">
           SceneBuilder for creating <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> objects.&nbsp;
@@ -1620,7 +1656,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></td>
         <td class="jd-descrcol" width="100%">
           Viro provides a full-featured audio engine.&nbsp;
@@ -1631,7 +1667,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/SoundField.html">SoundField</a></td>
         <td class="jd-descrcol" width="100%">
           SoundField emits environmental sound from every direction.&nbsp;
@@ -1642,7 +1678,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/SpatialSound.html">SpatialSound</a></td>
         <td class="jd-descrcol" width="100%">
           SpatialSound is positioned audio that can travel throughout a scene.&nbsp;
@@ -1653,7 +1689,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a></td>
         <td class="jd-descrcol" width="100%">
           Sphere defines a spherical shape, e.g.&nbsp;
@@ -1664,7 +1700,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Spotlight.html">Spotlight</a></td>
         <td class="jd-descrcol" width="100%">
           Spotlight is a <code><a href="../../../../reference/com/viro/core/Light.html">Light</a></code> that illuminates objects within a cone-shaped area, in a given
@@ -1676,7 +1712,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Spotlight.SpotlightBuilder.html">Spotlight.SpotlightBuilder</a>&lt;R&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Light.html">Light</a>,&nbsp;B&nbsp;extends&nbsp;<a href="../../../../reference/com/viro/core/Light.LightBuilder.html">LightBuilder</a>&lt;R,&nbsp;B&gt;&gt;</td>
         <td class="jd-descrcol" width="100%">
           Builder for creating <code><a href="../../../../reference/com/viro/core/Spotlight.html">Spotlight</a></code> objects.&nbsp;
@@ -1687,7 +1723,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></td>
         <td class="jd-descrcol" width="100%">
           Surface represents a one-sided plane defined by a width and height.&nbsp;
@@ -1698,7 +1734,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.html">Text</a></td>
         <td class="jd-descrcol" width="100%">
           Text is a Geometry that renders strings of text.&nbsp;
@@ -1709,7 +1745,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></td>
         <td class="jd-descrcol" width="100%">
           Builder for creating <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code> objects.&nbsp;
@@ -1720,7 +1756,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></td>
         <td class="jd-descrcol" width="100%">
           Texture is an image used to add surface detail and color to a <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>.&nbsp;
@@ -1731,7 +1767,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></td>
         <td class="jd-descrcol" width="100%">
           Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects.&nbsp;
@@ -1742,7 +1778,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></td>
         <td class="jd-descrcol" width="100%">
           Vector represents a 3-component floating-point vector.&nbsp;
@@ -1753,7 +1789,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/VideoTexture.html">VideoTexture</a></td>
         <td class="jd-descrcol" width="100%">
           VideoTexture plays video from local or remote sources.&nbsp;
@@ -1764,7 +1800,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></td>
         <td class="jd-descrcol" width="100%">
           ViroContext provides context for the Viro application.&nbsp;
@@ -1775,7 +1811,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html">ViroMediaRecorder</a></td>
         <td class="jd-descrcol" width="100%">
           ViroMediaRecorder enables you to take a screenshot or record a video of the scene rendered in
@@ -1787,7 +1823,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></td>
         <td class="jd-descrcol" width="100%">
           ViroView is the entrypoint for Viro applications, it enables the rendering of 3D AR and VR
@@ -1799,7 +1835,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroViewARCore.html">ViroViewARCore</a></td>
         <td class="jd-descrcol" width="100%">
           ViroViewARCore is a <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code> for rendering augmented reality scenes using Google's ARCore
@@ -1811,7 +1847,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroViewGVR.html">ViroViewGVR</a></td>
         <td class="jd-descrcol" width="100%">
           ViroViewGVR is a <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code> for rendering content in stereo for VR headsets using
@@ -1823,7 +1859,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class=" api apilevel-" >
+      <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroViewOVR.html">ViroViewOVR</a></td>
         <td class="jd-descrcol" width="100%">
           ViroViewOVR is a <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code> for rendering content in stereo for VR headsets using
@@ -1835,7 +1871,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </tr>
       
     
-      <tr class="alt-color api apilevel-" >
+      <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ViroViewScene.html">ViroViewScene</a></td>
         <td class="jd-descrcol" width="100%">
           ViroViewScene is a <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code> for rendering a <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> on a simple Android View.&nbsp;
