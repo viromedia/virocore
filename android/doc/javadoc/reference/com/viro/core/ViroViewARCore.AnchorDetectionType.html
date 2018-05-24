@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -667,8 +670,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   <tr class="api apilevel-" >
     <td><code><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></code>&nbsp;</td>
     <td width="100%">
-      <code>NONE</code>
-      <p>Anchor detection will be entirely disabled.&nbsp;
+      <code>PLANES_HORIZONTAL</code>
+      <p>Horizontal planes will be detected by the AR tracking system.&nbsp;
       
     
 </p>
@@ -679,8 +682,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   <tr class="api apilevel-" >
     <td><code><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></code>&nbsp;</td>
     <td width="100%">
-      <code>PLANES_HORIZONTAL</code>
-      <p>Horizontal planes will be detected by the AR tracking system.&nbsp;
+      <code>PLANES_VERTICAL</code>
+      <p>Vertical planes will be detected by the AR tracking system.&nbsp;
       
     
 </p>
@@ -778,31 +781,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="NONE"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">NONE</h3>
-    <div class="api-level">
-      
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a> NONE</pre>
-    
-    
-
-    
-  <p>Anchor detection will be entirely disabled. This setting results in optimal performance
- and should be used in applications where anchors are not required.
-</p></p>
-
-    
-</div>
-
-
-
 <A NAME="PLANES_HORIZONTAL"></A>
 
 <div class="api apilevel-">
@@ -820,6 +798,30 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     
   <p>Horizontal planes will be detected by the AR tracking system.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="PLANES_VERTICAL"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">PLANES_VERTICAL</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a> PLANES_VERTICAL</pre>
+    
+    
+
+    
+  <p>Vertical planes will be detected by the AR tracking system.
 </p></p>
 
     

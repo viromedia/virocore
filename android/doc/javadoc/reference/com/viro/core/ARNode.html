@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -633,19 +636,36 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>. ARNodes are
- automatically created by Viro and added to the <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> as they are detected, and by default
- hold no content and have no children. Each ARNode is continually updated to stay in sync with its
- corresponding ARAnchor: if the anchor's position, orientation, or other detected properties
- change, the ARNode will be changed as well.
+  <p>ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected or manually created <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>. ARNodes are automatically created by Viro and added to the <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> as anchors
+ are created, and by default hold no content and have no children. Each ARNode is continually
+ updated to stay in sync with its corresponding ARAnchor: if the anchor's position, orientation,
+ or other detected properties change, the ARNode will be changed as well.
  <p>
  ARNode is the mechanism through which you can attach virtual content to real-world objects. For
  example, if an <code><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></code> is detected, you can add a 3D model to that plane by loading
- the <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code> and making it a child of the ARNode.
+ the <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code> and making it a child of the anchor's ARNode.
  <p>
- To get an ARNode, attach a <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> to the <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code>,
- and listen for <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorFound(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorFound(ARAnchor, ARNode)</a></code>,
- which is invoked each time a new <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> is found, with its corresponding <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code>.
+ While normal <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code>s can be used in AR, it is highly recommended to ensure that all nodes
+ descend from an ARNode. This is because the world coordinate system used by the underlying
+ tracking technology may not be stable. By using an <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code>, you ensure that said node is
+ continually tracked, maintaining its position in the real world. Normal <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> objects can
+ be added as children to the ARNode, and they too will maintain their position relative to the
+ real-world.
+ <p>
+ There are three ways to acquire ARNodes: <ol> <li>Real-world feature detection. Every real-world
+ feature detected will trigger a callback giving you an ARNode corresponding to that feature. This
+ can used to add content to real-world features like planes or images. To do this, attach a <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></code> to the <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code>, and listen for <code><a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorFound(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorFound(ARAnchor, ARNode)</a></code>. </li> <li>Hit-test results. Perform a hit-test using <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#performARHitTest(android.graphics.Point, com.viro.core.ARHitTestListener)">performARHitTest(Point, ARHitTestListener)</a></code>, <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#performARHitTestWithPosition(com.viro.core.Vector, com.viro.core.ARHitTestListener)">performARHitTestWithPosition(Vector, ARHitTestListener)</a></code>, or <code><a href="../../../../reference/com/viro/core/ViroViewARCore.html#performARHitTestWithRay(com.viro.core.Vector, com.viro.core.ARHitTestListener)">performARHitTestWithRay(Vector, ARHitTestListener)</a></code>. These functions will return
+ an <code><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></code> for each intersected real-world. You can retrieve an ARNode
+ corresponding to any hit location via <code><a href="../../../../reference/com/viro/core/ARHitTestResult.html#createAnchoredNode()">createAnchoredNode()</a></code>.</li>
+ <li>Arbitrary real-world location. You can create an ARNode at any world coordinate position by
+ invoking <code><a href="../../../../reference/com/viro/core/ARScene.html#createAnchoredNode(com.viro.core.Vector)">createAnchoredNode(Vector)</a></code>. Note that world coordinates are in
+ meters.</li>
+ <p>
+ <p>
+ Finally, when finished with a manually constructed ARNode (methods 2 or 3 above), you must call
+ <code><a href="../../../../reference/com/viro/core/ARNode.html#detach()">detach()</a></code> to remove it from the system. If you do not detach the ARNode, it will
+ continue to receive tracking updates from the AR subsystem, adversely impacting performance.
+ Nodes that are automatically detected (method 1 above), do not need to be detached.
 </p>
 
 
@@ -689,6 +709,88 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <tr><th colspan="2"><h3>Public methods</h3></th></tr>
 
 
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARNode.html#detach()">detach</a>()
+      </code>
+      
+        <p>Detaches this ARNode, removing it and all of its children from the Scene, and stopping it
+ from receiving further AR tracking updates.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARNode.html#getAnchor()">getAnchor</a>()
+      </code>
+      
+        <p>Get the <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> associated with this ARNode.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARNode.html#removeFromParentNode()">removeFromParentNode</a>()
+      </code>
+      
+        <p>Remove this Node from its parent.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
 
   
   <tr class="api apilevel-" >
@@ -807,6 +909,92 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <h2 class="api-section">Public methods</h2>
 
+
+
+<A NAME="detach()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">detach</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void detach ()</pre>
+    
+    
+
+    
+  <p>Detaches this ARNode, removing it and all of its children from the Scene, and stopping it
+ from receiving further AR tracking updates. After this is called, the ARNode becomes
+ unusable.
+ <p>
+ This may only be called on ARNodes that are created manually by calls to <code><a href="../../../../reference/com/viro/core/ARHitTestResult.html#createAnchoredNode()">createAnchoredNode()</a></code>, <code><a href="../../../../reference/com/viro/core/ARScene.html#createAnchoredNode(com.viro.core.Vector, com.viro.core.Quaternion)">createAnchoredNode(Vector, Quaternion)</a></code>, or <code><a href="../../../../reference/com/viro/core/ARScene.html#createAnchoredNode(com.viro.core.Vector)">createAnchoredNode(Vector)</a></code>. Other ARNodes are created
+ automatically when Viro detects real-world features (e.g. planes and images), and are
+ automatically detached when those features are no longer visible to the AR system.
+</p></p>
+
+</div>
+
+
+<A NAME="getAnchor()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getAnchor</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> getAnchor ()</pre>
+    
+    
+
+    
+  <p>Get the <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> associated with this ARNode. The anchor is used to fix the
+ virtual content of this Node to tracked object represented by the anchor. This node is
+ automatically updated with the anchor's transformations.
+ <p>
+ This returns an immutable copy of the underlying anchor. The anchor returned will not
+ be updated by the tracking system: it is snapshot of the anchor at this point in time.
+ To get the latest transforms, you must invoke getAnchor() again.
+ <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> to which this ARNode is attached.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="removeFromParentNode()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">removeFromParentNode</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void removeFromParentNode ()</pre>
+    
+    
+
+    
+  <p>Remove this Node from its parent.
+</p></p>
+
+</div>
 
 
 <A NAME="setPauseUpdates(boolean)"></A>

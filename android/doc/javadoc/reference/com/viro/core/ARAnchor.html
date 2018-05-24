@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -772,6 +775,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        <a href="http://d.android.com/reference/java/lang/String.html">String</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARAnchor.html#getCloudAnchorId()">getCloudAnchorId</a>()
+      </code>
+      
+        <p>Return the cloud identifier of this anchor.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
     </td>
   
@@ -930,6 +960,41 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <tr>
         <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
         <td width="100%">Unique ID for the anchor.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getCloudAnchorId()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getCloudAnchorId</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/lang/String.html">String</a> getCloudAnchorId ()</pre>
+    
+    
+
+    
+  <p>Return the cloud identifier of this anchor. This identifier is only present if this anchor
+ is hosted on the cloud or was resolved from the cloud. If this anchor is not a cloud anchor,
+ this method will return null.
+ <p>
+ You use the cloud anchor ID to resolve anchors that other devices have hosted. See
+ <code><a href="../../../../reference/com/viro/core/ARScene.html#resolveCloudAnchor(java.lang.String, com.viro.core.ARScene.CloudAnchorResolveListener)">resolveCloudAnchor(String, ARScene.CloudAnchorResolveListener)</a></code>.
+ <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
+        <td width="100%">The cloud anchor ID of this anchor, or null if this anchor is not in the cloud.
 </p></td>
       </tr>
     </table>

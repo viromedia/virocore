@@ -103,11 +103,14 @@ public class ARNode extends Node {
 
     /**
      * Detaches this ARNode, removing it and all of its children from the Scene, and stopping it
-     * from receiving further AR tracking updates. After this is called, the ARNode becomes unusable.
-     * This may only be called on ARNodes that are created manually by calls to
-     * {@link ARHitTestResult#createAnchoredNode()}. Other ARNodes are created automatically when
-     * Viro detects real-world features, and are automatically detached when those features are no
-     * longer visible to the AR system.
+     * from receiving further AR tracking updates. After this is called, the ARNode becomes
+     * unusable.
+     * <p>
+     * This may only be called on ARNodes that are created manually by calls to {@link
+     * ARHitTestResult#createAnchoredNode()}, {@link ARScene#createAnchoredNode(Vector,
+     * Quaternion)}, or {@link ARScene#createAnchoredNode(Vector)}. Other ARNodes are created
+     * automatically when Viro detects real-world features (e.g. planes and images), and are
+     * automatically detached when those features are no longer visible to the AR system.
      */
     public void detach() {
         if (!nativeIsAnchorManaged(mNativeRef)) {

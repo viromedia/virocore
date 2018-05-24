@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -660,7 +663,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAmbientLightUpdate(float, float)">onAmbientLightUpdate</a>(float lightIntensity, float colorTemperature)
+      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAmbientLightUpdate(float, com.viro.core.Vector)">onAmbientLightUpdate</a>(float intensity, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> color)
       </code>
       
         <p>Invoked when the AR system's estimation of the current ambient light levels are
@@ -849,7 +852,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="onAmbientLightUpdate(float, float)"></A>
+<A NAME="onAmbientLightUpdate(float, com.viro.core.Vector)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">onAmbientLightUpdate</h3>
@@ -860,8 +863,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void onAmbientLightUpdate (float lightIntensity, 
-                float colorTemperature)</pre>
+void onAmbientLightUpdate (float intensity, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> color)</pre>
     
     
 
@@ -872,14 +875,14 @@ void onAmbientLightUpdate (float lightIntensity,
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>lightIntensity</code></td>
+        <td><code>intensity</code></td>
         <td width="100%">
-          <code>float</code>: The light intensity detected.</p></td>
+          <code>float</code>: The light intensity detected, in lumens.</p></td>
       </tr>
       <tr>
-        <td><code>colorTemperature</code></td>
+        <td><code>color</code></td>
         <td width="100%">
-          <code>float</code>: The color temperature detected.
+          <code>Vector</code>: The color of the light detected in RGB [0, 1].
 </p></td>
       </tr>
     </table>

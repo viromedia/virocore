@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -700,6 +703,61 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARHitTestResult.html#createAnchoredNode()">createAnchoredNode</a>()
+      </code>
+      
+        <p>Create an <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> that will be anchored to the real-world position associated with
+ this hit result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARHitTestResult.html#dispose()">dispose</a>()
+      </code>
+      
+        <p>Release native resources associated with this ARHitTestResult.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
     </td>
   
@@ -835,6 +893,72 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <h2 class="api-section">Public methods</h2>
 
+
+
+<A NAME="createAnchoredNode()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">createAnchoredNode</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> createAnchoredNode ()</pre>
+    
+    
+
+    
+  <p>Create an <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> that will be anchored to the real-world position associated with
+ this hit result. Anchoring a node to a hit-result will help ensure that the objects you
+ attach to this node will track properly and remain in place.
+ <p>
+ The returned <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> is automatically added to the Scene, and will be
+ continually updated to stay in the sync with its underlying anchor as the anchor's
+ properties, orientation, or position change.
+ <p>
+ If there is already an ARNode associated with this hit result, that ARNode will be returned
+ here. <b>If AR tracking is limited, this method will return null.</b>
+ <p>
+ When finished with this ARNode, you must call <code><a href="../../../../reference/com/viro/core/ARNode.html#detach()">detach()</a></code> to remove it from
+ the system. If you do not detach the ARNode, it will continue to receive tracking updates
+ from the AR subsystem, adversely impacting performance.
+ <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code></td>
+        <td width="100%">New <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> anchored to the hit result position, or null if AR tracking is
+ currently limited.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="dispose()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">dispose</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void dispose ()</pre>
+    
+    
+
+    
+  <p>Release native resources associated with this ARHitTestResult.
+</p></p>
+
+</div>
 
 
 <A NAME="getPosition()"></A>
