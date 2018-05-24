@@ -781,6 +781,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                             std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(image->acquireAnchor(pose));
                             if (anchor) {
                                 std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vImage, session);
+                                vAnchor->sync();
                                 addAnchor(vAnchor);
                             } else {
                                 pinfo("Failed to create anchor for trackable image target: will try again later");
