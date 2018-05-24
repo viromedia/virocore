@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -959,6 +962,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        int</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getChromaKeyFilteringColor()">getChromaKeyFilteringColor</a>()
+      </code>
+      
+        <p>Returns the chroma key filtering color.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></code>
     </td>
   
@@ -1392,6 +1422,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#isChromaKeyFilteringEnabled()">isChromaKeyFilteringEnabled</a>()
+      </code>
+      
+        <p>Returns true if chroma key filtering is enabled.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         void</code>
     </td>
   
@@ -1455,6 +1512,61 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Set the brightness value at which this Material will begin to bloom.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setChromaKeyFilteringColor(int)">setChromaKeyFilteringColor</a>(int color)
+      </code>
+      
+        <p>Set the color to remove from all surfaces rendering with this material, via chroma key
+ filtering.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setChromaKeyFilteringEnabled(boolean)">setChromaKeyFilteringEnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Enable chroma key filtering for this material.
         
     
 </p>
@@ -2107,6 +2219,36 @@ float getBloomThreshold ()</pre>
 </div>
 
 
+<A NAME="getChromaKeyFilteringColor()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getChromaKeyFilteringColor</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+int getChromaKeyFilteringColor ()</pre>
+    
+    
+
+    
+  <p>Returns the chroma key filtering color. Hues within an epsilon range about this color are
+ removed (made transparent) when chroma key filtering is enabled.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>int</code></td>
+        <td width="100%">The chroma key filtering color.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getCullMode()"></A>
 
 <div class="api apilevel-">
@@ -2604,6 +2746,35 @@ boolean getWritesToDepthBuffer ()</pre>
 </div>
 
 
+<A NAME="isChromaKeyFilteringEnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isChromaKeyFilteringEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isChromaKeyFilteringEnabled ()</pre>
+    
+    
+
+    
+  <p>Returns true if chroma key filtering is enabled.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if chroma key filtering is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setAmbientOcclusionMap(com.viro.core.Texture)"></A>
 
 <div class="api apilevel-">
@@ -2710,6 +2881,75 @@ void setBloomThreshold (float bloomThreshold)</pre>
         <td width="100%">
           <code>float</code>: The bloom threshold value to set. Set to less than zero to disable
                        bloom entirely.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setChromaKeyFilteringColor(int)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setChromaKeyFilteringColor</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setChromaKeyFilteringColor (int color)</pre>
+    
+    
+
+    
+  <p>Set the color to remove from all surfaces rendering with this material, via chroma key
+ filtering. Chroma key filtering enables partially transparent ("alpha") videos. When chroma
+ key filtering is enabled, all colors within an epsilon range this color will be removed (made
+ transparent). This technique is useful when rendering "green screen" or "blue screen" videos,
+ as is commonly seen in newscasting and motion pictures. To enable chroma key filtering, you
+ must also call <code><a href="../../../../reference/com/viro/core/Material.html#setChromaKeyFilteringEnabled(boolean)">setChromaKeyFilteringEnabled(boolean)</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>color</code></td>
+        <td width="100%">
+          <code>int</code>: The <code><a href="http://d.android.com/reference/android/graphics/Color.html">Color</a></code> to use for the filtering.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setChromaKeyFilteringEnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setChromaKeyFilteringEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setChromaKeyFilteringEnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Enable chroma key filtering for this material. Chroma key filtering enables partially
+ transparent ("alpha") videos. When chroma key filtering is enabled, all colors within an
+ epsilon range about the chroma key filtering color will be removed (made transparent). This
+ technique is useful when rendering "green screen" or "blue screen" videos, as is commonly
+ seen in newscasting and motion pictures. To set the color to be removed, use <code><a href="../../../../reference/com/viro/core/Material.html#setChromaKeyFilteringColor(int)">setChromaKeyFilteringColor(int)</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable chroma key filtering.
 </p></td>
       </tr>
     </table>

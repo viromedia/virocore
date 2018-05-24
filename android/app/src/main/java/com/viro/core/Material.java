@@ -1036,12 +1036,12 @@ public class Material {
     }
 
     /**
-     * Enable chroma key filtering for this material. When chroma key filtering is enabled, then
-     * all colors within an epsilon range about the chroma key filtering color will be removed
-     * (made transparent). This technique is useful when rendering "green screen" or "blue screen"
-     * videos, as is commonly seen in the newscasting, motion picture, and videogame industries,
-     * effectively enabling partially transparent videos. To set the color to be removed, use
-     * {@link #setChromaKeyFilteringColor(int)}.
+     * Enable chroma key filtering for this material. Chroma key filtering enables partially
+     * transparent ("alpha") videos. When chroma key filtering is enabled, all colors within an
+     * epsilon range about the chroma key filtering color will be removed (made transparent). This
+     * technique is useful when rendering "green screen" or "blue screen" videos, as is commonly
+     * seen in newscasting and motion pictures. To set the color to be removed, use {@link
+     * #setChromaKeyFilteringColor(int)}.
      *
      * @param enabled True to enable chroma key filtering.
      */
@@ -1061,11 +1061,11 @@ public class Material {
 
     /**
      * Set the color to remove from all surfaces rendering with this material, via chroma key
-     * filtering. When chroma key filtering is enabled, then all colors within an epsilon range this
-     * color will be removed (made transparent). This technique is useful when rendering "green
-     * screen" or "blue screen" videos, as is commonly seen in the newscasting, motion picture, and
-     * videogame industries, effectively enabling partially transparent videos. To enable chroma key
-     * filtering, you must also call {@link #setChromaKeyFilteringEnabled(boolean)}.
+     * filtering. Chroma key filtering enables partially transparent ("alpha") videos. When chroma
+     * key filtering is enabled, all colors within an epsilon range this color will be removed (made
+     * transparent). This technique is useful when rendering "green screen" or "blue screen" videos,
+     * as is commonly seen in newscasting and motion pictures. To enable chroma key filtering, you
+     * must also call {@link #setChromaKeyFilteringEnabled(boolean)}.
      *
      * @param color The {@link Color} to use for the filtering.
      */
