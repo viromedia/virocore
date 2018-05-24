@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -676,6 +679,19 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   <tr class="api apilevel-" >
     <td><code><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></code>&nbsp;</td>
     <td width="100%">
+      <code>FIXED_TO_PLANE</code>
+      <p>Dragging is limited to a user defined plane (specified by a point on the plane and its
+ normal vector).&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></code>&nbsp;</td>
+    <td width="100%">
       <code>FIXED_TO_WORLD</code>
       <p>Dragging is based on intersection with real-world object.&nbsp;
       
@@ -794,6 +810,32 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   <p>Dragging is limited to a fixed radius around the user. That is, as you drag a Node
  around, it never changes its distance from the user: it stays fixed as though you are
  dragging the Node around the inner surface of sphere.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="FIXED_TO_PLANE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">FIXED_TO_PLANE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a> FIXED_TO_PLANE</pre>
+    
+    
+
+    
+  <p>Dragging is limited to a user defined plane (specified by a point on the plane and its
+ normal vector). You can also limit the maximum distance the dragged object is allowed to
+ travel away from the camera/controller. These properties are controlled by <code><a href="../../../../reference/com/viro/core/Node.html#setDragPlanePoint(com.viro.core.Vector)">setDragPlanePoint(Vector)</a></code>, <code><a href="../../../../reference/com/viro/core/Node.html#setDragPlaneNormal(com.viro.core.Vector)">setDragPlaneNormal(Vector)</a></code>, and <code><a href="../../../../reference/com/viro/core/Node.html#setDragMaxDistance(float)">setDragMaxDistance(float)</a></code>.
 </p></p>
 
     

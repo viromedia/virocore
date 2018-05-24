@@ -88,7 +88,10 @@ public class Node implements EventDelegate.EventDelegateCallback {
 
         /**
          * Dragging is limited to a user defined plane (specified by a point on the plane and its
-         * normal vector) and max distance from the camera/controller.
+         * normal vector). You can also limit the maximum distance the dragged object is allowed to
+         * travel away from the camera/controller. These properties are controlled by {@link
+         * #setDragPlanePoint(Vector)}, {@link #setDragPlaneNormal(Vector)}, and {@link
+         * #setDragMaxDistance(float)}.
          */
         FIXED_TO_PLANE("FixedToPlane");
 
@@ -645,9 +648,10 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Set a point on the plane for {@link DragType#FIXED_TO_PLANE}.
+     * Specify the point that (along with the normal vector) defines the plane to use when dragging
+     * is set to {@link DragType#FIXED_TO_PLANE}. This point should be given in world coordinates.
      *
-     * @param planePoint The {@link Vector} containing the point.
+     * @param planePoint The {@link Vector} specifying the point in world coordinates.
      */
     public void setDragPlanePoint(Vector planePoint) {
         mDragPlanePoint = planePoint;
@@ -655,18 +659,20 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the point on the plane for {@link DragType#FIXED_TO_PLANE}.
+     * Get the point that (along with the normal vector) defines the plane used for {@link
+     * DragType#FIXED_TO_PLANE}. This point is given in world coordinates.
      *
-     * @return The {@link Vector} containing the point.
+     * @return The {@link Vector} specifying the point in world coordinates.
      */
     public Vector getDragPlanePoint() {
         return mDragPlanePoint;
     }
 
     /**
-     * Set the plane's normal for {@link DragType#FIXED_TO_PLANE}.
+     * Specify the normal vector that (along with the point) defines the plane to use when dragging
+     * is set to {@link DragType#FIXED_TO_PLANE}.
      *
-     * @param planeNormal The {@link Vector} containing the normal.
+     * @param planeNormal The {@link Vector} specifying the plane's normal.
      */
     public void setDragPlaneNormal(Vector planeNormal) {
         mDragPlaneNormal = planeNormal;
@@ -674,18 +680,20 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the plane's normal for {@link DragType#FIXED_TO_PLANE}
+     * Get the normal vector that (along with the point) defines the plane used for {@link
+     * DragType#FIXED_TO_PLANE}
      *
-     * @return The {@link Vector} containing the plane's normal.
+     * @return The {@link Vector} specifying the plane's normal.
      */
     public Vector getDragPlaneNormal() {
         return mDragPlaneNormal;
     }
 
     /**
-     * Set the max drag distance from the camera/controller for {@link DragType#FIXED_TO_PLANE}.
+     * Set the maximum distance this Node can be dragged along the user-specified plane when
+     * drag type is set to {@link DragType#FIXED_TO_PLANE}.
      *
-     * @param maxDistance The max drag distance from the camera/controller
+     * @param maxDistance The maximum drag distance from the camera.
      */
     public void setDragMaxDistance(float maxDistance) {
         mDragMaxDistance = maxDistance;
@@ -693,9 +701,10 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the max drag distance from the camera/controller for {@link DragType#FIXED_TO_PLANE}.
+     * Get the maximum distance this Node can be dragged along the user-specified plane when
+     * drag type is set to {@link DragType#FIXED_TO_PLANE}.
      *
-     * @return The max drag distance.
+     * @return The maximum drag distance from the camera.
      */
     public float getDragMaxDistance() {
         return mDragMaxDistance;

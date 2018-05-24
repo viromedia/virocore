@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -626,7 +629,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <tr class="alt-color api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></td>
         <td class="jd-descrcol" width="100%">
-          ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.&nbsp;
+          ARNode is a specialized <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that corresponds to a detected or manually created <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code>.&nbsp;
           
     
 
@@ -637,7 +640,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <tr class=" api apilevel-" >
         <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></td>
         <td class="jd-descrcol" width="100%">
-          Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX or OBJ models.&nbsp;
+          Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX, OBJ, GLTF, or GLB models.&nbsp;
           
     
 
@@ -1040,7 +1043,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/Node.html#convertWorldPositionToLocalSpace(com.viro.core.Vector)">convertWorldPositionToLocalSpace</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> worldPosition)
       </code>
       
-        <p>Convert the given position from world coordinates into coordinate space of this Node.
+        <p>Convert the given position from world coordinates into the coordinate space of this Node.
         
     
 </p>
@@ -1257,6 +1260,88 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Get the <code><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></code> that is currently installed for this <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Node.html#getDragMaxDistance()">getDragMaxDistance</a>()
+      </code>
+      
+        <p>Get the maximum distance this Node can be dragged along the user-specified plane when
+ drag type is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Node.html#getDragPlaneNormal()">getDragPlaneNormal</a>()
+      </code>
+      
+        <p>Get the normal vector that (along with the point) defines the plane used for <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Node.html#getDragPlanePoint()">getDragPlanePoint</a>()
+      </code>
+      
+        <p>Get the point that (along with the normal vector) defines the plane used for <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.
         
     
 </p>
@@ -2527,6 +2612,90 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Node.html#setDragMaxDistance(float)">setDragMaxDistance</a>(float maxDistance)
+      </code>
+      
+        <p>Set the maximum distance this Node can be dragged along the user-specified plane when
+ drag type is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Node.html#setDragPlaneNormal(com.viro.core.Vector)">setDragPlaneNormal</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> planeNormal)
+      </code>
+      
+        <p>Specify the normal vector that (along with the point) defines the plane to use when dragging
+ is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Node.html#setDragPlanePoint(com.viro.core.Vector)">setDragPlanePoint</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> planePoint)
+      </code>
+      
+        <p>Specify the point that (along with the normal vector) defines the plane to use when dragging
+ is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Node.html#setDragType(com.viro.core.Node.DragType)">setDragType</a>(<a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a> dragType)
       </code>
       
@@ -3548,7 +3717,7 @@ void clearPhysicsBody ()</pre>
     
 
     
-  <p>Convert the given position from world coordinates into coordinate space of this Node. The
+  <p>Convert the given position from world coordinates into the coordinate space of this Node. The
  world coordinate system is the global coordinate space; e.g., the coordinate space of the
  Scene's root Node. This Node's coordinate system is the coordinate system in which the
  children of this Node are positioned.</p></p>
@@ -3806,6 +3975,94 @@ void dispose ()</pre>
       <tr>
         <td><code><a href="../../../../reference/com/viro/core/DragListener.html">DragListener</a></code></td>
         <td width="100%">The installed listener, or null if none is installed.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getDragMaxDistance()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getDragMaxDistance</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getDragMaxDistance ()</pre>
+    
+    
+
+    
+  <p>Get the maximum distance this Node can be dragged along the user-specified plane when
+ drag type is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The maximum drag distance from the camera.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getDragPlaneNormal()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getDragPlaneNormal</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getDragPlaneNormal ()</pre>
+    
+    
+
+    
+  <p>Get the normal vector that (along with the point) defines the plane used for <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> specifying the plane's normal.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getDragPlanePoint()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getDragPlanePoint</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getDragPlanePoint ()</pre>
+    
+    
+
+    
+  <p>Get the point that (along with the normal vector) defines the plane used for <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>. This point is given in world coordinates.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> specifying the point in world coordinates.
 </p></td>
       </tr>
     </table>
@@ -5167,6 +5424,99 @@ void setDragListener (<a href="../../../../reference/com/viro/core/DragListener.
         <td><code>listener</code></td>
         <td width="100%">
           <code>DragListener</code>: The listener to attach, or null to remove any installed listener.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setDragMaxDistance(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setDragMaxDistance</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setDragMaxDistance (float maxDistance)</pre>
+    
+    
+
+    
+  <p>Set the maximum distance this Node can be dragged along the user-specified plane when
+ drag type is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>maxDistance</code></td>
+        <td width="100%">
+          <code>float</code>: The maximum drag distance from the camera.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setDragPlaneNormal(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setDragPlaneNormal</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setDragPlaneNormal (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> planeNormal)</pre>
+    
+    
+
+    
+  <p>Specify the normal vector that (along with the point) defines the plane to use when dragging
+ is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>planeNormal</code></td>
+        <td width="100%">
+          <code>Vector</code>: The <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> specifying the plane's normal.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setDragPlanePoint(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setDragPlanePoint</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setDragPlanePoint (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> planePoint)</pre>
+    
+    
+
+    
+  <p>Specify the point that (along with the normal vector) defines the plane to use when dragging
+ is set to <code><a href="../../../../reference/com/viro/core/Node.DragType.html#FIXED_TO_PLANE">FIXED_TO_PLANE</a></code>. This point should be given in world coordinates.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>planePoint</code></td>
+        <td width="100%">
+          <code>Vector</code>: The <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> specifying the point in world coordinates.
 </p></td>
       </tr>
     </table>
