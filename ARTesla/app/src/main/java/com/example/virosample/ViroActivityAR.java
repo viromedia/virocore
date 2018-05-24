@@ -210,7 +210,7 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
         // Creation of ObjectJni to the right
         Object3D fbxCarNode = new Object3D();
         fbxCarNode.setScale(new Vector(0.00f, 0.00f, 0.00f));
-        fbxCarNode.loadModel(Uri.parse("file:///android_asset/object_car.obj"), Object3D.Type.OBJ, new AsyncObject3DListener() {
+        fbxCarNode.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/object_car.obj"), Object3D.Type.OBJ, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 preloadCarColorTextures(object);
@@ -459,7 +459,7 @@ public class ViroActivityAR extends Activity implements ARScene.Listener {
     }
 
     @Override
-    public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+    public void onAmbientLightUpdate(float value, Vector v) {
         // No-op
     }
 }

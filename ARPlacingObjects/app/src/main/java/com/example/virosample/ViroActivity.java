@@ -142,7 +142,7 @@ public class ViroActivity extends Activity {
             });
 
             // Load the Android model asynchronously.
-            object3D.loadModel(Uri.parse(mFileName), Object3D.Type.FBX, new AsyncObject3DListener() {
+            object3D.loadModel(mViroView.getViroContext(), Uri.parse(mFileName), Object3D.Type.FBX, new AsyncObject3DListener() {
                 @Override
                 public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
 
@@ -269,8 +269,8 @@ public class ViroActivity extends Activity {
         }
 
         @Override
-        public void onAmbientLightUpdate(float v, float v1) {
-
+        public void onAmbientLightUpdate(float lightIntensity, Vector lightColor) {
+            // No-op
         }
 
         @Override

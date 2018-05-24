@@ -117,12 +117,12 @@ public class ViroActivityAR extends Activity {
             }
 
             @Override
-            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+            public void onAmbientLightUpdate(float lightIntensity, Vector color){
                 // No-op
             }
 
             @Override
-            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
                 // No-op
             }
 
@@ -191,7 +191,7 @@ public class ViroActivityAR extends Activity {
         mBlackPantherModel = new Object3D();
         mBlackPantherModel.setRotation(new Vector(Math.toRadians(-90), 0, 0));
         mBlackPantherModel.setScale(new Vector(0.2f, 0.2f, 0.2f));
-        mBlackPantherModel.loadModel(Uri.parse("file:///android_asset/blackpanther/object_bpanther_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        mBlackPantherModel.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/blackpanther/object_bpanther_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 mObjLoaded = true;

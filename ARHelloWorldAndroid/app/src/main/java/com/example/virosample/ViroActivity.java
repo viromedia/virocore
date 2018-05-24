@@ -154,7 +154,7 @@ public class ViroActivity extends Activity {
         mScene.getRootNode().addChildNode(object3D);
 
         // Load the Android model asynchronously.
-        object3D.loadModel(Uri.parse("file:///android_asset/andy.obj"), Object3D.Type.OBJ, new AsyncObject3DListener() {
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/andy.obj"), Object3D.Type.OBJ, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
                 // When the model is loaded, set the texture associated with this OBJ
@@ -308,7 +308,7 @@ public class ViroActivity extends Activity {
         }
 
         @Override
-        public void onAmbientLightUpdate(float v, float v1) {
+        public void onAmbientLightUpdate(float lightIntensity, Vector lightColor) {
             //No-op
         }
     }

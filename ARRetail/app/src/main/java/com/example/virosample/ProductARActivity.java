@@ -265,7 +265,7 @@ public class ProductARActivity extends Activity {
 
         final Object3D crosshairModel = new Object3D();
         scene.getRootNode().addChildNode(crosshairModel);
-        crosshairModel.loadModel(Uri.parse("file:///android_asset/tracking_1.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        crosshairModel.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/tracking_1.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(Object3D object3D, Object3D.Type type) {
 
@@ -326,7 +326,7 @@ public class ProductARActivity extends Activity {
 
         // Load the model from the given mSelected Product
         final Object3D productModel = new Object3D();
-        productModel.loadModel(Uri.parse(mSelectedProduct.m3DModelUri), Object3D.Type.FBX, new AsyncObject3DListener() {
+        productModel.loadModel(mViroView.getViroContext(), Uri.parse(mSelectedProduct.m3DModelUri), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(Object3D object3D, Object3D.Type type) {
                 object3D.setLightReceivingBitMask(1);
@@ -527,7 +527,7 @@ public class ProductARActivity extends Activity {
         }
 
         @Override
-        public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+        public void onAmbientLightUpdate(float lightIntensity, Vector v) {
             // no-op
         }
 
