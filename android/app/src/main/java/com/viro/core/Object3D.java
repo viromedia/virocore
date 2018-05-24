@@ -21,15 +21,22 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Object3D defines a {@link Node} that can load FBX or OBJ models. These file formats may contain
- * not just single Geometry instances but entire subgraphs of Nodes. This Node acts as the parent to
- * the generated subgraph.
+ * Object3D defines a {@link Node} that can load FBX, OBJ, GLTF, or GLB models. These file formats
+ * may contain not just single Geometry instances but entire subgraphs of Nodes. This Node acts
+ * as the parent to the generated subgraph.
  * <p>
  * OBJ loading supports MTL files, for loading material properties and textures. For OBJ files,
- * Materials can also be manually injected by invoking {@link Geometry#setMaterials(List)}. FBX
- * loading fully supports material properties, diffuse, specular, and normal maps, and skeletal and
- * keyframe animation.
+ * Materials can also be manually injected by invoking {@link Geometry#setMaterials(List)}.
  * <p>
+ * FBX loading supports Blinn/Phong material properties, diffuse, specular, and normal maps, skeletal and
+ * keyframe animation, and PBR material properties (roughness, metalness, ambient occlusion) through
+ * Stingray.
+ * <p>
+ * GLTF and GLB loading similarly support all material properties including PBR properties. Skeletal
+ * and keyframe animation however is currently <i>not</i> supported by GLTF/GLB. This support is
+ * forthcoming.
+ * <p>
+ *
  * For an extended discussion on 3D model loading, refer to the <a href="https://virocore.viromedia.com/docs/3d-objects">3D
  * Objects Guide</a>.
  */
@@ -57,17 +64,24 @@ public class Object3D extends Node {
         FBX(2),
 
         /**
-         * GLTF model format. GLTF files do not need ViroFBX script conversion. Associated resources
-         * like textures should reside in the same relative file path that as specified in the
-         * .gltf JSON structured file. This format currently only supports static GLTF models.
+         * GLTF model format. GLTF files do <i>>not</i> need ViroFBX script conversion: they can
+         * be directly loaded into your application. Associated resources like textures should
+         * reside in their relative paths as specified in the .gltf JSON file.
+         * <p>
+         * Viro currently only supports static GLTF models. Animated model (skeletal and keyframe)
+         * support is forthcoming.
+         * <p>
          */
         GLTF(3),
 
         /**
-         * A GLTF model that is in a GLB (binary) format. Like GLTF, GLB files do not need
-         * ViroFBX script conversion. Associated resources like textures should reside in the same
-         * relative file path that is specified by the JSON GLTF manifest that has been base64
-         * encoded into this file. This format currently only supports static GLTF models.
+         * GLTF binary model format. Like GLTF, GLB files do not need ViroFBX script conversion.
+         * Associated resources like textures should reside their relative paths as specified in
+         * the JSON GLTF manifest (which should have been Base64 encoded into the GLB file).
+         * <p>
+         * Viro currently only supports static GLTF models. Animated model (skeletal and keyframe)
+         * support is forthcoming.
+         * <p>
          */
         GLB(4);
 
@@ -111,15 +125,18 @@ public class Object3D extends Node {
     }
 
     /**
-     * Load an FBX or OBJ model at the given URI into this Node. The model will load asynchronously,
-     * and the provided listener will receive a notification when model loading is completed. To
-     * load Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>. If
-     * the model requires other resources (e.g. textures), those are expected to be found at the
-     * same base path as the model URI.
+     * Load the model at the given URI into this Node. The model will load asynchronously, and the
+     * provided listener will receive a notification when model loading is completed. To load
+     * Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>.
+     * <p>
+     * If the model requires other resources (e.g. textures), then for FBX and OBJ models those
+     * resources are expected to be found at the same base path as the model URI. For GLTB and GLB
+     * models, resources are expected at the relative paths specified in the GLTF JSON.
+     * <p>
      *
      * @param viroContext   The {@link ViroContext} is required to load models.
      * @param uri           The URI of the model to load.
-     * @param type          The type of model (FBX or OBJ).
+     * @param type          The model input format.
      * @param asyncListener Listener to respond to model loading status.
      */
     public void loadModel(ViroContext viroContext, Uri uri, Type type, AsyncObject3DListener asyncListener) {
@@ -130,14 +147,14 @@ public class Object3D extends Node {
     }
 
     /**
-     * Load an FBX or OBJ model from bundled application resources.
+     * Load a model from bundled application resources.
      *
      * @param viroContext   The {@link ViroContext} is required to load models.
-     * @param modelResource       The resource of the FBX or OBJ.
-     * @param type                The type of model (FBX or OBJ).
+     * @param modelResource       The resource.
+     * @param type                The model format.
      * @param asyncObjListener    Listener to respond to model loading status.
      * @param resourceNamesToUris Mapping of other resources required by the model, as defined in
-     *                            the model's FBX or OBJ file, to the URI's of those resources.
+     *                            the model file, to the URI's of those resources.
      * @hide
      */
     //#IFDEF 'viro_react'
@@ -212,7 +229,7 @@ public class Object3D extends Node {
      * at runtime to change the textures and/or other material properties of the model. Materials
      * can often be identified by their name, which is set by the 3D model loader.<p>
      * <p>
-     * Note that if a model file (OBJ or FBX) contains multiple geometries, this list will contain
+     * Note that if a model file contains multiple geometries, this list will contain
      * <i>all</i> the materials across all geometries.
      *
      * @return A list containing each {@link Material} used by this 3D model.

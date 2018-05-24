@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -676,6 +679,30 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   <tr class="api apilevel-" >
     <td><code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>&nbsp;</td>
     <td width="100%">
+      <code>GLB</code>
+      <p>GLTF binary model format.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>GLTF</code>
+      <p>GLTF model format.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>&nbsp;</td>
+    <td width="100%">
       <code>OBJ</code>
       <p>OBJ model format.&nbsp;
       
@@ -692,6 +719,32 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+
+
+<!-- =========== FIELD SUMMARY =========== -->
+<table id="lfields" class="responsive properties">
+<tr><th colspan="2"><h3>Fields</h3></th></tr>
+
+
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    final
+    int</code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/Object3D.Type.html#id">id</a></code>
+      <p>
+      
+    
+</p>
+    </td>
+  </tr>
+  
+
+
+</table>
 
 
 
@@ -724,7 +777,51 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Object3D.Type.html#fromString(java.lang.String)">fromString</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> sType)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Object3D.Type.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Object3D.Type.html#valueOf(int)">valueOf</a>(int id)
       </code>
       
     </td>
@@ -801,6 +898,66 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+<A NAME="GLB"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">GLB</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> GLB</pre>
+    
+    
+
+    
+  <p>GLTF binary model format. Like GLTF, GLB files do not need ViroFBX script conversion.
+ Associated resources like textures should reside their relative paths as specified in
+ the JSON GLTF manifest (which should have been Base64 encoded into the GLB file).
+ <p>
+ Viro currently only supports static GLTF models. Animated model (skeletal and keyframe)
+ support is forthcoming.
+ <p>
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="GLTF"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">GLTF</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> GLTF</pre>
+    
+    
+
+    
+  <p>GLTF model format. GLTF files do <i>>not</i> need ViroFBX script conversion: they can
+ be directly loaded into your application. Associated resources like textures should
+ reside in their relative paths as specified in the .gltf JSON file.
+ <p>
+ Viro currently only supports static GLTF models. Animated model (skeletal and keyframe)
+ support is forthcoming.
+ <p>
+</p></p>
+
+    
+</div>
+
+
+
 <A NAME="OBJ"></A>
 
 <div class="api apilevel-">
@@ -833,6 +990,36 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Fields -->
 
 
+<!-- ========= FIELD DETAIL ======== -->
+<h2 class="api-section">Fields</h2>
+
+
+
+
+<A NAME="id"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">id</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+int id</pre>
+    
+    
+
+    
+  <p></p></p>
+
+    
+</div>
+
+
+
+
 <!-- Public ctors -->
 
 
@@ -847,6 +1034,42 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <h2 class="api-section">Public methods</h2>
 
+
+
+<A NAME="fromString(java.lang.String)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">fromString</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> fromString (<a href="http://d.android.com/reference/java/lang/String.html">String</a> sType)</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>sType</code></td>
+        <td width="100%">
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
 
 
 <A NAME="valueOf(java.lang.String)"></A>
@@ -872,6 +1095,42 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <td><code>name</code></td>
         <td width="100%">
           <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="valueOf(int)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">valueOf</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> valueOf (int id)</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>id</code></td>
+        <td width="100%">
+          <code>int</code> <!-- no parameter comment --></p></td>
       </tr>
     </table>
     <table class="responsive">

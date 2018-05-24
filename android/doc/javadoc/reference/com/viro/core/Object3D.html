@@ -203,6 +203,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -293,6 +295,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.PortalSceneBuilder.html">PortalScene.PortalSceneBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererConfiguration.html">RendererConfiguration</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
@@ -633,15 +636,22 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX or OBJ models. These file formats may contain
- not just single Geometry instances but entire subgraphs of Nodes. This Node acts as the parent to
- the generated subgraph.
+  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX, OBJ, GLTF, or GLB models. These file formats
+ may contain not just single Geometry instances but entire subgraphs of Nodes. This Node acts
+ as the parent to the generated subgraph.
  <p>
  OBJ loading supports MTL files, for loading material properties and textures. For OBJ files,
- Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>. FBX
- loading fully supports material properties, diffuse, specular, and normal maps, and skeletal and
- keyframe animation.
+ Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>.
  <p>
+ FBX loading supports Blinn/Phong material properties, diffuse, specular, and normal maps, skeletal and
+ keyframe animation, and PBR material properties (roughness, metalness, ambient occlusion) through
+ Stingray.
+ <p>
+ GLTF and GLB loading similarly support all material properties including PBR properties. Skeletal
+ and keyframe animation however is currently <i>not</i> supported by GLTF/GLB. This support is
+ forthcoming.
+ <p>
+
  For an extended discussion on 3D model loading, refer to the <a href="https://virocore.viromedia.com/docs/3d-objects">3D
  Objects Guide</a>.
 </p>
@@ -811,10 +821,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel</a>(<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)
+      <a href="../../../../reference/com/viro/core/Object3D.html#loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)
       </code>
       
-        <p>Load an FBX or OBJ model at the given URI into this Node.
+        <p>Load the model at the given URI into this Node.
         
     
 </p>
@@ -925,7 +935,7 @@ Object3D ()</pre>
 
     
   <p>Construct a new Object3D. To load 3D model data into this Node, use
- <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(Uri, Type, AsyncObject3DListener)</a></code>.
+ <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(ViroContext, Uri, Type, AsyncObject3DListener)</a></code>.
 </p></p>
 
 </div>
@@ -988,7 +998,7 @@ void dispose ()</pre>
  at runtime to change the textures and/or other material properties of the model. Materials
  can often be identified by their name, which is set by the 3D model loader.<p>
  <p>
- Note that if a model file (OBJ or FBX) contains multiple geometries, this list will contain
+ Note that if a model file contains multiple geometries, this list will contain
  <i>all</i> the materials across all geometries.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
@@ -1002,7 +1012,7 @@ void dispose ()</pre>
 </div>
 
 
-<A NAME="loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)"></A>
+<A NAME="loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">loadModel</h3>
@@ -1013,20 +1023,29 @@ void dispose ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void loadModel (<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
+void loadModel (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
+                <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
                 <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, 
                 <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)</pre>
     
     
 
     
-  <p>Load an FBX or OBJ model at the given URI into this Node. The model will load asynchronously,
- and the provided listener will receive a notification when model loading is completed. To
- load Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>. If
- the model requires other resources (e.g. textures), those are expected to be found at the
- same base path as the model URI.</p></p>
+  <p>Load the model at the given URI into this Node. The model will load asynchronously, and the
+ provided listener will receive a notification when model loading is completed. To load
+ Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>.
+ <p>
+ If the model requires other resources (e.g. textures), then for FBX and OBJ models those
+ resources are expected to be found at the same base path as the model URI. For GLTB and GLB
+ models, resources are expected at the relative paths specified in the GLTF JSON.
+ <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>viroContext</code></td>
+        <td width="100%">
+          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to load models.</p></td>
+      </tr>
       <tr>
         <td><code>uri</code></td>
         <td width="100%">
@@ -1035,7 +1054,7 @@ void loadModel (<a href="http://d.android.com/reference/android/net/Uri.html">Ur
       <tr>
         <td><code>type</code></td>
         <td width="100%">
-          <code>Object3D.Type</code>: The type of model (FBX or OBJ).</p></td>
+          <code>Object3D.Type</code>: The model input format.</p></td>
       </tr>
       <tr>
         <td><code>asyncListener</code></td>
