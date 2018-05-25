@@ -243,13 +243,10 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
         samplers.push_back("shadow_map");
     }
-    
-    // Tone Mapping + Bloom
-    if (lightingCapabilities.hdr) {
-        modifiers.push_back(createToneMappingMaskModifier());
-        if (materialCapabilities.bloom && driver->isBloomSupported()) {
-            modifiers.push_back(createBloomModifier());
-        }
+
+    // Bloom
+    if (lightingCapabilities.hdr && materialCapabilities.bloom && driver->isBloomSupported()) {
+        modifiers.push_back(createBloomModifier());
     }
     
     // Custom material modifiers. These are added to the back of the modifiers list
@@ -261,6 +258,13 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     int attributes = (int)(VROShaderMask::Tex) | (int)(VROShaderMask::Norm) | (int)(VROShaderMask::Tangent);
     for (std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
         attributes |= modifier->getAttributes();
+    }
+
+    // The tone mapping mask generator must be the absolute *last* shader modifier
+    // applied; otherwise it will be based on outdated alpha data (causing, for example
+    // transparent shadow planes to be partially visible)
+    if (lightingCapabilities.hdr) {
+        modifiers.push_back(createToneMappingMaskModifier());
     }
     
     return std::make_shared<VROShaderProgram>(vertexShader, fragmentShader, samplers, modifiers, attributes,
