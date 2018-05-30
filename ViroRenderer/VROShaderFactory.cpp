@@ -897,15 +897,80 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createToneMappingMaskModifi
     /*
      Modifier that writes out the specific pixels that we wish to tone-map. We tone-map
      all non-transparent parts of the object.
+
+     This method sets the tone_mapped mask to 1.0 if the material requires tone-mapping,
+     and 0.0 if it does not. We then write that value into the map for each fragment.
+     In order to deal with cases where we have transparent fragments, we also multiply
+     the tone_mapped mask by the fragment's alpha value. This ensures we get the correct
+     results, so long as we're using normal blending:
+
+     output = [source_alpha * source + (1 - source_alpha) * destination]
+
+     Some examples:
+
+     Case A: Transparent shadow plane is rendered atop AR camera view
+
+             The AR camera view is rendered first. It does not need tone-mapping, so its
+             tone_mapped uniform is set to 0.0. [0.0, 0.0, 0.0, 0.0] is written to the
+             tone_mapping_mask for all fragments. The transparent shadow plane is then rendered;
+             since it has alpha 0.0, its tone_mapped setting is irrelevant. It blends with the
+             previously written HDR background, and we end up with [0.0, 0.0, 0.0, 0.0].
+
+             Result: No tone-mapping for the pixel.
+
+     Case B: Transparent shadow plane is rendered atop HDR background
+
+             The HDR background is rendered first. It *does* need tone-mapping, so its
+             tone_mapped uniform is set to 1.0. [1.0, 1.0, 1.0, 1.0] is written to the
+             tone_mapping_mask for all fragments. The transparent shadow plane is then rendered;
+             since it has alpha 0.0, its tone_mapped setting is irrelevant. It blends with the
+             previously written HDR background, and we end up with [1.0, 1.0, 1.0, 1.0].
+
+             Result: Tone-mapping for the pixel.
+
+     Case C: Opaque tone-mapped plane is rendered atop AR camera view
+
+             The AR camera view is rendered first: [0.0, 0.0, 0.0, 0.0].
+             The opaque plane is rendered next, blending in [1.0, 1.0, 1.0, 1.0].
+             After blending, the final value written is [1.0, 1.0, 1.0, 1.0].
+
+             Result: Tone-mapping for the pixel.
+
+     Case D: Opaque tone-mapped plane is rendered atop HDR background
+
+             The HDR background is rendered first: [1.0, 1.0, 1.0, 1.0].
+             The opaque plane is rendered next, blending in [1.0, 1.0, 1.0, 1.0].
+             After blending, the final value written is [1.0, 1.0, 1.0, 1.0].
+
+             Result: Tone-mapping for the pixel.
+
+     Case E: Opaque NOT tone-mapped plane is rendered atop AR camera view
+
+             The AR camera view is rendered first: [0.0, 0.0, 0.0, 0.0].
+             The opaque plane is rendered next, blending in [0.0, 0.0, 0.0, 1.0].
+             After blending, the final value written is [0.0, 0.0, 0.0, 0.0].
+
+             Result: No tone-mapping for the pixel.
+
+     Case F: Opaque NOT tone-mapped plane is rendered atop HDR background
+
+             The HDR background is rendered first: [1.0, 1.0, 1.0, 1.0].
+             The opaque plane is rendered next, blending in [0.0, 0.0, 0.0, 1.0].
+             After blending, the final value written is [1.0, 1.0, 1.0, 1.0].
+
+             Result: No tone-mapping for the pixel.
+
+     Note the final decision to tone-map or not (the process that reads the
+     tone_mapping_mask) is in VROToneMappingRenderPass.cpp.
+
+     VIRO-XXXX TODO Make use of glBlendFunci to ensure we always have blending configured
+               properly for this output
      */
     if (!sToneMappingMaskModifier) {
         std::vector<std::string> modifierCode =  {
             "layout (location = 1) out lowp vec4 tone_mapping_mask;",
             "uniform lowp float tone_mapped;",
-
-            "if (_output_color.a > 0.2) {",
-            "    tone_mapping_mask = vec4(tone_mapped);",
-            "}",
+            "tone_mapping_mask = vec4(tone_mapped * _output_color.a);"
         };
         sToneMappingMaskModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
         sToneMappingMaskModifier->setUniformBinder("tone_mapped", [](VROUniform *uniform, GLuint location,

@@ -39,8 +39,14 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
         "highp vec4 hdr_color = texture(hdr_texture, v_texcoord).rgba;",
         "lowp float tone_mapped = texture(tone_mapping_mask, v_texcoord).r;",
 
+        // The tone-mapping value stored in the texture is, for each fragment, the material's
+        // tone mapping setting (1.0 to tone-map, 0.0 to not). Multiple fragments are blended
+        // together [source * alpha + destination * (1 - alpha)] to get the final pixel value.
+        // We use a threshold of 0.2. If the blended result is less than that value, then we
+        // do not tone-map. See VROShaderFactory::createToneMappingMaskModifier for details.
+
         "highp vec3 mapped;",
-        "if (tone_mapped < 0.5) {",
+        "if (tone_mapped < 0.2) {",
         "    mapped = hdr_color.rgb;",
         "} else {",
     };
