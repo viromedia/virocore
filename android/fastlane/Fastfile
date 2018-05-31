@@ -73,6 +73,7 @@ platform :android do
   lane :virorenderer_viroreact_aar do
     begin
       # https://viromedia.atlassian.net/browse/VIRO-3468 Mitigation to build twice
+      gradle(task: "clean")
       gradle(task: ":viroreact:assembleRelease")
       gradle(task: ":viroreact:assembleRelease")
       sh("mkdir -p #{BUILD_INTERMEDIATES}")
@@ -86,6 +87,7 @@ platform :android do
   lane :virorenderer_virocore_aar do
     begin
       # https://viromedia.atlassian.net/browse/VIRO-3468 Mitigation to build twice 
+      gradle(task: "clean")
       gradle(task: ":virocore:assembleRelease")
       gradle(task: ":virocore:assembleRelease")
       sh("mkdir -p #{BUILD_INTERMEDIATES}")
