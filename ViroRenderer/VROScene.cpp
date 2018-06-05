@@ -42,7 +42,7 @@ VROScene::~VROScene() {
 
 #pragma mark - Render Cycle
 
-void VROScene::computeTransforms(const VRORenderContext &context) {
+void VROScene::computeTransforms() {
     _rootNode->computeTransforms({}, {});
 }
 

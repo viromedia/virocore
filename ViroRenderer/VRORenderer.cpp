@@ -278,21 +278,21 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
         // If no node camera is set, just use the point of view node's position and
         // rotation, with standard rotation type
         if (!_pointOfView->getCamera()) {
-            camera.setPosition(_pointOfView->getPosition());
-            camera.setBaseRotation(_pointOfView->getRotation().getMatrix());
+            camera.setPosition(_pointOfView->getWorldPosition());
+            camera.setBaseRotation(_pointOfView->getWorldRotation());
         }
         
         // Otherwise our camera is fully specified
         else {
             const std::shared_ptr<VRONodeCamera> &nodeCamera = _pointOfView->getCamera();
-            camera.setBaseRotation(_pointOfView->getRotation().getMatrix().multiply(nodeCamera->getBaseRotation().getMatrix()));
+            camera.setBaseRotation(_pointOfView->getWorldRotation().multiply(nodeCamera->getBaseRotation().getMatrix()));
             
             if (nodeCamera->getRotationType() == VROCameraRotationType::Standard) {
-                camera.setPosition(_pointOfView->getPosition() + nodeCamera->getPosition());
+                camera.setPosition(_pointOfView->getWorldPosition() + nodeCamera->getPosition());
             }
             else { // Orbit
-                VROVector3f pos = _pointOfView->getPosition() + nodeCamera->getPosition();
-                VROVector3f focal = _pointOfView->getPosition() + nodeCamera->getOrbitFocalPoint();
+                VROVector3f pos = _pointOfView->getWorldPosition() + nodeCamera->getPosition();
+                VROVector3f focal = _pointOfView->getWorldPosition() + nodeCamera->getOrbitFocalPoint();
                 
                 VROVector3f v = focal.subtract(pos);
                 VROVector3f ray = v.normalize();
@@ -358,6 +358,21 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     _context->setFrame(frame);
     _context->setFPS(getFPS());
     notifyFrameStart();
+    
+    /*
+     Before updating the camera we have to compute all world transforms (because
+     the camera is a part of the scene graph, we need the up-to-date position of
+     all of its node parents).
+     */
+    if (_sceneController) {
+        if (_outgoingSceneController) {
+            std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
+            outgoingScene->computeTransforms();
+            
+        }
+        std::shared_ptr<VROScene> scene = _sceneController->getScene();
+        scene->computeTransforms();
+    }
 
     VROCamera camera = updateCamera(viewport, fov, headRotation, projection);
     _context->setPreviousCamera(_context->getCamera());
@@ -386,7 +401,6 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     if (_sceneController) {
         if (_outgoingSceneController) {
             std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
-            outgoingScene->computeTransforms(context);
             outgoingScene->computePhysics(context);
             outgoingScene->applyConstraints(context);
             outgoingScene->updateParticles(context);
@@ -399,7 +413,6 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         _inputController->setProjection(projection);
         
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
-        scene->computeTransforms(context);
         scene->computePhysics(context);
         scene->applyConstraints(context);
         scene->updateParticles(context);
