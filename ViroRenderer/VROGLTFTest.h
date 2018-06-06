@@ -54,6 +54,7 @@ public:
     }
     
     void rotateModel();
+    void animate(std::shared_ptr<VRONode> gltfNode);
     
 private:
 

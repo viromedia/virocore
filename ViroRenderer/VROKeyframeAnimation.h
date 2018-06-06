@@ -60,7 +60,14 @@ public:
     std::string getName() const {
         return _name;
     }
-    
+
+    const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &getFrames() const {
+        return _frames;
+    }
+
+    float getDuration(){
+        return _duration;
+    }
 #pragma mark - Executable Animation API
     
     /*
@@ -79,7 +86,6 @@ public:
     void terminate(bool jumpToEnd);
     
     std::string toString() const;
-    
 private:
     
     /*

@@ -292,7 +292,8 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
 }
 
 std::shared_ptr<VRONode> VROTestUtil::loadGLTFModel(std::string model, std::string ext, VROVector3f position, VROVector3f scale,
-                                                   int lightMask, std::string animation, std::shared_ptr<VRODriver> driver) {
+                                                   int lightMask, std::string animation, std::shared_ptr<VRODriver> driver,
+                                                    std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     std::string url;
     std::string base;
     VROResourceType resourceType = VROResourceType::URL;
@@ -318,9 +319,9 @@ std::shared_ptr<VRONode> VROTestUtil::loadGLTFModel(std::string model, std::stri
 
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     VROGLTFLoader::loadGLTFFromResource(url, {}, resourceType, node, isGLBType, driver,
-                                      [scale, position, lightMask](std::shared_ptr<VRONode> node, bool success) {
+                                      [scale, position, lightMask, onFinish](std::shared_ptr<VRONode> node, bool success) {
                                           if (!success) {
-                                              return;
+                                              onFinish(node, false);
                                           }
 
                                           node->setScale(scale);
@@ -336,6 +337,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadGLTFModel(std::string model, std::stri
                                               }
                                           }
 
+                                          onFinish(node, true);
                                           pinfo("GLTF HAS LOADED");
                                       });
     return node;

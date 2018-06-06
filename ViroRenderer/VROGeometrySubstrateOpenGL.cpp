@@ -26,10 +26,13 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
         
     std::vector<std::shared_ptr<VROGeometrySource>> sources = geometry.getGeometrySources();
     if (geometry.getSkinner()) {
-        sources.push_back(geometry.getSkinner()->getBoneIndices());
-        sources.push_back(geometry.getSkinner()->getBoneWeights());
-        
         _boneUBO = std::unique_ptr<VROBoneUBO>(new VROBoneUBO(driver));
+
+        // For gLTF, bone and weights data are already processed into geometry sources.
+        if (geometry.getSkinner()->getBoneIndices() != nullptr){
+            sources.push_back(geometry.getSkinner()->getBoneIndices());
+            sources.push_back(geometry.getSkinner()->getBoneWeights());
+        }
     }
     readGeometrySources(sources);
         
@@ -154,7 +157,7 @@ void VROGeometrySubstrateOpenGL::createVAO() {
 
         for (VROVertexDescriptorOpenGL &vd : vertexDescriptors) {
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
-            
+
             for (int i = 0; i < vd.numAttributes; i++) {
                 if (vd.attributes[i].type == GL_INT || vd.attributes[i].type == GL_SHORT) {
                     glVertexAttribIPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, vd.stride,

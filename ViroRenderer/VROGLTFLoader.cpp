@@ -23,9 +23,21 @@
 #include "VROTestUtil.h"
 #include "VROCompress.h"
 #include "VROModelIOUtil.h"
+#include "VROBone.h"
+#include "VROKeyframeAnimation.h"
+#include "VROSkeletalAnimation.h"
+#include "VROSkeleton.h"
+#include "VROBoneUBO.h"
 
+static std::string kVROGLTFInputSamplerKey = "timeInput";
 std::map<std::string, std::shared_ptr<VROData>> VROGLTFLoader::_dataCache;
 std::map<std::string, std::shared_ptr<VROTexture>> VROGLTFLoader::_textureCache;
+std::map<int, std::shared_ptr<VROSkeleton>> VROGLTFLoader::_skinIndexToSkeleton;
+std::map<int, std::map<int,int>> VROGLTFLoader::_skinIndexToJointNodeIndex;
+std::map<int, std::map<int,std::vector<int>>> VROGLTFLoader::_skinIndexToJointChildJoints;
+std::map<int, std::map<int, std::shared_ptr<VROKeyframeAnimation>>> VROGLTFLoader::_nodeKeyFrameAnims;
+std::map<int, std::vector<std::shared_ptr<VROSkeletalAnimation>>> VROGLTFLoader::_skinSkeletalAnims;
+std::map<int, std::unique_ptr<VROSkinner>> VROGLTFLoader::_skinMap;
 
 VROGeometrySourceSemantic VROGLTFLoader::getGeometryAttribute(std::string name) {
     if (VROStringUtil::strcmpinsensitive(name, "POSITION")) {
@@ -39,11 +51,9 @@ VROGeometrySourceSemantic VROGLTFLoader::getGeometryAttribute(std::string name) 
     } else if (VROStringUtil::strcmpinsensitive(name, "COLOR_0")) {
         return VROGeometrySourceSemantic::Color;
     } else if (VROStringUtil::strcmpinsensitive(name, "JOINTS_0")) {
-        //TODO VIRO-3627: GLTF Animations
-        pwarn("GTLF animations are not yet supported! Unable to parse Joints attributes.");
+        return VROGeometrySourceSemantic::BoneIndices;
     } else if (VROStringUtil::strcmpinsensitive(name, "WEIGHTS_0")) {
-        //TODO VIRO-3627: GLTF Animations
-        pwarn("GTLF animations are not yet supported! Unable to parse Weighted attributes.");
+        return VROGeometrySourceSemantic::BoneWeights;
     } else {
         pwarn("Atempted to parse an unknown geometry attribute: %s", name.c_str());
     }
@@ -223,9 +233,25 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                     // Once the manifest has been parsed, start constructing our Viro 3D Model.
                     const tinygltf::Model &model = gModel;
                     VROPlatformDispatchAsyncRenderer([rootNode, model, driver, onFinish] {
-                        _dataCache.clear();
-                        _textureCache.clear();
+                        clearCachedData();
 
+                        // Process and cache skinner and skeletal data needed for skeletal animation
+                        // and skinner geometry to be set later on our nodes.
+                        if (!processSkinner(model)) {
+                            perr("Error when processing the skinner of gltf model!");
+                            return;
+                        }
+
+                        // Now generate our KeyFrame and skeletal animations and cache them to be
+                        // set later on our nodes (when we iterate through the scene hierarchy).
+                        if (!processAnimations(model)) {
+                            pwarn("Error when processing animation data of the gltf model!");
+                            return;
+                        }
+
+                        // Finally, iterate through gLTF model data and build out our VRONodes that
+                        // represent our 3D Model scene, setting cached animations / skinners on
+                        // those nodes along the way.
                         bool success = true;
                         std::shared_ptr<VRONode> gltfRootNode = std::make_shared<VRONode>();
                         for (const tinygltf::Scene gScene : model.scenes) {
@@ -239,8 +265,7 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                         injectGLTF(success ? gltfRootNode : nullptr, rootNode, driver, onFinish);
 
                         // Clean up our cached resources.
-                        _dataCache.clear();
-                        _textureCache.clear();
+                        clearCachedData();
                     });
                 });
             },
@@ -249,6 +274,480 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                 perr("Failed to retrieve GTLF file: %s", gltfManifestFilePath.c_str());
                 onFinish(rootNode, false);
             });
+}
+
+void VROGLTFLoader::clearCachedData() {
+    _dataCache.clear();
+    _textureCache.clear();
+    _skinIndexToSkeleton.clear();
+    _skinIndexToJointNodeIndex.clear();
+    _skinIndexToJointChildJoints.clear();
+    _skinMap.clear();
+    _nodeKeyFrameAnims.clear();
+    _skinSkeletalAnims.clear();
+}
+
+bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
+    if (model.skins.size() == 0) {
+        return true;
+    }
+
+    // Create a map of all known joints used for building a tree of the
+    // skeletal bones in this model.
+    std::map<int, std::map<int,int>> skinIndexToNodeJointIndexes;
+    for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
+        tinygltf::Skin skin = model.skins[skinIndex];
+
+        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+            int nodeIndexOfJoint = skin.joints[jointIndex];
+            skinIndexToNodeJointIndexes[skinIndex][nodeIndexOfJoint] = jointIndex;
+            _skinIndexToJointNodeIndex[skinIndex][jointIndex] = nodeIndexOfJoint;
+        }
+    }
+
+    // Construct _skinIndexToJointChildJoints and skinIndexToJointParentJoint mappings
+    // respectively - these effectively maps out the joints within the skeletal tree
+    // by keeping track of a joint's pointer to both child and parent joints.
+    std::map<int, std::map<int, int>> skinIndexToJointParentJoint;
+    for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
+        tinygltf::Skin skin = model.skins[skinIndex];
+        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+
+            // Grab the node index corresponding to this joint.
+            int nodeIndex = _skinIndexToJointNodeIndex[skinIndex][jointIndex];
+
+            // Then look up the node with the nodeIndex and grab it's child nodes.
+            std::vector<int> childrenNodeIndex = model.nodes[nodeIndex].children;
+            for (int childIndex : childrenNodeIndex) {
+                // Skip if we have child indexes that are not a joint.
+                if (skinIndexToNodeJointIndexes[skinIndex].find(childIndex) == skinIndexToNodeJointIndexes[skinIndex].end()) {
+                    continue;
+                }
+
+                // For each of the child node index, get it's corresponding joint index.
+                int subJointIndex = skinIndexToNodeJointIndexes[skinIndex][childIndex];
+
+                // Parent the all childed joint with it's parent. Also create a reverse map
+                // in skinIndexToJointParentJoint.
+                _skinIndexToJointChildJoints[skinIndex][jointIndex].push_back(subJointIndex);
+                skinIndexToJointParentJoint[skinIndex][subJointIndex] = jointIndex;
+            }
+        }
+    }
+
+    // Finally, use the joint tree to construct our VROSkeleton and VROSkinners.
+    for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
+        tinygltf::Skin skin = model.skins[skinIndex];
+
+        std::vector<std::shared_ptr<VROBone>> bones;
+        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+            int parentJointIndex = skinIndexToJointParentJoint[skinIndex][jointIndex];
+            std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentJointIndex);
+            bones.push_back(bone);
+        }
+
+        std::shared_ptr<VROSkeleton> skeleton = std::make_shared<VROSkeleton>(bones);
+        _skinIndexToSkeleton[skinIndex] = skeleton;
+
+        // Process and cache a copy of a VROSkinner.
+        std::unique_ptr<VROSkinner> skinnerOut = nullptr;
+        if (!processSkinnerInverseBindData(model, model.skins[skinIndex],
+                                           _skinIndexToSkeleton[skinIndex], skinnerOut)) {
+            pwarn("Chris. Failed to process Skinner");
+            return false;
+        }
+
+        _skinMap[skinIndex] = std::move(skinnerOut);
+    }
+    return true;
+}
+
+bool VROGLTFLoader::processAnimations(const tinygltf::Model &model) {
+    if (model.animations.size() == 0) {
+        return true;
+    }
+
+    // In gLTF, model.animations represents a mixed mixed group of keyframe animation and
+    // skeletal animation data corresponding to different nodes with different input times.
+    // Thus, we need to group gLTF animation data for easier parsing. We group as follows:
+    //
+    // - Group all animations that apply only to it's corresponding node.
+    // - Then group a node's set of animation data by animation name or id.
+    // - Then group the single animation's data with by same input time frame / inputIndex.
+    // - Data is then stored and referred to as channelIndex.
+    //
+    // This results in:
+    // <nodeIndex, <animationIndex , <inputIndex, vec<channelIndex>>>> nodeToAnimDataMap;
+    //
+    std::map<int, std::map<int, std::map<int, std::vector<int>>>> nodeToAnimDataMap;
+    std::map<int, std::set<int>> animToNodeIndexMap;
+    for (int animIndex = 0; animIndex < model.animations.size(); animIndex++) {
+        tinygltf::Animation anim = model.animations[animIndex];
+
+        // For each animation, iterate through the channel input data.
+        for (int cIndex = 0 ; cIndex < anim.channels.size(); cIndex ++) {
+            tinygltf::AnimationChannel channel = anim.channels[cIndex];
+
+            // Group all the channel input data with the same matching sampler inputAcessor
+            // index (ensures same keyframe data).
+            int channelInputIndex = anim.samplers[channel.sampler].input;
+            nodeToAnimDataMap[channel.target_node][animIndex][channelInputIndex].push_back(cIndex);
+
+            // Also save a reverse map of anim to nodeIndexes for skeletal animation processing.
+            animToNodeIndexMap[animIndex].insert(channel.target_node);
+        }
+    }
+
+    // Group all the node indexes associated with a given skin to be used for
+    // skeletal animation processing.
+    std::map<int, std::set<int>> skinToNodeMap;
+    for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
+        tinygltf::Skin skin = model.skins[skinIndex];
+        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+            skinToNodeMap[skinIndex].insert(skin.joints[jointIndex]);
+        }
+    }
+
+    // For each animation, determine if it is a skeletalAnimation (gLTF doesn't tell us)
+    // To do this, we assume that if an animation consists of all of the nodes specified in a
+    // skinner, it is treated automatically as a skeletalAnim.
+    std::vector<std::pair<int,int>> skeletalAnimToSkinPair;
+    for (int animIndex = 0; animIndex < animToNodeIndexMap.size(); animIndex++) {
+        for (int skinIndex = 0; skinIndex < skinToNodeMap.size(); skinIndex ++) {
+            if (animToNodeIndexMap[animIndex] == skinToNodeMap[skinIndex]) {
+                skeletalAnimToSkinPair.push_back(std::make_pair(animIndex, skinIndex));
+            }
+        }
+    }
+
+    // Finally, process all animations after grouping the data above.
+    if (!processAnimationKeyFrame(model, nodeToAnimDataMap)) {
+        perr("Error when parsing key frame animations");
+        return false;
+    }
+
+    processSkeletalAnimation(model, skeletalAnimToSkinPair);
+    return true;
+}
+
+bool VROGLTFLoader::processAnimationKeyFrame(const tinygltf::Model &model,
+                                             std::map<int, std::map<int, std::map<int, std::vector<int>>>> &animatedNodes) {
+    // Iterate through all animations that are mapped to a node in nodeIndex within
+    // animatedNodes. For each animation, proccess its data via animation channels
+    // and create a VROKeyframeAnimation from it. Cache the results in _nodeKeyFrameAnim.
+    for (auto const& animNode : animatedNodes) {
+
+        // Grab grouped animations of the form: <animationIndex , <inputIndex, vec<channelIndex>>>
+        std::map<int, std::map<int, std::vector<int>>> animations = animNode.second;
+        int nodeIndex = animNode.first;
+
+        for (auto const &anim : animations) {
+            // A single animation for a Node should only have one 'time' input sampler
+            // that effectively outlines the entire duration of that animation.
+            // Else, it is ambiguous as to the order of multiple input samplers.
+            // Thus, perform a sanity check here to ensure we only have one.
+            int animationIndex = anim.first;
+            std::map<int, std::vector<int>> channelData = anim.second;
+            if (channelData.size() > 1) {
+                pwarn("Invalid GLTF animations provided");
+                return false;
+            }
+
+            // Create a VROKeyframeAnimation with the targeted channel.
+            std::shared_ptr<VROKeyframeAnimation> animation = nullptr;
+            if (!processAnimationChannels(model,
+                                          model.animations[animationIndex],
+                                          channelData.begin()->second,
+                                          animation)) {
+                return false;
+            }
+
+            // If no animation is given, set a default one with an index reference.
+            std::string name = model.animations[anim.first].name;
+            if (name.size() == 0) {
+                name = "animation_" + VROStringUtil::toString(animationIndex);
+            }
+            animation->setName(name);
+            _nodeKeyFrameAnims[nodeIndex][anim.first] = animation;
+        }
+    }
+    return true;
+}
+
+bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
+                                             const tinygltf::Animation &anim,
+                                             std::vector<int> targetedChannelIndexes,
+                                             std::shared_ptr<VROKeyframeAnimation> &animOut) {
+    if (targetedChannelIndexes.size() <= 0) {
+        pwarn("Attempted to process an invalid gLTF animation.");
+        return false;
+    }
+
+    // Process input key frames first to create our vector of KeyFrameAnimationFrames to populate
+    // with animation data like Position, Rotation, Scaling.
+    std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> frames;
+    tinygltf::AnimationChannel inputChannel = anim.channels[targetedChannelIndexes.front()];
+    tinygltf::AnimationSampler inputSampler = anim.samplers[inputChannel.sampler];
+    if (!processRawChannelData(gModel, kVROGLTFInputSamplerKey, inputSampler, frames)) {
+        return false;
+    }
+
+    if (frames.size() == 0) {
+        perror("Unable to properly parse Animation frames");
+        return false;
+    }
+
+    // Set the total duration of this keyframe animation, in seconds.
+    float duration = frames.back()->time;
+
+    // Normalize the input key frame time (expected by Viro's animation system)
+    for (int i = 0; i < frames.size(); i ++) {
+        frames[i]->time = frames[i]->time/duration;
+    }
+
+    // Grab the channel object from the given index, and process it's raw buffered data
+    // into translation, scale or rotation for this keyframe animation.
+    bool hasTranslation = false;
+    bool hasRotation = false;
+    bool hasScale = false;
+    for (int channelIndex : targetedChannelIndexes) {
+        tinygltf::AnimationChannel channel = anim.channels[channelIndex];
+        tinygltf::AnimationSampler gSampler = anim.samplers[channel.sampler];
+        if (!processRawChannelData(gModel, channel.target_path, gSampler, frames)) {
+            perr("Failed to process channel index %s for gltf model!", channel.target_path.c_str());
+            return false;
+        }
+
+        if (VROStringUtil::strcmpinsensitive(channel.target_path, "translation")) {
+            hasTranslation = true;
+        } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "scale")) {
+            hasScale = true;
+        } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "rotation")) {
+            hasRotation = true;
+        }
+    }
+
+    animOut = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation,
+                                                     hasRotation, hasScale);
+    return true;
+}
+
+bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
+                                          std::string channelProperty,
+                                          const tinygltf::AnimationSampler &channelSampler,
+                                          std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &framesOut) {
+    // TODO VIRO-3848: Support additional 3D Model Interpolation types
+    if (!VROStringUtil::strcmpinsensitive(channelSampler.interpolation, "linear")) {
+        pwarn("Viro does not currently support non-linear animations for gltf models.");
+        return false;
+    }
+
+    // Grab the accessor that maps to a bufferView through which to access the data buffer
+    // representing this channel's raw data.
+    int accessorIndex = channelSampler.output;
+    if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
+        accessorIndex = channelSampler.input;
+    }
+    const tinygltf::Accessor &gDataAcessor = gModel.accessors[accessorIndex];
+    GLTFTypeComponent gTypeComponent;
+    GLTFType gType;
+    if (!getComponentType(gDataAcessor, gTypeComponent) || !getComponent(gDataAcessor, gType)) {
+        perr("Invalid Animation channel data provided!");
+        return false;
+    }
+
+    if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
+        // A kVROGLTFInputSamplerKey channelProperty param is provided when creating new, empty
+        // VROKeyFrameAnimations to be used for storing animation data.
+        for (int i = 0; i < gDataAcessor.count; i ++){
+            std::unique_ptr<VROKeyframeAnimationFrame> frame
+                    = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
+            framesOut.push_back(std::move(frame));
+        }
+    } else if (gDataAcessor.count != framesOut.size()) {
+        // Else if we are processing an output channel (animation data relating to key frames),
+        // ensure that the size of the data aligns with the number of expected key frames.
+        perr("Animation frame %s do not match number of keyframes", channelProperty.c_str());
+        return false;
+    }
+
+    // Calculate the byte stride size if none is provided from the BufferView.
+    const tinygltf::BufferView &gIndiceBufferView = gModel.bufferViews[gDataAcessor.bufferView];
+    size_t bufferViewStride = gIndiceBufferView.byteStride;
+    if (bufferViewStride == 0) {
+        int sizeOfSingleElement = (int) gType * (int) gTypeComponent;
+        bufferViewStride = sizeOfSingleElement;
+    }
+
+    // Determine offsets and data sizes representing the 'window of data' in the buffer
+    size_t elementCount = gDataAcessor.count;
+    size_t dataOffset = gDataAcessor.byteOffset + gIndiceBufferView.byteOffset;
+    size_t dataLength = elementCount * bufferViewStride;
+
+    // Now process that buffer to produce the right output data.
+    const tinygltf::Buffer &gBuffer = gModel.buffers[gIndiceBufferView.buffer];
+    std::vector<float> tempVec;
+    VROByteBuffer buffer((char *)gBuffer.data.data() + dataOffset, dataLength, false);
+    for (int elementIndex = 0; elementIndex < elementCount; elementIndex++) {
+
+        // Set the buffer position to begin at each element index - Ex: Each Vec4.
+        buffer.setPosition(elementIndex * bufferViewStride);
+        tempVec.clear();
+
+        // For the current element, cycle through each of its float or type component
+        // and convert them into a float through the math conversions required by gLTF.
+        for (int componentCount = 0; componentCount < (int) gType; componentCount ++) {
+            if (gTypeComponent == GLTFTypeComponent::Float) {
+                float floatData = buffer.readFloat();
+                tempVec.push_back(floatData);
+            } else if (gTypeComponent == GLTFTypeComponent::UnsignedShort) {
+                unsigned short uShortData = buffer.readUnsignedShort();
+                float point = uShortData / 65535.0;
+                tempVec.push_back(point);
+            } else if (gTypeComponent == GLTFTypeComponent::Short) {
+                short shortData = buffer.readShort();
+                float point = std::max(shortData / 32767.0, -1.0);
+                tempVec.push_back(point);
+            } else if (gTypeComponent == GLTFTypeComponent::UnsignedByte) {
+                unsigned uByteData = buffer.readUnsignedByte();
+                float point = uByteData / 255.0;
+                tempVec.push_back(point);
+            } else if (gTypeComponent == GLTFTypeComponent::Byte) {
+                signed char byteData = buffer.readByte();
+                float point = std::max(byteData / 127.0, -1.0);
+                tempVec.push_back(point);
+            } else {
+                pwarn("Invalid element type in Animation Accessor Data: %d", gTypeComponent);
+                return false;
+            }
+        }
+
+        if (VROStringUtil::strcmpinsensitive(channelProperty, "translation") && tempVec.size() == 3) {
+            framesOut[elementIndex]->translation = {tempVec[0], tempVec[1], tempVec[2]};
+        } else if (VROStringUtil::strcmpinsensitive(channelProperty, "rotation")&& tempVec.size() == 4) {
+            framesOut[elementIndex]->rotation = {tempVec[0], tempVec[1], tempVec[2], tempVec[3]};
+        } else if (VROStringUtil::strcmpinsensitive(channelProperty, "scale")&& tempVec.size() == 3) {
+            framesOut[elementIndex]->scale = {tempVec[0], tempVec[1], tempVec[2]};
+        } else if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
+            framesOut[elementIndex]->time = tempVec[0] * 1000;
+        } else if (VROStringUtil::strcmpinsensitive(channelProperty, "weights")) {
+            pwarn("Viro does not support morph targets yet at the moment");
+            return false;
+        } else {
+            pwarn("Invalid target path %s with data size %d provided for gLTF.", channelProperty.c_str(), tempVec.size());
+            return false;
+        }
+    }
+    return true;
+}
+
+void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
+                                     std::vector<std::pair<int,int>> &skeletalAnimToSkinPair) {
+    if (skeletalAnimToSkinPair.size() == 0) {
+        return;
+    }
+
+    // Process any skeletal animation that is associated with each skinner in the scene.
+    for (int i = 0; i < skeletalAnimToSkinPair.size(); i ++) {
+        int skinIndex = skeletalAnimToSkinPair[i].second;
+        int skeletalAnimationIndex = skeletalAnimToSkinPair[i].first;
+
+        // Create a set of skeletal Frames, populate them with empty key frames.
+        std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> skeletalFrames;
+        int firstNodeIndex = _skinIndexToJointNodeIndex[skinIndex][0];
+        std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = _nodeKeyFrameAnims[firstNodeIndex][skeletalAnimationIndex];
+        float totalDuration = keyFrameAnim->getDuration();
+        const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = keyFrameAnim->getFrames();
+        for (int i = 0; i < frames.size(); i++) {
+            std::unique_ptr<VROSkeletalAnimationFrame> skeletalFrame
+                    = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
+            skeletalFrame->time = frames[i]->time;
+            skeletalFrames.push_back(std::move(skeletalFrame));
+        }
+
+        // Now iterate through each frame and grab the computed transform for each joint/bone.
+        std::shared_ptr<VROSkeleton> currentSkeleton = _skinIndexToSkeleton[skinIndex];
+        for (int i = 0; i < frames.size(); i++) {
+            std::map<int, VROMatrix4f> computedAnimatedJointTrans;
+            processSkeletalTransformsForFrame(skinIndex, skeletalAnimationIndex, i, 0,
+                                              computedAnimatedJointTrans);
+
+            // Then, for each joint, move the transform the computed joint back into bone space
+            // and save that into the skeletalFrames for the animation.
+            for (int jointI = 0; jointI < computedAnimatedJointTrans.size(); jointI++) {
+                VROMatrix4f invBind = _skinMap[skinIndex]->getBindTransforms()[jointI];
+                VROMatrix4f computedAnimatedBoneTrans = invBind.multiply(computedAnimatedJointTrans[jointI]);
+                skeletalFrames[i]->boneIndices.push_back(jointI);
+                skeletalFrames[i]->boneTransforms.push_back(computedAnimatedBoneTrans);
+            }
+        }
+
+        // Remove any KeyFrameAnimations that were "turned into" and used for skeletal animations.
+        for (auto &jointNode : _skinIndexToJointNodeIndex[skinIndex]) {
+            int nodeIndex = jointNode.second;
+            std::map<int, std::shared_ptr<VROKeyframeAnimation>>::iterator iter
+                            = _nodeKeyFrameAnims[nodeIndex].find(skeletalAnimationIndex);
+            if (iter != _nodeKeyFrameAnims[nodeIndex].end()) {
+                _nodeKeyFrameAnims[nodeIndex].erase(iter);
+            }
+        }
+
+        // Finally construct our skeletal animation
+        std::shared_ptr<VROSkeletalAnimation> skeletalAnimation
+                = std::make_shared<VROSkeletalAnimation>(currentSkeleton, skeletalFrames, totalDuration);
+        skeletalAnimation->setName(keyFrameAnim->getName());
+        _skinSkeletalAnims[skinIndex].push_back(skeletalAnimation);
+    }
+    return;
+}
+
+void VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationIndex, int keyFrameTime,
+                                                      int currentJointIndex, std::map<int, VROMatrix4f> &transformsOut){
+    // If we are at the root, process its transform to be cascaded down the model's scene tree.
+    if (currentJointIndex == 0) {
+        int childNodeIndex = _skinIndexToJointNodeIndex[skin][0];
+        std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex];
+        const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
+        VROMatrix4f localTransform;
+        localTransform.toIdentity();
+        localTransform.scale(frames[keyFrameTime]->scale.x,
+                             frames[keyFrameTime]->scale.y,
+                             frames[keyFrameTime]->scale.z);
+        localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
+        localTransform.translate(frames[keyFrameTime]->translation);
+        transformsOut[0] = localTransform;
+    }
+
+    // Grab the transform of the current joint to be cascaded and multiplied on the child.
+    VROMatrix4f currentMatrix = transformsOut[currentJointIndex];
+
+    // Grab all the child joints for this current joint.
+    std::vector<int> childJoints = _skinIndexToJointChildJoints[skin][currentJointIndex];
+    for (int childJointIndex : childJoints) {
+        // Get the actual node index for the child joint Index and it's animation to set.
+        int childNodeIndex = _skinIndexToJointNodeIndex[skin][childJointIndex];
+        std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex];
+
+        // Grab the animation transform of the current keyFrame
+        const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
+        VROMatrix4f localTransform;
+        localTransform.toIdentity();
+        localTransform.scale(frames[keyFrameTime]->scale.x,
+                             frames[keyFrameTime]->scale.y,
+                             frames[keyFrameTime]->scale.z);
+        localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
+        localTransform.translate(frames[keyFrameTime]->translation);
+
+        // Now cascade and compute the actual world computed transform in model space, save it in transformsOut
+        VROMatrix4f computedJointTransformInMeshCoords = currentMatrix.multiply(localTransform);
+        transformsOut[childJointIndex] = computedJointTransformInMeshCoords;
+
+        // Continue going down the skeletal tree
+        processSkeletalTransformsForFrame(skin, animationIndex, keyFrameTime, childJointIndex, transformsOut);
+    }
+
+    // We have reached the leaf of the skeletal tree.
+    return;
 }
 
 void VROGLTFLoader::injectGLTF(std::shared_ptr<VRONode> gltfNode,
@@ -335,6 +834,30 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     if (meshIndex >= 0 && !processMesh(gModel, node, gModel.meshes[meshIndex])) {
         return false;
     }
+
+    // After processing the nodes of this model, process skins if any.
+    std::shared_ptr<VROGeometry> geom = node->getGeometry();
+    if (geom != nullptr && gNode.skin >=0) {
+        geom->setSkinner(std::move(_skinMap[gNode.skin]));
+        for (const std::shared_ptr<VROMaterial> &material : geom->getMaterials()) {
+            material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier(false));
+        }
+    }
+
+    // Set the animations on this node, if any.
+    if (_nodeKeyFrameAnims.find(gNodeIndex) != _nodeKeyFrameAnims.end()) {
+        for (int i = 0; i < _nodeKeyFrameAnims[gNodeIndex].size(); i ++) {
+            std::shared_ptr<VROKeyframeAnimation> anim = _nodeKeyFrameAnims[gNodeIndex][i];
+            node->addAnimation(anim->getName(), anim);
+        }
+    }
+
+    if (_skinSkeletalAnims.find(gNode.skin) != _skinSkeletalAnims.end()) {
+        for (std::shared_ptr<VROSkeletalAnimation> anim : _skinSkeletalAnims[gNode.skin]){
+            node->addAnimation(anim->getName(), anim);
+        }
+    }
+
     parentNode->addChildNode(node);
 
     // Recursively process each child node, if any.
@@ -345,6 +868,66 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
             return false;
         }
     }
+    return true;
+}
+
+bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
+                                                  const tinygltf::Skin &skin,
+                                                  std::shared_ptr<VROSkeleton> &skeleton,
+                                                  std::unique_ptr<VROSkinner> &skinnerOut) {
+    // Process inverseBind Matrices from the gLTF Accessor
+    const tinygltf::Accessor &gDataAcessor = gModel.accessors[skin.inverseBindMatrices];
+    GLTFTypeComponent gTypeComponent;
+    GLTFType gType;
+    if (!getComponentType(gDataAcessor, gTypeComponent) || !getComponent(gDataAcessor, gType)) {
+        perr("Invalid Animation channel data provided!");
+        return false;
+    }
+
+    // Calculate the byte stride size if none is provided from the BufferView.
+    const tinygltf::BufferView &gIndiceBufferView = gModel.bufferViews[gDataAcessor.bufferView];
+    size_t bufferViewStride = gIndiceBufferView.byteStride;
+    if (bufferViewStride == 0) {
+        int sizeOfSingleElement = (int) gType * (int) gTypeComponent;
+        bufferViewStride = sizeOfSingleElement;
+    }
+
+    // Determine offsets and data sizes representing the 'window of data' in the buffer
+    size_t elementCount = gDataAcessor.count;
+    size_t dataOffset = gDataAcessor.byteOffset + gIndiceBufferView.byteOffset;
+    size_t dataLength = elementCount * bufferViewStride;
+
+    // Now process that buffer to produce the right output data.
+    const tinygltf::Buffer &gBuffer = gModel.buffers[gIndiceBufferView.buffer];
+    std::vector<VROMatrix4f> invBindTransforms;
+    VROByteBuffer buffer((char *)gBuffer.data.data() + dataOffset, dataLength, false);
+    for (int elementIndex = 0; elementIndex < elementCount; elementIndex++) {
+
+        // Set the buffer position to begin at each element index - Ex: Each Mat4.
+        buffer.setPosition((elementIndex * bufferViewStride));
+
+        // For the current element, cycle through each of its float or type component
+        float *invBindMatrix = new float[16];
+        for (int componentCount = 0; componentCount < 16; componentCount ++) {
+            if (gTypeComponent == GLTFTypeComponent::Float) {
+                float floatData = buffer.readFloat();
+                invBindMatrix[componentCount] = floatData;
+            } else {
+                pwarn("Invalid element type in Animation Inverse Matrix Data: %d", gTypeComponent);
+                return false;
+            }
+        }
+
+        VROMatrix4f mat(invBindMatrix);
+        delete invBindMatrix;
+        invBindTransforms.push_back(mat);
+    }
+
+    skinnerOut = std::unique_ptr<VROSkinner>(new VROSkinner(skeleton,
+                                                      VROMatrix4f(),
+                                                      invBindTransforms,
+                                                      nullptr,
+                                                      nullptr));
     return true;
 }
 
@@ -496,26 +1079,85 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
             bufferViewStride = sizeOfSingleElement;
         }
 
-        // Process and cache the attribute data to be used by the VROGeometrySource associated with
-        // this attribute. If we've already been processed (cached) it before, simply grab it.
-        std::string key = VROStringUtil::toString(gAttributeAccesor.bufferView);
-        if (VROGLTFLoader::_dataCache.find(VROStringUtil::toString(gAttributeAccesor.bufferView)) == VROGLTFLoader::_dataCache.end()) {
-            const tinygltf::Buffer &gbuffer = gModel.buffers[gIndiceBufferView.buffer];
-            void *rawData = (void*)gbuffer.data.data();
-            VROGLTFLoader::_dataCache[key] = std::make_shared<VROData>(rawData, bufferViewTotalSize, bufferViewOffset);
-        }
+        std::shared_ptr<VROGeometrySource> source;
+        if (attributeType != VROGeometrySourceSemantic::BoneWeights) {
+            // Process and cache the attribute data to be used by the VROGeometrySource associated with
+            // this attribute. If we've already been processed (cached) it before, simply grab it.
+            std::string key = VROStringUtil::toString(gAttributeAccesor.bufferView);
+            if (VROGLTFLoader::_dataCache.find(VROStringUtil::toString(gAttributeAccesor.bufferView)) == VROGLTFLoader::_dataCache.end()) {
+                const tinygltf::Buffer &gbuffer = gModel.buffers[gIndiceBufferView.buffer];
+                void *rawData = (void*)gbuffer.data.data();
+                VROGLTFLoader::_dataCache[key] = std::make_shared<VROData>(rawData, bufferViewTotalSize, bufferViewOffset);
+            }
 
-        // Finally, build the Geometry source.
-        int elementCount = gAttributeAccesor.count;
-        std::shared_ptr<VROData> data = VROGLTFLoader::_dataCache[key];
-        std::shared_ptr<VROGeometrySource> source = std::make_shared<VROGeometrySource>(data,
-                                                                                        attributeType,
-                                                                                        elementCount,
-                                                                                        isFloat,
-                                                                                        (int) gType,
-                                                                                        (int) gTypeComponent,
-                                                                                        attributeAccessorOffset,
-                                                                                        bufferViewStride);
+            // Finally, build the Geometry source.
+            int elementCount = gAttributeAccesor.count;
+            std::shared_ptr<VROData> data = VROGLTFLoader::_dataCache[key];
+            source = std::make_shared<VROGeometrySource>(data,
+                                                         attributeType,
+                                                         elementCount,
+                                                         isFloat,
+                                                         (int) gType,
+                                                         (int) gTypeComponent,
+                                                         attributeAccessorOffset,
+                                                         bufferViewStride);
+        } else {
+            // gLTF requires the manual normalization of weighted bone attributes. As such,
+            // we process them here before constructing our VROGeometrySource.
+            const tinygltf::Buffer &gbuffer = gModel.buffers[gIndiceBufferView.buffer];
+            VROByteBuffer buffer((char *) gbuffer.data.data() + bufferViewOffset, bufferViewTotalSize, false);
+
+            // Parse the gLTF buffers for the weight of each bone and normalize them.
+            // The normalized data is stored in dataOut.
+            int sizeOfSingleBoneWeight = (int) gType * (int) gTypeComponent;
+            float *dataOut = new float[sizeOfSingleBoneWeight * gAttributeAccesor.count]();
+            for (int elementIndex = 0; elementIndex < gAttributeAccesor.count; elementIndex++) {
+
+                // For the current element, cycle through each of its float or type component
+                // and convert them into a float through the math conversions required by gLTF.
+                buffer.setPosition(elementIndex * bufferViewStride);
+                std::vector<float> weight;
+                for (int componentCount = 0; componentCount < (int) gType; componentCount++) {
+                    if (gTypeComponent == GLTFTypeComponent::Float) {
+                        float floatData = buffer.readFloat();
+                        weight.push_back(floatData);
+                    } else if (gTypeComponent == GLTFTypeComponent::UnsignedByte) {
+                        unsigned uByteData = buffer.readUnsignedByte();
+                        float point = uByteData / 255.0;
+                        weight.push_back(point);
+                    } else if (gTypeComponent == GLTFTypeComponent::UnsignedShort) {
+                        unsigned short uShortData = buffer.readUnsignedShort();
+                        float point = uShortData / 65535.0;
+                        weight.push_back(point);
+                    } else {
+                        perr("Invalid weighted bone data provided for the 3D gLTF skinner.");
+                        return false;
+                    }
+                }
+
+                float totalWeight = weight[0] + weight[1] + weight[2] + weight[3];
+                VROVector4f normalizedWeight;
+                VROVector4f(weight[0], weight[1], weight[2], weight[3]).scale(1/totalWeight, &normalizedWeight);
+                dataOut[(elementIndex * 4)]     = normalizedWeight.x;
+                dataOut[(elementIndex * 4) + 1] = normalizedWeight.y;
+                dataOut[(elementIndex * 4) + 2] = normalizedWeight.z;
+                dataOut[(elementIndex * 4) + 3] = normalizedWeight.w;
+            }
+
+            // Finally create our geometry sources with the normalized data.
+            std::shared_ptr<VROData> indexData
+                    = std::make_shared<VROData>((void *) dataOut,
+                                                sizeOfSingleBoneWeight * gAttributeAccesor.count);
+
+            source = std::make_shared<VROGeometrySource>(indexData,
+                                                         attributeType,
+                                                         gAttributeAccesor.count,
+                                                         isFloat,
+                                                         (int) gType,
+                                                         (int) gTypeComponent,
+                                                         0,
+                                                         sizeOfSingleBoneWeight);
+        }
 
         // Because GLTF can have VROGeometryElements that corresponds to different sets of VROGeometrySources,
         // the render needs to be notified of this element-to-source mapping, so that the correct vertex

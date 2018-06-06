@@ -43,7 +43,8 @@ public:
     static std::shared_ptr<VRONode> loadFBXModel(std::string model, VROVector3f position, VROVector3f scale,
                                                  int lightMask, std::string animation, std::shared_ptr<VRODriver> driver);
     static std::shared_ptr<VRONode> loadGLTFModel(std::string model, std::string ext, VROVector3f position, VROVector3f scale,
-                                                       int lightMask, std::string animation, std::shared_ptr<VRODriver> driver);
+                                                       int lightMask, std::string animation, std::shared_ptr<VRODriver> driver,
+                                                  std::function<void(std::shared_ptr<VRONode>, bool)> onFinish);
     static void setLightMasks(std::shared_ptr<VRONode> node, int value);
     
     static std::shared_ptr<VROVideoTexture> loadVideoTexture(std::shared_ptr<VRODriver> driver,

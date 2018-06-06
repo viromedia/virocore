@@ -1375,6 +1375,10 @@
 		A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */; };
 		A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; };
 		A5B4AF0B20535D460006D970 /* VROPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5BE9E1020E14F2200DB4E7A /* CesiumMan.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E0F20E14F2200DB4E7A /* CesiumMan.glb */; };
+		A5BE9E1220E14F3F00DB4E7A /* Monster.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1120E14F3F00DB4E7A /* Monster.glb */; };
+		A5BE9E1420E14F6800DB4E7A /* RiggedFigure.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1320E14F6800DB4E7A /* RiggedFigure.glb */; };
+		A5BE9E1620E14F7700DB4E7A /* RiggedSimple.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1520E14F7700DB4E7A /* RiggedSimple.glb */; };
 		A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65821EB3ECE200FE220E /* libBulletCollision.a */; };
 		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
 		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
@@ -2303,6 +2307,10 @@
 		A5B433EB204E64A500E9EE53 /* VROFixedParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFixedParticleEmitter.cpp; sourceTree = "<group>"; };
 		A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPolygon.cpp; sourceTree = "<group>"; };
 		A5B4AF0720535CDA0006D970 /* VROPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPolygon.h; sourceTree = "<group>"; };
+		A5BE9E0F20E14F2200DB4E7A /* CesiumMan.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = CesiumMan.glb; path = ../android/nativetest/src/main/assets/CesiumMan.glb; sourceTree = "<group>"; };
+		A5BE9E1120E14F3F00DB4E7A /* Monster.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = Monster.glb; path = ../android/nativetest/src/main/assets/Monster.glb; sourceTree = "<group>"; };
+		A5BE9E1320E14F6800DB4E7A /* RiggedFigure.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = RiggedFigure.glb; path = ../android/nativetest/src/main/assets/RiggedFigure.glb; sourceTree = "<group>"; };
+		A5BE9E1520E14F7700DB4E7A /* RiggedSimple.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = RiggedSimple.glb; path = ../android/nativetest/src/main/assets/RiggedSimple.glb; sourceTree = "<group>"; };
 		A5EC65821EB3ECE200FE220E /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = Libraries/bullet/libBulletCollision.a; sourceTree = "<group>"; };
 		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
 		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
@@ -3417,7 +3425,11 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A5BE9E1520E14F7700DB4E7A /* RiggedSimple.glb */,
+				A5BE9E1320E14F6800DB4E7A /* RiggedFigure.glb */,
+				A5BE9E1120E14F3F00DB4E7A /* Monster.glb */,
 				8F6E5B1020DD335A00BEE45F /* cr_ar_badges_Base_Color.png */,
+				A5BE9E0F20E14F2200DB4E7A /* CesiumMan.glb */,
 				8F6E5B0820DD335900BEE45F /* cr_ar_badges_Metallic.png */,
 				8F6E5B1220DD335A00BEE45F /* cr_ar_badges_Normal_OpenGL.png */,
 				8F6E5B0920DD335900BEE45F /* cr_ar_badges_Roughness.png */,
@@ -4638,6 +4650,7 @@
 				8FA9A251207E83980022C55D /* Lamborginhi_glass_Base_Color.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
+				A5BE9E1620E14F7700DB4E7A /* RiggedSimple.glb in Resources */,
 				8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
 				8FA9A240207DB56E0022C55D /* transparent.png in Resources */,
@@ -4703,6 +4716,7 @@
 				8FA9A254207E83980022C55D /* Lamborginhi_glass_Roughness.png in Resources */,
 				8F5EEEA920329C9B0059C9E7 /* cupcake.obj in Resources */,
 				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
+				A5BE9E1420E14F6800DB4E7A /* RiggedFigure.glb in Resources */,
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
@@ -4718,6 +4732,8 @@
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
 				8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */,
 				A540C5C71F3E73FA007986E6 /* particles_fsh.glsl in Resources */,
+				A5BE9E1220E14F3F00DB4E7A /* Monster.glb in Resources */,
+				A5BE9E1020E14F2200DB4E7A /* CesiumMan.glb in Resources */,
 				8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */,
 				8F043721201A43B800D98D26 /* ibl_ridgecrest_road.hdr in Resources */,
 				8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */,

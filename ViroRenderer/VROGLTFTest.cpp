@@ -7,7 +7,9 @@
 
 #include "VROGLTFTest.h"
 #include "VROTestUtil.h"
-
+#include "VROExecutableAnimation.h"
+#include "VRONode.h"
+#include "VROLog.h"
 VROGLTFTest::VROGLTFTest() :
     VRORendererTest(VRORendererTestType::GLTF) {
     _angle = 0;
@@ -22,20 +24,28 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
                        std::shared_ptr<VRODriver> driver) {
 
     _driver = driver;
-
     VROGLTFModel duck("Duck", "gltf", { 0, -1.5, -5 }, { 1, 1, 1 }, 1, "");
     VROGLTFModel buggy("Buggy", "glb", { -0.75, -1.5, -5 }, { 0.03, 0.03, 0.03 }, 1, "");
+    VROGLTFModel anim1("RiggedSimple", "glb", { 0, 0, -5 }, { 0.5,  0.5,  0.5 }, 1, "");
+    VROGLTFModel anim2("RiggedFigure", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "");
+    VROGLTFModel anim3("CesiumMan", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "");
+    VROGLTFModel anim4("Monster", "glb", { -1, 0, -3 }, { 0.001,  0.001,  0.001 }, 1, "");
+
     _models.push_back(duck);
     _models.push_back(buggy);
+    _models.push_back(anim1);
+    _models.push_back(anim2);
+    _models.push_back(anim3);
+    _models.push_back(anim4);
 
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
 
 
-    std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
+    //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
     //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");
-    //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_wooden_door");
+    std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_wooden_door");
 
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
@@ -50,11 +60,11 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
     light->setSpotInnerAngle(35);
     light->setSpotOuterAngle(60);
     light->setCastsShadow(true);
-    light->setIntensity(1000);
+    light->setIntensity(800);
 
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(100);
+    ambient->setIntensity(300);
 
     rootNode->addLight(light);
     rootNode->addLight(ambient);
@@ -99,11 +109,23 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->setEventDelegate(_eventDelegate);
 }
 
+void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode){
+    std::shared_ptr<VROExecutableAnimation> anim = gltfNode->getAnimation("animation_0", true);
+    if (anim != nullptr){
+        anim->execute(gltfNode, [this, gltfNode]() {
+            animate(gltfNode);
+        });
+    }
+}
+
 void VROGLTFTest::rotateModel() {
     VROGLTFModel model = _models[_gltfIndex];
     std::shared_ptr<VRONode> gltfNode = VROTestUtil::loadGLTFModel(model.name, model.ext,
                                                                    model.position, model.scale,
-                                                                   model.lightMask, model.animation, _driver);
+                                                                   model.lightMask, model.animation, _driver,
+                                                                   [this](std::shared_ptr<VRONode> node, bool success){
+                                                                       animate(node);
+                                                                   });
     _gltfContainerNode->removeAllChildren();
     _gltfContainerNode->addChildNode(gltfNode);
 
