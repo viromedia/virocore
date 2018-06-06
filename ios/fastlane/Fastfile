@@ -17,6 +17,7 @@ default_platform :ios
 
 platform :ios do
   before_all do
+    cocoapods
   end
 
   def on_error(exception)
@@ -44,6 +45,29 @@ platform :ios do
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator11.3 -arch x86_64| xcpretty -c")
        # build scheme for devices
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos11.3 | xcpretty -c")
+     end
+    rescue => exception
+           on_error(exception)
+    end
+  end
+
+  lane :virorender_viroreact_virokit_static_lib do
+    begin
+     Dir.chdir("../") do
+       # clean
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release clean | xcpretty -c")
+       # build scheme for simulator
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator11.3 -arch x86_64| xcpretty -c")
+       # build scheme for devices
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos11.3 | xcpretty -c")
+
+       # The above two builds seem to have intermittent failures (with no explaination),
+       # adding them to be built twice (just in case)
+       
+       # build scheme for simulator
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator11.3 -arch x86_64| xcpretty -c")
+       # build scheme for devices
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos11.3 | xcpretty -c")
      end
     rescue => exception
            on_error(exception)

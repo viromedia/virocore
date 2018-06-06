@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8FD4DECC1C18ECD4003DC425"
-               BuildableName = "ViroKit.framework"
-               BlueprintName = "ViroKit"
+               BlueprintIdentifier = "1331B3C620C8832C00D1C5F5"
+               BuildableName = "ViroKit_static_lib.framework"
+               BlueprintName = "ViroKit_static_lib"
                ReferencedContainer = "container:ViroRenderer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8FD4DECC1C18ECD4003DC425"
-            BuildableName = "ViroKit.framework"
-            BlueprintName = "ViroKit"
+            BlueprintIdentifier = "1331B3C620C8832C00D1C5F5"
+            BuildableName = "ViroKit_static_lib.framework"
+            BlueprintName = "ViroKit_static_lib"
             ReferencedContainer = "container:ViroRenderer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8FD4DECC1C18ECD4003DC425"
-            BuildableName = "ViroKit.framework"
-            BlueprintName = "ViroKit"
+            BlueprintIdentifier = "1331B3C620C8832C00D1C5F5"
+            BuildableName = "ViroKit_static_lib.framework"
+            BlueprintName = "ViroKit_static_lib"
             ReferencedContainer = "container:ViroRenderer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
