@@ -357,3 +357,23 @@ void EventDelegate_JNI::onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> po
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
 }
+
+
+void EventDelegate_JNI::onCameraTransformUpdate(VROVector3f position, VROVector3f rotation, VROVector3f forward, VROVector3f up) {
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, position, rotation, forward, up] {
+        VRO_ENV env = VROPlatformGetJNIEnv();
+        VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(weakObj);
+        if (VRO_IS_OBJECT_NULL(localObj)) {
+            return;
+        }
+
+        VROPlatformCallHostFunction(localObj, "onCameraTransformUpdate", "(FFFFFFFFFFFF)V",
+                                    position.x, position.y, position.z, rotation.x, rotation.y, rotation.z,
+                                    forward.x, forward.y, forward.z, up.x, up.y, up.z);
+        VRO_DELETE_LOCAL_REF(localObj);
+        VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
+    });
+}

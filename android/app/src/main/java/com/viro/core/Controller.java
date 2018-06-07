@@ -390,6 +390,18 @@ public class Controller implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * This is used to notify the developer of the current camera transform. Not exposed to the Java API.
+     * @hide
+     */
+    @Override
+    public void onCameraTransformUpdate(float posX, float poxY, float posZ,
+                                        float rotEulerX, float rotEulerY, float rotEulerZ,
+                                        float forwardX, float forwardY, float forwardZ,
+                                        float upX, float upY, float upZ) {
+
+    }
+
+    /**
      * @hide
      */
     @Override

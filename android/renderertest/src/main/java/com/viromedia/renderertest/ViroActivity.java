@@ -1609,5 +1609,13 @@ public class ViroActivity extends AppCompatActivity {
         public void onARPointCloudUpdate(ARPointCloud pointCloud) {
             Log.e(TAG, delegateTag + " On ARPointCloudUpdate");
         }
+
+        @Override
+        public void onCameraTransformUpdate(float posX, float poxY, float posZ,
+                                            float rotEulerX, float rotEulerY, float rotEulerZ,
+                                            float forwardX, float forwardY, float forwardZ,
+                                            float upX, float upY, float upZ) {
+            Log.e(TAG, delegateTag + " On CameraTransformUpdate");
+        }
     }
 }

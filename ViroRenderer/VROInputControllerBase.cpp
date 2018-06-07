@@ -467,6 +467,17 @@ void VROInputControllerBase::processOnFuseEvent(int source, std::shared_ptr<VRON
     }
 }
 
+void VROInputControllerBase::notifyCameraTransform(const VROCamera &camera) {
+    if (_scene) {
+        std::shared_ptr<VROEventDelegate> delegate = _scene->getRootNode()->getEventDelegate();
+
+        if (delegate && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraTransformUpdate)) {
+            delegate->onCameraTransformUpdate(camera.getPosition(), camera.getRotation().toEuler(),
+                                              camera.getForward(), camera.getUp());
+        }
+    }
+}
+
 void VROInputControllerBase::notifyOnFuseEvent(int source, float timeToFuseRatio) {
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
         delegate->onFuse(source, _currentFusedNode, timeToFuseRatio);

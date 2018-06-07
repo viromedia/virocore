@@ -14,6 +14,7 @@ VROVector3f VROInputControllerCardboardiOS::getDragForwardOffset() {
 
 void VROInputControllerCardboardiOS::onProcess(const VROCamera &camera) {
     updateOrientation(camera);
+    notifyCameraTransform(camera);
 }
 
 void VROInputControllerCardboardiOS::onScreenClicked(){

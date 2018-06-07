@@ -56,9 +56,11 @@ public:
     void onRotate(int source, std::shared_ptr<VRONode> node, float rotateDegrees, RotateState rotateState);
     void onCameraARHitTest(std::vector<std::shared_ptr<VROARHitTestResult>> results);
     void onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> pointCloud);
+    void onCameraTransformUpdate(VROVector3f position, VROVector3f rotation, VROVector3f forward, VROVector3f up);
 
 
-private:
+
+        private:
     VRO_OBJECT _javaObject;
 };
 

@@ -13,6 +13,7 @@ VROVector3f VROInputControllerCardboard::getDragForwardOffset() {
 
 void VROInputControllerCardboard::onProcess(const VROCamera &camera) {
     updateOrientation(camera);
+    notifyCameraTransform(camera);
 }
 
 void VROInputControllerCardboard::updateScreenTouch(int touchAction){

@@ -43,6 +43,8 @@ void VROInputControllerDaydream::onProcess(const VROCamera &camera) {
     updateOrientation(camera);
     updateButtons();
     updateTouchPad();
+
+    notifyCameraTransform(camera);
 }
 
 void VROInputControllerDaydream::updateButtons() {

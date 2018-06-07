@@ -83,6 +83,13 @@ public class EventDelegate {
          * @hide
          */
         void onARPointCloudUpdate(ARPointCloud pointCloud);
+        /**
+         * @hide
+         */
+        void onCameraTransformUpdate(float posX, float poxY, float posZ,
+                                     float rotEulerX, float rotEulerY, float rotEulerZ,
+                                     float forwardX, float forwardY, float forwardZ,
+                                     float upX, float upY, float upZ);
     }
 
     long mNativeRef;
@@ -167,7 +174,8 @@ public class EventDelegate {
         ON_PINCH(10),
         ON_ROTATE(11),
         ON_CAMERA_AR_HIT_TEST(12),
-        ON_AR_POINT_CLOUD_UPDATE(13);
+        ON_AR_POINT_CLOUD_UPDATE(13),
+        ON_CAMERA_TRANSFORM_UPDATE(14);
 
         public final int mTypeId;
 
@@ -291,6 +299,19 @@ public class EventDelegate {
     void onARPointCloudUpdate(ARPointCloud pointCloud) {
         if (mDelegate != null && mDelegate.get() != null) {
             mDelegate.get().onARPointCloudUpdate(pointCloud);
+        }
+    }
+
+    /**
+     * @hide
+     */
+    void onCameraTransformUpdate(float posX, float poxY, float posZ,
+                                 float rotEulerX, float rotEulerY, float rotEulerZ,
+                                 float forwardX, float forwardY, float forwardZ,
+                                 float upX, float upY, float upZ) {
+        if (mDelegate != null && mDelegate.get() != null) {
+            mDelegate.get().onCameraTransformUpdate(posX, poxY, posZ, rotEulerX, rotEulerY, rotEulerZ,
+                                                    forwardX, forwardY, forwardZ, upX, upY, upZ);
         }
     }
 }

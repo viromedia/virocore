@@ -32,6 +32,7 @@ void VROInputControllerAR::onProcess(const VROCamera &camera) {
     processTouchMovement();
     processCenterCameraHitTest();
     notifyARPointCloud();
+    notifyCameraTransform(camera);
     processGazeEvent(ViroCardBoard::InputSource::Controller);
 }
 
