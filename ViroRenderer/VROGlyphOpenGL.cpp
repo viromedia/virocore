@@ -107,22 +107,18 @@ void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph,
 
     GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
     GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-    GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
     GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+    GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR) );
 
-    // TODO All platforms should switch to using GL_RG, as it's more efficient
-#if VRO_PLATFORM_MACOS
-    GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, texWidth, texHeight, 0,
+    GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, texWidth, texHeight, 0,
                      GL_RG, GL_UNSIGNED_BYTE, luminanceAlphaBitmap) );
-#else
-    GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, texWidth, texHeight, 0,
-                     GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, luminanceAlphaBitmap) );
-#endif
-    
+    GL( glGenerateMipmap(GL_TEXTURE_2D) );
+
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
         new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, driver, true));
     
-    _texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+    _texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::RG8,
+                                            std::move(substrate));
     _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
     _size = VROVector3f(bitmap.width, bitmap.rows);
     

@@ -48,8 +48,9 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
         cap.diffuseTextureStereoMode = diffuse.getTexture()->getStereoMode();
         if (diffuse.getTexture()->getInternalFormat() == VROTextureInternalFormat::YCBCR) {
             cap.diffuseTexture = VRODiffuseTextureType::YCbCr;
-        }
-        else {
+        } else if (diffuse.getTexture()->getInternalFormat() == VROTextureInternalFormat::RG8) {
+            cap.diffuseTexture = VRODiffuseTextureType::Text;
+        } else {
             cap.diffuseTexture = VRODiffuseTextureType::Normal;
         }
         

@@ -77,7 +77,8 @@ void VROARSessionARCore::initCameraTexture(std::shared_ptr<VRODriverOpenGL> driv
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
             new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _cameraTextureId, driver, true));
-    _background = std::make_shared<VROTexture>(VROTextureType::TextureEGLImage, std::move(substrate));
+    _background = std::make_shared<VROTexture>(VROTextureType::TextureEGLImage, VROTextureInternalFormat::RGBA8,
+                                               std::move(substrate));
 
     passert_msg(_session != nullptr, "ARCore must be installed before setting camera texture");
     _session->setCameraTextureName(_cameraTextureId);

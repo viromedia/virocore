@@ -301,7 +301,8 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texNames[i], 0);
             
             std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
-            _textures[i] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+            _textures[i] = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::RGBA8,
+                                                        std::move(substrate));
         }
         
         /*
@@ -388,7 +389,8 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texNames[i], 0);
             
             std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
-            _textures[i] = std::make_shared<VROTexture>(VROTextureType::TextureCube, std::move(substrate));
+            _textures[i] = std::make_shared<VROTexture>(VROTextureType::TextureCube, VROTextureInternalFormat::RGBA8,
+                                                        std::move(substrate));
         }
         
         /*
@@ -456,7 +458,8 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         }
         
         std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
-        _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+        _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::RGBA8,
+                                                    std::move(substrate));
     }
     else if (_type == VRORenderTargetType::DepthTextureArray) {
         GLenum target = GL_TEXTURE_2D_ARRAY;
@@ -487,7 +490,8 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         }
         
         std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
-        _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+        _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::RGBA8,
+                                                    std::move(substrate));
     }
     else {
         pinfo("FBO does not have a texture type, cannot create texture");

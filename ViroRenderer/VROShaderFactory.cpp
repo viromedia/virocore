@@ -38,6 +38,7 @@ static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDiffuseIrradianceFragmentModifier;
 static std::shared_ptr<VROShaderModifier> sPBRDiffuseAndSpecularIrradianceFragmentModifier;
+static std::shared_ptr<VROShaderModifier> sRGTextureModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
@@ -145,6 +146,10 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Normal) {
         samplers.push_back("diffuse_texture");
         modifiers.push_back(createDiffuseTextureModifier());
+    }
+    else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Text) {
+        samplers.push_back("diffuse_texture");
+        modifiers.push_back(createTextTextureModifier());
     }
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::YCbCr) {
         samplers.push_back("diffuse_texture_y");
@@ -768,6 +773,27 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier
     }
     
     return modifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createTextTextureModifier() {
+    /*
+     Modifier that samples an RG texture, and applies the 'R' to the R, G, and B
+     channels of the diffuse color, and the 'G' to the A of the diffuse color.
+     This is used by text textures, which consist of a color (R) and an alpha value (G).
+     We also apply a mipmap bias of -0.65 to force the system use a slightly higher
+     resolution mip-level.
+     */
+    if (!sRGTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+                "uniform sampler2D diffuse_texture;",
+                "highp vec4 rg_color = texture(diffuse_texture, _surface.diffuse_texcoord, -0.65);",
+                "_surface.diffuse_color *= vec4(rg_color.r, rg_color.r, rg_color.r, rg_color.g);",
+        };
+        sRGTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                 modifierCode);
+        sRGTextureModifier->setName("rg");
+    }
+    return sRGTextureModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(bool linearizeColor) {

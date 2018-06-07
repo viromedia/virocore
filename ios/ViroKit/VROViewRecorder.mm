@@ -412,7 +412,8 @@
     // it here, just as the display will.
     bool sRGB = _driver->getColorRenderingMode() == VROColorRenderingMode::Linear;
     std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer, sRGB);
-    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::RGBA8,
+                                                                       std::move(substrate));
     
     _rttDelegate = std::make_shared<VROViewRecorderRTTDelegate>(self, texture, _renderer, _driver);
     _renderer->getChoreographer()->setRenderToTextureDelegate(_rttDelegate);

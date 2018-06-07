@@ -41,14 +41,15 @@ VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFor
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate, VROStereoMode stereoState) :
+VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFormat,
+                       std::unique_ptr<VROTextureSubstrate> substrate, VROStereoMode stereoState) :
     _textureId(sTextureId++),
     _type(type),
     _format(VROTextureFormat::RGBA8),
-    _internalFormat(VROTextureInternalFormat::RGBA8),
+    _internalFormat(internalFormat),
     _stereoMode(stereoState),
 
-    // Note these parameters are irrelevent for this constructor, since they are used
+    // Note these parameters are irrelevant for this constructor, since they are used
     // to generate a substrate, and for this constructor the substrate is already supplied
     _sRGB(false),
     _wrapS(VROWrapMode::Clamp),

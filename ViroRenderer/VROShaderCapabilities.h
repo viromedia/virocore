@@ -24,7 +24,8 @@ enum class VRODiffuseTextureType {
     None,
     YCbCr,
     Normal,
-    Cube
+    Cube,
+    Text,
 };
 
 /*
