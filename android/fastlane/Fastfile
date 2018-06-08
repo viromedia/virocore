@@ -17,6 +17,7 @@ default_platform :android
 
 platform :android do
   before_all do
+    BUILD_INTERMEDIATES = "/var/tmp/build_intermediates/"
   end
   
   def on_error(exception)
