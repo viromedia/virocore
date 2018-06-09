@@ -17,7 +17,7 @@ import android.view.Surface;
 
 import com.viro.core.internal.PlatformUtil;
 
-import java.util.EnumSet;
+import java.lang.ref.WeakReference;
 
 /**
  * @hide
@@ -26,6 +26,28 @@ public class Renderer {
 
     protected long mNativeRef;
     private CameraListener mCameraListener;
+    private FrameListener mFrameListener;
+    protected NativeFrameListenerImpl mNativeFrameListener;
+
+    protected static class NativeFrameListenerImpl extends NativeFrameListener {
+        WeakReference<Renderer> mWeakRenderer;
+
+        public NativeFrameListenerImpl(Renderer renderer) {
+            mWeakRenderer = new WeakReference<Renderer>(renderer);
+            mNativeRef = renderer.nativeCreateFrameListener(renderer.mNativeRef);
+        }
+
+        @Override
+        public void destroy() {
+            if (mNativeRef != 0) {
+                Renderer renderer = mWeakRenderer.get();
+                if (renderer != null) {
+                    renderer.nativeDestroyFrameListener(mNativeRef);
+                }
+            }
+            mNativeRef = 0;
+        }
+    }
 
     protected Renderer() {
 
@@ -68,6 +90,11 @@ public class Renderer {
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() {
+        if (mNativeFrameListener != null) {
+            mNativeFrameListener.destroy();
+        }
+        mNativeFrameListener = null;
+
         if (mNativeRef != 0) {
             nativeDestroyRenderer(mNativeRef);
         }
@@ -178,6 +205,23 @@ public class Renderer {
         nativeRemoveFrameListener(mNativeRef, frameListener.mNativeRef);
     }
 
+    public void setFrameListener(FrameListener listener) {
+        if (mNativeFrameListener == null) {
+            mNativeFrameListener = new NativeFrameListenerImpl(this);
+        }
+
+        if (listener == null) {
+            if (mFrameListener != null) {
+                removeFrameListener(mNativeFrameListener);
+            }
+        } else {
+            if (mFrameListener == null) {
+                addFrameListener(mNativeFrameListener);
+            }
+        }
+        mFrameListener = listener;
+    }
+
     public Vector getLastCameraPositionRealtime() {
         return new Vector(nativeGetCameraPositionRealtime(mNativeRef));
     }
@@ -207,6 +251,12 @@ public class Renderer {
         mCameraListener.onTransformUpdate(vPos, vRotEuler, vForward);
     }
 
+    public void onFrameDidRender() {
+        if (mFrameListener != null) {
+            mFrameListener.onDrawFrame();
+        }
+    }
+
     void setShadowsEnabled(boolean enabled) { nativeSetShadowsEnabled(mNativeRef, enabled); }
     void setHDREnabled(boolean enabled) { nativeSetHDREnabled(mNativeRef, enabled); }
     void setPBREnabled(boolean enabled) { nativeSetPBREnabled(mNativeRef, enabled); }
@@ -224,6 +274,8 @@ public class Renderer {
                                                       ViroViewScene view, AssetManager assets, PlatformUtil platformUtil,
                                                       boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
     private native void nativeDestroyRenderer(long nativeRenderer);
+    private native long nativeCreateFrameListener(long nativeRenderer);
+    private native void nativeDestroyFrameListener(long frameListenerRef);
     private native void nativeInitializeGL(long nativeRenderer, boolean sRGBFramebuffer, boolean testingMode);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
     private native long nativeDrawFrame(long nativeRenderer);
@@ -251,8 +303,8 @@ public class Renderer {
     private native void nativeSetHDREnabled(long nativeRef, boolean enabled);
     private native void nativeSetPBREnabled(long nativeRef, boolean enabled);
     private native void nativeSetBloomEnabled(long nativeRef, boolean enabled);
-    private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
-    private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);
+    private native void nativeAddFrameListener(long nativeRenderer, long frameListener);
+    private native void nativeRemoveFrameListener(long nativeRenderer, long frameListener);
     private native float[] nativeGetCameraPositionRealtime(long nativeRenderer);
     private native float[] nativeGetCameraRotationRealtime(long nativeRenderer);
     private native float[] nativeGetCameraForwardRealtime(long nativeRenderer);

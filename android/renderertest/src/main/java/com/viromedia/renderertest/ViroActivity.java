@@ -34,6 +34,7 @@ import com.viro.core.ARPointCloud;
 import com.viro.core.BoundingBox;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
+import com.viro.core.FrameListener;
 import com.viro.core.Quaternion;
 import com.viro.core.RendererConfiguration;
 import com.viro.core.ViroMediaRecorder;

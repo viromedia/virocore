@@ -20,7 +20,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.google.vr.cardboard.ContextUtils;
-import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.GLTextureView;
 import com.viro.core.internal.PlatformUtil;

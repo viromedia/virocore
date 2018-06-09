@@ -420,6 +420,17 @@ VRO_METHOD(void, nativeSetClearColor)(VRO_ARGS
     });
 }
 
+VRO_METHOD(VRO_REF(VROFrameListener), nativeCreateFrameListener)(VRO_ARGS
+                                                                 jlong native_renderer) {
+    std::shared_ptr<FrameListenerJNI> listener = std::make_shared<FrameListenerJNI>(obj);
+    return VRO_REF_NEW(VROFrameListener, listener);
+}
+
+VRO_METHOD(void, nativeDestroyFrameListener)(VRO_ARGS
+                                             jlong frame_listener) {
+    delete reinterpret_cast<PersistentRef<VROFrameListener> *>(frame_listener);
+}
+
 VRO_METHOD(void, nativeAddFrameListener)(VRO_ARGS
                                          jlong native_renderer, jlong frame_listener) {
 

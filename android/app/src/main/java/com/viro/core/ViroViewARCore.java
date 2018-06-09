@@ -37,7 +37,6 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.ViroTouchGestureListener;
 import com.viro.core.internal.CameraPermissionHelper;
-import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.renderer.BuildConfig;

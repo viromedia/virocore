@@ -7,6 +7,8 @@ package com.viro.core.internal;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
+import com.viro.core.FrameListener;
+
 public class VideoSink implements SurfaceTexture.OnFrameAvailableListener, FrameListener {
 
     /**

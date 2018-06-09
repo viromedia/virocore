@@ -360,6 +360,15 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
+     * Set a {@link FrameListener} to receive updates when a frame is drawn.
+     *
+     * @param listener The {@link FrameListener} to receive updates.
+     */
+    public void setFrameListener(FrameListener listener) {
+        getRenderer().setFrameListener(listener);
+    }
+
+    /**
      * (Used by Java API, mApiKey picked up from Metadata in Android Manifest) Your Viro API key must be validated, via this method, prior to rendering content. Content
      * will render during the validation process; if the key fails validation, the screen will
      * deactivate and render black.

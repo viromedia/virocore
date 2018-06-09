@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 
+import com.viro.core.FrameListener;
 import com.viro.core.internal.font.FontFamily;
 import com.viro.core.internal.font.SystemFontLoader;
 

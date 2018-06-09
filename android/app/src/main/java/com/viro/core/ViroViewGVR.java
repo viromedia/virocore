@@ -26,7 +26,6 @@ import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
 import com.viro.core.internal.BuildInfo;
-import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.renderer.BuildConfig;

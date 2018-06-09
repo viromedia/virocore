@@ -1,5 +1,5 @@
 //
-//  Camera_JNI.h
+//  Camera_JNI.cpp
 //  ViroRenderer
 //
 //  Copyright © 2017 Viro Media. All rights reserved.

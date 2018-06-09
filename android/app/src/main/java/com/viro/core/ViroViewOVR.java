@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.google.vr.cardboard.ContextUtils;
-import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.core.internal.RenderCommandQueue;
 import com.viro.renderer.BuildConfig;
