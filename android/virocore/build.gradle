@@ -54,7 +54,7 @@ android {
                 variant.outputs.all { output ->
                     //TODO This variable will come from maven-push.gradle when we integrate pushing
                     // maven in our builds. This is temporary.
-                    def version = '-v_1_7_2'
+                    def version = '-v_1_0_999'
                     def newName = output.outputFile.name
                     outputFileName = newName.replace("-release", "-release" + version)
                     //outputFileName = new File(output.outputFile.parent, newName)
