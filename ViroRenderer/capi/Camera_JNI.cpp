@@ -114,4 +114,15 @@ VRO_METHOD(void, nativeSetFieldOfView)(VRO_ARGS
     });
 }
 
+VRO_METHOD(void, nativeSetRefNodeToCopyRotation)(VRO_ARGS VRO_REF(VRONodeCamera) camera_j, VRO_REF(VRONode) node_j) {
+    std::weak_ptr<VRONodeCamera> camera_w = VRO_REF_GET(VRONodeCamera, camera_j);
+    VROPlatformDispatchAsyncRenderer([camera_w, node_j] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        std::shared_ptr<VRONode> childNode = VRO_REF_GET(VRONode, node_j);
+        if (camera) {
+            camera->setRefNodeToCopyRotation(childNode);
+        }
+    });
+}
+
 } // extern "C"

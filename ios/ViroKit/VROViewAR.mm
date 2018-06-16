@@ -504,7 +504,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Camera
 
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node {
-    pabort("May not set POV in AR mode");
+    self.renderer->setPointOfView(node);
 }
 
 #pragma mark - Scene Loading

@@ -50,3 +50,7 @@ void VRONodeCamera::setFieldOfViewY(float fovY) {
     }, _fov, fovY));
 }
 
+void VRONodeCamera::setRefNodeToCopyRotation(std::shared_ptr<VRONode> node) {
+    _refNodeToCopyCameraRotation = node;
+}
+

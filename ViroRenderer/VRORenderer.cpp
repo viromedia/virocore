@@ -289,6 +289,10 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
             
             if (nodeCamera->getRotationType() == VROCameraRotationType::Standard) {
                 camera.setPosition(_pointOfView->getWorldPosition() + nodeCamera->getPosition());
+                std::shared_ptr<VRONode> node = nodeCamera->getRefNodeToCopyRotation();
+                if (node != nullptr) {
+                    node->setRotation(VROQuaternion(headRotation));
+                }
             }
             else { // Orbit
                 VROVector3f pos = _pointOfView->getWorldPosition() + nodeCamera->getPosition();

@@ -69,6 +69,8 @@ public class Camera {
     private RotationType mRotationType = RotationType.STANDARD;
     private float mFieldOfView = 0;
 
+    private Node mRefNodeToCopyRotation;
+
     /**
      * Construct a new Camera.
      */
@@ -213,6 +215,11 @@ public class Camera {
         nativeSetFieldOfView(mNativeRef, fov);
     }
 
+    public void setRefNodeToCopyRotation(Node node) {
+        mRefNodeToCopyRotation = node;
+        nativeSetRefNodeToCopyRotation(mNativeRef, mRefNodeToCopyRotation.getNativeRef());
+    }
+
     /**
      * Return the field of view used by this Camera along its major (larger) axis, in degrees.
      * Field of view is an angle that determines how wide or narrow the camera lens is when rendering
@@ -232,4 +239,5 @@ public class Camera {
     private native void nativeSetRotationType(long nativeRef, String rotationType);
     private native void nativeSetOrbitFocalPoint(long nativeRef, float x, float y, float z);
     private native void nativeSetFieldOfView(long nativeRef, float fov);
+    private native void nativeSetRefNodeToCopyRotation(long nativeRef, long nodeReference);
 }
