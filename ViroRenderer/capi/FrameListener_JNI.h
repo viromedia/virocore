@@ -33,7 +33,7 @@ public:
     virtual void onFrameDidRender(const VRORenderContext &context) {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_WEAK jObjWeak = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
-        VROPlatformDispatchAsyncBackground([jObjWeak] {
+        VROPlatformDispatchAsyncApplication([jObjWeak] {
             VRO_ENV env = VROPlatformGetJNIEnv();
             VRO_OBJECT localObj = VRO_NEW_LOCAL_REF(jObjWeak);
             if (VRO_IS_OBJECT_NULL(localObj)) {
