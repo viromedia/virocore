@@ -130,8 +130,12 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
 
     // Chroma key filtering
     if (material.isChromaKeyFilteringEnabled()) {
-        cap.chromaKeyFiltering = material.getChromaKeyFilteringColor().hash();
-        cap.chromaKeyFilteringColor = material.getChromaKeyFilteringColor();
+        cap.chromaKeyFiltering = true;
+        
+        VROVector3f chromaKey = material.getChromaKeyFilteringColor();
+        cap.chromaKeyRed   = (int) (chromaKey.x * 255.0);
+        cap.chromaKeyGreen = (int) (chromaKey.y * 255.0);
+        cap.chromaKeyBlue  = (int) (chromaKey.z * 255.0);
     } else {
         cap.chromaKeyFiltering = 0;
     }

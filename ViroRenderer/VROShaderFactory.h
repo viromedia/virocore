@@ -92,7 +92,7 @@ private:
     std::shared_ptr<VROShaderModifier> createTextTextureModifier();
     std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier(bool linearizeColor);
     std::shared_ptr<VROShaderModifier> createEGLImageModifier(bool linearizeColor);
-    std::shared_ptr<VROShaderModifier> createChromaKeyModifier(VROVector3f chromaKey);
+    std::shared_ptr<VROShaderModifier> createChromaKeyModifier(int r, int g, int b);
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
     std::shared_ptr<VROShaderModifier> createBloomModifier();
     std::shared_ptr<VROShaderModifier> createToneMappingMaskModifier();
