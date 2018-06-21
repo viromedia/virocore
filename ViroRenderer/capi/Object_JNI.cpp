@@ -16,6 +16,7 @@
 #include "ViroContext_JNI.h"
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
+#include "Geometry_JNI.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
@@ -125,6 +126,57 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
             onFinish(nullptr, false);
         }
     });
+}
+
+VRO_METHOD(VRO_OBJECT_ARRAY, nativeCreateChildNodes)(VRO_ARGS
+                                      VRO_REF(VRONode) native_parent_node_ref) {
+    VRO_METHOD_PREAMBLE;
+
+    // Invoke in case renderer has not yet initialized
+    VROPlatformSetEnv(env);
+
+    // Grab the current node.
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, native_parent_node_ref);
+
+    // Create an empty jNode for each child nodes.
+    VRO_OBJECT_ARRAY nodeArray = VRO_NEW_OBJECT_ARRAY(node->getChildNodes().size(), "com/viro/core/Node");
+    for (int i = 0; i < node->getChildNodes().size(); i ++) {
+
+        // Create a persistent native reference that would represent the jNode object.
+        std::shared_ptr<VRONode> childNode = node->getChildNodes()[i];
+        VRO_REF(VRONode) nodeRef = VRO_REF_NEW(VRONode, childNode);
+
+        // Construct our Node.java object with that native reference.
+        VRO_OBJECT jNode = VROPlatformConstructHostObject("com/viro/core/Node", "(Z)V", false);
+        VROPlatformCallHostFunction(jNode, "initWithNativeRef", "(J)Z", nodeRef);
+
+        VRO_ARRAY_SET(nodeArray, i, jNode);
+    }
+
+    return nodeArray;
+}
+
+VRO_METHOD(void, nativeIntializeNode)(VRO_ARGS
+                                      VRO_OBJECT jNode,
+                                      VRO_REF(VRONode) native_node_ref) {
+    VRO_METHOD_PREAMBLE;
+
+    // Invoke in case renderer has not yet initialized
+    VROPlatformSetEnv(env);
+
+    // Set the basic properties on a Node.java object.
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, native_node_ref);
+    VROPlatformSetString(env, jNode, "mName",    node->getName());
+    VROPlatformSetString(env, jNode, "mTag",     node->getTag());
+    VROPlatformSetFloat(env,  jNode, "mOpacity", node->getOpacity());
+    VROPlatformSetBool(env,   jNode, "mVisible", node->isVisible());
+
+    // Create and set a jGeom representing the node's geometry.
+    std::shared_ptr<VROGeometry> geom = node->getGeometry();
+    if (geom) {
+       VRO_OBJECT jgeom = Geometry::createJGeometry(geom);
+       VROPlatformSetObject(env, jNode, "mGeometry", "Lcom/viro/core/Geometry;", jgeom);
+    }
 }
 
 } // extern "C"

@@ -218,9 +218,30 @@ public class Object3D extends Node {
         }
 
         mMaterialList = Arrays.asList(materials);
+        inflateChildNodes(this);
 
         if (mAsyncListener != null) {
             mAsyncListener.onObject3DLoaded(this, type);
+        }
+    }
+
+    private void inflateChildNodes(Node currentNode) {
+        long currentNativeRef = currentNode.getNativeRef();
+        if (currentNativeRef == 0) {
+            return;
+        }
+
+        Node childNodes[] = nativeCreateChildNodes(currentNativeRef);
+        if (childNodes.length == 0) {
+            return;
+        }
+
+        // Populate individual nodes and its properties one at a time, so as
+        // to ensure we don't hit the jni local reference limit.
+        for (Node childNode : childNodes) {
+            currentNode.addChildNode(childNode);
+            nativeIntializeNode(childNode, childNode.getNativeRef());
+            inflateChildNodes(childNode);
         }
     }
 
@@ -262,4 +283,6 @@ public class Object3D extends Node {
 
     private native void nativeLoadModelFromURL(String url, long nodeRef, long contextRef,int modelType, long requestID);
     private native void nativeLoadModelFromResources(String modelResource, Map<String, String> assetResources, long nodeRef, long contextRef, int modelType, long requestID);
+    private native Node[] nativeCreateChildNodes(long nodeRef);
+    private native void nativeIntializeNode(Node node, long nodeRef);
 }

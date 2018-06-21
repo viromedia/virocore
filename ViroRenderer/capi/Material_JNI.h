@@ -19,9 +19,9 @@
 class Material {
 public:
 
-    static VRO_OBJECT createJMaterial(std::shared_ptr<VROMaterial> &mat) {
+    static VRO_OBJECT createJMaterial(const std::shared_ptr<VROMaterial> &mat) {
         VRO_ENV env = VROPlatformGetJNIEnv();
-        if (env == nullptr){
+        if (env == nullptr) {
             perror("Required JNIEnv to create a jMaterial is null!");
             return VRO_OBJECT_NULL;
         }
