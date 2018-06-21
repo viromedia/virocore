@@ -83,7 +83,8 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _lastScale({ 1, 1, 1 }),
     _lastRotation(VROMatrix4f::identity()),
     _lastHasScalePivot(false),
-    _lastHasRotationPivot(false) {
+    _lastHasRotationPivot(false),
+    _holdRendering(false) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -124,7 +125,8 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _lastRotationPivot(node._lastRotationPivot.load()),
     _lastRotationPivotInverse(node._lastRotationPivotInverse.load()),
     _lastHasScalePivot(node._lastHasScalePivot.load()),
-    _lastHasRotationPivot(node._lastHasRotationPivot.load()) {
+    _lastHasRotationPivot(node._lastHasRotationPivot.load()),
+    _holdRendering(node._holdRendering) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -158,7 +160,9 @@ void VRONode::render(int elementIndex,
                      const VRORenderContext &context,
                      std::shared_ptr<VRODriver> &driver) {
     passert_thread(__func__);
-    
+    if (_holdRendering) {
+        return;
+    }
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         _geometry->render(elementIndex, material,
                           _worldTransform, _worldInverseTransposeTransform, _computedOpacity,
@@ -167,6 +171,9 @@ void VRONode::render(int elementIndex,
 }
 
 void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    if (_holdRendering) {
+        return;
+    }
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
             std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
@@ -200,6 +207,9 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
 void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
                                 VROSilhouetteMode mode, std::function<bool(const VRONode&)> filter,
                                 const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    if (_holdRendering) {
+        return;
+    }
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         if (!filter || filter(*this)) {
             if (mode == VROSilhouetteMode::Flat) {
@@ -274,6 +284,13 @@ void VRONode::updateSortKeys(uint32_t depth,
      not have to recurse down.
      */
     if (!_visible) {
+        return;
+    }
+    
+    /*
+     If rendering is held for this node, do not process any of its children either.
+     */
+    if (_holdRendering) {
         return;
     }
 

@@ -268,12 +268,13 @@ void VROGLTFLoader::injectGLTF(std::shared_ptr<VRONode> gltfNode,
         rootNode->syncAppThreadProperties();
         rootNode->setIgnoreEventHandling(rootNode->getIgnoreEventHandling());
 
-        // Hydrate the geometry and all textures prior to invoking the callback
-        VROModelIOUtil::hydrateNodes(rootNode, driver);
-
-        if (onFinish) {
-            onFinish(rootNode, true);
-        }
+        rootNode->setHoldRendering(true);
+        VROModelIOUtil::hydrateAsync(rootNode, [rootNode, onFinish] {
+            if (onFinish) {
+                onFinish(rootNode, true);
+            }
+            rootNode->setHoldRendering(false);
+        }, driver);
     }
     else {
         if (onFinish) {

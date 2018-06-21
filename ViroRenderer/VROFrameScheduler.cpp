@@ -22,6 +22,11 @@ VROFrameScheduler::~VROFrameScheduler() {
     
 }
 
+bool VROFrameScheduler::isTaskQueued(std::string key) {
+    std::lock_guard<std::recursive_mutex> lock(_taskQueueMutex);
+    return _queuedTasks.find(key) != _queuedTasks.end();
+}
+
 void VROFrameScheduler::scheduleTask(std::string key, std::function<void()> task) {
     std::lock_guard<std::recursive_mutex> lock(_taskQueueMutex);
     

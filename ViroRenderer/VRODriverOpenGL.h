@@ -426,6 +426,13 @@ public:
             }
         }
     }
+    
+    std::shared_ptr<VROFrameScheduler> getFrameScheduler() {
+        return _scheduler;
+    }
+    void setFrameScheduler(std::shared_ptr<VROFrameScheduler> scheduler) {
+        _scheduler = scheduler;
+    }
 
 protected:
     
@@ -482,6 +489,11 @@ private:
      Caches typeface collections.
      */
     std::map<std::string, std::weak_ptr<VROTypefaceCollection>> _typefaces;
+    
+    /*
+     Responsible for scheduling async tasks on the rendering thread.
+     */
+    std::shared_ptr<VROFrameScheduler> _scheduler;
 
     /*
      ID of the backbuffer.

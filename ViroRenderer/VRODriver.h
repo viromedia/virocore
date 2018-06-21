@@ -29,6 +29,7 @@ class VRORenderTarget;
 class VRORenderContext;
 class VROShaderProgram;
 class VROImagePostProcess;
+class VROFrameScheduler;
 
 enum class VROSoundType;
 enum class VROTextureType;
@@ -235,6 +236,8 @@ public:
                               std::string ceilingMaterial, std::string floorMaterial) = 0;
     virtual void setBlendingMode(VROBlendMode mode) = 0;
     
+    virtual std::shared_ptr<VROFrameScheduler> getFrameScheduler() = 0;
+    virtual void setFrameScheduler(std::shared_ptr<VROFrameScheduler> scheduler) = 0;
     virtual void *getGraphicsContext() = 0;
 };
 

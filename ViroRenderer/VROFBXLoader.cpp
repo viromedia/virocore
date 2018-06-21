@@ -168,12 +168,16 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode,
         node->syncAppThreadProperties();
         node->setIgnoreEventHandling(node->getIgnoreEventHandling());
 
-        // Hydrate the geometry and all textures prior to invoking the callback
-        VROModelIOUtil::hydrateNodes(node, driver);
-        
-        if (onFinish) {
-            onFinish(node, true);
-        }
+        // Hydrate the geometry and all textures prior to rendering, and ensure the callback is
+        // invoked before rendering (this way position/rotation can be set in the callback without
+        // causing any flicker).
+        node->setHoldRendering(true);
+        VROModelIOUtil::hydrateAsync(node, [node, onFinish] {
+            if (onFinish) {
+                onFinish(node, true);
+            }
+            node->setHoldRendering(false);
+        }, driver);
     }
     else {
         if (onFinish) {

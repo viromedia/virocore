@@ -74,6 +74,7 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     initBlankTexture(*_context);
     driver->readGPUType();
     driver->readDisplayFramebuffer();
+    driver->setFrameScheduler(_frameScheduler);
 
     _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
     _choreographer->setClearColor(_clearColor, driver);

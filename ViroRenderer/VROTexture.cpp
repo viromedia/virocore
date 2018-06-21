@@ -146,6 +146,47 @@ int VROTexture::getNumSubstrates() const {
     return (int)_substrates.size();
 }
 
+void VROTexture::hydrateAsync(std::function<void()> callback,
+                              std::shared_ptr<VRODriver> &driver) {
+    if (isHydrated()) {
+        return;
+    }
+    
+    _hydrationCallbacks.push_back(callback);
+    
+    const std::shared_ptr<VROFrameScheduler> &scheduler = driver->getFrameScheduler();
+    std::string key = getHydrationTaskKey();
+    if (!scheduler->isTaskQueued(key)) {
+        std::function<void()> hydrationTask = createHydrationTask(driver);
+        scheduler->scheduleTask(key, hydrationTask);
+    }
+}
+
+std::string VROTexture::getHydrationTaskKey() const {
+    return "th_" + VROStringUtil::toString(_textureId);
+}
+
+std::function<void()> VROTexture::createHydrationTask(std::shared_ptr<VRODriver> &driver) {
+    // Only hold weak pointers: we don't want queued hydration
+    // to prolong the lifetime of these objects
+    std::weak_ptr<VRODriver> driver_w = driver;
+    std::weak_ptr<VROTexture> texture_w = shared_from_this();
+    
+    std::function<void()> hydrationTask = [driver_w, texture_w]() {
+        std::shared_ptr<VROTexture> texture_s = texture_w.lock();
+        std::shared_ptr<VRODriver> driver_s = driver_w.lock();
+        
+        if (texture_s && driver_s) {
+            texture_s->hydrate(driver_s);
+        }
+    };
+    return hydrationTask;
+}
+
+bool VROTexture::isHydrated() const {
+    return _substrates[0] != nullptr;
+}
+
 VROTextureSubstrate *VROTexture::getSubstrate(int index, std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
     passert (index <= _substrates.size());
     if (!_substrates[index]) {
@@ -156,22 +197,11 @@ VROTextureSubstrate *VROTexture::getSubstrate(int index, std::shared_ptr<VRODriv
             hydrate(driver);
         }
         else {
-            // Only hold weak pointers: we don't want queued hydration
-            // to prolong the lifetime of these objects
-            std::weak_ptr<VRODriver> driver_w = driver;
-            std::weak_ptr<VROTexture> texture_w = shared_from_this();
-            
-            std::function<void()> hydrationTask = [driver_w, texture_w]() {
-                std::shared_ptr<VROTexture> texture_s = texture_w.lock();
-                std::shared_ptr<VRODriver> driver_s = driver_w.lock();
-                
-                if (texture_s && driver_s) {
-                    texture_s->hydrate(driver_s);
-                }
-            };
-            
-            std::string key = "th_" + VROStringUtil::toString(_textureId);
-            scheduler->scheduleTask(key, hydrationTask);
+            std::string key = getHydrationTaskKey();
+            if (!scheduler->isTaskQueued(key)) {
+                std::function<void()> hydrationTask = createHydrationTask(driver);
+                scheduler->scheduleTask(key, hydrationTask);
+            }
         }
     }
     
@@ -222,6 +252,11 @@ void VROTexture::hydrate(std::shared_ptr<VRODriver> &driver) {
                                                                                           _minificationFilter, _magnificationFilter, _mipFilter));
         _data.clear();
     }
+    
+    for (auto &callback : _hydrationCallbacks) {
+        callback();
+    }
+    _hydrationCallbacks.clear();
 }
 
 int VROTexture::getNumSubstratesForFormat(VROTextureInternalFormat format) const {

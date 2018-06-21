@@ -78,6 +78,21 @@ public:
      */
     static void hydrateNodes(std::shared_ptr<VRONode> node, std::shared_ptr<VRODriver> &driver);
     
+    /*
+     Upload all resources used by the given node (and its children) asynchronously on the rendering
+     thread, as time permits each frame. When finished, the provided callback will be invoked.
+     */
+    static void hydrateAsync(std::shared_ptr<VRONode> node, std::function<void()> callback,
+                             std::shared_ptr<VRODriver> &driver);
+    
+private:
+    
+    /*
+     Recursive helper function for async hydration.
+     */
+    static void hydrateAsync(std::shared_ptr<VRONode> node, std::function<void()> callback, int *unhydratedTextureCount,
+                             std::shared_ptr<VRODriver> &driver);
+    
 };
 
 #endif /* VROModelIOUtil_h */

@@ -401,6 +401,14 @@ public:
     }
     
     /*
+     True to stop rendering of this node and all of its children until the
+     model load callbacks are finished. Used internally.
+     */
+    void setHoldRendering(bool hold) {
+        _holdRendering = hold;
+    }
+    
+    /*
      Returns true if this node was found visible during the last call to
      computeVisibility(). If a node is not visible, that means none of its
      children are visible either (we use the umbrella bounding box for
@@ -1015,6 +1023,12 @@ private:
      Non-unique tag identifier representing this node. Defaults to kDefaultNodeTag.
      */
     std::string _tag = kDefaultNodeTag;
+    
+    /*
+     Used internally to hold the rendering of a node and all of its children until a model
+     load callback has been invoked.
+     */
+    bool _holdRendering;
 };
 
 #endif /* VRONode_h */

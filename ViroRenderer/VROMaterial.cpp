@@ -163,16 +163,41 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
 
 void VROMaterial::prewarm(std::shared_ptr<VRODriver> driver) {
     getSubstrate(driver);
+}
+
+int VROMaterial::hydrateAsync(std::function<void()> callback,
+                              std::shared_ptr<VRODriver> &driver) {
+    int count = 0;
     VROMaterialVisual *visuals[10] = { _diffuse, _roughness, _metalness, _specular, _normal, _reflective,
                                        _emission, _multiply, _ambientOcclusion, _selfIllumination };
     for (int i = 0; i < 10; i++) {
         VROMaterialVisual *visual = visuals[i];
         if (visual->getTextureType() != VROTextureType::None) {
-            visual->getTexture()->prewarm(driver);
+            if (!visual->getTexture()->isHydrated()) {
+                visual->getTexture()->hydrateAsync(callback, driver);
+                ++count;
+            }
         }
     }
+    return count;
 }
 
+bool VROMaterial::isHydrated() {
+    if (_substrate == nullptr) {
+        return false;
+    }
+    VROMaterialVisual *visuals[10] = { _diffuse, _roughness, _metalness, _specular, _normal, _reflective,
+                                       _emission, _multiply, _ambientOcclusion, _selfIllumination };
+    for (int i = 0; i < 10; i++) {
+        VROMaterialVisual *visual = visuals[i];
+        if (visual->getTextureType() != VROTextureType::None) {
+            if (!visual->getTexture()->isHydrated()) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 void VROMaterial::setTransparency(float transparency) {
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {

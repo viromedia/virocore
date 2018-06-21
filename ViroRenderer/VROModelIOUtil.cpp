@@ -170,3 +170,48 @@ void VROModelIOUtil::hydrateNodes(std::shared_ptr<VRONode> node, std::shared_ptr
     }
 }
 
+void VROModelIOUtil::hydrateAsync(std::shared_ptr<VRONode> node, std::function<void()> finishedCallback,
+                                  std::shared_ptr<VRODriver> &driver) {
+    int *unhydratedTextureCount = (int *)malloc(sizeof(int));
+    *unhydratedTextureCount = 0;
+    
+    std::function<void()> callback = [finishedCallback, unhydratedTextureCount]() mutable {
+        if (unhydratedTextureCount == nullptr) {
+            return;
+        }
+        
+        *unhydratedTextureCount = *unhydratedTextureCount - 1;
+        if (*unhydratedTextureCount == 0) {
+            free (unhydratedTextureCount);
+            unhydratedTextureCount = nullptr;
+            
+            finishedCallback();
+        }
+    };
+    hydrateAsync(node, callback, unhydratedTextureCount, driver);
+    
+    // If no textures needed to be hydrated, we invoke the callback immediately
+    if (unhydratedTextureCount != nullptr && *unhydratedTextureCount == 0) {
+        free (unhydratedTextureCount);
+        unhydratedTextureCount = nullptr;
+        
+        finishedCallback();
+    }
+}
+
+void VROModelIOUtil::hydrateAsync(std::shared_ptr<VRONode> node, std::function<void()> callback,
+                                  int *unhydratedTextureCount,
+                                  std::shared_ptr<VRODriver> &driver) {
+   
+    std::shared_ptr<VROGeometry> geometry = node->getGeometry();
+    if (geometry) {
+        geometry->prewarm(driver);
+        for (const std::shared_ptr<VROMaterial> &material : geometry->getMaterials()) {
+            *unhydratedTextureCount += material->hydrateAsync(callback, driver);
+        }
+    }
+    for (std::shared_ptr<VRONode> &node : node->getChildNodes()) {
+        hydrateAsync(node, callback, unhydratedTextureCount, driver);
+    }
+}
+
