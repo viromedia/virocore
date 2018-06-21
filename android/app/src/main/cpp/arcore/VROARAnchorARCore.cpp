@@ -28,8 +28,9 @@ VROARAnchorARCore::~VROARAnchorARCore() {
     // manually detached from its ARNode if it's a manual anchor (anchored to a hit
     // result).
     std::shared_ptr<arcore::Anchor> anchor = _anchor;
-    VROPlatformDispatchAsyncRenderer([anchor] {
-        if (anchor) {
+    std::weak_ptr<VROARSessionARCore> session = _session;
+    VROPlatformDispatchAsyncRenderer([anchor, session] {
+        if (anchor && session.lock()) {
             anchor->detach();
         }
     });
