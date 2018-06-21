@@ -702,6 +702,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                 // is update next frame
                 if (anchor) {
                     std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vPlane, session);
+                    vAnchor->sync();
                     addAnchor(vAnchor);
                 } else {
                     pinfo("Failed to create anchor for trackable plane: will try again later");
