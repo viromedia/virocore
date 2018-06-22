@@ -58,7 +58,8 @@ public:
     
     /*
      Retrieve the given resource asynchronously from the rendering thread. Invoke the given callback
-     on success or failure. The callback will be invoked on the rendering thread.
+     on success or failure. The callback contains the local filepath of the retrieved resource.
+     The callback will be invoked on the rendering thread.
      */
     static void retrieveResourceAsync(std::string resource, VROResourceType type,
                                       std::function<void(std::string, bool)> onSuccess,
@@ -92,6 +93,12 @@ private:
      */
     static void hydrateAsync(std::shared_ptr<VRONode> node, std::function<void()> callback, int *unhydratedTextureCount,
                              std::shared_ptr<VRODriver> &driver);
+    
+    /*
+     Helper function for loadTextureAsync. Loads the texture at the given local file path.
+     */
+    static std::shared_ptr<VROTexture> loadLocalTexture(std::string name, std::string path,
+                                                        bool sRGB, bool isTemp);
     
 };
 
