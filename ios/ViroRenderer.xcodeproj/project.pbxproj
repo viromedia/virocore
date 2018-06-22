@@ -889,6 +889,20 @@
 		8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F660AB91E9554B8006D063F /* VROFrameScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F67B59F1DF1DC930096C26F /* VROKnuthPlassFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F67B59D1DF1DC920096C26F /* VROKnuthPlassFormatter.cpp */; };
 		8F67B5A01DF1DC930096C26F /* VROKnuthPlassFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */; };
+		8F6E5B1520DD335B00BEE45F /* cr_cars_BaseColor.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0720DD335800BEE45F /* cr_cars_BaseColor.png */; };
+		8F6E5B1620DD335B00BEE45F /* cr_ar_badges_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0820DD335900BEE45F /* cr_ar_badges_Metallic.png */; };
+		8F6E5B1720DD335B00BEE45F /* cr_ar_badges_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0920DD335900BEE45F /* cr_ar_badges_Roughness.png */; };
+		8F6E5B1820DD335B00BEE45F /* cr_cars_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0A20DD335900BEE45F /* cr_cars_Metallic.png */; };
+		8F6E5B1920DD335B00BEE45F /* cr_labels.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0B20DD335900BEE45F /* cr_labels.vrx */; };
+		8F6E5B1A20DD335B00BEE45F /* cr_floorplan.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0C20DD335900BEE45F /* cr_floorplan.vrx */; };
+		8F6E5B1B20DD335B00BEE45F /* cr_cars.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0D20DD335A00BEE45F /* cr_cars.vrx */; };
+		8F6E5B1C20DD335B00BEE45F /* cr_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0E20DD335A00BEE45F /* cr_logo.png */; };
+		8F6E5B1D20DD335B00BEE45F /* cr_cars_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0F20DD335A00BEE45F /* cr_cars_Roughness.png */; };
+		8F6E5B1E20DD335B00BEE45F /* cr_ar_badges_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1020DD335A00BEE45F /* cr_ar_badges_Base_Color.png */; };
+		8F6E5B1F20DD335B00BEE45F /* cr_city.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1120DD335A00BEE45F /* cr_city.vrx */; };
+		8F6E5B2020DD335B00BEE45F /* cr_ar_badges_Normal_OpenGL.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1220DD335A00BEE45F /* cr_ar_badges_Normal_OpenGL.png */; };
+		8F6E5B2120DD335B00BEE45F /* cr_labels.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1320DD335A00BEE45F /* cr_labels.png */; };
+		8F6E5B2220DD335B00BEE45F /* cr_logo.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1420DD335A00BEE45F /* cr_logo.vrx */; };
 		8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F705DE01E8ACFD0008BE8F8 /* VRODebugHUD.cpp */; };
 		8F705DE31E8ACFD0008BE8F8 /* VRODebugHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F705DE11E8ACFD0008BE8F8 /* VRODebugHUD.h */; };
 		8F705DED1E8C7376008BE8F8 /* surface_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */; };
@@ -1854,6 +1868,20 @@
 		8F660AB91E9554B8006D063F /* VROFrameScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameScheduler.h; sourceTree = "<group>"; };
 		8F67B59D1DF1DC920096C26F /* VROKnuthPlassFormatter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROKnuthPlassFormatter.cpp; sourceTree = "<group>"; };
 		8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROKnuthPlassFormatter.h; sourceTree = "<group>"; };
+		8F6E5B0720DD335800BEE45F /* cr_cars_BaseColor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_cars_BaseColor.png; path = ViroSample/cr_cars_BaseColor.png; sourceTree = "<group>"; };
+		8F6E5B0820DD335900BEE45F /* cr_ar_badges_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Metallic.png; path = ViroSample/cr_ar_badges_Metallic.png; sourceTree = "<group>"; };
+		8F6E5B0920DD335900BEE45F /* cr_ar_badges_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Roughness.png; path = ViroSample/cr_ar_badges_Roughness.png; sourceTree = "<group>"; };
+		8F6E5B0A20DD335900BEE45F /* cr_cars_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_cars_Metallic.png; path = ViroSample/cr_cars_Metallic.png; sourceTree = "<group>"; };
+		8F6E5B0B20DD335900BEE45F /* cr_labels.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = cr_labels.vrx; path = ViroSample/cr_labels.vrx; sourceTree = "<group>"; };
+		8F6E5B0C20DD335900BEE45F /* cr_floorplan.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = cr_floorplan.vrx; path = ViroSample/cr_floorplan.vrx; sourceTree = "<group>"; };
+		8F6E5B0D20DD335A00BEE45F /* cr_cars.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = cr_cars.vrx; path = ViroSample/cr_cars.vrx; sourceTree = "<group>"; };
+		8F6E5B0E20DD335A00BEE45F /* cr_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_logo.png; path = ViroSample/cr_logo.png; sourceTree = "<group>"; };
+		8F6E5B0F20DD335A00BEE45F /* cr_cars_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_cars_Roughness.png; path = ViroSample/cr_cars_Roughness.png; sourceTree = "<group>"; };
+		8F6E5B1020DD335A00BEE45F /* cr_ar_badges_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Base_Color.png; path = ViroSample/cr_ar_badges_Base_Color.png; sourceTree = "<group>"; };
+		8F6E5B1120DD335A00BEE45F /* cr_city.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = cr_city.vrx; path = ViroSample/cr_city.vrx; sourceTree = "<group>"; };
+		8F6E5B1220DD335A00BEE45F /* cr_ar_badges_Normal_OpenGL.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Normal_OpenGL.png; path = ViroSample/cr_ar_badges_Normal_OpenGL.png; sourceTree = "<group>"; };
+		8F6E5B1320DD335A00BEE45F /* cr_labels.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_labels.png; path = ViroSample/cr_labels.png; sourceTree = "<group>"; };
+		8F6E5B1420DD335A00BEE45F /* cr_logo.vrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cr_logo.vrx; path = ViroSample/cr_logo.vrx; sourceTree = "<group>"; };
 		8F705DE01E8ACFD0008BE8F8 /* VRODebugHUD.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODebugHUD.cpp; sourceTree = "<group>"; };
 		8F705DE11E8ACFD0008BE8F8 /* VRODebugHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODebugHUD.h; sourceTree = "<group>"; };
 		8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = surface_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -3389,6 +3417,20 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F6E5B1020DD335A00BEE45F /* cr_ar_badges_Base_Color.png */,
+				8F6E5B0820DD335900BEE45F /* cr_ar_badges_Metallic.png */,
+				8F6E5B1220DD335A00BEE45F /* cr_ar_badges_Normal_OpenGL.png */,
+				8F6E5B0920DD335900BEE45F /* cr_ar_badges_Roughness.png */,
+				8F6E5B0720DD335800BEE45F /* cr_cars_BaseColor.png */,
+				8F6E5B0A20DD335900BEE45F /* cr_cars_Metallic.png */,
+				8F6E5B0F20DD335A00BEE45F /* cr_cars_Roughness.png */,
+				8F6E5B0D20DD335A00BEE45F /* cr_cars.vrx */,
+				8F6E5B1120DD335A00BEE45F /* cr_city.vrx */,
+				8F6E5B0C20DD335900BEE45F /* cr_floorplan.vrx */,
+				8F6E5B1320DD335A00BEE45F /* cr_labels.png */,
+				8F6E5B0B20DD335900BEE45F /* cr_labels.vrx */,
+				8F6E5B0E20DD335A00BEE45F /* cr_logo.png */,
+				8F6E5B1420DD335A00BEE45F /* cr_logo.vrx */,
 				A57CA8E320AE04FF00DE85A1 /* Buggy.glb */,
 				A57CA8DE20AE027400DE85A1 /* Duck.gltf */,
 				A57CA8DF20AE027400DE85A1 /* Duck0.bin */,
@@ -4508,6 +4550,7 @@
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F5EEE9A20325C310059C9E7 /* pumpkin.vrx in Resources */,
+				8F6E5B1D20DD335B00BEE45F /* cr_cars_Roughness.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F5EEEA820329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
@@ -4537,6 +4580,7 @@
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
 				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
 				8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */,
+				8F6E5B1C20DD335B00BEE45F /* cr_logo.png in Resources */,
 				8F1B4A1E1F64B61E00156809 /* portal_window_frame_specular.png in Resources */,
 				A597F8E3201AB412007EE387 /* prefilter_convolution_fsh.glsl in Resources */,
 				8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */,
@@ -4566,6 +4610,7 @@
 				8A35CEFB2060711300ADD393 /* george.jpg in Resources */,
 				8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */,
 				8FEACEDC2012605F0082D18B /* pbr_sample_metallic.png in Resources */,
+				8F6E5B1920DD335B00BEE45F /* cr_labels.vrx in Resources */,
 				8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */,
 				8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */,
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
@@ -4581,6 +4626,7 @@
 				8F043723201A43B800D98D26 /* ibl_wooden_door.hdr in Resources */,
 				8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
+				8F6E5B1F20DD335B00BEE45F /* cr_city.vrx in Resources */,
 				8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
 				8F5EEEA720329C9B0059C9E7 /* cupcake_vanilla_1001_BaseColor.png in Resources */,
@@ -4588,6 +4634,7 @@
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
 				8F5EEEA620329C9B0059C9E7 /* cupcake_vanilla_1001_Normal.png in Resources */,
 				8FA9A265207E96240022C55D /* object_bpanther_Base_Color.png in Resources */,
+				8F6E5B2020DD335B00BEE45F /* cr_ar_badges_Normal_OpenGL.png in Resources */,
 				8FA9A251207E83980022C55D /* Lamborginhi_glass_Base_Color.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
@@ -4608,9 +4655,13 @@
 				8FCED0831EBBD35200C19BCA /* SvenArmor_Glow.png in Resources */,
 				8F660AB51E931C6F006D063F /* earth.mtl in Resources */,
 				A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */,
+				8F6E5B1720DD335B00BEE45F /* cr_ar_badges_Roughness.png in Resources */,
 				8FCED0571EBBCFCF00C19BCA /* Global_Illumination.png in Resources */,
+				8F6E5B1A20DD335B00BEE45F /* cr_floorplan.vrx in Resources */,
+				8F6E5B1B20DD335B00BEE45F /* cr_cars.vrx in Resources */,
 				8F129FA31ECEC0A100341D83 /* texture.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
+				8F6E5B1E20DD335B00BEE45F /* cr_ar_badges_Base_Color.png in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8FD2A5941F868B1200E831A6 /* sunrise.vhd in Resources */,
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
@@ -4640,8 +4691,10 @@
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8FD2A4FE1F809AD800E831A6 /* object_star_specular.png in Resources */,
+				8F6E5B1520DD335B00BEE45F /* cr_cars_BaseColor.png in Resources */,
 				8F1B4A281F64B6E000156809 /* emoji_smile_specular.png in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
+				8F6E5B2220DD335B00BEE45F /* cr_logo.vrx in Resources */,
 				8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */,
 				8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */,
 				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
@@ -4671,6 +4724,7 @@
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
 				8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */,
+				8F6E5B1620DD335B00BEE45F /* cr_ar_badges_Metallic.png in Resources */,
 				8F04372C201AA72900D98D26 /* blinn2_Metallic.png in Resources */,
 				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
@@ -4678,6 +4732,7 @@
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
+				8F6E5B1820DD335B00BEE45F /* cr_cars_Metallic.png in Resources */,
 				8F5EEE9B20325C310059C9E7 /* object_pumpkin_inside_normal.png in Resources */,
 				8F043729201AA72900D98D26 /* blinn2_Normal_DirectX.png in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
@@ -4691,6 +4746,7 @@
 				8FA9A267207E96240022C55D /* object_bpanther_Mixed_AO.png in Resources */,
 				A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
+				8F6E5B2120DD335B00BEE45F /* cr_labels.png in Resources */,
 				8FCED0811EBBD35200C19BCA /* Sven_Hair_Specular.png in Resources */,
 				8F129FBD1ED603BE00341D83 /* minion.vrx in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
@@ -5522,8 +5578,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -5540,8 +5602,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -5624,8 +5698,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -5645,8 +5725,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -6002,8 +6094,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6020,8 +6118,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -6104,8 +6214,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6125,8 +6241,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

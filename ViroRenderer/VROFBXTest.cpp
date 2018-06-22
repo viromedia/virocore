@@ -24,6 +24,15 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
 
     _driver = driver;
 
+    VROVector3f crPosition = { 0, -1, -4 };
+    VROVector3f crScale = { .25, .25, .25 };
+    
+    VROFBXModel cars("cr_cars", crPosition, crScale, 1, "01");
+    VROFBXModel city("cr_city", crPosition, crScale, 1, "01");
+    VROFBXModel floorplan("cr_floorplan", crPosition, crScale, 1, "01");
+    VROFBXModel labels("cr_labels", crPosition, crScale, 1, "01");
+    VROFBXModel logo("cr_logo", crPosition, crScale, 1, "01");
+    
     VROFBXModel worm("worm", { 0, 0, -3 }, { .2, .2, .2 }, 1, "Take 001");
     VROFBXModel panther("object_bpanther_anim", { 0, -1.5, -8 }, { 2, 2, 2 }, 1, "01");
     VROFBXModel lamborghini("lamborghini_v2", { 0, -1.5, -6 }, { .015, .015, .015 }, 1, "02");
@@ -31,12 +40,13 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
     VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
     
-    _models.push_back(worm);
-    _models.push_back(panther);
-    _models.push_back(cylinder);
-    _models.push_back(dragon);
-    _models.push_back(lamborghini);
-    _models.push_back(pumpkin);
+    _models.push_back({ worm });
+    _models.push_back({ cars, city, floorplan, labels, logo });
+    _models.push_back({ panther });
+    _models.push_back({ cylinder });
+    _models.push_back({ dragon });
+    _models.push_back({ lamborghini });
+    _models.push_back({ pumpkin });
     
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
@@ -104,12 +114,14 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
 }
 
 void VROFBXTest::rotateFBX() {
-    VROFBXModel model = _models[_fbxIndex];
-    std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel(model.name, model.position, model.scale,
-                                                                 model.lightMask, model.animation, _driver);
     _fbxContainerNode->removeAllChildren();
-    _fbxContainerNode->addChildNode(fbxNode);
-    
+
+    std::vector<VROFBXModel> models = _models[_fbxIndex];
+    for (VROFBXModel &model : models) {
+        std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel(model.name, model.position, model.scale,
+                                                                     model.lightMask, model.animation, _driver);
+        _fbxContainerNode->addChildNode(fbxNode);
+    }
     _fbxIndex = (_fbxIndex + 1) % _models.size();
 }
 

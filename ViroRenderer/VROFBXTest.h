@@ -63,7 +63,7 @@ private:
     std::shared_ptr<VROEventDelegate> _eventDelegate;
     int _fbxIndex;
     float _angle;
-    std::vector<VROFBXModel> _models;
+    std::vector<std::vector<VROFBXModel>> _models;
     
 };
 
