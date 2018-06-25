@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+# Due to some changes, we need to increase the recursion depth to 1024:
+# https://github.com/jeremyong/Selene/issues/167#issuecomment-267751122
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=1024")
+endif()
+
 set(VIRO_ANDROID_INCLUDES ${CMAKE_SOURCE_DIR}/../libs)
 set(VIRO_ANDROID_LIBS     ${CMAKE_SOURCE_DIR}/../app/src/main/jniLibs)
 set(VIRO_RENDERER_SRC     ${CMAKE_SOURCE_DIR}/../../ViroRenderer)
