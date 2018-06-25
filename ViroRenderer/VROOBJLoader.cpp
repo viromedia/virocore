@@ -71,9 +71,9 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
          resource map, then generate the corresponding fileMap (this copies those resources
          into local files).
          */
-        std::map<std::string, std::string> *fileMap = new std::map<std::string, std::string>();
+        std::shared_ptr<std::map<std::string, std::string>> fileMap;
         if (loadingTexturesFromResourceMap) {
-            *fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
+            fileMap = VROModelIOUtil::createResourceMap(resourceMap, type);
         }
         
         std::string err;
@@ -81,7 +81,7 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
                          path.c_str(),
                          base.c_str(),
                          type == VROResourceType::URL, // base is URL?
-                         loadingTexturesFromResourceMap ? fileMap : nullptr,
+                         loadingTexturesFromResourceMap ? fileMap.get() : nullptr,
                          [err, node, attrib, shapes, materials, resource, type, loadingTexturesFromResourceMap,
                           fileMap, driver, onFinish](bool ret) {
                              if (!err.empty()) {
@@ -108,7 +108,6 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
                                      delete (attrib);
                                      delete (shapes);
                                      delete (materials);
-                                     delete (fileMap);
                                  });
                              }
                              else {
@@ -117,7 +116,6 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
                                  delete (attrib);
                                  delete (shapes);
                                  delete (materials);
-                                 delete (fileMap);
                              }
                          });
         
@@ -160,7 +158,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t &attrib,
                                                       std::vector<tinyobj::material_t> &materials,
                                                       std::string base,
                                                       VROResourceType type,
-                                                      const std::map<std::string, std::string> *resourceMap,
+                                                      std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                       std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
                                                       std::shared_ptr<VROTaskQueue> taskQueue) {
     pinfo("OBJ # of vertices  = %d", (int)(attrib.vertices.size()) / 3);

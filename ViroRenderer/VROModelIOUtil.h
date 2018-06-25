@@ -44,7 +44,7 @@ public:
      (e.g. specular, normal, etc.).
      */
     static void loadTextureAsync(const std::string &name, const std::string &base, VROResourceType type, bool sRGB,
-                                 const std::map<std::string, std::string> *resourceMap,
+                                 std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                  std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
                                  std::function<void(std::shared_ptr<VROTexture> texture)> onFinished);
 
@@ -71,8 +71,7 @@ public:
      
      This performs no action on local files.
      */
-    static std::map<std::string, std::string> processResourceMap(const std::map<std::string, std::string> &resourceMap,
-                                                                 VROResourceType type);
+    static std::shared_ptr<std::map<std::string, std::string>> createResourceMap(const std::map<std::string, std::string> &resourceMap, VROResourceType type);
 
     /*
      Recursively hydrate all geometries and textures in that descend from the given node.

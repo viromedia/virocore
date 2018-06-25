@@ -208,9 +208,9 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                      resource map, then generate the corresponding fileMap (this copies those resources
                      into local files).
                      */
-                    std::map<std::string, std::string> fileMap;
+                    std::shared_ptr<std::map<std::string, std::string>> fileMap;
                     if (loadingTexturesFromResourceMap) {
-                        fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
+                        fileMap = VROModelIOUtil::createResourceMap(resourceMap, type);
                     }
 
                     VROPlatformDispatchAsyncRenderer(
@@ -221,13 +221,14 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                                 // tasks (e.g. async texture download) in the task queue
                                 std::shared_ptr<VROTaskQueue> taskQueue = std::make_shared<VROTaskQueue>(
                                         VROTaskExecutionOrder::Serial);
+
                                 std::map<std::string, std::shared_ptr<VROTexture>> *textureCache = new std::map<std::string, std::shared_ptr<VROTexture>>();
                                 std::shared_ptr<VRONode> fbxNode = loadFBX(*node_pb, base,
                                                                            loadingTexturesFromResourceMap
                                                                            ? VROResourceType::LocalFile
                                                                            : type,
                                                                            loadingTexturesFromResourceMap
-                                                                           ? &fileMap : nullptr,
+                                                                           ? fileMap : nullptr,
                                                                            textureCache, taskQueue);
 
                                 // Run all the async tasks. When they're complete, inject the finished FBX into the
@@ -260,7 +261,7 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
 }
 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::string base, VROResourceType type,
-                                               const std::map<std::string, std::string> *resourceMap,
+                                               std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                std::map<std::string, std::shared_ptr<VROTexture>> *textureCache,
                                                std::shared_ptr<VROTaskQueue> taskQueue) {
     
@@ -288,7 +289,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::string 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                                                    std::shared_ptr<VROSkeleton> skeleton,
                                                    std::string base, VROResourceType type,
-                                                   const std::map<std::string, std::string> *resourceMap,
+                                                   std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
                                                    std::shared_ptr<VROTaskQueue> taskQueue) {
     
@@ -373,7 +374,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
 
 std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geometry &geo_pb,
                                                            std::string base, VROResourceType type,
-                                                           const std::map<std::string, std::string> *resourceMap,
+                                                           std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                            std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
                                                            std::shared_ptr<VROTaskQueue> taskQueue) {
     std::shared_ptr<VROData> varData = std::make_shared<VROData>(geo_pb.data().c_str(), geo_pb.data().length());

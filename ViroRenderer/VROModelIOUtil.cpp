@@ -20,7 +20,7 @@
 const std::string kAssetURLPrefix = "file:///android_asset";
 
 void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string &base, VROResourceType type, bool sRGB,
-                                      const std::map<std::string, std::string> *resourceMap,
+                                      std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                       std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
                                       std::function<void(std::shared_ptr<VROTexture> texture)> onFinished) {
     
@@ -30,14 +30,14 @@ void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string
         onFinished(it->second);
         return;
     }
-    
+
     std::string textureFile;
     if (resourceMap == nullptr) {
         textureFile = base + "/" + name;
     } else {
         textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
     }
-        
+
     retrieveResourceAsync(textureFile, type,
           [name, sRGB, onFinished, &textureCache](std::string path, bool isTemp) {
               // Abort (return empty texture) if the file wasn't found
@@ -46,10 +46,10 @@ void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string
                   return;
               }
               
-              VROPlatformDispatchAsyncBackground([name, path, sRGB, isTemp, textureCache, onFinished]() mutable {
+              VROPlatformDispatchAsyncBackground([name, path, sRGB, isTemp, &textureCache, onFinished]() {
                   std::shared_ptr<VROTexture> texture = loadLocalTexture(name, path, sRGB, isTemp);
 
-                  VROPlatformDispatchAsyncRenderer([name, texture, textureCache, onFinished]() mutable {
+                  VROPlatformDispatchAsyncRenderer([name, texture, &textureCache, onFinished]() {
                       if (texture != nullptr) {
                           textureCache.insert(std::make_pair(name, texture));
                       }
@@ -151,19 +151,22 @@ std::string VROModelIOUtil::retrieveResource(std::string resource, VROResourceTy
     return path;
 }
 
-std::map<std::string, std::string> VROModelIOUtil::processResourceMap(const std::map<std::string, std::string> &resourceMap,
-                                                                      VROResourceType type) {
+std::shared_ptr<std::map<std::string, std::string>> VROModelIOUtil::createResourceMap(const std::map<std::string, std::string> &resourceMap,
+                                                                                      VROResourceType type) {
+    std::shared_ptr<std::map<std::string, std::string>> resources = std::make_shared<std::map<std::string, std::string>>();
     if (type == VROResourceType::LocalFile) {
-        return resourceMap;
+        for (auto &kv : resourceMap) {
+            (*resources)[kv.first] = kv.second;
+        }
+        return resources;
     }
     else if (type == VROResourceType::URL) {
         pabort();
     }
     else {
-        std::map<std::string, std::string> resources;
         for (auto &kv : resourceMap) {
             bool isTemp;
-            resources[kv.first] = VROPlatformCopyResourceToFile(kv.second, &isTemp);
+            (*resources)[kv.first] = VROPlatformCopyResourceToFile(kv.second, &isTemp);
         }
         return resources;
     }
