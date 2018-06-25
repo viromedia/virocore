@@ -128,7 +128,7 @@ void VROARSessionARCore::pause() {
 }
 
 bool VROARSessionARCore::isReady() const {
-    return getScene() != nullptr;
+    return getScene() != nullptr && _session != nullptr;
 }
 
 void VROARSessionARCore::resetSession(bool resetTracking, bool removeAnchors) {
