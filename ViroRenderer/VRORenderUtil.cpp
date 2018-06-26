@@ -106,7 +106,7 @@ void VRORenderUtil::renderQuad(unsigned int *vao, unsigned int *vbo) {
 
 bool VRORenderUtil::bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
                                 std::shared_ptr<VRODriver> &driver) {
-    VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(0, driver, nullptr);
+    VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(0, driver, true);
     if (!substrate) {
         return false;
     }

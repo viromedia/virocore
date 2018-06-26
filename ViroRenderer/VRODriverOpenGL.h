@@ -45,6 +45,7 @@ public:
         _blendMode(VROBlendMode::Alpha) {
         
         _shaderFactory = std::unique_ptr<VROShaderFactory>(new VROShaderFactory());
+        _scheduler = std::make_shared<VROFrameScheduler>();
     }
 
     void willRenderFrame(const VRORenderContext &context) {
@@ -429,9 +430,6 @@ public:
     
     std::shared_ptr<VROFrameScheduler> getFrameScheduler() {
         return _scheduler;
-    }
-    void setFrameScheduler(std::shared_ptr<VROFrameScheduler> scheduler) {
-        _scheduler = scheduler;
     }
 
 protected:

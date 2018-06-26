@@ -166,12 +166,12 @@ public:
     void prewarm(std::shared_ptr<VRODriver> driver);
     
     /*
-     Get the substrates for this texture, loading them if necessary. If a scheduler is provided,
+     Get the substrates for this texture, loading them if necessary. If a immediate is false,
      then the substrates will be loaded asynchronously via the scheduler; otherwise, the
      substrates will be loaded immediately in a blocking fashion.
      */
     int getNumSubstrates() const;
-    VROTextureSubstrate *getSubstrate(int index, std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler);
+    VROTextureSubstrate *getSubstrate(int index, std::shared_ptr<VRODriver> &driver, bool immediate);
     
     /*
      Textures may have their substrates set externally if they are created and

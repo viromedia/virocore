@@ -237,7 +237,6 @@ public:
     virtual void setBlendingMode(VROBlendMode mode) = 0;
     
     virtual std::shared_ptr<VROFrameScheduler> getFrameScheduler() = 0;
-    virtual void setFrameScheduler(std::shared_ptr<VROFrameScheduler> scheduler) = 0;
     virtual void *getGraphicsContext() = 0;
 };
 

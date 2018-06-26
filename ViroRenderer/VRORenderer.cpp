@@ -54,14 +54,13 @@ VRORenderer::VRORenderer(VRORendererConfiguration config, std::shared_ptr<VROInp
     _fpsTickIndex(0),
     _fpsTickSum(0) {
     _hasIncomingSceneTransition = false;
-    _frameScheduler = std::make_shared<VROFrameScheduler>();
     _mpfTarget = 1000.0 / kFPSTarget;
         
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
 #endif
 
-    _context = std::make_shared<VRORenderContext>(_frameSynchronizer, _frameScheduler);
+    _context = std::make_shared<VRORenderContext>(_frameSynchronizer);
     _context->setPencil(std::make_shared<VROPencil>());
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
@@ -74,7 +73,6 @@ void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     initBlankTexture(*_context);
     driver->readGPUType();
     driver->readDisplayFramebuffer();
-    driver->setFrameScheduler(_frameScheduler);
 
     _choreographer = std::make_shared<VROChoreographer>(_initialRendererConfig, driver);
     _choreographer->setClearColor(_clearColor, driver);
@@ -527,7 +525,7 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     double timeForProcessing = _mpfTarget - (_frameEndTime - _frameStartTime);
     
     VROFrameTimer timer(VROFrameType::Normal, timeForProcessing, _frameEndTime);
-    _frameScheduler->processTasks(timer);
+    driver->getFrameScheduler()->processTasks(timer);
     
     driver->didRenderFrame(timer, *_context.get());
     pglpop();

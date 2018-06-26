@@ -187,20 +187,20 @@ bool VROTexture::isHydrated() const {
     return _substrates[0] != nullptr;
 }
 
-VROTextureSubstrate *VROTexture::getSubstrate(int index, std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
+VROTextureSubstrate *VROTexture::getSubstrate(int index, std::shared_ptr<VRODriver> &driver, bool immediate) {
     passert (index <= _substrates.size());
     if (!_substrates[index]) {
         // Hydration only works for single-substrate textures. Multi-substrate
         // textures need to inject the substrates manually via setSubstrate().
         passert (index == 0);
-        if (!scheduler) {
+        if (immediate) {
             hydrate(driver);
         }
         else {
             std::string key = getHydrationTaskKey();
-            if (!scheduler->isTaskQueued(key)) {
+            if (!driver->getFrameScheduler()->isTaskQueued(key)) {
                 std::function<void()> hydrationTask = createHydrationTask(driver);
-                scheduler->scheduleTask(key, hydrationTask);
+                driver->getFrameScheduler()->scheduleTask(key, hydrationTask);
             }
         }
     }

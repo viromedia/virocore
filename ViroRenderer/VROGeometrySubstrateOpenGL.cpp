@@ -301,12 +301,12 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
         const std::shared_ptr<VROTexture> &texture = reference.getTexture(context);
 
         for (int s = 0; s < texture->getNumSubstrates(); s++) {
-            VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(s, driver, context.getFrameScheduler().get());
+            VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(s, driver, false);
             if (!substrate) {
                 // Use a blank placeholder if a texture is not yet available (i.e.
                 // during video texture loading)
                 std::shared_ptr<VROTexture> blank = getBlankTexture(texture->getType());
-                substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(0, driver, nullptr);
+                substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(0, driver, true);
             }
             
             std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();

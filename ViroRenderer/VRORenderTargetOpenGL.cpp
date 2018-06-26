@@ -510,7 +510,7 @@ GLint VRORenderTargetOpenGL::getTextureName(int attachment) const {
         return 0;
     }
     
-    VROTextureSubstrate *substrate = _textures[attachment]->getSubstrate(0, driver, nullptr);
+    VROTextureSubstrate *substrate = _textures[attachment]->getSubstrate(0, driver, true);
     VROTextureSubstrateOpenGL *oglSubstrate = dynamic_cast<VROTextureSubstrateOpenGL *>(substrate);
     passert (oglSubstrate != nullptr);
     
