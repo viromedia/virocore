@@ -33,12 +33,12 @@ NSString * const kApplicationUUIDKey = @"com.viromedia.app.uuid.key";
 
 - (void)recordEvent:(NSString *)event {
   NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
-  BOOL isDebug = [[[[NSBundle mainBundle] appStoreReceiptURL] lastPathComponent] isEqualToString:@"sandboxReceipt"];
+  BOOL isLive = [self isRunningLive];
   // Override the above value if the bundle id is our own testbed app
   if ([bundleId caseInsensitiveCompare:@"com.viromedia.ViroMedia"] == NSOrderedSame) {
-    isDebug = false;
+    isLive = true;
   }
-  NSString *buildType = isDebug ? @"debug" : @"release";
+  NSString *buildType = isLive ? @"release" : @"debug";
   NSString *instanceID = [self getInstanceId];
   NSDictionary *eventDict = [NSDictionary dictionaryWithObjectsAndKeys:
                          event, @"event",
@@ -52,6 +52,18 @@ NSString * const kApplicationUUIDKey = @"com.viromedia.app.uuid.key";
                          nil];
   [[KeenClient sharedClient] addEvent:eventDict toEventCollection:@"ViroViewInit" error:nil];
   [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
+}
+
+- (BOOL) isRunningLive {
+#if TARGET_OS_SIMULATOR
+  return NO;
+#else
+  BOOL isRunningTestFlightBeta = [[[[NSBundle mainBundle] appStoreReceiptURL] lastPathComponent] isEqualToString:@"sandboxReceipt"];
+  BOOL hasEmbeddedMobileProvision = !![[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
+  if (isRunningTestFlightBeta || hasEmbeddedMobileProvision)
+    return NO;
+  return YES;
+#endif
 }
 
 - (NSString *)getInstanceId {
