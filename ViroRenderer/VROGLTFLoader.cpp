@@ -907,7 +907,7 @@ bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
         buffer.setPosition((elementIndex * bufferViewStride));
 
         // For the current element, cycle through each of its float or type component
-        float *invBindMatrix = new float[16];
+        float invBindMatrix[16];
         for (int componentCount = 0; componentCount < 16; componentCount ++) {
             if (gTypeComponent == GLTFTypeComponent::Float) {
                 float floatData = buffer.readFloat();
@@ -919,7 +919,6 @@ bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
         }
 
         VROMatrix4f mat(invBindMatrix);
-        delete invBindMatrix;
         invBindTransforms.push_back(mat);
     }
 
@@ -1147,7 +1146,7 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
             // Finally create our geometry sources with the normalized data.
             std::shared_ptr<VROData> indexData
                     = std::make_shared<VROData>((void *) dataOut,
-                                                sizeOfSingleBoneWeight * gAttributeAccesor.count);
+                                                sizeOfSingleBoneWeight * gAttributeAccesor.count, VRODataOwnership::Move);
 
             source = std::make_shared<VROGeometrySource>(indexData,
                                                          attributeType,
