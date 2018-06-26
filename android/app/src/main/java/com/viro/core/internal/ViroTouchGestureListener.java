@@ -10,6 +10,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.util.Log;
 
 import com.viro.core.Renderer;
 
@@ -96,6 +97,7 @@ public class ViroTouchGestureListener extends GestureDetector.SimpleOnGestureLis
                     if (mLastTouchX == event.getX() && mLastTouchY == event.getY()) {
                         break;
                     }
+
                     mNativeRenderer.onTouchEvent(EVENT_MOVE, event.getX(), event.getY());
 
                 } else if (mFingerDownTime != INVALID_FINGER_DOWN_TIME

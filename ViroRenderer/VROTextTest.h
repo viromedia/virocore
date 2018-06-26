@@ -19,6 +19,10 @@ public:
     VROTextEventDelegate(VROTextTest *test) : _test(test) {};
     virtual ~VROTextEventDelegate() {};
     void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
+    void onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState);
+
+    void onRotate(int source, std::shared_ptr<VRONode> node, float rotationRadians, RotateState rotateState);
+
 private:
     VROTextTest *_test;
 };
@@ -58,6 +62,7 @@ public:
     }
     
     void rotateText();
+    void scaleText(float scaleFactor);
 
 private:
 

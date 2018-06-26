@@ -116,6 +116,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         float height = self.frame.size.height * _trackerViewScale;
         _trackerOutputView.frame = CGRectMake(self.frame.size.width - width, self.frame.size.height - height, width, height);
     }
+    
     if (_trackerOutputText) {
         _trackerOutputText.frame = CGRectMake(0, self.frame.size.height - _textHeight, self.frame.size.width, _textHeight);
 

@@ -139,6 +139,8 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     
     _eventDelegate = std::make_shared<VROTextEventDelegate>(this);
     _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnRotate, true);
     rootNode->setEventDelegate(_eventDelegate);
 }
 
@@ -159,9 +161,21 @@ void VROTextTest::rotateText() {
     _textIndex = (_textIndex + 1) % _textSamples.size();
 }
 
+void VROTextTest::scaleText(float scaleFactor) {
+    _textNode->setScale(VROVector3f(scaleFactor, scaleFactor, scaleFactor));
+}
+
 void VROTextEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
                                    std::vector<float> position) {
     if (clickState == ClickState::Clicked) {
         _test->rotateText();
     }
+}
+
+void VROTextEventDelegate::onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState) {
+    _test->scaleText(scaleFactor);
+}
+
+void VROTextEventDelegate::onRotate(int source, std::shared_ptr<VRONode> node, float rotationRadians, RotateState rotateState) {
+
 }

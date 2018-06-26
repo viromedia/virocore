@@ -19,6 +19,7 @@
 #import "VROAllocationTracker.h"
 #import "VRORenderDelegateiOS.h"
 #import "VROInputControllerCardboardiOS.h"
+#import "VROInputControllerAR.h"
 #import "VRODriverOpenGLiOSGVR.h"
 #import "VROSceneRendererGVR.h"
 #import "VROChoreographer.h"
@@ -36,8 +37,15 @@
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
+    std::shared_ptr<VROInputControllerCardboardiOS> _inputControllerCardboard;
+    std::shared_ptr<VROInputControllerAR> _inputControllerAR;
     CADisplayLink *_displayLink;
     GVROverlayView *_overlayView;
+    UITapGestureRecognizer *_tapGestureCardboard;
+    UITapGestureRecognizer *_tapGestureTouch;
+    UIPanGestureRecognizer *_dragGestureTouch;
+    UIRotationGestureRecognizer *_rotateGesture;
+    UIPinchGestureRecognizer *_pinchGesture;
 }
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
@@ -95,7 +103,7 @@
     
     _VRModeEnabled = YES;
     _paused = YES;
-    
+
     _overlayView = [[GVROverlayView alloc] initWithFrame:self.bounds];
     _overlayView.hidesBackButton = NO;
     _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -136,18 +144,37 @@
      Create Viro renderer objects.
      */
     _driver = std::make_shared<VRODriverOpenGLiOSGVR>(self, self.context);
-    _renderer = std::make_shared<VRORenderer>(config, std::make_shared<VROInputControllerCardboardiOS>(_driver));
+    _inputControllerCardboard = std::make_shared<VROInputControllerCardboardiOS>(_driver);
+    _inputControllerAR = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
+                                                              self.frame.size.height * self.contentScaleFactor,
+                                                              _driver);
+
+    _renderer = std::make_shared<VRORenderer>(config, _inputControllerCardboard);
     _sceneRenderer = std::make_shared<VROSceneRendererGVR>(self.bounds.size.width * self.contentScaleFactor,
                                                            self.bounds.size.height * self.contentScaleFactor,
                                                            [[UIApplication sharedApplication] statusBarOrientation],
                                                            self.contentScaleFactor, _renderer, _driver);
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
-    
+
     /*
      Add a tap gesture to handle viewer trigger action.
      */
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapGLView:)];
-    [self addGestureRecognizer:tapGesture];
+    _tapGestureCardboard = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapWithCardboad:)];
+     [self addGestureRecognizer:_tapGestureCardboard];
+
+    /*
+     Gestures used only for 360 mode.
+     */
+    _tapGestureTouch = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapWithTouch:)];
+    _rotateGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotate:)];
+    _pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+
+    /*
+     Use a pan gesture instead of a 0 second long press gesture recoginizer because
+     it seems to play better with the other two recoginizers.
+     */
+    _dragGestureTouch= [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                                action:@selector(handleDragWithTouch:)];
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
@@ -162,6 +189,19 @@
     if (_VRModeEnabled != enabled) {
         _sceneRenderer->setVRModeEnabled(enabled);
         _VRModeEnabled = enabled;
+        if(enabled) {
+            [self removeGestureRecognizer:_rotateGesture];
+            [self removeGestureRecognizer:_pinchGesture];
+            [self removeGestureRecognizer:_tapGestureTouch];
+            [self addGestureRecognizer:_tapGestureCardboard];
+            _renderer->setInputController(_inputControllerCardboard);
+        } else  {
+            [self addGestureRecognizer:_rotateGesture];
+            [self addGestureRecognizer:_pinchGesture];
+            [self addGestureRecognizer:_tapGestureTouch];
+            [self removeGestureRecognizer:_tapGestureCardboard];
+            _renderer->setInputController(_inputControllerAR);
+        }
     }
     [self updateOverlayView];
 }
@@ -204,6 +244,14 @@
     }
     else {
         [self stopRenderer];
+    }
+}
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    if (_inputControllerAR) {
+        _inputControllerAR->setViewportSize(self.frame.size.width * self.contentScaleFactor,
+                                          self.frame.size.height * self.contentScaleFactor);
     }
 }
 
@@ -256,10 +304,64 @@
     [_overlayView setNeedsLayout];
 }
 
-- (void)didTapGLView:(id)sender {
+#pragma mark - Gestures
+
+- (void)didTapWithCardboad:(id)sender {
     std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
     std::shared_ptr<VROInputControllerCardboardiOS> cardboardController = std::dynamic_pointer_cast<VROInputControllerCardboardiOS>(baseController);
     cardboardController->onScreenClicked();
+}
+
+- (void)didTapWithTouch:(UITapGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        _inputControllerAR->onScreenTouchDown(viewportTouchPos);
+        _inputControllerAR->onScreenTouchUp(viewportTouchPos);
+    }
+}
+
+- (void)handleRotate:(UIRotationGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+
+    if(recognizer.state == UIGestureRecognizerStateBegan) {
+        _inputControllerAR->onRotateStart(viewportTouchPos);
+    } else if(recognizer.state == UIGestureRecognizerStateChanged) {
+        // Note: we need to "negate" the rotation because the value returned is "opposite" of our platform.
+        _inputControllerAR->onRotate(-recognizer.rotation); // already in radians
+    } else if(recognizer.state == UIGestureRecognizerStateEnded) {
+        _inputControllerAR->onRotateEnd();
+    }
+}
+
+- (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+
+    if(recognizer.state == UIGestureRecognizerStateBegan) {
+        _inputControllerAR->onPinchStart(viewportTouchPos);
+    } else if(recognizer.state == UIGestureRecognizerStateChanged) {
+        _inputControllerAR->onPinchScale(recognizer.scale);
+    } else if(recognizer.state == UIGestureRecognizerStateEnded) {
+        _inputControllerAR->onPinchEnd();
+    }
+}
+
+- (void)handleDragWithTouch:(UIPanGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        _inputControllerAR->onScreenTouchDown(viewportTouchPos);
+    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        _inputControllerAR->onScreenTouchUp(viewportTouchPos);
+    } else {
+        _inputControllerAR->onScreenTouchMove(viewportTouchPos);
+    }
 }
 
 #pragma mark - Rendering

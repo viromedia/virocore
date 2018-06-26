@@ -29,6 +29,7 @@ import com.viro.core.internal.BuildInfo;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.renderer.BuildConfig;
+import com.viro.core.internal.ViroTouchGestureListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class ViroViewGVR extends ViroView {
     private List<FrameListener> mFrameListeners = new ArrayList();
     private PlatformUtil mPlatformUtil;
     private GvrLayout mGVRLayout;
+    private WeakReference<GLSurfaceView> mGLSurfaceView;;
     private StartupListener mStartupListener;
     private boolean mVRModeEnabled;
 
@@ -300,6 +302,7 @@ public class ViroViewGVR extends ViroView {
 
         final Context activityContext = getContext();
         final GLSurfaceView glSurfaceView = createSurfaceView();
+        mGLSurfaceView = new WeakReference<GLSurfaceView>(glSurfaceView);
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
                 new GLSurfaceViewQueue(glSurfaceView),
@@ -374,6 +377,7 @@ public class ViroViewGVR extends ViroView {
         glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
         glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
 
+
         return glSurfaceView;
     }
 
@@ -417,8 +421,14 @@ public class ViroViewGVR extends ViroView {
 
         mGVRLayout.setStereoModeEnabled(vrModeEnabled);
         mGVRLayout.getUiLayout().setEnabled(vrModeEnabled);
-        mNativeRenderer.setVRModeEnabled(vrModeEnabled);
 
+        // If we are in 360 mode add a touch listener that detects pinch, rotation, etc.
+        if(mGLSurfaceView.get() != null && !vrModeEnabled && activity != null) {
+            GLSurfaceView surfaceView = mGLSurfaceView.get();
+            surfaceView.setOnTouchListener(new ViroTouchGestureListener(activity, mNativeRenderer));
+        }
+
+        mNativeRenderer.setVRModeEnabled(vrModeEnabled);
 
         // We want Android's VR mode on when the app is in VR and release build OR always when
         // using Daydream. We don't want this on in Debug mode because it this option turns

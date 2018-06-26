@@ -255,6 +255,10 @@ public:
     void setCameraDelegate(std::shared_ptr<VROCameraDelegate> delegate) {
         _cameraDelegate = delegate;
     }
+
+    void setInputController(std::shared_ptr<VROInputControllerBase> inputController) {
+        _inputController = inputController;
+    }
     
 #pragma mark - VR Framework Specific
     

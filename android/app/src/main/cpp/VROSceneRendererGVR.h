@@ -18,6 +18,8 @@
 #include <vector>
 #include "VROSceneRenderer.h"
 #include "VRODriverOpenGLAndroid.h"
+#include "VROInputControllerCardboard.h"
+#include "VROInputControllerARAndroid.h"
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
@@ -46,6 +48,10 @@ public:
     void initGL();
     void onDrawFrame();
     void onTouchEvent(int action, float x, float y);
+    void onPinchEvent(int pinchState, float scaleFactor,
+                                           float viewportX, float viewportY);
+    void onRotateEvent(int rotateState, float rotateRadians, float viewportX,
+                                            float viewportY);
     void onKeyEvent(int keyCode, int action) {} // Not Required
     void setVRModeEnabled(bool enabled);
     void setSuspended(bool suspendRenderer);
@@ -85,10 +91,12 @@ private:
     gvr::Sizei _surfaceSize;
     gvr::ViewerType _viewerType;
 
+    bool _touchTrackingEnabled;
     bool _vrModeEnabled;
     bool _rendererSuspended;
     double _suspendedNotificationTime;
-
+    std::shared_ptr<VROInputControllerARAndroid> _touchController;
+    std::shared_ptr<VROInputControllerBase>  _cardboardController;
     /*
      Utility methods.
      */

@@ -42,20 +42,20 @@ VROSceneRendererGVR::VROSceneRendererGVR(VRORendererConfiguration config,
     _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
 
     // Create corresponding controllers - cardboard, or daydream if supported.
-    std::shared_ptr<VROInputControllerBase> controller;
     _viewerType = _gvr->GetViewerType();
 
     if (_viewerType == GVR_VIEWER_TYPE_DAYDREAM) {
-        controller = std::make_shared<VROInputControllerDaydream>(gvr_context, _driver);
+        _cardboardController = std::make_shared<VROInputControllerDaydream>(gvr_context, _driver);
     } else if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD){
-        controller = std::make_shared<VROInputControllerCardboard>(_driver);
+        _cardboardController = std::make_shared<VROInputControllerCardboard>(_driver);
+        _touchController =  std::make_shared<VROInputControllerARAndroid>(0, 0, _driver);
     } else {
         perror("Unrecognized Viewer type! Falling back to Cardboard Controller as default.");
-        controller = std::make_shared<VROInputControllerCardboard>(_driver);
+        _cardboardController = std::make_shared<VROInputControllerCardboard>(_driver);
     }
 
     // Create renderer and attach the controller to it.
-    _renderer = std::make_shared<VRORenderer>(config, controller);
+    _renderer = std::make_shared<VRORenderer>(config, _cardboardController);
 }
 
 VROSceneRendererGVR::~VROSceneRendererGVR() {
@@ -235,6 +235,8 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
 
+    _touchController->setViewportSize((float)viewport.getWidth(), (float)viewport.getHeight());
+
     VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     VROMatrix4f eyeFromHeadMatrix; // Identity
@@ -254,10 +256,14 @@ void VROSceneRendererGVR::onSurfaceChanged(jobject surface, VRO_INT width, VRO_I
 
 void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {
     if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD) {
-        std::shared_ptr<VROInputControllerBase> baseController =  _renderer->getInputController();
-        std::shared_ptr<VROInputControllerCardboard> cardboardController
-                = std::dynamic_pointer_cast<VROInputControllerCardboard>(baseController);
-        cardboardController->updateScreenTouch(action);
+        if(!_vrModeEnabled && _touchController) {
+            _touchController->onTouchEvent(action, x, y);
+        } else {
+            std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
+            std::shared_ptr<VROInputControllerCardboard> cardboardController
+                    = std::dynamic_pointer_cast<VROInputControllerCardboard>(_cardboardController);
+            cardboardController->updateScreenTouch(action);
+        }
     }
 }
 
@@ -323,6 +329,20 @@ gvr::Sizei VROSceneRendererGVR::halfPixelCount(const gvr::Sizei& in) {
     return out;
 }
 
+void VROSceneRendererGVR::onPinchEvent(int pinchState, float scaleFactor,
+                                          float viewportX, float viewportY) {
+    if(!_vrModeEnabled && _touchController) {
+        _touchController->onPinchEvent(pinchState, scaleFactor, viewportX, viewportY);
+    }
+}
+
+void VROSceneRendererGVR::onRotateEvent(int rotateState, float rotateRadians, float viewportX,
+                                           float viewportY) {
+    if (!_vrModeEnabled && _touchController) {
+        _touchController->onRotateEvent(rotateState, rotateRadians, viewportX, viewportY);
+    }
+}
+
 void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
                                                 VROViewport *outViewport, VROFieldOfView *outFov) {
 
@@ -336,10 +356,13 @@ void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
 
 void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
     _vrModeEnabled = enabled;
+    if(_vrModeEnabled) {
+        _renderer->setInputController(_cardboardController);
+    } else {
+        _renderer->setInputController(_touchController);
+    }
 }
 
 void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
     _rendererSuspended = suspendRenderer;
 }
-
-
