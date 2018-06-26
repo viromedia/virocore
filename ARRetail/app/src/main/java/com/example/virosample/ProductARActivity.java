@@ -47,6 +47,7 @@ import com.viro.core.AsyncObject3DListener;
 import com.viro.core.ClickListener;
 import com.viro.core.ClickState;
 import com.viro.core.DragListener;
+import com.viro.core.Geometry;
 import com.viro.core.GestureRotateListener;
 import com.viro.core.Material;
 import com.viro.core.Node;
@@ -72,7 +73,8 @@ public class ProductARActivity extends Activity {
     private static final String TAG = ProductARActivity.class.getSimpleName();
     final public static String INTENT_PRODUCT_KEY = "product_key";
 
-    private ViroView mViroView;
+    private ViroViewARCore mViroView;
+    private ARScene mScene;
     private View mHudGroupView;
     private TextView mHUDInstructions;
     private ImageView mCameraButton;
@@ -97,6 +99,12 @@ public class ProductARActivity extends Activity {
     private Vector mLastProductRotation = new Vector();
     private Vector mSavedRotateToRotation = new Vector();
     private ARHitTestListenerCrossHair mCrossHairHitTest = null;
+
+    /*
+     * ARNode under which to parent our 3D furniture model. This is only created
+     * and non-ull if a user has selected a surface upon which to place the furniture.
+     */
+    private ARNode mHitARNode = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,21 +193,21 @@ public class ProductARActivity extends Activity {
 
     private void displayScene() {
         // Create the ARScene within which to load our ProductAR Experience
-        ARScene arScene = new ARScene();
+        mScene = new ARScene();
         mMainLight = new AmbientLight(Color.parseColor("#606060"), 400);
         mMainLight.setInfluenceBitMask(3);
-        arScene.getRootNode().addLight(mMainLight);
+        mScene.getRootNode().addLight(mMainLight);
 
         // Setup our 3D and HUD controls
-        initARCrosshair(arScene);
-        init3DModelProduct(arScene);
+        initARCrosshair();
+        init3DModelProduct();
         initARHud();
 
         // Start our tracking UI when the scene is ready to be tracked
-        arScene.setListener(new ARSceneListener());
+        mScene.setListener(new ARSceneListener());
 
         // Finally set the arScene on the renderer
-        mViroView.setScene(arScene);
+        mViroView.setScene(mScene);
     }
 
     private void initARHud(){
@@ -258,19 +266,24 @@ public class ProductARActivity extends Activity {
         mIconShakeView = mViroView.findViewById(R.id.icon_shake_phone);
     }
 
-    private void initARCrosshair(ARScene scene){
+    private void initARCrosshair(){
         if (mCrosshairModel != null){
             return;
         }
 
+        AmbientLight am = new AmbientLight();
+        am.setInfluenceBitMask(2);
+        am.setIntensity(1000);
+        mScene.getRootNode().addLight(am);
+
         final Object3D crosshairModel = new Object3D();
-        scene.getRootNode().addChildNode(crosshairModel);
+        mScene.getRootNode().addChildNode(crosshairModel);
         crosshairModel.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/tracking_1.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(Object3D object3D, Object3D.Type type) {
-
                 mCrosshairModel = object3D;
                 mCrosshairModel.setOpacity(0);
+                object3D.setLightReceivingBitMask(2);
                 mCrosshairModel.setScale(new Vector(0.175,0.175,0.175));
                 mCrosshairModel.setClickListener(new ClickListener() {
                     @Override
@@ -292,7 +305,7 @@ public class ProductARActivity extends Activity {
         });
     }
 
-    private void init3DModelProduct(ARScene scene){
+    private void init3DModelProduct(){
         // Create our group node containing the light, shadow plane, and 3D models
         mProductModelGroup = new Node();
 
@@ -366,7 +379,6 @@ public class ProductARActivity extends Activity {
 
         mProductModelGroup.setOpacity(0);
         mProductModelGroup.addChildNode(productModel);
-        scene.getRootNode().addChildNode(mProductModelGroup);
     }
 
     private void setTrackingStatus(TRACK_STATUS status) {
@@ -446,12 +458,13 @@ public class ProductARActivity extends Activity {
             return;
         }
 
-        Vector position = mCrosshairModel.getPositionRealtime();
-        Vector rotation = mCrosshairModel.getRotationEulerRealtime();
+        if (mHitARNode != null){
+            return;
+        }
 
+        mHitARNode = mScene.createAnchoredNode(mCrosshairModel.getPositionRealtime());
+        mHitARNode.addChildNode(mProductModelGroup);
         mProductModelGroup.setOpacity(1);
-        mProductModelGroup.setPosition(position);
-        mProductModelGroup.setRotation(rotation);
     }
 
     private class ARHitTestListenerCrossHair implements ARHitTestListener {
@@ -472,34 +485,24 @@ public class ProductARActivity extends Activity {
                 ARHitTestResult currentResult = arHitTestResults[i];
 
                 float distance = currentResult.getPosition().distance(cameraPos);
-                if (distance < closestDistance && distance > .3 && distance < 5){
+                if (distance < closestDistance && distance > .3 && distance < 5) {
                     result = currentResult;
                     closestDistance = distance;
                 }
             }
 
             // Update the cross hair target location with the closest target.
-            animateCrossHairToPosition(result);
+            if (result != null) {
+                mCrosshairModel.setPosition(result.getPosition());
+                mCrosshairModel.setRotation(result.getRotation());
+            }
 
             // Update State based on hit target
-            if (result != null){
+            if (result != null) {
                 setTrackingStatus(TRACK_STATUS.SURFACE_FOUND);
             } else {
                 setTrackingStatus(TRACK_STATUS.FINDING_SURFACE);
             }
-        }
-
-        private void animateCrossHairToPosition(ARHitTestResult result){
-            if (result == null) {
-                return;
-            }
-
-            AnimationTransaction.begin();
-            AnimationTransaction.setAnimationDuration(70);
-            AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
-            mCrosshairModel.setPosition(result.getPosition());
-            mCrosshairModel.setRotation(result.getRotation());
-            AnimationTransaction.commit();
         }
     }
 
