@@ -148,7 +148,7 @@ VRO_METHOD(VRO_OBJECT_ARRAY, nativeCreateChildNodes)(VRO_ARGS
 
         // Construct our Node.java object with that native reference.
         VRO_OBJECT jNode = VROPlatformConstructHostObject("com/viro/core/Node", "(Z)V", false);
-        VROPlatformCallHostFunction(jNode, "initWithNativeRef", "(J)Z", nodeRef);
+        VROPlatformCallHostFunction(jNode, "initWithNativeRef", "(J)V", nodeRef);
 
         VRO_ARRAY_SET(nodeArray, i, jNode);
     }
