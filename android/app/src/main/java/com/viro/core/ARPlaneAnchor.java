@@ -24,20 +24,21 @@ public class ARPlaneAnchor extends ARAnchor {
          * The {@link ARPlaneAnchor} is horizontal.
          */
         HORIZONTAL("Horizontal"),
+
         /**
          * The {@link ARPlaneAnchor} is horizontal, facing upward (e.g. a tabletop).
          */
         HORIZONTAL_UPWARD("HorizontalUpward"),
 
         /**
-         * The {@link ARPlaneAnchor} is horizontal, facing downwrad (e.g. a ceiling).
+         * The {@link ARPlaneAnchor} is horizontal, facing downward (e.g. a ceiling).
          */
         HORIZONTAL_DOWNWARD("HorizontalDownward"),
 
         /**
          * The {@link ARPlaneAnchor} is not horizontal.
          */
-        NON_HORIZONTAL("NonHorizontal");
+        VERTICAL("Vertical");
 
         private String mStringValue;
         private Alignment(String value) {

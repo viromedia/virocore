@@ -302,7 +302,7 @@ namespace arcore {
         } else if (type == AR_PLANE_VERTICAL) {
             return PlaneType::Vertical;
         } else {
-            return PlaneType::NonHorizontal;
+            return PlaneType::HorizontalUpward;
         }
     }
 

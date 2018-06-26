@@ -131,7 +131,7 @@ VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
         strArr = "HorizontalDownward";
     }
     else {
-        strArr = "NonHorizontal";
+        strArr = "Vertical";
     }
     return VRO_NEW_STRING(strArr);
 }

@@ -85,7 +85,6 @@ namespace arcore {
     };
 
     enum class PlaneType {
-        NonHorizontal,
         HorizontalUpward,
         HorizontalDownward,
         Vertical,
