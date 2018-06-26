@@ -107,7 +107,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     _frame = 0;
     _suspendedNotificationTime = VROTimeCurrentSeconds();
     _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width,
-                                                              self.frame.size.height);
+                                                              self.frame.size.height,
+                                                              _driver);
     _renderer = std::make_shared<VRORenderer>(config, _inputController);
     _renderer->setDelegate(_renderDelegateWrapper);
     

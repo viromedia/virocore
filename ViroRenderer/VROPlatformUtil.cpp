@@ -309,6 +309,11 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
     return std::make_shared<VROImageMacOS>(image, format);
 }
 
+std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsigned char> rawData,
+                                                               VROTextureInternalFormat format) {
+    return nullptr;
+}
+
 #endif
 
 #pragma mark - Android

@@ -555,6 +555,10 @@
 		8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */; };
 		8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD9B4641C33A933006CB698 /* bobaraj.png */; };
+		8FDA1D1F20DEC5BE005AFC70 /* VROGLTFLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA1D1B20DEC5BD005AFC70 /* VROGLTFLoader.cpp */; };
+		8FDA1D2020DEC5BE005AFC70 /* VROGLTFLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDA1D1C20DEC5BD005AFC70 /* VROGLTFLoader.h */; };
+		8FDA1D2120DEC5BE005AFC70 /* VROGLTFTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDA1D1D20DEC5BE005AFC70 /* VROGLTFTest.h */; };
+		8FDA1D2220DEC5BE005AFC70 /* VROGLTFTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA1D1E20DEC5BE005AFC70 /* VROGLTFTest.cpp */; };
 		8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FDD8FF21E3A9907006CF466 /* 360_westlake.jpg */; };
 		8FDDB49D1DADB8C200DE0968 /* VROLightingUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */; };
 		8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */; };
@@ -1291,6 +1295,10 @@
 		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
 		8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrate.h; sourceTree = "<group>"; };
 		8FD9B4641C33A933006CB698 /* bobaraj.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bobaraj.png; path = ViroSample/bobaraj.png; sourceTree = "<group>"; };
+		8FDA1D1B20DEC5BD005AFC70 /* VROGLTFLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGLTFLoader.cpp; sourceTree = "<group>"; };
+		8FDA1D1C20DEC5BD005AFC70 /* VROGLTFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGLTFLoader.h; sourceTree = "<group>"; };
+		8FDA1D1D20DEC5BE005AFC70 /* VROGLTFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGLTFTest.h; sourceTree = "<group>"; };
+		8FDA1D1E20DEC5BE005AFC70 /* VROGLTFTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGLTFTest.cpp; sourceTree = "<group>"; };
 		8FDD8FF21E3A9907006CF466 /* 360_westlake.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 360_westlake.jpg; path = ViroSample/360_westlake.jpg; sourceTree = "<group>"; };
 		8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLightingUBO.h; sourceTree = "<group>"; };
 		8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLightingUBO.cpp; sourceTree = "<group>"; };
@@ -2066,6 +2074,10 @@
 		8FCB6C851C3C826C00C14158 /* IO */ = {
 			isa = PBXGroup;
 			children = (
+				8FDA1D1B20DEC5BD005AFC70 /* VROGLTFLoader.cpp */,
+				8FDA1D1C20DEC5BD005AFC70 /* VROGLTFLoader.h */,
+				8FDA1D1E20DEC5BE005AFC70 /* VROGLTFTest.cpp */,
+				8FDA1D1D20DEC5BE005AFC70 /* VROGLTFTest.h */,
 				8FEACEE2201697810082D18B /* stb_image.h */,
 				8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */,
 				8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */,
@@ -2563,6 +2575,7 @@
 				8FD2A5381F813C4100E831A6 /* VROParticleTest.h in Headers */,
 				8FD4DF3E1C18F5EA003DC425 /* VROImageUtil.h in Headers */,
 				8F56AEAA1DE76E1D00DD65B6 /* VROText.h in Headers */,
+				8FDA1D2020DEC5BE005AFC70 /* VROGLTFLoader.h in Headers */,
 				8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */,
 				8FD2A5411F813C4100E831A6 /* VROTextTest.h in Headers */,
 				8FB9EA4C1F6B12580068FCA7 /* VRORenderMetadata.h in Headers */,
@@ -2584,6 +2597,7 @@
 				8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8AF0E08E1FABA4C50083CBAE /* VROARPointCloud.h in Headers */,
+				8FDA1D2120DEC5BE005AFC70 /* VROGLTFTest.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
 				8F53D3A51DCB9B2A001C91A8 /* VROImage.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
@@ -3016,6 +3030,7 @@
 				8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */,
 				8F3C75181FB7B6F80054639C /* VROARSceneController.cpp in Sources */,
 				A59E113B1F5396BF00EB2CEB /* VROPostProcessEffectFactory.cpp in Sources */,
+				8FDA1D2220DEC5BE005AFC70 /* VROGLTFTest.cpp in Sources */,
 				8F65F78D1C90D83600415115 /* VROTransformConstraint.cpp in Sources */,
 				8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */,
 				8F2F82F71F4E627C00D1CBFA /* VROARShadow.cpp in Sources */,
@@ -3132,6 +3147,7 @@
 				8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */,
 				8F53C9021E01A39E008314B4 /* VROOBJLoader.cpp in Sources */,
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
+				8FDA1D1F20DEC5BE005AFC70 /* VROGLTFLoader.cpp in Sources */,
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
 				8FEACF1020191F000082D18B /* VROMaterialShaderBinding.cpp in Sources */,
 				8F8754BA20632DF7002D9BF8 /* VROTypefaceCollection.cpp in Sources */,
