@@ -534,7 +534,7 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
 }
 
-void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation) {
+void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation, bool animated) {
     // Create a final compute transform representing the desired, final world position and rotation.
     VROVector3f worldScale = getWorldTransform().extractScale();
     VROMatrix4f finalWorldTransform;
@@ -548,9 +548,18 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
     VROMatrix4f parentTransform = getParentNode()->getWorldTransform();
     VROMatrix4f currentTransform = parentTransform.invert() * finalWorldTransform;
 
-    _scale = currentTransform.extractScale();
-    _position = currentTransform.extractTranslation();
-    _rotation = currentTransform.extractRotation(_scale);
+    if (!animated) {
+        _scale = currentTransform.extractScale();
+        _position = currentTransform.extractTranslation();
+        _rotation = currentTransform.extractRotation(_scale);
+    } else {
+        // we want this "setWorldTransform" to animate to the new scale/position/rotation. This is
+        // slightly problematic because the computeTransforms is recursive, but this is only used
+        // for AR's FixedToWorld dragging right now.
+        setScale(currentTransform.extractScale());
+        setPosition(currentTransform.extractTranslation());
+        setRotation(currentTransform.extractRotation(currentTransform.extractScale()));
+    }
 
     if (getParentNode() == nullptr){
         return;

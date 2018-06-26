@@ -128,9 +128,10 @@ public:
     /*
      Sets both the local position and rotation of this node in terms of world coordinates.
      A computeTransform pass is then performed to update the node's bounding boxes
-     and as well as its child's node transforms recursively.
+     and as well as its child's node transforms recursively. The animated flag should be
+     false in most cases because of the recursive computeTransform pass.
      */
-    void setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation);
+    void setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation, bool animated = false);
 
     /*
      Update the visibility status of this node, using the camera in the current render
