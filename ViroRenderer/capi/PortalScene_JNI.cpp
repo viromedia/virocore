@@ -170,11 +170,14 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
             return;
         }
 
+        if (texture_j == 0) {
+            portal->setLightingEnvironment(nullptr);
+            return;
+        }
+
         std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, texture_j);
         if (texture) {
             portal->setLightingEnvironment(texture);
-        } else {
-            portal->setLightingEnvironment(nullptr);
         }
     });
 }

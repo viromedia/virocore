@@ -140,11 +140,14 @@ VRO_METHOD(void, nativeSetLightingEnvironment)(VRO_ARGS
             return;
         }
 
+        if (texture_j == 0) {
+            scene->getScene()->getRootNode()->setLightingEnvironment(nullptr);
+            return;
+        }
+
         std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, texture_j);
         if (texture) {
             scene->getScene()->getRootNode()->setLightingEnvironment(texture);
-        } else {
-            scene->getScene()->getRootNode()->setLightingEnvironment(nullptr);
         }
     });
 }
