@@ -411,10 +411,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             outgoingScene->updateSortKeys(_renderMetadata, context, driver);
             outgoingScene->syncAtomicRenderProperties();
         }
-        _inputController->onProcess(camera);
-        _inputController->setView(camera.getLookAtMatrix());
-        _inputController->setProjection(projection);
-        
+
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
         scene->computePhysics(context);
         scene->applyConstraints(context);
@@ -423,6 +420,10 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         scene->updateSortKeys(_renderMetadata, context, driver);
         scene->syncAtomicRenderProperties();
         updateSceneEffects(driver, scene);
+
+        _inputController->onProcess(camera);
+        _inputController->setView(camera.getLookAtMatrix());
+        _inputController->setProjection(projection);
     }
 
     driver->willRenderFrame(context);
