@@ -129,6 +129,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
         self.context = context;
     }
+    VROPlatformSetEAGLContext(self.context);
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     
     /*
@@ -552,6 +553,9 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Rendering
 
 - (void)drawRect:(CGRect)rect {
+    // Clear error state
+    GL ();
+    
     @autoreleasepool {
         if (self.suspended) {
             [self renderSuspended];

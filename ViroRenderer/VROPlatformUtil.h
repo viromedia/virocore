@@ -163,6 +163,17 @@ void VROPlatformDispatchAsyncApplication(std::function<void()> fcn);
  */
 void VROPlatformFlushTaskQueues();
 
+#if VRO_PLATFORM_IOS
+
+/*
+ The EAGL context is required by iOS so that we can ensure it is bound during
+ async dispatch calls to the renderer.
+ */
+@class EAGLContext;
+void VROPlatformSetEAGLContext(EAGLContext *context);
+
+#endif
+
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
 #import <Foundation/Foundation.h>
 

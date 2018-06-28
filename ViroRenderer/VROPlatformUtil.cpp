@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <cstring>
+#include "VROOpenGL.h"
 
 static VROPlatformType sPlatformType = VROPlatformType::Unknown;
 
@@ -157,12 +158,6 @@ void VROPlatformDeleteFile(std::string filename) {
                                                error:&deleteError];
 }
 
-void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        fcn();
-    });
-}
-
 void VROPlatformDispatchAsyncApplication(std::function<void()> fcn) {
     // On iOS the application and rendering thread are the same
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -192,6 +187,26 @@ std::string VROPlatformGetDeviceBrand() {
 
 #if VRO_PLATFORM_IOS
 #import "VROImageiOS.h"
+
+static EAGLContext *_context = nullptr;
+void VROPlatformSetEAGLContext(EAGLContext *context) {
+    _context = context;
+}
+
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Ensure the EAGLContext is set whenever we dispatch to the
+        // rendering thread. Otherwise we may end up invoking GL
+        // commands without a context, which leads to loss of sync between
+        // GPU state and CPU state. This can lead to the corruption of GPU
+        // objects like vertex array IDs, vertex buffers, etc.
+        if (_context) {
+            [EAGLContext setCurrentContext:_context];
+        }
+        GL(); // Clears out error state
+        fcn();
+    });
+}
 
 NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
                                                      void (^completionBlock)(NSData *data, NSError *error)) {
@@ -267,6 +282,13 @@ std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsig
 
 #elif VRO_PLATFORM_MACOS
 #import "VROImageMacOS.h"
+
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        GL(); // Clears out error state
+        fcn();
+    });
+}
 
 NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
                                                      void (^completionBlock)(NSData *data, NSError *error)) {
