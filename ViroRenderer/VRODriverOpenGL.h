@@ -56,24 +56,24 @@ public:
         _boundRenderTarget.reset();
         
         _colorWritingEnabled = true;
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        GL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
         _depthWritingEnabled = true;
         _depthReadingEnabled = true;
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-        glDepthFunc(GL_LEQUAL);
+        GL( glEnable(GL_DEPTH_TEST) );
+        GL( glDepthMask(GL_TRUE) );
+        GL( glDepthFunc(GL_LEQUAL) );
         
         _stencilTestEnabled = true;
-        glEnable(GL_STENCIL_TEST);
+        GL( glEnable(GL_STENCIL_TEST) );
         
         _cullMode = VROCullMode::None;
-        glDisable(GL_CULL_FACE);
+        GL( glDisable(GL_CULL_FACE) );
         
         _blendMode = VROBlendMode::Alpha;
-        glEnable(GL_BLEND);
-        glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GL( glEnable(GL_BLEND) );
+        GL( glBlendEquation(GL_FUNC_ADD) );
+        GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
     }
     
     void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) {
@@ -111,10 +111,10 @@ public:
         
         _depthWritingEnabled = enabled;
         if (enabled) {
-            glDepthMask(GL_TRUE);
+            GL( glDepthMask(GL_TRUE) );
         }
         else {
-            glDepthMask(GL_FALSE);
+            GL( glDepthMask(GL_FALSE) );
         }
     }
     
@@ -125,10 +125,10 @@ public:
         
         _depthReadingEnabled = enabled;
         if (_depthReadingEnabled) {
-            glDepthFunc(GL_LEQUAL);
+            GL( glDepthFunc(GL_LEQUAL) );
         }
         else {
-            glDepthFunc(GL_ALWAYS);
+            GL( glDepthFunc(GL_ALWAYS) );
         }
     }
     
@@ -139,10 +139,10 @@ public:
         
         _stencilTestEnabled = enabled;
         if (_stencilTestEnabled) {
-            glEnable(GL_STENCIL_TEST);
+            GL( glEnable(GL_STENCIL_TEST) );
         }
         else {
-            glDisable(GL_STENCIL_TEST);
+            GL( glDisable(GL_STENCIL_TEST) );
         }
     }
 
@@ -153,15 +153,15 @@ public:
         
         _cullMode = cullMode;
         if (cullMode == VROCullMode::None) {
-            glDisable(GL_CULL_FACE);
+            GL( glDisable(GL_CULL_FACE) );
         }
         else if (cullMode == VROCullMode::Back) {
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
+            GL( glEnable(GL_CULL_FACE) );
+            GL( glCullFace(GL_BACK) );
         }
         else if (cullMode == VROCullMode::Front) {
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_FRONT);
+            GL( glEnable(GL_CULL_FACE) );
+            GL( glCullFace(GL_FRONT) );
         }
     }
 
@@ -171,36 +171,36 @@ public:
         }
 
         if (_blendMode != VROBlendMode::None && mode == VROBlendMode::None) {
-            glDisable(GL_BLEND);
+            GL( glDisable(GL_BLEND) );
         }
         else {
             if (_blendMode == VROBlendMode::None && mode != VROBlendMode::None) {
-                glEnable(GL_BLEND);
+                GL( glEnable(GL_BLEND) );
             }
             
             if (mode == VROBlendMode::Alpha) {
-                glBlendEquation(GL_FUNC_ADD);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                GL( glBlendEquation(GL_FUNC_ADD) );
+                GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
             }
             else if (mode == VROBlendMode::Add) {
-                glBlendEquation(GL_FUNC_ADD);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                GL( glBlendEquation(GL_FUNC_ADD) );
+                GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE) );
             }
             else if (mode == VROBlendMode::Multiply) {
-                glBlendEquation(GL_FUNC_ADD);
-                glBlendFunc(GL_DST_COLOR, GL_ZERO);
+                GL( glBlendEquation(GL_FUNC_ADD) );
+                GL( glBlendFunc(GL_DST_COLOR, GL_ZERO) );
             }
             else if (mode == VROBlendMode::Subtract) {
-                glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                GL( glBlendEquation(GL_FUNC_REVERSE_SUBTRACT) );
+                GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE) );
             }
             else if (mode == VROBlendMode::Screen) {
-                glBlendEquation(GL_FUNC_ADD);
-                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+                GL( glBlendEquation(GL_FUNC_ADD) );
+                GL( glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR) );
             }
             else if (mode == VROBlendMode::PremultiplyAlpha) {
-                glBlendEquation(GL_FUNC_ADD);
-                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                GL( glBlendEquation(GL_FUNC_ADD) );
+                GL( glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA) );
             }
             else {
                 pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");
@@ -216,10 +216,10 @@ public:
         
         _colorWritingEnabled = enabled;
         if (_colorWritingEnabled) {
-            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            GL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
         }
         else {
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            GL( glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE) );
         }
     }
     
@@ -367,7 +367,7 @@ public:
     }
 
     void readDisplayFramebuffer() {
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_displayFramebuffer);
+        GL( glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_displayFramebuffer) );
     }
 
     virtual std::shared_ptr<VRORenderTarget> getDisplay() {

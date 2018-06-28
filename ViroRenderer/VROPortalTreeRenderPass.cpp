@@ -17,6 +17,7 @@
 #include "VROPencil.h"
 #include "VROLight.h"
 #include "VROPortalFrame.h"
+#include "VROOpenGL.h" // For pglpush and pop
 #include "VROShadowMapRenderPass.h" // For drawing light frustra
 
 VROPortalTreeRenderPass::VROPortalTreeRenderPass() {

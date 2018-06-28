@@ -22,14 +22,14 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
     _needsVertexUpdate(false) {
 
     // Initialize the fragment VBO
-    glGenBuffers(1, &_lightingFragmentUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, _lightingFragmentUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), NULL, GL_DYNAMIC_DRAW);
+    GL( glGenBuffers(1, &_lightingFragmentUBO) );
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _lightingFragmentUBO) );
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), NULL, GL_DYNAMIC_DRAW) );
             
     // Initialize the vertex VBO
-    glGenBuffers(1, &_lightingVertexUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, _lightingVertexUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), NULL, GL_DYNAMIC_DRAW);
+    GL( glGenBuffers(1, &_lightingVertexUBO) );
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _lightingVertexUBO) );
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), NULL, GL_DYNAMIC_DRAW) );
         
     updateLightsFragment();
     updateLightsVertex();
@@ -38,8 +38,8 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
 VROLightingUBO::~VROLightingUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
-        glDeleteBuffers(1, &_lightingFragmentUBO);        
-        glDeleteBuffers(1, &_lightingVertexUBO);
+        GL( glDeleteBuffers(1, &_lightingFragmentUBO) );
+        GL( glDeleteBuffers(1, &_lightingVertexUBO) );
     }
 }
 
@@ -48,14 +48,14 @@ void VROLightingUBO::bind() {
         updateLightsFragment();
     }
     else {
-        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
+        GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO) );
     }
         
     if (_needsVertexUpdate) {
         updateLightsVertex();
     }
     else {
-        glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
+        GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO) );
     }
 }
 
@@ -107,11 +107,11 @@ void VROLightingUBO::updateLightsFragment() {
     
     ambientLight.toArray(data.ambient_light_color);
     
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
+    GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingFragmentUBOBindingPoint, _lightingFragmentUBO) );
 #if VRO_AVOID_BUFFER_SUB_DATA
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), &data, GL_DYNAMIC_DRAW);
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), &data, GL_DYNAMIC_DRAW) );
 #else
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingFragmentData), &data);
+    GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingFragmentData), &data) );
 #endif
     
     pglpop();
@@ -141,11 +141,11 @@ void VROLightingUBO::updateLightsVertex() {
         }
     }
     
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO);
+    GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sLightingVertexUBOBindingPoint, _lightingVertexUBO) );
 #if VRO_AVOID_BUFFER_SUB_DATA
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), &vertexData, GL_DYNAMIC_DRAW);
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), &vertexData, GL_DYNAMIC_DRAW) );
 #else
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingVertexData), &vertexData);
+    GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingVertexData), &vertexData) );
 #endif
 
     pglpop();

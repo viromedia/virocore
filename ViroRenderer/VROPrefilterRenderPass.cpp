@@ -23,10 +23,10 @@ VROPrefilterRenderPass::VROPrefilterRenderPass() {
 
 VROPrefilterRenderPass::~VROPrefilterRenderPass() {
     if (_cubeVBO != 0) {
-        glDeleteBuffers(1, &_cubeVBO);
+        GL( glDeleteBuffers(1, &_cubeVBO) );
     }
     if (_cubeVAO != 0) {
-        glDeleteVertexArrays(1, &_cubeVAO);
+        GL( glDeleteVertexArrays(1, &_cubeVAO) );
     }
 }
 
@@ -88,7 +88,7 @@ void VROPrefilterRenderPass::render(std::shared_ptr<VROScene> scene,
         for (int i = 0; i < 6; ++i) {
             _shader->getUniform("view_matrix")->setMat4(captureViews[i]);
             _prefilterRenderTarget->setTextureCubeFace(i, mip, 0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
             VRORenderUtil::renderUnitCube(&_cubeVAO, &_cubeVBO);
         }
     }

@@ -57,24 +57,24 @@ void VRORenderUtil::renderUnitCube(unsigned int *vao, unsigned int *vbo) {
             -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
             -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left
         };
-        glGenVertexArrays(1, vao);
-        glGenBuffers(1, vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glBindVertexArray(*vao);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        GL( glGenVertexArrays(1, vao) );
+        GL( glGenBuffers(1, vbo) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, *vbo) );
+        GL( glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW) );
+        GL( glBindVertexArray(*vao) );
+        GL( glEnableVertexAttribArray(0) );
+        GL( glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0) );
+        GL( glEnableVertexAttribArray(1) );
+        GL( glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))) );
+        GL( glEnableVertexAttribArray(2) );
+        GL( glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+        GL( glBindVertexArray(0) );
     }
     
-    glBindVertexArray(*vao);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+    GL( glBindVertexArray(*vao) );
+    GL( glDrawArrays(GL_TRIANGLES, 0, 36) );
+    GL( glBindVertexArray(0) );
 }
 
 void VRORenderUtil::renderQuad(unsigned int *vao, unsigned int *vbo) {
@@ -88,20 +88,20 @@ void VRORenderUtil::renderQuad(unsigned int *vao, unsigned int *vbo) {
         };
 
         // setup quad VAO
-        glGenVertexArrays(1, vao);
-        glGenBuffers(1, vbo);
-        glBindVertexArray(*vao);
-        glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        GL( glGenVertexArrays(1, vao) );
+        GL( glGenBuffers(1, vbo) );
+        GL( glBindVertexArray(*vao) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, *vbo) );
+        GL( glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW) );
+        GL( glEnableVertexAttribArray(0) );
+        GL( glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0) );
+        GL( glEnableVertexAttribArray(1) );
+        GL( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))) );
     }
 
-    glBindVertexArray(*vao);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
+    GL( glBindVertexArray(*vao) );
+    GL( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
+    GL( glBindVertexArray(0) );
 }
 
 bool VRORenderUtil::bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
@@ -112,7 +112,7 @@ bool VRORenderUtil::bindTexture(int unit, const std::shared_ptr<VROTexture> &tex
     }
     std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
     
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(targetAndTexture.first, targetAndTexture.second);
+    GL( glActiveTexture(GL_TEXTURE0 + unit) );
+    GL( glBindTexture(targetAndTexture.first, targetAndTexture.second) );
     return true;
 }

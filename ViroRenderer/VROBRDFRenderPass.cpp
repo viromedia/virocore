@@ -23,10 +23,10 @@ VROBRDFRenderPass::VROBRDFRenderPass() {
 
 VROBRDFRenderPass::~VROBRDFRenderPass() {
     if (_quadVBO != 0) {
-        glDeleteBuffers(1, &_quadVBO);
+        GL( glDeleteBuffers(1, &_quadVBO) );
     }
     if (_quadVAO != 0) {
-        glDeleteVertexArrays(1, &_quadVAO);
+        GL( glDeleteVertexArrays(1, &_quadVAO) );
     }
 }
 
@@ -65,7 +65,7 @@ void VROBRDFRenderPass::render(std::shared_ptr<VROScene> scene,
     driver->bindShader(_shader);
 
     // Render our brdf convolution
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
     VRORenderUtil::renderQuad(&_quadVAO, &_quadVBO);
     driver->unbindShader();
     pglpop();

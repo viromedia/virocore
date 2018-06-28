@@ -34,7 +34,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
 VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
     ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
     if (_owned && _driver.lock()) {
-        glDeleteTextures(1, &_texture);
+        GL( glDeleteTextures(1, &_texture) );
     }
 }
 
@@ -50,16 +50,16 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
  
     _target = GL_TEXTURE_2D;
     
-    glGenTextures(1, &_texture);
-    glActiveTexture(GL_TEXTURE0);
+    GL( glGenTextures(1, &_texture) );
+    GL( glActiveTexture(GL_TEXTURE0) );
     
     if (type == VROTextureType::Texture2D) {
-        glBindTexture(GL_TEXTURE_2D, _texture);
+        GL( glBindTexture(GL_TEXTURE_2D, _texture) );
         
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, convertMinFilter(mipmapMode, minFilter, mipFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, convertMagFilter(magFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, convertWrapMode(wrapS));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, convertWrapMode(wrapT));
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, convertMinFilter(mipmapMode, minFilter, mipFilter)) );
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, convertMagFilter(magFilter)) );
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, convertWrapMode(wrapS)) );
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, convertWrapMode(wrapT)) );
         
         loadFace(GL_TEXTURE_2D, format, internalFormat, sRGB,
                  mipmapMode, data.front(), width, height, mipSizes);
@@ -72,12 +72,12 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
         
         _target = GL_TEXTURE_CUBE_MAP;
         
-        glBindTexture(GL_TEXTURE_CUBE_MAP, _texture);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, convertMinFilter(mipmapMode, minFilter, mipFilter));
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, convertMagFilter(magFilter));
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        GL( glBindTexture(GL_TEXTURE_CUBE_MAP, _texture) );
+        GL( glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, convertMinFilter(mipmapMode, minFilter, mipFilter)) );
+        GL( glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, convertMagFilter(magFilter)) );
+        GL( glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+        GL( glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+        GL( glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE) );
         
         for (int slice = 0; slice < 6; ++slice) {
             loadFace(GL_TEXTURE_CUBE_MAP_POSITIVE_X + slice, format, internalFormat, sRGB,
@@ -107,9 +107,9 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
             GLenum internalFormat = sRGB ? GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC : GL_COMPRESSED_RGBA8_ETC2_EAC;
             for (int level = 0; level < mipSizes.size(); level++) {
                 uint32_t mipSize = mipSizes[level];
-                glCompressedTexImage2D(target, level, internalFormat,
-                                       width >> level, height >> level, 0,
-                                       mipSize, ((const char *)faceData->getData()) + offset);
+                GL( glCompressedTexImage2D(target, level, internalFormat,
+                                           width >> level, height >> level, 0,
+                                           mipSize, ((const char *)faceData->getData()) + offset) );
                 offset += mipSize;
             }
         }
@@ -118,20 +118,20 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
             // If no mipsizes are provided, though, then we just use the full data length
             GLenum internalFormat = sRGB ? GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC : GL_COMPRESSED_RGBA8_ETC2_EAC;
             if (!mipSizes.empty()) {
-                glCompressedTexImage2D(target, 0, internalFormat, width, height, 0,
-                                       mipSizes.front(), faceData->getData());
+                GL( glCompressedTexImage2D(target, 0, internalFormat, width, height, 0,
+                                           mipSizes.front(), faceData->getData()) );
             }
             else {
-                glCompressedTexImage2D(target, 0, GL_COMPRESSED_RGBA8_ETC2_EAC, width, height, 0,
-                                       faceData->getDataLength(), faceData->getData());
+                GL( glCompressedTexImage2D(target, 0, GL_COMPRESSED_RGBA8_ETC2_EAC, width, height, 0,
+                                           faceData->getDataLength(), faceData->getData()) );
             }
         }
     }
     else if (format == VROTextureFormat::ASTC_4x4_LDR) {
         passert (mipmapMode == VROMipmapMode::None);
         GLenum internalFormat = sRGB ? GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR : GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
-        glCompressedTexImage2D(target, 0, internalFormat, width, height, 0,
-                               faceData->getDataLength(), faceData->getData());
+        GL( glCompressedTexImage2D(target, 0, internalFormat, width, height, 0,
+                                   faceData->getDataLength(), faceData->getData()) );
     }
     else if (format == VROTextureFormat::RGBA8 || format == VROTextureFormat::RGB8) {
         // We write format RGB8 into internal format RGBA8, because sRGB8 does not work
@@ -140,10 +140,10 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
         passert_msg (internalFormat != VROTextureInternalFormat::RGB565,
                      "RGB565 internal format requires RGB565 or RGB8 source data!");
         
-        glTexImage2D(target, 0, getInternalFormat(internalFormat, sRGB), width, height, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, faceData->getData());
+        GL( glTexImage2D(target, 0, getInternalFormat(internalFormat, sRGB), width, height, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, faceData->getData()) );
         if (mipmapMode == VROMipmapMode::Runtime) {
-            glGenerateMipmap(GL_TEXTURE_2D);
+            GL( glGenerateMipmap(GL_TEXTURE_2D) );
         }
     }
     else if (format == VROTextureFormat::RGB9_E5) {
@@ -153,17 +153,17 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
         passert_msg (internalFormat == VROTextureInternalFormat::RGB9_E5,
                      "RGB9_E5 internal format requires RGB9_E5 source data!");
         
-        glTexImage2D(target, 0, GL_RGB9_E5, width, height, 0,
-                     GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV, faceData->getData());
+        GL( glTexImage2D(target, 0, GL_RGB9_E5, width, height, 0,
+                         GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV, faceData->getData()) );
     }
     else if (format == VROTextureFormat::RGB565) {
         passert_msg (internalFormat == VROTextureInternalFormat::RGB565,
                      "RGB565 source format is only compatible with RGB565 internal format!");
 
-        glTexImage2D(target, 0, getInternalFormat(internalFormat, sRGB), width, height, 0,
-                         GL_RGB, GL_UNSIGNED_SHORT_5_6_5, faceData->getData());
+        GL( glTexImage2D(target, 0, getInternalFormat(internalFormat, sRGB), width, height, 0,
+                         GL_RGB, GL_UNSIGNED_SHORT_5_6_5, faceData->getData()) );
         if (mipmapMode == VROMipmapMode::Runtime) {
-            glGenerateMipmap(GL_TEXTURE_2D);
+            GL( glGenerateMipmap(GL_TEXTURE_2D) );
         }
     }
     else {

@@ -130,7 +130,7 @@ VROShaderProgram::~VROShaderProgram() {
 
     // Ensure we are deleting GL objects with the current GL context
     if (_driver.lock()) {
-        glDeleteShader(_program);
+        GL( glDeleteShader(_program) );
     }
     
     ALLOCATION_TRACKER_SUB(Shaders, 1);
@@ -176,7 +176,7 @@ bool VROShaderProgram::isHydrated() const {
 void VROShaderProgram::evict() {
     if (_program != 0) {
         if (_driver.lock()) {
-            glDeleteProgram(_program);
+            GL( glDeleteProgram(_program) );
         }
     }
 
@@ -192,21 +192,21 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
     GLint status;
     int len = (int) strlen(source);
 
-    *shader = glCreateShader(type);
-    glShaderSource(*shader, 1, &source, &len);
-    glCompileShader(*shader);
+    *shader = GL( glCreateShader(type) );
+    GL( glShaderSource(*shader, 1, &source, &len) );
+    GL( glCompileShader(*shader) );
 
 #if kDebugShaders
     GLint logLength;
-    glGetShaderInfoLog(*shader, shaderMaxLogLength, &logLength, shaderLog);
+    GL( glGetShaderInfoLog(*shader, shaderMaxLogLength, &logLength, shaderLog) );
     if (logLength > 1) { // when there are no logs we have just a '\n', don't print that out
         perr("Shader compile log:\n%s", shaderLog);
     }
 #endif
 
-    glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
+    GL( glGetShaderiv(*shader, GL_COMPILE_STATUS, &status) );
     if (status == 0) {
-        glDeleteShader(*shader);
+        GL( glDeleteShader(*shader) );
         return false;
     }
 
@@ -215,17 +215,17 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
 
 bool VROShaderProgram::linkProgram(GLuint prog) {
     GLint status;
-    glLinkProgram(prog);
+    GL( glLinkProgram(prog) );
 
 #if kDebugShaders
     GLint logLength;
-    glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog);
+    GL( glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog) );
     if (logLength > 1) {
         perr("Program link log:\n%s", shaderLog);
     }
 #endif
 
-    glGetProgramiv(prog, GL_LINK_STATUS, &status);
+    GL( glGetProgramiv(prog, GL_LINK_STATUS, &status) );
     if (status == 0) {
         return false;
     }
@@ -235,17 +235,17 @@ bool VROShaderProgram::linkProgram(GLuint prog) {
 
 bool VROShaderProgram::validateProgram(GLuint prog) {
     GLint status;
-    glValidateProgram(prog);
+    GL( glValidateProgram(prog) );
 
 #if kDebugShaders
     GLint logLength;
-    glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog);
+    GL( glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog) );
     if (logLength > 1) {
         perr("Program validate log:\n%s", shaderLog);
     }
 #endif
 
-    glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
+    GL( glGetProgramiv(prog, GL_VALIDATE_STATUS, &status) );
     if (status == 0) {
         return false;
     }
@@ -254,7 +254,7 @@ bool VROShaderProgram::validateProgram(GLuint prog) {
 
 bool VROShaderProgram::compileAndLink() {
     GLuint vertShader, fragShader;
-    _program = glCreateProgram();
+    _program = GL( glCreateProgram() );
 
     if (_program == 0) {
         if (_shaderName.empty()) {
@@ -298,8 +298,8 @@ bool VROShaderProgram::compileAndLink() {
         return false;
     }
 
-    glAttachShader(_program, vertShader);
-    glAttachShader(_program, fragShader);
+    GL( glAttachShader(_program, vertShader) );
+    GL( glAttachShader(_program, fragShader) );
 
     /*
      Bind attribute locations.
@@ -312,15 +312,15 @@ bool VROShaderProgram::compileAndLink() {
     if (!linkProgram(_program)) {
         pinfo("Failed to link program %d, name %s", _program, _shaderName.c_str());
         if (vertShader) {
-            glDeleteShader(vertShader);
+            GL( glDeleteShader(vertShader) );
             vertShader = 0;
         }
         if (fragShader) {
-            glDeleteShader(fragShader);
+            GL( glDeleteShader(fragShader) );
             fragShader = 0;
         }
         if (_program) {
-            glDeleteProgram(_program);
+            GL( glDeleteProgram(_program) );
             _program = 0;
         }
         
@@ -331,10 +331,10 @@ bool VROShaderProgram::compileAndLink() {
      Release vertex and fragment shaders.
      */
     if (vertShader) {
-        glDeleteShader(vertShader);
+        GL( glDeleteShader(vertShader) );
     }
     if (fragShader) {
-        glDeleteShader(fragShader);
+        GL( glDeleteShader(fragShader) );
     }
 
 #if kDebugShaders
@@ -350,7 +350,7 @@ bool VROShaderProgram::bind() {
     }
 
     passert (isHydrated());
-    glUseProgram(_program);
+    GL( glUseProgram(_program) );
 
     // Bind uniform locations here, if required.
     if (_uniformsNeedRebind) {
@@ -363,7 +363,7 @@ bool VROShaderProgram::bind() {
 }
 
 void VROShaderProgram::unbind() {
-    glUseProgram(0);
+    GL( glUseProgram(0) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -412,15 +412,15 @@ VROUniform *VROShaderProgram::getUniform(int index) {
 
 void VROShaderProgram::findUniformLocations() {
     for (VROUniform *uniform : _uniforms) {
-        int location = glGetUniformLocation(_program, uniform->getName().c_str());
+        int location = GL( glGetUniformLocation(_program, uniform->getName().c_str()) );
         uniform->setLocation(location);
     }
     
     int samplerIdx = 0;
     
     for (std::string &samplerName : _samplers) {
-        int location = glGetUniformLocation(_program, samplerName.c_str());
-        glUniform1i(location, samplerIdx);
+        int location = GL( glGetUniformLocation(_program, samplerName.c_str()) );
+        GL( glUniform1i(location, samplerIdx) );
         
         ++samplerIdx;
     }
@@ -440,25 +440,25 @@ void VROShaderProgram::addModifierUniforms() {
 #pragma mark - Standard 3D Shader
 
 void VROShaderProgram::bindAttributes() {
-    glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Vertex, "position");
+    GL( glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Vertex, "position") );
     
     if ((_attributes & (int)VROShaderMask::Tex) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord");
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord") );
     }
     if ((_attributes & (int)VROShaderMask::Color) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Color), "color");
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Color), "color") );
     }
     if ((_attributes & (int)VROShaderMask::Norm) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Normal), "normal");
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Normal), "normal") );
     }
     if ((_attributes & (int)VROShaderMask::Tangent) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Tangent), "tangent");
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Tangent), "tangent") );
     }
     if ((_attributes & (int)VROShaderMask::BoneIndex) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneIndices), "bone_indices");
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneIndices), "bone_indices") );
     }
     if ((_attributes & (int)VROShaderMask::BoneWeight) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneWeights), "bone_weights");
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneWeights), "bone_weights") );
     }
 }
 
@@ -467,27 +467,27 @@ void VROShaderProgram::bindUniformBlocks() {
     // Within each Viro UBO class we use glBindBuffer base to then link the actual UBO data
     // the same binding point.
 
-    _lightingFragmentBlockIndex = glGetUniformBlockIndex(_program, "lighting_fragment");
+    _lightingFragmentBlockIndex = GL( glGetUniformBlockIndex(_program, "lighting_fragment") );
     if (_lightingFragmentBlockIndex != GL_INVALID_INDEX) {
-        glUniformBlockBinding(_program, _lightingFragmentBlockIndex, sLightingFragmentUBOBindingPoint);
+        GL( glUniformBlockBinding(_program, _lightingFragmentBlockIndex, sLightingFragmentUBOBindingPoint) );
     }
-    _lightingVertexBlockIndex = glGetUniformBlockIndex(_program, "lighting_vertex");
+    _lightingVertexBlockIndex = GL( glGetUniformBlockIndex(_program, "lighting_vertex") );
     if (_lightingVertexBlockIndex != GL_INVALID_INDEX) {
-        glUniformBlockBinding(_program, _lightingVertexBlockIndex, sLightingVertexUBOBindingPoint);
+        GL( glUniformBlockBinding(_program, _lightingVertexBlockIndex, sLightingVertexUBOBindingPoint) );
     }
     
-    _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
+    _bonesBlockIndex = GL( glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones") );
     if (_bonesBlockIndex != GL_INVALID_INDEX) {
-        glUniformBlockBinding(_program, _bonesBlockIndex, sBonesUBOBindingPoint);
+        GL( glUniformBlockBinding(_program, _bonesBlockIndex, sBonesUBOBindingPoint) );
     }
     
-    _particlesVertexBlockIndex = glGetUniformBlockIndex(_program, "particles_vertex_data");
+    _particlesVertexBlockIndex = GL( glGetUniformBlockIndex(_program, "particles_vertex_data") );
     if (_particlesVertexBlockIndex != GL_INVALID_INDEX) {
-        glUniformBlockBinding(_program, _particlesVertexBlockIndex, sParticleVertexUBOBindingPoint);
+        GL( glUniformBlockBinding(_program, _particlesVertexBlockIndex, sParticleVertexUBOBindingPoint) );
     }
-    _particlesFragmentBlockIndex = glGetUniformBlockIndex(_program, "particles_fragment_data");
+    _particlesFragmentBlockIndex = GL( glGetUniformBlockIndex(_program, "particles_fragment_data") );
     if (_particlesFragmentBlockIndex != GL_INVALID_INDEX) {
-        glUniformBlockBinding(_program, _particlesFragmentBlockIndex, sParticleFragmentUBOBindingPoint);
+        GL( glUniformBlockBinding(_program, _particlesFragmentBlockIndex, sParticleFragmentUBOBindingPoint) );
     }
 }
 

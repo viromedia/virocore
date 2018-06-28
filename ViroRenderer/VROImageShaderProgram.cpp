@@ -33,8 +33,8 @@ VROImageShaderProgram::~VROImageShaderProgram() {
 }
 
 void VROImageShaderProgram::bindAttributes() {
-    glBindAttribLocation(getProgram(), (int)VROGeometrySourceSemantic::Vertex, "position");
-    glBindAttribLocation(getProgram(), VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord");
+    GL( glBindAttribLocation(getProgram(), (int)VROGeometrySourceSemantic::Vertex, "position") );
+    GL( glBindAttribLocation(getProgram(), VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord") );
 }
 
 void VROImageShaderProgram::bindUniformBlocks() {

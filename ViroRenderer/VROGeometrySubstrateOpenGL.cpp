@@ -51,8 +51,8 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
 
     // Ensure we are deleting GL objects with the current GL context
     if (_driver.lock()) {
-        glDeleteBuffers((int) buffers.size(), buffers.data());
-        glDeleteVertexArrays((int) _vaos.size(), _vaos.data());
+        GL( glDeleteBuffers((int) buffers.size(), buffers.data()) );
+        GL( glDeleteVertexArrays((int) _vaos.size(), _vaos.data()) );
     }
 
     std::map<int, std::vector<VROVertexDescriptorOpenGL>>::iterator it;
@@ -69,9 +69,9 @@ void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::sha
         
         int indexCount = VROGeometryUtilGetIndicesCount(element->getPrimitiveCount(), element->getPrimitiveType());
         
-        glGenBuffers(1, &elementOGL.buffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOGL.buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * element->getBytesPerIndex(), element->getData()->getData(), GL_STATIC_DRAW);
+        GL( glGenBuffers(1, &elementOGL.buffer) );
+        GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOGL.buffer) );
+        GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * element->getBytesPerIndex(), element->getData()->getData(), GL_STATIC_DRAW) );
      
         elementOGL.primitiveType = parsePrimitiveType(element->getPrimitiveType());
         elementOGL.indexCount = indexCount;
@@ -111,9 +111,9 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
         vd.stride = group[0]->getDataStride();
         vd.numAttributes = 0;
         
-        glGenBuffers(1, &vd.buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
-        glBufferData(GL_ARRAY_BUFFER, kv.first->getDataLength(), kv.first->getData(), GL_STATIC_DRAW);
+        GL( glGenBuffers(1, &vd.buffer) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, vd.buffer) );
+        GL( glBufferData(GL_ARRAY_BUFFER, kv.first->getDataLength(), kv.first->getData(), GL_STATIC_DRAW) );
         
         /*
          Create an attribute for each geometry source in this group.
@@ -145,10 +145,10 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
 
 void VROGeometrySubstrateOpenGL::createVAO() {
     GLuint vaos[_elements.size()];
-    glGenVertexArrays((int) _elements.size(), vaos);
+    GL( glGenVertexArrays((int) _elements.size(), vaos) );
     
     for (int i = 0; i < _elements.size(); i++) {
-        glBindVertexArray(vaos[i]);
+        GL( glBindVertexArray(vaos[i]) );
         std::vector<VROVertexDescriptorOpenGL> &vertexDescriptors = _vertexDescriptors;
         if (_elementToDescriptorsMap.size() > 0
                 && _elementToDescriptorsMap.find(i) != _elementToDescriptorsMap.end()) {
@@ -156,24 +156,24 @@ void VROGeometrySubstrateOpenGL::createVAO() {
         }
 
         for (VROVertexDescriptorOpenGL &vd : vertexDescriptors) {
-            glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
-
+            GL( glBindBuffer(GL_ARRAY_BUFFER, vd.buffer) );
+    
             for (int i = 0; i < vd.numAttributes; i++) {
                 if (vd.attributes[i].type == GL_INT || vd.attributes[i].type == GL_SHORT) {
-                    glVertexAttribIPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, vd.stride,
-                                           (GLvoid *) vd.attributes[i].offset);
+                    GL( glVertexAttribIPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, vd.stride,
+                                               (GLvoid *) vd.attributes[i].offset) );
                 }
                 else {
-                    glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride,
-                                          (GLvoid *) vd.attributes[i].offset);
+                    GL( glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride,
+                                              (GLvoid *) vd.attributes[i].offset) );
                 }
-                glEnableVertexAttribArray(vd.attributes[i].index);
+                GL( glEnableVertexAttribArray(vd.attributes[i].index) );
             }
         }
         
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elements[i].buffer);
-        glBindVertexArray(0);
+        GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+        GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elements[i].buffer) );
+        GL( glBindVertexArray(0) );
     }
     
     _vaos.assign(vaos, vaos + _elements.size());
@@ -269,9 +269,11 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                         context.getCamera().getPosition(), context.getEyeType());
     
+    passert (elementIndex < _vaos.size() && elementIndex >= 0);
+    GL (glBindVertexArray(_vaos[elementIndex]) );
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, material, substrate, element, opacity, context, driver);
-    glBindVertexArray(0);
+    GL (glBindVertexArray(0) );
     
     pglpop();
 }
@@ -310,8 +312,8 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             }
             
             std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
-            glActiveTexture(GL_TEXTURE0 + activeTexture);
-            glBindTexture(targetAndTexture.first, targetAndTexture.second);
+            GL (glActiveTexture(GL_TEXTURE0 + activeTexture) );
+            GL (glBindTexture(targetAndTexture.first, targetAndTexture.second) );
             
             ++activeTexture;
         }
@@ -322,11 +324,11 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
         int numberOfDraws = instancedUBO->getNumberOfDrawCalls();
         for (int i = 0; i < numberOfDraws; i ++) {
             int instances = instancedUBO->bindDrawData(i);
-            glDrawElementsInstanced(element.primitiveType, element.indexCount, element.indexType, 0, instances);
+            GL( glDrawElementsInstanced(element.primitiveType, element.indexCount, element.indexType, 0, instances) );
         }
     }
     else {
-        glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
+        GL( glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0) );
     }
 }
 
@@ -359,10 +361,10 @@ void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
         substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                             context.getCamera().getPosition(), context.getEyeType());
         
-        glBindVertexArray(_vaos[i]);
+        GL( glBindVertexArray(_vaos[i]) );
         substrate->bindGeometry(1.0, geometry);
-        glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
-        glBindVertexArray(0);
+        GL( glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0) );
+        GL( glBindVertexArray(0) );
     }
     pglpop();
 }
@@ -397,9 +399,9 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                         context.getCamera().getPosition(), context.getEyeType());
     
-    glBindVertexArray(_vaos[elementIndex]);
+    GL( glBindVertexArray(_vaos[elementIndex]) );
     renderMaterial(geometry, material, substrate, element, 1.0, context, driver);
-    glBindVertexArray(0);
+    GL( glBindVertexArray(0) );
     
     pglpop();
 }

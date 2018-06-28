@@ -13,6 +13,7 @@
 #include "VROShadowMapRenderPass.h"
 #include "VRORenderContext.h"
 #include "VROScene.h"
+#include "VROOpenGL.h" // For pglpush and pop
 
 VROShadowPreprocess::VROShadowPreprocess(std::shared_ptr<VRODriver> driver) :
      _maxSupportedShadowMapSize(2048) {

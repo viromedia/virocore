@@ -51,7 +51,7 @@ VRORenderTargetOpenGL::~VRORenderTargetOpenGL() {
 }
 
 void VRORenderTargetOpenGL::bind() {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer);
+    GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer) );
     
     /*
      Bind the viewport and scissor when the render target changes. The scissor
@@ -59,14 +59,14 @@ void VRORenderTargetOpenGL::bind() {
      particularly important in VR mode where we have two 'eyes' each with a
      different viewport over the same framebuffer.
      */
-    glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
-    glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
+    GL( glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight()) );
+    GL( glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight()) );
     
     /*
      Prevent logical buffer load by immediately clearing.
      */
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    glStencilFuncSeparate(GL_FRONT_AND_BACK, GL_ALWAYS, 0xFF, 0xFF);
+    GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
+    GL( glStencilFuncSeparate(GL_FRONT_AND_BACK, GL_ALWAYS, 0xFF, 0xFF) );
 }
 
 void VRORenderTargetOpenGL::invalidate() {
@@ -114,19 +114,19 @@ void VRORenderTargetOpenGL::blitAttachment(GLenum attachment, GLbitfield mask, G
     passert (_viewport.getHeight() == destination->getHeight());
     
     VRORenderTargetOpenGL *t = (VRORenderTargetOpenGL *) destination.get();
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
-    glReadBuffer(attachment);
-    glDrawBuffers(1, &attachment);
+    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer) );
+    GL( glReadBuffer(attachment) );
+    GL( glDrawBuffers(1, &attachment) );
     
     if (flipY) {
-        glBlitFramebuffer(   _viewport.getX(),  _viewport.getY(), _viewport.getX() + _viewport.getWidth(), _viewport.getY() + _viewport.getHeight(),
-                          t->_viewport.getX(), t->_viewport.getY() + t->_viewport.getHeight(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY(),
-                          mask, filter);
+        GL( glBlitFramebuffer(   _viewport.getX(),  _viewport.getY(), _viewport.getX() + _viewport.getWidth(), _viewport.getY() + _viewport.getHeight(),
+                              t->_viewport.getX(), t->_viewport.getY() + t->_viewport.getHeight(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY(),
+                              mask, filter) );
     }
     else {
-        glBlitFramebuffer(   _viewport.getX(),    _viewport.getY(),    _viewport.getX() +    _viewport.getWidth(),    _viewport.getY() +    _viewport.getHeight(),
-                          t->_viewport.getX(), t->_viewport.getY(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY() + t->_viewport.getHeight(),
-                          mask, filter);
+        GL( glBlitFramebuffer(   _viewport.getX(),    _viewport.getY(),    _viewport.getX() +    _viewport.getWidth(),    _viewport.getY() +    _viewport.getHeight(),
+                              t->_viewport.getX(), t->_viewport.getY(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY() + t->_viewport.getHeight(),
+                              mask, filter) );
     }
 }
 
@@ -169,8 +169,8 @@ void VRORenderTargetOpenGL::clearTextures() {
         GLenum attachment = getTextureAttachmentType(i);
         passert (attachment != 0);
         
-        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0);
+        GL( glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
+        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0) );
     }
     for (std::shared_ptr<VROTexture> &texture : _textures) {
         texture.reset();
@@ -183,21 +183,21 @@ void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture, i
     GLenum attachment = getTextureAttachmentType(attachmentIndex);
     passert (attachment != 0);
     
-    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
     if (_type == VRORenderTargetType::ColorTexture ||
         _type == VRORenderTargetType::ColorTextureRG16 ||
         _type == VRORenderTargetType::ColorTextureHDR16 ||
         _type == VRORenderTargetType::ColorTextureHDR32 ||
         _type == VRORenderTargetType::DepthTexture) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, name, 0);
+        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, name, 0) );
     }
     else if (_type == VRORenderTargetType::CubeTexture ||
              _type == VRORenderTargetType::CubeTextureHDR16 ||
              _type == VRORenderTargetType::CubeTextureHDR32) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X, name, 0);
+        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X, name, 0) );
     }
     else if (_type == VRORenderTargetType::DepthTextureArray) {
-        glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, 0);
+        GL( glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, 0) );
     }
     else {
         pabort();
@@ -210,8 +210,8 @@ void VRORenderTargetOpenGL::setTextureImageIndex(int index, int attachmentIndex)
     passert (attachment != 0);
     passert (_type == VRORenderTargetType::DepthTextureArray);
     
-    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, index);
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
+    GL( glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, index) );
 }
 
 void VRORenderTargetOpenGL::setTextureCubeFace(int face, int mipLevel, int attachmentIndex) {
@@ -222,9 +222,9 @@ void VRORenderTargetOpenGL::setTextureCubeFace(int face, int mipLevel, int attac
              _type == VRORenderTargetType::CubeTextureHDR16 ||
              _type == VRORenderTargetType::CubeTextureHDR32);
     
-    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
-                           name, mipLevel);
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
+    GL( glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
+                               name, mipLevel) );
     if (_mipmapsEnabled) {
         setMipLevel(mipLevel, attachmentIndex);
     }
@@ -235,9 +235,9 @@ void VRORenderTargetOpenGL::setMipLevel(int mipLevel, int attachmentIndex) {
     
     unsigned int mipWidth  = _viewport.getWidth()  * std::pow(0.5, mipLevel);
     unsigned int mipHeight = _viewport.getHeight() * std::pow(0.5, mipLevel);
-    glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, mipWidth, mipHeight);
-    glViewport(0, 0, mipWidth, mipHeight);
+    GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
+    GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, mipWidth, mipHeight) );
+    GL (glViewport(0, 0, mipWidth, mipHeight) );
 }
 
 bool VRORenderTargetOpenGL::attachNewTextures() {
@@ -280,25 +280,25 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             texType = GL_FLOAT;
         }
         
-        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+        GL (glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
         GLuint texNames[_numAttachments];
-        glGenTextures(_numAttachments, texNames);
+        GL (glGenTextures(_numAttachments, texNames) );
         
         for (int i = 0 ; i < _numAttachments; i++) {
-            glBindTexture(GL_TEXTURE_2D, texNames[i]);
+            GL (glBindTexture(GL_TEXTURE_2D, texNames[i]) );
             GLenum attachment = getTextureAttachmentType(i);
 
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(), 0, format, texType, nullptr);
+            GL (glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+            GL (glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR) );
+            GL (glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+            GL (glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+            GL (glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(), 0, format, texType, nullptr) );
             if (_mipmapsEnabled) {
                 // Allocates memory for the mipmaps
-                glGenerateMipmap(GL_TEXTURE_2D);
+                GL (glGenerateMipmap(GL_TEXTURE_2D) );
             }
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texNames[i], 0);
+            GL (glBindTexture(GL_TEXTURE_2D, 0) );
+            GL (glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texNames[i], 0) );
             
             std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
             _textures[i] = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::RGBA8,
@@ -311,12 +311,12 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
          */
         if (_depthStencilbuffer == 0) {
             _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
-            glGenRenderbuffers(1, &_depthStencilbuffer);
-            glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight());
+            GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
+            GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
+            GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight()) );
             
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
+            GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
+            GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
         }
         
         /*
@@ -326,7 +326,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         for (int i = 0; i < _numAttachments; i++) {
             attachments[i] = GL_COLOR_ATTACHMENT0 + i;
         }
-        glDrawBuffers(_numAttachments, attachments);
+        GL (glDrawBuffers(_numAttachments, attachments) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -363,30 +363,30 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             texType = GL_FLOAT;
         }
         
-        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+        GL (glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
         GLuint texNames[_numAttachments];
-        glGenTextures(_numAttachments, texNames);
+        GL (glGenTextures(_numAttachments, texNames) );
         
         for (int i = 0 ; i < _numAttachments; i++) {
-            glBindTexture(target, texNames[i]);
+            GL (glBindTexture(target, texNames[i]) );
             GLenum attachment = getTextureAttachmentType(i);
             
-            glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameterf(target, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-            glTexParameterf(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameterf(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameterf(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            GL (glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+            GL (glTexParameterf(target, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR) );
+            GL (glTexParameterf(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+            GL (glTexParameterf(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+            GL (glTexParameterf(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE) );
             
             for (int s = 0; s < 6; s++) {
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + s, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(),
-                             0, format, texType, nullptr);
+                GL( glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + s, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(),
+                                 0, format, texType, nullptr) );
             }
             if (_mipmapsEnabled) {
                 // Allocates memory for the mipmaps
-                glGenerateMipmap(target);
+                GL (glGenerateMipmap(target) );
             }
-            glBindTexture(target, 0);
             
+            GL (glBindTexture(target, 0) );            
             std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
             _textures[i] = std::make_shared<VROTexture>(VROTextureType::TextureCube, VROTextureInternalFormat::RGBA8,
                                                         std::move(substrate));
@@ -398,10 +398,10 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
          */
         if (_depthStencilbuffer == 0) {
             _depthStencilRenderbufferStorage = GL_DEPTH_COMPONENT24;
-            glGenRenderbuffers(1, &_depthStencilbuffer);
-            glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight());
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
+            GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
+            GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
+            GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight()) );
+            GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
         }
         
         /*
@@ -411,7 +411,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         for (int i = 0; i < _numAttachments; i++) {
             attachments[i] = GL_COLOR_ATTACHMENT0 + i;
         }
-        glDrawBuffers(_numAttachments, attachments);
+        GL (glDrawBuffers(_numAttachments, attachments) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -432,24 +432,24 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
     }
     else if (_type == VRORenderTargetType::DepthTexture) {
         GLenum target = GL_TEXTURE_2D;
-        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+        GL (glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
         
         GLuint texName;
-        glGenTextures(1, &texName);
-        glBindTexture(GL_TEXTURE_2D, texName);
+        GL (glGenTextures(1, &texName) );
+        GL (glBindTexture(GL_TEXTURE_2D, texName) );
         
         // Setting a depth texture up with linear filtering means OpenGL
         // will use PCF on texture(sampler2DShadow) calls
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight(), 0,
-                     GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texName, 0);
+        GL (glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+        GL (glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+        GL (glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+        GL (glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+        GL (glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE) );
+        GL (glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL) );
+        GL (glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight(), 0,
+                         GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0) );
+        GL (glBindTexture(GL_TEXTURE_2D, 0) );
+        GL (glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texName, 0) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pinfo("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -462,26 +462,26 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
     }
     else if (_type == VRORenderTargetType::DepthTextureArray) {
         GLenum target = GL_TEXTURE_2D_ARRAY;
-        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+        GL (glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
         
         GLuint texName;
-        glGenTextures(1, &texName);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, texName);
+        GL (glGenTextures(1, &texName) );
+        GL (glBindTexture(GL_TEXTURE_2D_ARRAY, texName) );
         
         // Setting a depth texture up with linear filtering means OpenGL
         // will use PCF on texture(sampler2DShadow) calls
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 1);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight(),
-                     _numImages, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texName, 0, 0);
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 1) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE) );
+        GL (glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL) );
+        GL (glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight(),
+                         _numImages, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0) );
+        GL (glBindTexture(GL_TEXTURE_2D_ARRAY, 0) );
+        GL (glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texName, 0, 0) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pinfo("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -566,15 +566,15 @@ bool VRORenderTargetOpenGL::restoreFramebuffers() {
 
 void VRORenderTargetOpenGL::deleteFramebuffers() {
     if (_framebuffer) {
-        glDeleteFramebuffers(1, &_framebuffer);
+        GL (glDeleteFramebuffers(1, &_framebuffer) );
         _framebuffer = 0;
     }
     if (_colorbuffer) {
-        glDeleteRenderbuffers(1, &_colorbuffer);
+        GL (glDeleteRenderbuffers(1, &_colorbuffer) );
         _colorbuffer = 0;
     }
     if (_depthStencilbuffer) {
-        glDeleteRenderbuffers(1, &_depthStencilbuffer);
+        GL (glDeleteRenderbuffers(1, &_depthStencilbuffer) );
         _depthStencilbuffer = 0;
     }
     
@@ -591,30 +591,30 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
     /*
      Create framebuffer.
      */
-    glGenFramebuffers(1, &_framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    GL (glGenFramebuffers(1, &_framebuffer) );
+    GL (glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer) );
     
     /*
      Create a color renderbuffer, allocate storage for it, and attach it to the framebuffer's color
      attachment point.
      */
     GLuint colorRenderbuffer;
-    glGenRenderbuffers(1, &colorRenderbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, _viewport.getWidth(), _viewport.getHeight());
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+    GL (glGenRenderbuffers(1, &colorRenderbuffer) );
+    GL (glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer) );
+    GL (glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, _viewport.getWidth(), _viewport.getHeight()) );
+    GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer) );
     
     /*
      Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to the
      framebuffer's depth attachment point.
      */
     _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
-    glGenRenderbuffers(1, &_depthStencilbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight());
+    GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
+    GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
+    GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight()) );
     
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
+    GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
+    GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -641,10 +641,10 @@ bool VRORenderTargetOpenGL::createColorTextureTarget() {
     /*
      Create framebuffer.
      */
-    glGenFramebuffers(1, &_framebuffer);
+    GL (glGenFramebuffers(1, &_framebuffer) );
     if (!attachNewTextures()) {
         pinfo("Failed to create color texture target: texture creation failed");
-        glDeleteFramebuffers(1, &_framebuffer);
+        GL (glDeleteFramebuffers(1, &_framebuffer) );
         return false;
     }
     
@@ -664,7 +664,7 @@ bool VRORenderTargetOpenGL::createColorTextureTarget() {
             pinfo("   Unsupported");
         }
         pinfo("Failed to create color texture render target");
-        glDeleteFramebuffers(1, &_framebuffer);
+        GL (glDeleteFramebuffers(1, &_framebuffer) );
         return false;
     }
     return true;
@@ -674,17 +674,17 @@ bool VRORenderTargetOpenGL::createDepthTextureTarget() {
     passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
                 "Must invoke setViewport before using a render target");
 
-    glGenFramebuffers(1, &_framebuffer);
+    GL (glGenFramebuffers(1, &_framebuffer) );
     if (!attachNewTextures()) {
         pinfo("Failed to create depth texture target [width %d, height %d]: texture creation failed",
               _viewport.getWidth(), _viewport.getHeight());
-        glDeleteFramebuffers(1, &_framebuffer);
+        GL (glDeleteFramebuffers(1, &_framebuffer) );
         return false;
     }
     
     GLenum none[] = { GL_NONE };
-    glDrawBuffers(1, none);
-    glReadBuffer(GL_NONE);
+    GL (glDrawBuffers(1, none) );
+    GL (glReadBuffer(GL_NONE) );
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -702,7 +702,7 @@ bool VRORenderTargetOpenGL::createDepthTextureTarget() {
             pinfo("   Unsupported");
         }
         pinfo("Failed to create depth texture render target");
-        glDeleteFramebuffers(1, &_framebuffer);
+        GL (glDeleteFramebuffers(1, &_framebuffer) );
         return false;
     }
     return true;
@@ -713,9 +713,9 @@ bool VRORenderTargetOpenGL::createDepthTextureTarget() {
 void VRORenderTargetOpenGL::clearStencil(int bits)  {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
-        glStencilMask(0xFF);
-        glClearStencil(bits);
-        glClear(GL_STENCIL_BUFFER_BIT);
+        GL (glStencilMask(0xFF) );
+        GL (glClearStencil(bits) );
+        GL (glClear(GL_STENCIL_BUFFER_BIT) );
     }
     else {
         pabort();
@@ -726,7 +726,7 @@ void VRORenderTargetOpenGL::clearDepth() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setDepthWritingEnabled(true);
-        glClear(GL_DEPTH_BUFFER_BIT);
+        GL (glClear(GL_DEPTH_BUFFER_BIT) );
     }
     else {
         pabort();
@@ -737,8 +737,8 @@ void VRORenderTargetOpenGL::clearColor() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setColorWritingEnabled(true);
-        glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        GL (glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w) );
+        GL (glClear(GL_COLOR_BUFFER_BIT) );
     }
     else {
         pabort();
@@ -750,8 +750,8 @@ void VRORenderTargetOpenGL::clearDepthAndColor() {
     if (driver) {
         driver->setDepthWritingEnabled(true);
         driver->setColorWritingEnabled(true);
-        glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GL (glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w) );
+        GL (glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
     }
     else {
         pabort();
@@ -796,8 +796,8 @@ void VRORenderTargetOpenGL::enablePortalStencilWriting(VROFace face) {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setStencilTestEnabled(true);
-        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR);   // Increment stencil buffer when pass
-        glStencilMaskSeparate(toGL(face), 0x0F);                      // Allow writing to the lower four bits in stencil buffer
+        GL (glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR) );   // Increment stencil buffer when pass
+        GL (glStencilMaskSeparate(toGL(face), 0x0F) );                      // Allow writing to the lower four bits in stencil buffer
     }
 }
 
@@ -805,8 +805,8 @@ void VRORenderTargetOpenGL::enablePortalStencilRemoval(VROFace face) {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setStencilTestEnabled(true);
-        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR);   // Decrement stencil buffer when pass
-        glStencilMaskSeparate(toGL(face), 0x0F);                      // Allow writing to the lower four bits in stencil buffer
+        GL (glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR) );   // Decrement stencil buffer when pass
+        GL (glStencilMaskSeparate(toGL(face), 0x0F) );                      // Allow writing to the lower four bits in stencil buffer
     }
 }
 
@@ -814,7 +814,7 @@ void VRORenderTargetOpenGL::disablePortalStencilWriting(VROFace face) {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setStencilTestEnabled(true);
-        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP);   // Do not write to stencil buffer
+        GL( glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP) );   // Do not write to stencil buffer
     }
 }
 
@@ -827,6 +827,6 @@ void VRORenderTargetOpenGL::setPortalStencilPassFunction(VROFace face, VROStenci
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setStencilTestEnabled(true);
-        glStencilFuncSeparate(toGL(face), toGL(_stencilFunc), _stencilRef, 0x0F);
+        GL( glStencilFuncSeparate(toGL(face), toGL(_stencilFunc), _stencilRef, 0x0F) );
     }
 }

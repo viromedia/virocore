@@ -117,25 +117,25 @@ bool VROImagePostProcessOpenGL::bind(std::vector<std::shared_ptr<VROTexture>> te
 
 void VROImagePostProcessOpenGL::drawScreenSpaceVAR() {
     if (_quadVAO == 0) {
-        glGenBuffers(1, &_quadVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, _quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(_quadFSVAR), _quadFSVAR, GL_STATIC_DRAW);
+        GL( glGenBuffers(1, &_quadVBO));
+        GL( glBindBuffer(GL_ARRAY_BUFFER, _quadVBO) );
+        GL( glBufferData(GL_ARRAY_BUFFER, sizeof(_quadFSVAR), _quadFSVAR, GL_STATIC_DRAW) );
         
-        glGenVertexArrays(1, &_quadVAO);
-        glBindVertexArray(_quadVAO);
+        GL( glGenVertexArrays(1, &_quadVAO) );
+        GL( glBindVertexArray(_quadVAO) );
         
         int verticesIndex = VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Vertex);
-        glEnableVertexAttribArray(verticesIndex);
-        glVertexAttribPointer(verticesIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0);
+        GL( glEnableVertexAttribArray(verticesIndex) );
+        GL( glVertexAttribPointer(verticesIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0) );
         
         int texcoordIndex = VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord);
-        glEnableVertexAttribArray(texcoordIndex);
-        glVertexAttribPointer(texcoordIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float)));
+        GL( glEnableVertexAttribArray(texcoordIndex) );
+        GL( glVertexAttribPointer(texcoordIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float))) );
     }
     
-    glBindVertexArray(_quadVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
+    GL( glBindVertexArray(_quadVAO) );
+    GL( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
+    GL( glBindVertexArray(0) );
 }
 
 void VROImagePostProcessOpenGL::buildQuadFSVAR(bool flipped) {

@@ -88,8 +88,8 @@ std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool
 VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
     _driver(driver) {
     
-    glGenBuffers(1, &_bonesUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
+    GL( glGenBuffers(1, &_bonesUBO) );
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO) );
 
     // If we don't initialize the bone data, the GPU may freeze (in particular when using
     // Adreno + OVR)
@@ -98,19 +98,19 @@ VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
     for (int i = 0; i < kMaxBones; i++) {
         memcpy(&data.bone_transforms[i * kFloatsPerBone], identity.getArray(), kFloatsPerBone * sizeof(float));
     }
-    glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), &data, GL_DYNAMIC_DRAW);
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO) );
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), &data, GL_DYNAMIC_DRAW) );
 }
 
 VROBoneUBO::~VROBoneUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
-        glDeleteBuffers(1, &_bonesUBO);
+        GL( glDeleteBuffers(1, &_bonesUBO) );
     }
 }
 
 void VROBoneUBO::bind() {
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sBonesUBOBindingPoint, _bonesUBO);
+    GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sBonesUBOBindingPoint, _bonesUBO) );
 }
 
 void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
@@ -156,11 +156,11 @@ void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
         }
     }
     
-    glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO) );
 #if VRO_AVOID_BUFFER_SUB_DATA
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), &data, GL_DYNAMIC_DRAW);
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), &data, GL_DYNAMIC_DRAW) );
 #else
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROBonesData), &data);
+    GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROBonesData), &data) );
 #endif
     
     pglpop();

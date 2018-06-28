@@ -31,7 +31,7 @@
 #include "VRORenderMetadata.h"
 #include "VROToneMappingRenderPass.h"
 #include "VRODebugHUD.h"
-
+#include "VROOpenGL.h" // For pglpush and pop
 
 // Target frames-per-second. Eventually this will be platform dependent,
 // but for now all of our platforms target 60.

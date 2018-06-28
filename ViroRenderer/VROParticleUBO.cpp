@@ -26,21 +26,21 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     memset(fragmentData.frag_particles_color, 0x0, kMaxParticlesPerUBO * kMaxFloatsPerColor * sizeof(float));
 
     // Set up Vertex UBO
-    glGenBuffers(1, &_particleVertexUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, _particleVertexUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
+    GL( glGenBuffers(1, &_particleVertexUBO) );
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _particleVertexUBO) );
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW) );
 
     // Set up Fragment UBO
-    glGenBuffers(1, &_particleFragmentUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, _particleFragmentUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
+    GL( glGenBuffers(1, &_particleFragmentUBO) );
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, _particleFragmentUBO) );
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW) );
 }
 
 VROParticleUBO::~VROParticleUBO() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
-        glDeleteBuffers(1, &_particleVertexUBO);
-        glDeleteBuffers(1, &_particleFragmentUBO);
+        GL( glDeleteBuffers(1, &_particleVertexUBO) );
+        GL( glDeleteBuffers(1, &_particleFragmentUBO) );
     }
 }
 
@@ -110,20 +110,20 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
 
     // Finally bind the UBO to its corresponding buffers.
     pglpush("Particles");
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, _particleVertexUBO);
+    GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleVertexUBOBindingPoint, _particleVertexUBO) );
 #if VRO_AVOID_BUFFER_SUB_DATA
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW);
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOVertexData), &vertexData, GL_DYNAMIC_DRAW) );
 #else
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOVertexData), &vertexData);
+    GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOVertexData), &vertexData) );
 #endif
     pglpop();
 
     pglpush("ParticlesFragment");
-    glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, _particleFragmentUBO);
+    GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sParticleFragmentUBOBindingPoint, _particleFragmentUBO) );
 #if VRO_AVOID_BUFFER_SUB_DATA
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW);
+    GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), &fragmentData, GL_DYNAMIC_DRAW) );
 #else
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOFragmentData), &fragmentData);
+    GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROParticlesUBOFragmentData), &fragmentData) );
 #endif
     pglpop();
     return end - start;
