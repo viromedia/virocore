@@ -386,7 +386,6 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
                 glGenerateMipmap(target);
             }
             glBindTexture(target, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texNames[i], 0);
             
             std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
             _textures[i] = std::make_shared<VROTexture>(VROTextureType::TextureCube, VROTextureInternalFormat::RGBA8,
