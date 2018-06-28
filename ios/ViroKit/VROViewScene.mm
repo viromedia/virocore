@@ -85,6 +85,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
         self.context = context;
     }
+    VROPlatformSetEAGLContext(self.context);
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     
     /*
