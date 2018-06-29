@@ -96,9 +96,10 @@ public class ViroViewGVR extends ViroView {
     private WeakReference<GLSurfaceView> mGLSurfaceView;;
     private StartupListener mStartupListener;
     private boolean mVRModeEnabled;
+    private ViroOnTouchListener mBaseTouchListener;
+    private ViroTouchGestureListener mGestureTouchListener;
 
     // Activity state to restore to before being modified by the renderer.
-
     private static class ViroSurfaceViewRenderer implements GLSurfaceView.Renderer {
 
         private WeakReference<ViroViewGVR> mView;
@@ -300,6 +301,7 @@ public class ViroViewGVR extends ViroView {
         }
         addView(mGVRLayout);
 
+        mBaseTouchListener = new ViroOnTouchListener(this);
         final Context activityContext = getContext();
         final GLSurfaceView glSurfaceView = createSurfaceView();
         mGLSurfaceView = new WeakReference<GLSurfaceView>(glSurfaceView);
@@ -316,6 +318,7 @@ public class ViroViewGVR extends ViroView {
                 mGVRLayout.getGvrApi().getNativeGvrContext(), mRendererConfig);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mStartupListener = startupListener;
+        mGestureTouchListener = new ViroTouchGestureListener((Activity) getContext(), mNativeRenderer);
 
         // Add the GLSurfaceView to the GvrLayout.
         mGVRLayout.setPresentationView(glSurfaceView);
@@ -375,7 +378,7 @@ public class ViroViewGVR extends ViroView {
         glSurfaceView.setPreserveEGLContextOnPause(true);
 
         glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
-        glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
+        glSurfaceView.setOnTouchListener(mBaseTouchListener);
 
 
         return glSurfaceView;
@@ -422,10 +425,10 @@ public class ViroViewGVR extends ViroView {
         mGVRLayout.setStereoModeEnabled(vrModeEnabled);
         mGVRLayout.getUiLayout().setEnabled(vrModeEnabled);
 
-        // If we are in 360 mode add a touch listener that detects pinch, rotation, etc.
-        if(mGLSurfaceView.get() != null && !vrModeEnabled && activity != null) {
+        // Switch between touch listeners base on VR modes.
+        if(mGLSurfaceView.get() != null  && activity != null) {
             GLSurfaceView surfaceView = mGLSurfaceView.get();
-            surfaceView.setOnTouchListener(new ViroTouchGestureListener(activity, mNativeRenderer));
+            surfaceView.setOnTouchListener(vrModeEnabled ? mBaseTouchListener : mGestureTouchListener);
         }
 
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
