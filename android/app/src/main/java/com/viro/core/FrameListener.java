@@ -5,13 +5,14 @@
 package com.viro.core;
 
 /**
- * Interface for listening to frame events. The FrameListener can be registered to receive events
- * via {@link ViroView#setFrameListener(FrameListener)} in {@link ViroView}.
+ * Callback interface for listening to frame events. FrameListener can be used to receive a callback
+ * just before each frame is rendered. FrameListener is registered via {@link
+ * ViroView#setFrameListener(FrameListener)} in {@link ViroView}.
  */
 public interface FrameListener {
 
     /**
-     * Invoked whenever a frame is drawn.
+     * Invoked just before a frame is drawn.
      */
     public void onDrawFrame();
 

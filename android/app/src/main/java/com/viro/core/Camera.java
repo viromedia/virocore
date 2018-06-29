@@ -215,10 +215,15 @@ public class Camera {
         nativeSetFieldOfView(mNativeRef, fov);
     }
 
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
     public void setRefNodeToCopyRotation(Node node) {
         mRefNodeToCopyRotation = node;
         nativeSetRefNodeToCopyRotation(mNativeRef, mRefNodeToCopyRotation.getNativeRef());
     }
+    //#ENDIF
 
     /**
      * Return the field of view used by this Camera along its major (larger) axis, in degrees.
