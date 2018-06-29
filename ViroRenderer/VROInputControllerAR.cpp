@@ -129,12 +129,6 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
         if ((VROTimeCurrentMillis() - _lastProcessDragTimeMillis > kARProcessDragInterval) || alwaysRun) {
 
             VROVector3f position = getNextDragPosition(results);
-
-            // The offset is the intersectionPoint minus the original HitTest location
-            VROVector3f draggedOffset = position - _lastDraggedNode->_originalHitLocation;
-
-            // Finally, the position is set to the "starting" position of the dragged object + the offset.
-           position = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
             
             // TODO: since we're animating position... the position passed back below won't necessarily
             // reflect its real position.
