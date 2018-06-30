@@ -243,7 +243,10 @@ public:
     int getHeight() const {
         return _height;
     }
-    
+
+protected:
+    int _width, _height;
+
 private:
     
     uint32_t _textureId;
@@ -276,8 +279,7 @@ private:
      source format).
      */
     VROTextureInternalFormat _internalFormat;
-    int _width, _height;
-    
+
     /*
      The mipmap generation mode for this texture. Determines if mipmaps
      are loaded from the source data (pregenerated), generated at runtime,

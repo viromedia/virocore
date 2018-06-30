@@ -57,6 +57,7 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/VROInputControllerOVR.cpp
              ${VIRO_ANDROID_SRC}/VROAVRecorderAndroid.cpp
              ${VIRO_ANDROID_SRC}/VROTextureReader.cpp
+             ${VIRO_ANDROID_SRC}/VROAndroidViewTexture.cpp
 
              # C API
              ${VIRO_CAPI_SRC}/Node_JNI.cpp

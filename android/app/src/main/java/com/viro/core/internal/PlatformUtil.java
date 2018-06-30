@@ -178,6 +178,14 @@ public class PlatformUtil {
         return videoSink.getSurface();
     }
 
+    public Surface createVideoSink(int textureId, int width, int height) {
+        VideoSink videoSink = new VideoSink(textureId, width, height);
+        mVideoSinks.put(textureId, videoSink);
+        mFrameListeners.add(videoSink);
+
+        return videoSink.getSurface();
+    }
+
     // Accessed by Native code (VROPlatformUtil.cpp)
     public void destroyVideoSink(int textureId) {
         VideoSink videoSink = mVideoSinks.remove(textureId);

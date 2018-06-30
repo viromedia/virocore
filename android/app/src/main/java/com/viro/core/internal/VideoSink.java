@@ -42,6 +42,17 @@ public class VideoSink implements SurfaceTexture.OnFrameAvailableListener, Frame
         }
     }
 
+    public VideoSink(int textureId, int width, int height) {
+        mSurfaceTexture = new SurfaceTexture(textureId);
+        mSurfaceTexture.setOnFrameAvailableListener(this);
+        mSurfaceTexture.setDefaultBufferSize(width, height);
+        mSurface = new Surface(mSurfaceTexture);
+
+        synchronized (this) {
+            mSurfacedUpdated = false;
+        }
+    }
+
     @Override
     public void onDrawFrame() {
         synchronized (this) {

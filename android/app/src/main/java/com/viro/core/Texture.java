@@ -247,8 +247,8 @@ public class Texture {
 
 
     protected long mNativeRef;
-    private int mWidth;
-    private int mHeight;
+    int mWidth;
+    int mHeight;
     private WrapMode mWrapS = WrapMode.CLAMP;
     private WrapMode mWrapT = WrapMode.CLAMP;
     private FilterMode mMinificationFilter = FilterMode.LINEAR;

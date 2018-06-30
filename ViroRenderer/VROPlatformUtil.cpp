@@ -803,6 +803,18 @@ jobject VROPlatformCreateVideoSink(int textureId) {
     return jsurface;
 }
 
+jobject VROPlatformCreateVideoSink(int textureId, int width, int height) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "createVideoSink", "(III)Landroid/view/Surface;");
+    jobject jsurface = env->CallObjectMethod(sPlatformUtil, jmethod, textureId, width, height);
+
+    env->DeleteLocalRef(cls);
+    return jsurface;
+}
+
 void VROPlatformDestroyVideoSink(int textureId) {
     // As Video finalizers in Java can get called after the renderer is destroyed,
     // we perform a null check here to prevent video sinks from getting cleaned up twice.

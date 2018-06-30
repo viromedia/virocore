@@ -235,6 +235,7 @@ void VROPlatformSetTrackingImageView(std::string filepath);
 
 // Create a video sink on the Java side. Returns the Surface.
 jobject VROPlatformCreateVideoSink(int textureId);
+jobject VROPlatformCreateVideoSink(int textureId, int width, int height);
 void VROPlatformDestroyVideoSink(int textureId);
 
 // Get audio properties for this device.
