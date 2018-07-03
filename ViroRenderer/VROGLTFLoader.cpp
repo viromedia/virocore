@@ -634,7 +634,7 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
             pwarn("Viro does not support morph targets yet at the moment");
             return false;
         } else {
-            pwarn("Invalid target path %s with data size %d provided for gLTF.", channelProperty.c_str(), tempVec.size());
+            pwarn("Invalid target path %s with data size %d provided for gLTF.", channelProperty.c_str(), (int) tempVec.size());
             return false;
         }
     }
@@ -1020,7 +1020,7 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
     }
 
     // Determine offsets and data sizes representing the indexed vertices's 'window of data' in the buffer
-    int primitiveCount = VROGeometryUtilGetPrimitiveCount(gIndiceAccessor.count, primitiveType);
+    int primitiveCount = VROGeometryUtilGetPrimitiveCount((int) gIndiceAccessor.count, primitiveType);
     size_t elementCount = gIndiceAccessor.count;
     size_t dataOffset = gIndiceAccessor.byteOffset + gIndiceBufferView.byteOffset;
     size_t dataLength = elementCount *  bufferViewStride;
@@ -1090,7 +1090,7 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
             }
 
             // Finally, build the Geometry source.
-            int elementCount = gAttributeAccesor.count;
+            int elementCount = (int) gAttributeAccesor.count;
             std::shared_ptr<VROData> data = VROGLTFLoader::_dataCache[key];
             source = std::make_shared<VROGeometrySource>(data,
                                                          attributeType,
@@ -1162,7 +1162,7 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
         // the render needs to be notified of this element-to-source mapping, so that the correct vertex
         // indices are bounded to and pointed by the right set of vertex attributes. Thus, we set the
         // correspondingly mapped VROGeometryElement index here to preserve that mapping.
-        source->setGeometryElementIndex(geoElementIndex);
+        source->setGeometryElementIndex((int) geoElementIndex);
         sources.push_back(source);
     }
 

@@ -76,7 +76,7 @@ namespace stdviro
 
         if(pos) *pos = end - begin ;
 
-        return value ;
+        return (int) value;
     }
 
    /* int snprintf(char *s, size_t n, const char *fmt, ...)

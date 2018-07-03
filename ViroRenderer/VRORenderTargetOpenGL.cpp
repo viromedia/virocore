@@ -369,7 +369,6 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         
         for (int i = 0 ; i < _numAttachments; i++) {
             GL (glBindTexture(target, texNames[i]) );
-            GLenum attachment = getTextureAttachmentType(i);
             
             GL (glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
             GL (glTexParameterf(target, GL_TEXTURE_MIN_FILTER, _mipmapsEnabled ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR) );
