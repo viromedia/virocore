@@ -283,8 +283,16 @@ std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsig
 #elif VRO_PLATFORM_MACOS
 #import "VROImageMacOS.h"
 
+static NSOpenGLContext *_context = nullptr;
+void VROPlatformSetOpenGLContext(NSOpenGLContext *context) {
+    _context = context;
+}
+
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (_context) {
+            [_context makeCurrentContext];
+        }
         GL(); // Clears out error state
         fcn();
     });

@@ -174,6 +174,13 @@ void VROPlatformSetEAGLContext(EAGLContext *context);
 
 #endif
 
+#if VRO_PLATFORM_MACOS
+
+@class NSOpenGLContext;
+void VROPlatformSetOpenGLContext(NSOpenGLContext *context);
+
+#endif
+
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
 #import <Foundation/Foundation.h>
 
