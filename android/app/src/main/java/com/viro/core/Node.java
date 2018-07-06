@@ -1579,16 +1579,19 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * This is used for real-time depth testing, only by the VRTARScene. Not exposed to Java API.
      * @hide
      */
+    //#IFDEF 'viro_react'
     @Override
     public void onCameraARHitTest(ARHitTestResult[] results) {
         if (mHitTestListener != null) {
             mHitTestListener.onHitTestFinished(results);
         }
     }
+    //#ENDIF
 
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     @Override
     public void onCameraTransformUpdate(float posX, float poxY, float posZ,
                                         float rotEulerX, float rotEulerY, float rotEulerZ,
@@ -1596,6 +1599,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
                                         float upX, float upY, float upZ) {
         // no-op - used by VRTARScene only
     }
+    //#ENDIF
 
  // +---------------------------------------------------------------------------+
  // | NATIVE
