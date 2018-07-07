@@ -592,6 +592,20 @@ public class ViroViewARCore extends ViroView {
         return true;
     }
 
+    //#IFDEF 'viro_react'
+    public static boolean setBitmapOnTrackingImageView(Bitmap bitmap) {
+        if (sTrackingImageView == null) {
+            return false;
+        }
+        try {
+            sTrackingImageView.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+    //#ENDIF
+
     /**
      * @hide
      */

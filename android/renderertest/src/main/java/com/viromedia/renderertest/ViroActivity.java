@@ -32,6 +32,7 @@ import com.viro.core.ARImageAnchor;
 import com.viro.core.ARImageTarget;
 import com.viro.core.ARPointCloud;
 import com.viro.core.BoundingBox;
+import com.viro.core.CameraImageListener;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.FrameListener;
@@ -102,6 +103,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.crashlytics.android.Crashlytics;
+import com.viro.core.internal.PlatformUtil;
+
 import io.fabric.sdk.android.Fabric;
 
 public class ViroActivity extends AppCompatActivity {
@@ -353,8 +356,9 @@ public class ViroActivity extends AppCompatActivity {
         //testARHitTest(scene, 0, 5);
         //testAddArbitraryAnchors(scene, 0, 5);
         //testHostCloudAnchors(scene, 0, 2);
-        testResolveCloudAnchor(scene, "ua-ceb1cbf2825bf3545b4ef91650fbeff2");
+        //testResolveCloudAnchor(scene, "ua-ceb1cbf2825bf3545b4ef91650fbeff2");
         //nodes.addAll(testARImageTarget(scene));
+        testCameraImageCapture(scene);
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
@@ -512,7 +516,27 @@ public class ViroActivity extends AppCompatActivity {
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();
+    }
 
+    static class TestCameraImageListener implements CameraImageListener {
+        @Override
+        public void onCameraImageUpdated(ByteBuffer buffer, int width, int height) {
+            Log.i("Viro", "Received image " + width + ", " + height + " with buffer size " + buffer.capacity() + ", limit " + buffer.limit() + ", remaining " + buffer.remaining());
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bitmap.copyPixelsFromBuffer(buffer);
+
+            ViroViewARCore.setBitmapOnTrackingImageView(bitmap);
+        }
+    }
+
+    private void testCameraImageCapture(final ARScene scene) {
+        ((ViroViewARCore) mViroView).setCameraImageListener(mViroView.getViroContext(), new TestCameraImageListener());
+        //mHandler.postDelayed(new Runnable() {
+        //    @Override
+        //    public void run() {
+        //         ((ViroViewARCore) mViroView).setCameraImageListener(mViroView.getViroContext(), null);
+        //    }
+        //}, 5000);
     }
 
     private void testBackgroundImage(final Scene scene) {
