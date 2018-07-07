@@ -13,6 +13,8 @@
 #include "VROSceneRendererARCore.h"
 #include "ARUtils_JNI.h"
 #include "VRORenderer.h"
+#include "ViroContextAndroid_JNI.h"
+#include "VROCameraImageListener.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \
@@ -220,6 +222,61 @@ VRO_METHOD(void, nativeEnableTracking) (VRO_ARGS
             arRenderer->enableTracking(shouldTrack);
         }
     });
+}
+
+VRO_METHOD(void, nativeSetCameraImageListener)(VRO_ARGS
+                                               VRO_REF(VROARSceneController) renderer_j,
+                                               VRO_REF(ViroContext) context_j,
+                                               VRO_OBJECT listener_j) {
+    VRO_METHOD_PREAMBLE;
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(renderer_j);
+    std::weak_ptr<ViroContext> context_w = VRO_REF_GET(ViroContext, context_j);
+
+    if (VRO_IS_OBJECT_NULL(listener_j)) {
+        VROPlatformDispatchAsyncRenderer([context_w] {
+            VRO_ENV env = VROPlatformGetJNIEnv();
+            std::shared_ptr<ViroContext> context = context_w.lock();
+            if (!context) {
+                return;
+            }
+            std::shared_ptr<ViroContextAndroid> context_a = std::dynamic_pointer_cast<ViroContextAndroid>(context);
+            if (!context_a) {
+                return;
+            }
+            context_a->setCameraImageFrameListener(nullptr);
+        });
+    }
+    else {
+        VRO_OBJECT listener_g = VRO_NEW_GLOBAL_REF(listener_j);
+        VROPlatformDispatchAsyncRenderer([listener_g, renderer_w, context_w] {
+            VRO_ENV env = VROPlatformGetJNIEnv();
+            std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+            if (!renderer) {
+                VRO_DELETE_GLOBAL_REF(listener_g);
+                return;
+            }
+            std::shared_ptr<VROSceneRendererARCore> renderer_arc = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+            if (!renderer_arc) {
+                VRO_DELETE_GLOBAL_REF(listener_g);
+                return;
+            }
+            std::shared_ptr<ViroContext> context = context_w.lock();
+            if (!context) {
+                VRO_DELETE_GLOBAL_REF(listener_g);
+                return;
+            }
+            std::shared_ptr<ViroContextAndroid> context_a = std::dynamic_pointer_cast<ViroContextAndroid>(context);
+            if (!context_a) {
+                VRO_DELETE_GLOBAL_REF(listener_g);
+                return;
+            }
+
+            std::shared_ptr<VROCameraImageFrameListener> imageListener =
+                    std::make_shared<VROCameraImageFrameListener>(listener_g, renderer_arc, env);
+            context_a->setCameraImageFrameListener(imageListener);
+            VRO_DELETE_GLOBAL_REF(listener_g);
+        });
+    }
 }
 
 }

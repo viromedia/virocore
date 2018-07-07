@@ -62,6 +62,7 @@ public:
     void setSceneController(std::shared_ptr<VROSceneController> sceneController);
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunction);
+    std::shared_ptr<VROSceneController> getSceneController() { return _sceneController; };
 
     /*
      Activity lifecycle.

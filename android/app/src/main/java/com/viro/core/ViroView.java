@@ -243,6 +243,13 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
+     * Get the {@link Scene} that this ViroView is currently rendering.
+     *
+     * @return The {@link Scene} being rendered by this ViroView.
+     */
+    public Scene getScene() { return mCurrentScene; }
+
+    /**
      * For VR applications, set this to true to render in stereo mode. Stereo renders two images:
      * one for the left eye and one for the right, each perturbed slightly to simulate depth. This
      * mode is meant to be used in a VR headset. Set to false to render to the entire screen, for

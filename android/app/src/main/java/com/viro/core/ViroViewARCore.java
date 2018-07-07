@@ -281,6 +281,7 @@ public class ViroViewARCore extends ViroView {
     private ViroTouchGestureListener mViroTouchGestureListener;
     private ViroMediaRecorder mMediaRecorder;
     private StartupListener mStartupListener;
+    private CameraImageListener mCameraImageListener;
 
     // The renderer start listener is invoked when these are all true
     private AtomicBoolean mRendererSurfaceInitialized = new AtomicBoolean(false);
@@ -904,6 +905,28 @@ public class ViroViewARCore extends ViroView {
         }
 
         mCurrentScene.getRootNode().setARHitTestListener(hitTestListener);
+    }
+
+    /**
+     * Install a {@link CameraImageListener} which will be invoked each frame as the AR camera
+     * image is updated. This can be used to perform additional processing on the real-world
+     * images before they are rendered to the device.
+     *
+     * @param context The {@link ViroContext} is required to set an image listener.
+     * @param listener The {@link CameraImageListener} to install.
+     */
+    public void setCameraImageListener(ViroContext context, CameraImageListener listener) {
+        mCameraImageListener = listener;
+        ((RendererARCore) mNativeRenderer).setCameraImageListener(context, listener);
+    }
+
+    /**
+     * Get the {@link CameraImageListener} that is currently receiving all AR camera frames.
+     *
+     * @return The CameraImageListener currently installed.
+     */
+    public CameraImageListener getCameraImageListener() {
+        return mCameraImageListener;
     }
 
     /**

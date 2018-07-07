@@ -11,7 +11,7 @@
 #include "ViroContext_JNI.h"
 #include "VROSceneRenderer.h"
 #include "VROImageAndroid.h"
-#include "ARSceneController_JNI.h"
+#include "VROCameraImageListener.h"
 
 /**
  * Helper Context for accessing render specific information, without exposing the entire renderer.
@@ -22,7 +22,8 @@ public:
     ViroContextAndroid(std::shared_ptr<VROSceneRenderer> renderer) {
         _renderer = renderer;
     }
-    virtual ~ViroContextAndroid(){}
+    virtual ~ViroContextAndroid(){
+    }
 
     const VROCamera &getCamera() {
         return _renderer->getRenderer()->getCamera();
@@ -37,15 +38,14 @@ public:
         return _renderer->getRenderer()->getInputController();
     }
 
-    void setCameraImageFrameListener(std::shared_ptr<CameraImageFrameListener> listener) {
+    void setCameraImageFrameListener(std::shared_ptr<VROCameraImageFrameListener> listener) {
         std::shared_ptr<VROFrameSynchronizer> synchronizer = getFrameSynchronizer();
-        std::shared_ptr<CameraImageFrameListener> existingListener = _cameraFrameListener;
+        std::shared_ptr<VROCameraImageFrameListener> existingListener = _cameraFrameListener;
         if (existingListener) {
             synchronizer->removeFrameListener(existingListener);
         }
 
         if (listener) {
-            pinfo("added to synchronizer");
             synchronizer->addFrameListener(listener);
             _cameraFrameListener = listener;
         } else {
@@ -60,7 +60,7 @@ private:
     /*
      The currently installed camera frame listener, if any.
      */
-    std::shared_ptr<CameraImageFrameListener> _cameraFrameListener;
+    std::shared_ptr<VROCameraImageFrameListener> _cameraFrameListener;
 
 };
 

@@ -67,6 +67,10 @@ public class RendererARCore extends Renderer {
         nativeEnableTracking(mNativeRef, shouldTrack);
     }
 
+    public void setCameraImageListener(ViroContext context, CameraImageListener listener) {
+        nativeSetCameraImageListener(mNativeRef, context.mNativeRef, listener);
+    }
+
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
                                                    AssetManager assets, PlatformUtil platformUtil,
                                                    boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
@@ -79,5 +83,6 @@ public class RendererARCore extends Renderer {
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
     private native void nativeEnableTracking(long nativeRenderer, boolean shouldTrack);
+    private native void nativeSetCameraImageListener(long nativeRenderer, long contextRef, CameraImageListener listener);
 
 }

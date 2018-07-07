@@ -61,38 +61,4 @@ private:
     VRO_OBJECT _javaObject;
 };
 
-class CameraImageFrameListener : public VROFrameListener {
-public:
-    CameraImageFrameListener(VRO_OBJECT listener_j, std::shared_ptr<VROARScene> scene, VRO_ENV env) :
-            _listener_j(VRO_NEW_GLOBAL_REF(listener_j)),
-            _scene(scene),
-            _bufferIndex(0) {
-
-        for (int i = 0; i < 3; i++) {
-            _buffers[i] = NULL;
-        }
-    }
-
-    virtual ~CameraImageFrameListener() {
-        VRO_ENV env = VROPlatformGetJNIEnv();
-        VRO_DELETE_GLOBAL_REF(_listener_j);
-
-        for (int i = 0; i < 3; i++) {
-            if (_buffers[i] != NULL) {
-                VRO_DELETE_GLOBAL_REF(_buffers[i]);
-            }
-        }
-    }
-
-    void onFrameWillRender(const VRORenderContext &context);
-    void onFrameDidRender(const VRORenderContext &context);
-
-private:
-    VRO_OBJECT _listener_j;
-    std::weak_ptr<VROARScene> _scene;
-    int _bufferIndex;
-    std::shared_ptr<VROData> _data[3];
-    jobject _buffers[3];
-};
-
 #endif
