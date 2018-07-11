@@ -95,13 +95,14 @@ VROARSessionARCore::~VROARSessionARCore() {
     if (_session != nullptr) {
         pinfo("Destroying ARCore session");
         delete (_session);
-    }
-    if (_rotatedImageData != nullptr) {
-        free (_rotatedImageData);
+
+        if (_currentARCoreImageDatabase != nullptr) {
+            delete(_currentARCoreImageDatabase);
+        }
     }
 
-    if (_currentARCoreImageDatabase != nullptr) {
-        delete(_currentARCoreImageDatabase);
+    if (_rotatedImageData != nullptr) {
+        free (_rotatedImageData);
     }
 }
 
