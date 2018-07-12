@@ -10,6 +10,7 @@
 #define VROGlyph_h
 
 #include <memory>
+#include <vector>
 #include "VROVector3f.h"
 #include "VROAllocationTracker.h"
 #include <ft2build.h>
@@ -17,6 +18,8 @@
 
 class VRODriver;
 class VROTexture;
+class VROGlyphAtlas;
+class VROAtlasLocation;
 
 class VROGlyph {
     
@@ -30,18 +33,25 @@ public:
     }
     
     /*
-     If forRendering is false, then the texture and all bitmap fields will
-     not be loaded, and only getAdvance() will be available.
+     Load the glyph identified by the given FT_Face. If forRendering is false,
+     then only getAdvance() will be available after this operation. If
+     forRendering is true, then the glyph will additionally be written to the
+     last VROGlyphAtlas provided in the given vector. If the glyph does not
+     fit in said vector, then a new VROGlyphAtlas will be created and pushed
+     to the back of the vector.
      
      If the variant selector is 0, then we assume this is not a variation
      sequence.
      */
     virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                      bool forRendering, std::shared_ptr<VRODriver> driver) = 0;
+                      bool forRendering, std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
+                      std::shared_ptr<VRODriver> driver) = 0;
     
-    std::shared_ptr<VROTexture> getTexture() const {
-        return _texture;
+    virtual std::shared_ptr<VROTexture> getTexture() const = 0;
+    const std::shared_ptr<VROGlyphAtlas> getAtlas() const {
+        return _atlas;
     }
+    
     VROVector3f getSize() const {
         return _size;
     }
@@ -68,9 +78,9 @@ public:
 protected:
     
     /*
-     Texture on which the glyph is rendered.
+     Atlas on which the glyph is rendered.
      */
-    std::shared_ptr<VROTexture> _texture;
+    std::shared_ptr<VROGlyphAtlas> _atlas;
     
     /*
      Size of the glyph.

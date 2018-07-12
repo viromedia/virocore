@@ -20,6 +20,7 @@
 class VROMaterial;
 class VROTexture;
 class VROGlyph;
+class VROGlyphAtlas;
 class VROTypefaceCollection;
 
 enum class VROTextHorizontalAlignment {
@@ -210,14 +211,15 @@ private:
                           std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                           std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                           std::vector<std::shared_ptr<VROMaterial>> &materials,
-                          float *outRealizedWidth, float *outRealizedHeight);
+                          float *outRealizedWidth, float *outRealizedHeight,
+                          std::shared_ptr<VRODriver> driver);
     
     /*
      Build a standard Viro geometry from the given vertex array and material/indices
      pairs.
      */
     static void buildGeometry(std::vector<VROShapeVertexLayout> &var,
-                              std::map<uint32_t, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
+                              std::map<std::shared_ptr<VROGlyphAtlas>, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                               std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                               std::vector<std::shared_ptr<VROMaterial>> &materials);

@@ -272,6 +272,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROShaderModifier.cpp
              ${VIRO_RENDERER_SRC}/VROLightingUBO.cpp
              ${VIRO_RENDERER_SRC}/VROGlyphOpenGL.cpp
+             ${VIRO_RENDERER_SRC}/VROGlyphAtlasOpenGL.cpp
 
              # GVR Audio
              ${VIRO_RENDERER_SRC}/VROSoundGVR.cpp

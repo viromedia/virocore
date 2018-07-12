@@ -66,6 +66,7 @@ void VROAllocationTracker::printNow() {
     pinfo("    Video Tex Caches:    %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::VideoTextureCaches)].load()));
     pinfo("    Typefaces:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Typefaces)].load()));
     pinfo("    Glyphs:              %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Glyphs)].load()));
+    pinfo("    Glyph Atlases:       %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::GlyphAtlases)].load()));
     pinfo("    Render Targets:      %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::RenderTargets)].load()));
     pinfo("    Task Queues:         %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TaskQueues)].load()));
 }

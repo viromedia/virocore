@@ -20,6 +20,8 @@
 #include "VROSparseBitSet.h"
 
 class VROGlyph;
+class VRODriver;
+class VROGlyphAtlas;
 struct FT_FaceRec_;
 
 enum class VROFontStyle {
@@ -89,6 +91,11 @@ public:
                                        bool forRendering);
     
     /*
+     Refresh the texture of all glyph atlases used by this typeface.
+     */
+    void refreshGlyphAtlases(std::shared_ptr<VRODriver> driver);
+    
+    /*
      Preload the glyphs in the given string, caching them with this typeface.
      */
     void preloadGlyphs(std::string chars);
@@ -105,6 +112,7 @@ protected:
                                                 bool forRendering) = 0;
     
     std::string _name;
+    std::vector<std::shared_ptr<VROGlyphAtlas>> _glyphAtlases;
     
     // TODO VIRO-3239 Move these to VROFont. VROTypeface is essentially a "font family"
     int _size;

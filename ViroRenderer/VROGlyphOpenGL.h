@@ -23,12 +23,12 @@ public:
     virtual ~VROGlyphOpenGL();
     
     virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                      bool forRendering, std::shared_ptr<VRODriver> driver);
+                      bool forRendering, std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
+                      std::shared_ptr<VRODriver> driver);
+    
+    std::shared_ptr<VROTexture> getTexture() const;
     
 private:
-    
-    void loadTexture(FT_Face face, FT_GlyphSlot &glyph,
-                     std::shared_ptr<VRODriverOpenGL> driver);
     
 };
 

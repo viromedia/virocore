@@ -181,7 +181,7 @@ void VROText::update() {
     float realizedWidth, realizedHeight;
     buildText(_text, _typefaceCollection, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
               _lineBreakMode, _clipMode, _maxLines, sources, elements, materials,
-              &realizedWidth, &realizedHeight);
+              &realizedWidth, &realizedHeight, driver);
 
     _realizedWidth = realizedWidth;
     _realizedHeight = realizedHeight;
@@ -258,7 +258,8 @@ void VROText::buildText(std::wstring &text,
                         std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                         std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                         std::vector<std::shared_ptr<VROMaterial>> &materials,
-                        float *outRealizedWidth, float *outRealizedHeight) {
+                        float *outRealizedWidth, float *outRealizedHeight,
+                        std::shared_ptr<VRODriver> driver) {
     if (text.size() == 0) {
         *outRealizedWidth = 0;
         *outRealizedHeight = 0;
@@ -267,12 +268,11 @@ void VROText::buildText(std::wstring &text,
 
     /*
      Create a glyph, material, and vector of indices for each character
-     in the text string. If a character appears multiple times in the text,
-     we can share the same glyph, material, and indices vector across them
-     all.
+     in the text string. Characters that share the same atlas will use the
+     same material.
      */
     std::map<uint32_t, std::shared_ptr<VROGlyph>> glyphMap;
-    std::map<uint32_t, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
+    std::map<std::shared_ptr<VROGlyphAtlas>, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
     
     // Split the text into runs, eached mapped to a typeface
     std::vector<VROFontRun> fontRuns = typefaces->computeRuns(text);
@@ -294,7 +294,7 @@ void VROText::buildText(std::wstring &text,
         whitespaceMaterial->setName(whitespaceName);
         
         std::vector<int> indices;
-        materialMap[spaceCode] = { whitespaceMaterial, indices };
+        materialMap[whitespaceGlyph->getAtlas()] = { whitespaceMaterial, indices };
         glyphMap[spaceCode] = whitespaceGlyph;
     }
     
@@ -313,19 +313,33 @@ void VROText::buildText(std::wstring &text,
             if (glyphMap.find(codePoint) == glyphMap.end()) {
                 std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, true);
                 
-                std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-                material->setNeedsToneMapping(false);
-                material->getDiffuse().setColor(color);
-                material->getDiffuse().setTexture(glyph->getTexture());
-                
-                char name[2] = { (char)codePoint, 0 };
-                material->setName(name);
-                
-                std::vector<int> indices;
-                materialMap[codePoint] = { material, indices };
+                const std::shared_ptr<VROGlyphAtlas> atlas = glyph->getAtlas();
+                auto materialAndIndices = materialMap.find(atlas);
+                if (materialAndIndices == materialMap.end()) {
+                    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+                    material->setNeedsToneMapping(false);
+                    material->getDiffuse().setColor(color);
+  
+                    std::vector<int> indices;
+                    materialMap[atlas] = { material, indices };
+                }
                 glyphMap[codePoint] = glyph;
             }
         }
+    }
+    
+    /*
+     Now that all the glyphs are loaded for this text, refresh the atlas textures,
+     then assign the texture to each material.
+     */
+    for (VROFontRun &fontRun : fontRuns) {
+        std::shared_ptr<VROTypeface> &typeface = fontRun.typeface;
+        typeface->refreshGlyphAtlases(driver);
+    }
+    for (auto &kv : glyphMap) {
+        std::shared_ptr<VROGlyph> glyph = kv.second;
+        std::shared_ptr<VROMaterial> material = materialMap[glyph->getAtlas()].first;
+        material->getDiffuse().setTexture(glyph->getTexture());
     }
     
     /*
@@ -406,7 +420,7 @@ void VROText::buildText(std::wstring &text,
             uint32_t charCode = *c;
             std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
-            buildChar(glyph, x, y, var, materialMap[charCode].second);
+            buildChar(glyph, x, y, var, materialMap[glyph->getAtlas()].second);
             float advance = glyph->getAdvance() * kTextPointToWorldScale;
             
             if (charCode == ' ') {
@@ -455,7 +469,7 @@ void VROText::buildChar(std::shared_ptr<VROGlyph> &glyph,
 }
 
 void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
-                            std::map<uint32_t, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
+                            std::map<std::shared_ptr<VROGlyphAtlas>, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                             std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                             std::vector<std::shared_ptr<VROMaterial>> &materials) {

@@ -135,7 +135,7 @@ CTFontRef VROTypefaceiOS::createFont(NSString *family, int size, VROFontStyle st
 std::shared_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(uint32_t charCode, uint32_t variantSelector,
                                                     bool forRendering) {
     std::shared_ptr<VROGlyph> glyph = std::make_shared<VROGlyphOpenGL>();
-    glyph->load(_face, charCode, variantSelector, forRendering, _driver.lock());
+    glyph->load(_face, charCode, variantSelector, forRendering, &_glyphAtlases, _driver.lock());
     
     return glyph;
 }

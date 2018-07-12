@@ -12,6 +12,7 @@
 #include "VROCharmapCoverage.h"
 #include "VROFontUtil.h"
 #include "VROStringUtil.h"
+#include "VROGlyphAtlas.h"
 
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
@@ -153,5 +154,11 @@ std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t var
 void VROTypeface::preloadGlyphs(std::string chars) {
     for (std::string::const_iterator c = chars.begin(); c != chars.end(); ++c) {
         getGlyph(*c, 0, true);
+    }
+}
+
+void VROTypeface::refreshGlyphAtlases(std::shared_ptr<VRODriver> driver) {
+    for (std::shared_ptr<VROGlyphAtlas> atlas : _glyphAtlases) {
+        atlas->refreshTexture(driver);
     }
 }
