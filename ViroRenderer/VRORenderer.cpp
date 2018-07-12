@@ -71,6 +71,7 @@ VRORenderer::~VRORenderer() {
 
 void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     initBlankTexture(*_context);
+    initPointCloudTexture();
     driver->readGPUType();
     driver->readDisplayFramebuffer();
 
