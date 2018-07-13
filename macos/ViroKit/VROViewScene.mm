@@ -28,12 +28,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     std::shared_ptr<VRODriverOpenGL> _driver;
     std::shared_ptr<VROInputControllerAR> _inputController;
     VRORendererConfiguration _rendererConfig;
+    CVDisplayLinkRef _displayLink;
     
-    NSTimer *_renderTimer;
     NSOpenGLContext *_openGLContext;
     NSOpenGLPixelFormat *_pixelFormat;
     
-    CVDisplayLinkRef _displayLink;
+    std::recursive_mutex _taskQueueMutex;
+    std::queue<std::function<void()>> _taskQueue;
+    
     int _frame;
     double _suspendedNotificationTime;
 }
@@ -46,6 +48,12 @@ static VROVector3f const kZeroVector = VROVector3f();
 @dynamic sceneController;
 
 #pragma mark - Initialization
+
+static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now, const CVTimeStamp *outputTime,
+                                      CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext) {
+    [(__bridge VROViewScene *)displayLinkContext renderFrame];
+    return kCVReturnSuccess;
+}
 
 - (id)initWithFrame:(NSRect)frameRect
              config:(VRORendererConfiguration)config
@@ -70,7 +78,10 @@ static VROVector3f const kZeroVector = VROVector3f();
         pabort("No OpenGL pixel format");
     }
     _openGLContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:context];
+    GLint swapInt = 1;
+    [_openGLContext setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
     
+    NSLog(@"Created new OpenGL context %p", _openGLContext);
     if (self = [super initWithFrame:frameRect]) {
         [_openGLContext makeCurrentContext];
         
@@ -78,29 +89,26 @@ static VROVector3f const kZeroVector = VROVector3f();
         GLint swapInt = 1;
         [_openGLContext setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
         
-        // Look for changes in view size
-        // Note, -reshape will not be called automatically on size changes because NSView does not export it to override
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(reshape)
-                                                     name:NSViewGlobalFrameDidChangeNotification
-                                                   object:self];
+        // Create a display link capable of being used with all active displays
+        CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
         
-        _renderTimer = [NSTimer timerWithTimeInterval:0.001   //a 1ms time interval
-                                              target:self
-                                            selector:@selector(timerFired:)
-                                            userInfo:nil
-                                             repeats:YES];
+        // Set the renderer output callback function
+        CVDisplayLinkSetOutputCallback(_displayLink, &MyDisplayLinkCallback, (__bridge void *)self);
         
-        [[NSRunLoop currentRunLoop] addTimer:_renderTimer
-                                     forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] addTimer:_renderTimer
-                                     forMode:NSEventTrackingRunLoopMode]; //Ensure timer fires during resize
+        // Set the display link for the current renderer
+        CGLContextObj cglContext = [_openGLContext CGLContextObj];
+        CGLPixelFormatObj cglPixelFormat = [_pixelFormat CGLPixelFormatObj];
+        CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, cglContext, cglPixelFormat);
+        
+        // Activate the display link
+        CVDisplayLinkStart(_displayLink);
     }
     return self;
 }
 
 - (void)initRenderer:(VRORendererConfiguration)config {
     VROPlatformSetType(VROPlatformType::iOSSceneView);
+    VROPlatformSetOpenGLContext(_openGLContext, self);
     VROThreadRestricted::setThread(VROThreadName::Renderer);
     
     _driver = std::make_shared<VRODriverOpenGLMacOS>(_openGLContext, _pixelFormat);
@@ -113,14 +121,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     _renderer->setDelegate(_renderDelegateWrapper);
     
     glEnable(GL_FRAMEBUFFER_SRGB);
-}
-
-- (void)timerFired:(id)sender
-{
-    // It is good practice in a Cocoa application to allow the system to send the -drawRect:
-    // message when it needs to draw, and not to invoke it directly from the timer.
-    // All we do here is tell the display it needs a refresh
-    [self setNeedsDisplay:YES];
 }
 
 - (void)surfaceNeedsUpdate:(NSNotification *)notification {
@@ -138,8 +138,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     
 }
 
-- (void)drawRect:(NSRect)dirtyRect {
+- (void)renderFrame {
     [_openGLContext makeCurrentContext];
+    
+    [self processTasks];
     if (_frame == 0) {
         [self initRenderer:_rendererConfig];
     }
@@ -150,6 +152,20 @@ static VROVector3f const kZeroVector = VROVector3f();
     ++_frame;
     ALLOCATION_TRACKER_PRINT();
     [_openGLContext flushBuffer];
+}
+
+- (void)processTasks {
+    std::lock_guard<std::recursive_mutex> lock(_taskQueueMutex);
+    while (!_taskQueue.empty()) {
+        std::function<void()> task = _taskQueue.front();
+        _taskQueue.pop();
+        task();
+    }
+}
+
+- (void)queueRendererTask:(std::function<void()>)task {
+    std::lock_guard<std::recursive_mutex> lock(_taskQueueMutex);
+    _taskQueue.push(task);
 }
 
 - (BOOL)acceptsFirstResponder {

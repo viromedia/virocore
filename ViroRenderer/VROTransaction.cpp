@@ -17,8 +17,8 @@
 
 #pragma mark - Transaction Management
 
-static std::stack<std::shared_ptr<VROTransaction>> openTransactions;
-static std::vector<std::shared_ptr<VROTransaction>> committedTransactions;
+static thread_local std::stack<std::shared_ptr<VROTransaction>> openTransactions;
+static thread_local std::vector<std::shared_ptr<VROTransaction>> committedTransactions;
 
 std::shared_ptr<VROTransaction> VROTransaction::get() {
     if (openTransactions.empty()) {

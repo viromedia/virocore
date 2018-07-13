@@ -158,19 +158,6 @@ void VROPlatformDeleteFile(std::string filename) {
                                                error:&deleteError];
 }
 
-void VROPlatformDispatchAsyncApplication(std::function<void()> fcn) {
-    // On iOS the application and rendering thread are the same
-    dispatch_async(dispatch_get_main_queue(), ^{
-        fcn();
-    });
-}
-
-void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        fcn();
-    });
-}
-
 std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::string, std::string> resourceMap) {
     return "";
 }
@@ -204,6 +191,19 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
             [EAGLContext setCurrentContext:_context];
         }
         GL(); // Clears out error state
+        fcn();
+    });
+}
+
+void VROPlatformDispatchAsyncApplication(std::function<void()> fcn) {
+    // On iOS the application and rendering thread are the same
+    dispatch_async(dispatch_get_main_queue(), ^{
+        fcn();
+    });
+}
+
+void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         fcn();
     });
 }
@@ -282,18 +282,62 @@ std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsig
 
 #elif VRO_PLATFORM_MACOS
 #import "VROImageMacOS.h"
+#import "VROViewScene.h"
 
-static NSOpenGLContext *_context = nullptr;
-void VROPlatformSetOpenGLContext(NSOpenGLContext *context) {
-    _context = context;
+static const char *sRenderingContextKey = "rendering_context";
+
+// Thread-local needs to be wrapped in a C++ class due to MacOS bug
+class VRORenderingThreadContext {
+public:
+    NSOpenGLContext *openGLContext;
+    dispatch_queue_t backgroundQueue;
+    VROViewScene *view;
+};
+static thread_local VRORenderingThreadContext *_context = nullptr;
+
+void VROPlatformSetOpenGLContext(NSOpenGLContext *context, VROViewScene *scene) {
+    if (!_context) {
+        _context = new VRORenderingThreadContext();
+        _context->openGLContext = context;
+        _context->backgroundQueue = dispatch_queue_create("com.viro.background", DISPATCH_QUEUE_CONCURRENT);
+        _context->view = scene;
+        
+        dispatch_queue_set_specific(_context->backgroundQueue, sRenderingContextKey, _context, nullptr);
+    }
+}
+
+void VROPlatformSetOpenGLContext(VRORenderingThreadContext *context) {
+    if (!_context) {
+        _context = context;
+    }
+}
+
+VRORenderingThreadContext *VROPlatformGetRenderingThreadContext() {
+    // First check if we have a context attached to our active dispatch queue
+    // (this is the case if we invoke this from a background queue)
+    VRORenderingThreadContext *context = (VRORenderingThreadContext *) dispatch_queue_get_specific(dispatch_get_current_queue(), sRenderingContextKey);
+    if (!context) {
+        // Otherwise check for thread local
+        context = _context;
+    }
+    return context;
 }
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
+    VRORenderingThreadContext *context = VROPlatformGetRenderingThreadContext();
+    passert (context != nullptr);
+    [context->view queueRendererTask:fcn];
+}
+
+void VROPlatformDispatchAsyncApplication(std::function<void()> fcn) {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (_context) {
-            [_context makeCurrentContext];
-        }
-        GL(); // Clears out error state
+        fcn();
+    });
+}
+
+void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
+    passert (_context != nullptr);
+    dispatch_async(_context->backgroundQueue, ^{
         fcn();
     });
 }
@@ -301,6 +345,7 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
 NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
                                                      void (^completionBlock)(NSData *data, NSError *error)) {
     
+    VRORenderingThreadContext *context = VROPlatformGetRenderingThreadContext();
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -309,8 +354,12 @@ NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
     NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                            completionBlock(data, error);
-                                                            dispatch_semaphore_signal(semaphore);
+                                                            dispatch_async(context->backgroundQueue, ^{
+                                                                // Ensure the context is transferred over to the background thread
+                                                                //VROPlatformSetOpenGLContext(context);
+                                                                completionBlock(data, error);
+                                                                dispatch_semaphore_signal(semaphore);
+                                                            });
                                                         }];
     [downloadTask resume];
     [downloadSession finishTasksAndInvalidate];
@@ -323,10 +372,16 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
     sessionConfig.timeoutIntervalForRequest = 30;
     
+    VRORenderingThreadContext *context = VROPlatformGetRenderingThreadContext();
+
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
     NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                            completionBlock(data, error);
+                                                            dispatch_async(context->backgroundQueue, ^{
+                                                                // Ensure the context is transferred over to the background thread
+                                                                //VROPlatformSetOpenGLContext(context);
+                                                                completionBlock(data, error);
+                                                            });
                                                         }];
     [downloadTask resume];
     [downloadSession finishTasksAndInvalidate];

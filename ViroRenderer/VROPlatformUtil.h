@@ -177,7 +177,8 @@ void VROPlatformSetEAGLContext(EAGLContext *context);
 #if VRO_PLATFORM_MACOS
 
 @class NSOpenGLContext;
-void VROPlatformSetOpenGLContext(NSOpenGLContext *context);
+@class VROViewScene;
+void VROPlatformSetOpenGLContext(NSOpenGLContext *context, VROViewScene *scene);
 
 #endif
 

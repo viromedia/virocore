@@ -9,6 +9,7 @@
 #include <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import "VROView.h"
+#import <functional>
 
 class VRORendererConfiguration;
 
@@ -22,6 +23,11 @@ class VRORendererConfiguration;
  Base OpenGL view implementation.
  */
 - (void)update;
+
+/*
+ Queue a task to run on the rendering thread of this view.
+ */
+- (void)queueRendererTask:(std::function<void()>)task;
 
 /*
  Should be invoked before this object gets deallocated, to clean up GL
