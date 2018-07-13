@@ -525,7 +525,7 @@ public class ViroActivity extends AppCompatActivity {
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(buffer);
 
-            ViroViewARCore.setBitmapOnTrackingImageView(bitmap);
+            //ViroViewARCore.setBitmapOnTrackingImageView(bitmap);
         }
     }
 

@@ -592,8 +592,7 @@ public class ViroViewARCore extends ViroView {
         return true;
     }
 
-    //#IFDEF 'viro_react'
-    public static boolean setBitmapOnTrackingImageView(Bitmap bitmap) {
+    static boolean setBitmapOnTrackingImageView(Bitmap bitmap) {
         if (sTrackingImageView == null) {
             return false;
         }
@@ -604,7 +603,6 @@ public class ViroViewARCore extends ViroView {
         }
         return true;
     }
-    //#ENDIF
 
     /**
      * @hide
