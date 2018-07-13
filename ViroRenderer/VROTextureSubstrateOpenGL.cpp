@@ -25,7 +25,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
     _owned(true),
     _driver(driver) {
     
-    bool linearRenderingEnabled = driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
+    bool linearRenderingEnabled = driver->isLinearRenderingEnabled();
     loadTexture(type, format, internalFormat, linearRenderingEnabled && sRGB, mipmapMode, data, width, height, mipSizes,
                 wrapS, wrapT, minFilter, magFilter, mipFilter);
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);

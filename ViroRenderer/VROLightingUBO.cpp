@@ -69,7 +69,7 @@ void VROLightingUBO::updateLightsFragment() {
 
     for (const std::shared_ptr<VROLight> &light : _lights) {
         VROVector3f lightColor = light->getColor();
-        if (driver && driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear) {
+        if (driver && driver->isLinearRenderingEnabled()) {
             lightColor = VROMathConvertSRGBToLinearColor(lightColor);
         }
         VROVector3f color = lightColor * light->getColorFromTemperature();

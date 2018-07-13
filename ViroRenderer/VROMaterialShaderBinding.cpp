@@ -150,7 +150,7 @@ void VROMaterialShaderBinding::bindMaterialUniforms(const VROMaterial &material,
                                                     std::shared_ptr<VRODriver> &driver) {
     if (_diffuseSurfaceColorUniform != nullptr) {
         VROVector4f color = material.getDiffuse().getColor();
-        if (driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear) {
+        if (driver->isLinearRenderingEnabled()) {
             color = VROMathConvertSRGBToLinearColor(color);
         }
         _diffuseSurfaceColorUniform->setVec4(color);

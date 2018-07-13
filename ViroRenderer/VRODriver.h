@@ -207,6 +207,25 @@ public:
     virtual VROColorRenderingMode getColorRenderingMode() = 0;
     
     /*
+     Sets a flag indicating whether a software gamma correction pass is currently
+     being used by the choreographer.
+     */
+    virtual void setHasSoftwareGammaPass(bool softwareGamma) = 0;
+    virtual bool hasSoftwareGammaPass() const = 0;
+    
+    /*
+     Returns true if linear rendering is enabled for this device. This only returns true
+     if:
+     
+     1. We have a hardware sRGB buffer, or
+     2. We are using software gamma correction (which requires that HDR is enabled).
+     */
+    bool isLinearRenderingEnabled() {
+        return getColorRenderingMode() == VROColorRenderingMode::Linear ||
+              (getColorRenderingMode() == VROColorRenderingMode::LinearSoftware && hasSoftwareGammaPass());
+    }
+    
+    /*
      Return true if bloom rendering is enabled. If so, materials that exceed their
      bloom threshold will glow.
      */

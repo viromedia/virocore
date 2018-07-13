@@ -38,6 +38,7 @@ public:
     VRODriverOpenGL() :
         _gpuType(VROGPUType::Normal),
         _lastPurgeFrame(0),
+        _softwareGammaPass(false),
         _depthWritingEnabled(true),
         _depthReadingEnabled(true),
         _colorWritingEnabled(true),
@@ -362,6 +363,13 @@ public:
         }
     }
 
+    void setHasSoftwareGammaPass(bool gammaPass) {
+        _softwareGammaPass = gammaPass;
+    }
+    bool hasSoftwareGammaPass() const {
+        return _softwareGammaPass;
+    }
+
     VROGPUType getGPUType() {
         return _gpuType;
     }
@@ -470,6 +478,11 @@ private:
      The frame during which we last purged resources.
      */
     int _lastPurgeFrame;
+
+    /*
+     True if a software gamma correction pass is installed.
+     */
+    bool _softwareGammaPass;
     
     /*
      Current context-wide state.

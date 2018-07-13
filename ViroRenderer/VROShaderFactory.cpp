@@ -154,7 +154,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::YCbCr) {
         samplers.push_back("diffuse_texture_y");
         samplers.push_back("diffuse_texture_cbcr");
-        modifiers.push_back(createYCbCrTextureModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
+        modifiers.push_back(createYCbCrTextureModifier(driver->isLinearRenderingEnabled()));
     }
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Cube) {
         samplers.push_back("diffuse_texture");
@@ -165,7 +165,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     if (materialCapabilities.diffuseEGLModifier) {
-        modifiers.push_back(createEGLImageModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
+        modifiers.push_back(createEGLImageModifier(driver->isLinearRenderingEnabled()));
     }
 
     if (materialCapabilities.chromaKeyFiltering) {

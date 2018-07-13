@@ -135,9 +135,13 @@ void VROChoreographer::createRenderTargets() {
             // (indicating what fragments require tone-mapping)
             _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false);
         }
+
+        bool needsSoftwareGammaPass = driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware;
         _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::HableLuminanceOnly,
-                                                                      driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,
-                                                                      driver);
+                                                                      needsSoftwareGammaPass, driver);
+        driver->setHasSoftwareGammaPass(needsSoftwareGammaPass);
+    } else {
+        driver->setHasSoftwareGammaPass(false);
     }
     
     /*
