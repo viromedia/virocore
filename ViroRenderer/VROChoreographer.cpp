@@ -152,6 +152,7 @@ void VROChoreographer::createRenderTargets() {
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
     _viewport = viewport;
     
+
     /*
      The display needs the full viewport, in case it's rendering to a translated
      half of a larger screen (e.g. as in VR).
@@ -165,25 +166,49 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
      */
     VROViewport rtViewport = VROViewport(0, 0, viewport.getWidth(), viewport.getHeight());
 
+    bool failed = false;
     if (_blitTarget) {
-        _blitTarget->setViewport(rtViewport);
+        if (!_blitTarget->setViewport(rtViewport)) {
+            pwarn("Blit target creation failed");
+            failed = true;
+        }
     }
     if (_postProcessTargetA) {
-        _postProcessTargetA->setViewport(rtViewport);
+        if (!_postProcessTargetA->setViewport(rtViewport)) {
+            pwarn("Post process render target (A) creation failed");
+            failed = true;
+        }
     }
     if (_postProcessTargetB) {
-        _postProcessTargetB->setViewport(rtViewport);
+        if (!_postProcessTargetB->setViewport(rtViewport)) {
+            pwarn("Post process render target (B) creation failed");
+            failed = true;
+        }
     }
     if (_hdrTarget) {
-        _hdrTarget->setViewport(rtViewport);
+        if (!_hdrTarget->setViewport(rtViewport)) {
+            pwarn("HDR render target creation failed");
+            failed = true;
+        }
     }
     if (_blurTargetA) {
-        _blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
-                                                                          (int)(rtViewport.getHeight() * _blurScaling) });
+        if (!_blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
+                                                                               (int)(rtViewport.getHeight() * _blurScaling) })) {
+            pwarn("Blur render target (A) creation failed");
+            failed = true;
+        }
     }
     if (_blurTargetB) {
-        _blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
-                                                                          (int)(rtViewport.getHeight() * _blurScaling) });
+        if (!_blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
+                                                                               (int)(rtViewport.getHeight() * _blurScaling) })) {
+            pwarn("Blur render target (B) creation failed");
+            failed = true;
+        }
+    }
+
+    if (failed) {
+        pwarn("One or more render targets failed creation: disabling HDR and retrying");
+        setHDREnabled(false);
     }
 }
 
