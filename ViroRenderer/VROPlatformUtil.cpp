@@ -1096,12 +1096,13 @@ void VROPlatformSetEnumValue(JNIEnv *env, jobject jObj, const char *fieldName,
 
 void VROPlatformSetObject(JNIEnv *env, jobject jObj, const char *fieldName,
                           const char *fieldType, VRO_OBJECT object) {
-    jfieldID fieldId = env->GetFieldID(env->GetObjectClass(jObj), fieldName, fieldType);
+    jclass objclass = env->GetObjectClass(jObj);
+    jfieldID fieldId = env->GetFieldID(objclass, fieldName, fieldType);
     if (fieldId == NULL) {
         pwarn("Attempted to set undefined field: %s", fieldName);
         return;
     }
-
+    env->DeleteLocalRef(objclass);
     env->SetObjectField(jObj, fieldId, object);
 }
 

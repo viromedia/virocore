@@ -176,6 +176,7 @@ VRO_METHOD(void, nativeIntializeNode)(VRO_ARGS
     if (geom) {
        VRO_OBJECT jgeom = Geometry::createJGeometry(geom);
        VROPlatformSetObject(env, jNode, "mGeometry", "Lcom/viro/core/Geometry;", jgeom);
+       VRO_DELETE_LOCAL_REF(jgeom);
     }
 }
 
