@@ -51,7 +51,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now, const CVTimeStamp *outputTime,
                                       CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext) {
-    [(__bridge VROViewScene *)displayLinkContext renderFrame];
+    [(__bridge VROViewScene *)displayLinkContext drawFrame];
     return kCVReturnSuccess;
 }
 
@@ -93,7 +93,7 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
         CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
         
         // Set the renderer output callback function
-        CVDisplayLinkSetOutputCallback(_displayLink, &MyDisplayLinkCallback, (__bridge void *)self);
+        CVDisplayLinkSetOutputCallback(_displayLink, &VRODisplayLinkCallback, (__bridge void *)self);
         
         // Set the display link for the current renderer
         CGLContextObj cglContext = [_openGLContext CGLContextObj];
@@ -138,7 +138,7 @@ static CVReturn VRODisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTim
     
 }
 
-- (void)renderFrame {
+- (void)drawFrame {
     [_openGLContext makeCurrentContext];
     
     [self processTasks];
