@@ -25,7 +25,9 @@ class VRORenderToTextureDelegateAndroid;
 class VROAVRecorderAndroid : public std::enable_shared_from_this<VROAVRecorderAndroid> {
 public:
     VROAVRecorderAndroid(std::shared_ptr<MediaRecorder_JNI> jRecorder);
+
     virtual ~VROAVRecorderAndroid();
+
     void init(std::shared_ptr<VRODriver> driver);
 
     /*
@@ -33,12 +35,13 @@ public:
      tasks made by ViroMediaRecorder.java
      */
     void setEnableVideoFrameRecording(bool isRecording);
+
     void scheduleScreenCapture();
 
     /*
      True if this recorder is currently recording video.
      */
-    bool isRecordingVideo() const {return _isRecording; }
+    bool isRecordingVideo() const { return _isRecording; }
 
     /*
      Returns a VRORenderToTextureDelegate, implemented by this VROAVRecorderAndroid,
@@ -58,6 +61,7 @@ public:
      Binds and unbinds the underlying egl _recorderDisplay for recording.
      */
     void bindToEglSurface();
+
     void unbindFromEGLSurface();
 
     /*
@@ -101,9 +105,26 @@ private:
     std::shared_ptr<VRORenderTarget> _screenshotLDRTarget;
 
     /*
+     Post process to gamma correct screen shots.
+     */
+    std::shared_ptr<VROImagePostProcess> _gammaPostProcess;
+
+    /*
      Weak reference to the native-to-java jni interface for triggering java callbacks.
      */
     std::weak_ptr<MediaRecorder_JNI> _w_mediaRecorderJNI;
+
+    /*
+     Create or retrieve the screenshot LDR target.
+     */
+    std::shared_ptr<VRORenderTarget> bindScreenshotLDRTarget(int width, int height,
+                                                             std::shared_ptr<VRODriver> &driver);
+
+    /*
+     Create or retrieve the gamma correction post-process.
+     */
+    std::shared_ptr<VROImagePostProcess> getGammaPostProcess(std::shared_ptr<VRODriver> driver);
+
 };
 
 #endif //VRO_AVRECORDER_ANDROID_H
