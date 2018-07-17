@@ -184,7 +184,6 @@ public class Viro3DObjectTest extends ViroBaseTest {
                 object.setPosition(new Vector(0, 0, -3));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
                 mAnimation = object.getAnimation("02_spin");
-                mAnimation.setDelay(2000);
                 mAnimation.setLoop(true);
                 mAnimation.play();
             }
@@ -196,7 +195,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
 
         mMutableTestMethod = () -> mAnimation.stop();
-        assertPass("FBX animation stops (after *maybe* one spin)");
+        assertPass("FBX animation stops mid way (after *maybe* one spin)");
     }
 
     public void stage4_testLoadModelOBJ() {
