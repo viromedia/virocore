@@ -30,6 +30,7 @@ public:
 #pragma mark - VRORenderTarget Implementation
     
     void bind();
+    void bindRead();
     virtual void invalidate();
     virtual void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
                            std::shared_ptr<VRODriver> driver);

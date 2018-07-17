@@ -656,15 +656,13 @@ public class ViroMediaRecorder {
         protected void grabScreenShot() {
             mPixelBuf.rewind();
 
-            // Bind to the original egl display from which to read. For Android
-            // this is the same as unbinding to let the egl surface bind to it.
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            GLES20.glGetError(); // Clear any existing error
             GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE,
                     mPixelBuf);
             int result = GLES20.glGetError();
-            mRunnableSuccess = result == GLES20.GL_NO_ERROR;
+            mRunnableSuccess = (result == GLES20.GL_NO_ERROR);
             if (!mRunnableSuccess) {
-                Log.e("Viro","GL Error when grabbing screen shot: " + result);
+                Log.e("Viro","GL error when grabbing screen shot: " + result);
             }
         }
 
@@ -820,7 +818,7 @@ public class ViroMediaRecorder {
 
     /**
      * Called by the renderer to inform ViroMediaRecorder to grab a screen shot from the latest
-     * rendered frame (thereby fuflling all pending queued screenshot pending request.
+     * rendered frame (thereby fulfilling all pending queued screenshot requests).
      * @hide
      */
     public void onNativeTakeScreenshot() {

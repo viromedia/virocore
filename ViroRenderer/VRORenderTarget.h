@@ -97,6 +97,11 @@ public:
      */
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
+
+    /*
+     Get the color format (type) of this render target.
+     */
+    VRORenderTargetType getType() const { return _type; }
     
     /*
      Set the clear color to use for this render target.
@@ -106,9 +111,14 @@ public:
     }
     
     /*
-     Bind this render-target.
+     Bind this render-target. This will bind target only for drawing.
      */
     virtual void bind() = 0;
+
+    /*
+     Bind this render-target for reading.
+     */
+    virtual void bindRead() = 0;
     
     /*
      Invalidate the buffers in this render-target.

@@ -52,7 +52,7 @@ VRORenderTargetOpenGL::~VRORenderTargetOpenGL() {
 
 void VRORenderTargetOpenGL::bind() {
     GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer) );
-    
+
     /*
      Bind the viewport and scissor when the render target changes. The scissor
      ensures we only clear (e.g. glClear) over the designated area; this is
@@ -67,6 +67,10 @@ void VRORenderTargetOpenGL::bind() {
      */
     GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
     GL( glStencilFuncSeparate(GL_FRONT_AND_BACK, GL_ALWAYS, 0xFF, 0xFF) );
+}
+
+void VRORenderTargetOpenGL::bindRead() {
+    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer) );
 }
 
 void VRORenderTargetOpenGL::invalidate() {
@@ -263,7 +267,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GLint format = GL_RGBA;
         GLenum texType = GL_UNSIGNED_BYTE;
 
-        if (_type == VRORenderTargetType::ColorTextureRG16){
+        if (_type == VRORenderTargetType::ColorTextureRG16) {
             internalFormat = GL_RG16F;
             format = GL_RG;
             texType = GL_FLOAT;

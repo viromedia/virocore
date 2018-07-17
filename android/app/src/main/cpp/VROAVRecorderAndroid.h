@@ -95,6 +95,12 @@ private:
     std::shared_ptr<VRORenderToTextureDelegateAndroid> _renderToTextureDelegate;
 
     /*
+     Render target used for taking screenshots. This is used if the input textures are HDR;
+     we have to render them to this LDR target so we can run glReadPixels.
+     */
+    std::shared_ptr<VRORenderTarget> _screenshotLDRTarget;
+
+    /*
      Weak reference to the native-to-java jni interface for triggering java callbacks.
      */
     std::weak_ptr<MediaRecorder_JNI> _w_mediaRecorderJNI;

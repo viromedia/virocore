@@ -72,6 +72,26 @@ bool VROAVRecorderAndroid::onRenderedFrameTexture(std::shared_ptr<VRORenderTarge
     if (_scheduledScreenShot) {
         std::shared_ptr<MediaRecorder_JNI> jRecorder = _w_mediaRecorderJNI.lock();
         if (jRecorder) {
+            passert (driver->getRenderTarget() == input);
+
+            // If the input was an LDR color target, we can directly read from it
+            if (input->getType() == VRORenderTargetType::ColorTexture) {
+                input->bindRead();
+            } else {
+                // Otherwise create an LDR render target and render to it
+                if (!_screenshotLDRTarget) {
+                    pinfo("Creating screenshot LDR render target");
+
+                    _screenshotLDRTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false);
+                    _screenshotLDRTarget->setViewport({ 0, 0, input->getWidth(), input->getHeight() });
+                }
+
+                driver->bindRenderTarget(_screenshotLDRTarget, VRORenderTargetUnbindOp::Invalidate);
+                input->blitColor(_screenshotLDRTarget, false, driver);
+                _screenshotLDRTarget->bindRead();
+            }
+
+            // This will call glReadPixels up in Java, reading from the currently bound (READ) framebuffer
             jRecorder->onTakeScreenshot();
         }
         _scheduledScreenShot = false;
