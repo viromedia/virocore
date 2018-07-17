@@ -375,11 +375,12 @@ public class Controller implements EventDelegate.EventDelegateCallback {
      * This is used for real-time depth testing, only by the VRTScene. Not exposed to Java API.
      * @hide
      */
+    //#IFDEF 'viro_react'
     @Override
     public void onCameraARHitTest(ARHitTestResult[] results) {
 
     }
-
+    //#ENDIF
     /**
      * This is used to notify the developer of the current point cloud. Not exposed to the Java API.
      * @hide
@@ -393,6 +394,7 @@ public class Controller implements EventDelegate.EventDelegateCallback {
      * This is used to notify the developer of the current camera transform. Not exposed to the Java API.
      * @hide
      */
+    //#IFDEF 'viro_react'
     @Override
     public void onCameraTransformUpdate(float posX, float poxY, float posZ,
                                         float rotEulerX, float rotEulerY, float rotEulerZ,
@@ -400,6 +402,7 @@ public class Controller implements EventDelegate.EventDelegateCallback {
                                         float upX, float upY, float upZ) {
 
     }
+    //#ENDIF
 
     /**
      * @hide

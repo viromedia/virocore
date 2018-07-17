@@ -78,7 +78,9 @@ public class EventDelegate {
         /**
          * @hide
          */
+        //#IFDEF 'viro_react'
         void onCameraARHitTest(ARHitTestResult[] results);
+        //#ENDIF
         /**
          * @hide
          */
@@ -86,10 +88,12 @@ public class EventDelegate {
         /**
          * @hide
          */
+        //#IFDEF 'viro_react'
         void onCameraTransformUpdate(float posX, float poxY, float posZ,
                                      float rotEulerX, float rotEulerY, float rotEulerZ,
                                      float forwardX, float forwardY, float forwardZ,
                                      float upX, float upY, float upZ);
+        //#ENDIF
     }
 
     long mNativeRef;
@@ -290,11 +294,16 @@ public class EventDelegate {
         }
     }
 
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
     void onCameraARHitTest(ARHitTestResult[] results) {
         if (mDelegate != null && mDelegate.get() != null) {
             mDelegate.get().onCameraARHitTest(results);
         }
     }
+    //#ENDIF
 
     void onARPointCloudUpdate(ARPointCloud pointCloud) {
         if (mDelegate != null && mDelegate.get() != null) {
@@ -305,6 +314,7 @@ public class EventDelegate {
     /**
      * @hide
      */
+    //#IFDEF 'viro_react'
     void onCameraTransformUpdate(float posX, float poxY, float posZ,
                                  float rotEulerX, float rotEulerY, float rotEulerZ,
                                  float forwardX, float forwardY, float forwardZ,
@@ -314,4 +324,5 @@ public class EventDelegate {
                                                     forwardX, forwardY, forwardZ, upX, upY, upZ);
         }
     }
+    //#ENDIF
 }
