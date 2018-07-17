@@ -239,7 +239,7 @@ public class Object3D extends Node {
         // Populate individual nodes and its properties one at a time, so as
         // to ensure we don't hit the jni local reference limit.
         for (Node childNode : childNodes) {
-            currentNode.addChildNode(childNode);
+            currentNode.addNativelyAttachedChildNode(childNode);
             nativeIntializeNode(childNode, childNode.getNativeRef());
             inflateChildNodes(childNode);
         }

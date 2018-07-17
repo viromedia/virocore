@@ -335,6 +335,17 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * @hide
+     *
+     * Add a child Node that has already been natively attached to this Node.
+     * This is used internally by {@link Object3D} upon child node inflation.
+     */
+    void addNativelyAttachedChildNode(Node childNode) {
+        mChildren.add(childNode);
+        childNode.mParent = new WeakReference<Node>(this);
+    }
+
+    /**
      * Remove this Node from its parent.
      */
     public void removeFromParentNode() {
