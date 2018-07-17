@@ -310,6 +310,7 @@ void VROPortal::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->setLightingModel(VROLightingModel::Constant);
     material->getDiffuse().setTexture(textureSphere);
     material->setWritesToDepthBuffer(false);
+    material->setNeedsToneMapping(false);
     
     installBackgroundShaderModifier();
 }
