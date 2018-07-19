@@ -34,6 +34,7 @@
 #include "VROVideoSphereTest.h"
 #include "VRORendererSettingsTest.h"
 #include "VROToneMappingTest.h"
+#include "VROPolygonTest.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROARImageTrackingTest.h"
@@ -132,6 +133,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VRORendererSettingsTest>();
         case VRORendererTestType::ToneMapping:
             return std::make_shared<VROToneMappingTest>();
+        case VRORendererTestType::Polygon:
+            return std::make_shared<VROPolygonTest>();
         default:
             pabort();
             return nullptr;

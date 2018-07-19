@@ -274,6 +274,13 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROGlyphOpenGL.cpp
              ${VIRO_RENDERER_SRC}/VROGlyphAtlasOpenGL.cpp
 
+             # Poly2Tri
+             ${VIRO_RENDERER_SRC}/poly2tri/sweep/advancing_front.cc
+             ${VIRO_RENDERER_SRC}/poly2tri/sweep/cdt.cc
+             ${VIRO_RENDERER_SRC}/poly2tri/sweep/sweep_context.cc
+             ${VIRO_RENDERER_SRC}/poly2tri/sweep/sweep.cc
+             ${VIRO_RENDERER_SRC}/poly2tri/common/shapes.cc
+
              # GVR Audio
              ${VIRO_RENDERER_SRC}/VROSoundGVR.cpp
              ${VIRO_RENDERER_SRC}/VROSoundDataGVR.cpp
@@ -323,6 +330,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROPhotometricLightTest.cpp
              ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
              ${VIRO_RENDERER_SRC}/VROToneMappingTest.cpp
+             ${VIRO_RENDERER_SRC}/VROPolygonTest.cpp
              )
 
 # Add pre-built libraries

@@ -21,27 +21,50 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF(VROPolygon), nativeCreateSurface)(VRO_ARGS
-                                                     VRO_ARRAY(VRO_FLOAT_ARRAY) jpoints,
+VRO_METHOD(VRO_REF(VROPolygon), nativeCreatePolygon)(VRO_ARGS
+                                                     VRO_ARRAY(VRO_FLOAT_ARRAY) points_j,
+                                                     VRO_ARRAY(VRO_ARRAY(VRO_FLOAT_ARRAY)) holes_j,
                                                      VRO_FLOAT u0, VRO_FLOAT v0,
                                                      VRO_FLOAT u1, VRO_FLOAT v1) {
-    std::vector<VROVector3f> initialValues;
-    int numberOfValues = VRO_ARRAY_LENGTH(jpoints);
-    for (int i = 0; i < numberOfValues; i++) {
-        VRO_FLOAT_ARRAY vec3Value = (VRO_FLOAT_ARRAY) VRO_ARRAY_GET(jpoints, i);
-        VRO_FLOAT *vec3ValueArray = VRO_FLOAT_ARRAY_GET_ELEMENTS(vec3Value);
-        VROVector3f vec3 = VROVector3f(vec3ValueArray[0], vec3ValueArray[1]);
-        initialValues.push_back(vec3);
-        VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(vec3Value, vec3ValueArray);
+    std::vector<VROVector3f> path;
+    int pathSize = VRO_ARRAY_LENGTH(points_j);
+    for (int i = 0; i < pathSize; i++) {
+        VRO_FLOAT_ARRAY point_j = (VRO_FLOAT_ARRAY) VRO_ARRAY_GET(points_j, i);
+        VRO_FLOAT *point_c = VRO_FLOAT_ARRAY_GET_ELEMENTS(point_j);
+        VROVector3f point = VROVector3f(point_c[0], point_c[1]);
+        path.push_back(point);
+
+        VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(point_j, point_c);
     }
 
-    std::shared_ptr<VROPolygon> surface  = VROPolygon::createPolygon(initialValues, u0, v0, u1, v1);
+    std::vector<std::vector<VROVector3f>> holes;
+    if (holes_j != nullptr) {
+        int numHoles = VRO_ARRAY_LENGTH(holes_j);
+        for (int i = 0; i < numHoles; i++) {
+            std::vector<VROVector3f> hole;
+            VRO_ARRAY(VRO_FLOAT_ARRAY) hole_j = (VRO_ARRAY(VRO_FLOAT_ARRAY)) VRO_ARRAY_GET(holes_j, i);
+            int holeSize = VRO_ARRAY_LENGTH(hole_j);
+
+            for (int i = 0; i < holeSize; i++) {
+                VRO_FLOAT_ARRAY point_j = (VRO_FLOAT_ARRAY) VRO_ARRAY_GET(hole_j, i);
+                VRO_FLOAT *point_c = VRO_FLOAT_ARRAY_GET_ELEMENTS(point_j);
+                VROVector3f point = VROVector3f(point_c[0], point_c[1]);
+                hole.push_back(point);
+
+                VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(point_j, point_c);
+            }
+
+            holes.push_back(hole);
+        }
+    }
+
+    std::shared_ptr<VROPolygon> surface  = VROPolygon::createPolygon(path, holes, u0, v0, u1, v1);
     return VRO_REF_NEW(VROPolygon, surface);
 }
 
-VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
-                                       VRO_REF(VROPolygon) nativeSurface) {
-    VRO_REF_DELETE(VROPolygon, nativeSurface);
+VRO_METHOD(void, nativeDestroyPolygon)(VRO_ARGS
+                                       VRO_REF(VROPolygon) polygon) {
+    VRO_REF_DELETE(VROPolygon, polygon);
 }
 
 }  // extern "C"
