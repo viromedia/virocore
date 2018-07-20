@@ -279,7 +279,13 @@ void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> targ
             std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
             if (arsession) {
                 arsession->addTargetToDatabase(target, arsession->_currentARCoreImageDatabase);
-                arsession->updateARCoreConfig();
+                // update the ARCore config on the renderer thread
+                VROPlatformDispatchAsyncRenderer([w_arsession] {
+                    std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+                    if (arsession) {
+                        arsession->updateARCoreConfig();
+                    }
+                });
             }
         });
     }
@@ -305,8 +311,15 @@ void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> t
                 for (int i = 0; i < arsession->_imageTargets.size(); i++) {
                     arsession->addTargetToDatabase(target, arsession->_currentARCoreImageDatabase);
                 }
-                // then "update" the config with the new target database.
-                arsession->updateARCoreConfig();
+
+                // update the ARCore config on the renderer thread
+                VROPlatformDispatchAsyncRenderer([w_arsession] {
+                    std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+                    if (arsession) {
+                        // then "update" the config with the new target database.
+                        arsession->updateARCoreConfig();
+                    }
+                });
             }
         });
 
