@@ -43,7 +43,8 @@ VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
                                                std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _rendererSuspended(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
-    _arcoreInstalled(false) {
+    _arcoreInstalled(false),
+    _destroyed(false) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
     _session = std::make_shared<VROARSessionARCore>(_driver);
@@ -79,6 +80,10 @@ void VROSceneRendererARCore::setARCoreSession(arcore::Session *session) {
 }
 
 void VROSceneRendererARCore::onDrawFrame() {
+    if (_destroyed) {
+        return;
+    }
+
     if (!_rendererSuspended && _arcoreInstalled) {
         renderFrame();
     }
@@ -307,6 +312,10 @@ void VROSceneRendererARCore::onResume() {
         shared->_renderer->getInputController()->onResume();
         shared->_driver->resume();
     });
+}
+
+void VROSceneRendererARCore::onDestroy() {
+    _destroyed = true;
 }
 
 void VROSceneRendererARCore::setVRModeEnabled(bool enabled) {

@@ -71,7 +71,7 @@ public:
     void onPause();
     void onResume();
     void onStop() {}
-    void onDestroy() {}
+    void onDestroy();
 
     /*
      Surface lifecycle.
@@ -130,6 +130,7 @@ private:
     bool _rendererSuspended;
     double _suspendedNotificationTime;
     bool _arcoreInstalled;
+    bool _destroyed;
 
     // Detection types are only stored here so that they can be pushed to the ARScene when that
     // is injected into the scene renderer (from there they are pushed into the VROARSession).
