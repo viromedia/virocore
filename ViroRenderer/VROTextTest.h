@@ -73,6 +73,7 @@ private:
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROTextEventDelegate> _eventDelegate;
+    bool _using3DText;
     
 };
 

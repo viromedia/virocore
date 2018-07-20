@@ -10,11 +10,13 @@
 #include "VROTestUtil.h"
 #include "VRODefines.h"
 #include "VROTypeface.h"
+#include "VROText3D.h"
 #include "VROTypefaceCollection.h"
 
 VROTextTest::VROTextTest() :
     VRORendererTest(VRORendererTestType::Text) {
     _textIndex = 0;
+    _using3DText = true;
 }
 
 VROTextTest::~VROTextTest() {
@@ -29,6 +31,8 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     std::wstring englishText = L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     
 #if VRO_PLATFORM_IOS
+    _textSamples.emplace_back(englishText,
+                              "", 32, VROFontStyle::Normal, VROFontWeight::Regular);
     _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。",
                               "PingFang HK", 32, VROFontStyle::Normal, VROFontWeight::Regular);
     _textSamples.emplace_back(L"人人生而自由,在尊严和权利上一律平等。他们赋 有理性和良心,并应以兄弟关系的精神互相对待。",
@@ -130,10 +134,22 @@ void VROTextTest::build(std::shared_ptr<VRORenderer> renderer,
     free (fileData);
     
     /*
+     Camera
+     */
+    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
+    camera->setRotationType(VROCameraRotationType::Orbit);
+    camera->setOrbitFocalPoint({ 0, 0, -6});
+    
+    std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
+    cameraNode->setCamera(camera);
+    rootNode->addChildNode(cameraNode);
+    
+    _pointOfView = cameraNode;
+    
+    /*
      Actual text.
      */
     _textNode = std::make_shared<VRONode>();
-    _textNode->setPosition({0, 0, -6});
     rootNode->addChildNode(_textNode);
     rotateText();
     
@@ -152,12 +168,28 @@ void VROTextTest::rotateText() {
 
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
-    std::shared_ptr<VROText> text = VROText::createText(sample.sample, sample.typefaceNames, sample.fontSize,
-                                                        sample.fontStyle, sample.fontWeight, {1.0, 1.0, 1.0, 1.0}, width, height,
-                                                        VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
-                                                        linebreakMode, clipMode, 0, _driver);
-    _textNode->setGeometry(text);
     
+    if (_using3DText) {
+        std::shared_ptr<VROText3D> text = VROText3D::createText(sample.sample, sample.typefaceNames, sample.fontSize,
+                                                                sample.fontStyle, sample.fontWeight, {0.0, 0.0, 1.0, 1.0}, 8, width, height,
+                                                                VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Center,
+                                                                linebreakMode, clipMode, 0, _driver);
+        _textNode->setGeometry(text);
+        _textNode->setPosition({ 0, 0, -3 });
+        _pointOfView->getCamera()->setOrbitFocalPoint({ 0, 0, -3});
+    } else {
+        std::shared_ptr<VROText> text = VROText::createText(sample.sample, sample.typefaceNames, sample.fontSize,
+                                                            sample.fontStyle, sample.fontWeight, {1.0, 1.0, 1.0, 1.0}, width, height,
+                                                            VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
+                                                            linebreakMode, clipMode, 0, _driver);
+        _textNode->setGeometry(text);
+        _textNode->setPosition({ 0, 0, -6 });
+        _pointOfView->getCamera()->setOrbitFocalPoint({ 0, 0, -6});
+    }
+    
+    if (_textIndex == _textSamples.size() - 1) {
+        _using3DText = !_using3DText;
+    }
     _textIndex = (_textIndex + 1) % _textSamples.size();
 }
 

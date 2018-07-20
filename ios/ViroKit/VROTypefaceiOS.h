@@ -29,7 +29,7 @@ public:
     
     float getLineHeight() const;
     std::shared_ptr<VROGlyph> loadGlyph(uint32_t charCode, uint32_t variantSelector,
-                                        bool forRendering);
+                                        VROGlyphRenderMode renderMode);
 
 protected:
     

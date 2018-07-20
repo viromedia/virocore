@@ -12,6 +12,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <memory>
 
 class VROGlyph;
 enum class VROTextClipMode;

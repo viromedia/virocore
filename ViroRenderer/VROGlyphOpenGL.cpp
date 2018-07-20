@@ -13,7 +13,13 @@
 #include "VROMath.h"
 #include "VRODriverOpenGL.h"
 #include "VRODefines.h"
+#include "VROVectorizer.h"
+#include "VROContour.h"
 #include "VROGlyphAtlasOpenGL.h"
+#include "poly2tri/poly2tri.h"
+
+static const int kBezierSteps = 4;
+static const float kExtrusion = 1;
 
 VROGlyphOpenGL::VROGlyphOpenGL() {
     
@@ -24,7 +30,8 @@ VROGlyphOpenGL::~VROGlyphOpenGL() {
 }
 
 bool VROGlyphOpenGL::load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                          bool forRendering, std::vector<std::shared_ptr<VROGlyphAtlas>> *glyphAtlases,
+                          VROGlyphRenderMode renderMode,
+                          std::vector<std::shared_ptr<VROGlyphAtlas>> *glyphAtlases,
                           std::shared_ptr<VRODriver> driver) {
     /*
      Load the glyph from freetype.
@@ -57,41 +64,157 @@ bool VROGlyphOpenGL::load(FT_Face face, uint32_t charCode, uint32_t variantSelec
      */
     _advance = glyph->advance.x >> 6;
     
-    if (forRendering) {
-        if (glyphAtlases->empty()) {
-            glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>());
-        }
-        std::shared_ptr<VROGlyphAtlas> atlas = glyphAtlases->back();
+    if (renderMode == VROGlyphRenderMode::Bitmap) {
+        return loadBitmap(glyph, charCode, glyphAtlases, driver);
+    } else if (renderMode == VROGlyphRenderMode::Vector) {
+        return loadVector(glyph);
+    } else {
+        return true;
+    }
+}
+
+bool VROGlyphOpenGL::loadBitmap(FT_GlyphSlot &glyph, uint32_t charCode,
+                                std::vector<std::shared_ptr<VROGlyphAtlas>> *glyphAtlases,
+                                std::shared_ptr<VRODriver> driver) {
+    if (glyphAtlases->empty()) {
+        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>());
+    }
+    std::shared_ptr<VROGlyphAtlas> atlas = glyphAtlases->back();
+    
+    FT_Render_Glyph(glyph, FT_RENDER_MODE_LIGHT);
+    FT_Bitmap &bitmap = glyph->bitmap;
+    
+    VROAtlasLocation location;
+    if (atlas->glyphWillFit(bitmap, &location)) {
+        atlas->write(glyph, bitmap, location, driver);
+    } else {
+        // Did not fit in the atlas, create a new atlas
+        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>());
+        atlas = glyphAtlases->back();
         
-        FT_Render_Glyph(glyph, FT_RENDER_MODE_LIGHT);
-        FT_Bitmap &bitmap = glyph->bitmap;
-        
-        VROAtlasLocation location;
         if (atlas->glyphWillFit(bitmap, &location)) {
             atlas->write(glyph, bitmap, location, driver);
         } else {
-            // Did not fit in the atlas, create a new atlas
-            glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>());
-            atlas = glyphAtlases->back();
-            
-            if (atlas->glyphWillFit(bitmap, &location)) {
-                atlas->write(glyph, bitmap, location, driver);
-            } else {
-                pinfo("Failed to render glyph for char code %d", charCode);
-                return false;
-            }
+            pinfo("Failed to render glyph for char code %d", charCode);
+            return false;
         }
-        
-        _atlas = atlas;
-        _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
-        _size = VROVector3f(bitmap.width, bitmap.rows);
-        _minU = ((float) location.minU) / (float) atlas->getSize();
-        _maxU = ((float) location.maxU) / (float) atlas->getSize();
-        _minV = ((float) location.minV) / (float) atlas->getSize();
-        _maxV = ((float) location.maxV) / (float) atlas->getSize();        
     }
     
+    _atlas = atlas;
+    _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
+    _size = VROVector3f(bitmap.width, bitmap.rows);
+    _minU = ((float) location.minU) / (float) atlas->getSize();
+    _maxU = ((float) location.maxU) / (float) atlas->getSize();
+    _minV = ((float) location.minV) / (float) atlas->getSize();
+    _maxV = ((float) location.maxV) / (float) atlas->getSize();
+    
     return true;
+}
+
+bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
+    if (glyph->format != FT_GLYPH_FORMAT_OUTLINE) {
+        pwarn("Outline glyph format required to vectorize, aborting 3D font building");
+        return false;
+    }
+    
+    VROVectorizer vectorizer(glyph, kBezierSteps);
+    for (size_t c = 0; c < vectorizer.getContourCount(); ++c) {
+        const VROContour *contour = vectorizer.getContour(c);
+        
+        for (size_t p = 0; p < contour->getPointCount() - 1; ++p) {
+            const VROVector3f d1 = contour->getPoint(p);
+            const VROVector3f d2 = contour->getPoint(p + 1);
+            
+            VROVector3f a, b, c;
+            a.x = (d1.x / 64.0f);
+            a.y = d1.y / 64.0f;
+            a.z = 0.0f;
+            b.x = (d2.x / 64.0f);
+            b.y = d2.y / 64.0f;
+            b.z = 0.0f;
+            c.x = (d1.x / 64.0f);
+            c.y = d1.y / 64.0f;
+            c.z = kExtrusion;
+            
+            VROTriangle t1(a, b, c);
+            _triangles.push_back(t1);
+            
+            a.x = (d1.x / 64.0f);
+            a.y = d1.y / 64.0f;
+            a.z = kExtrusion;
+            b.x = (d2.x / 64.0f);
+            b.y = d2.y / 64.0f;
+            b.z = kExtrusion;
+            c.x = (d2.x / 64.0f);
+            c.y = d2.y / 64.0f;
+            c.z = 0.0f;
+            
+            VROTriangle t2(a, b, c);
+            _triangles.push_back(t2);
+        }
+        
+        if (contour->getDirection()) {
+            try {
+                std::vector<p2t::Point *> polyline = triangulateContour(vectorizer, (int) c);
+                p2t::CDT *cdt = new p2t::CDT(polyline);
+
+                for (size_t cm = 0; cm < vectorizer.getContourCount(); ++cm) {
+                    const VROContour *sm = vectorizer.getContour(cm);
+                    if (c != cm && !sm->getDirection() && sm->isInside(contour)) {
+                        std::vector<p2t::Point *> pl = triangulateContour(vectorizer, (int) cm);
+                        cdt->AddHole(pl);
+                    }
+                }
+
+                cdt->Triangulate();
+                std::vector<p2t::Triangle *> ts = cdt->GetTriangles();
+                for (int i = 0; i < ts.size(); i++) {
+                    p2t::Triangle *ot = ts[i];
+
+                    VROVector3f a, b, c;
+                    a.x = ot->GetPoint(0)->x;
+                    a.y = ot->GetPoint(0)->y;
+                    a.z = 0.0f;
+                    b.x = ot->GetPoint(1)->x;
+                    b.y = ot->GetPoint(1)->y;
+                    b.z = 0.0f;
+                    c.x = ot->GetPoint(2)->x;
+                    c.y = ot->GetPoint(2)->y;
+                    c.z = 0.0f;
+
+                    VROTriangle t1(a, b, c);
+                    _triangles.push_back(t1);
+
+                    a.x = ot->GetPoint(0)->x;
+                    a.y = ot->GetPoint(0)->y;
+                    a.z = kExtrusion;
+                    b.x = ot->GetPoint(1)->x;
+                    b.y = ot->GetPoint(1)->y;
+                    b.z = kExtrusion;
+                    c.x = ot->GetPoint(2)->x;
+                    c.y = ot->GetPoint(2)->y;
+                    c.z = kExtrusion;
+
+                    VROTriangle t2(a, b, c);
+                    _triangles.push_back(t2);
+                }
+                delete (cdt);
+            } catch (const std::exception &e) {
+                pwarn("Exception while triangulating text; text may be malformed");
+            }
+        }
+    }
+    return true;
+}
+
+std::vector<p2t::Point *> VROGlyphOpenGL::triangulateContour(VROVectorizer &vectorizer, int c) {
+    std::vector<p2t::Point*> polyline;
+    const VROContour *contour = vectorizer.getContour(c);
+    for(size_t p = 0; p < contour->getPointCount(); ++p) {
+        VROVector3f d = contour->getPoint(p);
+        polyline.push_back(new p2t::Point((d.x / 64.0f), d.y / 64.0f));
+    }
+    return polyline;
 }
 
 std::shared_ptr<VROTexture> VROGlyphOpenGL::getTexture() const {

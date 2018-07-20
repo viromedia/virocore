@@ -765,6 +765,12 @@
 		8F201C4C21010C7C00637A75 /* cdt.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C4B21010C7B00637A75 /* cdt.cc */; };
 		8F201C4F21010E0B00637A75 /* VROPolygonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C4D21010E0B00637A75 /* VROPolygonTest.cpp */; };
 		8F201C5021010E0B00637A75 /* VROPolygonTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C4E21010E0B00637A75 /* VROPolygonTest.h */; };
+		8F201C532101579E00637A75 /* VROText3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C512101579E00637A75 /* VROText3D.cpp */; };
+		8F201C542101579E00637A75 /* VROText3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C522101579E00637A75 /* VROText3D.h */; };
+		8F201C572101597200637A75 /* VROVectorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C552101597200637A75 /* VROVectorizer.cpp */; };
+		8F201C582101597200637A75 /* VROVectorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C562101597200637A75 /* VROVectorizer.h */; };
+		8F201C5B210159E700637A75 /* VROContour.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C59210159E600637A75 /* VROContour.h */; };
+		8F201C5C210159E700637A75 /* VROContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C5A210159E700637A75 /* VROContour.cpp */; };
 		8F201C5F2101624500637A75 /* VROTextFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C5D2101624500637A75 /* VROTextFormatter.cpp */; };
 		8F201C602101624500637A75 /* VROTextFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C5E2101624500637A75 /* VROTextFormatter.h */; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1698,6 +1704,12 @@
 		8F201C4B21010C7B00637A75 /* cdt.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cdt.cc; path = ../poly2tri/sweep/cdt.cc; sourceTree = "<group>"; };
 		8F201C4D21010E0B00637A75 /* VROPolygonTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPolygonTest.cpp; sourceTree = "<group>"; };
 		8F201C4E21010E0B00637A75 /* VROPolygonTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPolygonTest.h; sourceTree = "<group>"; };
+		8F201C512101579E00637A75 /* VROText3D.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROText3D.cpp; sourceTree = "<group>"; };
+		8F201C522101579E00637A75 /* VROText3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROText3D.h; sourceTree = "<group>"; };
+		8F201C552101597200637A75 /* VROVectorizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVectorizer.cpp; sourceTree = "<group>"; };
+		8F201C562101597200637A75 /* VROVectorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVectorizer.h; sourceTree = "<group>"; };
+		8F201C59210159E600637A75 /* VROContour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROContour.h; sourceTree = "<group>"; };
+		8F201C5A210159E700637A75 /* VROContour.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROContour.cpp; sourceTree = "<group>"; };
 		8F201C5D2101624500637A75 /* VROTextFormatter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTextFormatter.cpp; sourceTree = "<group>"; };
 		8F201C5E2101624500637A75 /* VROTextFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTextFormatter.h; sourceTree = "<group>"; };
 		8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = gorilla.vrx; path = ViroSample/gorilla.vrx; sourceTree = "<group>"; };
@@ -3030,10 +3042,16 @@
 				8F87516820629846002D9BF8 /* Font */,
 				8F56AEA81DE76E1D00DD65B6 /* VROText.h */,
 				8F56AEA71DE76E1D00DD65B6 /* VROText.cpp */,
+				8F201C522101579E00637A75 /* VROText3D.h */,
+				8F201C512101579E00637A75 /* VROText3D.cpp */,
 				8F201C5E2101624500637A75 /* VROTextFormatter.h */,
 				8F201C5D2101624500637A75 /* VROTextFormatter.cpp */,
 				8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */,
 				8F67B59D1DF1DC920096C26F /* VROKnuthPlassFormatter.cpp */,
+				8F201C59210159E600637A75 /* VROContour.h */,
+				8F201C5A210159E700637A75 /* VROContour.cpp */,
+				8F201C562101597200637A75 /* VROVectorizer.h */,
+				8F201C552101597200637A75 /* VROVectorizer.cpp */,
 			);
 			name = Text;
 			sourceTree = "<group>";
@@ -4141,6 +4159,7 @@
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
 				8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */,
 				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
+				8F201C582101597200637A75 /* VROVectorizer.h in Headers */,
 				13F631B52065C21B00A74EFC /* KeenProperties.h in Headers */,
 				8F0FE6761CD2D47900A4C297 /* VROViewGVR.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
@@ -4187,6 +4206,7 @@
 				8FEACEFD20180CB40082D18B /* VROShadowPreprocess.h in Headers */,
 				13F631AA2065C1EA00A74EFC /* keen_io_sqlite3ext.h in Headers */,
 				8F0FE67F1CD3E12F00A4C297 /* VROShaderProgram.h in Headers */,
+				8F201C5B210159E700637A75 /* VROContour.h in Headers */,
 				8FAE18C41EE79D470021C7BB /* VROARSessioniOS.h in Headers */,
 				8F83DEA31C4826F80089C31A /* VROTimingFunctionPowerDeceleration.h in Headers */,
 				8F9209191F3CCF9D003305C8 /* VROImagePostProcess.h in Headers */,
@@ -4214,6 +4234,7 @@
 				8FD4DF3C1C18F5EA003DC425 /* VROLog.h in Headers */,
 				8FB659171CD839A000D036EB /* VRODriverOpenGL.h in Headers */,
 				8ABEDD3720115EB1003E8AFF /* VROARImageTracker.h in Headers */,
+				8F201C542101579E00637A75 /* VROText3D.h in Headers */,
 				8F83DE9C1C4826F80089C31A /* VROTimingFunction.h in Headers */,
 				8FD2A5521F813C4100E831A6 /* VROVideoSphereTest.h in Headers */,
 				8F53C8F91E00F03E008314B4 /* tiny_obj_loader.h in Headers */,
@@ -5424,6 +5445,7 @@
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
 				8FD4DF131C18ED44003DC425 /* OrientationEKF.mm in Sources */,
 				8FD2A54A1F813C4100E831A6 /* VROTorusTest.cpp in Sources */,
+				8F201C532101579E00637A75 /* VROText3D.cpp in Sources */,
 				8F1E01011FD10D7D00DF9068 /* VROViewControllerGVR.m in Sources */,
 				8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */,
 				8F53D39E1DCA883A001C91A8 /* VROConvert.cpp in Sources */,
@@ -5431,6 +5453,7 @@
 				8F2657461F0E808C0031DE17 /* VROCompress.cpp in Sources */,
 				8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */,
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
+				8F201C5F2101624500637A75 /* VROTextFormatter.cpp in Sources */,
 				8F660ABA1E9554B8006D063F /* VROFrameScheduler.cpp in Sources */,
 				8FD2A5481F813C4100E831A6 /* VROARShadowTest.cpp in Sources */,
 				A51347401F3544A600FF3726 /* VROParticleUBO.cpp in Sources */,
@@ -5466,6 +5489,7 @@
 				8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */,
 				8F828EF51FAD07660068159E /* VROARDeclarativeSession.cpp in Sources */,
 				8FD4DF011C18ED2C003DC425 /* VROMaterialSubstrateMetal.cpp in Sources */,
+				8F201C5C210159E700637A75 /* VROContour.cpp in Sources */,
 				8F5CAA181F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp in Sources */,
 				8F2F342920F54FAC001962D0 /* VROGlyphAtlasOpenGL.cpp in Sources */,
 				8FCD02B51FD6F8E0001813D8 /* VRODriverOpenGLiOS.cpp in Sources */,
@@ -5509,6 +5533,7 @@
 				8FEACF0C2018319C0082D18B /* VRORenderUtil.cpp in Sources */,
 				8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
+				8F201C572101597200637A75 /* VROVectorizer.cpp in Sources */,
 				A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */,
 				8FEACF172019223C0082D18B /* VROShaderCapabilities.cpp in Sources */,
 				8F53D3A91DCBA06A001C91A8 /* VROImageiOS.cpp in Sources */,

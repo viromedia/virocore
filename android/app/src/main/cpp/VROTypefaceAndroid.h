@@ -27,7 +27,8 @@ public:
     virtual ~VROTypefaceAndroid();
 
     float getLineHeight() const;
-    std::shared_ptr<VROGlyph> loadGlyph(uint32_t charCode, uint32_t variantSelector, bool forRendering);
+    std::shared_ptr<VROGlyph> loadGlyph(uint32_t charCode, uint32_t variantSelector,
+                                        VROGlyphRenderMode renderMode);
 
     // If this typeface was sourced from a TTC file, this will return the number of other faces
     // in the TTC

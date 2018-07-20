@@ -74,7 +74,7 @@ VROVector3f VROText::getTextSize(std::wstring text,
     std::shared_ptr<VROTypeface> &firstTypeface = fontRuns.front().typeface;
     std::wstring space = L" ";
     uint32_t spaceCode = *space.begin();
-    glyphMap[spaceCode] = firstTypeface->getGlyph(spaceCode, 0, false);
+    glyphMap[spaceCode] = firstTypeface->getGlyph(spaceCode, 0, VROGlyphRenderMode::None);
     
     // Now add all the remaining glyphs. For line height we will use
     // the maximum found in any run.
@@ -89,7 +89,7 @@ VROVector3f VROText::getTextSize(std::wstring text,
         for (int i = fontRun.start; i < fontRun.end; i++) {
             uint32_t codePoint = text.at(i);
             if (glyphMap.find(codePoint) == glyphMap.end()) {
-                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, false);
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, VROGlyphRenderMode::None);
                 glyphMap[codePoint] = glyph;
             }
         }
@@ -278,7 +278,7 @@ void VROText::buildText(std::wstring &text,
         std::wstring space = L" ";
         uint32_t spaceCode = *space.begin();
         
-        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, true);
+        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, VROGlyphRenderMode::Bitmap);
         
         std::shared_ptr<VROMaterial> whitespaceMaterial = std::make_shared<VROMaterial>();
         whitespaceMaterial->setNeedsToneMapping(false);
@@ -306,7 +306,7 @@ void VROText::buildText(std::wstring &text,
         for (int i = fontRun.start; i < fontRun.end; i++) {
             uint32_t codePoint = text.at(i);
             if (glyphMap.find(codePoint) == glyphMap.end()) {
-                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, true);
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, VROGlyphRenderMode::Bitmap);
                 
                 const std::shared_ptr<VROGlyphAtlas> atlas = glyph->getAtlas();
                 auto materialAndIndices = materialMap.find(atlas);

@@ -13,6 +13,7 @@
 #include "VROFontUtil.h"
 #include "VROStringUtil.h"
 #include "VROGlyphAtlas.h"
+#include "VROGlyph.h"
 
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
@@ -137,23 +138,34 @@ std::pair<std::string, std::string> VROTypeface::getLanguages(FT_FaceRec_* face)
     return std::make_pair(dlng, slng);
 }
 
-std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t variantSelector, bool forRendering) {
+std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t variantSelector,
+                                                VROGlyphRenderMode renderMode) {
     std::string key = VROStringUtil::toString(codePoint) + "_V" + VROStringUtil::toString(variantSelector);
-    auto kv = _glyphCache.find(key);
-    if (kv != _glyphCache.end()) {
-        return kv->second;
+    
+    if (renderMode == VROGlyphRenderMode::Bitmap || renderMode == VROGlyphRenderMode::None) {
+        auto kv = _bitmapGlyphCache.find(key);
+        if (kv != _bitmapGlyphCache.end()) {
+            return kv->second;
+        }
+    } else if (renderMode == VROGlyphRenderMode::Vector || renderMode == VROGlyphRenderMode::None) {
+        auto kv = _vectorGlyphCache.find(key);
+        if (kv != _vectorGlyphCache.end()) {
+            return kv->second;
+        }
     }
     
-    std::shared_ptr<VROGlyph> glyph = loadGlyph(codePoint, variantSelector, forRendering);
-    if (forRendering) {
-        _glyphCache.insert(std::make_pair(key, glyph));
+    std::shared_ptr<VROGlyph> glyph = loadGlyph(codePoint, variantSelector, renderMode);
+    if (renderMode == VROGlyphRenderMode::Bitmap) {
+        _bitmapGlyphCache.insert(std::make_pair(key, glyph));
+    } else if (renderMode == VROGlyphRenderMode::Vector) {
+        _vectorGlyphCache.insert(std::make_pair(key, glyph));
     }
     return glyph;
 }
 
 void VROTypeface::preloadGlyphs(std::string chars) {
     for (std::string::const_iterator c = chars.begin(); c != chars.end(); ++c) {
-        getGlyph(*c, 0, true);
+        getGlyph(*c, 0, VROGlyphRenderMode::Bitmap);
     }
 }
 

@@ -24,6 +24,7 @@ class VRODriver;
 class VROGlyphAtlas;
 struct FT_FaceRec_;
 
+enum class VROGlyphRenderMode;
 enum class VROFontStyle {
     Normal,
     Italic
@@ -80,15 +81,17 @@ public:
     bool hasCharacter(uint32_t codePoint, uint32_t variationSelector) const;
     
     /*
-     Get the glyph for the given character. If forRendering is true, then the
-     texture in the VROGlyph will be populated; otherwise it is left empty. 
-     Glyphs are cached when they are retrieved for the first time (if
-     forRendering is true), so that future retrievals are faster.
+     Get the glyph for the given character. If renderMode is Bitmap, then the
+     texture (and related bitmap properties) in the VROGlyph will be populated;
+     if renderMode is Vector, then the triangles in the glyph will be populated.
+     
+     Glyphs are cached (once for each render mode) when they are retrieved for the
+     first time, so that future retrievals are faster.
      
      If the variant selector is 0, then we assume this is not a variation sequence.
      */
     std::shared_ptr<VROGlyph> getGlyph(uint32_t codePoint, uint32_t variantSelector,
-                                       bool forRendering);
+                                       VROGlyphRenderMode renderMode);
     
     /*
      Refresh the texture of all glyph atlases used by this typeface.
@@ -109,7 +112,7 @@ protected:
     
     virtual FT_FaceRec_ *loadFTFace() = 0;
     virtual std::shared_ptr<VROGlyph> loadGlyph(uint32_t charCode, uint32_t variantSelector,
-                                                bool forRendering) = 0;
+                                                VROGlyphRenderMode renderMode) = 0;
     
     std::string _name;
     std::vector<std::shared_ptr<VROGlyphAtlas>> _glyphAtlases;
@@ -129,7 +132,7 @@ private:
     
     VROSparseBitSet _coverage;
     std::vector<std::unique_ptr<VROSparseBitSet>> _variationCoverage;
-    std::map<std::string, std::shared_ptr<VROGlyph>> _glyphCache;
+    std::map<std::string, std::shared_ptr<VROGlyph>> _bitmapGlyphCache, _vectorGlyphCache;
     
     /*
      Compute the charmap coverage of this typeface.

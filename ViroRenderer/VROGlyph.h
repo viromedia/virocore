@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include "VROVector3f.h"
+#include "VROTriangle.h"
 #include "VROAllocationTracker.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -20,6 +21,12 @@ class VRODriver;
 class VROTexture;
 class VROGlyphAtlas;
 class VROAtlasLocation;
+
+enum class VROGlyphRenderMode {
+    None,
+    Bitmap,
+    Vector,
+};
 
 class VROGlyph {
     
@@ -34,34 +41,41 @@ public:
     
     /*
      Load the glyph identified by the given FT_Face. If forRendering is false,
-     then only getAdvance() will be available after this operation. If
-     forRendering is true, then the glyph will additionally be written to the
+     then only getAdvance() will be available after this operation.
+     
+     If the render mode is Bitmap, then the glyph will additionally be written to the
      last VROGlyphAtlas provided in the given vector. If the glyph does not
      fit in said vector, then a new VROGlyphAtlas will be created and pushed
      to the back of the vector.
+     
+     If the render mode is Vector, then the contours for the glyph will be loaded
+     and stored.
      
      If the variant selector is 0, then we assume this is not a variation
      sequence.
      */
     virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                      bool forRendering, std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
+                      VROGlyphRenderMode renderMode,
+                      std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
                       std::shared_ptr<VRODriver> driver) = 0;
     
+#pragma mark - Bitmap Fonts
+    
+    /*
+     For glyphs rendered as to textures, these methods provide the atlas and texture.
+     The texture getter is simply a convenience method; it returns the atlas's
+     texture.
+     */
     virtual std::shared_ptr<VROTexture> getTexture() const = 0;
     const std::shared_ptr<VROGlyphAtlas> getAtlas() const {
         return _atlas;
     }
-    
     VROVector3f getSize() const {
         return _size;
     }
     VROVector3f getBearing() const {
         return _bearing;
     }
-    long getAdvance() const {
-        return _advance;
-    }
-    
     float getMinU() const {
         return _minU;
     }
@@ -73,6 +87,18 @@ public:
     }
     float getMaxV() const {
         return _maxV;
+    }
+    
+#pragma mark - Vector Fonts
+    
+    const std::vector<VROTriangle> &getTriangles() const {
+        return _triangles;
+    }
+    
+#pragma mark - All Fonts
+    
+    long getAdvance() const {
+        return _advance;
     }
     
 protected:
@@ -104,6 +130,12 @@ protected:
      */
     float _minU, _minV;
     float _maxU, _maxV;
+    
+    /*
+     For vectorized glphs, contains the triangles to render the
+     glyph.
+     */
+    std::vector<VROTriangle> _triangles;
     
 };
 

@@ -256,11 +256,15 @@ add_library( # Sets the name of the library.
              # UI
              ${VIRO_RENDERER_SRC}/VROReticle.cpp
              ${VIRO_RENDERER_SRC}/VROText.cpp
+             ${VIRO_RENDERER_SRC}/VROText3D.cpp
+             ${VIRO_RENDERER_SRC}/VROTextFormatter.cpp
              ${VIRO_RENDERER_SRC}/VROTypeface.cpp
              ${VIRO_RENDERER_SRC}/VROTypefaceCollection.cpp
              ${VIRO_RENDERER_SRC}/VROFontUtil.cpp
              ${VIRO_RENDERER_SRC}/VROCharmapCoverage.cpp
              ${VIRO_RENDERER_SRC}/VROKnuthPlassFormatter.cpp
+             ${VIRO_RENDERER_SRC}/VROVectorizer.cpp
+             ${VIRO_RENDERER_SRC}/VROContour.cpp
              ${VIRO_RENDERER_SRC}/VRODebugHUD.cpp
 
              # OpenGL
