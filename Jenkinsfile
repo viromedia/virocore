@@ -45,7 +45,7 @@ fastlane renderer_memoryleaktest'''
     }
     stage('start react-viro') {
       steps {
-        build(job: 'react-viro/master', propagate: true, wait: true)
+        build(job: 'react-viro/'+env.BRANCH_NAME', propagate: true, wait: true)
       }
     }
   }
