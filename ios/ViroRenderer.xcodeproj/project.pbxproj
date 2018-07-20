@@ -765,6 +765,8 @@
 		8F201C4C21010C7C00637A75 /* cdt.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C4B21010C7B00637A75 /* cdt.cc */; };
 		8F201C4F21010E0B00637A75 /* VROPolygonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C4D21010E0B00637A75 /* VROPolygonTest.cpp */; };
 		8F201C5021010E0B00637A75 /* VROPolygonTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C4E21010E0B00637A75 /* VROPolygonTest.h */; };
+		8F201C5F2101624500637A75 /* VROTextFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C5D2101624500637A75 /* VROTextFormatter.cpp */; };
+		8F201C602101624500637A75 /* VROTextFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C5E2101624500637A75 /* VROTextFormatter.h */; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */; };
@@ -1696,6 +1698,8 @@
 		8F201C4B21010C7B00637A75 /* cdt.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cdt.cc; path = ../poly2tri/sweep/cdt.cc; sourceTree = "<group>"; };
 		8F201C4D21010E0B00637A75 /* VROPolygonTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPolygonTest.cpp; sourceTree = "<group>"; };
 		8F201C4E21010E0B00637A75 /* VROPolygonTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPolygonTest.h; sourceTree = "<group>"; };
+		8F201C5D2101624500637A75 /* VROTextFormatter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTextFormatter.cpp; sourceTree = "<group>"; };
+		8F201C5E2101624500637A75 /* VROTextFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTextFormatter.h; sourceTree = "<group>"; };
 		8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = gorilla.vrx; path = ViroSample/gorilla.vrx; sourceTree = "<group>"; };
 		8F2657441F0E808C0031DE17 /* VROCompress.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCompress.cpp; sourceTree = "<group>"; };
 		8F2657451F0E808C0031DE17 /* VROCompress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCompress.h; sourceTree = "<group>"; };
@@ -3026,6 +3030,8 @@
 				8F87516820629846002D9BF8 /* Font */,
 				8F56AEA81DE76E1D00DD65B6 /* VROText.h */,
 				8F56AEA71DE76E1D00DD65B6 /* VROText.cpp */,
+				8F201C5E2101624500637A75 /* VROTextFormatter.h */,
+				8F201C5D2101624500637A75 /* VROTextFormatter.cpp */,
 				8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */,
 				8F67B59D1DF1DC920096C26F /* VROKnuthPlassFormatter.cpp */,
 			);
@@ -4070,6 +4076,7 @@
 				8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */,
 				8F828EFB1FAF83840068159E /* VROARImperativeSession.h in Headers */,
 				A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */,
+				8F201C602101624500637A75 /* VROTextFormatter.h in Headers */,
 				A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */,
 				8FEACEED2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h in Headers */,
 				A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */,

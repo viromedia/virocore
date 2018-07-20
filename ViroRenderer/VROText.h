@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <map>
 #include <atomic>
-
 #include "VROGeometry.h"
 #include "VROShapeUtils.h"
 #include "VROVector4f.h"
@@ -22,6 +21,8 @@ class VROTexture;
 class VROGlyph;
 class VROGlyphAtlas;
 class VROTypefaceCollection;
+
+static const float kTextPointToWorldScale = 0.01;
 
 enum class VROTextHorizontalAlignment {
     Left,
@@ -52,16 +53,6 @@ class VROTextLayout {
     float height;
     VROTextHorizontalAlignment horizontalAlignment;
     VROTextVerticalAlignment verticalAlignment;
-};
-
-class VROTextLine {
-public:
-    std::wstring line;
-    float spacingRatio;
-    
-    VROTextLine(std::wstring &line) : line(line), spacingRatio(1) {}
-    VROTextLine(std::wstring &line, float spacingRatio) : line(line), spacingRatio(spacingRatio) {}
-    virtual ~VROTextLine() {}
 };
 
 class VROText : public VROGeometry {
@@ -233,51 +224,6 @@ private:
                           float x, float y, 
                           std::vector<VROShapeVertexLayout> &var,
                           std::vector<int> &indices);
-    
-    /*
-     Simple methods for processing the line-break mode. All of the methods below use a 
-     'greedy' algorithm, filling as much space in the current line as possible then moving
-     to the next line. These methods also introduce a newline on hard breaks (i.e. whenever
-     the '\n' character is encountered). In particular, the wrapByNewlines function *only*
-     processes hard breaks; the rest process both hard and soft.
-     
-     These functions also handle clipping. When char/word wrapping is on, we only have to
-     clip text vertically (horizontal edges are implicitly taken care of by the wrapping
-     function). When char/word wrapping is off, we also have to clip text horizontally.
-     */
-    static std::vector<VROTextLine> wrapByWords(std::wstring &text,
-                                                float maxWidth, float maxHeight, int maxLines, float lineHeight,
-                                                VROTextClipMode clipMode,
-                                                std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap);
-    static std::vector<VROTextLine> wrapByChars(std::wstring &text,
-                                                float maxWidth, float maxHeight, int maxLines, float lineHeight,
-                                                VROTextClipMode clipMode,
-                                                std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap);
-    static std::vector<VROTextLine> wrapByNewlines(std::wstring &text,
-                                                   float maxWidth, float maxHeight, int maxLines, float lineHeight,
-                                                   VROTextClipMode clipMode,
-                                                   std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap);
-    
-    /*
-     Justification routine. Considerably more complex than the greedy algorithms above. Note that
-     justification is a word-wrapping technique that reduces the 'raggedness' of the text edges;
-     it can be used with left, right, and centered horizontal alignment. To achieve traditional 
-     justified text as seen in newspapers, use it with VROTextHorizontalAlignment::Left.
-     */
-    static std::vector<VROTextLine> justify(std::wstring &text,
-                                            float maxWidth, float maxHeight, int maxLines, float lineHeight,
-                                            VROTextClipMode clipMode,
-                                            std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap);
-    
-    /*
-     Helpers for wrapping/clipping.
-     */
-    static std::vector<std::wstring> divideIntoParagraphs(std::wstring &text);
-    static float getLengthOfWord(const std::wstring &word, std::map<uint32_t, std::shared_ptr<VROGlyph>> &glyphMap);
-
-    static bool isAnotherLineAvailable(size_t numLinesNow, float maxHeight, int maxLines,
-                                       float lineHeight, VROTextClipMode clipMode);
-    
 
 };
 
