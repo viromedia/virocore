@@ -204,9 +204,17 @@ void VROText3D::buildText(std::wstring &text,
      */
     std::map<uint32_t, std::shared_ptr<VROGlyph>> glyphMap;
     
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->getDiffuse().setColor(color);
-    material->setCullMode(VROCullMode::None);
+    std::shared_ptr<VROMaterial> faceMaterial = std::make_shared<VROMaterial>();
+    faceMaterial->getDiffuse().setColor(color);
+    faceMaterial->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> backMaterial = std::make_shared<VROMaterial>();
+    backMaterial->getDiffuse().setColor(color);
+    backMaterial->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VROMaterial> sideMaterial = std::make_shared<VROMaterial>();
+    sideMaterial->getDiffuse().setColor(color);
+    sideMaterial->setCullMode(VROCullMode::None);
     
     // Split the text into runs, eached mapped to a typeface
     std::vector<VROFontRun> fontRuns = typefaces->computeRuns(text);
@@ -241,25 +249,31 @@ void VROText3D::buildText(std::wstring &text,
     }
     
     std::vector<VROShapeVertexLayout> var;
-    std::vector<int> indices;
+    std::vector<int> frontIndices;
+    std::vector<int> backIndices;
+    std::vector<int> sideIndices;
     
     VROTextFormatter::formatAndBuild(text, width, height, maxLines, maxLineHeight, horizontalAlignment, verticalAlignment, lineBreakMode, clipMode, glyphMap, outRealizedWidth, outRealizedHeight,
-                                     [&var, &indices, extrusion] (std::shared_ptr<VROGlyph> &glyph, float x, float y) {
-                                         buildChar(glyph, x, y, extrusion, var, indices);
+                                     [&var, &frontIndices, &backIndices, &sideIndices, extrusion] (std::shared_ptr<VROGlyph> &glyph, float x, float y) {
+                                         buildChar(glyph, x, y, extrusion, var,
+                                                   frontIndices, backIndices, sideIndices);
                                      });
-    buildGeometry(var, indices, material, sources, elements, materials);
+    
+    buildGeometry(var, { frontIndices, backIndices, sideIndices }, sources, elements);
+    materials.push_back(faceMaterial);
+    materials.push_back(backMaterial);
+    materials.push_back(sideMaterial);
 }
 
 void VROText3D::buildChar(std::shared_ptr<VROGlyph> &glyph,
                           float x, float y, float extrusion,
                           std::vector<VROShapeVertexLayout> &var,
-                          std::vector<int> &indices) {
+                          std::vector<int> &frontIndices,
+                          std::vector<int> &backIndices,
+                          std::vector<int> &sideIndices) {
     
-    const std::vector<VROTriangle> &triangles = glyph->getTriangles();
-    //x += glyph->getBearing().x * kTextPointToWorldScale;
-    //y += (glyph->getBearing().y - glyph->getSize().y) * kTextPointToWorldScale;
-    
-    for (const VROTriangle &triangle : triangles) {
+    const std::vector<VROGlyphTriangle> &triangles = glyph->getTriangles();
+    for (const VROGlyphTriangle &triangle : triangles) {
         var.push_back({ x + triangle.getA().x * kTextPointToWorldScale,
                         y + triangle.getA().y * kTextPointToWorldScale,
                             triangle.getA().z * kTextPointToWorldScale * extrusion, 0, 0, 0, 0, 1});
@@ -269,20 +283,30 @@ void VROText3D::buildChar(std::shared_ptr<VROGlyph> &glyph,
         var.push_back({ x + triangle.getC().x * kTextPointToWorldScale,
                         y + triangle.getC().y * kTextPointToWorldScale,
                             triangle.getC().z * kTextPointToWorldScale * extrusion, 0, 0, 0, 0, 1});
+        
         for (int i = 0; i < 3; i++) {
-            indices.push_back((int) indices.size());
+            int index = (int) (frontIndices.size() + backIndices.size() + sideIndices.size());
+            switch (triangle.getType()) {
+                case VROGlyphTriangleType::Front:
+                    frontIndices.push_back(index);
+                    break;
+                case VROGlyphTriangleType::Back:
+                    backIndices.push_back(index);
+                    break;
+                case VROGlyphTriangleType::Side:
+                    sideIndices.push_back(index);
+                    break;
+                default:
+                    pabort();
+            }
         }
     }
-    
-    
 }
 
 void VROText3D::buildGeometry(std::vector<VROShapeVertexLayout> &var,
-                              std::vector<int> &indices,
-                              std::shared_ptr<VROMaterial> material,
+                              std::vector<std::vector<int>> indices,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                              std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                              std::vector<std::shared_ptr<VROMaterial>> &materials) {
+                              std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     
     int numVertices = (int) var.size();
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>(var.data(), var.size() * sizeof(VROShapeVertexLayout));
@@ -292,11 +316,13 @@ void VROText3D::buildGeometry(std::vector<VROShapeVertexLayout> &var,
         sources.push_back(source);
     }
     
-    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices.data(), sizeof(int) * indices.size());
-    std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
-                                                                                       VROGeometryPrimitiveType::Triangle,
-                                                                                       indices.size() / 3,
-                                                                                       sizeof(int));
-    elements.push_back(element);
-    materials.push_back(material);
+    for (size_t i = 0; i < indices.size(); i++) {
+        std::vector<int> &elementIndices = indices[i];
+        std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) elementIndices.data(), sizeof(int) * elementIndices.size());
+        std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
+                                                                                           VROGeometryPrimitiveType::Triangle,
+                                                                                           elementIndices.size() / 3,
+                                                                                           sizeof(int));
+        elements.push_back(element);
+    }
 }

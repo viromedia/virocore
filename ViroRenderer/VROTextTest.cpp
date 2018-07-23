@@ -174,6 +174,8 @@ void VROTextTest::rotateText() {
                                                                 sample.fontStyle, sample.fontWeight, {0.0, 0.0, 1.0, 1.0}, 8, width, height,
                                                                 VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Center,
                                                                 linebreakMode, clipMode, 0, _driver);
+        text->getMaterials()[1]->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
+        text->getMaterials()[2]->getDiffuse().setColor({ 1.0, 0.0, 1.0, 1.0 });
         _textNode->setGeometry(text);
         _textNode->setPosition({ 0, 0, -3 });
         _pointOfView->getCamera()->setOrbitFocalPoint({ 0, 0, -3});

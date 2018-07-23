@@ -166,11 +166,9 @@ private:
      Build a standard Viro geometry from the given vertex array and indices.
      */
     static void buildGeometry(std::vector<VROShapeVertexLayout> &var,
-                              std::vector<int> &indices,
-                              std::shared_ptr<VROMaterial> material,
+                              std::vector<std::vector<int>> indices,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                              std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                              std::vector<std::shared_ptr<VROMaterial>> &materials);
+                              std::vector<std::shared_ptr<VROGeometryElement>> &elements);
     
     /*
      Write the geometry for the given glyph (at the given position) into the
@@ -180,7 +178,9 @@ private:
     static void buildChar(std::shared_ptr<VROGlyph> &glyph,
                           float x, float y, float extrusion,
                           std::vector<VROShapeVertexLayout> &var,
-                          std::vector<int> &indices);
+                          std::vector<int> &frontIndices,
+                          std::vector<int> &backIndices,
+                          std::vector<int> &sideIndices);
 };
 
 #endif /* VROText3D_h */

@@ -21,6 +21,7 @@ class VRODriver;
 class VROTexture;
 class VROGlyphAtlas;
 class VROAtlasLocation;
+class VROGlyphTriangle;
 
 enum class VROGlyphRenderMode {
     None,
@@ -91,7 +92,7 @@ public:
     
 #pragma mark - Vector Fonts
     
-    const std::vector<VROTriangle> &getTriangles() const {
+    const std::vector<VROGlyphTriangle> &getTriangles() const {
         return _triangles;
     }
     
@@ -135,8 +136,37 @@ protected:
      For vectorized glphs, contains the triangles to render the
      glyph.
      */
-    std::vector<VROTriangle> _triangles;
+    std::vector<VROGlyphTriangle> _triangles;
     
+};
+
+enum class VROGlyphTriangleType {
+    Front,
+    Back,
+    Side
+};
+
+class VROGlyphTriangle {
+public:
+    
+    VROGlyphTriangle(VROVector3f a, VROVector3f b, VROVector3f c, VROGlyphTriangleType type) :
+        _a(a), _b(b), _c(c), _type(type) {}
+    virtual ~VROGlyphTriangle() {}
+    
+    /*
+     Get the points of the triangle.
+     */
+    VROVector3f getA() const { return _a; }
+    VROVector3f getB() const { return _b; }
+    VROVector3f getC() const { return _c; }
+    VROGlyphTriangleType getType() const { return _type; }
+    
+private:
+    
+    VROVector3f _a;
+    VROVector3f _b;
+    VROVector3f _c;
+    VROGlyphTriangleType _type;
 };
 
 #endif /* VROGlyph_h */

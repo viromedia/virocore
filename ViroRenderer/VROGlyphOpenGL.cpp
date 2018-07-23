@@ -118,9 +118,12 @@ bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
     }
     
     VROVectorizer vectorizer(glyph, kBezierSteps);
-    for (size_t c = 0; c < vectorizer.getContourCount(); ++c) {
-        const VROContour *contour = vectorizer.getContour(c);
-        
+    
+    /*
+     Contour the sides.
+     */
+    for (size_t ci = 0; ci < vectorizer.getContourCount(); ++ci) {
+        const VROContour *contour = vectorizer.getContour(ci);
         for (size_t p = 0; p < contour->getPointCount() - 1; ++p) {
             const VROVector3f d1 = contour->getPoint(p);
             const VROVector3f d2 = contour->getPoint(p + 1);
@@ -136,7 +139,7 @@ bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
             c.y = d1.y / 64.0f;
             c.z = kExtrusion;
             
-            VROTriangle t1(a, b, c);
+            VROGlyphTriangle t1(a, b, c, VROGlyphTriangleType::Side);
             _triangles.push_back(t1);
             
             a.x = (d1.x / 64.0f);
@@ -149,18 +152,50 @@ bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
             c.y = d2.y / 64.0f;
             c.z = 0.0f;
             
-            VROTriangle t2(a, b, c);
+            VROGlyphTriangle t2(a, b, c, VROGlyphTriangleType::Side);
             _triangles.push_back(t2);
         }
         
+        /*
+         Add the last triangle closing the contour of the sides.
+         */
+        const VROVector3f d1 = contour->getPoint(contour->getPointCount() - 1);
+        const VROVector3f d2 = contour->getPoint(0);
+        VROVector3f a, b, c;
+        a.x = (d1.x / 64.0f);
+        a.y = d1.y / 64.0f;
+        a.z = 0.0f;
+        b.x = (d2.x / 64.0f);
+        b.y = d2.y / 64.0f;
+        b.z = 0.0f;
+        c.x = (d1.x / 64.0f);
+        c.y = d1.y / 64.0f;
+        c.z = kExtrusion;
+        
+        VROGlyphTriangle t1(a, b, c, VROGlyphTriangleType::Side);
+        _triangles.push_back(t1);
+        
+        a.x = (d1.x / 64.0f);
+        a.y = d1.y / 64.0f;
+        a.z = kExtrusion;
+        b.x = (d2.x / 64.0f);
+        b.y = d2.y / 64.0f;
+        b.z = kExtrusion;
+        c.x = (d2.x / 64.0f);
+        c.y = d2.y / 64.0f;
+        c.z = 0.0f;
+        
+        VROGlyphTriangle t2(a, b, c, VROGlyphTriangleType::Side);
+        _triangles.push_back(t2);
+        
         if (contour->getDirection()) {
             try {
-                std::vector<p2t::Point *> polyline = triangulateContour(vectorizer, (int) c);
+                std::vector<p2t::Point *> polyline = triangulateContour(vectorizer, (int) ci);
                 p2t::CDT *cdt = new p2t::CDT(polyline);
 
                 for (size_t cm = 0; cm < vectorizer.getContourCount(); ++cm) {
                     const VROContour *sm = vectorizer.getContour(cm);
-                    if (c != cm && !sm->getDirection() && sm->isInside(contour)) {
+                    if (ci != cm && !sm->getDirection() && sm->isInside(contour)) {
                         std::vector<p2t::Point *> pl = triangulateContour(vectorizer, (int) cm);
                         cdt->AddHole(pl);
                     }
@@ -182,7 +217,7 @@ bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
                     c.y = ot->GetPoint(2)->y;
                     c.z = 0.0f;
 
-                    VROTriangle t1(a, b, c);
+                    VROGlyphTriangle t1(a, b, c, VROGlyphTriangleType::Back);
                     _triangles.push_back(t1);
 
                     a.x = ot->GetPoint(0)->x;
@@ -195,7 +230,7 @@ bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
                     c.y = ot->GetPoint(2)->y;
                     c.z = kExtrusion;
 
-                    VROTriangle t2(a, b, c);
+                    VROGlyphTriangle t2(a, b, c, VROGlyphTriangleType::Front);
                     _triangles.push_back(t2);
                 }
                 delete (cdt);
