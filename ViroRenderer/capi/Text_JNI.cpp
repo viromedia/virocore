@@ -83,6 +83,7 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
                                                VRO_INT style,
                                                VRO_INT weight,
                                                VRO_LONG color,
+                                               VRO_FLOAT extrusionDepth,
                                                VRO_FLOAT width,
                                                VRO_FLOAT height,
                                                VRO_STRING horizontalAlignment_j,
@@ -122,7 +123,7 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
     std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, fontFamily, size,
                                                                  (VROFontStyle) style,
                                                                  (VROFontWeight) weight,
-                                                                 vecColor, width, height,
+                                                                 vecColor, extrusionDepth, width, height,
                                                                  horizontalAlignment,
                                                                  verticalAlignment,
                                                                  lineBreakMode,
@@ -196,6 +197,20 @@ VRO_METHOD(void, nativeSetColor)(VRO_ARGS
             return;
         }
         text->setColor(color);
+    });
+}
+
+VRO_METHOD(void, nativeSetExtrusionDepth)(VRO_ARGS
+                                          VRO_REF(VROText) text_j,
+                                          VRO_FLOAT extrusionDepth) {
+
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
+    VROPlatformDispatchAsyncRenderer([text_w, extrusionDepth] {
+        std::shared_ptr<VROText> text = text_w.lock();
+        if (!text) {
+            return;
+        }
+        text->setExtrusion(extrusionDepth);
     });
 }
 

@@ -39,7 +39,7 @@ void VRODebugHUD::initRenderer(std::shared_ptr<VRODriver> driver) {
      */
     _text = VROText::createSingleLineText(L"0.0",
                                           "Helvetica", 26, VROFontStyle::Normal, VROFontWeight::Regular,
-                                          { 0.6, 1.0, 0.6, 1.0 }, driver);
+                                          { 0.6, 1.0, 0.6, 1.0 }, 0, driver);
     for (const std::shared_ptr<VROTypeface> &typeface : _text->getTypefaceCollection()->getTypefaces()) {
         typeface->preloadGlyphs("0123456789.");
     }

@@ -112,7 +112,7 @@ void VROToneMappingTest::build(std::shared_ptr<VRORenderer> renderer,
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
     std::shared_ptr<VROText> text = VROText::createText(L"Hable (Luminance Only) tone-mapping", "Helvetica", 24,
-                                                        VROFontStyle::Normal, VROFontWeight::Regular, {1.0, 1.0, 1.0, 1.0}, width, height,
+                                                        VROFontStyle::Normal, VROFontWeight::Regular, {1.0, 1.0, 1.0, 1.0}, 0, width, height,
                                                         VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Center,
                                                         linebreakMode, clipMode, 0, driver);
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();

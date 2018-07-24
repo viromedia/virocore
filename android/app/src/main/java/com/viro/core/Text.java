@@ -15,6 +15,8 @@ package com.viro.core;
 
 import android.graphics.Color;
 
+import java.util.List;
+
 /**
  * Text is a Geometry that renders strings of text. The properties of the Text determine the style
  * of the rendered string, and the bounds of the Text (width and height) determine the area within
@@ -268,9 +270,10 @@ public class Text extends Geometry {
     private LineBreakMode mLineBreakMode = DEFAULT_LINE_BREAK_MODE;
     private ClipMode mClipMode = DEFAULT_CLIP_MODE;
     private int mMaxLines = DEFAULT_MAX_LINES;
+    private float mExtrusionDepth = 0;
 
     /**
-     * Create a new Text with the given set of minimum parameters: the text to display, and the
+     * Create a new 2D Text with the given set of minimum parameters: the text to display, and the
      * width and height of the bounds within which to display it. The text will be constrained to
      * the provided bounds, and defaults to wrapping words.
      *
@@ -280,8 +283,43 @@ public class Text extends Geometry {
      * @param height The height of the bounds within which to display the text.
      */
     public Text(ViroContext viroContext, String text, float width, float height) {
+        this(viroContext, text, width, height, 0);
+    }
+
+    /**
+     * Create a new Text with the given set of minimum parameters: the text to display, and the
+     * width and height of the bounds within which to display it. The text will be constrained to
+     * the provided bounds, and defaults to wrapping words. If extrusionDepth is greater than 0,
+     * then the Text will be rendered in 3D: it will be vectorized with sides of length
+     * <tt>extrusionDepth</tt>. If extrusionDepth is 0, then the Text will be rendered as a Bitmap, which is
+     * the equivalent of invoking the basic {@link #Text(ViroContext, String, float, float)}
+     * constructor.<p>
+     * <p>
+     * If the Text is rendered in 3D (if extrusionDepth > 0), then you can apply three
+     * materials to the text: Material 0 will represent the front of the Text, Material 1 will represent the
+     * back of the Text, and Material 2 will represent the sides of the Text. You can set the
+     * colors of these Materials to accordingly change the colors of different parts of the
+     * Text. For example:<p><pre>
+     * Material frontMaterial = new Material();
+     * frontMaterial.setDiffuseColor(Color.WHITE);
+     *
+     * Material  backMaterial = new Material();
+     * backMaterial.setDiffuseColor(Color.BLUE);
+     *
+     * Material sideMaterial = new Material();
+     * sideMaterial.setDiffuseColor(Color.RED);
+     * List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
+     * text.setMaterials(materials);
+     * </pre><p>
+     *
+     * @param viroContext The {@link ViroContext} is required to render Text.
+     * @param text        The text string to display.
+     * @param width       The width of the bounds within which to display the text.
+     * @param height      The height of the bounds within which to display the text.
+     */
+    public Text(ViroContext viroContext, String text, float width, float height, float extrusionDepth) {
         this(viroContext, text, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, DEFAULT_FONT_STYLE,
-                DEFAULT_FONT_WEIGHT, DEFAULT_COLOR, width, height,
+                DEFAULT_FONT_WEIGHT, DEFAULT_COLOR, width, height, extrusionDepth,
                 DEFAULT_HORIZONTAL_ALIGNMENT, DEFAULT_VERTICAL_ALIGNMENT, DEFAULT_LINE_BREAK_MODE,
                 DEFAULT_CLIP_MODE, DEFAULT_MAX_LINES);
     }
@@ -329,21 +367,23 @@ public class Text extends Geometry {
                 HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
 
-        this(viroContext, text, fontFamilies, size, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, color,
+        this(viroContext, text, fontFamilies, size, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, color, 0,
                 width, height, horizontalAlignment, verticalAlignment, lineBreakMode, clipMode,
                 maxLines);
     }
 
     private Text(ViroContext viroContext, String text, String fontFamilies,
-                int size, FontStyle fontStyle, FontWeight fontWeight, long color, float width, float height,
-                HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
-                LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
+                 int size, FontStyle fontStyle, FontWeight fontWeight, long color,
+                 float extrusionDepth, float width, float height,
+                 HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
+                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
         mViroContext = viroContext;
         mText = text;
         mFontFamilyName = fontFamilies;
         mFontSize = size;
         mFontStyle = fontStyle;
         mFontWeight = fontWeight;
+        mExtrusionDepth = extrusionDepth;
         mColor = color;
         mWidth = width;
         mHeight = height;
@@ -354,7 +394,7 @@ public class Text extends Geometry {
         mMaxLines = maxLines;
 
         mNativeRef = nativeCreateText(mViroContext.mNativeRef, mText, mFontFamilyName, mFontSize,
-                                      mFontStyle.getIntValue(), mFontWeight.getIntValue(), mColor, mWidth,
+                                      mFontStyle.getIntValue(), mFontWeight.getIntValue(), mColor, mExtrusionDepth, mWidth,
                                       mHeight, mHorizontalAlignment.getStringValue(), mVerticalAlignment.getStringValue(),
                                       mLineBreakMode.getStringValue(), mClipMode.getStringValue(), mMaxLines);
     }
@@ -517,13 +557,63 @@ public class Text extends Geometry {
                       mFontStyle.getIntValue(), mFontWeight.getIntValue());
     }
 
+    /**
+     * Get the color (as a {@link Color} int) of the Text. For a 3D Text, (one with a non-zero
+     * extrusion depth) this is the color of the front face of the Text.
+     *
+     * @return The color of the Text.
+     */
     public long getColor() {
         return mColor;
     }
 
+    /**
+     * Set the color of this Text. For a 3D Text, this sets the color of the front face of the Text
+     * (it sets the diffuse color the Text's first material). To set the color of the sides or the
+     * back, invoke {@link #setMaterials(List)}, and make the diffuse color of the second Material
+     * the desired back color and the diffuse color of the third Material the desired side
+     * color. For example:<p><pre>
+     * Material frontMaterial = new Material();
+     * frontMaterial.setDiffuseColor(Color.WHITE);
+     *
+     * Material  backMaterial = new Material();
+     * backMaterial.setDiffuseColor(Color.BLUE);
+     *
+     * Material sideMaterial = new Material();
+     * sideMaterial.setDiffuseColor(Color.RED);
+     * List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
+     * text.setMaterials(materials);
+     * </pre><p>
+     *
+     * @param color The color to use for the front faces of the Text.
+     */
     public void setColor(long color) {
         this.mColor = color;
         nativeSetColor(mNativeRef, color);
+    }
+
+    /**
+     * Get the extrusion depth of the text. This is zero for 2D Text. For 3D text, this is the
+     * extent of the Text's sides.
+     *
+     * @return The extrusion depth of the Text, at world coordinate scale (e.g. 1 point equals 1
+     * meter).
+     */
+    public float getExtrusionDepth() {
+        return mExtrusionDepth;
+    }
+
+    /**
+     * Set the extrusion depth of the text. Set this to zero to render 2D Text (e.g. bitmap text).
+     * If extrusionDepth is greater than 0, then the Text will be rendered in 3D: it will be
+     * vectorized with sides of length <tt>extrusionDepth</tt>.
+     *
+     * @param extrusionDepth The extrusion depth of the Text, at world coordinate scale (e.g. 1
+     *                       point equals 1 meter).
+     */
+    public void setExtrusionDepth(float extrusionDepth) {
+        this.mExtrusionDepth = extrusionDepth;
+        nativeSetExtrusionDepth(mNativeRef, extrusionDepth);
     }
 
     /**
@@ -672,13 +762,16 @@ public class Text extends Geometry {
     }
 
     private native long nativeCreateText(long viroContext, String text, String fontFamilyName,
-                                         int size, int style, int weight, long color, float width, float height,
+                                         int size, int style, int weight, long color, float extrusionDepth,
+                                         float width, float height,
                                          String horizontalAlignment, String verticalAlignment,
                                          String lineBreakMode, String clipMode, int maxLines);
     private native void nativeDestroyText(long textRef);
     private native void nativeSetText(long textRef, String text);
     private native void nativeSetFont(long viroContext, long textRef, String family, int size, int style, int weight);
     private native void nativeSetColor(long textRef, long color);
+    private native void nativeSetBackColor(long textRef, long color);
+    private native void nativeSetSideColor(long textRef, long color);
     private native void nativeSetWidth(long textRef, float width);
     private native void nativeSetHeight(long textRef, float height);
     private native void nativeSetHorizontalAlignment(long textRef, String horizontalAlignment);
@@ -686,6 +779,7 @@ public class Text extends Geometry {
     private native void nativeSetLineBreakMode(long textRef, String lineBreakMode);
     private native void nativeSetClipMode(long textRef, String clipMode);
     private native void nativeSetMaxLines(long textRef, int maxLines);
+    private native void nativeSetExtrusionDepth(long textRef, float extrusionDepth);
 
     /**
      * Builder for creating {@link Text} objects.
@@ -701,6 +795,7 @@ public class Text extends Geometry {
 
         private ViroContext mViroContext;
         private String mText;
+        private float mExtrusionDepth;
         private float mWidth;
         private float mHeight;
         private String mFontFamilyName = DEFAULT_FONT_FAMILY;
@@ -797,6 +892,16 @@ public class Text extends Geometry {
         }
 
         /**
+         * Refer to {@link Text#setExtrusionDepth(float)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder extrusionDepth(float extrusionDepth) {
+            this.mExtrusionDepth = extrusionDepth;
+            return this;
+        }
+
+        /**
          * Refer to {@link Text#setWidth(float)}.
          *
          * @return This builder.
@@ -872,8 +977,8 @@ public class Text extends Geometry {
          * @return The built Text.
          */
         public Text build() {
-            return new Text(mViroContext, mText, mFontFamilyName, mFontSize, mFontStyle, mFontWeight, mColor, mWidth, mHeight,
-            mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
+            return new Text(mViroContext, mText, mFontFamilyName, mFontSize, mFontStyle, mFontWeight, mColor, mExtrusionDepth,
+                    mWidth, mHeight, mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
         }
 
     }

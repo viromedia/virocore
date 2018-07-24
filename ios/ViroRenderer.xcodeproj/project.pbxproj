@@ -765,8 +765,6 @@
 		8F201C4C21010C7C00637A75 /* cdt.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C4B21010C7B00637A75 /* cdt.cc */; };
 		8F201C4F21010E0B00637A75 /* VROPolygonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C4D21010E0B00637A75 /* VROPolygonTest.cpp */; };
 		8F201C5021010E0B00637A75 /* VROPolygonTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C4E21010E0B00637A75 /* VROPolygonTest.h */; };
-		8F201C532101579E00637A75 /* VROText3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C512101579E00637A75 /* VROText3D.cpp */; };
-		8F201C542101579E00637A75 /* VROText3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C522101579E00637A75 /* VROText3D.h */; };
 		8F201C572101597200637A75 /* VROVectorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C552101597200637A75 /* VROVectorizer.cpp */; };
 		8F201C582101597200637A75 /* VROVectorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C562101597200637A75 /* VROVectorizer.h */; };
 		8F201C5B210159E700637A75 /* VROContour.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C59210159E600637A75 /* VROContour.h */; };
@@ -1704,8 +1702,6 @@
 		8F201C4B21010C7B00637A75 /* cdt.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cdt.cc; path = ../poly2tri/sweep/cdt.cc; sourceTree = "<group>"; };
 		8F201C4D21010E0B00637A75 /* VROPolygonTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPolygonTest.cpp; sourceTree = "<group>"; };
 		8F201C4E21010E0B00637A75 /* VROPolygonTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPolygonTest.h; sourceTree = "<group>"; };
-		8F201C512101579E00637A75 /* VROText3D.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROText3D.cpp; sourceTree = "<group>"; };
-		8F201C522101579E00637A75 /* VROText3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROText3D.h; sourceTree = "<group>"; };
 		8F201C552101597200637A75 /* VROVectorizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVectorizer.cpp; sourceTree = "<group>"; };
 		8F201C562101597200637A75 /* VROVectorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVectorizer.h; sourceTree = "<group>"; };
 		8F201C59210159E600637A75 /* VROContour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROContour.h; sourceTree = "<group>"; };
@@ -3042,8 +3038,6 @@
 				8F87516820629846002D9BF8 /* Font */,
 				8F56AEA81DE76E1D00DD65B6 /* VROText.h */,
 				8F56AEA71DE76E1D00DD65B6 /* VROText.cpp */,
-				8F201C522101579E00637A75 /* VROText3D.h */,
-				8F201C512101579E00637A75 /* VROText3D.cpp */,
 				8F201C5E2101624500637A75 /* VROTextFormatter.h */,
 				8F201C5D2101624500637A75 /* VROTextFormatter.cpp */,
 				8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */,
@@ -4234,7 +4228,6 @@
 				8FD4DF3C1C18F5EA003DC425 /* VROLog.h in Headers */,
 				8FB659171CD839A000D036EB /* VRODriverOpenGL.h in Headers */,
 				8ABEDD3720115EB1003E8AFF /* VROARImageTracker.h in Headers */,
-				8F201C542101579E00637A75 /* VROText3D.h in Headers */,
 				8F83DE9C1C4826F80089C31A /* VROTimingFunction.h in Headers */,
 				8FD2A5521F813C4100E831A6 /* VROVideoSphereTest.h in Headers */,
 				8F53C8F91E00F03E008314B4 /* tiny_obj_loader.h in Headers */,
@@ -5445,7 +5438,6 @@
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
 				8FD4DF131C18ED44003DC425 /* OrientationEKF.mm in Sources */,
 				8FD2A54A1F813C4100E831A6 /* VROTorusTest.cpp in Sources */,
-				8F201C532101579E00637A75 /* VROText3D.cpp in Sources */,
 				8F1E01011FD10D7D00DF9068 /* VROViewControllerGVR.m in Sources */,
 				8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */,
 				8F53D39E1DCA883A001C91A8 /* VROConvert.cpp in Sources */,

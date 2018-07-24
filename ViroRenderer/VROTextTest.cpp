@@ -169,25 +169,18 @@ void VROTextTest::rotateText() {
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
     
+    float extrusion = _using3DText ? 8 : 0;
+    std::shared_ptr<VROText> text = VROText::createText(sample.sample, sample.typefaceNames, sample.fontSize,
+                                                        sample.fontStyle, sample.fontWeight, {1.0, 1.0, 1.0, 1.0}, extrusion, width, height,
+                                                        VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
+                                                        linebreakMode, clipMode, 0, _driver);
     if (_using3DText) {
-        std::shared_ptr<VROText3D> text = VROText3D::createText(sample.sample, sample.typefaceNames, sample.fontSize,
-                                                                sample.fontStyle, sample.fontWeight, {0.0, 0.0, 1.0, 1.0}, 8, width, height,
-                                                                VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Center,
-                                                                linebreakMode, clipMode, 0, _driver);
         text->getMaterials()[1]->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
         text->getMaterials()[2]->getDiffuse().setColor({ 1.0, 0.0, 1.0, 1.0 });
-        _textNode->setGeometry(text);
-        _textNode->setPosition({ 0, 0, -3 });
-        _pointOfView->getCamera()->setOrbitFocalPoint({ 0, 0, -3});
-    } else {
-        std::shared_ptr<VROText> text = VROText::createText(sample.sample, sample.typefaceNames, sample.fontSize,
-                                                            sample.fontStyle, sample.fontWeight, {1.0, 1.0, 1.0, 1.0}, width, height,
-                                                            VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
-                                                            linebreakMode, clipMode, 0, _driver);
-        _textNode->setGeometry(text);
-        _textNode->setPosition({ 0, 0, -6 });
-        _pointOfView->getCamera()->setOrbitFocalPoint({ 0, 0, -6});
     }
+    _textNode->setGeometry(text);
+    _textNode->setPosition({ 0, 0, -6 });
+    _pointOfView->getCamera()->setOrbitFocalPoint({ 0, 0, -6});
     
     if (_textIndex == _textSamples.size() - 1) {
         _using3DText = !_using3DText;

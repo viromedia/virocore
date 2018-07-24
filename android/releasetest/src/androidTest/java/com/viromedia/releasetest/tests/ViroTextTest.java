@@ -13,12 +13,14 @@ import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.AmbientLight;
+import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Text;
 import com.viro.core.Vector;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +66,9 @@ public class ViroTextTest extends ViroBaseTest {
         runUITest(() -> testSetLineBreakMode());
         runUITest(() -> testSetClipMode());
         runUITest(() -> testSetMaxLines());
+        runUITest(() -> testExtrusion());
+        runUITest(() -> testExtrusionColors());
+        runUITest(() -> testExtrusionAltering());
     }
 
     private void testSetLineBreakMode() {
@@ -222,5 +227,66 @@ public class ViroTextTest extends ViroBaseTest {
         assertPass("+1 fontSize per second", () -> {
             mText.setFontSize(25);
         });
+    }
+
+    private void testExtrusion() {
+        Material frontMaterial = new Material();
+        frontMaterial.setDiffuseColor(Color.BLUE);
+        Material backMaterial = new Material();
+        backMaterial.setDiffuseColor(Color.BLUE);
+        mText.setMaterials(Arrays.asList(frontMaterial, backMaterial));
+
+        mText.setExtrusionDepth(8);
+
+        final List<String> strings = Arrays.asList(new String("Jived fox nymph grabs quick waltz."),
+                new String("Glib jocks quiz nymph to vex dwarf."),
+                new String("Sphinx of black quartz, judge my vow."),
+                new String("How vexingly quick daft zebras jump!"),
+                new String("The five boxing wizards jump quickly."),
+                new String("Pack my box with five dozen liquor jugs."));
+        final Iterator<String> itr = Iterables.cycle(strings).iterator();
+        mMutableTestMethod = () -> {
+            mText.setText(itr.next());
+
+        };
+        assertPass("Cycling through strings of 3D blue text");
+    }
+
+    private void testExtrusionColors() {
+        mText.setExtrusionDepth(8);
+
+        Material frontMaterial = new Material();
+        frontMaterial.setDiffuseColor(Color.WHITE);
+        Material  backMaterial = new Material();
+        backMaterial.setDiffuseColor(Color.BLUE);
+        Material sideMaterial = new Material();
+        sideMaterial.setDiffuseColor(Color.RED);
+
+        List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
+        mText.setMaterials(materials);
+
+        final List<String> strings = Arrays.asList(new String("Jived fox nymph grabs quick waltz."),
+                new String("Glib jocks quiz nymph to vex dwarf."),
+                new String("Sphinx of black quartz, judge my vow."),
+                new String("How vexingly quick daft zebras jump!"),
+                new String("The five boxing wizards jump quickly."),
+                new String("Pack my box with five dozen liquor jugs."));
+        final Iterator<String> itr = Iterables.cycle(strings).iterator();
+        mMutableTestMethod = () -> {
+            mText.setText(itr.next());
+        };
+        assertPass("Cycling through strings of 3D white text with red sides");
+    }
+
+    private void testExtrusionAltering() {
+        mText.setText("Extrusion Test");
+        final List<Float> extrusion = Arrays.asList(new Float(0), new Float(4),
+                new Float(8), new Float(16), new Float(32), new Float(64));
+
+        final Iterator<Float> itr = Iterables.cycle(extrusion).iterator();
+        mMutableTestMethod = () -> {
+            mText.setExtrusionDepth(itr.next());
+        };
+        assertPass("Increasing extrusion depth");
     }
 }
