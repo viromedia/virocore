@@ -30,9 +30,8 @@ public interface CameraImageListener {
      * copy it to a separate buffer.
      *
      * @param buffer The buffer containing the RGBA8888 data.
-     * @param width The width of the image.
-     * @param height The height of the image.
+     * @param intrinsics Camera Intrinsics of the device camera. See {@link CameraIntrinsics}
      */
-    public void onCameraImageUpdated(ByteBuffer buffer, int width, int height);
+    public void onCameraImageUpdated(ByteBuffer buffer, int width, int height, CameraIntrinsics intrinsics);
 
 }

@@ -166,6 +166,7 @@ namespace arcore {
         virtual ~FrameNative();
         virtual void getViewMatrix(float *outMatrix);
         virtual void getProjectionMatrix(float near, float far, float *outMatrix);
+        virtual void getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy);
         virtual TrackingState getTrackingState();
         virtual void getLightEstimate(LightEstimate *outLightEstimate);
         virtual bool hasDisplayGeometryChanged();

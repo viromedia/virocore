@@ -30,12 +30,18 @@ void VROCameraImageFrameListener::onFrameWillRender(const VRORenderContext &cont
     if (!session) {
         return;
     }
+    if (!session->isReady()) {
+        return;
+    }
     std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
     if (!frame) {
         return;
     }
     std::shared_ptr<VROARCameraARCore> camera = std::dynamic_pointer_cast<VROARCameraARCore>(frame->getCamera());
     if (!camera || !camera->isImageDataAvailable()) {
+        return;
+    }
+    if (camera->getTrackingState() != VROARTrackingState::Normal) {
         return;
     }
     int bufferIndex = _bufferIndex;
@@ -57,15 +63,23 @@ void VROCameraImageFrameListener::onFrameWillRender(const VRORenderContext &cont
 
     camera->getImageData((uint8_t *) _data[bufferIndex]->getData());
 
+
+    float outFx, outFy, outCx, outCy;
+    camera->getImageIntrinsics(&outFx, &outFy, &outCx, &outCy);
+
+    VRO_OBJECT intrinsics = VROPlatformConstructHostObject("com/viro/core/CameraIntrinsics",
+                                                           "(FFFF)V", outFx, outFy, outCx, outCy);
+
     VRO_WEAK listener_w = VRO_NEW_WEAK_GLOBAL_REF(_listener_j);
     jobject buffer_w = VRO_NEW_WEAK_GLOBAL_REF(_buffers[bufferIndex]);
-
-    VROPlatformDispatchAsyncApplication([listener_w, width, height, buffer_w] {
+    jobject intrinsics_g = VRO_NEW_GLOBAL_REF(intrinsics);
+    VROPlatformDispatchAsyncApplication([listener_w, width, height, buffer_w, intrinsics_g] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         VRO_OBJECT listener = VRO_NEW_LOCAL_REF(listener_w);
         if (VRO_IS_OBJECT_NULL(listener)) {
             VRO_DELETE_WEAK_GLOBAL_REF(listener_w);
             VRO_DELETE_WEAK_GLOBAL_REF(buffer_w);
+            VRO_DELETE_GLOBAL_REF(intrinsics_g);
             return;
         }
 
@@ -73,14 +87,24 @@ void VROCameraImageFrameListener::onFrameWillRender(const VRORenderContext &cont
         if (VRO_IS_OBJECT_NULL(buffer_w)) {
             VRO_DELETE_WEAK_GLOBAL_REF(listener_w);
             VRO_DELETE_WEAK_GLOBAL_REF(buffer_w);
+            VRO_DELETE_GLOBAL_REF(intrinsics_g);
             return;
         }
 
+        VRO_OBJECT intrinsics = VRO_NEW_LOCAL_REF(intrinsics_g);
+        if (VRO_IS_OBJECT_NULL(intrinsics_g)) {
+            VRO_DELETE_WEAK_GLOBAL_REF(listener_w);
+            VRO_DELETE_WEAK_GLOBAL_REF(buffer_w);
+            VRO_DELETE_GLOBAL_REF(intrinsics_g);
+            return;
+        }
         VROPlatformCallHostObjectFunction(buffer, "rewind", "()Ljava/nio/Buffer;");
         VROPlatformCallHostObjectFunction(buffer, "limit", "(I)Ljava/nio/Buffer;", width * height * 4);
-        VROPlatformCallHostFunction(listener, "onCameraImageUpdated", "(Ljava/nio/ByteBuffer;II)V", buffer, width, height);
+        VROPlatformCallHostFunction(listener, "onCameraImageUpdated", "(Ljava/nio/ByteBuffer;IILcom/viro/core/CameraIntrinsics;)V", buffer, width, height, intrinsics);
         VRO_DELETE_LOCAL_REF(listener);
         VRO_DELETE_WEAK_GLOBAL_REF(listener_w);
+        VRO_DELETE_LOCAL_REF(intrinsics);
+        VRO_DELETE_GLOBAL_REF(intrinsics_g);
     });
 }
 

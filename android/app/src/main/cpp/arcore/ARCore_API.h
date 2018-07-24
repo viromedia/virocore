@@ -214,6 +214,7 @@ namespace arcore {
         virtual ~Frame() {}
         virtual void getViewMatrix(float *outMatrix) = 0;
         virtual void getProjectionMatrix(float near, float far, float *outMatrix) = 0;
+        virtual void getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy) = 0;
         virtual TrackingState getTrackingState() = 0;
         virtual void getLightEstimate(LightEstimate *outLightEstimate) = 0;
         virtual bool hasDisplayGeometryChanged() = 0;

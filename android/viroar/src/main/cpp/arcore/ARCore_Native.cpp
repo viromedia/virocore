@@ -510,6 +510,18 @@ namespace arcore {
         ArCamera_release(camera);
     }
 
+    void FrameNative::getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy) {
+        ArCamera *camera;
+        ArFrame_acquireCamera(_session, _frame, &camera);
+        ArCameraIntrinsics *outIntrinsics;
+        ArCameraIntrinsics_create(_session, &outIntrinsics);
+        ArCamera_getImageIntrinsics(_session, camera, outIntrinsics);
+        ArCameraIntrinsics_getFocalLength(_session, outIntrinsics, outFx, outFy);
+        ArCameraIntrinsics_getPrincipalPoint(_session, outIntrinsics, outCx, outCy);
+        ArCamera_release(camera);
+        ArCameraIntrinsics_destroy(outIntrinsics);
+    }
+
     TrackingState FrameNative::getTrackingState() {
         ArCamera *camera;
         ArFrame_acquireCamera(_session, _frame, &camera);

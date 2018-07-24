@@ -60,6 +60,22 @@ VROARTrackingState VROARCameraARCore::getTrackingState() const {
     };
 }
 
+void VROARCameraARCore::getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy) {
+    if (!isImageDataAvailable()) {
+        return;
+    }
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return;
+    }
+    arcore::TrackingState trackingState = _frame->getTrackingState();
+    if (trackingState == arcore::TrackingState::Tracking) {
+
+        _frame->getImageIntrinsics(outFx, outFy, outCx, outCy);
+    }
+
+
+}
 VROARTrackingStateReason VROARCameraARCore::getLimitedTrackingStateReason() const {
     return VROARTrackingStateReason::None;
 }

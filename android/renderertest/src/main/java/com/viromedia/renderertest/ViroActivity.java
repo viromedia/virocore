@@ -33,6 +33,7 @@ import com.viro.core.ARImageTarget;
 import com.viro.core.ARPointCloud;
 import com.viro.core.BoundingBox;
 import com.viro.core.CameraImageListener;
+import com.viro.core.CameraIntrinsics;
 import com.viro.core.ClickListener;
 import com.viro.core.DragListener;
 import com.viro.core.FrameListener;
@@ -520,8 +521,10 @@ public class ViroActivity extends AppCompatActivity {
 
     static class TestCameraImageListener implements CameraImageListener {
         @Override
-        public void onCameraImageUpdated(ByteBuffer buffer, int width, int height) {
-            Log.i("Viro", "Received image " + width + ", " + height + " with buffer size " + buffer.capacity() + ", limit " + buffer.limit() + ", remaining " + buffer.remaining());
+        public void onCameraImageUpdated(ByteBuffer buffer, int width, int height, CameraIntrinsics intrinsics) {
+            Log.i("Viro", "Received image with buffer size " + buffer.capacity() + ", limit " + buffer.limit() + ", remaining " + buffer.remaining());
+            Log.i("Viro", "Focal Length" + intrinsics.getFocalLength()[0] + ", " + intrinsics.getFocalLength()[1] + "; Principal Point " + intrinsics.getPrincipalPoint()[0] + ", " + intrinsics.getPrincipalPoint()[1]);
+
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(buffer);
 
