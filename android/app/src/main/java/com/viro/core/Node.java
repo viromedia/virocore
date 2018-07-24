@@ -178,7 +178,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private static final DragType DEFAULT_DRAGTYPE = DragType.FIXED_DISTANCE;
     private static final int DEFAULT_LIGHT_RECEIVING_BIT_MASK = 1;
     private static final int DEFAULT_SHADOW_CASTING_BIT_MASK = 1;
-    private static final boolean DEFAULT_HIGH_ACCURACY_GAZE = false;
+    private static final boolean DEFAULT_HIGH_ACCURACY_EVENTS = false;
     private static final boolean DEFAULT_IGNORE_EVENT_HANDLING = false;
 
 
@@ -204,7 +204,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private float mDragMaxDistance = 10;
     protected int mLightReceivingBitMask = DEFAULT_LIGHT_RECEIVING_BIT_MASK;
     protected int mShadowCastingBitMask = DEFAULT_SHADOW_CASTING_BIT_MASK;
-    private boolean mHighAccuracyGaze = DEFAULT_HIGH_ACCURACY_GAZE;
+    private boolean mHighAccuracyEvents = DEFAULT_HIGH_ACCURACY_EVENTS;
     private boolean mIgnoreEventHandling = DEFAULT_IGNORE_EVENT_HANDLING;
     private EnumSet<TransformBehavior> mTransformBehaviors;
     private String mTag;
@@ -771,19 +771,42 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * value is false.
      *
      * @param highAccuracyGaze True to enable high accuracy gazing.
+     * @deprecated Use {@link #setHighAccuracyEvents(boolean)}
      */
     public void setHighAccuracyGaze(boolean highAccuracyGaze) {
-        mHighAccuracyGaze = highAccuracyGaze;
-        nativeSetHighAccuracyGaze(mNativeRef, highAccuracyGaze);
+        setHighAccuracyEvents(highAccuracyGaze);
     }
 
     /**
      * Returns true if high accuracy gaze is enabled.
      *
      * @return True if this Node is using high accuracy gazing.
+     * @deprecated Use {@link #getHighAccuracyEvents()}
      */
     public boolean getHighAccuracyGaze() {
-        return mHighAccuracyGaze;
+        return getHighAccuracyEvents();
+    }
+
+    /**
+     * True if events should use the Geometry of this Node to determine if the user is
+     * interacting with this Node. If false, the Node's axis-aligned bounding box will be
+     * used instead. This makes events more accurate, but takes more processing power.
+     * The default value is false.
+     *
+     * @param highAccuracyEvents True to enable high accuracy events.
+     */
+    public void setHighAccuracyEvents(boolean highAccuracyEvents) {
+        mHighAccuracyEvents = highAccuracyEvents;
+        nativeSetHighAccuracyEvents(mNativeRef, highAccuracyEvents);
+    }
+
+    /**
+     * Returns true if high accuracy events are enabled.
+     *
+     * @return True if this Node is using high accuracy events.
+     */
+    public boolean getHighAccuracyEvents() {
+        return mHighAccuracyEvents;
     }
 
     /**
@@ -1643,7 +1666,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetDragPlaneNormal(long nodeReference, float[] planeNormal);
     private native void nativeSetDragMaxDistance(long nodeReference, float maxDistance);
     private native void nativeSetIgnoreEventHandling(long nodeReference, boolean visible);
-    private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
+    private native void nativeSetHighAccuracyEvents(long nodeReference, boolean enabled);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
     private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
     private native long nativeSetTransformDelegate(long nodeReference, double throttlingWindow);

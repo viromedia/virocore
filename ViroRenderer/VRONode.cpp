@@ -67,7 +67,7 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _opacity(1.0),
     _computedOpacity(1.0),
     _selectable(true),
-    _highAccuracyGaze(false),
+    _highAccuracyEvents(false),
     _hierarchicalRendering(false),
     _lightReceivingBitMask(1),
     _shadowCastingBitMask(1),
@@ -105,7 +105,7 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _opacityFromHiddenFlag(node._opacityFromHiddenFlag),
     _opacity(node._opacity),
     _selectable(node._selectable),
-    _highAccuracyGaze(node._highAccuracyGaze),
+    _highAccuracyEvents(node._highAccuracyEvents),
     _hierarchicalRendering(node._hierarchicalRendering),
     _lightReceivingBitMask(node._lightReceivingBitMask),
     _shadowCastingBitMask(node._shadowCastingBitMask),
@@ -932,9 +932,9 @@ void VRONode::setHidden(bool hidden) {
     }, _opacityFromHiddenFlag, opacity));
 }
 
-void VRONode::setHighAccuracyGaze(bool enabled) {
+void VRONode::setHighAccuracyEvents(bool enabled) {
     passert_thread(__func__);
-    _highAccuracyGaze = enabled;
+    _highAccuracyEvents = enabled;
 }
 
 #pragma mark - Application Thread Setters
@@ -1268,7 +1268,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     }
     
     VROMatrix4f transform = _worldTransform;
-    boundsOnly = boundsOnly && !getHighAccuracyGaze();
+    boundsOnly = boundsOnly && !getHighAccuracyEvents();
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold && _visible) {
         VROVector3f intPt;

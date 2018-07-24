@@ -453,10 +453,10 @@ VRO_METHOD(void, nativeSetShadowCastingBitMask)(VRO_ARGS
     });
 }
 
-VRO_METHOD(void, nativeSetHighAccuracyGaze)(VRO_ARGS
+VRO_METHOD(void, nativeSetHighAccuracyEvents)(VRO_ARGS
                                             VRO_REF(VRONode) native_node_ref,
                                             VRO_BOOL enabled) {
-    VRO_REF_GET(VRONode, native_node_ref)->setHighAccuracyGaze(enabled);
+    VRO_REF_GET(VRONode, native_node_ref)->setHighAccuracyEvents(enabled);
 }
 
 VRO_METHOD(void, nativeSetVisible)(VRO_ARGS

@@ -652,9 +652,9 @@ public:
         return _tag;
     }
     
-    void setHighAccuracyGaze(bool enabled);
-    bool getHighAccuracyGaze() const {
-        return _highAccuracyGaze;
+    void setHighAccuracyEvents(bool enabled);
+    bool getHighAccuracyEvents() const {
+        return _highAccuracyEvents;
     }
 
     void setIsBeingDragged(bool isDragging) {
@@ -884,10 +884,10 @@ private:
     std::weak_ptr<VROEventDelegate> _eventDelegateWeak;
 
     /*
-     True if we want to perform more accurate hit testing against this node's geometry
+     True if we want to perform more accurate event hit testing against this node's geometry
      rather than its bounding box.
      */
-    bool _highAccuracyGaze;
+    bool _highAccuracyEvents;
 
     /*
      Active actions on this node.
