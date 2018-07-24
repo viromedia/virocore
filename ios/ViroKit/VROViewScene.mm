@@ -261,19 +261,19 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (BOOL)setShadowsEnabled:(BOOL)enabled {
-    return _renderer->getChoreographer()->setShadowsEnabled(enabled);
+    return _renderer->setShadowsEnabled(enabled);
 }
 
 - (BOOL)setHDREnabled:(BOOL)enabled {
-    return _renderer->getChoreographer()->setHDREnabled(enabled);
+    return _renderer->setHDREnabled(enabled);
 }
 
 - (BOOL)setPBREnabled:(BOOL)enabled {
-    return _renderer->getChoreographer()->setPBREnabled(enabled);
+    return _renderer->setPBREnabled(enabled);
 }
 
 - (BOOL)setBloomEnabled:(BOOL)enabled {
-    return _renderer->getChoreographer()->setBloomEnabled(enabled);
+    return _renderer->setBloomEnabled(enabled);
 }
 
 #pragma mark - Recording and Screenshots

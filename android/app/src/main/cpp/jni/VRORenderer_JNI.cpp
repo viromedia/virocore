@@ -523,7 +523,7 @@ VRO_METHOD(void, nativeSetShadowsEnabled)(VRO_ARGS
         if (!sceneRenderer) {
             return;
         }
-        sceneRenderer->getRenderer()->getChoreographer()->setShadowsEnabled(enabled);
+        sceneRenderer->getRenderer()->setShadowsEnabled(enabled);
     });
 }
 
@@ -537,7 +537,7 @@ VRO_METHOD(void, nativeSetHDREnabled)(VRO_ARGS
         if (!sceneRenderer) {
             return;
         }
-        sceneRenderer->getRenderer()->getChoreographer()->setHDREnabled(enabled);
+        sceneRenderer->getRenderer()->setHDREnabled(enabled);
     });
 }
 
@@ -551,7 +551,7 @@ VRO_METHOD(void, nativeSetPBREnabled)(VRO_ARGS
         if (!sceneRenderer) {
             return;
         }
-        sceneRenderer->getRenderer()->getChoreographer()->setPBREnabled(enabled);
+        sceneRenderer->getRenderer()->setPBREnabled(enabled);
     });
 }
 
@@ -565,7 +565,7 @@ VRO_METHOD(void, nativeSetBloomEnabled)(VRO_ARGS
         if (!sceneRenderer) {
             return;
         }
-        sceneRenderer->getRenderer()->getChoreographer()->setBloomEnabled(enabled);
+        sceneRenderer->getRenderer()->setBloomEnabled(enabled);
     });
 }
 

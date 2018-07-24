@@ -98,6 +98,46 @@ void VRORenderer::setDebugHUDEnabled(bool enabled) {
 #endif
 }
 
+bool VRORenderer::setHDREnabled(bool enableHDR) {
+    if (_choreographer) {
+        return _choreographer->setHDREnabled(enableHDR);
+    } else {
+        pinfo("Modified initial renderer config for HDR");
+        _initialRendererConfig.enableHDR = enableHDR;
+        return true;
+    }
+}
+
+bool VRORenderer::setPBREnabled(bool enablePBR) {
+    if (_choreographer) {
+        return _choreographer->setPBREnabled(enablePBR);
+    } else {
+        pinfo("Modified initial renderer config for PBR");
+        _initialRendererConfig.enablePBR = enablePBR;
+        return true;
+    }
+}
+
+bool VRORenderer::setShadowsEnabled(bool enableShadows) {
+    if (_choreographer) {
+        return _choreographer->setShadowsEnabled(enableShadows);
+    } else {
+        pinfo("Modified initial renderer config for shadows");
+        _initialRendererConfig.enableShadows = enableShadows;
+        return true;
+    }
+}
+
+bool VRORenderer::setBloomEnabled(bool enableBloom) {
+    if (_choreographer) {
+        return _choreographer->setBloomEnabled(enableBloom);
+    } else {
+        pinfo("Modified initial renderer config for bloom");
+        _initialRendererConfig.enableBloom = enableBloom;
+        return true;
+    }
+}
+
 const std::shared_ptr<VROChoreographer> VRORenderer::getChoreographer() const {
     return _choreographer;
 }

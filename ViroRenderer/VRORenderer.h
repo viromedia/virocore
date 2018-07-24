@@ -76,6 +76,15 @@ public:
     void setDebugHUDEnabled(bool enabled);
 
     /*
+     Set renderer configuration properties. These are forwarded to the
+     choreographer once it's created.
+     */
+    bool setHDREnabled(bool enableHDR);
+    bool setPBREnabled(bool enablePBR);
+    bool setShadowsEnabled(bool enableShadows);
+    bool setBloomEnabled(bool enableBloom);
+
+    /*
      Get the VROChoreographer, which can be used to customize the rendering
      technique.
      */
