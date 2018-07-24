@@ -256,7 +256,6 @@ add_library( # Sets the name of the library.
              # UI
              ${VIRO_RENDERER_SRC}/VROReticle.cpp
              ${VIRO_RENDERER_SRC}/VROText.cpp
-             ${VIRO_RENDERER_SRC}/VROText3D.cpp
              ${VIRO_RENDERER_SRC}/VROTextFormatter.cpp
              ${VIRO_RENDERER_SRC}/VROTypeface.cpp
              ${VIRO_RENDERER_SRC}/VROTypefaceCollection.cpp
