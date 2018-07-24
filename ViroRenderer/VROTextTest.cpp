@@ -10,7 +10,6 @@
 #include "VROTestUtil.h"
 #include "VRODefines.h"
 #include "VROTypeface.h"
-#include "VROText3D.h"
 #include "VROTypefaceCollection.h"
 
 VROTextTest::VROTextTest() :
