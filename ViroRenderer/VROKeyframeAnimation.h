@@ -68,7 +68,7 @@ public:
     void setDuration(float durationSeconds) {
         _duration = durationSeconds;
     }
-    float getDuration(){
+    float getDuration() const {
         return _duration;
     }
 

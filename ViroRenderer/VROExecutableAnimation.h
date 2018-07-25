@@ -40,6 +40,12 @@ public:
      standard duration.
      */
     virtual void setDuration(float durationSeconds) = 0;
+
+    /*
+     Returns the duration of this animation, in seconds. If this animation contains
+     multiple sub-animations, this will return the longest animation.
+     */
+    virtual float getDuration() const = 0;
     
     virtual void pause() = 0;
     virtual void resume() = 0;

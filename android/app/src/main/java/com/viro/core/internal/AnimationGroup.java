@@ -30,6 +30,7 @@ public class AnimationGroup extends ExecutableAnimation {
                 rotateX, rotateY, rotateZ,
                 opacity, color, lazyMaterialRef,
                 durationSeconds, delaySeconds, functionType);
+        mDurationSeconds = nativeGetDuration(mNativeRef);
     }
 
     private AnimationGroup(long nativeRef, LazyMaterial lazyMaterial) {

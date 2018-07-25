@@ -30,13 +30,12 @@ VRO_METHOD(VRO_REF(VROExecutableAnimation), nativeWrapNodeAnimation)(VRO_ARGS
     std::shared_ptr<VROExecutableAnimation> animation;
     if (!VRO_IS_STRING_EMPTY(jkey)) {
         std::string key_s = VRO_STRING_STL(jkey);
-        animation = node->getAnimation(key_s, true);
+        animation = node->getAnimation(key_s, true)->copy();
     }
 
     if (animation) {
         return VRO_REF_NEW(VROExecutableAnimation, animation);
-    }
-    else {
+    } else {
         return 0;
     }
 }
@@ -115,6 +114,25 @@ VRO_METHOD(void, nativeTerminateAnimation)(VRO_ARGS
 VRO_METHOD(void, nativeDestroyAnimation)(VRO_ARGS
                                          VRO_REF(VROExecutableAnimation) nativeRef) {
     VRO_REF_DELETE(VROExecutableAnimation, nativeRef);
+}
+
+VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
+                                    VRO_REF(VROExecutableAnimation) nativeRef,
+                                    VRO_FLOAT durationSeconds) {
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
+    VROPlatformDispatchAsyncRenderer([animation_w, durationSeconds] {
+        std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
+        if (!animation) {
+            return;
+        }
+        animation->setDuration(durationSeconds);
+    });
+}
+
+// This should only be invoked on initialization to grab the initial duration
+VRO_METHOD(VRO_FLOAT, nativeGetDuration)(VRO_ARGS
+                                         VRO_REF(VROExecutableAnimation) nativeRef) {
+    return VRO_REF_GET(VROExecutableAnimation, nativeRef)->getDuration();
 }
 
 } // extern "C"

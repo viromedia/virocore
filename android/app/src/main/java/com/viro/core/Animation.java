@@ -100,6 +100,27 @@ public class Animation {
     }
 
     /**
+     * Get the duration of this Animation in milliseconds. Animations have an initial duration
+     * that is set by the model from which this Animation was loaded. This duration can be
+     * overridden by invoking {@link #setDuration(long)}.
+     *
+     * @return The duration of the Animation.
+     */
+    public long getDuration() {
+        return (long) (mExecutableAnimation.getDuration() * 1000);
+    }
+
+    /**
+     * Set the duration of this Animation. This will overwrite the duration that was initially
+     * set for the Animation.
+     *
+     * @param durationMillis The duration to set for the animation, in milliseconds.
+     */
+    public void setDuration(long durationMillis) {
+        mExecutableAnimation.setDuration((float) durationMillis / 1000.0f);
+    }
+
+    /**
      * Set to true to make the Animation automatically loop to the beginning when playback finishes.
      *
      * @param loop True to loop.
@@ -161,7 +182,6 @@ public class Animation {
      * State#STOPPED}, then it will first wait <tt>delay</tt> milliseconds before starting.
      */
     public void play() {
-
         if (mState == State.PAUSED) {
             mExecutableAnimation.resume();
             mState = State.RUNNING;

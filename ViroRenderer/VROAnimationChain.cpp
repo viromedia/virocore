@@ -105,6 +105,14 @@ void VROAnimationChain::setDuration(float durationSeconds) {
     }
 }
 
+float VROAnimationChain::getDuration() const {
+    float maxDuration = 0;
+    for (std::shared_ptr<VROExecutableAnimation> animation : _animations) {
+        maxDuration = fmax(maxDuration, animation->getDuration());
+    }
+    return maxDuration;
+}
+
 void VROAnimationChain::addAnimation(std::shared_ptr<VROExecutableAnimation> animation) {
     _animations.push_back(animation);
 }

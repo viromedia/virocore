@@ -12,6 +12,7 @@ public class AnimationChain extends ExecutableAnimation {
 
     public AnimationChain(ExecutionType type) {
         mNativeRef = nativeCreateAnimationChain(type.name());
+        mDurationSeconds = nativeGetDuration(mNativeRef);
     }
 
     private AnimationChain(long nativeRef) {

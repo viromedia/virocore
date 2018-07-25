@@ -17,6 +17,7 @@ public class ExecutableAnimation {
     }
 
     protected long mNativeRef;
+    protected float mDurationSeconds;
     protected AnimationDelegate mDelegate;
 
     /**
@@ -31,15 +32,25 @@ public class ExecutableAnimation {
      */
     public ExecutableAnimation(Node node, String key) {
         mNativeRef = nativeWrapNodeAnimation(node.getNativeRef(), key);
+        mDurationSeconds = nativeGetDuration(mNativeRef);
+    }
+
+    public ExecutableAnimation copy() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setDuration(float durationSeconds) {
+        mDurationSeconds = durationSeconds;
+        nativeSetDuration(mNativeRef, durationSeconds);
+    }
+
+    public float getDuration() {
+        return mDurationSeconds;
     }
 
     public void execute(Node node, AnimationDelegate delegate) {
         mDelegate = delegate;
         execute(node);
-    }
-
-    public ExecutableAnimation copy() {
-        throw new UnsupportedOperationException();
     }
 
     public void execute(Node node) {
@@ -49,6 +60,7 @@ public class ExecutableAnimation {
         }
         nativeExecuteAnimation(mNativeRef, node.getNativeRef());
     }
+
     public void pause() {
         nativePauseAnimation(mNativeRef);
     }
@@ -58,14 +70,11 @@ public class ExecutableAnimation {
     public void terminate(boolean jumpToEnd) {
         nativeTerminateAnimation(mNativeRef, jumpToEnd);
     }
-
     public void destroy() { nativeDestroyAnimation(mNativeRef); }
 
     /**
-     * AnimationDelegate logic
+     * AnimationDelegate
      */
-
-
     public interface AnimationDelegate {
         void onFinish(ExecutableAnimation animation);
     }
@@ -81,5 +90,9 @@ public class ExecutableAnimation {
     private native void nativePauseAnimation(long nativeRef);
     private native void nativeResumeAnimation(long nativeRef);
     private native void nativeTerminateAnimation(long nativeRef, boolean allowInterruptable);
+    private native void nativeSetDuration(long nativeRef, float durationSeconds);
     private native void nativeDestroyAnimation(long nativeRef);
+
+    // This should only be invoked on construction to get the initial duration for mDurationSeconds
+    protected native float nativeGetDuration(long nativeRef);
 }

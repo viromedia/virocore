@@ -48,7 +48,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         runUITest(() -> stage0_testLoadModelGLTF());
         runUITest(() -> stage1_testLoadModelFBX());
         runUITest(() -> stage2_testFBXAnimPause());
@@ -59,6 +59,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         runUITest(() -> stage6_testLoadModelOBJMaterials());
         runUITest(() -> stage7_testLoadModelVRXReplaceMaterial());
         runUITest(() -> stage8_testLoadModelAnimateVRXWithShadow());
+        runUITest(() -> stage8_testLoadModelAnimateSlow());
     }
 
     public void stage0_testLoadModelGLTF() {
@@ -459,6 +460,56 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
 
         assertPass("You should see an animated dragon with it's shadow moving.",()->{
+            object3D.removeFromParentNode();
+        });
+    }
+
+    public void stage8_testLoadModelAnimateSlow() {
+        DirectionalLight light = new DirectionalLight();
+        light.setColor(Color.WHITE);
+        light.setDirection(new Vector(0, -1, 0));
+        light.setShadowOrthographicPosition(new Vector(0, 20, -9));
+        light.setShadowOrthographicSize(60);
+        light.setShadowNearZ(1);
+        light.setShadowFarZ(60);
+        light.setShadowOpacity(1.0f);
+        light.setCastsShadow(true);
+        mScene.getRootNode().removeLight(mAmbientLight);
+        mScene.getRootNode().addLight(light);
+
+        Material coloredMaterial = new Material();
+        coloredMaterial.setDiffuseColor(Color.RED);
+        coloredMaterial.setLightingModel(Material.LightingModel.BLINN);
+        //used to be 60 for width and height
+        Surface surface = new Surface(60, 60);
+        surface.setMaterials(Arrays.asList(coloredMaterial));
+        Node surfaceNode = new Node();
+        surfaceNode.setGeometry(surface);
+        surfaceNode.setRotation(new Vector((float) -Math.PI / 2.0f, 0, 0));
+        surfaceNode.setPosition(new Vector(0, -5, -9));
+        mScene.getRootNode().addChildNode(surfaceNode);
+
+        final Object3D object3D = new Object3D();
+        mScene.getRootNode().addChildNode(object3D);
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/dragao.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -9));
+                object.setScale(new Vector(0.2f, 0.2f, 0.2f));
+                mAnimation = object.getAnimation("01");
+                mAnimation.setDelay(1000);
+                mAnimation.setLoop(true);
+                mAnimation.setDuration(mAnimation.getDuration() * 4);
+                mAnimation.play();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        assertPass("Animated dragon running 4x slower than usual",()->{
             object3D.removeFromParentNode();
         });
     }

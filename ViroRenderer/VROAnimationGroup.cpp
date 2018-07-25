@@ -254,6 +254,10 @@ void VROAnimationGroup::setDuration(float durationSeconds) {
     _duration = durationSeconds;
 }
 
+float VROAnimationGroup::getDuration() const {
+    return _duration;
+}
+
 std::string VROAnimationGroup::toString() const {
     std::stringstream ss;
     ss << "[duration: " << _duration << ", delay: " << _delay;

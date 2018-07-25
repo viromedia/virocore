@@ -115,6 +115,10 @@ void VROSkeletalAnimation::setDuration(float durationSeconds) {
     _duration = durationSeconds;
 }
 
+float VROSkeletalAnimation::getDuration() const {
+    return _duration;
+}
+
 std::string VROSkeletalAnimation::toString() const {
     std::stringstream ss;
     ss << "[skeletal: " << _name << "]";

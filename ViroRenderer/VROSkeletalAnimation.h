@@ -96,6 +96,7 @@ public:
      Override the duration of this skeletal animation, in seconds.
      */
     void setDuration(float durationSeconds);
+    float getDuration() const;
     
     std::string toString() const;
     

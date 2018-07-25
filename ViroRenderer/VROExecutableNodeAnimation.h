@@ -58,6 +58,9 @@ public:
     void setDuration(float durationSeconds) {
         _executableAnimation->setDuration(durationSeconds);
     }
+    float getDuration() const {
+        return _executableAnimation->getDuration();
+    }
     
     std::string toString() const {
         return _executableAnimation->toString();
