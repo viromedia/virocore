@@ -94,7 +94,13 @@ VROARSessionARCore::~VROARSessionARCore() {
 
     if (_session != nullptr) {
         pinfo("Destroying ARCore session");
-        delete (_session);
+
+        // Deleting the session could take a few seconds, so to prevent blocking the main thread,
+        // they recommend pausing the session, then deleting on a background thread!
+        _session->pause();
+        VROPlatformDispatchAsyncBackground([this]{
+            delete(_session);
+        });
 
         if (_currentARCoreImageDatabase != nullptr) {
             delete(_currentARCoreImageDatabase);
