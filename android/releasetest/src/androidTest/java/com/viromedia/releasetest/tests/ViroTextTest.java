@@ -40,10 +40,10 @@ public class ViroTextTest extends ViroBaseTest {
         final AmbientLight ambientLight = new AmbientLight(Color.WHITE, 1000);
         mScene.getRootNode().addLight(ambientLight);
 
-        mText = new Text(mViroView.getViroContext(), TEST_STRING,
-                "Roboto", 25, Color.WHITE,
-                3.5f, 1f, Text.HorizontalAlignment.LEFT,
-                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        mText = Text.builder().viroContext(mViroView.getViroContext()).textString(TEST_STRING).
+                fontFamilies("Roboto").fontSize(25).color(Color.WHITE).width(2.5f).height(1f).
+                horizontalAlignment(Text.HorizontalAlignment.LEFT).verticalAlignment(Text.VerticalAlignment.TOP).
+                clipMode(Text.ClipMode.NONE).lineBreakMode(Text.LineBreakMode.WORD_WRAP).build();
         mTextNode = new Node();
         mTextNode.setPosition(new Vector(0f, 0f, -3.3f));
         mTextNode.setGeometry(mText);
@@ -69,6 +69,11 @@ public class ViroTextTest extends ViroBaseTest {
         runUITest(() -> testExtrusion());
         runUITest(() -> testExtrusionColors());
         runUITest(() -> testExtrusionAltering());
+        runUITest(() -> testOutline());
+        runUITest(() -> testDropShadow());
+        runUITest(() -> testOutlineColorChange());
+        runUITest(() -> testThickOutline());
+        runUITest(() -> testAlternatingOuterStroke());
     }
 
     private void testSetLineBreakMode() {
@@ -288,5 +293,39 @@ public class ViroTextTest extends ViroBaseTest {
             mText.setExtrusionDepth(itr.next());
         };
         assertPass("Increasing extrusion depth");
+    }
+
+    private void testOutline() {
+        mText.setOuterStroke(Text.OuterStroke.OUTLINE, 2, Color.BLUE);
+        assertPass("Text with blue outline");
+    }
+
+    private void testDropShadow() {
+        mText.setOuterStroke(Text.OuterStroke.DROP_SHADOW, 2, Color.RED);
+        assertPass("Text with red drop shadow");
+    }
+
+    private void testOutlineColorChange() {
+        final List<Integer> colors = Arrays.asList(Color.BLUE, Color.RED, Color.MAGENTA, Color.DKGRAY);
+        final Iterator<Integer> itr = Iterables.cycle(colors).iterator();
+        mMutableTestMethod = () -> {
+            mText.setOuterStroke(Text.OuterStroke.OUTLINE, 2, itr.next());
+        };
+        assertPass("Text with alternating color outline");
+    }
+
+    private void testThickOutline() {
+        mText.setOuterStroke(Text.OuterStroke.OUTLINE, 4, Color.RED);
+        assertPass("Text with thick red outline");
+    }
+
+    private void testAlternatingOuterStroke() {
+        final List<Text.OuterStroke> strokes = Arrays.asList(Text.OuterStroke.NONE, Text.OuterStroke.OUTLINE, Text.OuterStroke.DROP_SHADOW);
+
+        final Iterator<Text.OuterStroke> itr = Iterables.cycle(strokes).iterator();
+        mMutableTestMethod = () -> {
+            mText.setOuterStroke(itr.next(), 2, Color.BLUE);
+        };
+        assertPass("Text with alternating outer stroke (none, outline, drop shadow)");
     }
 }

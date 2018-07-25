@@ -18,6 +18,7 @@
 #include <limits>
 #include "VROTextFormatter.h"
 #include "VROStringUtil.h"
+#include "VROGlyphAtlas.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -31,8 +32,10 @@ std::shared_ptr<VROText> VROText::createText(std::wstring text,
                                              VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines,
                                              std::shared_ptr<VRODriver> driver) {
     
+    VROVector4f strokeColor = {1, 1, 1, 1};
     std::shared_ptr<VROText> model = std::make_shared<VROText>(text, typefaceNames, fontSize, fontStyle, fontWeight,
-                                                               color, extrusion, width, height, horizontalAlignment,
+                                                               color, extrusion, VROTextOuterStroke::None, 2, strokeColor,
+                                                               width, height, horizontalAlignment,
                                                                verticalAlignment, lineBreakMode, clipMode, maxLines,
                                                                driver);
     model->update();
@@ -76,7 +79,7 @@ VROVector3f VROText::getTextSize(std::wstring text,
     std::shared_ptr<VROTypeface> &firstTypeface = fontRuns.front().typeface;
     std::wstring space = L" ";
     uint32_t spaceCode = *space.begin();
-    glyphMap[spaceCode] = firstTypeface->getGlyph(spaceCode, 0, VROGlyphRenderMode::None);
+    glyphMap[spaceCode] = firstTypeface->getGlyph(spaceCode, 0, 0, VROGlyphRenderMode::None);
     
     // Now add all the remaining glyphs. For line height we will use
     // the maximum found in any run.
@@ -91,7 +94,7 @@ VROVector3f VROText::getTextSize(std::wstring text,
         for (int i = fontRun.start; i < fontRun.end; i++) {
             uint32_t codePoint = text.at(i);
             if (glyphMap.find(codePoint) == glyphMap.end()) {
-                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, VROGlyphRenderMode::None);
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, 0, VROGlyphRenderMode::None);
                 glyphMap[codePoint] = glyph;
             }
         }
@@ -142,6 +145,7 @@ VROText::VROText(std::wstring text,
                  int fontSize, VROFontStyle fontStyle, VROFontWeight fontWeight,
                  VROVector4f color,
                  float extrusion,
+                 VROTextOuterStroke stroke, int strokeWidth, VROVector4f strokeColor,
                  float width, float height,
                  VROTextHorizontalAlignment horizontalAlignment,
                  VROTextVerticalAlignment verticalAlignment,
@@ -161,6 +165,9 @@ VROText::VROText(std::wstring text,
     _lineBreakMode(lineBreakMode),
     _clipMode(clipMode),
     _maxLines(maxLines),
+    _outerStroke(stroke),
+    _outerStrokeWidth(strokeWidth),
+    _outerStrokeColor(strokeColor),
     _driver(driver) {
 
 }
@@ -188,7 +195,8 @@ void VROText::update() {
                             &realizedWidth, &realizedHeight, driver);
     }
     else {
-        buildBitmapText(_text, _typefaceCollection, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
+        buildBitmapText(_text, _typefaceCollection, _color, _outerStroke, _outerStrokeWidth, _outerStrokeColor,
+                        _width, _height, _horizontalAlignment, _verticalAlignment,
                         _lineBreakMode, _clipMode, _maxLines, sources, elements, materials,
                         &realizedWidth, &realizedHeight, driver);
     }
@@ -222,6 +230,13 @@ void VROText::setColor(VROVector4f color) {
 
 void VROText::setExtrusion(float extrusion) {
     _extrusion = extrusion;
+    update();
+}
+
+void VROText::setOuterStroke(VROTextOuterStroke stroke, int outerStrokeWidth, VROVector4f outerStrokeColor) {
+    _outerStroke = stroke;
+    _outerStrokeWidth = outerStrokeWidth;
+    _outerStrokeColor = outerStrokeColor;
     update();
 }
 
@@ -270,8 +285,8 @@ void VROText::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materials) 
 void VROText::buildBitmapText(std::wstring &text,
                               std::shared_ptr<VROTypefaceCollection> &typefaces,
                               VROVector4f color,
-                              float width,
-                              float height,
+                              VROTextOuterStroke outerStroke, int outerStrokeWidth, VROVector4f outerStrokeColor,
+                              float width, float height,
                               VROTextHorizontalAlignment horizontalAlignment,
                               VROTextVerticalAlignment verticalAlignment,
                               VROLineBreakMode lineBreakMode,
@@ -286,6 +301,29 @@ void VROText::buildBitmapText(std::wstring &text,
         *outRealizedWidth = 0;
         *outRealizedHeight = 0;
         return;
+    }
+    
+    /*
+     Configure the stroke (for outline or drop shadow).
+     */
+    int outlineWidth;
+    int outlineOffset;
+    VROVector4f outlineColor = outerStrokeColor;
+
+    if (outerStroke == VROTextOuterStroke::Outline) {
+        outlineWidth = outerStrokeWidth;
+        outlineOffset = -outerStrokeWidth;
+
+        pinfo("Creating outline with color %f, %f, %f, shadow %f, %f, %f", color.x, color.y, color.z, outlineColor.x, outlineColor.y, outlineColor.z);
+
+    } else if (outerStroke == VROTextOuterStroke::DropShadow) {
+        outlineWidth = outerStrokeWidth;
+        outlineOffset = 0;
+
+        pinfo("Creating drop shadow with color %f, %f, %f, shadow %f, %f, %f", color.x, color.y, color.z, outlineColor.x, outlineColor.y, outlineColor.z);
+    } else {
+        outlineWidth = 0;
+        outlineOffset = 0;
     }
 
     /*
@@ -305,18 +343,32 @@ void VROText::buildBitmapText(std::wstring &text,
         std::wstring space = L" ";
         uint32_t spaceCode = *space.begin();
         
-        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, VROGlyphRenderMode::Bitmap);
+        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, outlineWidth, VROGlyphRenderMode::Bitmap);
+        std::shared_ptr<VROGlyphAtlas> whitespaceAtlas = whitespaceGlyph->getBitmap(0).atlas;
         
         std::shared_ptr<VROMaterial> whitespaceMaterial = std::make_shared<VROMaterial>();
         whitespaceMaterial->setNeedsToneMapping(false);
         whitespaceMaterial->getDiffuse().setColor(color);
-        whitespaceMaterial->getDiffuse().setTexture(whitespaceGlyph->getTexture());
-        
-        char whitespaceName[2] = { (char)spaceCode, 0 };
-        whitespaceMaterial->setName(whitespaceName);
+        whitespaceMaterial->getDiffuse().setTexture(whitespaceAtlas->getTexture());
+        whitespaceMaterial->setRenderingOrder(1);
         
         std::vector<int> indices;
-        materialMap[whitespaceGlyph->getAtlas()] = { whitespaceMaterial, indices };
+        materialMap[whitespaceAtlas] = { whitespaceMaterial, indices };
+        
+        if (outlineWidth > 0) {
+            std::shared_ptr<VROGlyphAtlas> whitespaceAtlasOutline = whitespaceGlyph->getBitmap(outlineWidth).atlas;
+
+            std::shared_ptr<VROMaterial> whitespaceMaterialOutline = std::make_shared<VROMaterial>();
+            whitespaceMaterialOutline->setNeedsToneMapping(false);
+            whitespaceMaterialOutline->setWritesToDepthBuffer(false);
+            whitespaceMaterialOutline->getDiffuse().setColor(outlineColor);
+            whitespaceMaterialOutline->getDiffuse().setTexture(whitespaceGlyph->getBitmap(outlineWidth).atlas->getTexture());
+            whitespaceMaterialOutline->setRenderingOrder(0);
+
+            std::vector<int> indices;
+            materialMap[whitespaceAtlasOutline] = { whitespaceMaterialOutline, indices };
+        }
+        
         glyphMap[spaceCode] = whitespaceGlyph;
     }
     
@@ -333,17 +385,37 @@ void VROText::buildBitmapText(std::wstring &text,
         for (int i = fontRun.start; i < fontRun.end; i++) {
             uint32_t codePoint = text.at(i);
             if (glyphMap.find(codePoint) == glyphMap.end()) {
-                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, VROGlyphRenderMode::Bitmap);
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, outlineWidth, VROGlyphRenderMode::Bitmap);
                 
-                const std::shared_ptr<VROGlyphAtlas> atlas = glyph->getAtlas();
+                const std::shared_ptr<VROGlyphAtlas> atlas = glyph->getBitmap(0).atlas;
                 auto materialAndIndices = materialMap.find(atlas);
                 if (materialAndIndices == materialMap.end()) {
                     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
                     material->setNeedsToneMapping(false);
                     material->getDiffuse().setColor(color);
-  
+                    material->setRenderingOrder(1);
+
                     std::vector<int> indices;
                     materialMap[atlas] = { material, indices };
+                }
+                
+                if (outlineWidth > 0) {
+                    const std::shared_ptr<VROGlyphAtlas> atlasOutline = glyph->getBitmap(outlineWidth).atlas;
+                    auto materialAndIndices = materialMap.find(atlasOutline);
+                    if (materialAndIndices == materialMap.end()) {
+                        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+                        material->setNeedsToneMapping(false);
+                        material->getDiffuse().setColor(outlineColor);
+                        material->setRenderingOrder(0);
+                        
+                        // Outline strokes do not write to the depth buffer to prevent Z-fighting
+                        // with the front stroke; this should be ok because the front stroke glyphs
+                        // will write into the depth buffer immediately after
+                        material->setWritesToDepthBuffer(false);
+                        
+                        std::vector<int> indices;
+                        materialMap[atlasOutline] = { material, indices };
+                    }
                 }
                 glyphMap[codePoint] = glyph;
             }
@@ -360,36 +432,50 @@ void VROText::buildBitmapText(std::wstring &text,
     }
     for (auto &kv : glyphMap) {
         std::shared_ptr<VROGlyph> glyph = kv.second;
-        std::shared_ptr<VROMaterial> material = materialMap[glyph->getAtlas()].first;
-        material->getDiffuse().setTexture(glyph->getTexture());
+        const std::shared_ptr<VROGlyphAtlas> &atlas = glyph->getBitmap(0).atlas;
+        std::shared_ptr<VROMaterial> material = materialMap[atlas].first;
+        material->getDiffuse().setTexture(atlas->getTexture());
+        
+        if (outlineWidth > 0) {
+            const std::shared_ptr<VROGlyphAtlas> &atlasOutline = glyph->getBitmap(outlineWidth).atlas;
+            std::shared_ptr<VROMaterial> materialOutline = materialMap[atlasOutline].first;
+            materialOutline->getDiffuse().setTexture(atlasOutline->getTexture());
+        }
     }
     
     std::vector<VROShapeVertexLayout> var;
 
     VROTextFormatter::formatAndBuild(text, width, height, maxLines, maxLineHeight, horizontalAlignment, verticalAlignment, lineBreakMode, clipMode, glyphMap, outRealizedWidth, outRealizedHeight,
-                                     [&var, &materialMap] (std::shared_ptr<VROGlyph> &glyph, float x, float y) {
-                                         buildBitmapChar(glyph, x, y, var, materialMap[glyph->getAtlas()].second);
+                                     [&var, &materialMap, outlineWidth, outlineOffset] (std::shared_ptr<VROGlyph> &glyph, float x, float y) {
+                                         if (outlineWidth > 0) {
+                                             const VROGlyphBitmap &bitmap = glyph->getBitmap(outlineWidth);
+                                             buildBitmapChar(bitmap, x, y, outlineOffset, outlineOffset,
+                                                             var, materialMap[bitmap.atlas].second);
+                                         }
+                                         const VROGlyphBitmap &bitmap = glyph->getBitmap(0);
+                                         buildBitmapChar(bitmap, x, y, 0, 0, var, materialMap[bitmap.atlas].second);
                                      });
     buildBitmapGeometry(var, materialMap, sources, elements, materials);
 }
 
-void VROText::buildBitmapChar(std::shared_ptr<VROGlyph> &glyph,
+void VROText::buildBitmapChar(const VROGlyphBitmap &bitmap,
                               float x, float y,
+                              float offsetX, float offsetY,
                               std::vector<VROShapeVertexLayout> &var,
                               std::vector<int> &indices) {
     
     int index = (int)var.size();
     
-    x += glyph->getBearing().x * kTextPointToWorldScale;
-    y += (glyph->getBearing().y - glyph->getSize().y) * kTextPointToWorldScale;
+    x += (bitmap.bearing.x + offsetX) * kTextPointToWorldScale;
+    y += (bitmap.bearing.y - bitmap.size.y - offsetY) * kTextPointToWorldScale;
     
-    float w = glyph->getSize().x * kTextPointToWorldScale;
-    float h = glyph->getSize().y * kTextPointToWorldScale;
+    float w = bitmap.size.x * kTextPointToWorldScale;
+    float h = bitmap.size.y * kTextPointToWorldScale;
     
-    float minU = glyph->getMinU();
-    float maxU = glyph->getMaxU();
-    float minV = glyph->getMinV();
-    float maxV = glyph->getMaxV();
+    float minU = bitmap.minU;
+    float maxU = bitmap.maxU;
+    float minV = bitmap.minV;
+    float maxV = bitmap.maxV;
     
     var.push_back({x,     y + h, 0, minU, minV, 0, 0, 1});
     var.push_back({x,     y,     0, minU, maxV, 0, 0, 1});
@@ -417,9 +503,26 @@ void VROText::buildBitmapGeometry(std::vector<VROShapeVertexLayout> &var,
         sources.push_back(source);
     }
     
+    // Order the elements so that the front text material appears first (since this corresponds to
+    // the color property)
+    std::vector<std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> orderedElements;
     for (auto &kv : materialMap) {
-        std::shared_ptr<VROMaterial> &material = kv.second.first;
-        std::vector<int> &indices = kv.second.second;
+        const std::shared_ptr<VROGlyphAtlas> &atlas = kv.first;
+        if (!atlas->isOutline()) {
+            orderedElements.push_back(kv.second);
+        }
+    }
+    for (auto &kv : materialMap) {
+        const std::shared_ptr<VROGlyphAtlas> &atlas = kv.first;
+        if (atlas->isOutline()) {
+            orderedElements.push_back(kv.second);
+        }
+    }
+    
+    // Then create the element for each
+    for (auto &ordered : orderedElements) {
+        std::shared_ptr<VROMaterial> &material = ordered.first;
+        std::vector<int> &indices = ordered.second;
         
         std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices.data(), sizeof(int) * indices.size());
         std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
@@ -500,7 +603,7 @@ void VROText::buildVectorizedText(std::wstring &text,
         std::wstring space = L" ";
         uint32_t spaceCode = *space.begin();
         
-        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, VROGlyphRenderMode::Vector);
+        std::shared_ptr<VROGlyph> whitespaceGlyph = firstTypeface->getGlyph(spaceCode, 0, 0, VROGlyphRenderMode::Vector);
         glyphMap[spaceCode] = whitespaceGlyph;
     }
     
@@ -517,7 +620,7 @@ void VROText::buildVectorizedText(std::wstring &text,
         for (int i = fontRun.start; i < fontRun.end; i++) {
             uint32_t codePoint = text.at(i);
             if (glyphMap.find(codePoint) == glyphMap.end()) {
-                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, VROGlyphRenderMode::Vector);
+                std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(codePoint, 0, 0, VROGlyphRenderMode::Vector);
                 glyphMap[codePoint] = glyph;
             }
         }

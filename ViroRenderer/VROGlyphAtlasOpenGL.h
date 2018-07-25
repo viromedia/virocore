@@ -19,13 +19,12 @@ class VROGlyphAtlasOpenGL : public VROGlyphAtlas {
     
 public:
     
-    VROGlyphAtlasOpenGL();
+    VROGlyphAtlasOpenGL(bool isOutline);
     virtual ~VROGlyphAtlasOpenGL();
     
     void refreshTexture(std::shared_ptr<VRODriver> driver);
     bool glyphWillFit(FT_Bitmap &bitmap, VROAtlasLocation *outLocation);
-    void write(FT_GlyphSlot &glyph, FT_Bitmap &bitmap,
-               const VROAtlasLocation &location, std::shared_ptr<VRODriver> driver);
+    void write(FT_Bitmap &bitmap, const VROAtlasLocation &location, std::shared_ptr<VRODriver> driver);
     int getSize() const;
     
 private:

@@ -139,8 +139,10 @@ std::pair<std::string, std::string> VROTypeface::getLanguages(FT_FaceRec_* face)
 }
 
 std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t variantSelector,
-                                                VROGlyphRenderMode renderMode) {
-    std::string key = VROStringUtil::toString(codePoint) + "_V" + VROStringUtil::toString(variantSelector);
+                                                uint32_t outlineWidth, VROGlyphRenderMode renderMode) {
+    std::string key = VROStringUtil::toString(codePoint) + "_V" +
+                      VROStringUtil::toString(variantSelector) + "_S" +
+                      VROStringUtil::toString(outlineWidth);
     
     if (renderMode == VROGlyphRenderMode::Bitmap || renderMode == VROGlyphRenderMode::None) {
         auto kv = _bitmapGlyphCache.find(key);
@@ -154,7 +156,7 @@ std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t var
         }
     }
     
-    std::shared_ptr<VROGlyph> glyph = loadGlyph(codePoint, variantSelector, renderMode);
+    std::shared_ptr<VROGlyph> glyph = loadGlyph(codePoint, variantSelector, outlineWidth, renderMode);
     if (renderMode == VROGlyphRenderMode::Bitmap) {
         _bitmapGlyphCache.insert(std::make_pair(key, glyph));
     } else if (renderMode == VROGlyphRenderMode::Vector) {
@@ -165,12 +167,17 @@ std::shared_ptr<VROGlyph> VROTypeface::getGlyph(uint32_t codePoint, uint32_t var
 
 void VROTypeface::preloadGlyphs(std::string chars) {
     for (std::string::const_iterator c = chars.begin(); c != chars.end(); ++c) {
-        getGlyph(*c, 0, VROGlyphRenderMode::Bitmap);
+        getGlyph(*c, 0, 0, VROGlyphRenderMode::Bitmap);
     }
 }
 
 void VROTypeface::refreshGlyphAtlases(std::shared_ptr<VRODriver> driver) {
     for (std::shared_ptr<VROGlyphAtlas> atlas : _glyphAtlases) {
         atlas->refreshTexture(driver);
+    }
+    for (auto &kv : _outlineAtlases) {
+        for (std::shared_ptr<VROGlyphAtlas> atlas : kv.second) {
+            atlas->refreshTexture(driver);
+        }
     }
 }

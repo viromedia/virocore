@@ -104,7 +104,8 @@ void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key, const std::vecto
                                                std::shared_ptr<VRODriver> driver) {
     VROMaterialShaderBinding *binding = getShaderBindingForLights(lights, context, driver);
     passert (binding != nullptr);
-    
+
+    key.materialRenderingOrder = _material.getRenderingOrder();
     key.shader = binding->getProgram()->getShaderId();
     key.textures = hashTextures(binding->getTextures());
 }

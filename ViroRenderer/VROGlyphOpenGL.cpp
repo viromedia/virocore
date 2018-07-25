@@ -17,6 +17,7 @@
 #include "VROContour.h"
 #include "VROGlyphAtlasOpenGL.h"
 #include "poly2tri/poly2tri.h"
+#include "freetype/ftstroke.h"
 
 static const int kBezierSteps = 4;
 static const float kExtrusion = 1;
@@ -29,10 +30,7 @@ VROGlyphOpenGL::~VROGlyphOpenGL() {
     
 }
 
-bool VROGlyphOpenGL::load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                          VROGlyphRenderMode renderMode,
-                          std::vector<std::shared_ptr<VROGlyphAtlas>> *glyphAtlases,
-                          std::shared_ptr<VRODriver> driver) {
+bool VROGlyphOpenGL::loadGlyph(FT_Face face, uint32_t charCode, uint32_t variantSelector) {
     /*
      Load the glyph from freetype.
      */
@@ -63,21 +61,23 @@ bool VROGlyphOpenGL::load(FT_Face face, uint32_t charCode, uint32_t variantSelec
      Each advance unit is 1/64 of a pixel so divide by 64 (>> 6) to get advance in pixels.
      */
     _advance = glyph->advance.x >> 6;
-    
-    if (renderMode == VROGlyphRenderMode::Bitmap) {
-        return loadBitmap(glyph, charCode, glyphAtlases, driver);
-    } else if (renderMode == VROGlyphRenderMode::Vector) {
-        return loadVector(glyph);
-    } else {
-        return true;
-    }
+    return true;
 }
 
-bool VROGlyphOpenGL::loadBitmap(FT_GlyphSlot &glyph, uint32_t charCode,
+bool VROGlyphOpenGL::loadMetrics(FT_Face face, uint32_t charCode, uint32_t variantSelector) {
+    return loadGlyph(face, charCode, variantSelector);
+}
+
+bool VROGlyphOpenGL::loadBitmap(FT_Face face, uint32_t charCode, uint32_t variantSelector,
                                 std::vector<std::shared_ptr<VROGlyphAtlas>> *glyphAtlases,
                                 std::shared_ptr<VRODriver> driver) {
+    if (!loadGlyph(face, charCode, variantSelector)) {
+        return false;
+    }
+    FT_GlyphSlot &glyph = face->glyph;
+    
     if (glyphAtlases->empty()) {
-        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>());
+        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>(false));
     }
     std::shared_ptr<VROGlyphAtlas> atlas = glyphAtlases->back();
     
@@ -86,32 +86,93 @@ bool VROGlyphOpenGL::loadBitmap(FT_GlyphSlot &glyph, uint32_t charCode,
     
     VROAtlasLocation location;
     if (atlas->glyphWillFit(bitmap, &location)) {
-        atlas->write(glyph, bitmap, location, driver);
+        atlas->write(bitmap, location, driver);
     } else {
         // Did not fit in the atlas, create a new atlas
-        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>());
+        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>(false));
         atlas = glyphAtlases->back();
         
         if (atlas->glyphWillFit(bitmap, &location)) {
-            atlas->write(glyph, bitmap, location, driver);
+            atlas->write(bitmap, location, driver);
         } else {
             pinfo("Failed to render glyph for char code %d", charCode);
             return false;
         }
     }
     
-    _atlas = atlas;
-    _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
-    _size = VROVector3f(bitmap.width, bitmap.rows);
-    _minU = ((float) location.minU) / (float) atlas->getSize();
-    _maxU = ((float) location.maxU) / (float) atlas->getSize();
-    _minV = ((float) location.minV) / (float) atlas->getSize();
-    _maxV = ((float) location.maxV) / (float) atlas->getSize();
+    VROGlyphBitmap vBitmap;
+    vBitmap.atlas = atlas;
+    vBitmap.bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
+    vBitmap.size = VROVector3f(bitmap.width, bitmap.rows);
+    vBitmap.minU = ((float) location.minU) / (float) atlas->getSize();
+    vBitmap.maxU = ((float) location.maxU) / (float) atlas->getSize();
+    vBitmap.minV = ((float) location.minV) / (float) atlas->getSize();
+    vBitmap.maxV = ((float) location.maxV) / (float) atlas->getSize();
     
+    _bitmaps[0] = vBitmap;
     return true;
 }
 
-bool VROGlyphOpenGL::loadVector(FT_GlyphSlot &glyph) {
+bool VROGlyphOpenGL::loadOutlineBitmap(FT_Library library, FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                                       uint32_t outlineWidth,
+                                       std::vector<std::shared_ptr<VROGlyphAtlas>> *glyphAtlases,
+                                       std::shared_ptr<VRODriver> driver) {
+    if (!loadGlyph(face, charCode, variantSelector)) {
+        return false;
+    }
+    
+    FT_GlyphSlot &glyphSlot = face->glyph;
+    if (glyphAtlases->empty()) {
+        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>(true));
+    }
+    std::shared_ptr<VROGlyphAtlas> atlas = glyphAtlases->back();
+    
+    FT_Stroker stroker;
+    FT_Stroker_New(library, &stroker);
+    FT_Stroker_Set(stroker, outlineWidth * 64, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
+
+    FT_Glyph glyph;
+    FT_Get_Glyph(glyphSlot, &glyph);
+    FT_Glyph_StrokeBorder(&glyph, stroker, false, true);
+    FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, nullptr, true);
+    FT_BitmapGlyph bitmapGlyph = reinterpret_cast<FT_BitmapGlyph>(glyph);
+    FT_Bitmap &bitmap = bitmapGlyph->bitmap;
+    
+    VROAtlasLocation location;
+    if (atlas->glyphWillFit(bitmap, &location)) {
+        atlas->write(bitmap, location, driver);
+    } else {
+        // Did not fit in the atlas, create a new atlas
+        glyphAtlases->push_back(std::make_shared<VROGlyphAtlasOpenGL>(true));
+        atlas = glyphAtlases->back();
+        
+        if (atlas->glyphWillFit(bitmap, &location)) {
+            atlas->write(bitmap, location, driver);
+        } else {
+            pinfo("Failed to render glyph for char code %d", charCode);
+            return false;
+        }
+    }
+    
+    VROGlyphBitmap vBitmap;
+    vBitmap.atlas = atlas;
+    vBitmap.bearing = VROVector3f(glyphSlot->bitmap_left, glyphSlot->bitmap_top);
+    vBitmap.size = VROVector3f(bitmap.width, bitmap.rows);
+    vBitmap.minU = ((float) location.minU) / (float) atlas->getSize();
+    vBitmap.maxU = ((float) location.maxU) / (float) atlas->getSize();
+    vBitmap.minV = ((float) location.minV) / (float) atlas->getSize();
+    vBitmap.maxV = ((float) location.maxV) / (float) atlas->getSize();
+    
+    _bitmaps[(int) outlineWidth] = vBitmap;
+    return true;
+}
+
+bool VROGlyphOpenGL::loadVector(FT_Face face, uint32_t charCode, uint32_t variantSelector) {
+    if (!loadGlyph(face, charCode, variantSelector)) {
+        return false;
+    }
+    
+    FT_GlyphSlot &glyph = face->glyph;
     if (glyph->format != FT_GLYPH_FORMAT_OUTLINE) {
         pwarn("Outline glyph format required to vectorize, aborting 3D font building");
         return false;
@@ -250,8 +311,4 @@ std::vector<p2t::Point *> VROGlyphOpenGL::triangulateContour(VROVectorizer &vect
         polyline.push_back(new p2t::Point((d.x / 64.0f), d.y / 64.0f));
     }
     return polyline;
-}
-
-std::shared_ptr<VROTexture> VROGlyphOpenGL::getTexture() const {
-    return _atlas->getTexture();
 }

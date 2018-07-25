@@ -15,7 +15,9 @@ package com.viro.core;
 
 import android.graphics.Color;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Text is a Geometry that renders strings of text. The properties of the Text determine the style
@@ -245,6 +247,53 @@ public class Text extends Geometry {
         }
     };
 
+    /**
+     * The outer stroke which enables effects like outline or drop shadow. Using different
+     * outer stroke types can help make text more legible when presented over complex backgrounds in AR.
+     */
+    public enum OuterStroke {
+        /**
+         * Text is rendered without an outer stroke.
+         */
+        NONE("None"),
+
+        /**
+         * Text is rendered with an outline.
+         */
+        OUTLINE("Outline"),
+
+        /**
+         * Text is rendered with a drop shadow.
+         */
+        DROP_SHADOW("DropShadow");
+
+        private String mStringValue;
+        private OuterStroke(String value) {
+            this.mStringValue = value;
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public String getStringValue() {
+            return mStringValue;
+        }
+
+        private static Map<String, Text.OuterStroke> map = new HashMap<>();
+        static {
+            for (Text.OuterStroke value : Text.OuterStroke.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static OuterStroke valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
+    };
+
     private static final String DEFAULT_FONT_FAMILY = "Roboto";
     private static final int DEFAULT_FONT_SIZE = 12;
     private static final FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
@@ -254,6 +303,9 @@ public class Text extends Geometry {
     private static final VerticalAlignment DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER;
     private static final LineBreakMode DEFAULT_LINE_BREAK_MODE = LineBreakMode.WORD_WRAP;
     private static final ClipMode DEFAULT_CLIP_MODE = ClipMode.CLIP_TO_BOUNDS;
+    private static final OuterStroke DEFAULT_OUTER_STROKE = OuterStroke.NONE;
+    private static final int DEFAULT_OUTER_STROKE_WIDTH = 2;
+    private static final long DEFAULT_OUTER_STROKE_COLOR = Color.DKGRAY;
     private static final int DEFAULT_MAX_LINES = 0;
 
     private ViroContext mViroContext;
@@ -269,6 +321,9 @@ public class Text extends Geometry {
     private VerticalAlignment mVerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT;
     private LineBreakMode mLineBreakMode = DEFAULT_LINE_BREAK_MODE;
     private ClipMode mClipMode = DEFAULT_CLIP_MODE;
+    private OuterStroke mOuterStroke = DEFAULT_OUTER_STROKE;
+    private int mOuterStrokeWidth = DEFAULT_OUTER_STROKE_WIDTH;
+    private long mOuterStrokeColor = DEFAULT_OUTER_STROKE_COLOR;
     private int mMaxLines = DEFAULT_MAX_LINES;
     private float mExtrusionDepth = 0;
 
@@ -316,10 +371,14 @@ public class Text extends Geometry {
      * @param text        The text string to display.
      * @param width       The width of the bounds within which to display the text.
      * @param height      The height of the bounds within which to display the text.
+     * @param extrusionDepth The depth of the text along the Z-axis. Set to a value greater than
+     *                       zero to create 3D text.
      */
     public Text(ViroContext viroContext, String text, float width, float height, float extrusionDepth) {
         this(viroContext, text, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, DEFAULT_FONT_STYLE,
-                DEFAULT_FONT_WEIGHT, DEFAULT_COLOR, width, height, extrusionDepth,
+                DEFAULT_FONT_WEIGHT, DEFAULT_COLOR, extrusionDepth,
+                DEFAULT_OUTER_STROKE, DEFAULT_OUTER_STROKE_WIDTH, DEFAULT_OUTER_STROKE_COLOR,
+                width, height,
                 DEFAULT_HORIZONTAL_ALIGNMENT, DEFAULT_VERTICAL_ALIGNMENT, DEFAULT_LINE_BREAK_MODE,
                 DEFAULT_CLIP_MODE, DEFAULT_MAX_LINES);
     }
@@ -368,13 +427,16 @@ public class Text extends Geometry {
                 LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
 
         this(viroContext, text, fontFamilies, size, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, color, 0,
+                DEFAULT_OUTER_STROKE, DEFAULT_OUTER_STROKE_WIDTH, DEFAULT_OUTER_STROKE_COLOR,
                 width, height, horizontalAlignment, verticalAlignment, lineBreakMode, clipMode,
                 maxLines);
     }
 
     private Text(ViroContext viroContext, String text, String fontFamilies,
                  int size, FontStyle fontStyle, FontWeight fontWeight, long color,
-                 float extrusionDepth, float width, float height,
+                 float extrusionDepth,
+                 OuterStroke outerStroke, int outerStrokeWidth, long outerStrokeColor,
+                 float width, float height,
                  HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                  LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
         mViroContext = viroContext;
@@ -385,6 +447,9 @@ public class Text extends Geometry {
         mFontWeight = fontWeight;
         mExtrusionDepth = extrusionDepth;
         mColor = color;
+        mOuterStroke = outerStroke;
+        mOuterStrokeWidth = outerStrokeWidth;
+        mOuterStrokeColor = outerStrokeColor;
         mWidth = width;
         mHeight = height;
         mHorizontalAlignment = horizontalAlignment;
@@ -394,7 +459,8 @@ public class Text extends Geometry {
         mMaxLines = maxLines;
 
         mNativeRef = nativeCreateText(mViroContext.mNativeRef, mText, mFontFamilyName, mFontSize,
-                                      mFontStyle.getIntValue(), mFontWeight.getIntValue(), mColor, mExtrusionDepth, mWidth,
+                                      mFontStyle.getIntValue(), mFontWeight.getIntValue(), mColor, mExtrusionDepth,
+                                      mOuterStroke.getStringValue(), mOuterStrokeWidth, mOuterStrokeColor, mWidth,
                                       mHeight, mHorizontalAlignment.getStringValue(), mVerticalAlignment.getStringValue(),
                                       mLineBreakMode.getStringValue(), mClipMode.getStringValue(), mMaxLines);
     }
@@ -761,8 +827,64 @@ public class Text extends Geometry {
         nativeSetMaxLines(mNativeRef, maxLines);
     }
 
+    /**
+     * Set an optional {@link OuterStroke} type, width, and color to use for this Text. The outer
+     * stroke can be used to render an outline surrounding the Text or drop shadow extending to the
+     * bottom right of the Text. These are often used to make the Text more legible over busy
+     * backgrounds. The width of the outer stroke is given in pixels: a width of 2 displays a fairly
+     * standard outline or drop shadow.
+     * <p>
+     * Note that outer strokes do <i>not</i> apply to 3D text (text with extrusion depth greater than
+     * zero).
+     * <p>
+     * To remove the outer stroke, set the <tt>outerStroke</tt> to {@link OuterStroke#NONE}. In this
+     * case the outerStrokeWidth and outerStrokeColor will be ignored.
+     * <p>
+     *
+     * @param outerStroke The {@link OuterStroke} type to render for this text.
+     * @param outerStrokeWidth The width of the stroke in pixels.
+     * @param outerStrokeColor The color of the Stroke as an Android {@link Color} integer.
+     */
+    public void setOuterStroke(OuterStroke outerStroke, int outerStrokeWidth, long outerStrokeColor) {
+        mOuterStroke = outerStroke;
+        mOuterStrokeWidth = outerStrokeWidth;
+        mOuterStrokeColor = outerStrokeColor;
+        nativeSetOuterStroke(mNativeRef, outerStroke.getStringValue(), outerStrokeWidth, outerStrokeColor);
+    }
+
+    /**
+     * Get the {@link OuterStroke}, if any, being rendered with this Text. The outer stroke
+     * determines if the Text is rendered with an outline or drop shadow.
+     *
+     * @return The {@link OuterStroke} used to render this Text.
+     */
+    public OuterStroke getOuterStroke() {
+        return mOuterStroke;
+    }
+
+    /**
+     * Get the width of the {@link OuterStroke} being rendered with this Text, in pixels. This
+     * determines how "thick" the outline or drop shadow appears.
+     *
+     * @return The width of the outer stroke in pixels.
+     */
+    public int getOuterStrokeWidth() {
+        return mOuterStrokeWidth;
+    }
+
+    /**
+     * Get the color of the {@link OuterStroke} being rendered with this Text. The color is
+     * returned as an Android {@link Color} value.
+     *
+     * @return The outer stroke color.
+     */
+    public long getOuterStrokeColor() {
+        return mOuterStrokeColor;
+    }
+
     private native long nativeCreateText(long viroContext, String text, String fontFamilyName,
                                          int size, int style, int weight, long color, float extrusionDepth,
+                                         String outerStroke, int outerStrokeWidth, long outerStrokeColor,
                                          float width, float height,
                                          String horizontalAlignment, String verticalAlignment,
                                          String lineBreakMode, String clipMode, int maxLines);
@@ -770,8 +892,7 @@ public class Text extends Geometry {
     private native void nativeSetText(long textRef, String text);
     private native void nativeSetFont(long viroContext, long textRef, String family, int size, int style, int weight);
     private native void nativeSetColor(long textRef, long color);
-    private native void nativeSetBackColor(long textRef, long color);
-    private native void nativeSetSideColor(long textRef, long color);
+    private native void nativeSetOuterStroke(long textRef, String stroke, int width, long color);
     private native void nativeSetWidth(long textRef, float width);
     private native void nativeSetHeight(long textRef, float height);
     private native void nativeSetHorizontalAlignment(long textRef, String horizontalAlignment);
@@ -808,6 +929,9 @@ public class Text extends Geometry {
         private LineBreakMode mLineBreakMode = DEFAULT_LINE_BREAK_MODE;
         private ClipMode mClipMode = DEFAULT_CLIP_MODE;
         private int mMaxLines = DEFAULT_MAX_LINES;
+        private OuterStroke mOuterStroke = DEFAULT_OUTER_STROKE;
+        private int mOuterStrokeWidth = DEFAULT_OUTER_STROKE_WIDTH;
+        private long mOuterStrokeColor = DEFAULT_OUTER_STROKE_COLOR;
 
         /**
          * Set the {@link ViroContext} to be used while building Text object.
@@ -902,6 +1026,36 @@ public class Text extends Geometry {
         }
 
         /**
+         * Refer to {@link Text#setOuterStroke(OuterStroke, int, long)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder outerStroke(OuterStroke outerStroke) {
+            this.mOuterStroke = outerStroke;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setOuterStroke(OuterStroke, int, long)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder outerStrokeWidth(int outerStrokeWidth) {
+            this.mOuterStrokeWidth = outerStrokeWidth;
+            return this;
+        }
+
+        /**
+         * Refer to {@link Text#setOuterStroke(OuterStroke, int, long)}.
+         *
+         * @return This builder.
+         */
+        public TextBuilder outerStrokeColor(long outerStrokeColor) {
+            this.mOuterStrokeColor = outerStrokeColor;
+            return this;
+        }
+
+        /**
          * Refer to {@link Text#setWidth(float)}.
          *
          * @return This builder.
@@ -978,6 +1132,7 @@ public class Text extends Geometry {
          */
         public Text build() {
             return new Text(mViroContext, mText, mFontFamilyName, mFontSize, mFontStyle, mFontWeight, mColor, mExtrusionDepth,
+                    mOuterStroke, mOuterStrokeWidth, mOuterStrokeColor,
                     mWidth, mHeight, mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
         }
 

@@ -27,18 +27,19 @@ public:
     VROGlyphOpenGL();
     virtual ~VROGlyphOpenGL();
     
-    virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                      VROGlyphRenderMode renderMode, std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
-                      std::shared_ptr<VRODriver> driver);
-    
-    std::shared_ptr<VROTexture> getTexture() const;
-    
-private:
-    
-    bool loadBitmap(FT_GlyphSlot &glyph, uint32_t charCode,
+    bool loadMetrics(FT_Face face, uint32_t charCode, uint32_t variantSelector);
+    bool loadBitmap(FT_Face face, uint32_t charCode, uint32_t variantSelector,
                     std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
                     std::shared_ptr<VRODriver> driver);
-    bool loadVector(FT_GlyphSlot &glyph);
+    bool loadOutlineBitmap(FT_Library library, FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                           uint32_t outlineWidth,
+                           std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
+                           std::shared_ptr<VRODriver> driver);
+    bool loadVector(FT_Face face, uint32_t charCode, uint32_t variantSelector);
+        
+private:
+    
+    bool loadGlyph(FT_Face face, uint32_t charCode, uint32_t variantSelector);
     
     std::vector<p2t::Point *> triangulateContour(VROVectorizer &vectorizer, int c);
     

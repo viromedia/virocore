@@ -17,8 +17,9 @@
 static const int kGlyphAtlasTextureSize = 512;
 static const int kGlyphPadding = 8;
 
-VROGlyphAtlasOpenGL::VROGlyphAtlasOpenGL() :
+VROGlyphAtlasOpenGL::VROGlyphAtlasOpenGL(bool isOutline) :
     _textureId(0) {
+    _outline = isOutline;
     _luminanceAlphaBitmap = (GLubyte *)malloc( sizeof(GLubyte) * 2 *
                                                kGlyphAtlasTextureSize * kGlyphAtlasTextureSize );
         
@@ -84,7 +85,7 @@ bool VROGlyphAtlasOpenGL::glyphWillFit(FT_Bitmap &bitmap, VROAtlasLocation *outL
     return true;
 }
 
-void VROGlyphAtlasOpenGL::write(FT_GlyphSlot &glyph, FT_Bitmap &bitmap, const VROAtlasLocation &location,
+void VROGlyphAtlasOpenGL::write(FT_Bitmap &bitmap, const VROAtlasLocation &location,
                                 std::shared_ptr<VRODriver> driver) {
    
     int texWidth  = bitmap.width;

@@ -15,7 +15,7 @@
 VROTextTest::VROTextTest() :
     VRORendererTest(VRORendererTestType::Text) {
     _textIndex = 0;
-    _using3DText = true;
+    _using3DText = false;
 }
 
 VROTextTest::~VROTextTest() {
@@ -176,6 +176,8 @@ void VROTextTest::rotateText() {
     if (_using3DText) {
         text->getMaterials()[1]->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
         text->getMaterials()[2]->getDiffuse().setColor({ 1.0, 0.0, 1.0, 1.0 });
+    } else {
+        text->setOuterStroke(VROTextOuterStroke::DropShadow, 2, { 0.7, 0.7, 0.7, 1.0 });
     }
     _textNode->setGeometry(text);
     _textNode->setPosition({ 0, 0, -6 });

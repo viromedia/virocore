@@ -9,6 +9,7 @@
 #ifndef VROGlyph_h
 #define VROGlyph_h
 
+#include <map>
 #include <memory>
 #include <vector>
 #include "VROVector3f.h"
@@ -29,8 +30,36 @@ enum class VROGlyphRenderMode {
     Vector,
 };
 
-class VROGlyph {
+/*
+ Data used to render glyphs as bitmaps.
+ */
+class VROGlyphBitmap {
+public:
+    /*
+     Atlas on which the glyph is rendered.
+     */
+    std::shared_ptr<VROGlyphAtlas> atlas;
     
+    /*
+     Size of the glyph.
+     */
+    VROVector3f size;
+    
+    /*
+     Offset from the baseline to the top-left of the glyph.
+     */
+    VROVector3f bearing;
+
+    /*
+     The min and max U and V values for the texture. These
+     indicate what section of the texture corresponds to
+     this character.
+     */
+    float minU, minV;
+    float maxU, maxV;
+};
+
+class VROGlyph {
 public:
     
     VROGlyph() {
@@ -41,53 +70,48 @@ public:
     }
     
     /*
-     Load the glyph identified by the given FT_Face. If forRendering is false,
-     then only getAdvance() will be available after this operation.
+     Load the glyph identified by the given FT_Face. These methods may be called
+     successively to load different pieces of the FT_Face into this glyph.
      
-     If the render mode is Bitmap, then the glyph will additionally be written to the
+     The first method is used to only load the metrics of the glyph for sizing
+     operations. Only getAdvance() will be available after invoking this method.
+     
+     The loadBitmap method will write the glyph's bitmap to the
      last VROGlyphAtlas provided in the given vector. If the glyph does not
-     fit in said vector, then a new VROGlyphAtlas will be created and pushed
-     to the back of the vector.
+     fit in said atlas, then a new VROGlyphAtlas will be created and pushed
+     to the back of the vector. After invoking this method, the bitmap data
+     will be available by invoking getBitmap(0).
      
-     If the render mode is Vector, then the contours for the glyph will be loaded
-     and stored.
+     The third method loads the bitmap of an outline into the glyph. The bitmap
+     will have the provided outline width, and will similarly write to the provided
+     atlas vector. The loaded bitmap data will be available by calling
+     getBitmap(outlineWidth).
+     
+     Finally, the loadVector method craetes the contours of the glyph in 3D,
+     triangulates them, and stores the results, which are accessible via
+     getTriangles(). This method is used for 3D text rendering.
      
      If the variant selector is 0, then we assume this is not a variation
      sequence.
      */
-    virtual bool load(FT_Face face, uint32_t charCode, uint32_t variantSelector,
-                      VROGlyphRenderMode renderMode,
-                      std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
-                      std::shared_ptr<VRODriver> driver) = 0;
+    virtual bool loadMetrics(FT_Face face, uint32_t charCode, uint32_t variantSelector) = 0;
+    virtual bool loadBitmap(FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                            std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
+                            std::shared_ptr<VRODriver> driver) = 0;
+    virtual bool loadOutlineBitmap(FT_Library library, FT_Face face, uint32_t charCode, uint32_t variantSelector,
+                                   uint32_t outlineWidth,
+                                   std::vector<std::shared_ptr<VROGlyphAtlas>> *atlases,
+                                   std::shared_ptr<VRODriver> driver) = 0;
+    virtual bool loadVector(FT_Face face, uint32_t charCode, uint32_t variantSelector) = 0;
     
 #pragma mark - Bitmap Fonts
     
     /*
-     For glyphs rendered as to textures, these methods provide the atlas and texture.
-     The texture getter is simply a convenience method; it returns the atlas's
-     texture.
+     For glyphs rendered to textures, these methods provide the atlas and other
+     metadata required for rendering.
      */
-    virtual std::shared_ptr<VROTexture> getTexture() const = 0;
-    const std::shared_ptr<VROGlyphAtlas> getAtlas() const {
-        return _atlas;
-    }
-    VROVector3f getSize() const {
-        return _size;
-    }
-    VROVector3f getBearing() const {
-        return _bearing;
-    }
-    float getMinU() const {
-        return _minU;
-    }
-    float getMaxU() const {
-        return _maxU;
-    }
-    float getMinV() const {
-        return _minV;
-    }
-    float getMaxV() const {
-        return _maxV;
+    const VROGlyphBitmap &getBitmap(int outlineWidth) const {
+        return _bitmaps.find(outlineWidth)->second;
     }
     
 #pragma mark - Vector Fonts
@@ -105,32 +129,15 @@ public:
 protected:
     
     /*
-     Atlas on which the glyph is rendered.
+     Atlas on which the glyph is rendered, for different outline widths.
+     Width 0 corresponds to no outline.
      */
-    std::shared_ptr<VROGlyphAtlas> _atlas;
-    
-    /*
-     Size of the glyph.
-     */
-    VROVector3f _size;
-    
-    /*
-     Offset from the baseline to the top-left of the glyph.
-     */
-    VROVector3f _bearing;
+    std::map<int, VROGlyphBitmap> _bitmaps;
     
     /*
      Offset to advance to the next glyph.
      */
     long _advance;
-    
-    /*
-     The min and max U and V values for the texture. These
-     indicate what section of the texture corresponds to 
-     this character.
-     */
-    float _minU, _minV;
-    float _maxU, _maxV;
     
     /*
      For vectorized glphs, contains the triangles to render the

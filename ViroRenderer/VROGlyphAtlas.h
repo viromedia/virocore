@@ -48,8 +48,7 @@ public:
      Write the given Freetype glyph (with its associated bitmap) onto this atlas, at
      the provided location.
      */
-    virtual void write(FT_GlyphSlot &glyph, FT_Bitmap &bitmap, const VROAtlasLocation &location,
-                       std::shared_ptr<VRODriver> driver) = 0;
+    virtual void write(FT_Bitmap &bitmap, const VROAtlasLocation &location, std::shared_ptr<VRODriver> driver) = 0;
     
     /*
      Refresh the underlying pixel data for the texture. This should be invoked
@@ -65,11 +64,22 @@ public:
     }
     
     /*
+     Return true if this atlas is for outline glyphs.
+     */
+    bool isOutline() const { return _outline; }
+    
+    /*
      Get the width and height of the texture.
      */
     virtual int getSize() const = 0;
     
 protected:
+    
+    /*
+     True if this atlas is used by outline glyphs (this should impact
+     render order).
+     */
+    bool _outline;
     
     /*
      Texture on which the glyphs are rendered.

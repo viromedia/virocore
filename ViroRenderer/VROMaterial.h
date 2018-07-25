@@ -300,6 +300,18 @@ public:
     }
 
     /*
+     Material rendering order; this should only be used to fix a rendering order between materials
+     that are part of the same geometry. For cross-geometry rendering order, use
+     VRONode::setRenderingOrder().
+     */
+    int getRenderingOrder() const {
+        return _renderingOrder;
+    }
+    void setRenderingOrder(int renderingOrder) {
+        _renderingOrder = renderingOrder;
+    }
+
+    /*
      Shader modifiers.
      */
     void addShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
@@ -515,6 +527,13 @@ private:
      Defaults to true.
      */
     bool _needsToneMapping;
+
+    /*
+     The rendering order of this material, which determines when it is rendered in relation to
+     other materials. See VROSortKey for where this falls within the hierarchy of renderinng sort
+     concerns.
+     */
+    uint32_t _renderingOrder;
     
     /*
      Representation of this material in the underlying graphics hardware.

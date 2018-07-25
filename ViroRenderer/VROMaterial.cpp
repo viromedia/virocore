@@ -38,6 +38,7 @@ VROMaterial::VROMaterial() :
     _chromaKeyFilteringEnabled(false),
     _chromaKeyFilteringColor({ 0, 1, 0 }),
     _needsToneMapping(true),
+    _renderingOrder(0),
     _substrate(nullptr) {
     
     _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |
@@ -83,6 +84,7 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
  _chromaKeyFilteringEnabled(material->_chromaKeyFilteringEnabled),
  _chromaKeyFilteringColor(material->_chromaKeyFilteringColor),
  _needsToneMapping(material->needsToneMapping()),
+ _renderingOrder(material->_renderingOrder),
  _substrate(nullptr) {
  
      _diffuse = new VROMaterialVisual(*material->_diffuse);
@@ -146,6 +148,7 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _chromaKeyFilteringEnabled = material->_chromaKeyFilteringEnabled;
     _chromaKeyFilteringColor = material->_chromaKeyFilteringColor;
     _needsToneMapping = material->_needsToneMapping;
+    _renderingOrder = material->_renderingOrder;
     
     _substrate = nullptr;
     

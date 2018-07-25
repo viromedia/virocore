@@ -73,6 +73,18 @@ VROTextClipMode getTextClipModeEnum(const std::string& strName) {
     }
 }
 
+
+VROTextOuterStroke getTextOuterStrokeEnum(const std::string& strName) {
+    // Depending on string, return the right enum
+    if (VROStringUtil::strcmpinsensitive(strName, "Outline")) {
+        return VROTextOuterStroke::Outline;
+    } else if (VROStringUtil::strcmpinsensitive(strName, "DropShadow")) {
+        return VROTextOuterStroke::DropShadow;
+    } else {
+        return VROTextOuterStroke::None;
+    }
+}
+
 extern "C" {
 
 VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
@@ -84,6 +96,9 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
                                                VRO_INT weight,
                                                VRO_LONG color,
                                                VRO_FLOAT extrusionDepth,
+                                               VRO_STRING outerStroke_j,
+                                               VRO_INT outerStrokeWidth_j,
+                                               VRO_LONG outerStrokeColor_j,
                                                VRO_FLOAT width,
                                                VRO_FLOAT height,
                                                VRO_STRING horizontalAlignment_j,
@@ -116,14 +131,27 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
     // Get clip mode
     VROTextClipMode clipMode = getTextClipModeEnum(VRO_STRING_STL(clipMode_j));
 
+    // Get the font family
     std::string fontFamily = VRO_STRING_STL(fontFamily_j);
+
+    // Get the outer stroke
+    float outerA = ((outerStrokeColor_j >> 24) & 0xFF) / 255.0;
+    float outerR = ((outerStrokeColor_j >> 16) & 0xFF) / 255.0;
+    float outerG = ((outerStrokeColor_j >> 8) & 0xFF) / 255.0;
+    float outerB = (outerStrokeColor_j & 0xFF) / 255.0;
+    VROVector4f outerStrokeColor(outerR, outerG, outerB, outerA);
+
+    VROTextOuterStroke outerStroke = getTextOuterStrokeEnum(VRO_STRING_STL(outerStroke_j));
+
     std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
 
     std::shared_ptr<VROText> vroText = std::make_shared<VROText>(text, fontFamily, size,
                                                                  (VROFontStyle) style,
                                                                  (VROFontWeight) weight,
-                                                                 vecColor, extrusionDepth, width, height,
+                                                                 vecColor, extrusionDepth,
+                                                                 outerStroke, outerStrokeWidth_j, outerStrokeColor,
+                                                                 width, height,
                                                                  horizontalAlignment,
                                                                  verticalAlignment,
                                                                  lineBreakMode,
@@ -211,6 +239,28 @@ VRO_METHOD(void, nativeSetExtrusionDepth)(VRO_ARGS
             return;
         }
         text->setExtrusion(extrusionDepth);
+    });
+}
+
+VRO_METHOD(void, nativeSetOuterStroke)(VRO_ARGS
+                                       VRO_REF(VROText) text_j,
+                                       VRO_STRING stroke_j,
+                                       VRO_INT width, VRO_LONG color_j) {
+    float a = ((color_j >> 24) & 0xFF) / 255.0;
+    float r = ((color_j >> 16) & 0xFF) / 255.0;
+    float g = ((color_j >> 8) & 0xFF) / 255.0;
+    float b = (color_j & 0xFF) / 255.0;
+    VROVector4f color(r, g, b, a);
+
+    VROTextOuterStroke stroke = getTextOuterStrokeEnum(VRO_STRING_STL(stroke_j));
+
+    std::weak_ptr<VROText> text_w = VRO_REF_GET(VROText, text_j);
+    VROPlatformDispatchAsyncRenderer([text_w, stroke, width, color] {
+        std::shared_ptr<VROText> text = text_w.lock();
+        if (!text) {
+            return;
+        }
+        text->setOuterStroke(stroke, width, color);
     });
 }
 
