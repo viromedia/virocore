@@ -658,7 +658,7 @@ std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(con
     
     float duration = animation_pb.duration();
     
-    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames, duration);
+    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames, duration / 1000.0);
     animation->setName(animation_pb.name());
     
     return animation;
@@ -693,7 +693,7 @@ std::shared_ptr<VROKeyframeAnimation> VROFBXLoader::loadFBXKeyframeAnimation(con
     
     float duration = animation_pb.duration();
     
-    std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale);
+    std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, duration / 1000.0, hasTranslation, hasRotation, hasScale);
     animation->setName(animation_pb.name());
     
     return animation;

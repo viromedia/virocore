@@ -51,6 +51,8 @@ public:
     void pause();
     void resume();
     void terminate(bool jumpToEnd);
+
+    void setDuration(float durationSeconds);
     std::string toString() const;
     
 private:

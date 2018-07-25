@@ -17,7 +17,19 @@
 #include <map>
 
 std::shared_ptr<VROExecutableAnimation> VROSkeletalAnimation::copy() {
-    pabort("Skeletal animations may not be copied");
+    std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> frames;
+    for (std::unique_ptr<VROSkeletalAnimationFrame> &origFrame : _frames) {
+        std::unique_ptr<VROSkeletalAnimationFrame> frame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
+        frame->time = origFrame->time;
+        frame->boneIndices = origFrame->boneIndices;
+        frame->boneTransforms = origFrame->boneTransforms;
+
+        frames.push_back(std::move(frame));
+    }
+    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(_skeleton, frames, _duration);
+    animation->setName(_name);
+    
+    return animation;
 }
 
 void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
@@ -42,7 +54,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     }
     
     VROTransaction::begin();
-    VROTransaction::setAnimationDuration(_duration / 1000);
+    VROTransaction::setAnimationDuration(_duration);
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     for (auto kv : boneKeyTimes) {
@@ -63,7 +75,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     }
     
     std::weak_ptr<VROSkeletalAnimation> weakSelf = shared_from_this();
-    VROTransaction::setFinishCallback([weakSelf, onFinished](bool terminate){
+    VROTransaction::setFinishCallback([weakSelf, onFinished](bool terminate) {
         std::shared_ptr<VROSkeletalAnimation> skeletal = weakSelf.lock();
         if (skeletal) {
             skeletal->_transaction.reset();
@@ -71,26 +83,36 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
         onFinished();
     });
     
-    _transaction = VROTransaction::commit();
+    std::shared_ptr<VROTransaction> transaction = VROTransaction::commit();
+    transaction->holdExecutableAnimation(shared_from_this());
+    
+    _transaction = transaction;
 }
 
 void VROSkeletalAnimation::pause() {
-    if (_transaction) {
-        VROTransaction::pause(_transaction);
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::pause(transaction);
     }
 }
 
 void VROSkeletalAnimation::resume() {
-    if (_transaction) {
-        VROTransaction::resume(_transaction);
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::resume(transaction);
     }
 }
 
 void VROSkeletalAnimation::terminate(bool jumpToEnd) {
-    if (_transaction) {
-        VROTransaction::terminate(_transaction, jumpToEnd);
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::terminate(transaction, jumpToEnd);
         _transaction.reset();
     }
+}
+
+void VROSkeletalAnimation::setDuration(float durationSeconds) {
+    _duration = durationSeconds;
 }
 
 std::string VROSkeletalAnimation::toString() const {

@@ -497,12 +497,12 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
         return false;
     }
 
-    // Set the total duration of this keyframe animation, in seconds.
+    // Set the total duration of this keyframe animation, in seconds
     float duration = frames.back()->time;
 
     // Normalize the input key frame time (expected by Viro's animation system)
     for (int i = 0; i < frames.size(); i ++) {
-        frames[i]->time = frames[i]->time/duration;
+        frames[i]->time = frames[i]->time / duration;
     }
 
     // Grab the channel object from the given index, and process it's raw buffered data
@@ -527,8 +527,7 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
         }
     }
 
-    animOut = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation,
-                                                     hasRotation, hasScale);
+    animOut = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale);
     return true;
 }
 
@@ -629,7 +628,7 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
         } else if (VROStringUtil::strcmpinsensitive(channelProperty, "scale")&& tempVec.size() == 3) {
             framesOut[elementIndex]->scale = {tempVec[0], tempVec[1], tempVec[2]};
         } else if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
-            framesOut[elementIndex]->time = tempVec[0] * 1000;
+            framesOut[elementIndex]->time = tempVec[0];
         } else if (VROStringUtil::strcmpinsensitive(channelProperty, "weights")) {
             pwarn("Viro does not support morph targets yet at the moment");
             return false;
@@ -652,15 +651,15 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         int skinIndex = skeletalAnimToSkinPair[i].second;
         int skeletalAnimationIndex = skeletalAnimToSkinPair[i].first;
 
-        // Create a set of skeletal Frames, populate them with empty key frames.
+        // Create a set of skeletal Frames, populate them with empty key frames
         std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> skeletalFrames;
         int firstNodeIndex = _skinIndexToJointNodeIndex[skinIndex][0];
         std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = _nodeKeyFrameAnims[firstNodeIndex][skeletalAnimationIndex];
         float totalDuration = keyFrameAnim->getDuration();
+
         const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = keyFrameAnim->getFrames();
         for (int i = 0; i < frames.size(); i++) {
-            std::unique_ptr<VROSkeletalAnimationFrame> skeletalFrame
-                    = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
+            std::unique_ptr<VROSkeletalAnimationFrame> skeletalFrame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
             skeletalFrame->time = frames[i]->time;
             skeletalFrames.push_back(std::move(skeletalFrame));
         }

@@ -65,9 +65,13 @@ public:
         return _frames;
     }
 
+    void setDuration(float durationSeconds) {
+        _duration = durationSeconds;
+    }
     float getDuration(){
         return _duration;
     }
+
 #pragma mark - Executable Animation API
     
     /*
@@ -104,14 +108,14 @@ private:
     std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> _frames;
     
     /*
-     The duration of this animation in milliseconds.
+     The duration of this animation in seconds.
      */
     float _duration;
     
     /*
      If the animation is running, this is its associated transaction.
      */
-    std::shared_ptr<VROTransaction> _transaction;
+    std::weak_ptr<VROTransaction> _transaction;
     
 };
 

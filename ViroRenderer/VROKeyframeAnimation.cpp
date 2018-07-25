@@ -17,7 +17,20 @@
 #include <map>
 
 std::shared_ptr<VROExecutableAnimation> VROKeyframeAnimation::copy() {
-    pabort("Keyframe animations may not be copied");
+    std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> frames;
+    for (std::unique_ptr<VROKeyframeAnimationFrame> &origFrame : _frames) {
+        std::unique_ptr<VROKeyframeAnimationFrame> frame = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
+        frame->time = origFrame->time;
+        frame->translation = origFrame->translation;
+        frame->scale = origFrame->scale;
+        frame->rotation = origFrame->rotation;
+
+        frames.push_back(std::move(frame));
+    }
+    std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, _duration, _hasTranslation,
+                                                                                             _hasRotation, _hasScale);
+    animation->setName(_name);
+    return animation;
 }
 
 void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
@@ -49,7 +62,7 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     }
     
     VROTransaction::begin();
-    VROTransaction::setAnimationDuration(_duration / 1000);
+    VROTransaction::setAnimationDuration(_duration);
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     if (_hasTranslation) {
@@ -97,24 +110,30 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
         onFinished();
     });
     
-    _transaction = VROTransaction::commit();
+    std::shared_ptr<VROTransaction> transaction = VROTransaction::commit();
+    transaction->holdExecutableAnimation(shared_from_this());
+    
+    _transaction = transaction;
 }
 
 void VROKeyframeAnimation::pause() {
-    if (_transaction) {
-        VROTransaction::pause(_transaction);
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::pause(transaction);
     }
 }
 
 void VROKeyframeAnimation::resume() {
-    if (_transaction) {
-        VROTransaction::resume(_transaction);
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::resume(transaction);
     }
 }
 
 void VROKeyframeAnimation::terminate(bool jumpToEnd) {
-    if (_transaction) {
-        VROTransaction::terminate(_transaction, jumpToEnd);
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::terminate(transaction, jumpToEnd);
         _transaction.reset();
     }
 }

@@ -349,7 +349,9 @@ void VROTestUtil::animateTake(std::weak_ptr<VRONode> node_w, std::string name) {
         return;
     }
 
-    node->getAnimation(name.c_str(), true)->execute(node, [node_w, name] {
+    std::shared_ptr<VROExecutableAnimation> animation = node->getAnimation(name.c_str(), true)->copy();
+    animation->setDuration(15);
+    animation->execute(node, [node_w, name] {
         animateTake(node_w, name);
     });
 }

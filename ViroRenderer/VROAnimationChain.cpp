@@ -99,6 +99,12 @@ void VROAnimationChain::terminate(bool jumpToEnd) {
     }
 }
 
+void VROAnimationChain::setDuration(float durationSeconds) {
+    for (std::shared_ptr<VROExecutableAnimation> animation : _animations) {
+        animation->setDuration(durationSeconds);
+    }
+}
+
 void VROAnimationChain::addAnimation(std::shared_ptr<VROExecutableAnimation> animation) {
     _animations.push_back(animation);
 }

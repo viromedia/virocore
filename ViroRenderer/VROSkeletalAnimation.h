@@ -91,6 +91,11 @@ public:
     void pause();
     void resume();
     void terminate(bool jumpToEnd);
+
+    /*
+     Override the duration of this skeletal animation, in seconds.
+     */
+    void setDuration(float durationSeconds);
     
     std::string toString() const;
     
@@ -112,14 +117,14 @@ private:
     std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> _frames;
     
     /*
-     The duration of this animation in milliseconds.
+     The duration of this animation in seconds.
      */
     float _duration;
     
     /*
      If the animation is running, this is its associated transaction.
      */
-    std::shared_ptr<VROTransaction> _transaction;
+    std::weak_ptr<VROTransaction> _transaction;
     
 };
 

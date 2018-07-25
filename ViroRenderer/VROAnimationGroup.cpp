@@ -250,6 +250,10 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     }
 }
 
+void VROAnimationGroup::setDuration(float durationSeconds) {
+    _duration = durationSeconds;
+}
+
 std::string VROAnimationGroup::toString() const {
     std::stringstream ss;
     ss << "[duration: " << _duration << ", delay: " << _delay;

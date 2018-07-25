@@ -54,6 +54,10 @@ public:
     void terminate(bool jumpToEnd) {
         _executableAnimation->terminate(jumpToEnd);
     }
+
+    void setDuration(float durationSeconds) {
+        _executableAnimation->setDuration(durationSeconds);
+    }
     
     std::string toString() const {
         return _executableAnimation->toString();
