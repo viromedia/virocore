@@ -136,14 +136,6 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
         // a potential change of shader -- and we have to upload our material's uniforms
         // to any new shader.
         if (key.material != boundMaterialId || boundLights != node->getComputedLights()) {
-            // TODO Perhaps we can check if the shader changed, and if so bind
-            //      properties? We could also meld these two methods into one, simplifying
-            //      the API?
-            if (!material->bindShader(key.lights, node->getComputedLights(), context, driver)) {
-                pinfo("Failed to bind shader: will not render associated geometry");
-                continue;
-            }
-            material->bindProperties(driver);
 
             // If we're rendering a hierarchical object -- meaning, an object that's part of a close-knit
             // 2D unit like a flex-view -- then the entire hierarchy of these 2D objects will appear
@@ -169,6 +161,15 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
                     boundHierarchyParent = nullptr;
                 }
             }
+
+            // TODO Perhaps we can check if the shader changed, and if so bind
+            //      properties? We could also meld these two methods into one, simplifying
+            //      the API?
+            if (!material->bindShader(key.lights, node->getComputedLights(), context, driver)) {
+                pinfo("Failed to bind shader: will not render associated geometry");
+                continue;
+            }
+            material->bindProperties(driver);
 
             // When rendering a hierarchy, ensure nothing is written to the depth buffer
             if (key.hierarchyId < kMaxHierarchyId) {
@@ -206,15 +207,22 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
 void VROPortal::writeHierarchyParentToDepthBuffer(VROSortKey &hierarchyParent,
                                                   const VRORenderContext &context,
                                                   std::shared_ptr<VRODriver> &driver) {
+    VRONode *hParentNode = (VRONode *)hierarchyParent.node;
+    if (!hParentNode->getGeometry()) {
+        return;
+    }
+
+    std::shared_ptr<VROMaterial> hParentMaterial = hParentNode->getGeometry()->getMaterialForElement(hierarchyParent.elementIndex);
+    if (!hParentMaterial->bindShader(hierarchyParent.lights, hParentNode->getComputedLights(), context, driver)) {
+        pinfo("Failed to bind shader: will not render associated geometry");
+        return;
+    }
+    hParentMaterial->bindProperties(driver);
+
     driver->setDepthWritingEnabled(true);
     driver->setDepthReadingEnabled(true);
     driver->setColorWritingEnabled(false);
-
-    VRONode *hParentNode = (VRONode *)hierarchyParent.node;
-    if (hParentNode->getGeometry()) {
-        std::shared_ptr<VROMaterial> hParentMaterial = hParentNode->getGeometry()->getMaterialForElement(hierarchyParent.elementIndex);
-        hParentNode->render(hierarchyParent.elementIndex, hParentMaterial, context, driver);
-    }
+    hParentNode->render(hierarchyParent.elementIndex, hParentMaterial, context, driver);
     driver->setColorWritingEnabled(true);
 }
 
