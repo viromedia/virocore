@@ -78,7 +78,7 @@ std::shared_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(uint32_t charCode, uint3
         glyph->loadMetrics(_face, charCode, variantSelector);
     } else if (renderMode == VROGlyphRenderMode::Bitmap) {
         glyph->loadBitmap(_face, charCode, variantSelector, &_glyphAtlases, driver);
-        if (outlineWidth > 0 && renderMode != VROGlyphRenderMode::Vector) {
+        if (outlineWidth > 0) {
             glyph->loadOutlineBitmap(driver->getFreetype(), _face, charCode, variantSelector, outlineWidth,
                                      &_outlineAtlases[outlineWidth], driver);
         }

@@ -313,14 +313,9 @@ void VROText::buildBitmapText(std::wstring &text,
     if (outerStroke == VROTextOuterStroke::Outline) {
         outlineWidth = outerStrokeWidth;
         outlineOffset = -outerStrokeWidth;
-
-        pinfo("Creating outline with color %f, %f, %f, shadow %f, %f, %f", color.x, color.y, color.z, outlineColor.x, outlineColor.y, outlineColor.z);
-
     } else if (outerStroke == VROTextOuterStroke::DropShadow) {
         outlineWidth = outerStrokeWidth;
         outlineOffset = 0;
-
-        pinfo("Creating drop shadow with color %f, %f, %f, shadow %f, %f, %f", color.x, color.y, color.z, outlineColor.x, outlineColor.y, outlineColor.z);
     } else {
         outlineWidth = 0;
         outlineOffset = 0;
