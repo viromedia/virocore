@@ -1035,43 +1035,52 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
 }
 
 void VROPlatformSetBool(JNIEnv *env, jobject jObj, const char *fieldName, jboolean value) {
-    jfieldID fieldId = env->GetFieldID(env->GetObjectClass(jObj), fieldName, "Z");
+    jclass cls = env->GetObjectClass(jObj);
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "Z");
     if (fieldId == NULL) {
         pwarn("Attempted to set undefined field: %s", fieldName);
         return;
     }
 
     env->SetBooleanField(jObj, fieldId, value);
+    env->DeleteLocalRef(cls);
 }
 
 void VROPlatformSetInt(JNIEnv *env, jobject jObj, const char *fieldName, VRO_INT value) {
-    jfieldID fieldId = env->GetFieldID(env->GetObjectClass(jObj), fieldName, "I");
+    jclass cls = env->GetObjectClass(jObj);
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "I");
     if (fieldId == NULL) {
         pwarn("Attempted to set undefined field: %s", fieldName);
         return;
     }
 
     env->SetIntField(jObj, fieldId, value);
+    env->DeleteLocalRef(cls);
 }
 
 void VROPlatformSetFloat(JNIEnv *env, jobject jObj, const char *fieldName, VRO_FLOAT value) {
-    jfieldID fieldId = env->GetFieldID(env->GetObjectClass(jObj), fieldName, "F");
+    jclass cls = env->GetObjectClass(jObj);
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "F");
     if (fieldId == NULL){
         pwarn("Attempted to set undefined field: %s", fieldName);
         return;
     }
 
+    env->DeleteLocalRef(cls);
     env->SetFloatField(jObj, fieldId, value);
 }
 
 void VROPlatformSetString(JNIEnv *env, jobject jObj, const char *fieldName, std::string value) {
-    jfieldID fieldId = env->GetFieldID(env->GetObjectClass(jObj), fieldName, "Ljava/lang/String;");
+    jclass cls = env->GetObjectClass(jObj);
+    jfieldID fieldId = env->GetFieldID(cls, fieldName, "Ljava/lang/String;");
     if (fieldId == NULL){
         pwarn("Attempted to set undefined field: %s", fieldName);
         return;
     }
 
     VRO_STRING jValue = VRO_NEW_STRING(value.c_str());
+
+    env->DeleteLocalRef(cls);
     env->SetObjectField(jObj, fieldId, jValue);
 }
 
@@ -1088,10 +1097,12 @@ void VROPlatformSetEnumValue(JNIEnv *env, jobject jObj, const char *fieldName,
     jobject jEnumValue = env->GetStaticObjectField(enumClass, enumValueField);
 
     // Get the corresponding enum field in jObjClass.java to be set on and set it.
-    jfieldID jEnumField = env->GetFieldID(env->GetObjectClass(jObj), fieldName, enumClassPathType.c_str());
+    jclass jObjClass = env->GetObjectClass(jObj);
+    jfieldID jEnumField = env->GetFieldID(jObjClass, fieldName, enumClassPathType.c_str());
     env->SetObjectField(jObj, jEnumField, jEnumValue);
     env->DeleteLocalRef(enumClass);
     env->DeleteLocalRef(jEnumValue);
+    env->DeleteLocalRef(jObjClass);
 }
 
 void VROPlatformSetObject(JNIEnv *env, jobject jObj, const char *fieldName,
