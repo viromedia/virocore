@@ -20,7 +20,7 @@
 
 static std::atomic_int sMaterialId;
 
-VROMaterial::VROMaterial() :
+VROMaterial::VROMaterial() : VROThreadRestricted(VROThreadName::Renderer),
     _materialId(sMaterialId++),
     _shininess(2.0),
     _fresnelExponent(1.0),
@@ -40,17 +40,17 @@ VROMaterial::VROMaterial() :
     _needsToneMapping(true),
     _renderingOrder(0),
     _substrate(nullptr) {
-    
+   
     _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |
                                                      (int)VROTextureType::Texture2D |
                                                      (int)VROTextureType::TextureCube |
                                                      (int)VROTextureType::TextureEGLImage);
     _roughness        = new VROMaterialVisual(*this, (int)VROTextureType::None |
-                                                     (int)VROTextureType::Texture2D);
-    _roughness->setColor({ 0.484529, 0.484529, 0.484529, 1.0 }); // Sensible default for shapes
+                                                     (int)VROTextureType::Texture2D,
+                                              { 0.484529, 0.484529, 0.484529, 1.0 }); // Sensible default for shapes
     _metalness        = new VROMaterialVisual(*this, (int)VROTextureType::None |
-                                                     (int)VROTextureType::Texture2D);
-    _metalness->setColor({ 0, 0, 0, 1.0 });
+                                                     (int)VROTextureType::Texture2D,
+                                              { 0, 0, 0, 1.0 });
     _specular         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
     _normal           = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
     _reflective       = new VROMaterialVisual(*this, (int)VROTextureType::TextureCube);
@@ -65,7 +65,7 @@ VROMaterial::VROMaterial() :
     ALLOCATION_TRACKER_ADD(Materials, 1);
 }
 
-VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
+VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) : VROThreadRestricted(VROThreadName::Renderer),
  _materialId(sMaterialId++),
  _name(material->_name),
  _shininess(material->_shininess),
@@ -299,7 +299,10 @@ void VROMaterial::updateSubstrateTextures() {
 }
 
 void VROMaterial::updateSubstrate() {
-    delete (_substrate);
+    passert_thread(__func__);
+    if (_substrate != nullptr) {
+        delete (_substrate);
+    }
     _substrate = nullptr;
 }
 

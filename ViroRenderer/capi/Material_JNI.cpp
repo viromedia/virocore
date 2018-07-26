@@ -109,6 +109,8 @@ VRO_METHOD(VRO_REF(VROMaterial), nativeCreateImmutableMaterial)(VRO_ARGS
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->setThreadRestrictionEnabled(false);
+
     material->setLightingModel(parseLightingModel(VRO_STRING_STL(lightingModel)));
     material->getDiffuse().setColor(parseColor(diffuseColor));
     if (diffuseTexture != 0) { material->getDiffuse().setTexture(VRO_REF_GET(VROTexture, diffuseTexture)); }
@@ -123,6 +125,7 @@ VRO_METHOD(VRO_REF(VROMaterial), nativeCreateImmutableMaterial)(VRO_ARGS
     material->setBloomThreshold(bloomThreshold);
     material->setWritesToDepthBuffer(writesToDepthBuffer);
     material->setReadsFromDepthBuffer(readsFromDepthBuffer);
+    material->setThreadRestrictionEnabled(true);
 
     return VRO_REF_NEW(VROMaterial, material);
 }

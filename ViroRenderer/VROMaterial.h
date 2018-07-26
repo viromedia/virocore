@@ -14,6 +14,7 @@
 #include "VROMaterialVisual.h"
 #include "VROAnimatable.h"
 #include "VROStringUtil.h"
+#include "VROThreadRestricted.h"
 
 enum class VROFace {
     Front,
@@ -62,7 +63,7 @@ class VROShaderModifier;
  visual attributes and their options, which you can then reuse for multiple geometries 
  in a scene.
  */
-class VROMaterial : public VROAnimatable {
+class VROMaterial : public VROAnimatable, public VROThreadRestricted {
     
 public:
     
