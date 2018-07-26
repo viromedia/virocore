@@ -159,7 +159,9 @@ void VROAudioPlayeriOS::play() {
 void VROAudioPlayeriOS::pause() {
     _paused = true;
     if (_player) {
-        doFadeThenPause();
+        if([_player isPlaying]) {
+            doFadeThenPause();
+        }
     }
 }
 
