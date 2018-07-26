@@ -11,8 +11,8 @@
 #include "VROMaterial.h"
 #include "VROLog.h"
 
-VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
- _material(visual._material),
+VROMaterialVisual::VROMaterialVisual(VROMaterial &material, const VROMaterialVisual &visual) :
+ _material(material),
  _permissibleContentsMask(visual._permissibleContentsMask),
  _contentsColor(visual._contentsColor),
  _contentsTexture(visual._contentsTexture),

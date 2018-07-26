@@ -87,16 +87,16 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) : VROThreadRestr
  _renderingOrder(material->_renderingOrder),
  _substrate(nullptr) {
  
-     _diffuse = new VROMaterialVisual(*material->_diffuse);
-     _roughness = new VROMaterialVisual(*material->_roughness);
-     _metalness = new VROMaterialVisual(*material->_metalness);
-     _specular = new VROMaterialVisual(*material->_specular);
-     _normal = new VROMaterialVisual(*material->_normal);
-     _reflective = new VROMaterialVisual(*material->_reflective);
-     _emission = new VROMaterialVisual(*material->_emission);
-     _multiply = new VROMaterialVisual(*material->_multiply);
-     _ambientOcclusion = new VROMaterialVisual(*material->_ambientOcclusion);
-     _selfIllumination = new VROMaterialVisual(*material->_selfIllumination);
+     _diffuse = new VROMaterialVisual(*this, *material->_diffuse);
+     _roughness = new VROMaterialVisual(*this, *material->_roughness);
+     _metalness = new VROMaterialVisual(*this, *material->_metalness);
+     _specular = new VROMaterialVisual(*this, *material->_specular);
+     _normal = new VROMaterialVisual(*this, *material->_normal);
+     _reflective = new VROMaterialVisual(*this, *material->_reflective);
+     _emission = new VROMaterialVisual(*this, *material->_emission);
+     _multiply = new VROMaterialVisual(*this, *material->_multiply);
+     _ambientOcclusion = new VROMaterialVisual(*this, *material->_ambientOcclusion);
+     _selfIllumination = new VROMaterialVisual(*this, *material->_selfIllumination);
      
      ALLOCATION_TRACKER_ADD(Materials, 1);
 }
