@@ -33,12 +33,14 @@ std::shared_ptr<VROPolygon> VROPolygon::createPolygon(std::vector<VROVector3f> p
 
 VROPolygon::VROPolygon(std::vector<VROVector3f> path, std::vector<std::vector<VROVector3f>> holes,
                        float u0, float v0, float u1, float v1) :
-    _path(path),
     _holes(holes),
     _u0(u0),
     _v0(v0),
     _u1(u1),
     _v1(v1) {
+
+    removeDuplicateVertices(path);
+    _path = path;
 
     // Determine the min and max vertex coordinates for this polygon.
     _minX = FLT_MAX;
@@ -63,7 +65,8 @@ void VROPolygon::updateSurface() {
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
 
     // Build the polygon here to get sources and elements
-    passert(_path.size() > 0);
+    // Note that poly2Tri requires at least 2 vertices to build a geometry.
+    passert(_path.size() > 1);
     buildGeometry(sources, elements);
 
     // Then set the geometric elements and sources that we've just built.
@@ -72,9 +75,29 @@ void VROPolygon::updateSurface() {
     updateBoundingBox();
 }
 
+void VROPolygon::removeDuplicateVertices(std::vector<VROVector3f> &path) {
+    std::vector<VROVector3f>::iterator currentItem = path.begin();
+    while(currentItem != path.end()) {
+        std::vector<VROVector3f>::iterator it = currentItem;
+        it++;
+
+        // Identify and remove duplicates.
+        while(it != path.end()) {
+            if (currentItem->x == it->x && currentItem->y == it->y) {
+                pwarn("Duplicated vertex found and removed in VROPolygon!");
+                it = path.erase(it);
+            } else {
+                it++;
+            }
+        }
+
+        currentItem++;
+    }
+}
+
 void VROPolygon::buildGeometry(std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
-    
+
     const std::size_t pathSize = _path.size();
     
     /*
@@ -88,7 +111,7 @@ void VROPolygon::buildGeometry(std::vector<std::shared_ptr<VROGeometrySource>> &
         p2tPath.push_back(p);
     }
     p2t::CDT cdt(p2tPath);
-    
+
     std::vector<std::vector<p2t::Point *>> p2tHoles;
     p2tHoles.reserve(_holes.size());
     
@@ -104,11 +127,11 @@ void VROPolygon::buildGeometry(std::vector<std::shared_ptr<VROGeometrySource>> &
         cdt.AddHole(p2tHole);
         p2tHoles.push_back(std::move(p2tHole));
     }
-    
+
     // Triangulate
     cdt.Triangulate();
     std::vector<p2t::Triangle *> triangles = cdt.GetTriangles();
-    
+
     // Start creating our buffer of vertex indices that references each corner within this polygon.
     VROByteBuffer buffer;
     for (p2t::Triangle *triangle : triangles) {
