@@ -689,9 +689,24 @@ public class ParticleEmitter {
      * @param viroContext The ViroContext is required to generate particles.
      * @param surface     {@link Surface} representing how each individual particle should appear.
      *                    The Surface may be textured as well.
+     * @deprecated use {@link ParticleEmitter#ParticleEmitter(ViroContext, Quad)} instead
      */
     public ParticleEmitter(ViroContext viroContext, Surface surface) {
         mNativeRef = nativeCreateEmitter(viroContext.mNativeRef, surface.mNativeRef);
+    }
+
+    /**
+     * Create a new ParticleEmitter with individual particles that resemble the provided {@link
+     * Quad}. To be used, the ParticleEmitter needs to be added to a {@link Node} through {@link
+     * Node#setParticleEmitter(ParticleEmitter)}. The ParticleEmitter will conform to all the
+     * transforms of its parent Node, meaning it can be moved and oriented with the scene graph.
+     *
+     * @param viroContext The ViroContext is required to generate particles.
+     * @param quad     {@link Quad} representing how each individual particle should appear.
+     *                    The Quad may be textured as well.
+     */
+    public ParticleEmitter(ViroContext viroContext, Quad quad) {
+        mNativeRef = nativeCreateEmitter(viroContext.mNativeRef, quad.mNativeRef);
     }
 
     @Override
@@ -1345,10 +1360,19 @@ public class ParticleEmitter {
 
     /**
      * Builder for {@link ParticleEmitter} objects.
+     * @deprecated use {@link ParticleEmitterBuilder#ParticleEmitterBuilder(ViroContext, Quad)} instead
      */
     public static ParticleEmitterBuilder builder(ViroContext viroContext,
                                                  Surface surface) {
         return new ParticleEmitterBuilder(viroContext, surface);
+    }
+
+    /**
+     * Builder for {@link ParticleEmitter} objects.
+     */
+    public static ParticleEmitterBuilder builder(ViroContext viroContext,
+                                                 Quad quad) {
+        return new ParticleEmitterBuilder(viroContext, quad);
     }
 
     /**
@@ -1359,9 +1383,17 @@ public class ParticleEmitter {
 
         /**
          * Constructor for ParticleEmitterBuilder.
+         * @deprecated use {@link ParticleEmitterBuilder#ParticleEmitter(ViroContext, Quad)} instead
          */
         public ParticleEmitterBuilder(ViroContext viroContext,Surface surface) {
             particleEmitter = new ParticleEmitter(viroContext, surface);
+        }
+
+        /**
+         * Constructor for ParticleEmitterBuilder.
+         */
+        public ParticleEmitterBuilder(ViroContext viroContext,Quad quad) {
+            particleEmitter = new ParticleEmitter(viroContext, quad);
         }
 
         /**

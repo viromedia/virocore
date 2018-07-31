@@ -370,6 +370,8 @@ public class ARScene extends Scene {
     /**
      * Reset the point cloud surface to the default values. The point cloud surface is the
      * {@link Surface} that will be used to render each point in the point cloud.
+     *
+     * @deprecated use {@link ARScene#resetPointCloudQuad()} instead
      */
     public void resetPointCloudSurface() {
         nativeResetPointCloudSurface(mNativeRef);
@@ -381,6 +383,7 @@ public class ARScene extends Scene {
      * textured (or otherwise colored) Surface.
      *
      * @param surface The {@link Surface} to use for representing each point in the cloud.
+     * @deprecated use {@link ARScene#setPointCloudQuad(Quad)} instead
      */
     public void setPointCloudSurface(Surface surface) {
         nativeSetPointCloudSurface(mNativeRef, surface.mNativeRef);
@@ -390,8 +393,37 @@ public class ARScene extends Scene {
      * Set the scale factor to use when rendering each point in the AR point cloud.
      *
      * @param scale The scale as a {@link Vector} in X, Y, and Z dimensions.
+     * @deprecated use {@link ARScene#setPointCloudQuadScale(Vector)} instead
      */
     public void setPointCloudSurfaceScale(Vector scale) {
+        nativeSetPointCloudSurfaceScale(mNativeRef, scale.x, scale.y, scale.z);
+    }
+
+    /**
+     * Reset the point cloud quad to the default values. The point cloud quad is the
+     * {@link Quad} that will be used to render each point in the point cloud.
+     */
+    public void resetPointCloudQuad() {
+        nativeResetPointCloudSurface(mNativeRef);
+    }
+
+    /**
+     * Set the {@link Quad} that should be used to render each point in the rendered
+     * AR point cloud. This allows you to customize the appearance of the cloud with a
+     * textured (or otherwise colored) Surface.
+     *
+     * @param quad The {@link Quad} to use for representing each point in the cloud.
+     */
+    public void setPointCloudQuad(Quad quad) {
+        nativeSetPointCloudSurface(mNativeRef, quad.mNativeRef);
+    }
+
+    /**
+     * Set the scale factor to use when rendering each point in the AR point cloud.
+     *
+     * @param scale The scale as a {@link Vector} in X, Y, and Z dimensions.
+     */
+    public void setPointCloudQuadScale(Vector scale) {
         nativeSetPointCloudSurfaceScale(mNativeRef, scale.x, scale.y, scale.z);
     }
 

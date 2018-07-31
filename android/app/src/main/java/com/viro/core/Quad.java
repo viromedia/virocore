@@ -67,9 +67,9 @@ public class Quad extends Geometry {
      */
     //#IFDEF 'viro_react'
     public Quad(float width, float height, float u0, float v0, float u1, float v1,
-                   Surface oldSurface) {
+                Quad oldQuad) {
         mNativeRef = nativeCreateQuadFromQuad(width, height, u0, v0, u1, v1,
-                oldSurface.mNativeRef);
+                oldQuad.mNativeRef);
     }
     //#ENDIF
 
