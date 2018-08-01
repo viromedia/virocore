@@ -35,6 +35,7 @@ public:
         }
 
         VROPlatformSetObject(env, jGeom, "mMaterials", "Ljava/util/List;", arrayList);
+        VRO_DELETE_LOCAL_REF(arrayList);
         return jGeom;
     }
 };
