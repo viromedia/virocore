@@ -59,7 +59,9 @@ namespace arcore {
 #pragma mark - AugmentedImageDatabase
 
     AugmentedImageDatabaseNative::~AugmentedImageDatabaseNative() {
-        ArAugmentedImageDatabase_destroy(_database);
+        if (_database) {
+            ArAugmentedImageDatabase_destroy(_database);
+        }
     }
 
     AugmentedImageDatabaseStatus
