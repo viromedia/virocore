@@ -47,28 +47,36 @@ VRO_METHOD(void, nativeExecuteAnimation)(VRO_ARGS
 
     // Hold a global reference to the object until the animation finishes, so that
     // we invoke its animationDidFinish callback
-    VRO_OBJECT obj_g = VRO_NEW_GLOBAL_REF(obj);
+    VRO_WEAK obj_w = VRO_NEW_WEAK_GLOBAL_REF(obj);
 
     std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nodeRef);
 
-    VROPlatformDispatchAsyncRenderer([animation_w, node_w, obj_g] {
+    VROPlatformDispatchAsyncRenderer([animation_w, node_w, obj_w] {
         VRO_ENV env = VROPlatformGetJNIEnv();
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
-            VRO_DELETE_GLOBAL_REF(obj_g);
+            VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
             return;
         }
         std::shared_ptr<VRONode> node = node_w.lock();
         if (!node) {
-            VRO_DELETE_GLOBAL_REF(obj_g);
+            VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
             return;
         }
-        animation->execute(node, [obj_g] {
-            VROPlatformDispatchAsyncApplication([obj_g] {
-                VROPlatformCallHostFunction(obj_g, "animationDidFinish", "()V");
+        animation->execute(node, [obj_w] {
+            VROPlatformDispatchAsyncApplication([obj_w] {
                 VRO_ENV env = VROPlatformGetJNIEnv();
-                VRO_DELETE_GLOBAL_REF(obj_g);
+
+                VRO_OBJECT obj_s = VRO_NEW_LOCAL_REF(obj_w);
+                if (VRO_IS_OBJECT_NULL(obj_s)) {
+                    VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+                    return;
+                }
+
+                VROPlatformCallHostFunction(obj_s, "animationDidFinish", "()V");
+                VRO_DELETE_WEAK_GLOBAL_REF(obj_w);
+                VRO_DELETE_LOCAL_REF(obj_s);
             });
         });
     });
