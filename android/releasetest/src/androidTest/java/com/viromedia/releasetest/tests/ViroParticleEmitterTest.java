@@ -52,16 +52,8 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
         return new ParticleEmitter(context, nativeSurface);
     }
 
-    private void runTest(Runnable test) {
-        prepareTest();
-        test.run();
-        cleanupTest();
-    }
-
-    /**
-     * Constructs a new particle emitter and node and attaches it to the scene.
-     */
-    private void prepareTest(){
+    @Override
+    void configureTestScene() {
         if (mEmitter != null){
             mEmitter.dispose();
         }
@@ -103,14 +95,14 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
 
     @Test
     public void particleEmitterTests() {
-        runUITest(() -> runTest(()->{singleParticleTest();}));
-        runUITest(() -> runTest(()->{emitterColorTest();}));
-        runUITest(() -> runTest(()->{emitterScaleTest();}));
-        runUITest(() -> runTest(()->{emitterRotationTest();}));
-        runUITest(() -> runTest(()->{emitterOpacityTest();}));
-        runUITest(() -> runTest(()->{randomizedPropertiesTest();}));
-        runUITest(() -> runTest(()->{multipleIntervalTest();}));
-        runUITest(() -> runTest(()->{emitterDistanceTest();}));
+        runUITest(() -> singleParticleTest());
+        runUITest(() -> emitterColorTest());
+        runUITest(() -> emitterScaleTest());
+        runUITest(() -> emitterRotationTest());
+        runUITest(() -> emitterOpacityTest());
+        runUITest(() -> randomizedPropertiesTest());
+        runUITest(() -> multipleIntervalTest());
+        runUITest(() -> emitterDistanceTest());
     }
 
     public void singleParticleTest() {
@@ -245,8 +237,4 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
         assertPass("Distance Test: Particles should turn blue and shrink the further away it is from the spawn point.");
     }
 
-    @Override
-    void configureTestScene() {
-        // No-op.
-    }
 }
