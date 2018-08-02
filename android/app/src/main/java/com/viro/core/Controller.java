@@ -375,19 +375,18 @@ public class Controller implements EventDelegate.EventDelegateCallback {
      * This is used for real-time depth testing, only by the VRTScene. Not exposed to Java API.
      * @hide
      */
-    //#IFDEF 'viro_react'
     @Override
     public void onCameraARHitTest(ARHitTestResult[] results) {
-
+        //No-op
     }
-    //#ENDIF
+
     /**
      * This is used to notify the developer of the current point cloud. Not exposed to the Java API.
      * @hide
      */
     @Override
     public void onARPointCloudUpdate(ARPointCloud pointCloud) {
-
+        //No-op
     }
 
     /**

@@ -78,9 +78,7 @@ public class EventDelegate {
         /**
          * @hide
          */
-        //#IFDEF 'viro_react'
         void onCameraARHitTest(ARHitTestResult[] results);
-        //#ENDIF
         /**
          * @hide
          */
@@ -294,16 +292,11 @@ public class EventDelegate {
         }
     }
 
-    /**
-     * @hide
-     */
-    //#IFDEF 'viro_react'
     void onCameraARHitTest(ARHitTestResult[] results) {
         if (mDelegate != null && mDelegate.get() != null) {
             mDelegate.get().onCameraARHitTest(results);
         }
     }
-    //#ENDIF
 
     void onARPointCloudUpdate(ARPointCloud pointCloud) {
         if (mDelegate != null && mDelegate.get() != null) {
