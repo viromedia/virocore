@@ -18,6 +18,7 @@ import com.viro.core.AmbientLight;
 import com.viro.core.AnimationTransaction;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.Quad;
 import com.viro.core.Sphere;
 import com.viro.core.Spotlight;
 import com.viro.core.Surface;
@@ -55,7 +56,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
 
         // Configure verticle surface
         final Node verticleSurfaceNode = new Node();
-        final Surface surface = new Surface(5, 5);
+        final Quad surface = new Quad(5, 5);
         final float[] surfacePos = {0, 0, -5};
         verticleSurfaceNode.setPosition(new Vector(surfacePos));
         final Material surfaceMaterial = new Material();
@@ -68,15 +69,15 @@ public class ViroSpotLightTest extends ViroBaseTest {
 
         // Configure horizontal surface
         final Node horizontalSurfaceNode = new Node();
-        final Surface hSurface = new Surface(5, 5);
-        final float[] hSurfacePos = {0, -2f, -5};
+        final Quad hSurface = new Quad(5, 5);
+        final float[] hSurfacePos = {0, -2.5f, -5};
         horizontalSurfaceNode.setPosition(new Vector(hSurfacePos));
         final Material hSurfaceMaterial = new Material();
         hSurfaceMaterial.setDiffuseColor(Color.WHITE);
         hSurfaceMaterial.setLightingModel(Material.LightingModel.BLINN);
         hSurface.setMaterials(Arrays.asList(hSurfaceMaterial));
         horizontalSurfaceNode.setGeometry(hSurface);
-        horizontalSurfaceNode.setRotation(new Vector(-90, 0, 0));
+        horizontalSurfaceNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
         horizontalSurfaceNode.setLightReceivingBitMask(INFLUENCE_BITMASK);
         mScene.getRootNode().addChildNode(horizontalSurfaceNode);
 

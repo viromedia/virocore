@@ -14,9 +14,11 @@ import android.support.test.espresso.core.deps.guava.collect.Iterables;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.viro.core.AmbientLight;
+import com.viro.core.Box;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.Quad;
 import com.viro.core.Sphere;
 import com.viro.core.Surface;
 import com.viro.core.Vector;
@@ -52,7 +54,7 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
 
         // Configure verticle surface
         final Node verticleSurfaceNode = new Node();
-        final Surface surface = new Surface(5, 5);
+        final Quad surface = new Quad(5, 5);
         final float[] surfacePos = {0, 0, -5};
         verticleSurfaceNode.setPosition(new Vector(surfacePos));
         final Material surfaceMaterial = new Material();
@@ -65,15 +67,15 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
 
         // Configure horizontal surface
         final Node horizontalSurfaceNode = new Node();
-        final Surface hSurface = new Surface(5, 5);
-        final float[] hSurfacePos = {0, -2f, -5};
+        final Quad hSurface = new Quad(5, 5);
+        final float[] hSurfacePos = {0, -2.5f, -5};
         horizontalSurfaceNode.setPosition(new Vector(hSurfacePos));
         final Material hSurfaceMaterial = new Material();
         hSurfaceMaterial.setDiffuseColor(Color.WHITE);
         hSurfaceMaterial.setLightingModel(Material.LightingModel.BLINN);
         hSurface.setMaterials(Arrays.asList(hSurfaceMaterial));
         horizontalSurfaceNode.setGeometry(hSurface);
-        horizontalSurfaceNode.setRotation(new Vector(-90, 0, 0));
+        horizontalSurfaceNode.setRotation(new Vector(Math.toRadians(-90), 0, 0));
         horizontalSurfaceNode.setLightReceivingBitMask(INFLUENCE_BITMASK);
         mScene.getRootNode().addChildNode(horizontalSurfaceNode);
 
@@ -86,10 +88,15 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
         sphereNode.setShadowCastingBitMask(INFLUENCE_BITMASK);
         sphereNode.setLightReceivingBitMask(INFLUENCE_BITMASK);
         sphereNode.setGeometry(sphere);
-        final float[] spherePos = {0, -0.5f, -2f};
+
+        final float[] spherePos = {0, 0, -2f};
         sphereNode.setPosition(new Vector(spherePos));
         sphere.setMaterials(Arrays.asList(sphereMaterial));
+
         mScene.getRootNode().addChildNode(sphereNode);
+
+
+
 
     }
 
