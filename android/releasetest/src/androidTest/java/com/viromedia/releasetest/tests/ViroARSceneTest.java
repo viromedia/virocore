@@ -212,13 +212,15 @@ public class ViroARSceneTest extends ViroBaseTest {
         material.setDiffuseColor(Color.BLUE);
         quadOne.setMaterials(Arrays.asList(material));
         mARScene.setPointCloudQuad(quadOne);
-        final List<Integer> maxPoints = Arrays.asList(1, 5, 200);
+        mARScene.setPointCloudMaxPoints(2);
+        final List<Integer> maxPoints = Arrays.asList(50, 200);
         final Iterator<Integer> itr = Iterables.cycle(maxPoints).iterator();
 
         mMutableTestMethod = ()->{
             mARScene.setPointCloudMaxPoints(itr.next());
         };
-        assertPass("Max cloud points loops from 1, 5 to 200", () -> {
+
+        assertPass("Max cloud points loops from 50 to 200", () -> {
         });
     }
 
