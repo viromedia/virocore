@@ -719,17 +719,9 @@ public class ViroViewARCore extends ViroView {
      */
     @Override
     public void onActivityDestroyed(Activity activity) {
+        // This method should ONLY call dispose() because onActivityDestroyed is only called when
+        // the activity is destroyed, but all of React Native lives and runs within 1 activity!
         this.dispose();
-        ARNode.nodeARMap.clear();
-        mViroTouchGestureListener = null;
-        mPlatformUtil = null;
-        mAssetManager = null;
-        mSurfaceView = null;
-
-        if (mFrameListeners != null) {
-            mFrameListeners.clear();
-            mFrameListeners = null;
-        }
     }
 
     @Override
@@ -740,6 +732,20 @@ public class ViroViewARCore extends ViroView {
         if (mViroTouchGestureListener != null) {
             mViroTouchGestureListener.destroy();
         }
+
+        // When the ViroViewARCore object is disposed, we want the ARNode's nodeARMap to also clear itself.
+        ARNode.nodeARMap.clear();
+
+        mViroTouchGestureListener = null;
+        mPlatformUtil = null;
+        mAssetManager = null;
+        mSurfaceView = null;
+
+        if (mFrameListeners != null) {
+            mFrameListeners.clear();
+            mFrameListeners = null;
+        }
+
         super.dispose();
     }
 
