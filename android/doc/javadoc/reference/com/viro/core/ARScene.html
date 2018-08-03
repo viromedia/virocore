@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARScene | Android Developers
+  <title>ARScene | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -129,7 +129,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore/issues">Issues</a>
           </li>
           <li>
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
@@ -207,6 +207,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
@@ -247,6 +248,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -261,6 +263,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraIntrinsics.html">CameraIntrinsics</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
@@ -357,6 +360,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
@@ -1125,10 +1129,40 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/ARScene.html#resetPointCloudQuad()">resetPointCloudQuad</a>()
+      </code>
+      
+        <p>Reset the point cloud quad to the default values.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/ARScene.html#resetPointCloudSurface()">resetPointCloudSurface</a>()
       </code>
       
-        <p>Reset the point cloud surface to the default values.
+        <p><em>
+      This method is deprecated.
+    use <code><a href="../../../../reference/com/viro/core/ARScene.html#resetPointCloudQuad()">resetPointCloudQuad()</a></code> instead
+</em>
         
     
 </p>
@@ -1233,11 +1267,68 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudQuad(com.viro.core.Quad)">setPointCloudQuad</a>(<a href="../../../../reference/com/viro/core/Quad.html">Quad</a> quad)
+      </code>
+      
+        <p>Set the <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> that should be used to render each point in the rendered
+ AR point cloud.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudQuadScale(com.viro.core.Vector)">setPointCloudQuadScale</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)
+      </code>
+      
+        <p>Set the scale factor to use when rendering each point in the AR point cloud.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudSurface(com.viro.core.Surface)">setPointCloudSurface</a>(<a href="../../../../reference/com/viro/core/Surface.html">Surface</a> surface)
       </code>
       
-        <p>Set the <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that should be used to render each point in the rendered
- AR point cloud.
+        <p><em>
+      This method is deprecated.
+    use <code><a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudQuad(com.viro.core.Quad)">setPointCloudQuad(Quad)</a></code> instead
+</em>
         
     
 </p>
@@ -1264,7 +1355,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudSurfaceScale(com.viro.core.Vector)">setPointCloudSurfaceScale</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)
       </code>
       
-        <p>Set the scale factor to use when rendering each point in the AR point cloud.
+        <p><em>
+      This method is deprecated.
+    use <code><a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudQuadScale(com.viro.core.Vector)">setPointCloudQuadScale(Vector)</a></code> instead
+</em>
         
     
 </p>
@@ -1747,6 +1841,29 @@ void removeARImageTarget (<a href="../../../../reference/com/viro/core/ARImageTa
 </div>
 
 
+<A NAME="resetPointCloudQuad()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">resetPointCloudQuad</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void resetPointCloudQuad ()</pre>
+    
+    
+
+    
+  <p>Reset the point cloud quad to the default values. The point cloud quad is the
+ <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> that will be used to render each point in the point cloud.
+</p></p>
+
+</div>
+
+
 <A NAME="resetPointCloudSurface()"></A>
 
 <div class="api apilevel-">
@@ -1762,10 +1879,14 @@ void resetPointCloudSurface ()</pre>
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    use <code><a href="../../../../reference/com/viro/core/ARScene.html#resetPointCloudQuad()">resetPointCloudQuad()</a></code> instead
+
+  </p>
   <p>Reset the point cloud surface to the default values. The point cloud surface is the
- <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that will be used to render each point in the point cloud.
-</p></p>
+ <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that will be used to render each point in the point cloud.</p></p>
 
 </div>
 
@@ -1886,6 +2007,68 @@ void setPointCloudMaxPoints (int maxPoints)</pre>
 </div>
 
 
+<A NAME="setPointCloudQuad(com.viro.core.Quad)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setPointCloudQuad</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setPointCloudQuad (<a href="../../../../reference/com/viro/core/Quad.html">Quad</a> quad)</pre>
+    
+    
+
+    
+  <p>Set the <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> that should be used to render each point in the rendered
+ AR point cloud. This allows you to customize the appearance of the cloud with a
+ textured (or otherwise colored) Surface.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>quad</code></td>
+        <td width="100%">
+          <code>Quad</code>: The <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> to use for representing each point in the cloud.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setPointCloudQuadScale(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setPointCloudQuadScale</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setPointCloudQuadScale (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)</pre>
+    
+    
+
+    
+  <p>Set the scale factor to use when rendering each point in the AR point cloud.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>scale</code></td>
+        <td width="100%">
+          <code>Vector</code>: The scale as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> in X, Y, and Z dimensions.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setPointCloudSurface(com.viro.core.Surface)"></A>
 
 <div class="api apilevel-">
@@ -1901,7 +2084,12 @@ void setPointCloudSurface (<a href="../../../../reference/com/viro/core/Surface.
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    use <code><a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudQuad(com.viro.core.Quad)">setPointCloudQuad(Quad)</a></code> instead
+
+  </p>
   <p>Set the <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> that should be used to render each point in the rendered
  AR point cloud. This allows you to customize the appearance of the cloud with a
  textured (or otherwise colored) Surface.</p></p>
@@ -1910,8 +2098,7 @@ void setPointCloudSurface (<a href="../../../../reference/com/viro/core/Surface.
       <tr>
         <td><code>surface</code></td>
         <td width="100%">
-          <code>Surface</code>: The <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> to use for representing each point in the cloud.
-</p></td>
+          <code>Surface</code>: The <code><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></code> to use for representing each point in the cloud.</p></td>
       </tr>
     </table>
 
@@ -1933,15 +2120,19 @@ void setPointCloudSurfaceScale (<a href="../../../../reference/com/viro/core/Vec
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    use <code><a href="../../../../reference/com/viro/core/ARScene.html#setPointCloudQuadScale(com.viro.core.Vector)">setPointCloudQuadScale(Vector)</a></code> instead
+
+  </p>
   <p>Set the scale factor to use when rendering each point in the AR point cloud.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>scale</code></td>
         <td width="100%">
-          <code>Vector</code>: The scale as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> in X, Y, and Z dimensions.
-</p></td>
+          <code>Vector</code>: The scale as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> in X, Y, and Z dimensions.</p></td>
       </tr>
     </table>
 
