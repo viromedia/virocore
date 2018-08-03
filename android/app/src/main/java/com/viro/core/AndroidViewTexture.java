@@ -15,25 +15,22 @@ import android.view.Surface;
 import java.lang.ref.WeakReference;
 
 /**
- * The AndroidViewTexture coordinates the rendering of an Android View onto a
- * {@link Texture} with a given set of width and height in pixels. These dimensions
- * define the maximum total size the Android layout will be rendered before being
- * clipped. This texture can then be applied onto any Viro {@link Geometry} to
- * be rendered in the {@link Scene}.
+ * AndroidViewTexture renders an Android {@link View} onto a Viro {@link Texture}. This texture
+ * can be applied onto any Viro {@link Geometry} to be rendered in the {@link Scene}. The width and
+ * height of AndroidViewTexture define the bounds of the Android view: content outside these bounds
+ * will be clipped.
  * <p>
- * By default, the AndroidViewTexture will render Android Views onto its texture
- * without any hardware acceleration. This ensures maximum compatibility with
- * most Android OS versions while guaranteeing correct view interaction behavior.
- * However, there is a memory size limitation with this approach, resulting in
- * smaller viable width and height sizes that can be set on the texture. To check
- * if your desired view size works with Software Acceleration mode, use:
- * {@link AndroidViewTexture#supportsSoftwareSurfaceOfSize(Context, int, int)}.
+ * By default, AndroidViewTexture will render Android Views without any hardware acceleration. This
+ * ensures maximum compatibility with most Android OS versions while guaranteeing correct view
+ * interaction behavior. However, there is a memory size limitation with this approach, resulting in
+ * smaller viable width and height sizes for the texture. To check if your desired view size works
+ * with software acceleration, use {@link AndroidViewTexture#supportsSoftwareSurfaceOfSize(Context,
+ * int, int)}.
  * <p>
- * If specified, developers can also force the AndroidViewTexture to use hardware
- * acceleration for rendering Android views, enabling larger texture sizes.
- * However, although most basic Android controls function properly with this mode,
- * it is important to note that some views may have unpredictable issues when it
- * comes to interaction behavior.
+ * If specified, developers can also force the AndroidViewTexture to use hardware acceleration,
+ * enabling larger texture sizes. Although most basic Android controls function properly with this
+ * mode, it is important to note that some views may have unpredictable behavior, particularly when
+ * handling user interaction.
  */
 public class AndroidViewTexture extends Texture {
     private final static String TAG = AndroidViewTexture.class.getSimpleName();
@@ -46,33 +43,39 @@ public class AndroidViewTexture extends Texture {
      * scene with the given pixel width and pixel height. By default, the
      * AndroidViewTexture will render Android Views onto its texture without
      * any hardware acceleration.
+     * <p>
+     * Once constructed, you can attach the Android View you wish to render by invoking
+     * {@link #attachView(View)}.
      *
-     * @param renderer                  The {@link ViroView} containing your 3D scene.
-     * @param pxWidth                   The width of the texture in pixels.
-     * @param pxHeight                  The height of the texture in pixels.
+     * @param view     The {@link ViroView} containing your 3D scene.
+     * @param pxWidth  The width of the texture in pixels.
+     * @param pxHeight The height of the texture in pixels.
      */
-    public AndroidViewTexture(ViroView renderer, int pxWidth, int pxHeight) {
-        this(renderer, pxWidth, pxHeight, false);
+    public AndroidViewTexture(ViroView view, int pxWidth, int pxHeight) {
+        this(view, pxWidth, pxHeight, false);
     }
 
     /**
-     * Construct a new AndroidViewTexture that will renders Android views into the
-     * scene with the given pixel width, pixel height.
+     * Construct a new AndroidViewTexture that will render Android views into the
+     * scene with the given pixel width and height.
+     * <p>
+     * Once constructed, you can attach the Android View you wish to render by invoking
+     * {@link #attachView(View)}.
      *
-     * @param renderer                  The {@link ViroView} containing your 3D scene.
-     * @param pxWidth                   The width of the texture in pixels.
-     * @param pxHeight                  The height of the texture in pixels.
-     * @param useHardwareAcceleration   True if this view should use hardware acceleration.
+     * @param view                    The {@link ViroView} containing your 3D scene.
+     * @param pxWidth                 The width of the texture in pixels.
+     * @param pxHeight                The height of the texture in pixels.
+     * @param useHardwareAcceleration True if this view should use hardware acceleration.
      */
-    public AndroidViewTexture(ViroView renderer, int pxWidth, int pxHeight,
+    public AndroidViewTexture(ViroView view, int pxWidth, int pxHeight,
                               boolean useHardwareAcceleration) {
-        ViroContext viroContext = renderer.getViroContext();
+        ViroContext viroContext = view.getViroContext();
         mWidth = pxWidth;
         mHeight = pxHeight;
         mNativeRef = nativeCreateAndroidViewTexture(viroContext.mNativeRef, pxWidth, pxHeight);
 
         // Create an Android view sink with which to render on this texture.
-        Context activityContext = renderer.getContext();
+        Context activityContext = view.getContext();
         mRenderableAndroidSink = new AndroidViewSink(activityContext, this, useHardwareAcceleration);
 
         // Configure the view sink as needed.
@@ -83,7 +86,7 @@ public class AndroidViewTexture extends Texture {
         mRenderableAndroidSink.setClipToPadding(false);
 
         // Finally add our Android Sink to the render's layout.
-        renderer.addView(mRenderableAndroidSink);
+        view.addView(mRenderableAndroidSink);
     }
 
     @Override
@@ -101,9 +104,10 @@ public class AndroidViewTexture extends Texture {
     }
 
     /**
-     * Attaches the Android view to be rendered with this AndroidViewTexture.
+     * Attach the Android {@link View} to be rendered with this AndroidViewTexture. This will detach
+     * any currently attached View.
      *
-     * @param view The Android view to be rendered with this AndroidViewTexture.
+     * @param view The Android View to be rendered with this AndroidViewTexture.
      */
     public void attachView(View view) {
         if (mAttachedView != null) {
@@ -122,8 +126,8 @@ public class AndroidViewTexture extends Texture {
     }
 
     /**
-     * Detaches all associated Android views that were previously attached with
-     * {@link AndroidViewTexture#attachView(View)}.
+     * Detaches the Android {@link View} that was last attached via {@link
+     * AndroidViewTexture#attachView(View)}.
      */
     public void detachView() {
         mRenderableAndroidSink.detachView();
@@ -133,30 +137,32 @@ public class AndroidViewTexture extends Texture {
     }
 
     /**
-     * Triggers a Viro ClickState event at the following pixel coordinates in Android
-     * views that were previously attached with {@link AndroidViewTexture#attachView(View)}.
-     * This should only be used for cases where you would like to map ClickState interactivity
-     * for non-quad geometric 3D models with an applied AndroidViewTexture.
+     * Triggers a Viro {@link ClickState} event at the given pixel coordinates in the currently
+     * attached Android {@link View}. This should only be used for cases where you would like to map
+     * ClickState interactivity for non-quad geometric 3D models with an applied AndroidViewTexture.
      * <p>
      * For quad objects, use {@link AndroidViewTexture#getClickListenerWithQuad(Quad)} instead.
      *
-     * @param state   - ClickState to be applied onto the view.
-     * @param pixelX  - The X coordinate in pixels at which to apply the click event.
-     * @param pixelY  - The Y coordinate in pixels at which to apply the click event.
+     * @param state  ClickState to be applied onto the view.
+     * @param pixelX The X coordinate in pixels at which to apply the click event.
+     * @param pixelY The Y coordinate in pixels at which to apply the click event.
      */
     public void dispatchClickStateEvent(ClickState state, float pixelX, float pixelY) {
         mRenderableAndroidSink.dispatchClickStateEvent(state, pixelX, pixelY);
     }
 
     /**
-     * Constructs and returns a click listener that maps and propagates a ViroClick Event performed
-     * on the given quad to an Android Touch Event to be applied on the underlying attached Android
-     * view of this AndroidViewTexture. This also takes into account the transformations that are
-     * applied to the quad, and as well as the size of the underlying texture.
+     * Constructs and returns a {@link ClickListener} that maps Viro clicks performed on the given
+     * {@link Quad} to Android touch events, which will be automatically applied to the underlying
+     * attached Android {@link View}. This takes into account the transformations that are applied
+     * to the Quad, and as well as the size of the underlying texture.
+     * <p>
+     * To use the {@link ClickListener} returned by this method, you need to then attach it to the
+     * Quad's parent Node, via {@link Node#setClickListener(ClickListener)}.
      *
-     * @param quad  - The quad from which click positions will be calculated on.
-     * @return      - The click listener representing this AndroidViewTexture, it's underlying
-     * Android view and the given quad.
+     * @param quad The {@link Quad} from which click positions will originate.
+     * @return The {@link ClickListener} connecting clicks between the underlying Android {@link
+     * View} and the given Quad.
      */
     public ClickListener getClickListenerWithQuad(final Quad quad) {
         return new QuadClickListener(quad, this);
@@ -204,10 +210,10 @@ public class AndroidViewTexture extends Texture {
      * Determines if the current device supports rendering an Android layout in Software
      * Acceleration mode with the given width and height.
      *
-     * @param context   - The Android Context
-     * @param width     - The desired width of your android layout.
-     * @param height    - The desired height of your android layout.
-     * @return          - True if the provided dimensions are supported on the current device.
+     * @param context   The Android Context.
+     * @param width     The desired width of your Android layout.
+     * @param height    The desired height of your Android layout.
+     * @return True if the provided dimensions are supported on the current device.
      */
     public static boolean supportsSoftwareSurfaceOfSize(Context context, int width, int height) {
         final long drawingCacheSize = ViewConfiguration.get(context).getScaledMaximumDrawingCacheSize();
@@ -228,7 +234,7 @@ public class AndroidViewTexture extends Texture {
         mViroRenderSurface = videoSink;
     }
 
-    // Called by the renderer.
+    // Called by the renderer
     Surface getTextureRenderSurface() {
         return mViroRenderSurface;
     }

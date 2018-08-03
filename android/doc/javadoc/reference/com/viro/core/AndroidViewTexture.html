@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Texture | Viro Developers
+  <title>AndroidViewTexture | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -248,7 +248,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -313,7 +313,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.html">Text</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.html">VideoTexture</a></li>
@@ -570,7 +570,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Texture</h1>
+<h1 class="api-title">AndroidViewTexture</h1>
 <p>
 <code class="api-signature">
   public
@@ -578,14 +578,20 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  Texture
+  AndroidViewTexture
 </code>
 <br>
 
 
 <code class="api-signature">
   
-    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
+  
+  
+</code>
+
+<code class="api-signature">
+  
+    extends <a href="../../../../reference/com/viro/core/Texture.html">Texture</a>
   
   
   
@@ -602,7 +608,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -611,56 +617,23 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Texture
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Texture.html">com.viro.core.Texture</a>
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.AndroidViewTexture
     </td>
   </tr>
   
 
 </table>
-  <table class="jd-sumtable jd-sumtable-subclasses">
-    <tr>
-      <td style="border:none;margin:0;padding:0;">
-          <span>Known Direct Subclasses</span>
-          
-  <div id="subclasses-direct">
-    <div id="subclasses-direct-list" class="jd-inheritedlinks"
-         style="display: none;" > <a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a>,<a href="../../../../reference/com/viro/core/VideoTexture.html">VideoTexture</a>
-    </div>
-    <div id="subclasses-direct-summary" >
-      
-  
-  <table class="jd-sumtable-expando">
-    
-      <tr class="alt-color api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></td>
-        <td class="jd-descrcol" width="100%">
-          AndroidViewTexture renders an Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> onto a Viro <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-      <tr class=" api apilevel-" >
-        <td class="jd-linkcol"><a href="../../../../reference/com/viro/core/VideoTexture.html">VideoTexture</a></td>
-        <td class="jd-descrcol" width="100%">
-          VideoTexture plays video from local or remote sources.&nbsp;
-          
-    
-
-        </td>
-      </tr>
-      
-    
-  </table>
-
-    </div>
-  </div>
-      </td>
-    </tr>
-  </table>
-  
   
 
     
@@ -668,15 +641,21 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Texture is an image used to add surface detail and color to a <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>. The most common
- form of Texture is a diffuse texture, which determines a Material's base color. Other common
- textures are specular textures, which affect the color of light reflected directly toward the
- user, and normal textures, which specify the orientation of a surface at each pixel.
+  <p>AndroidViewTexture renders an Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> onto a Viro <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>. This texture
+ can be applied onto any Viro <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code> to be rendered in the <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code>. The width and
+ height of AndroidViewTexture define the bounds of the Android view: content outside these bounds
+ will be clipped.
  <p>
- Textures consist of image data and properties that define how they map to a given surface. These
- properties include the texture's wrapping mode (e.g. repeat or clamp), and its various filtering
- modes, which determine how the texture is sampled when it's size on the screen is smaller or
- larger than its underlying image size.
+ By default, AndroidViewTexture will render Android Views without any hardware acceleration. This
+ ensures maximum compatibility with most Android OS versions while guaranteeing correct view
+ interaction behavior. However, there is a memory size limitation with this approach, resulting in
+ smaller viable width and height sizes for the texture. To check if your desired view size works
+ with software acceleration, use <code><a href="../../../../reference/com/viro/core/AndroidViewTexture.html#supportsSoftwareSurfaceOfSize(android.content.Context, int, int)">supportsSoftwareSurfaceOfSize(Context, int, int)</a></code>.
+ <p>
+ If specified, developers can also force the AndroidViewTexture to use hardware acceleration,
+ enabling larger texture sizes. Although most basic Android controls function properly with this
+ mode, it is important to note that some views may have unpredictable behavior, particularly when
+ handling user interaction.
 </p>
 
 
@@ -688,102 +667,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <h2 class="api-section">Summary</h2>
-
-
-
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
-
-
-  
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code>
-        <p>FilterMode determines how samples are chosen from the <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> when its rendered
- size is larger or smaller than the underlying image's actual size.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></code>
-        <p>Texture.Format identifies the format of the pixel-data underlying the <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code>
-        <p>StereoMode is used in VR to render a <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> in stereo.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        class</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>
-        <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>
-        <p>WrapMode determines what happens when the texture coordinates extend outside the [0.0, 1.0]
- range when mapping the image.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
 
 
 
@@ -819,10 +702,11 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, com.viro.core.Texture.Format)">Texture</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> px, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nx, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> py, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> ny, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> pz, <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nz, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat)
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#AndroidViewTexture(com.viro.core.ViroView, int, int)">AndroidViewTexture</a>(<a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a> view, int pxWidth, int pxHeight)
       </code>
       
-        <p>Construct a new cube map Texture out of the given images.
+        <p>Construct a new AndroidViewTexture that will render Android views into the
+ scene with the given pixel width and pixel height.
         
     
 </p>
@@ -837,66 +721,11 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean)">Texture</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, boolean sRGB, boolean generateMipmaps)
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#AndroidViewTexture(com.viro.core.ViroView, int, int, boolean)">AndroidViewTexture</a>(<a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a> view, int pxWidth, int pxHeight, boolean useHardwareAcceleration)
       </code>
       
-        <p>Construct a new 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)">Texture</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, boolean sRGB, boolean generateMipmaps, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
-      </code>
-      
-        <p>Construct a new <i>stereo</i> 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(java.nio.ByteBuffer, int, int, com.viro.core.Texture.Format, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)">Texture</a>(<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, int width, int height, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> inputFormat, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, boolean sRGB, boolean generateMipmaps, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
-      </code>
-      
-        <p>Construct a new 2D Texture out of the image contained in the given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>,
- stored in the indicated format.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(java.nio.ByteBuffer, com.viro.core.Texture.StereoMode)">Texture</a>(<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
-      </code>
-      
-        <p>Construct a new 2D <i>HDR</i> Texture out of the image contained in VHD format in the
- given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>.
+        <p>Construct a new AndroidViewTexture that will render Android views into the
+ scene with the given pixel width and height.
         
     
 </p>
@@ -926,72 +755,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
-        static
         
         
-        <a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>
+        
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#builderWithData(java.nio.ByteBuffer)">builderWithData</a>(<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data)
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#attachView(android.view.View)">attachView</a>(<a href="http://d.android.com/reference/android/view/View.html">View</a> view)
       </code>
       
-        <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects from given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code> data.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        static
-        
-        
-        <a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#builderWithImage(android.graphics.Bitmap)">builderWithImage</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image)
-      </code>
-      
-        <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects with bitmap images.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        static
-        
-        
-        <a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#builderWithPx(android.graphics.Bitmap)">builderWithPx</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> px)
-      </code>
-      
-        <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects with cube map bitmaps (px, nx, pz, nz, py, zy).
+        <p>Attach the Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> to be rendered with this AndroidViewTexture.
         
     
 </p>
@@ -1015,10 +790,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#dispose()">dispose</a>()
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#detachView()">detachView</a>()
       </code>
       
-        <p>Release native resources associated with this Texture.
+        <p>Detaches the Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> that was last attached via <code><a href="../../../../reference/com/viro/core/AndroidViewTexture.html#attachView(android.view.View)">attachView(View)</a></code>.
         
     
 </p>
@@ -1037,15 +812,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        int</code>
+        void</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getHeight()">getHeight</a>()
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#dispatchClickStateEvent(com.viro.core.ClickState, float, float)">dispatchClickStateEvent</a>(<a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a> state, float pixelX, float pixelY)
       </code>
       
-        <p>Get the height of this Texture in pixels.
+        <p>Triggers a Viro <code><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></code> event at the given pixel coordinates in the currently
+ attached Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code>.
         
     
 </p>
@@ -1064,150 +840,17 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        <a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code>
+        <a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getMagnificationFilter()">getMagnificationFilter</a>()
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#getClickListenerWithQuad(com.viro.core.Quad)">getClickListenerWithQuad</a>(<a href="../../../../reference/com/viro/core/Quad.html">Quad</a> quad)
       </code>
       
-        <p>Get the magnification <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> used by this Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getMinificationFilter()">getMinificationFilter</a>()
-      </code>
-      
-        <p>Get the minification <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> used by this Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getMipFilter()">getMipFilter</a>()
-      </code>
-      
-        <p>Get the mip <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> used by this Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        int</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getWidth()">getWidth</a>()
-      </code>
-      
-        <p>Get the width of this Texture in pixels.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getWrapS()">getWrapS</a>()
-      </code>
-      
-        <p>Get the horizontal <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code> used for this Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#getWrapT()">getWrapT</a>()
-      </code>
-      
-        <p>Get the vertical <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code> used for this Texture.
+        <p>Constructs and returns a <code><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></code> that maps Viro clicks performed on the given
+ <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> to Android touch events, which will be automatically applied to the underlying
+ attached Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code>.
         
     
 </p>
@@ -1226,150 +869,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         static
         
         
-        <a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>
+        boolean</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#loadRadianceHDRTexture(android.net.Uri)">loadRadianceHDRTexture</a>(<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri)
+      <a href="../../../../reference/com/viro/core/AndroidViewTexture.html#supportsSoftwareSurfaceOfSize(android.content.Context, int, int)">supportsSoftwareSurfaceOfSize</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, int width, int height)
       </code>
       
-        <p>Loads the Radiance HDR (.hdr) texture at the given URI.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#setMagnificationFilter(com.viro.core.Texture.FilterMode)">setMagnificationFilter</a>(<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> magnificationFilter)
-      </code>
-      
-        <p>Set the magnification filter to use for this Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#setMinificationFilter(com.viro.core.Texture.FilterMode)">setMinificationFilter</a>(<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> minificationFilter)
-      </code>
-      
-        <p>Set the minification filter to use for this Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#setMipFilter(com.viro.core.Texture.FilterMode)">setMipFilter</a>(<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> mipFilter)
-      </code>
-      
-        <p>Set the filter to use when mipmapping the Texture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#setWrapS(com.viro.core.Texture.WrapMode)">setWrapS</a>(<a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a> wrapS)
-      </code>
-      
-        <p>Set the horizontal <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#setWrapT(com.viro.core.Texture.WrapMode)">setWrapT</a>(<a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a> wrapT)
-      </code>
-      
-        <p>Set the vertical <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>.
+        <p>Determines if the current device supports rendering an Android layout in Software
+ Acceleration mode with the given width and height.
         
     
 </p>
@@ -1408,10 +917,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="Texture(android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, com.viro.core.Texture.Format)"></A>
+<A NAME="AndroidViewTexture(com.viro.core.ViroView, int, int)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
+    <h3 class="api-name">AndroidViewTexture</h3>
     <div class="api-level">
       <div></div>
       
@@ -1419,57 +928,36 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> px, 
-                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nx, 
-                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> py, 
-                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> ny, 
-                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> pz, 
-                <a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> nz, 
-                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat)</pre>
+AndroidViewTexture (<a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a> view, 
+                int pxWidth, 
+                int pxHeight)</pre>
     
     
 
     
-  <p>Construct a new cube map Texture out of the given images. Cube maps are a group of six
- images. They are commonly used either as skyboxes (backgrounds that enclose the user), via
- <code><a href="../../../../reference/com/viro/core/Scene.html#setBackgroundCubeTexture(com.viro.core.Texture)">setBackgroundCubeTexture(Texture)</a></code>, or as reflective or environment
- maps.</p></p>
+  <p>Construct a new AndroidViewTexture that will render Android views into the
+ scene with the given pixel width and pixel height. By default, the
+ AndroidViewTexture will render Android Views onto its texture without
+ any hardware acceleration.
+ <p>
+ Once constructed, you can attach the Android View you wish to render by invoking
+ <code><a href="../../../../reference/com/viro/core/AndroidViewTexture.html#attachView(android.view.View)">attachView(View)</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>px</code></td>
+        <td><code>view</code></td>
         <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the right side of the cube.</p></td>
+          <code>ViroView</code>: The <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code> containing your 3D scene.</p></td>
       </tr>
       <tr>
-        <td><code>nx</code></td>
+        <td><code>pxWidth</code></td>
         <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the left side of the cube.</p></td>
+          <code>int</code>: The width of the texture in pixels.</p></td>
       </tr>
       <tr>
-        <td><code>py</code></td>
+        <td><code>pxHeight</code></td>
         <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the top side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>ny</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the bottom side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>pz</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the far side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>nz</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to use for the near side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>storageFormat</code></td>
-        <td width="100%">
-          <code>Texture.Format</code>: The format in which to store the texture in memory.
+          <code>int</code>: The height of the texture in pixels.
 </p></td>
       </tr>
     </table>
@@ -1477,10 +965,10 @@ Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">B
 </div>
 
 
-<A NAME="Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean)"></A>
+<A NAME="AndroidViewTexture(com.viro.core.ViroView, int, int, boolean)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
+    <h3 class="api-name">AndroidViewTexture</h3>
     <div class="api-level">
       <div></div>
       
@@ -1488,230 +976,40 @@ Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">B
 
     </div>
 <pre class="api-signature no-pretty-print">
-Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, 
-                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, 
-                boolean sRGB, 
-                boolean generateMipmaps)</pre>
+AndroidViewTexture (<a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a> view, 
+                int pxWidth, 
+                int pxHeight, 
+                boolean useHardwareAcceleration)</pre>
     
     
 
     
-  <p>Construct a new 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.</p></p>
+  <p>Construct a new AndroidViewTexture that will render Android views into the
+ scene with the given pixel width and height.
+ <p>
+ Once constructed, you can attach the Android View you wish to render by invoking
+ <code><a href="../../../../reference/com/viro/core/AndroidViewTexture.html#attachView(android.view.View)">attachView(View)</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>image</code></td>
+        <td><code>view</code></td>
         <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to turn into a Texture.</p></td>
+          <code>ViroView</code>: The <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code> containing your 3D scene.</p></td>
       </tr>
       <tr>
-        <td><code>storageFormat</code></td>
+        <td><code>pxWidth</code></td>
         <td width="100%">
-          <code>Texture.Format</code>: The format in which to store the Texture in memory. Bitmaps can be
-                        stored as either <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGBA8">RGBA8</a></code> or <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGB565">RGB565</a></code>.</p></td>
+          <code>int</code>: The width of the texture in pixels.</p></td>
       </tr>
       <tr>
-        <td><code>sRGB</code></td>
+        <td><code>pxHeight</code></td>
         <td width="100%">
-          <code>boolean</code>: True if the image is in a gamma-corrected (sRGB) format. If true, Viro
-                        will linearize the texture during shading computations. This option
-                        should generally be set to true for diffuse and specular images, and
-                        false for non-visual images like normal maps.</p></td>
+          <code>int</code>: The height of the texture in pixels.</p></td>
       </tr>
       <tr>
-        <td><code>generateMipmaps</code></td>
+        <td><code>useHardwareAcceleration</code></td>
         <td width="100%">
-          <code>boolean</code>: True if Viro should generate mipmaps for the image and store them in
-                        the Texture. Mipmapping dramatically improves the visual quality and
-                        performance of Textures when they are rendered onto small surfaces.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, 
-                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, 
-                boolean sRGB, 
-                boolean generateMipmaps, 
-                <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
-    
-    
-
-    
-  <p>Construct a new <i>stereo</i> 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>image</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to turn into a Texture.</p></td>
-      </tr>
-      <tr>
-        <td><code>storageFormat</code></td>
-        <td width="100%">
-          <code>Texture.Format</code>: The format in which to store the Texture in memory. Bitmaps can be
-                        stored as either <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGBA8">RGBA8</a></code> or <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGB565">RGB565</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>sRGB</code></td>
-        <td width="100%">
-          <code>boolean</code>: True if the image is in a gamma-corrected (sRGB) format. If true, Viro
-                        will linearize the texture during shading computations. This option
-                        should generally be set to true for diffuse and specular images, and
-                        false for non-visual images like normal maps.</p></td>
-      </tr>
-      <tr>
-        <td><code>generateMipmaps</code></td>
-        <td width="100%">
-          <code>boolean</code>: True if Viro should generate mipmaps for the image and store them in
-                        the Texture. Mipmapping dramatically improves the visual quality and
-                        performance of Textures when they are rendered onto small surfaces.</p></td>
-      </tr>
-      <tr>
-        <td><code>stereoMode</code></td>
-        <td width="100%">
-          <code>Texture.StereoMode</code>: The <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code> indicating which half of the image to render to
-                        the left eye, and which to render to the right eye. Null if the image
-                        is not stereo.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="Texture(java.nio.ByteBuffer, int, int, com.viro.core.Texture.Format, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, 
-                int width, 
-                int height, 
-                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> inputFormat, 
-                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, 
-                boolean sRGB, 
-                boolean generateMipmaps, 
-                <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
-    
-    
-
-    
-  <p>Construct a new 2D Texture out of the image contained in the given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>,
- stored in the indicated format. Not all input formats are compatible with all storage formats.
- This method can be used to load images that are not in <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> form: for example,
- raw images or HDR images.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>data</code></td>
-        <td width="100%">
-          <code>ByteBuffer</code>: The raw image data to turn into a Texture. This must be a
-                        <i>direct</i> <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>. The image data must start at
-                        position 0 in the buffer and end at the buffer's capacity.</p></td>
-      </tr>
-      <tr>
-        <td><code>width</code></td>
-        <td width="100%">
-          <code>int</code>: The width of the image stored in <tt>data</tt>.</p></td>
-      </tr>
-      <tr>
-        <td><code>height</code></td>
-        <td width="100%">
-          <code>int</code>: The height of the image stored in <tt>data</tt>.</p></td>
-      </tr>
-      <tr>
-        <td><code>inputFormat</code></td>
-        <td width="100%">
-          <code>Texture.Format</code>: The format of the data stored in <tt>data</tt>.</p></td>
-      </tr>
-      <tr>
-        <td><code>storageFormat</code></td>
-        <td width="100%">
-          <code>Texture.Format</code>: The format in which to store the Texture in memory.</p></td>
-      </tr>
-      <tr>
-        <td><code>sRGB</code></td>
-        <td width="100%">
-          <code>boolean</code>: True if the image is in a gamma-corrected (sRGB) format. If true, Viro
-                        will linearize the texture during shading computations. This option
-                        should generally be set to true for diffuse and specular images, and
-                        false for non-visual images like normal maps.</p></td>
-      </tr>
-      <tr>
-        <td><code>generateMipmaps</code></td>
-        <td width="100%">
-          <code>boolean</code>: True if Viro should generate mipmaps for the image and store them in
-                        the Texture. Mipmapping dramatically improves the visual quality and
-                        performance of Textures when they are rendered onto small surfaces.
-                        Mipmap generation is not possible for all input formats.</p></td>
-      </tr>
-      <tr>
-        <td><code>stereoMode</code></td>
-        <td width="100%">
-          <code>Texture.StereoMode</code>: The <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code> indicating which half of the image to render to
-                        the left eye, and which to render to the right eye. Null if the image
-                        is not stereo.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="Texture(java.nio.ByteBuffer, com.viro.core.Texture.StereoMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, 
-                <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
-    
-    
-
-    
-  <p>Construct a new 2D <i>HDR</i> Texture out of the image contained in VHD format in the
- given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>data</code></td>
-        <td width="100%">
-          <code>ByteBuffer</code>: The raw image data to turn into a Texture. This must be a
-                        <i>direct</i> <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>. The image data must start at
-                        position 0 in the buffer and end at the buffer's capacity.</p></td>
-      </tr>
-      <tr>
-        <td><code>stereoMode</code></td>
-        <td width="100%">
-          <code>Texture.StereoMode</code>: The <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code> indicating which half of the image to render to
-                        the left eye, and which to render to the right eye. Null if the image
-                        is not stereo.
+          <code>boolean</code>: True if this view should use hardware acceleration.
 </p></td>
       </tr>
     </table>
@@ -1734,10 +1032,10 @@ Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteB
 
 
 
-<A NAME="builderWithData(java.nio.ByteBuffer)"></A>
+<A NAME="attachView(android.view.View)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">builderWithData</h3>
+    <h3 class="api-name">attachView</h3>
     <div class="api-level">
       <div></div>
       
@@ -1745,25 +1043,19 @@ Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteB
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a> builderWithData (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data)</pre>
+void attachView (<a href="http://d.android.com/reference/android/view/View.html">View</a> view)</pre>
     
     
 
     
-  <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects from given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code> data.</p></p>
+  <p>Attach the Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> to be rendered with this AndroidViewTexture. This will detach
+ any currently attached View.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>data</code></td>
+        <td><code>view</code></td>
         <td width="100%">
-          <code>ByteBuffer</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code></td>
-        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>.
+          <code>View</code>: The Android View to be rendered with this AndroidViewTexture.
 </p></td>
       </tr>
     </table>
@@ -1771,10 +1063,10 @@ Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteB
 </div>
 
 
-<A NAME="builderWithImage(android.graphics.Bitmap)"></A>
+<A NAME="detachView()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">builderWithImage</h3>
+    <h3 class="api-name">detachView</h3>
     <div class="api-level">
       <div></div>
       
@@ -1782,97 +1074,21 @@ Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteB
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a> builderWithImage (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image)</pre>
+void detachView ()</pre>
     
     
 
     
-  <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects with bitmap images. This builder can be used to
- build textures with normal bitmap images as well as bitmap images with any <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code>
- configuration.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>image</code></td>
-        <td width="100%">
-          <code>Bitmap</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code></td>
-        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="builderWithPx(android.graphics.Bitmap)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">builderWithPx</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a> builderWithPx (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> px)</pre>
-    
-    
-
-    
-  <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects with cube map bitmaps (px, nx, pz, nz, py, zy).</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>px</code></td>
-        <td width="100%">
-          <code>Bitmap</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code></td>
-        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="dispose()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">dispose</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void dispose ()</pre>
-    
-    
-
-    
-  <p>Release native resources associated with this Texture.
+  <p>Detaches the Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> that was last attached via <code><a href="../../../../reference/com/viro/core/AndroidViewTexture.html#attachView(android.view.View)">attachView(View)</a></code>.
 </p></p>
 
 </div>
 
 
-<A NAME="getHeight()"></A>
+<A NAME="dispatchClickStateEvent(com.viro.core.ClickState, float, float)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getHeight</h3>
+    <h3 class="api-name">dispatchClickStateEvent</h3>
     <div class="api-level">
       <div></div>
       
@@ -1880,333 +1096,77 @@ void dispose ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-int getHeight ()</pre>
+void dispatchClickStateEvent (<a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a> state, 
+                float pixelX, 
+                float pixelY)</pre>
     
     
 
     
-  <p>Get the height of this Texture in pixels.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>int</code></td>
-        <td width="100%">The height of the Texture.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getMagnificationFilter()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getMagnificationFilter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> getMagnificationFilter ()</pre>
-    
-    
-
-    
-  <p>Get the magnification <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> used by this Texture.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code></td>
-        <td width="100%">The magnification filter.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getMinificationFilter()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getMinificationFilter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> getMinificationFilter ()</pre>
-    
-    
-
-    
-  <p>Get the minification <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> used by this Texture.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code></td>
-        <td width="100%">The minification filter.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getMipFilter()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getMipFilter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> getMipFilter ()</pre>
-    
-    
-
-    
-  <p>Get the mip <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> used by this Texture.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code></td>
-        <td width="100%">The mip filter.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getWidth()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getWidth</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-int getWidth ()</pre>
-    
-    
-
-    
-  <p>Get the width of this Texture in pixels.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>int</code></td>
-        <td width="100%">The width of this Texture.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getWrapS()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getWrapS</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a> getWrapS ()</pre>
-    
-    
-
-    
-  <p>Get the horizontal <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code> used for this Texture.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code></td>
-        <td width="100%">The horizontal wrap mode.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getWrapT()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getWrapT</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a> getWrapT ()</pre>
-    
-    
-
-    
-  <p>Get the vertical <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code> used for this Texture.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code></td>
-        <td width="100%">The vertical wrap mode.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="loadRadianceHDRTexture(android.net.Uri)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">loadRadianceHDRTexture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Texture.html">Texture</a> loadRadianceHDRTexture (<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri)</pre>
-    
-    
-
-    
-  <p>Loads the Radiance HDR (.hdr) texture at the given URI. These textures are commonly used for
- lighting environments.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>uri</code></td>
-        <td width="100%">
-          <code>Uri</code>: The URI of the texture. To load the texture from an Android asset, use URI's
-                    of the form <tt>file:///android_asset/[asset-name]</tt>.</p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code></td>
-        <td width="100%">The loaded HDR <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>, null if the .hdr texture fails to load.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setMagnificationFilter(com.viro.core.Texture.FilterMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setMagnificationFilter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setMagnificationFilter (<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> magnificationFilter)</pre>
-    
-    
-
-    
-  <p>Set the magnification filter to use for this Texture. The magnification filter is used when
- the texture image needs to be rendered onto a surface *larger* than the image. This occurs,
- for example, when rendering a textured surface very close to the camera.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>magnificationFilter</code></td>
-        <td width="100%">
-          <code>Texture.FilterMode</code>: The magnification <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> to use for this Texture.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setMinificationFilter(com.viro.core.Texture.FilterMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setMinificationFilter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setMinificationFilter (<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> minificationFilter)</pre>
-    
-    
-
-    
-  <p>Set the minification filter to use for this Texture. The minification filter is used when the
- texture image needs to be rendered onto a surface <i>smaller</i> than the image. This occurs,
- for example, when rendering a textured surface very far away from the camera.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>minificationFilter</code></td>
-        <td width="100%">
-          <code>Texture.FilterMode</code>: The minification <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> to use for this Texture.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setMipFilter(com.viro.core.Texture.FilterMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setMipFilter</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setMipFilter (<a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a> mipFilter)</pre>
-    
-    
-
-    
-  <p>Set the filter to use when mipmapping the Texture. Mipmapping increases rendering performance
- when rendering textures at small sizes. When used, Viro will create scaled down versions of
- the texture, and during rendering will sample the version that's closest to the size of the
- surface being rendered.
+  <p>Triggers a Viro <code><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></code> event at the given pixel coordinates in the currently
+ attached Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code>. This should only be used for cases where you would like to map
+ ClickState interactivity for non-quad geometric 3D models with an applied AndroidViewTexture.
  <p>
- <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html#NEAREST">NEAREST</a></code> filtering will return the color from the mip-level closest to the
- size of the rendered surface.
+ For quad objects, use <code><a href="../../../../reference/com/viro/core/AndroidViewTexture.html#getClickListenerWithQuad(com.viro.core.Quad)">getClickListenerWithQuad(Quad)</a></code> instead.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>state</code></td>
+        <td width="100%">
+          <code>ClickState</code>: ClickState to be applied onto the view.</p></td>
+      </tr>
+      <tr>
+        <td><code>pixelX</code></td>
+        <td width="100%">
+          <code>float</code>: The X coordinate in pixels at which to apply the click event.</p></td>
+      </tr>
+      <tr>
+        <td><code>pixelY</code></td>
+        <td width="100%">
+          <code>float</code>: The Y coordinate in pixels at which to apply the click event.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getClickListenerWithQuad(com.viro.core.Quad)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getClickListenerWithQuad</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a> getClickListenerWithQuad (<a href="../../../../reference/com/viro/core/Quad.html">Quad</a> quad)</pre>
+    
+    
+
+    
+  <p>Constructs and returns a <code><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></code> that maps Viro clicks performed on the given
+ <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> to Android touch events, which will be automatically applied to the underlying
+ attached Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code>. This takes into account the transformations that are applied
+ to the Quad, and as well as the size of the underlying texture.
  <p>
- <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html#LINEAR">LINEAR</a></code>' filtering will return the color found by interpolating between the
- two nearest mip-levels.</p></p>
+ To use the <code><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></code> returned by this method, you need to then attach it to the
+ Quad's parent Node, via <code><a href="../../../../reference/com/viro/core/Node.html#setClickListener(com.viro.core.ClickListener)">setClickListener(ClickListener)</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>mipFilter</code></td>
+        <td><code>quad</code></td>
         <td width="100%">
-          <code>Texture.FilterMode</code>: The mip <code><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></code> to use for this Texture.
+          <code>Quad</code>: The <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code> from which click positions will originate.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></code> connecting clicks between the underlying Android <code><a href="http://d.android.com/reference/android/view/View.html">View</a></code> and the given Quad.
 </p></td>
       </tr>
     </table>
@@ -2214,10 +1174,10 @@ void setMipFilter (<a href="../../../../reference/com/viro/core/Texture.FilterMo
 </div>
 
 
-<A NAME="setWrapS(com.viro.core.Texture.WrapMode)"></A>
+<A NAME="supportsSoftwareSurfaceOfSize(android.content.Context, int, int)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setWrapS</h3>
+    <h3 class="api-name">supportsSoftwareSurfaceOfSize</h3>
     <div class="api-level">
       <div></div>
       
@@ -2225,50 +1185,38 @@ void setMipFilter (<a href="../../../../reference/com/viro/core/Texture.FilterMo
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setWrapS (<a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a> wrapS)</pre>
+boolean supportsSoftwareSurfaceOfSize (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, 
+                int width, 
+                int height)</pre>
     
     
 
     
-  <p>Set the horizontal <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>. This determines what happens when the texture
- coordinates extend outside the [0.0, 1.0] in the X direction of the Texture.</p></p>
+  <p>Determines if the current device supports rendering an Android layout in Software
+ Acceleration mode with the given width and height.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>wrapS</code></td>
+        <td><code>context</code></td>
         <td width="100%">
-          <code>Texture.WrapMode</code>: The horizontal <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>.
-</p></td>
+          <code>Context</code>: The Android Context.</p></td>
+      </tr>
+      <tr>
+        <td><code>width</code></td>
+        <td width="100%">
+          <code>int</code>: The desired width of your Android layout.</p></td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td width="100%">
+          <code>int</code>: The desired height of your Android layout.</p></td>
       </tr>
     </table>
-
-</div>
-
-
-<A NAME="setWrapT(com.viro.core.Texture.WrapMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setWrapT</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setWrapT (<a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a> wrapT)</pre>
-    
-    
-
-    
-  <p>Set the vertical <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>. This determines what happens when the texture coordinates
- extend outside the [0.0, 1.0] in the Y direction of the Texture.</p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>wrapT</code></td>
-        <td width="100%">
-          <code>Texture.WrapMode</code>: The vertical <code><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></code>.
+        <td><code>boolean</code></td>
+        <td width="100%">True if the provided dimensions are supported on the current device.
 </p></td>
       </tr>
     </table>
