@@ -51,6 +51,8 @@ public class ViroNodeTest extends ViroBaseTest {
         boxOneMaterial.setLightingModel(Material.LightingModel.BLINN);
         box.setMaterials(Arrays.asList(boxOneMaterial));
         childOne.setGeometry(box);
+        childOne.setOpacity(1.0f);
+        childOne.setVisible(true);
         childOne.setPosition(new Vector(-1.5f, 0f, 0f));
 
         //create 2nd box.
@@ -60,6 +62,7 @@ public class ViroNodeTest extends ViroBaseTest {
         boxTwoMaterial.setLightingModel(Material.LightingModel.BLINN);
         boxTwo.setMaterials(Arrays.asList(boxTwoMaterial));
         childTwo.setGeometry(boxTwo);
+        childTwo.setRotation(new Vector(0f, 0f, 0f));
         childTwo.setPosition(new Vector(0.0f, 1f, 0f));
 
         //create 3rd box, right node
@@ -69,6 +72,8 @@ public class ViroNodeTest extends ViroBaseTest {
         boxThreeMaterial.setLightingModel(Material.LightingModel.BLINN);
         boxThree.setMaterials(Arrays.asList(boxThreeMaterial));
         childThree.setGeometry(boxThree);
+        childThree.setVisible(true);
+        childThree.setScale(new Vector(1f, 1f, 1f));
         childThree.setPosition(new Vector(1.5f, 0f, 0f));
 
         final Sphere sphere = new Sphere(.5f);
@@ -78,11 +83,20 @@ public class ViroNodeTest extends ViroBaseTest {
         sphere.setMaterials(Arrays.asList(sphereMaterial));
         parentSphereNode.setGeometry(sphere);
         parentSphereNode.setPosition(new Vector(0f, 0f, -5f));
+        parentSphereNode.setRotation(new Vector(0f, 0f, 0f));
+        parentSphereNode.setScale(new Vector(1f, 1f, 1f));
+        parentSphereNode.setVisible(true);
+        parentSphereNode.setOpacity(1.0f);
 
         parentSphereNode.addChildNode(childOne);
         parentSphereNode.addChildNode(childTwo);
         parentSphereNode.addChildNode(childThree);
         mScene.getRootNode().addChildNode(parentSphereNode);
+
+        if (mYesButtonNode != null) {
+            mYesButtonNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD_Y));
+            mYesButtonNode.setPosition(new Vector(2.5f, -0.5f, -3.3f));
+        }
     }
 
     @Test
@@ -125,9 +139,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 parentSphereNode.setPosition(newPosition);
             }
         };
-        assertPass("All nodes are moving back to -10", () -> {
-            parentSphereNode.setRotation(new Vector(0f, 0f, -5f));
-        });
+        assertPass("All nodes are moving back to -10");
     }
 
     private void testNodeRotationParent() {
@@ -140,9 +152,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 parentSphereNode.setRotation(newRotation);
             }
         };
-        assertPass("All nodes are rotating around all x,y,z axis", () -> {
-            parentSphereNode.setRotation(new Vector(0f, 0f, 0f));
-        });
+        assertPass("All nodes are rotating around all x,y,z axis");
     }
 
 
@@ -157,9 +167,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("All have smaller scale", () -> {
-            parentSphereNode.setScale(new Vector(1f, 1f, 1f));
-        });
+        assertPass("All have smaller scale");
     }
 
     private void testNodeVisibilityParent() {
@@ -169,9 +177,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("All nodes dissappear and reappear", () -> {
-            parentSphereNode.setVisible(true);
-        });
+        assertPass("All nodes dissappear and reappear");
     }
 
     private void testNodeOpacityParent() {
@@ -181,9 +187,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("All nodes fade out", () -> {
-            parentSphereNode.setOpacity(1.0f);
-        });
+        assertPass("All nodes fade out");
     }
 
     private void testNodeOpacityChild() {
@@ -193,9 +197,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Left node fades out", () -> {
-            childOne.setOpacity(1.0f);
-        });
+        assertPass("Left node fades out");
     }
 
     private void testNodeVisibilityChild() {
@@ -204,10 +206,7 @@ public class ViroNodeTest extends ViroBaseTest {
             childThree.setVisible(!childThree.isVisible());
         };
 
-        assertPass("Left and right nodes disappear and reappear", () -> {
-            childOne.setVisible(true);
-            childThree.setVisible(true);
-        });
+        assertPass("Left and right nodes disappear and reappear");
     }
 
     private void testNodePositionChild() {
@@ -218,9 +217,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 childOne.setPosition(newPosition);
             }
         };
-        assertPass("Left node is moving back to -10", () -> {
-            childOne.setPosition(new Vector(-1.5f, 0f, 0f));
-        });
+        assertPass("Left node is moving back to -10");
     }
 
     private void testNodeRotationChild() {
@@ -232,9 +229,7 @@ public class ViroNodeTest extends ViroBaseTest {
                 childTwo.setRotation(newRotation);
             }
         };
-        assertPass("Top node is rotating", () -> {
-            childTwo.setRotation(new Vector(0f, 0f, 0f));
-        });
+        assertPass("Top node is rotating");
     }
 
 
@@ -248,9 +243,7 @@ public class ViroNodeTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Right node scale shrinks", () -> {
-            childThree.setScale(new Vector(1f, 1f, 1f));
-        });
+        assertPass("Right node scale shrinks");
     }
 
     private void testNodeChangeGeometry() {
@@ -271,14 +264,7 @@ public class ViroNodeTest extends ViroBaseTest {
 
     private void testNodeRemoveAllChildren() {
         parentSphereNode.removeAllChildNodes();
-        assertPass("All nodes but middle box should be removed.", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                parentSphereNode.addChildNode(childOne);
-                parentSphereNode.addChildNode(childTwo);
-                parentSphereNode.addChildNode(childThree);
-            }
-        });
+        assertPass("All nodes but middle box should be removed.");
     }
 
     private void testTransformBehaviorX() {
@@ -305,12 +291,11 @@ public class ViroNodeTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(polylineNode);
         final EnumSet<Node.TransformBehavior> transformBehavior =
                 EnumSet.of(Node.TransformBehavior.BILLBOARD_X);
-        mYesButtonNode.setTransformBehaviors(transformBehavior);
+        if (mYesButtonNode != null) {
+            mYesButtonNode.setTransformBehaviors(transformBehavior);
+        }
         assertPass("Drag the Thumbs-Up above and below the X axis, and confirm the button " +
-                "billboards along the axis", () -> {
-            mYesButtonNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD_Y));
-            mYesButtonNode.setPosition(new Vector(2.5f, -0.5f, -3.3f));
-        });
+                "billboards along the axis");
     }
 
     private void testTransformBehaviorY() {
@@ -339,23 +324,21 @@ public class ViroNodeTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(polylineNode);
         final EnumSet<Node.TransformBehavior> transformBehavior =
                 EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
-        mYesButtonNode.setTransformBehaviors(transformBehavior);
+        if (mYesButtonNode != null) {
+            mYesButtonNode.setTransformBehaviors(transformBehavior);
+        }
         assertPass("Drag the Thumbs-Up left and right of the Y axis, and confirm the button " +
-                "billboards along the axis", () -> {
-            mYesButtonNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD_Y));
-            mYesButtonNode.setPosition(new Vector(2.5f, -0.5f, -3.3f));
-        });
+                "billboards along the axis");
     }
 
     private void testTransformBehaviorXY() {
         final EnumSet<Node.TransformBehavior> transformBehavior =
                 EnumSet.of(Node.TransformBehavior.BILLBOARD);
-        mYesButtonNode.setTransformBehaviors(transformBehavior);
+        if (mYesButtonNode != null) {
+            mYesButtonNode.setTransformBehaviors(transformBehavior);
+        }
         assertPass("Drag the Thumbs-Up far out in any quadrant and, and confirm the button " +
-                "billboards along both the axis", () -> {
-            mYesButtonNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD_Y));
-            mYesButtonNode.setPosition(new Vector(2.5f, -0.5f, -3.3f));
-        });
+                "billboards along both the axis");
     }
 
     private void testConvertLocalToWorld() {

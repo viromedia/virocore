@@ -46,7 +46,8 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
         // Add directional light in -Z direction
         mDirectionalLight = new DirectionalLight();
         mDirectionalLight.setInfluenceBitMask(INFLUENCE_BITMASK);
-
+        mDirectionalLight.setIntensity(1000);
+        mDirectionalLight.setCastsShadow(true);
         mScene.getRootNode().addLight(mDirectionalLight);
 
         // Configure verticle surface
@@ -123,9 +124,7 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             mDirectionalLight.setColor(itr.next());
         };
-        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN", () -> {
-            mDirectionalLight.setColor(Color.GREEN);
-        });
+        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN");
 
     }
 
@@ -136,9 +135,7 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
                 mDirectionalLight.setIntensity((currentIntensity + 200) % 2000);
             }
         };
-        assertPass("Cycling intensity from 0 to 2000, with +200 every second", () -> {
-            mDirectionalLight.setIntensity(1000);
-        });
+        assertPass("Cycling intensity from 0 to 2000, with +200 every second");
     }
 
     private void testSetCastsShadow() {
@@ -147,9 +144,7 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
                 mDirectionalLight.setCastsShadow(!mDirectionalLight.getCastsShadow());
             }
         };
-        assertPass("Toggling casts shadow", () -> {
-            mDirectionalLight.setCastsShadow(false);
-        });
+        assertPass("Toggling casts shadow");
     }
 
     private void testSetInfluenceBitMask() {

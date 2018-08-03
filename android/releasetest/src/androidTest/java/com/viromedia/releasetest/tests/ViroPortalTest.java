@@ -49,9 +49,18 @@ public class ViroPortalTest extends ViroBaseTest  {
         mPortalScene.setPosition(new Vector(0, 0, -6));
         mScene.getRootNode().addChildNode(mPortalScene);
 
+        Object3D object3DArchway = new Object3D();
+        object3DArchway.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/portal_archway.vrx"), Object3D.Type.FBX, null);
+        mPortal.addChildNode(object3DArchway);
+        mPortalScene.setPortalEntrance(mPortal);
+
         ViroReleaseTestActivity activity = (ViroReleaseTestActivity)mActivity;
         Renderer renderer = activity.getViroView().getRenderer();
         renderer.setPointOfView(mScene.getRootNode());
+        mMutableTestMethod = null;
+        if (mCamera != null) {
+            mCamera.setPosition(new Vector(0, 0, -4));
+        }
     }
 
     @Test
@@ -88,9 +97,7 @@ public class ViroPortalTest extends ViroBaseTest  {
             }
         };
 
-        assertPass("The portal entrance should switch between door archway and ship", ()-> {
-            mMutableTestMethod = null;
-        });
+        assertPass("The portal entrance should switch between door archway and ship");
     }
 
     private void testPortalSceneBackgroundTexture() {
@@ -102,19 +109,21 @@ public class ViroPortalTest extends ViroBaseTest  {
     }
 
     private void testPortalSceneBackgroundVideoTexture() {
-        // TODO: Remove UI-Threaded patch once VIRO-2162 has been implemented.
-        runOnUiThread(()->{
-            final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
-                    Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
-            mPortalScene.setBackgroundTexture(videoTexture);
-            videoTexture.setLoop(true);
-            videoTexture.play();
-        });
+
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        mPortalScene.setBackgroundTexture(videoTexture);
+        videoTexture.setLoop(true);
+        videoTexture.play();
 
         assertPass("The portal background should display a video of a climber.");
     }
 
     private void testPortalScenesBackgroundRotation() {
+        Bitmap background = this.getBitmapFromAssets(mActivity, "360_westlake.jpg");
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
+        mPortalScene.setBackgroundTexture(backgroundTexture);
+
         final List<Float> rotations = Arrays.asList(0f, 45f, 90f, 135f, 180f, 225f, 270f);
         final Iterator<Float> itr = Iterables.cycle(rotations).iterator();
         mMutableTestMethod = () -> {
@@ -154,19 +163,25 @@ public class ViroPortalTest extends ViroBaseTest  {
         mScene.getRootNode().setCamera(mCamera);
         mPortalScene.setPassable(true);
         mCamera.setPosition(new Vector(0, 0, -4));
+        Bitmap background = this.getBitmapFromAssets(mActivity, "360_westlake.jpg");
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
+        mPortalScene.setBackgroundTexture(backgroundTexture);
+
         final List<Float> rotations = Arrays.asList(-4.8f, -5.2f,  -5.9f, -6.1f, -6.8f);
         final Iterator<Float> itr = Iterables.cycle(rotations).iterator();
         mMutableTestMethod = () -> {
             mCamera.setPosition(new Vector(0, 0, itr.next()));
         };
 
-        assertPass("The user should traverse inside the portal", ()-> {
-            mCamera.setPosition(new Vector(0, 0, -4));
-        });
+        assertPass("The user should traverse inside the portal");
     }
 
     private void testPortalSceneDelegate() {
         mPortalScene.setPassable(true);
+        Bitmap background = this.getBitmapFromAssets(mActivity, "360_westlake.jpg");
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
+        mPortalScene.setBackgroundTexture(backgroundTexture);
+
         mScene.getRootNode().setCamera(mCamera);
         final Text text = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
                 "Roboto", 25,
@@ -199,18 +214,18 @@ public class ViroPortalTest extends ViroBaseTest  {
             mCamera.setPosition(new Vector(0, 0, itr.next()));
         };
 
-        assertPass("'Portal Delegate' text should change when entering/exiting the portal", ()-> {
-            mCamera.setPosition(new Vector(0, 0, -4));
-            textNode.removeFromParentNode();
-        });
+        assertPass("'Portal Delegate' text should change when entering/exiting the portal");
     }
 
 
     private void testPortalSceneIsPassableOff() {
+        Bitmap background = this.getBitmapFromAssets(mActivity, "360_westlake.jpg");
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
+        mPortalScene.setBackgroundTexture(backgroundTexture);
+
         mPortalScene.setPassable(false);
         mCamera = new Camera();
         mScene.getRootNode().setCamera(mCamera);
-        mPortalScene.setPassable(true);
         mCamera.setPosition(new Vector(0, 0, -4));
         final List<Float> rotations = Arrays.asList(-4.8f, -5.2f,  -5.9f, -6.1f, -6.8f);
         final Iterator<Float> itr = Iterables.cycle(rotations).iterator();
@@ -218,9 +233,7 @@ public class ViroPortalTest extends ViroBaseTest  {
             mCamera.setPosition(new Vector(0, 0, itr.next()));
         };
 
-        assertPass("The camera should traverse pass the portal, not entering it.", ()-> {
-            mCamera.setPosition(new Vector(0, 0, -4));
-        });
+        assertPass("The camera should traverse pass the portal, not entering it.");
     }
 
 }

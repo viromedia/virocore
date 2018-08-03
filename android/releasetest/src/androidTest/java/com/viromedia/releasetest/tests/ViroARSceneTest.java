@@ -14,6 +14,7 @@ import com.viro.core.Box;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.PointCloudUpdateListener;
+import com.viro.core.Quad;
 import com.viro.core.Surface;
 import com.viro.core.Text;
 import com.viro.core.Texture;
@@ -101,6 +102,8 @@ public class ViroARSceneTest extends ViroBaseTest {
             }
 
         });
+        mARScene.setPointCloudUpdateListener(null);
+        mARScene.resetPointCloudQuad();
     }
 
     @Test
@@ -110,7 +113,7 @@ public class ViroARSceneTest extends ViroBaseTest {
         runUITest(() -> testPointCloudUpdateCallback());
         runUITest(() -> testDisplayPointCloudOn());
         runUITest(() -> testPointCloudScale());
-        runUITest(() -> testPointCloudSurface());
+        runUITest(() -> testPointCloudQuad());
         runUITest(() -> setPointCloudMaxPoints());
         runUITest(() -> testDisplayPointCloudOff());
     }
@@ -131,10 +134,10 @@ public class ViroARSceneTest extends ViroBaseTest {
 
         mMutableTestMethod = () -> {
             Float scaleNum = itr.next();
-            mARScene.setPointCloudSurfaceScale(new Vector(scaleNum, scaleNum, scaleNum));
+            mARScene.setPointCloudQuadScale(new Vector(scaleNum, scaleNum, scaleNum));
         };
         assertPass("Point cloud scale should change over time.", () -> {
-            mARScene.resetPointCloudSurface();
+
         });
     }
 
@@ -144,6 +147,7 @@ public class ViroARSceneTest extends ViroBaseTest {
     }
 
     private void testPointCloudUpdateCallback() {
+        mARScene.displayPointCloud(true);
         final Text pointCloudText = new Text(mViroView.getViroContext(),
                 "Waiting for cloud updates.", "Roboto", 12,
                 Color.WHITE, 4f, 4f, Text.HorizontalAlignment.LEFT,
@@ -171,40 +175,43 @@ public class ViroARSceneTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Point cloud callback should update with new values", () -> {
-            mARScene.setPointCloudUpdateListener(null);
-            textNode.removeFromParentNode();
-        });
+        assertPass("Point cloud callback should update with new values");
     }
 
-    private void testPointCloudSurface() {
+    private void testPointCloudQuad() {
         mARScene.displayPointCloud(true);
-        Surface surfaceOne = new Surface(.1f, .1f);
-        Surface surfaceTwo = new Surface(.1f, .1f);
+        Quad quadOne = new Quad(.3f, .3f);
+        Quad quadTwo = new Quad(.3f, .3f);
 
         Material material = new Material();
         material.setLightingModel(Material.LightingModel.BLINN);
         material.setDiffuseColor(Color.BLUE);
-        surfaceOne.setMaterials(Arrays.asList(material));
+        quadOne.setMaterials(Arrays.asList(material));
 
         Material materialTwo = new Material();
         materialTwo.setLightingModel(Material.LightingModel.BLINN);
         materialTwo.setDiffuseColor(Color.RED);
-        surfaceTwo.setMaterials(Arrays.asList(materialTwo));
+        quadTwo.setMaterials(Arrays.asList(materialTwo));
 
-        final List<Surface> surfaces = Arrays.asList(surfaceOne, surfaceTwo);
-        final Iterator<Surface> itr = Iterables.cycle(surfaces).iterator();
+        final List<Quad> surfaces = Arrays.asList(quadOne, quadTwo);
+        final Iterator<Quad> itr = Iterables.cycle(surfaces).iterator();
         mMutableTestMethod = ()->{
-            Surface surface = itr.next();
-            mARScene.setPointCloudSurface(surface);
+            Quad quad = itr.next();
+            mARScene.setPointCloudQuad(quad);
         };
         assertPass("Point cloud surfaces should loop change from red to blue.", () -> {
-            mARScene.resetPointCloudSurface();
         });
     }
 
     private void setPointCloudMaxPoints() {
         mARScene.displayPointCloud(true);
+        Quad quadOne = new Quad(.5f, .5f);
+
+        Material material = new Material();
+        material.setLightingModel(Material.LightingModel.BLINN);
+        material.setDiffuseColor(Color.BLUE);
+        quadOne.setMaterials(Arrays.asList(material));
+        mARScene.setPointCloudQuad(quadOne);
         final List<Integer> maxPoints = Arrays.asList(1, 5, 200);
         final Iterator<Integer> itr = Iterables.cycle(maxPoints).iterator();
 
@@ -212,7 +219,6 @@ public class ViroARSceneTest extends ViroBaseTest {
             mARScene.setPointCloudMaxPoints(itr.next());
         };
         assertPass("Max cloud points loops from 1, 5 to 200", () -> {
-            mARScene.resetPointCloudSurface();
         });
     }
 

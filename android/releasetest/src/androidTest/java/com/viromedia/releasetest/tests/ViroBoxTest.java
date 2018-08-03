@@ -60,9 +60,7 @@ public class ViroBoxTest extends ViroBaseTest {
                 mBox.setWidth(mBox.getWidth() + 1);
             }
         };
-        assertPass("Box changed in width from 1 to 5", () -> {
-            mBox.setWidth(1);
-        });
+        assertPass("Box changed in width from 1 to 5");
     }
 
     public void boxHeightTest() {
@@ -71,9 +69,7 @@ public class ViroBoxTest extends ViroBaseTest {
                 mBox.setHeight(mBox.getHeight() + 1);
             }
         };
-        assertPass("Box changed in height from 1 to 5", () -> {
-            mBox.setHeight(1);
-        });
+        assertPass("Box changed in height from 1 to 5");
     }
 
     public void boxLengthTest() {
@@ -82,8 +78,6 @@ public class ViroBoxTest extends ViroBaseTest {
                 mBox.setLength(mBox.getLength() + 1);
             }
         };
-        assertPass("Box changed in length from 1 to 5", () -> {
-            mBox.setLength(1);
-        });
+        assertPass("Box changed in length from 1 to 5");
     }
 }

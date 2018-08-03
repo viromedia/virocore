@@ -45,11 +45,13 @@ public class ViroSoundTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(textNode);
 
         final ViroContext context = mViroView.getViroContext();
-        runOnUiThread(()->{
-            mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/mpthreetest.mp3"), null);
-        });
+
+        mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/mpthreetest.mp3"), null);
 
         mSound.setLoop(true);
+        mSound.setVolume(1);
+        mSound.setMuted(false);
+
         mSound.setPlaybackListener(new Sound.PlaybackListener() {
             @Override
             public void onSoundReady(final Sound sound) {
@@ -92,9 +94,7 @@ public class ViroSoundTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Toggling sound play / pause", () -> {
-            mSound.play();
-        });
+        assertPass("Toggling sound play / pause");
     }
 
     private void testSetVolume() {
@@ -104,9 +104,7 @@ public class ViroSoundTest extends ViroBaseTest {
             mDelegateText.setText("Sound volume: " + mSound.getVolume());
             mSound.setVolume((mSound.getVolume() + 0.1f) % 1);
         };
-        assertPass("Increasing volume by +1 every second", () -> {
-            mSound.setVolume(1);
-        });
+        assertPass("Increasing volume by +1 every second");
     }
 
     private void testSetMuted() {
@@ -114,9 +112,7 @@ public class ViroSoundTest extends ViroBaseTest {
             mDelegateText.setText("Sound muted: " + mSound.isMuted());
             mSound.setMuted(!mSound.isMuted());
         };
-        assertPass("Toggling mute / unmute every second", () -> {
-            mSound.setMuted(false);
-        });
+        assertPass("Toggling mute / unmute every second");
     }
 
     private void testSetLoop() {
@@ -124,9 +120,7 @@ public class ViroSoundTest extends ViroBaseTest {
         mSound.seekToTime(0);
         mDelegateText.setText("Sound loop: " + mSound.getLoop());
 
-        assertPass("Looping == false, confirm it does not loop after it finishes", () -> {
-            mSound.setLoop(true);
-        });
+        assertPass("Looping == false, confirm it does not loop after it finishes");
     }
 
     private void testSeekToTime() {
@@ -138,9 +132,7 @@ public class ViroSoundTest extends ViroBaseTest {
             mDelegateText.setText("Sound seekToTime: " + seekToTime);
             mSound.seekToTime(seekToTime.floatValue());
         };
-        assertPass("Seek to random times", () -> {
-            mSound.seekToTime(0);
-        });
+        assertPass("Seek to random times");
     }
 
     // TODO VIRO-2181 setting null delegate will cause an NPE

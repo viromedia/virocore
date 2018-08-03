@@ -76,6 +76,36 @@ public class ViroEventsTest extends ViroBaseTest {
         textNode.setGeometry(eventText);
         mScene.getRootNode().addChildNode(textNode);
 
+        objectNode.setClickListener(null);
+        sphereNode.setClickListener(null);
+        boxNode.setClickListener(null);
+        boxClickListener = null;
+        boxNode.setHoverListener(null);
+        objectNode.setHoverListener(null);
+        sphereNode.setHoverListener(null);
+        boxNode.setFuseListener(null);
+        objectNode.setFuseListener(null);
+        sphereNode.setFuseListener(null);
+        sphereNode.setDragListener(null);
+        objectNode.setDragListener(null);
+        boxNode.setDragListener(null);
+        sphereNode.setGesturePinchListener(null);
+        objectNode.setGesturePinchListener(null);
+        boxNode.setGesturePinchListener(null);
+        sphereNode.setGestureRotateListener(null);
+        objectNode.setGestureRotateListener(null);
+        boxNode.setGestureRotateListener(null);
+        sphereNode.setTouchpadTouchListener(null);
+        objectNode.setTouchpadTouchListener(null);
+        boxNode.setTouchpadTouchListener(null);
+        sphereNode.setTouchpadSwipeListener(null);
+        objectNode.setTouchpadSwipeListener(null);
+        boxNode.setTouchpadSwipeListener(null);
+        sphereNode.setTouchpadScrollListener(null);
+        objectNode.setTouchpadScrollListener(null);
+        boxNode.setTouchpadScrollListener(null);
+        eventText.setText(DEFAULT_EVENT_TEXT);
+
     }
 
     @Test
@@ -136,13 +166,7 @@ public class ViroEventsTest extends ViroBaseTest {
             }
         });
 
-        assertPass("All objects are clickable.", () -> {
-            objectNode.setClickListener(null);
-            sphereNode.setClickListener(null);
-            boxNode.setClickListener(null);
-            boxClickListener = null;
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("All objects are clickable.");
     }
 
     private void testEventsHoverListener() {
@@ -164,12 +188,7 @@ public class ViroEventsTest extends ViroBaseTest {
             }
         });
 
-        assertPass("All events hover.", ()->{
-            boxNode.setHoverListener(null);
-            objectNode.setHoverListener(null);
-            sphereNode.setHoverListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("All events hover.");
     }
 
 
@@ -186,12 +205,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Set fuse on Sphere.");
         });
 
-        assertPass("All nodes respond to onFuse.", ()->{
-            boxNode.setFuseListener(null);
-            objectNode.setFuseListener(null);
-            sphereNode.setFuseListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("All nodes respond to onFuse.");
     }
 
     private void testEventsDragListener() {
@@ -207,12 +221,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Dragging the sphere. WorldLoc:" + ViroEventsTest.vectorString(worldLocation) + ", LocalLoc:" + ViroEventsTest.vectorString(localLocation));
         });
 
-        assertPass("All objects respond to drag events with world loc. and local loc.", () -> {
-            sphereNode.setDragListener(null);
-            objectNode.setDragListener(null);
-            boxNode.setDragListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("All objects respond to drag events with world loc. and local loc.");
     }
 
     private void testEventsGesturePinchListener() {
@@ -231,12 +240,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Pinching on Sphere");
             sphereNode.setScale(new Vector(scaleFactor, scaleFactor, scaleFactor));
         });
-        assertPass("All nodes respond to pinch.", () -> {
-            sphereNode.setGesturePinchListener(null);
-            objectNode.setGesturePinchListener(null);
-            boxNode.setGesturePinchListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("All nodes respond to pinch.");
     }
 
     private void testEventsGestureRotateListener() {
@@ -253,12 +257,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Rotating on Sphere.");
         });
 
-        assertPass("All nodes respond to rotate.", () -> {
-            sphereNode.setGestureRotateListener(null);
-            objectNode.setGestureRotateListener(null);
-            boxNode.setGestureRotateListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("All nodes respond to rotate.");
     }
 
     private void testEventsTouchpadTouchListener() {
@@ -274,12 +273,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Touch registered on Sphere. TouchState: " + touchState.toString());
         });
 
-        assertPass("For GearVR: All objects can be touched with touch pad, Touch state changes.", () -> {
-            sphereNode.setTouchpadTouchListener(null);
-            objectNode.setTouchpadTouchListener(null);
-            boxNode.setTouchpadTouchListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("For GearVR: All objects can be touched with touch pad, Touch state changes.");
     }
 
     private void testEventsTouchpadSwipeListener() {
@@ -295,12 +289,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Touchpad listener registered on Sphere. SwipeState: " + swipeState.toString());
         });
 
-        assertPass("For GearVR: All objects register swipe event with touch pad.", () -> {
-            sphereNode.setTouchpadSwipeListener(null);
-            objectNode.setTouchpadSwipeListener(null);
-            boxNode.setTouchpadSwipeListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("For GearVR: All objects register swipe event with touch pad.");
     }
 
     private void testEventsTouchpadScrollListener() {
@@ -316,12 +305,7 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Scroll listener registered on sphere. (x,y):" + "[" + x + "," + y + "]");
         });
 
-        assertPass("For GearVR: All objects register scroll event with touch pad.", () -> {
-            sphereNode.setTouchpadScrollListener(null);
-            objectNode.setTouchpadScrollListener(null);
-            boxNode.setTouchpadScrollListener(null);
-            eventText.setText(DEFAULT_EVENT_TEXT);
-        });
+        assertPass("For GearVR: All objects register scroll event with touch pad.");
     }
 
     public static String vectorString(Vector vec) {

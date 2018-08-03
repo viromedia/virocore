@@ -133,7 +133,7 @@ public class ViroAmbientLightTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Alternating ambientLight's influence betweeen 1 and 2", () -> {
+        assertPass("Alternating ambientLight's influence bit mask betweeen 1 and 2", () -> {
             mSphere.setLightReceivingBitMask(INFLUENCE_BITMASK);
         });
     }

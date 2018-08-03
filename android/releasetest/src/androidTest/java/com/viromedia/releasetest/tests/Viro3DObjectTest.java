@@ -409,7 +409,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
             }
         };
 
-        assertPass("You should see dragon material change color over time from white, blue, green to black.",()->{
+        assertPass("You should see dragon material change color over time from white, blue, yellow to cyan.",()->{
             object3D.removeFromParentNode();
         });
 

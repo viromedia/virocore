@@ -45,11 +45,13 @@ public class ViroSoundFieldTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(textNode);
 
         final ViroContext context = mViroView.getViroContext();
-        runOnUiThread(() -> {
-            mSound = new SoundField(mViroView.getViroContext(), Uri.parse("file:///android_asset/thelin.wav"), null);
-        });
+
+        mSound = new SoundField(mViroView.getViroContext(), Uri.parse("file:///android_asset/thelin.wav"), null);
+
 
         mSound.setLoop(true);
+        mSound.setVolume(1);
+        mSound.setMuted(false);
         mSound.setPlaybackListener(new SoundField.PlaybackListener() {
             @Override
             public void onSoundReady(final SoundField sound) {
@@ -83,9 +85,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Toggling sound play / pause", () -> {
-            mSound.play();
-        });
+        assertPass("Toggling sound play / pause");
     }
 
     private void testSetVolume() {
@@ -95,9 +95,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             mDelegateText.setText("Sound volume: " + mSound.getVolume());
             mSound.setVolume((mSound.getVolume() + 0.1f) % 1);
         };
-        assertPass("Increasing volume by +1 every second", () -> {
-            mSound.setVolume(1);
-        });
+        assertPass("Increasing volume by +1 every second");
     }
 
     private void testSetMuted() {
@@ -105,11 +103,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             mDelegateText.setText("Sound muted: " + mSound.isMuted() + "\n This should toggle, TODO BUG VIRO-2192 ");
             mSound.setMuted(!mSound.isMuted());
         };
-        assertPass("Toggling mute / unmute every second", () -> {
-            mSound.setMuted(false);
-            mMutableTestMethod = () -> {
-            };
-        });
+        assertPass("Toggling mute / unmute every second");
     }
 
     private void testSetLoop() {
@@ -117,9 +111,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
         mSound.seekToTime(0);
         mDelegateText.setText("Sound loop: " + mSound.getLoop());
 
-        assertPass("Looping == false, confirm it does not loop after it finishes", () -> {
-            mSound.setLoop(true);
-        });
+        assertPass("Looping == false, confirm it does not loop after it finishes");
     }
 /*
     NOTE: GVR Sound field does not currently support seek to time.

@@ -47,6 +47,8 @@ public class ViroSpotLightTest extends ViroBaseTest {
 
         // Add directional light in -Z direction
         mSpotLight = new Spotlight();
+        mSpotLight.setIntensity(1000);
+        mSpotLight.setCastsShadow(true);
         mSpotLight.setInfluenceBitMask(INFLUENCE_BITMASK);
 
         mScene.getRootNode().addLight(mSpotLight);
@@ -119,9 +121,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             mSpotLight.setColor(itr.next());
         };
-        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN", () -> {
-            mSpotLight.setColor(Color.GREEN);
-        });
+        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN");
 
     }
 
@@ -132,9 +132,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
                 mSpotLight.setIntensity((currentIntensity + 200) % 2000);
             }
         };
-        assertPass("Cycling intensity from 0 to 2000, with +200 every second", () -> {
-            mSpotLight.setIntensity(1000);
-        });
+        assertPass("Cycling intensity from 0 to 2000, with +200 every second");
     }
 
     private void testSetCastsShadow() {
@@ -143,9 +141,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
                 mSpotLight.setCastsShadow(!mSpotLight.getCastsShadow());
             }
         };
-        assertPass("Toggling casts shadow", () -> {
-            mSpotLight.setCastsShadow(false);
-        });
+        assertPass("Toggling casts shadow");
     }
 
     private void testSetInfluenceBitMask() {

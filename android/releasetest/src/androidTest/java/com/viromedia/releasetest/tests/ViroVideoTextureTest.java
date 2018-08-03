@@ -48,56 +48,57 @@ public class ViroVideoTextureTest extends ViroBaseTest {
         final AmbientLight ambientLight = new AmbientLight(Color.WHITE, 300);
         mScene.getRootNode().addLight(ambientLight);
 
-        runOnUiThread(() -> {
-            mDelegateText = new Text(mViroView.getViroContext(), "Delegate text", "Roboto", 25,
-                    Color.WHITE, 3f, 1f, Text.HorizontalAlignment.LEFT,
-                    Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-            final Node textNode = new Node();
-            textNode.setPosition(new Vector(0f, 1f, -3.3f));
-            textNode.setGeometry(mDelegateText);
-            mScene.getRootNode().addChildNode(textNode);
-            
-            final VideoTexture.PlaybackListener delegate = new VideoTexture.PlaybackListener() {
-                private static final String TAG = "VideoDelegate: ";
 
-                @Override
-                public void onVideoBufferStart(final VideoTexture video) {
-                    mDelegateText.setText(TAG + "onVideoBufferStart");
-                }
+        mDelegateText = new Text(mViroView.getViroContext(), "Delegate text", "Roboto", 25,
+                Color.WHITE, 3f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        final Node textNode = new Node();
+        textNode.setPosition(new Vector(0f, 1f, -3.3f));
+        textNode.setGeometry(mDelegateText);
+        mScene.getRootNode().addChildNode(textNode);
 
-                @Override
-                public void onVideoBufferEnd(final VideoTexture video) {
-                    mDelegateText.setText(TAG + "onVideoBufferEnd");
-                }
+        final VideoTexture.PlaybackListener delegate = new VideoTexture.PlaybackListener() {
+            private static final String TAG = "VideoDelegate: ";
 
-                @Override
-                public void onVideoFinish(final VideoTexture video) {
-                    mDelegateText.setText(TAG + "onVideoFinish");
-                }
+            @Override
+            public void onVideoBufferStart(final VideoTexture video) {
+                mDelegateText.setText(TAG + "onVideoBufferStart");
+            }
 
-                @Override
-                public void onReady(final VideoTexture video) {
-                    mDelegateText.setText(TAG + "onReady");
-                    video.play();
-                }
+            @Override
+            public void onVideoBufferEnd(final VideoTexture video) {
+                mDelegateText.setText(TAG + "onVideoBufferEnd");
+            }
 
-                @Override
-                public void onVideoFailed(final String error) {
-                    mDelegateText.setText(TAG + "onVideoFailed");
-                }
+            @Override
+            public void onVideoFinish(final VideoTexture video) {
+                mDelegateText.setText(TAG + "onVideoFinish");
+            }
 
-                @Override
-                public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float totalDuration) {
-                    mDelegateText.setText(TAG + "onVideoUpdatedTime seconds = " + seconds
-                            + ", totalDuration = " + totalDuration);
-                }
-            };
+            @Override
+            public void onReady(final VideoTexture video) {
+                mDelegateText.setText(TAG + "onReady");
+                video.play();
+            }
 
-            mVideoTexture = new VideoTexture(mViroView.getViroContext(),
-                    Uri.parse("file:///android_asset/stereoVid360.mp4"), delegate, Texture.StereoMode.TOP_BOTTOM);
-        });
+            @Override
+            public void onVideoFailed(final String error) {
+                mDelegateText.setText(TAG + "onVideoFailed");
+            }
+
+            @Override
+            public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float totalDuration) {
+                mDelegateText.setText(TAG + "onVideoUpdatedTime seconds = " + seconds
+                        + ", totalDuration = " + totalDuration);
+            }
+        };
+
+        mVideoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("file:///android_asset/stereoVid360.mp4"), delegate, Texture.StereoMode.TOP_BOTTOM);
         mVideoTexture.setVolume(1);
+        mVideoTexture.setMuted(false);
         mVideoTexture.setLoop(true);
+        mVideoTexture.play();
         final Material videoMaterial = new Material();
         videoMaterial.setDiffuseTexture(mVideoTexture);
         mScene.setBackgroundTexture(mVideoTexture);
@@ -159,10 +160,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Toggling video play / pause", () -> {
-            mVideoTexture.play();
-            animateBox();
-        });
+        assertPass("Toggling video play / pause");
     }
 
     private void testSetVolume() {
@@ -172,10 +170,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             mDelegateText.setText("Video volume: " + mVideoTexture.getVolume());
             mVideoTexture.setVolume((mVideoTexture.getVolume() + 0.1f) % 1);
         };
-        assertPass("Increasing volume by +1 every second", () -> {
-            mVideoTexture.setVolume(1);
-            animateBox();
-        });
+        assertPass("Increasing volume by +1 every second");
     }
 
     private void testSetMuted() {
@@ -183,10 +178,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             mDelegateText.setText("Video muted: " + mVideoTexture.isMuted() + "\n This should toggle, TODO BUG VIRO-2192 ");
             mVideoTexture.setMuted(!mVideoTexture.isMuted());
         };
-        assertPass("Toggling mute / unmute every second", () -> {
-            mVideoTexture.setMuted(false);
-            animateBox();
-        });
+        assertPass("Toggling mute / unmute every second");
     }
 
     private void testSetLoop() {
@@ -194,10 +186,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
         mVideoTexture.seekToTime(0);
         mDelegateText.setText("video loop: " + mVideoTexture.getLoop());
 
-        assertPass("Looping == false, confirm video does not loop after it finishes", () -> {
-            mVideoTexture.setLoop(true);
-            animateBox();
-        });
+        assertPass("Looping == false, confirm video does not loop after it finishes");
     }
 
     private void testSeekToTime() {
@@ -209,10 +198,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             mDelegateText.setText("Video seekToTime: " + seekToTime);
             mVideoTexture.seekToTime(seekToTime.floatValue());
         };
-        assertPass("Seek to random times", () -> {
-            mVideoTexture.seekToTime(0);
-            animateBox();
-        });
+        assertPass("Seek to random times");
     }
 
     private void testSetDelegate() {
@@ -294,9 +280,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             mVideoTexture.setPlaybackListener(itr.next());
         };
 
-        assertPass("Toggling between two delegates", () -> {
-            animateBox();
-        });
+        assertPass("Toggling between two delegates");
     }
 
     private void testSetRotation() {

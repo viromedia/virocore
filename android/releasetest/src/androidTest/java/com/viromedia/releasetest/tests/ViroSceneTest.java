@@ -66,17 +66,20 @@ public class ViroSceneTest extends ViroBaseTest {
     }
 
     private void testSceneBackgroundVideoTexture() {
-        runOnUiThread(()->{
-            final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
-                    Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
-            mScene.setBackgroundTexture(videoTexture);
-            videoTexture.setLoop(true);
-            videoTexture.play();
-        });
+
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        mScene.setBackgroundTexture(videoTexture);
+        videoTexture.setLoop(true);
+        videoTexture.play();
+
         assertPass("The scene background should display a video of a climber.");
     }
 
     private void testSceneBackgroundRotation() {
+        final Bitmap background = getBitmapFromAssets(mActivity, "360_westlake.jpg");
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
+        mScene.setBackgroundTexture(backgroundTexture);
         final List<Float> rotations = Arrays.asList(0f, 45f, 90f, 135f, 180f, 225f, 270f);
         final Iterator<Float> itr = Iterables.cycle(rotations).iterator();
         mMutableTestMethod = () -> {
@@ -130,26 +133,26 @@ public class ViroSceneTest extends ViroBaseTest {
         boxNode.setPosition(new Vector(0, -2.5f, -3.3f));
         scene1.getRootNode().addChildNode(boxNode);
 
-        runOnUiThread(() -> {
-            final Sound sound = new Sound(mViroView.getViroContext(),
-                    Uri.parse("file:///android_asset/flies_mono.wav"), new Sound.PlaybackListener() {
-                @Override
-                public void onSoundReady(final Sound sound) {
-                    sound.play();
-                }
 
-                @Override
-                public void onSoundFinish(final Sound sound) {
+        final Sound sound = new Sound(mViroView.getViroContext(),
+                Uri.parse("file:///android_asset/flies_mono.wav"), new Sound.PlaybackListener() {
+            @Override
+            public void onSoundReady(final Sound sound) {
+                sound.play();
+            }
 
-                }
+            @Override
+            public void onSoundFinish(final Sound sound) {
 
-                @Override
-                public void onSoundFail(final String error) {
+            }
 
-                }
-            });
-            sound.setLoop(true);
+            @Override
+            public void onSoundFail(final String error) {
+
+            }
         });
+        sound.setLoop(true);
+
 
         final Scene scene2 = new ARScene();
         scene2.getRootNode().addLight(light);
@@ -161,46 +164,45 @@ public class ViroSceneTest extends ViroBaseTest {
         sphereNode.setPosition(new Vector(0, -2.5f, -3.3f));
         scene2.getRootNode().addChildNode(sphereNode);
 
-        runOnUiThread(() -> {
-            final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
-                    Uri.parse("file:///android_asset/stereoVid360.mp4"), new VideoTexture.PlaybackListener() {
-                @Override
-                public void onVideoBufferStart(final VideoTexture video) {
 
-                }
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("file:///android_asset/stereoVid360.mp4"), new VideoTexture.PlaybackListener() {
+            @Override
+            public void onVideoBufferStart(final VideoTexture video) {
 
-                @Override
-                public void onVideoBufferEnd(final VideoTexture video) {
+            }
 
-                }
+            @Override
+            public void onVideoBufferEnd(final VideoTexture video) {
 
-                @Override
-                public void onVideoFinish(final VideoTexture video) {
+            }
 
-                }
+            @Override
+            public void onVideoFinish(final VideoTexture video) {
 
-                @Override
-                public void onReady(final VideoTexture video) {
-                    video.play();
-                }
+            }
 
-                @Override
-                public void onVideoFailed(final String error) {
+            @Override
+            public void onReady(final VideoTexture video) {
+                video.play();
+            }
 
-                }
+            @Override
+            public void onVideoFailed(final String error) {
 
-                @Override
-                public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float totalDuration) {
+            }
 
-                }
-            }, Texture.StereoMode.TOP_BOTTOM);
+            @Override
+            public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float totalDuration) {
 
-            videoTexture.setVolume(1);
-            videoTexture.setLoop(true);
-            final Material videoMaterial = new Material();
-            videoMaterial.setDiffuseTexture(videoTexture);
-            scene2.setBackgroundTexture(videoTexture);
-        });
+            }
+        }, Texture.StereoMode.TOP_BOTTOM);
+
+        videoTexture.setVolume(1);
+        videoTexture.setLoop(true);
+        final Material videoMaterial = new Material();
+        videoMaterial.setDiffuseTexture(videoTexture);
+        scene2.setBackgroundTexture(videoTexture);
 
         final List<Scene> scenes = Arrays.asList(scene1, scene1, scene2, scene2);
         final Iterator<Scene> iterator = Iterables.cycle(scenes).iterator();

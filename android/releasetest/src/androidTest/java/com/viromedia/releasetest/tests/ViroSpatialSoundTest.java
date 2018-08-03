@@ -43,12 +43,12 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
         textNode.setGeometry(mDelegateText);
         mScene.getRootNode().addChildNode(textNode);
 
-        runOnUiThread(() -> {
-            mSound = new SpatialSound(mViroView.getViroContext(), Uri.parse("file:///android_asset/flies_mono.wav"), null);
-        });
+        mSound = new SpatialSound(mViroView.getViroContext(), Uri.parse("file:///android_asset/flies_mono.wav"), null);
         mSound.setPosition(new Vector(-5, 0, 0));
         mSound.setDistanceRolloff(SpatialSound.Rolloff.LINEAR, 3, 5);
         mSound.setLoop(true);
+        mSound.setVolume(1);
+        mSound.setMuted(false);
         mSound.setPlaybackListener(new SpatialSound.PlaybackListener() {
             @Override
             public void onSoundReady(final SpatialSound sound) {
@@ -84,9 +84,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             mDelegateText.setText("Moving spatial sound N, E, W, S of user");
         };
 
-        assertPass("Spatial sound can be set correctly", () -> {
-            mSound.setPosition(new Vector(-5, 0, 0));
-        });
+        assertPass("Spatial sound can be set correctly");
     }
 
     private void testPlayPause() {
@@ -101,9 +99,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             }
         };
 
-        assertPass("Toggling sound play / pause", () -> {
-            mSound.play();
-        });
+        assertPass("Toggling sound play / pause");
     }
 
     private void testSetVolume() {
@@ -113,9 +109,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             mDelegateText.setText("Sound volume: " + mSound.getVolume());
             mSound.setVolume((mSound.getVolume() + 0.1f) % 1);
         };
-        assertPass("Increasing volume by +1 every second", () -> {
-            mSound.setVolume(1);
-        });
+        assertPass("Increasing volume by +1 every second");
     }
 
     private void testSetMuted() {
@@ -123,11 +117,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             mDelegateText.setText("Sound muted: " + mSound.isMuted() + "\n This should toggle, TODO BUG VIRO-2192 ");
             mSound.setMuted(!mSound.isMuted());
         };
-        assertPass("Toggling mute / unmute every second", () -> {
-            mSound.setMuted(false);
-            mMutableTestMethod = () -> {
-            };
-        });
+        assertPass("Toggling mute / unmute every second");
     }
 
     private void testSetLoop() {
@@ -149,9 +139,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             mDelegateText.setText("Sound seekToTime: " + seekToTime);
             mSound.seekToTime(seekToTime.floatValue());
         };
-        assertPass("Seek to random times", () -> {
-            mSound.seekToTime(0);
-        });
+        assertPass("Seek to random times");
     }
 
     // TODO VIRO-2181 setting null delegate will cause an NPE

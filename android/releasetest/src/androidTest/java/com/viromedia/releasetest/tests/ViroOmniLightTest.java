@@ -45,7 +45,10 @@ public class ViroOmniLightTest extends ViroBaseTest {
     void configureTestScene() {
         mOmniLight = new OmniLight();
         mOmniLight.setInfluenceBitMask(INFLUENCE_BITMASK);
+        mOmniLight.setIntensity(1000f);
         mOmniLight.setPosition(new Vector(0, 5, -2));
+        mOmniLight.setAttenuationStartDistance(2);
+        mOmniLight.setAttenuationEndDistance(Float.MAX_VALUE);
         mScene.getRootNode().addLight(mOmniLight);
 
         final DirectionalLight directionalLight = new DirectionalLight();
@@ -112,9 +115,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             mOmniLight.setColor(itr.next());
         };
-        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN", () -> {
-            mOmniLight.setColor(Color.GREEN);
-        });
+        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN");
     }
 
     private void testSetIntensity() {
@@ -122,9 +123,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
             final float currentIntensity = mOmniLight.getIntensity();
             mOmniLight.setIntensity((currentIntensity + 200) % 2000);
         };
-        assertPass("Cycling intensity from 0 to 2000, with +200 every second", () -> {
-            mOmniLight.setIntensity(1000);
-        });
+        assertPass("Cycling intensity from 0 to 2000, with +200 every second");
     }
 
     private void testSetInfluenceBitMask() {
@@ -133,9 +132,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
             mOmniLight.setInfluenceBitMask(currentBitMask == INFLUENCE_BITMASK ? 2 : INFLUENCE_BITMASK);
         };
 
-        assertPass("Alternating omnilight's influence betweeen 1 and 2", () -> {
-            mOmniLight.setInfluenceBitMask(INFLUENCE_BITMASK);
-        });
+        assertPass("Alternating omnilight's influence betweeen 1 and 2");
     }
 
     private void testSetPosition() {
@@ -145,9 +142,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
             mOmniLight.setPosition(new Vector(currentPostion.x, currentPostion.y + 10, currentPostion.z));
         };
 
-        assertPass("Moving Omnilight in +Y direction, vertical plane should go dark", () -> {
-            mOmniLight.setPosition(initialPosition);
-        });
+        assertPass("Moving Omnilight in +Y direction, vertical plane should go dark");
     }
 
     private void testSetAttenuationEndDistance() {
@@ -159,9 +154,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
             mOmniLight.setAttenuationEndDistance(itr.next());
         };
 
-        assertPass("Decreasing attenuationEndDistance", () -> {
-            mOmniLight.setAttenuationEndDistance(Float.MAX_VALUE);
-        });
+        assertPass("Decreasing attenuationEndDistance");
     }
 
     private void testSetAttenuationStartDistance() {
@@ -174,9 +167,6 @@ public class ViroOmniLightTest extends ViroBaseTest {
             mOmniLight.setAttenuationStartDistance(itr.next());
         };
 
-        assertPass("Increasing attenuationStartDistance", () -> {
-            mOmniLight.setAttenuationStartDistance(2);
-            mOmniLight.setAttenuationEndDistance(Float.MAX_VALUE);
-        });
+        assertPass("Increasing attenuationStartDistance");
     }
 }

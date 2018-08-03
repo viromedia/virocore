@@ -84,16 +84,23 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
         Bitmap specBitmap = this.getBitmapFromAssets(mActivity, "transparent.png");
         mTransparentTexture = new Texture(specBitmap, Texture.Format.RGBA8, true, true);
-    }
 
-    private void resetAll() {
         mFrontGreenNode.setVisible(true);
         mFrontGreenNode.setOpacity(1.0f);
         mBackRedNode.setVisible(true);
         mBackRedNode.setOpacity(1.0f);
         mBoxNode.setVisible(true);
         mBoxNode.setOpacity(1.0f);
+        mBox.getMaterials().get(0).setDiffuseColor(Color.WHITE);
+        mBox.getMaterials().get(0).setDiffuseTexture(null);
+        mFrontGreenSurface.getMaterials().get(0).setDiffuseTexture(null);
+        mBackRedSurface.getMaterials().get(0).setReadsFromDepthBuffer(true);
+        mBackRedSurface.getMaterials().get(0).setWritesToDepthBuffer(true);
+        mFrontGreenSurface.getMaterials().get(0).setReadsFromDepthBuffer(true);
+        mFrontGreenSurface.getMaterials().get(0).setWritesToDepthBuffer(true);
+        mBackRedSurface.getMaterials().get(0).setDiffuseTexture(null);
     }
+
 
     @Test
     public void renderOrderTest() {
@@ -113,12 +120,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
         // Simply test that two opaque surfaces render correctly with the depth
         // buffer (order should not matter).
-        assertPass("Green in front of red", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-            }
-        });
+        assertPass("Green in front of red");
     }
 
     public void boxAndGreenSurfaceTransparent() {
@@ -130,12 +132,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
         // As a result, we will *not* see the green surface behind the partially transparent box.
         mBoxNode.setOpacity(0.25f);
         mFrontGreenNode.setOpacity(0.99f);
-        assertPass("Green surface can *NOT* be seen behind the partially transparent box", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-            }
-        });
+        assertPass("Green surface can *NOT* be seen behind the partially transparent box");
     }
 
     public void greenBoxTransparentFromNodeOpacity() {
@@ -145,12 +142,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
         // will be rendered first (it's opaque), and the white box is rendered after (it's transparent).
         // Therefore we should see the green surface behind the partially transparent white box.
         mBoxNode.setOpacity(0.25f);
-        assertPass("[Opacity based] Green surface can be seen behind the partially transparent white box", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-            }
-        });
+        assertPass("[Opacity based] Green surface can be seen behind the partially transparent white box");
     }
 
     public void greenBoxTransparentFromDiffuseColor() {
@@ -158,13 +150,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
         // Same as above except we make the box transparent by turning down its color alpha
         mBox.getMaterials().get(0).setDiffuseColor(Color.argb(64, 255, 255, 255));
-        assertPass("[Color based] Green surface can be seen behind the partially transparent white box", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-                mBox.getMaterials().get(0).setDiffuseColor(Color.WHITE);
-            }
-        });
+        assertPass("[Color based] Green surface can be seen behind the partially transparent white box");
     }
 
     public void greenBoxTransparentFromTexture() {
@@ -172,13 +158,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
         // Same as above except we make the box transparent by giving it a transparent texture
         mBox.getMaterials().get(0).setDiffuseTexture(mTransparentTexture);
-        assertPass("Green surface can be seen behind the transparent squiggles", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-                mBox.getMaterials().get(0).setDiffuseTexture(null);
-            }
-        });
+        assertPass("Green surface can be seen behind the transparent squiggles");
     }
 
     public void boxAndRedSurfaceTransparent() {
@@ -189,12 +169,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
         // the box, it's still rendered first
         mBoxNode.setOpacity(0.25f);
         mBackRedNode.setOpacity(0.99f);
-        assertPass("Red surface can be seen behind the partially transparent box", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-            }
-        });
+        assertPass("Red surface can be seen behind the partially transparent box");
     }
 
     public void greenOverRed() {
@@ -202,13 +177,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
         // Set the green plane to partially transparent, and the red should be seen behind it
         mFrontGreenSurface.getMaterials().get(0).setDiffuseTexture(mTransparentTexture);
-        assertPass("Red surface can be seen behind transparent squiggles", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-                mFrontGreenSurface.getMaterials().get(0).setDiffuseTexture(null);
-            }
-        });
+        assertPass("Red surface can be seen behind transparent squiggles");
     }
 
     public void redOverGreen() {
@@ -225,17 +194,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
         // The red surface is rendered on top of the green, but you should still see the green
         // surface through the squiggles.
         mBackRedSurface.getMaterials().get(0).setDiffuseTexture(mTransparentTexture);
-        assertPass("Green surface can be seen behind transparent squiggles (edges of squiggles are black)", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-                mBackRedSurface.getMaterials().get(0).setReadsFromDepthBuffer(true);
-                mBackRedSurface.getMaterials().get(0).setWritesToDepthBuffer(true);
-                mFrontGreenSurface.getMaterials().get(0).setReadsFromDepthBuffer(true);
-                mFrontGreenSurface.getMaterials().get(0).setWritesToDepthBuffer(true);
-                mBackRedSurface.getMaterials().get(0).setDiffuseTexture(null);
-            }
-        });
+        assertPass("Green surface can be seen behind transparent squiggles (edges of squiggles are black)");
     }
 
     public void lamborghini() {
@@ -270,13 +229,7 @@ public class ViroRenderOrderTest extends ViroBaseTest {
 
         mFrontGreenNode.setVisible(false);
         mBoxNode.setVisible(false);
-        assertPass("Lamborghini is displayed, and the interior and red surface can be seen through the window", new TestCleanUpMethod() {
-            @Override
-            public void cleanUp() {
-                resetAll();
-                lamborghini.removeFromParentNode();
-            }
-        });
+        assertPass("Lamborghini is displayed, and the interior and red surface can be seen through the window");
     }
 
 }

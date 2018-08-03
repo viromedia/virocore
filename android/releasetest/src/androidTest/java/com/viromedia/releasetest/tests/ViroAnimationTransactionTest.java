@@ -49,7 +49,10 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         mMaterial.setDiffuseColor(Color.BLUE);
         mBox.setMaterials(Arrays.asList(mMaterial));
         boxNode.setGeometry(mBox);
-        boxNode.setPosition(new Vector(-3,0, -3));
+        boxNode.setPosition(new Vector(0,0, -3));
+        boxNode.setRotation(new Vector(0, 0, 0));
+        boxNode.setScale(new Vector(1f, 1f, 1f));
+        boxNode.setOpacity(1.0f);
         mScene.getRootNode().addChildNode(boxNode);
 
     }
@@ -72,9 +75,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
         boxNode.setPosition(new Vector(3, 0, -3));
         AnimationTransaction.commit();
-        assertPass("Position animates from x -3 to 3.", () -> {
-            boxNode.setPosition(new Vector(0, 0, -3));
-        });
+        assertPass("Position animates from x -3 to 3.");
     }
 
     private void testAnimationRotation() {
@@ -83,9 +84,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
         boxNode.setRotation(new Vector(0, 0.78, 0.78));
         AnimationTransaction.commit();
-        assertPass("Animate rotation to 45 degrees on y and z axis.", ()->{
-            boxNode.setRotation(new Vector(0, 0, 0));
-        });
+        assertPass("Animate rotation to 45 degrees on y and z axis.");
     }
 
     private void testAnimationScale() {
@@ -94,9 +93,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
         boxNode.setScale(new Vector(.2f, .2f, 2f));
         AnimationTransaction.commit();
-        assertPass("Animate animates from scale 1 to .2", ()-> {
-            boxNode.setScale(new Vector(1f, 1f, 1f));
-        });
+        assertPass("Animate animates from scale 1 to .2");
     }
 
     private void testAnimationMaterial() {
@@ -113,9 +110,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
         boxNode.setOpacity(0.2f);
         AnimationTransaction.commit();
-        assertPass("Animate opacity from 1 to 0.2", ()->{
-            boxNode.setOpacity(1.0f);
-        });
+        assertPass("Animate opacity from 1 to 0.2");
     }
 
     private void testAnimationChained() {
@@ -131,10 +126,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         });
         AnimationTransaction.commit();
 
-        assertPass("Chained Animation should move box back then rotate.", ()->{
-            boxNode.setPosition(new Vector(0, 0, -3));
-            boxNode.setRotation(new Vector(0, 0, 0));
-        });
+        assertPass("Chained Animation should move box back then rotate.");
     }
 
     private void testAnimationLoop() {
@@ -151,10 +143,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         });
         mTransaction = AnimationTransaction.commit();
         assertPass("Loop Animate rotation to 45 degrees on y and z axis," +
-                " should change color every second", ()->{
-            boxNode.setRotation(new Vector(0, 0, 0));
-        });
-
+                " should change color every second");
     }
     private void testAnimationEasing() {
         for (final AnimationTimingFunction animationTimingFunction : AnimationTimingFunction.values()) {
@@ -168,9 +157,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setTimingFunction(animTimingFunction);
         boxNode.setPosition(new Vector(0, 0, -5));
         AnimationTransaction.commit();
-        assertPass("Animation easing is set to:" + animTimingFunction.toString(), ()->{
-            boxNode.setPosition(new Vector(0, 0, -3));
-        });
+        assertPass("Animation easing is set to:" + animTimingFunction.toString());
     }
 
 }

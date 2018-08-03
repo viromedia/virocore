@@ -2,6 +2,7 @@ package com.viromedia.releasetest.tests;
 
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.Animation;
@@ -55,6 +56,9 @@ public class ViroCameraTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(node);
 
         mCamera = new Camera();
+        mCamera.setPosition(new Vector(0, 0, 0));
+        mCamera.setRotation(new Vector(0, 0, 0));
+        mCamera.setRotationType(Camera.RotationType.STANDARD);
         mRotationAngle = 0.0f;
         mScene.getRootNode().setCamera(mCamera);
         mRenderer.setPointOfView(mScene.getRootNode());
@@ -73,8 +77,7 @@ public class ViroCameraTest extends ViroBaseTest {
         mMutableTestMethod = null;
         mCamera.setRotationType(Camera.RotationType.ORBIT);
         mCamera.setOrbitFocalPoint(new Vector(0, 0, -10));
-        assertPass("Camera should orbit around box", ()->{
-        mCamera.setRotationType(Camera.RotationType.STANDARD);});
+        assertPass("Camera should orbit around box");
     }
 
     private void testCameraPosition() {
@@ -84,7 +87,7 @@ public class ViroCameraTest extends ViroBaseTest {
                 mCamera.setPosition(new Vector(0, 0, position.z + .2f));
             }
         };
-        assertPass("Camera position moves back.", ()->{mCamera.setPosition(new Vector(0, 0, 0));});
+        assertPass("Camera position moves back.");
     }
 
     private void testCameraRotationQuaternion() {
@@ -94,7 +97,7 @@ public class ViroCameraTest extends ViroBaseTest {
             mCamera.setRotation(quaternion);
         };
 
-        assertPass("Camera rotates upwards (via Quaternion).", () ->{mCamera.setRotation(ViroCameraTest.toQuaternion(0, 0, 0));});
+        assertPass("Camera rotates upwards (via Quaternion).");
     }
 
     private void testCameraRotationEuler() {
@@ -103,10 +106,7 @@ public class ViroCameraTest extends ViroBaseTest {
             mCamera.setRotation(new Vector(0, Math.toRadians(mRotationAngle), 0));
         };
 
-        assertPass("Camera rotates to the left (via Euler angles).", ()->{
-            mCamera.setRotation(new Vector());
-            mRotationAngle = 0;
-        });
+        assertPass("Camera rotates to the left (via Euler angles).");
     }
 
     // TODO: VIRO-2166 Move to Quaternion class
@@ -136,10 +136,9 @@ public class ViroCameraTest extends ViroBaseTest {
 
         Node textNode = new Node();
         textNode.setGeometry(output);
-        textNode.setRotationPivot(new Vector(-4,0,0));
         textNode.setTransformBehaviors(EnumSet.of(Node.TransformBehavior.BILLBOARD));
         mScene.getRootNode().addChildNode(textNode);
-        textNode.setPosition(new Vector(0f, 4f, -3.3f));
+        textNode.setPosition(new Vector(0f, 0, -3.3f));
 
         // Set the camera at preset positions
         mCamera.setPosition(new Vector(0, 0, 0));
@@ -160,10 +159,11 @@ public class ViroCameraTest extends ViroBaseTest {
                 Vector ro2 = new Vector(0,Math.toDegrees(rotation.y), 0);
                 String msg = "You should see the position and rotation of the camera animate increase\n Pos: " + position.toString() + " Rot: " + ro2.toString();
                 output.setText(msg);
+                Log.i("ViroCameraTest", msg);
             }
         });
 
-        assertPass("Camera position Changes.", ()->{mCamera.setPosition(new Vector(0, 0, 0));});
+        assertPass("Camera position Changes. (grep Logcat for \"ViroCameraTest\")");
         transaction.terminate();
         textNode.removeFromParentNode();
         textNode.dispose();
