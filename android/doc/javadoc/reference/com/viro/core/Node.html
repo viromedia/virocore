@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Node | Android Developers
+  <title>Node | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -129,7 +129,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore/issues">Issues</a>
           </li>
           <li>
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
@@ -207,6 +207,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
@@ -247,6 +248,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -261,6 +263,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraIntrinsics.html">CameraIntrinsics</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
@@ -357,6 +360,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
@@ -1528,10 +1532,40 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Node.html#getHighAccuracyEvents()">getHighAccuracyEvents</a>()
+      </code>
+      
+        <p>Returns true if high accuracy events are enabled.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Node.html#getHighAccuracyGaze()">getHighAccuracyGaze</a>()
       </code>
       
-        <p>Returns true if high accuracy gaze is enabled.
+        <p><em>
+      This method is deprecated.
+    Use <code><a href="../../../../reference/com/viro/core/Node.html#getHighAccuracyEvents()">getHighAccuracyEvents()</a></code>
+</em>
         
     
 </p>
@@ -2862,11 +2896,41 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Node.html#setHighAccuracyEvents(boolean)">setHighAccuracyEvents</a>(boolean highAccuracyEvents)
+      </code>
+      
+        <p>True if events should use the Geometry of this Node to determine if the user is
+ interacting with this Node.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Node.html#setHighAccuracyGaze(boolean)">setHighAccuracyGaze</a>(boolean highAccuracyGaze)
       </code>
       
-        <p>True if onHover events should use the Geometry of this Node to determine if the user is
- hovering over this Node.
+        <p><em>
+      This method is deprecated.
+    Use <code><a href="../../../../reference/com/viro/core/Node.html#setHighAccuracyEvents(boolean)">setHighAccuracyEvents(boolean)</a></code>
+</em>
         
     
 </p>
@@ -4246,6 +4310,35 @@ float getDragMaxDistance ()</pre>
 </div>
 
 
+<A NAME="getHighAccuracyEvents()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getHighAccuracyEvents</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean getHighAccuracyEvents ()</pre>
+    
+    
+
+    
+  <p>Returns true if high accuracy events are enabled.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if this Node is using high accuracy events.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getHighAccuracyGaze()"></A>
 
 <div class="api apilevel-">
@@ -4261,14 +4354,18 @@ boolean getHighAccuracyGaze ()</pre>
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    Use <code><a href="../../../../reference/com/viro/core/Node.html#getHighAccuracyEvents()">getHighAccuracyEvents()</a></code>
+
+  </p>
   <p>Returns true if high accuracy gaze is enabled.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code>boolean</code></td>
-        <td width="100%">True if this Node is using high accuracy gazing.
-</p></td>
+        <td width="100%">True if this Node is using high accuracy gazing.</p></td>
       </tr>
     </table>
 
@@ -5716,6 +5813,39 @@ void setGestureRotateListener (<a href="../../../../reference/com/viro/core/Gest
 </div>
 
 
+<A NAME="setHighAccuracyEvents(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setHighAccuracyEvents</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setHighAccuracyEvents (boolean highAccuracyEvents)</pre>
+    
+    
+
+    
+  <p>True if events should use the Geometry of this Node to determine if the user is
+ interacting with this Node. If false, the Node's axis-aligned bounding box will be
+ used instead. This makes events more accurate, but takes more processing power.
+ The default value is false.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>highAccuracyEvents</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable high accuracy events.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setHighAccuracyGaze(boolean)"></A>
 
 <div class="api apilevel-">
@@ -5731,7 +5861,12 @@ void setHighAccuracyGaze (boolean highAccuracyGaze)</pre>
     
     
 
-    
+    <p>
+  <p class="caution"><strong>
+      This method is deprecated.</strong><br/>
+    Use <code><a href="../../../../reference/com/viro/core/Node.html#setHighAccuracyEvents(boolean)">setHighAccuracyEvents(boolean)</a></code>
+
+  </p>
   <p>True if onHover events should use the Geometry of this Node to determine if the user is
  hovering over this Node. If false, the Node's axis-aligned bounding box will be used
  instead. High accuracy gazing is more accurate but takes more processing power. The default
@@ -5741,8 +5876,7 @@ void setHighAccuracyGaze (boolean highAccuracyGaze)</pre>
       <tr>
         <td><code>highAccuracyGaze</code></td>
         <td width="100%">
-          <code>boolean</code>: True to enable high accuracy gazing.
-</p></td>
+          <code>boolean</code>: True to enable high accuracy gazing.</p></td>
       </tr>
     </table>
 
