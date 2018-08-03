@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Polygon | Android Developers
+  <title>Polygon | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -129,7 +129,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore/issues">Issues</a>
           </li>
           <li>
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
@@ -207,6 +207,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
@@ -247,6 +248,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -261,6 +263,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraIntrinsics.html">CameraIntrinsics</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
@@ -357,6 +360,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
@@ -687,8 +691,25 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/Polygon.html#Polygon(java.util.List<com.viro.core.Vector>, float, float, float, float)">Polygon</a>(<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt; vertices, float u0, float v0, float u1, float v1)
       </code>
       
-        <p>Given a list of 2D points on the XY plane representing a convex boundary, construct a flat
- polygon.
+        <p>Construct a flat polygon with the given perimeter.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Polygon.html#Polygon(java.util.List<com.viro.core.Vector>, java.util.List<java.util.List<com.viro.core.Vector>>, float, float, float, float)">Polygon</a>(<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt; vertices, <a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt;&gt; holes, float u0, float v0, float u1, float v1)
+      </code>
+      
+        <p>Construct a flat polygon with the given perimeter and holes.
         
     
 </p>
@@ -788,8 +809,8 @@ Polygon (<a href="http://d.android.com/reference/java/util/List.html">List</a>&l
     
 
     
-  <p>Given a list of 2D points on the XY plane representing a convex boundary, construct a flat
- polygon. <i>Concave polygonal shapes are not supported.</i>
+  <p>Construct a flat polygon with the given perimeter. The perimeter is specified as a list of 2D
+ points on the XY plane. Both convex and concave polygonal shapes are supported.
  <p>
  Texture coordinates are represented on 2D U and V axes (essentially the X and Y axes of the
  texture). The left edge of the texture is U = 0.0 and the right edge of the texture is U =
@@ -812,6 +833,85 @@ Polygon (<a href="http://d.android.com/reference/java/util/List.html">List</a>&l
         <td><code>vertices</code></td>
         <td width="100%">
           <code>List</code>: The list of boundary vertex positions in local model space.</p></td>
+      </tr>
+      <tr>
+        <td><code>u0</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the start <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> left edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>v0</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the start <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> top edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>u1</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the end <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> left edge.</p></td>
+      </tr>
+      <tr>
+        <td><code>v1</code></td>
+        <td width="100%">
+          <code>float</code>: The texture coordinate that specifies the end <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> top edge.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Polygon(java.util.List<com.viro.core.Vector>, java.util.List<java.util.List<com.viro.core.Vector>>, float, float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Polygon</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Polygon (<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt; vertices, 
+                <a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Vector.html">Vector</a>&gt;&gt; holes, 
+                float u0, 
+                float v0, 
+                float u1, 
+                float v1)</pre>
+    
+    
+
+    
+  <p>Construct a flat polygon with the given perimeter and holes. The perimeter is specified as a
+ list of 2D points on the XY plane, and the holes are each similarly represented as a list of 2D points.
+ Both convex and concave polygonal shapes are supported.
+ <p>
+ Texture coordinates are represented on 2D U and V axes (essentially the X and Y axes of the
+ texture). The left edge of the texture is U = 0.0 and the right edge of the texture is U =
+ 1.0. Similarly, the top edge of a texture is V = 0.0 and the bottom edge of the texture is V
+ = 1.0.
+ <p>
+ Specifying greater than 1.0 on either the U or V axis will cause the texture to either tile
+ and repeat itself or clamp, depending on the Texture's <code><a href="../../../../reference/com/viro/core/Texture.html#setWrapS(com.viro.core.Texture.WrapMode)">setWrapS(Texture.WrapMode)</a></code>.
+ Specifying less than 1.0 on the U or V axis will render that texture partially over the
+ surface.
+ <p>
+ For example, specifying u0,v0 as (0,0) and (u1,v2) as (2,2) will tile the Texture twice over
+ the width and height of the polygon, effectively displaying 4 textures on the polygon.
+ Alternatively, setting (u1,v1) as (0.5, 0.5) will display a quarter of the texture over the
+ polygon.
+ <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vertices</code></td>
+        <td width="100%">
+          <code>List</code>: The list of boundary (perimeter) vertex positions in local model space.</p></td>
+      </tr>
+      <tr>
+        <td><code>holes</code></td>
+        <td width="100%">
+          <code>List</code>: The boundary of each hole in the polygon. Each hole is given as a separate List of
+                 Vectors.</p></td>
       </tr>
       <tr>
         <td><code>u0</code></td>
