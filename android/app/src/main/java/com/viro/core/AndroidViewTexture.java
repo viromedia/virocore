@@ -223,8 +223,8 @@ public class AndroidViewTexture extends Texture {
         return true;
     }
 
-    // Called by the renderer.
-    private void setVideoSink(android.view.Surface videoSink) {
+    // Called by the renderer
+    void setVideoSink(android.view.Surface videoSink) {
         mViroRenderSurface = videoSink;
     }
 
