@@ -77,7 +77,7 @@
           <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore/issues">Issues</a>
           </li>
           <li>
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>

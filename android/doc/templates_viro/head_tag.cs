@@ -3,12 +3,12 @@
 if:devsite ?><?cs
   if:page.title ?><?cs
     var:html_strip(page.title) ?><?cs
-  else ?>Android Developers<?cs
+  else ?>Viro Developers<?cs
   /if ?><?cs
 else ?><?cs
   if:page.title ?><?cs
     var:page.title ?> | <?cs
-  /if ?>Android Developers
+  /if ?>Viro Developers
 <?cs /if ?><?cs
 # END if/else devsite ?></title><?cs
   ####### If building devsite, add some meta data needed for when generating the top nav ######### ?><?cs
