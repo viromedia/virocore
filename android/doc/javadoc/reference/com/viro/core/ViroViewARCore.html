@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ViroViewARCore | Android Developers
+  <title>ViroViewARCore | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -129,7 +129,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore/issues">Issues</a>
           </li>
           <li>
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
@@ -207,6 +207,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
@@ -247,6 +248,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -261,6 +263,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraIntrinsics.html">CameraIntrinsics</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
@@ -357,6 +360,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
@@ -898,6 +902,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        <a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.html#getCameraImageListener()">getCameraImageListener</a>()
+      </code>
+      
+        <p>Get the <code><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code> that is currently receiving all AR camera frames.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         int</code>
     </td>
   
@@ -1099,6 +1130,34 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Set the <code><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.html#setCameraImageListener(com.viro.core.ViroContext, com.viro.core.CameraImageListener)">setCameraImageListener</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> context, <a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a> listener)
+      </code>
+      
+        <p>Install a <code><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code> which will be invoked each frame as the AR camera
+ image is updated.
         
     
 </p>
@@ -1328,6 +1387,35 @@ void dispose ()</pre>
     
   <p>Release native resources associated with this ViroView.
 </p></p>
+
+</div>
+
+
+<A NAME="getCameraImageListener()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getCameraImageListener</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a> getCameraImageListener ()</pre>
+    
+    
+
+    
+  <p>Get the <code><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code> that is currently receiving all AR camera frames.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code></td>
+        <td width="100%">The CameraImageListener currently installed.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 
@@ -1610,6 +1698,44 @@ void setCameraARHitTestListener (<a href="../../../../reference/com/viro/core/AR
         <td width="100%">
           <code>ARHitTestListener</code>: The callback that will receive the <code><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></code>
                  results.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setCameraImageListener(com.viro.core.ViroContext, com.viro.core.CameraImageListener)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setCameraImageListener</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setCameraImageListener (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> context, 
+                <a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a> listener)</pre>
+    
+    
+
+    
+  <p>Install a <code><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code> which will be invoked each frame as the AR camera
+ image is updated. This can be used to perform additional processing on the real-world
+ images before they are rendered to the device.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>context</code></td>
+        <td width="100%">
+          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to set an image listener.</p></td>
+      </tr>
+      <tr>
+        <td><code>listener</code></td>
+        <td width="100%">
+          <code>CameraImageListener</code>: The <code><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></code> to install.
 </p></td>
       </tr>
     </table>

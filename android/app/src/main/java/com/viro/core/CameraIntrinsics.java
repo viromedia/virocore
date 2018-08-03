@@ -1,10 +1,9 @@
 package com.viro.core;
 
-
 /**
- * Created by manish on 7/23/18.
+ * CameraIntrinsics define the physical characteristics of the device camera using a "pinhole"
+ * model.
  */
-
 public class CameraIntrinsics {
     private float[] mFocalLength;
     private float[] mPrincipalPoint;
@@ -18,10 +17,20 @@ public class CameraIntrinsics {
         this.mPrincipalPoint = new float[]{cx, cy};
     }
 
+    /**
+     * Get the X and Y focal length of the camera.
+     *
+     * @return The X and Y focal length in an array { X, Y }.
+     */
     public float[] getFocalLength() {
         return mFocalLength;
     }
 
+    /**
+     * Get the principal point of the camera.
+     *
+     * @return The X and Y of the principal point in an array { X, Y }.
+     */
     public float[] getPrincipalPoint() {
         return mPrincipalPoint;
     }

@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 
 /**
  * CameraImageListener receives a callback each time the AR camera image is updated. This can be
- * used to process camera imagery for your own purposes as it is rendered to the device. This
- * listener is installed via {@link ARScene#setCameraImageListener(CameraImageListener)}.
+ * used to process camera imagery, for your own purposes, as it is rendered to the device. This
+ * listener is installed via {@link ViroViewARCore#setCameraImageListener(ViroContext, CameraImageListener)}.
  */
 public interface CameraImageListener {
 
@@ -30,7 +30,10 @@ public interface CameraImageListener {
      * copy it to a separate buffer.
      *
      * @param buffer The buffer containing the RGBA8888 data.
-     * @param intrinsics Camera Intrinsics of the device camera. See {@link CameraIntrinsics}
+     * @param width The width of the image.
+     * @param height The height of the image.
+     * @param intrinsics The {@link CameraIntrinsics} of the device's camera, which describe the camera's
+     *                   physical characteristics.
      */
     public void onCameraImageUpdated(ByteBuffer buffer, int width, int height, CameraIntrinsics intrinsics);
 
