@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Text | Android Developers
+  <title>Text | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -129,7 +129,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
          </li>
          <li>
-          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore/issues">Issues</a>
           </li>
           <li>
          <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
@@ -207,6 +207,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatusListener.html">ControllerStatusListener</a></li>
@@ -247,6 +248,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -261,6 +263,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/BoundingBox.html">BoundingBox</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Box.html">Box</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraIntrinsics.html">CameraIntrinsics</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
@@ -357,6 +360,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
@@ -753,6 +757,23 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>
+        <p>The outer stroke which enables effects like outline or drop shadow.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
         class</code></td>
       <td class="jd-descrcol" width="100%">
         <code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
@@ -817,6 +838,25 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td width="100%">
       <code>
       <a href="../../../../reference/com/viro/core/Text.html#Text(com.viro.core.ViroContext, java.lang.String, float, float)">Text</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/java/lang/String.html">String</a> text, float width, float height)
+      </code>
+      
+        <p>Create a new 2D Text with the given set of minimum parameters: the text to display, and the
+ width and height of the bounds within which to display it.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#Text(com.viro.core.ViroContext, java.lang.String, float, float, float)">Text</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/java/lang/String.html">String</a> text, float width, float height, float extrusionDepth)
       </code>
       
         <p>Create a new Text with the given set of minimum parameters: the text to display, and the
@@ -963,6 +1003,38 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <code>
       <a href="../../../../reference/com/viro/core/Text.html#getColor()">getColor</a>()
       </code>
+      
+        <p>Get the color (as a <code><a href="http://d.android.com/reference/android/graphics/Color.html">Color</a></code> int) of the Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getExtrusionDepth()">getExtrusionDepth</a>()
+      </code>
+      
+        <p>Get the extrusion depth of the text.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -1224,6 +1296,87 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        <a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getOuterStroke()">getOuterStroke</a>()
+      </code>
+      
+        <p>Get the <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>, if any, being rendered with this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        long</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getOuterStrokeColor()">getOuterStrokeColor</a>()
+      </code>
+      
+        <p>Get the color of the <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> being rendered with this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        int</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#getOuterStrokeWidth()">getOuterStrokeWidth</a>()
+      </code>
+      
+        <p>Get the width of the <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> being rendered with this Text, in pixels.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         <a href="http://d.android.com/reference/java/lang/String.html">String</a></code>
     </td>
   
@@ -1339,6 +1492,38 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <code>
       <a href="../../../../reference/com/viro/core/Text.html#setColor(long)">setColor</a>(long color)
       </code>
+      
+        <p>Set the color of this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Text.html#setExtrusionDepth(float)">setExtrusionDepth</a>(float extrusionDepth)
+      </code>
+      
+        <p>Set the extrusion depth of the text.
+        
+    
+</p>
       
     </td>
   </tr>
@@ -1605,6 +1790,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke</a>(<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> outerStroke, int outerStrokeWidth, long outerStrokeColor)
+      </code>
+      
+        <p>Set an optional <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> type, width, and color to use for this Text.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Text.html#setText(java.lang.String)">setText</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> textString)
       </code>
       
@@ -1720,7 +1932,7 @@ Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext
     
 
     
-  <p>Create a new Text with the given set of minimum parameters: the text to display, and the
+  <p>Create a new 2D Text with the given set of minimum parameters: the text to display, and the
  width and height of the bounds within which to display it. The text will be constrained to
  the provided bounds, and defaults to wrapping words.</p></p>
     <table class="responsive">
@@ -1744,6 +1956,84 @@ Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext
         <td><code>height</code></td>
         <td width="100%">
           <code>float</code>: The height of the bounds within which to display the text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Text(com.viro.core.ViroContext, java.lang.String, float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Text</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Text (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
+                <a href="http://d.android.com/reference/java/lang/String.html">String</a> text, 
+                float width, 
+                float height, 
+                float extrusionDepth)</pre>
+    
+    
+
+    
+  <p>Create a new Text with the given set of minimum parameters: the text to display, and the
+ width and height of the bounds within which to display it. The text will be constrained to
+ the provided bounds, and defaults to wrapping words. If extrusionDepth is greater than 0,
+ then the Text will be rendered in 3D: it will be vectorized with sides of length
+ <tt>extrusionDepth</tt>. If extrusionDepth is 0, then the Text will be rendered as a Bitmap, which is
+ the equivalent of invoking the basic <code><a href="../../../../reference/com/viro/core/Text.html#Text(com.viro.core.ViroContext, java.lang.String, float, float)">Text(ViroContext, String, float, float)</a></code>
+ constructor.<p>
+ <p>
+ If the Text is rendered in 3D (if extrusionDepth > 0), then you can apply three
+ materials to the text: Material 0 will represent the front of the Text, Material 1 will represent the
+ back of the Text, and Material 2 will represent the sides of the Text. You can set the
+ colors of these Materials to accordingly change the colors of different parts of the
+ Text. For example:<p><pre>
+ Material frontMaterial = new Material();
+ frontMaterial.setDiffuseColor(Color.WHITE);
+
+ Material  backMaterial = new Material();
+ backMaterial.setDiffuseColor(Color.BLUE);
+
+ Material sideMaterial = new Material();
+ sideMaterial.setDiffuseColor(Color.RED);
+ List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
+ text.setMaterials(materials);
+ </pre><p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>viroContext</code></td>
+        <td width="100%">
+          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to render Text.</p></td>
+      </tr>
+      <tr>
+        <td><code>text</code></td>
+        <td width="100%">
+          <code>String</code>: The text string to display.</p></td>
+      </tr>
+      <tr>
+        <td><code>width</code></td>
+        <td width="100%">
+          <code>float</code>: The width of the bounds within which to display the text.</p></td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td width="100%">
+          <code>float</code>: The height of the bounds within which to display the text.</p></td>
+      </tr>
+      <tr>
+        <td><code>extrusionDepth</code></td>
+        <td width="100%">
+          <code>float</code>: The depth of the text along the Z-axis. Set to a value greater than
+                       zero to create 3D text.
 </p></td>
       </tr>
     </table>
@@ -1982,12 +2272,45 @@ long getColor ()</pre>
     
 
     
-  <p></p></p>
+  <p>Get the color (as a <code><a href="http://d.android.com/reference/android/graphics/Color.html">Color</a></code> int) of the Text. For a 3D Text, (one with a non-zero
+ extrusion depth) this is the color of the front face of the Text.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code>long</code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
+        <td width="100%">The color of the Text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getExtrusionDepth()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getExtrusionDepth</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getExtrusionDepth ()</pre>
+    
+    
+
+    
+  <p>Get the extrusion depth of the text. This is zero for 2D Text. For 3D text, this is the
+ extent of the Text's sides.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The extrusion depth of the Text, at world coordinate scale (e.g. 1 point equals 1
+ meter).
+</p></td>
       </tr>
     </table>
 
@@ -2261,6 +2584,96 @@ int getMaxLines ()</pre>
 </div>
 
 
+<A NAME="getOuterStroke()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getOuterStroke</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> getOuterStroke ()</pre>
+    
+    
+
+    
+  <p>Get the <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>, if any, being rendered with this Text. The outer stroke
+ determines if the Text is rendered with an outline or drop shadow.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> used to render this Text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getOuterStrokeColor()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getOuterStrokeColor</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+long getOuterStrokeColor ()</pre>
+    
+    
+
+    
+  <p>Get the color of the <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> being rendered with this Text. The color is
+ returned as an Android <code><a href="http://d.android.com/reference/android/graphics/Color.html">Color</a></code> value.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>long</code></td>
+        <td width="100%">The outer stroke color.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getOuterStrokeWidth()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getOuterStrokeWidth</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+int getOuterStrokeWidth ()</pre>
+    
+    
+
+    
+  <p>Get the width of the <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> being rendered with this Text, in pixels. This
+ determines how "thick" the outline or drop shadow appears.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>int</code></td>
+        <td width="100%">The width of the outer stroke in pixels.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="getText()"></A>
 
 <div class="api apilevel-">
@@ -2396,13 +2809,62 @@ void setColor (long color)</pre>
     
 
     
-  <p></p></p>
+  <p>Set the color of this Text. For a 3D Text, this sets the color of the front face of the Text
+ (it sets the diffuse color the Text's first material). To set the color of the sides or the
+ back, invoke <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>, and make the diffuse color of the second Material
+ the desired back color and the diffuse color of the third Material the desired side
+ color. For example:<p><pre>
+ Material frontMaterial = new Material();
+ frontMaterial.setDiffuseColor(Color.WHITE);
+
+ Material  backMaterial = new Material();
+ backMaterial.setDiffuseColor(Color.BLUE);
+
+ Material sideMaterial = new Material();
+ sideMaterial.setDiffuseColor(Color.RED);
+ List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
+ text.setMaterials(materials);
+ </pre><p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>color</code></td>
         <td width="100%">
-          <code>long</code> <!-- no parameter comment --></p></td>
+          <code>long</code>: The color to use for the front faces of the Text.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setExtrusionDepth(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setExtrusionDepth</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setExtrusionDepth (float extrusionDepth)</pre>
+    
+    
+
+    
+  <p>Set the extrusion depth of the text. Set this to zero to render 2D Text (e.g. bitmap text).
+ If extrusionDepth is greater than 0, then the Text will be rendered in 3D: it will be
+ vectorized with sides of length <tt>extrusionDepth</tt>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>extrusionDepth</code></td>
+        <td width="100%">
+          <code>float</code>: The extrusion depth of the Text, at world coordinate scale (e.g. 1
+                       point equals 1 meter).
+</p></td>
       </tr>
     </table>
 
@@ -2696,6 +3158,59 @@ void setMaxLines (int maxLines)</pre>
         <td><code>maxLines</code></td>
         <td width="100%">
           <code>int</code>: The maximum of lines to render.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setOuterStroke(com.viro.core.Text.OuterStroke, int, long)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setOuterStroke</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setOuterStroke (<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> outerStroke, 
+                int outerStrokeWidth, 
+                long outerStrokeColor)</pre>
+    
+    
+
+    
+  <p>Set an optional <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> type, width, and color to use for this Text. The outer
+ stroke can be used to render an outline surrounding the Text or drop shadow extending to the
+ bottom right of the Text. These are often used to make the Text more legible over busy
+ backgrounds. The width of the outer stroke is given in pixels: a width of 2 displays a fairly
+ standard outline or drop shadow.
+ <p>
+ Note that outer strokes do <i>not</i> apply to 3D text (text with extrusion depth greater than
+ zero).
+ <p>
+ To remove the outer stroke, set the <tt>outerStroke</tt> to <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html#NONE">NONE</a></code>. In this
+ case the outerStrokeWidth and outerStrokeColor will be ignored.
+ <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>outerStroke</code></td>
+        <td width="100%">
+          <code>Text.OuterStroke</code>: The <code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code> type to render for this text.</p></td>
+      </tr>
+      <tr>
+        <td><code>outerStrokeWidth</code></td>
+        <td width="100%">
+          <code>int</code>: The width of the stroke in pixels.</p></td>
+      </tr>
+      <tr>
+        <td><code>outerStrokeColor</code></td>
+        <td width="100%">
+          <code>long</code>: The color of the Stroke as an Android <code><a href="http://d.android.com/reference/android/graphics/Color.html">Color</a></code> integer.
 </p></td>
       </tr>
     </table>

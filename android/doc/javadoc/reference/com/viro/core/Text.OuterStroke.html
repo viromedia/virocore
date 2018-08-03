@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Text.TextBuilder | Viro Developers
+  <title>Text.OuterStroke | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -312,7 +312,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Spotlight.SpotlightBuilder.html">Spotlight.SpotlightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.html">Text</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></li>
@@ -360,7 +360,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
@@ -570,22 +570,28 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Text.TextBuilder</h1>
+<h1 class="api-title">Text.OuterStroke</h1>
 <p>
 <code class="api-signature">
   public
   static
+  final
   
-  
-  class
-  Text.TextBuilder
+  enum
+  Text.OuterStroke
 </code>
 <br>
 
 
 <code class="api-signature">
   
-    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
+  
+  
+</code>
+
+<code class="api-signature">
+  
+    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a>&gt;
   
   
   
@@ -602,7 +608,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -611,7 +617,18 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Text.TextBuilder
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">com.viro.core.Text.OuterStroke</a>&gt;
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Text.OuterStroke
     </td>
   </tr>
   
@@ -624,7 +641,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code> objects.
+  <p>The outer stroke which enables effects like outline or drop shadow. Using different
+ outer stroke types can help make text more legible when presented over complex backgrounds in AR.
 </p>
 
 
@@ -647,39 +665,59 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<table id="pubctors" class="responsive constructors">
-<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
-
-
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+<table id="enumconstants" class="responsive constants">
+  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
 
   
   <tr class="api apilevel-" >
-  
-  
+    <td><code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>&nbsp;</td>
     <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#Text.TextBuilder()">Text.TextBuilder</a>()
-      </code>
+      <code>DROP_SHADOW</code>
+      <p>Text is rendered with a drop shadow.&nbsp;
       
+    
+</p>
     </td>
   </tr>
   
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>NONE</code>
+      <p>Text is rendered without an outer stroke.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>OUTLINE</code>
+      <p>Text is rendered with an outline.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
 
 
-</table>
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -699,21 +737,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
         
         
-        
-        <a href="../../../../reference/com/viro/core/Text.html">Text</a></code>
+        <a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#build()">build</a>()
+      <a href="../../../../reference/com/viro/core/Text.OuterStroke.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
       </code>
-      
-        <p>Return the built <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code>.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -726,510 +759,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
+        final
         
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
+        <a href="../../../../reference/com/viro/core/Text.OuterStroke.html">OuterStroke[]</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#clipMode(com.viro.core.Text.ClipMode)">clipMode</a>(<a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a> mClipMode)
+      <a href="../../../../reference/com/viro/core/Text.OuterStroke.html#values()">values</a>()
       </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setClipMode(com.viro.core.Text.ClipMode)">setClipMode(ClipMode)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#color(long)">color</a>(long mColor)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setColor(long)">setColor(long)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#extrusionDepth(float)">extrusionDepth</a>(float extrusionDepth)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setExtrusionDepth(float)">setExtrusionDepth(float)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontFamilies(java.lang.String)">fontFamilies</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> mFontFamilyName)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontFamilies(java.lang.String)">setFontFamilies(String)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontFamilyName(java.lang.String)">fontFamilyName</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> mFontFamilyName)
-      </code>
-      
-        <p><em>
-      This method is deprecated.
-    Use <code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontFamilies(java.lang.String)">fontFamilies(String)</a></code>
-</em>
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontSize(int)">fontSize</a>(int mFontSize)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontSize(int)">setFontSize(int)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontStyle(com.viro.core.Text.FontStyle)">fontStyle</a>(<a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a> style)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontStyle(com.viro.core.Text.FontStyle)">setFontStyle(FontStyle)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontWeight(com.viro.core.Text.FontWeight)">fontWeight</a>(<a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a> weight)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontWeight(com.viro.core.Text.FontWeight)">setFontWeight(FontWeight)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#height(float)">height</a>(float mHeight)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setHeight(float)">setHeight(float)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#horizontalAlignment(com.viro.core.Text.HorizontalAlignment)">horizontalAlignment</a>(<a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a> mHorizontalAlignment)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setHorizontalAlignment(com.viro.core.Text.HorizontalAlignment)">setHorizontalAlignment(HorizontalAlignment)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#lineBreakMode(com.viro.core.Text.LineBreakMode)">lineBreakMode</a>(<a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a> mLineBreakMode)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setLineBreakMode(com.viro.core.Text.LineBreakMode)">setLineBreakMode(LineBreakMode)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#maxLines(int)">maxLines</a>(int mMaxLines)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setMaxLines(int)">setMaxLines(int)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#outerStroke(com.viro.core.Text.OuterStroke)">outerStroke</a>(<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> outerStroke)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke(OuterStroke, int, long)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#outerStrokeColor(long)">outerStrokeColor</a>(long outerStrokeColor)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke(OuterStroke, int, long)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#outerStrokeWidth(int)">outerStrokeWidth</a>(int outerStrokeWidth)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke(OuterStroke, int, long)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#textString(java.lang.String)">textString</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> mText)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setText(java.lang.String)">setText(String)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#verticalAlignment(com.viro.core.Text.VerticalAlignment)">verticalAlignment</a>(<a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a> mVerticalAlignment)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setVerticalAlignment(com.viro.core.Text.VerticalAlignment)">setVerticalAlignment(VerticalAlignment)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#viroContext(com.viro.core.ViroContext)">viroContext</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> mViroContext)
-      </code>
-      
-        <p>Set the <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> to be used while building Text object.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Text.TextBuilder.html#width(float)">width</a>(float mWidth)
-      </code>
-      
-        <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setWidth(float)">setWidth(float)</a></code>.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -1251,6 +790,85 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Enum Values -->
 
 
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
+<h2 class="api-section">Enum values</h2>
+
+
+
+
+<A NAME="DROP_SHADOW"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">DROP_SHADOW</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> DROP_SHADOW</pre>
+    
+    
+
+    
+  <p>Text is rendered with a drop shadow.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="NONE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">NONE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> NONE</pre>
+    
+    
+
+    
+  <p>Text is rendered without an outer stroke.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="OUTLINE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">OUTLINE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> OUTLINE</pre>
+    
+    
+
+    
+  <p>Text is rendered with an outline.
+</p></p>
+
+    
+</div>
+
+
+
+
 <!-- Constants -->
 
 
@@ -1258,34 +876,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Public ctors -->
-
-
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<h2 class="api-section">Public constructors</h2>
-
-
-
-<A NAME="Text.TextBuilder()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Text.TextBuilder</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Text.TextBuilder ()</pre>
-    
-    
-
-    
-  <p></p></p>
-
-</div>
-
-
 
 
 
@@ -1301,10 +891,10 @@ Text.TextBuilder ()</pre>
 
 
 
-<A NAME="build()"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">build</h3>
+    <h3 class="api-name">valueOf</h3>
     <div class="api-level">
       <div></div>
       
@@ -1312,156 +902,16 @@ Text.TextBuilder ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.html">Text</a> build ()</pre>
+<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
     
     
 
     
-  <p>Return the built <code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code>.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.html">Text</a></code></td>
-        <td width="100%">The built Text.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="clipMode(com.viro.core.Text.ClipMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">clipMode</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> clipMode (<a href="../../../../reference/com/viro/core/Text.ClipMode.html">Text.ClipMode</a> mClipMode)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setClipMode(com.viro.core.Text.ClipMode)">setClipMode(ClipMode)</a></code>.</p></p>
+  <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>mClipMode</code></td>
-        <td width="100%">
-          <code>Text.ClipMode</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="color(long)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">color</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> color (long mColor)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setColor(long)">setColor(long)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mColor</code></td>
-        <td width="100%">
-          <code>long</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="extrusionDepth(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">extrusionDepth</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> extrusionDepth (float extrusionDepth)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setExtrusionDepth(float)">setExtrusionDepth(float)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>extrusionDepth</code></td>
-        <td width="100%">
-          <code>float</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="fontFamilies(java.lang.String)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">fontFamilies</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> fontFamilies (<a href="http://d.android.com/reference/java/lang/String.html">String</a> mFontFamilyName)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontFamilies(java.lang.String)">setFontFamilies(String)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mFontFamilyName</code></td>
+        <td><code>name</code></td>
         <td width="100%">
           <code>String</code> <!-- no parameter comment --></p></td>
       </tr>
@@ -1469,19 +919,18 @@ Text.TextBuilder ()</pre>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="fontFamilyName(java.lang.String)"></A>
+<A NAME="values()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">fontFamilyName</h3>
+    <h3 class="api-name">values</h3>
     <div class="api-level">
       <div></div>
       
@@ -1489,548 +938,17 @@ Text.TextBuilder ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> fontFamilyName (<a href="http://d.android.com/reference/java/lang/String.html">String</a> mFontFamilyName)</pre>
+<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">OuterStroke[]</a> values ()</pre>
     
     
 
-    <p>
-  <p class="caution"><strong>
-      This method is deprecated.</strong><br/>
-    Use <code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html#fontFamilies(java.lang.String)">fontFamilies(String)</a></code>
-
-  </p>
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontFamilyName(java.lang.String)">setFontFamilyName(String)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mFontFamilyName</code></td>
-        <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
+    
+  <p></p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="fontSize(int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">fontSize</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> fontSize (int mFontSize)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontSize(int)">setFontSize(int)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mFontSize</code></td>
-        <td width="100%">
-          <code>int</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="fontStyle(com.viro.core.Text.FontStyle)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">fontStyle</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> fontStyle (<a href="../../../../reference/com/viro/core/Text.FontStyle.html">Text.FontStyle</a> style)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontStyle(com.viro.core.Text.FontStyle)">setFontStyle(FontStyle)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>style</code></td>
-        <td width="100%">
-          <code>Text.FontStyle</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="fontWeight(com.viro.core.Text.FontWeight)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">fontWeight</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> fontWeight (<a href="../../../../reference/com/viro/core/Text.FontWeight.html">Text.FontWeight</a> weight)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setFontWeight(com.viro.core.Text.FontWeight)">setFontWeight(FontWeight)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>weight</code></td>
-        <td width="100%">
-          <code>Text.FontWeight</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="height(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">height</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> height (float mHeight)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setHeight(float)">setHeight(float)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mHeight</code></td>
-        <td width="100%">
-          <code>float</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="horizontalAlignment(com.viro.core.Text.HorizontalAlignment)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">horizontalAlignment</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> horizontalAlignment (<a href="../../../../reference/com/viro/core/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a> mHorizontalAlignment)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setHorizontalAlignment(com.viro.core.Text.HorizontalAlignment)">setHorizontalAlignment(HorizontalAlignment)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mHorizontalAlignment</code></td>
-        <td width="100%">
-          <code>Text.HorizontalAlignment</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="lineBreakMode(com.viro.core.Text.LineBreakMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">lineBreakMode</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> lineBreakMode (<a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a> mLineBreakMode)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setLineBreakMode(com.viro.core.Text.LineBreakMode)">setLineBreakMode(LineBreakMode)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mLineBreakMode</code></td>
-        <td width="100%">
-          <code>Text.LineBreakMode</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="maxLines(int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">maxLines</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> maxLines (int mMaxLines)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setMaxLines(int)">setMaxLines(int)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mMaxLines</code></td>
-        <td width="100%">
-          <code>int</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="outerStroke(com.viro.core.Text.OuterStroke)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">outerStroke</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> outerStroke (<a href="../../../../reference/com/viro/core/Text.OuterStroke.html">Text.OuterStroke</a> outerStroke)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke(OuterStroke, int, long)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>outerStroke</code></td>
-        <td width="100%">
-          <code>Text.OuterStroke</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="outerStrokeColor(long)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">outerStrokeColor</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> outerStrokeColor (long outerStrokeColor)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke(OuterStroke, int, long)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>outerStrokeColor</code></td>
-        <td width="100%">
-          <code>long</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="outerStrokeWidth(int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">outerStrokeWidth</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> outerStrokeWidth (int outerStrokeWidth)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setOuterStroke(com.viro.core.Text.OuterStroke, int, long)">setOuterStroke(OuterStroke, int, long)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>outerStrokeWidth</code></td>
-        <td width="100%">
-          <code>int</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="textString(java.lang.String)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">textString</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> textString (<a href="http://d.android.com/reference/java/lang/String.html">String</a> mText)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setText(java.lang.String)">setText(String)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mText</code></td>
-        <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="verticalAlignment(com.viro.core.Text.VerticalAlignment)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">verticalAlignment</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> verticalAlignment (<a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a> mVerticalAlignment)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setVerticalAlignment(com.viro.core.Text.VerticalAlignment)">setVerticalAlignment(VerticalAlignment)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mVerticalAlignment</code></td>
-        <td width="100%">
-          <code>Text.VerticalAlignment</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="viroContext(com.viro.core.ViroContext)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">viroContext</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> viroContext (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> mViroContext)</pre>
-    
-    
-
-    
-  <p>Set the <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> to be used while building Text object.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mViroContext</code></td>
-        <td width="100%">
-          <code>ViroContext</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="width(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">width</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a> width (float mWidth)</pre>
-    
-    
-
-    
-  <p>Refer to <code><a href="../../../../reference/com/viro/core/Text.html#setWidth(float)">setWidth(float)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mWidth</code></td>
-        <td width="100%">
-          <code>float</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></code></td>
-        <td width="100%">This builder.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/Text.OuterStroke.html">OuterStroke[]</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
