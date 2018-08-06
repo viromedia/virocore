@@ -1,2 +1,2 @@
 configurations.maybeCreate("default")
-artifacts.add("default", file('virocore-release-v_1_8_2.aar'))
+artifacts.add("default", file('virocore-release-v_1_9_0.aar'))
