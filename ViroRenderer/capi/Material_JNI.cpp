@@ -95,6 +95,25 @@ VROCullMode parseCullMode(std::string strName) {
     }
 }
 
+VROColorMask parseColorMask(std::string strName) {
+    if (VROStringUtil::strcmpinsensitive(strName, "Red")) {
+        return VROColorMaskRed;
+    } else if (VROStringUtil::strcmpinsensitive(strName, "Green")) {
+        return VROColorMaskGreen;
+    } else if (VROStringUtil::strcmpinsensitive(strName, "Blue")) {
+        return VROColorMaskBlue;
+    } else if (VROStringUtil::strcmpinsensitive(strName, "Alpha")) {
+        return VROColorMaskAlpha;
+    } else if (VROStringUtil::strcmpinsensitive(strName, "All")) {
+        return VROColorMaskAll;
+    } else if (VROStringUtil::strcmpinsensitive(strName, "None")) {
+        return VROColorMaskNone;
+    } else {
+        // Default color mask is All.
+        return VROColorMaskAll;
+    }
+}
+
 VRO_METHOD(VRO_REF(VROMaterial), nativeCreateMaterial)(VRO_NO_ARGS) {
     std::shared_ptr<VROMaterial> materialPtr = std::make_shared<VROMaterial>();
     return VRO_REF_NEW(VROMaterial, materialPtr);
@@ -439,5 +458,25 @@ VRO_METHOD(void, nativeSetChromaKeyFilteringColor)(VRO_ARGS
     });
 }
 
+VRO_METHOD(void, nativeSetColorWriteMask)(VRO_ARGS
+                                          VRO_REF(VROMaterial) material_j, VRO_STRING_ARRAY masks_j) {
+    std::weak_ptr<VROMaterial> material_w = VRO_REF_GET(VROMaterial, material_j);
+    VROColorMask mask = VROColorMaskNone;
+
+    int numMasks = VRO_ARRAY_LENGTH(masks_j);
+    for (int i = 0; i < numMasks; i++) {
+        VRO_STRING mask_j = VRO_STRING_ARRAY_GET(masks_j, i);
+        std::string mask_s = VRO_STRING_STL(mask_j);
+        mask = (VROColorMask) (mask | parseColorMask(mask_s));
+    }
+
+    VROPlatformDispatchAsyncRenderer([material_w, mask] {
+        std::shared_ptr<VROMaterial> material = material_w.lock();
+        if (!material) {
+            return;
+        }
+        material->setColorWriteMask(mask);
+    });
+}
 
 }  // extern "C"

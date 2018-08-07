@@ -221,9 +221,9 @@ void VROPortal::writeHierarchyParentToDepthBuffer(VROSortKey &hierarchyParent,
 
     driver->setDepthWritingEnabled(true);
     driver->setDepthReadingEnabled(true);
-    driver->setColorWritingEnabled(false);
+    driver->setRenderTargetColorWritingMask(VROColorMaskNone);
     hParentNode->render(hierarchyParent.elementIndex, hParentMaterial, context, driver);
-    driver->setColorWritingEnabled(true);
+    driver->setRenderTargetColorWritingMask(VROColorMaskAll);
 }
 
 #pragma mark - Portal Entrance

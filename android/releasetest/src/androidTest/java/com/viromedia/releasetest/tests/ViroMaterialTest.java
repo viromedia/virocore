@@ -11,12 +11,14 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.Box;
 import com.viro.core.Camera;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.Quad;
 import com.viro.core.Sphere;
 
 import com.viro.core.Texture;
@@ -26,6 +28,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class ViroMaterialTest extends ViroBaseTest {
@@ -58,15 +63,13 @@ public class ViroMaterialTest extends ViroBaseTest {
 
         mSphereNode = new Node();
         mSphereNode.setGeometry(mSphere);
-        float[] spherePosition = {0, 0, -12};
-        mSphereNode.setPosition(new Vector(spherePosition));
+        mSphereNode.setPosition(new Vector(0, 0, -12));
         mScene.getRootNode().addChildNode(mSphereNode);
 
         mBox = new Box(2,2,2);
         mNodeBox = new Node();
         mNodeBox.setOpacity(0.8f);
-        float[] boxPosition = {0, 0, -4};
-        mNodeBox.setPosition(new Vector(boxPosition));
+        mNodeBox.setPosition(new Vector(0, 0, -4));
         mNodeBox.setRotation(new Vector(0f, 45f, 0f));
         mMaterialBoxList = new ArrayList();
         int[] colorArray = {Color.DKGRAY, Color.GRAY, Color.LTGRAY, Color.MAGENTA, Color.CYAN, Color.YELLOW};
@@ -110,6 +113,10 @@ public class ViroMaterialTest extends ViroBaseTest {
         runUITest(() -> testMaterialReadsFromDepthBuffer());
         runUITest(() -> testMaterialWritesToDepthBuffer());
         runUITest(() -> testMaterialBloomThreshold());
+        
+        runUITest(() -> testMaterialColorWriteMaskCycling());
+        runUITest(() -> testMaterialColorWriteMaskMultipleCycling());
+        runUITest(() -> testMaterialColorWriteMaskOcclusion());
     }
 
     private void testMaterialLightingModelConstant() {
@@ -271,5 +278,60 @@ public class ViroMaterialTest extends ViroBaseTest {
             }
         };
         assertPass("Bloom threshold changes low to high (sphere goes from bright to dim)");
+    }
+
+    private void testMaterialColorWriteMaskCycling() {
+        mScene.setBackgroundCubeWithColor(Color.BLACK);
+        mNodeBox.setPosition(new Vector(0, 0, -15));
+        mMaterial.setDiffuseTexture(null);
+        mMaterial.setDiffuseColor(Color.WHITE);
+
+        final List<Material.ColorWriteMask> masks = Arrays.asList(Material.ColorWriteMask.ALL, Material.ColorWriteMask.RED,
+                Material.ColorWriteMask.GREEN, Material.ColorWriteMask.BLUE,
+                Material.ColorWriteMask.NONE);
+
+        final Iterator<Material.ColorWriteMask> itr = Iterables.cycle(masks).iterator();
+        mMutableTestMethod = () -> {
+            mMaterial.setColorWriteMask(EnumSet.of(itr.next()));
+        };
+        assertPass("Color should cycle (WHITE -> RED -> GREEN -> BLUE -> BLACK)");
+    }
+
+    private void testMaterialColorWriteMaskMultipleCycling() {
+        mScene.setBackgroundCubeWithColor(Color.BLACK);
+        mNodeBox.setPosition(new Vector(0, 0, -15));
+        mMaterial.setColorWriteMask(EnumSet.of(Material.ColorWriteMask.RED, Material.ColorWriteMask.GREEN));
+        mMaterial.setDiffuseTexture(null);
+        mMaterial.setDiffuseColor(Color.WHITE);
+
+        final List<EnumSet<Material.ColorWriteMask>> masks = Arrays.asList(
+                EnumSet.of(Material.ColorWriteMask.RED, Material.ColorWriteMask.GREEN),
+                EnumSet.of(Material.ColorWriteMask.RED, Material.ColorWriteMask.BLUE),
+                EnumSet.of(Material.ColorWriteMask.GREEN, Material.ColorWriteMask.BLUE)
+        );
+
+        final Iterator<EnumSet<Material.ColorWriteMask>> itr = Iterables.cycle(masks).iterator();
+        mMutableTestMethod = () -> {
+            mMaterial.setColorWriteMask(itr.next());
+        };
+        assertPass("Color should cycle (YELLOW, PURPLE, CYAN)");
+    }
+
+    private void testMaterialColorWriteMaskOcclusion() {
+        Quad quad = new Quad(5, 5);
+
+        Material material = new Material();
+        material.setColorWriteMask(EnumSet.of(Material.ColorWriteMask.NONE));
+        quad.setMaterials(Arrays.asList(material));
+
+        final Node quadNode = new Node();
+        quadNode.setGeometry(quad);
+        quadNode.setPosition(new Vector(0, 0, -4));
+
+        mScene.getRootNode().addChildNode(quadNode);
+        mMutableTestMethod = () -> {
+            quadNode.setVisible(!quadNode.isVisible());
+        };
+        assertPass("The sphere should disappear (behind a transparent quad) then reappear. Background should stay blue.");
     }
 }

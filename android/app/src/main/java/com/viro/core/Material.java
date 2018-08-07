@@ -5,7 +5,10 @@
 package com.viro.core;
 
 import android.graphics.Color;
+import android.util.Log;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -226,7 +229,6 @@ public class Material {
         }
     };
 
-
     /**
      * CullMode determines whether we render front faces, back faces, or both. Each 3D surface in
      * Viro has a front face and a back face. The front-face is that which has a counter-clockwise
@@ -382,6 +384,74 @@ public class Material {
         }
     };
 
+    /**
+     * ColorWriteMask indicates what colors should be written to the screen when rendering a
+     * Material. This is commonly used for two purposes: one, to filter out a base color (e.g. red)
+     * from the Material, or two, to turn off <i>all</i> color writing for a Material, so that
+     * the Material is only written to the depth buffer. This latter approach can be used to
+     * implement "transparent occlusion planes", or surfaces that occlude other geometry without
+     * being visible to the user.
+     */
+    public enum ColorWriteMask {
+
+        /**
+         * Do not write any colors for the Material.
+         */
+        NONE("None"),
+
+        /**
+         * Write only red colors for the Material.
+         */
+        RED("Red"),
+
+        /**
+         * Write only green colors for the Material.
+         */
+        GREEN("Green"),
+
+        /**
+         * Write only blue colors for the Material.
+         */
+        BLUE("Blue"),
+
+        /**
+         * Write only the alpha channel for the Material.
+         */
+        ALPHA("Alpha"),
+
+        /**
+         * Write all colors for the Material.
+         */
+        ALL("All");
+
+        private String mStringValue;
+        private ColorWriteMask(String value) {
+            this.mStringValue = value;
+        }
+
+        /**
+         * @return
+         * @hide
+         */
+        public String getStringValue() {
+            return mStringValue;
+        }
+
+        private static Map<String, ColorWriteMask> map = new HashMap<String, ColorWriteMask>();
+        static {
+            for (ColorWriteMask value : ColorWriteMask.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static ColorWriteMask valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
+    }
+
     long mNativeRef;
     private boolean mWritesToDepthBuffer = true;
     private boolean mReadsFromDepthBuffer = true;
@@ -406,6 +476,7 @@ public class Material {
     private String mName ="";
     private boolean mChromaKeyFilteringEnabled = false;
     private int mChromaKeyFilteringColor = Color.GREEN;
+    private EnumSet<ColorWriteMask> mColorWriteMask = EnumSet.of(ColorWriteMask.ALL);
 
     /**
      * Construct a new Material. The material defaults to a flat white color with a constant
@@ -546,6 +617,62 @@ public class Material {
      */
     public boolean getReadsFromDepthBuffer() {
         return mReadsFromDepthBuffer;
+    }
+
+    /**
+     * Set what color channels this Material will write to when rendered. One use of this method is
+     * to filter out a base color (e.g. red), so that when this material is rendered, only its blue
+     * and green components will be rendered to the screen. The more common usage of this method,
+     * however, is to turn off <i>all</i> color writing for a Material, by using
+     * EnumSet.of(ColorMask.NONE).<p>
+     * <p>
+     * By doing this, the Material will not be written to the color buffer. If
+     * getWritesToDepthBuffer() is true, then the Material will <i>still</i> be written to the depth
+     * buffer, so that surfaces rendered with this Material will occlude other geometry. This
+     * approach can be used to implement "transparent occlusion planes", or surfaces that occlude
+     * other geometry without themselves being visible to the user. This is particularly useful in
+     * AR, in cases where you want it to appear as though real-world features are occluding virtual
+     * objects. You can do this by creating surfaces that align with the real-world features and
+     * setting their material color masks to EnumSet.of(ColorMask.NONE). For example, the following
+     * code snippet creates a 5x5 Quad 4 meters away from the user, which will not be visible to the
+     * user but will occlude all objects behind it:
+     * <p>
+     * <tt>
+     * <pre>
+     * Quad quad = new Quad(5, 5);
+     *
+     * Material material = new Material();
+     * material.setColorWriteMask(EnumSet.of(Material.ColorWriteMask.NONE));
+     * quad.setMaterials(Arrays.asList(material));
+     *
+     * Node quadNode = new Node();
+     * quadNode.setGeometry(quad);
+     * quadNode.setPosition(new Vector(0, 0, -4));
+     * </pre>
+     * </tt>
+     *
+     * @param mask The colors channels to which this Material should write.
+     */
+    public void setColorWriteMask(EnumSet<ColorWriteMask> mask) {
+        mColorWriteMask = mask;
+
+        int i = 0;
+        String[] masks = new String[mask.size()];
+        for (ColorWriteMask m : mask) {
+            masks[i] = m.getStringValue();
+            ++i;
+        }
+        nativeSetColorWriteMask(mNativeRef, masks);
+    }
+
+    /**
+     * Get the color channels to which this Material is writing. See {@link #setColorWriteMask(EnumSet)}
+     * for more details.
+     *
+     * @return The color channels to which this Material is writing.
+     */
+    public EnumSet<ColorWriteMask> getColorWriteMask() {
+        return mColorWriteMask;
     }
 
     /**
@@ -1107,6 +1234,7 @@ public class Material {
     private native void nativeSetName(long nativeRef, String name);
     private native void nativeSetChromaKeyFilteringEnabled(long nativeRef, boolean enabled);
     private native void nativeSetChromaKeyFilteringColor(long nativeRef, int color);
+    private native void nativeSetColorWriteMask(long nativeRef, String[] masks);
 
     /**
      * Builder for creating {@link Material} objects.
@@ -1145,6 +1273,16 @@ public class Material {
          */
         public MaterialBuilder readsFromDepthBuffer(boolean readsFromDepthBuffer) {
             material.setReadsFromDepthBuffer(readsFromDepthBuffer);
+            return this;
+        }
+
+        /**
+         * Refer to {@link Material#setColorWriteMask(EnumSet)}.
+         *
+         * @return This builder.
+         */
+        public MaterialBuilder colorWriteMask(EnumSet<ColorWriteMask> mask) {
+            material.setColorWriteMask(mask);
             return this;
         }
 

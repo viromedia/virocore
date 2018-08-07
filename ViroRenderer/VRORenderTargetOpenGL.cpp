@@ -739,7 +739,7 @@ void VRORenderTargetOpenGL::clearDepth() {
 void VRORenderTargetOpenGL::clearColor() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
-        driver->setColorWritingEnabled(true);
+        driver->setRenderTargetColorWritingMask(VROColorMaskAll);
         GL (glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w) );
         GL (glClear(GL_COLOR_BUFFER_BIT) );
     }
@@ -752,7 +752,7 @@ void VRORenderTargetOpenGL::clearDepthAndColor() {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
         driver->setDepthWritingEnabled(true);
-        driver->setColorWritingEnabled(true);
+        driver->setRenderTargetColorWritingMask(VROColorMaskAll);
         GL (glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w) );
         GL (glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
     }

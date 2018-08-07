@@ -72,7 +72,7 @@ void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
     context->setViewMatrix(shadowView);
     
     driver->setDepthWritingEnabled(true);
-    driver->setColorWritingEnabled(false);
+    driver->setRenderTargetColorWritingMask(VROColorMaskNone);
     driver->bindRenderTarget(target, VRORenderTargetUnbindOp::Invalidate);
     target->clearDepth();
     
@@ -128,7 +128,7 @@ void VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene,
     }
     
     // Restore state
-    driver->setColorWritingEnabled(true);
+    driver->setRenderTargetColorWritingMask(VROColorMaskAll);
     context->setProjectionMatrix(previousProjection);
     context->setViewMatrix(previousView);
 }

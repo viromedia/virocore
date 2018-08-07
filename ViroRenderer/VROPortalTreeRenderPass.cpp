@@ -41,7 +41,7 @@ void VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene,
     passert (target);
     driver->bindRenderTarget(target, VRORenderTargetUnbindOp::Invalidate);
 
-    driver->setColorWritingEnabled(true);
+    driver->setRenderTargetColorWritingMask(VROColorMaskAll);
     target->clearDepthAndColor();
     target->clearStencil(0);
 
@@ -113,7 +113,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             if (portalFrame->isTwoSided()) {
                 target->disablePortalStencilWriting(portalFrame->getInactiveFace(isExit));
             }
-            driver->setColorWritingEnabled(false);
+            driver->setRenderTargetColorWritingMask(VROColorMaskNone);
             target->enablePortalStencilWriting(portalFrame->getActiveFace(isExit));
             
             // Only render the portal silhouette over the area covered
@@ -135,7 +135,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         
         // Now we're unwinding from recursion, prepare for scene rendering.
         pglpush("Contents");
-        driver->setColorWritingEnabled(true);
+        driver->setRenderTargetColorWritingMask(VROColorMaskAll);
         target->disablePortalStencilWriting(VROFace::FrontAndBack);
         
         // Draw wherever the stencil buffer value is greater than or equal
@@ -168,7 +168,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             _silhouetteMaterial->bindShader(0, {}, context, driver);
             _silhouetteMaterial->bindProperties(driver);
             
-            driver->setColorWritingEnabled(false);
+            driver->setRenderTargetColorWritingMask(VROColorMaskNone);
             target->enablePortalStencilRemoval(portalFrame->getActiveFace(isExit));
             target->setPortalStencilPassFunction(portalFrame->getActiveFace(isExit), VROStencilFunc::LessOrEqual,
                                                  portal->getRecursionLevel());
@@ -183,7 +183,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             // (so culling *must* be disabled on the portal frame, in case we're looking
             // at the transparent section from behind).
             pglpush("Portal Frame");
-            driver->setColorWritingEnabled(true);
+            driver->setRenderTargetColorWritingMask(VROColorMaskAll);
             target->disablePortalStencilWriting(VROFace::FrontAndBack);
             target->setPortalStencilPassFunction(portalFrame->getActiveFace(isExit), VROStencilFunc::LessOrEqual,
                                                  portal->getRecursionLevel() - 1);

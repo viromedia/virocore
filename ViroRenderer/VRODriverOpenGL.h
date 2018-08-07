@@ -41,7 +41,9 @@ public:
         _softwareGammaPass(false),
         _depthWritingEnabled(true),
         _depthReadingEnabled(true),
-        _colorWritingEnabled(true),
+        _materialColorWritingMask(VROColorMaskAll),
+        _renderTargetColorWritingMask(VROColorMaskAll),
+        _aggregateColorWritingMask(VROColorMaskAll),
         _cullMode(VROCullMode::None),
         _blendMode(VROBlendMode::Alpha) {
         
@@ -56,7 +58,9 @@ public:
         // etc.) changes OpenGL state outside of the VRODriver.
         _boundRenderTarget.reset();
         
-        _colorWritingEnabled = true;
+        _materialColorWritingMask = VROColorMaskAll;
+        _renderTargetColorWritingMask = VROColorMaskAll;
+        _aggregateColorWritingMask = VROColorMaskAll;
         GL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
         _depthWritingEnabled = true;
@@ -210,18 +214,20 @@ public:
         _blendMode = mode;
     }
     
-    void setColorWritingEnabled(bool enabled) {
-        if (_colorWritingEnabled == enabled) {
+    void setRenderTargetColorWritingMask(VROColorMask mask) {
+        if (_renderTargetColorWritingMask == mask) {
             return;
         }
-        
-        _colorWritingEnabled = enabled;
-        if (_colorWritingEnabled) {
-            GL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
+        _renderTargetColorWritingMask = mask;
+        updateColorMask();
+    }
+    
+    void setMaterialColorWritingMask(VROColorMask mask) {
+        if (_materialColorWritingMask == mask) {
+            return;
         }
-        else {
-            GL( glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE) );
-        }
+        _materialColorWritingMask = mask;
+        updateColorMask();
     }
     
     void bindShader(std::shared_ptr<VROShaderProgram> program) {
@@ -487,8 +493,8 @@ private:
     /*
      Current context-wide state.
      */
-    bool _colorWritingEnabled;
     bool _depthWritingEnabled, _depthReadingEnabled;
+    VROColorMask _renderTargetColorWritingMask, _materialColorWritingMask, _aggregateColorWritingMask;
     bool _stencilTestEnabled;
     VROCullMode _cullMode;
     VROBlendMode _blendMode;
@@ -510,6 +516,23 @@ private:
      ID of the backbuffer.
      */
     GLint _displayFramebuffer;
+    
+    void updateColorMask() {
+        // Both the material and render target must support writing to a color for us to
+        // enable writing to that color
+        VROColorMask mask = (VROColorMask) (_renderTargetColorWritingMask & _materialColorWritingMask);
+        if (_aggregateColorWritingMask == mask) {
+            return;
+        }
+        _aggregateColorWritingMask = mask;
+        
+        GLboolean red, green, blue, alpha;
+        red   = (mask & VROColorMaskRed)   == VROColorMaskRed   ? GL_TRUE : GL_FALSE;
+        green = (mask & VROColorMaskGreen) == VROColorMaskGreen ? GL_TRUE : GL_FALSE;
+        blue  = (mask & VROColorMaskBlue)  == VROColorMaskBlue  ? GL_TRUE : GL_FALSE;
+        alpha = (mask & VROColorMaskAlpha) == VROColorMaskAlpha ? GL_TRUE : GL_FALSE;
+        GL( glColorMask(red, green, blue, alpha) );
+    }
     
 };
 

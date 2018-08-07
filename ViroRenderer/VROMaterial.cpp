@@ -32,6 +32,7 @@ VROMaterial::VROMaterial() : VROThreadRestricted(VROThreadName::Renderer),
     _blendMode(VROBlendMode::Alpha),
     _writesToDepthBuffer(true),
     _readsFromDepthBuffer(true),
+    _colorWriteMask(VROColorMaskAll),
     _bloomThreshold(-1),
     _receivesShadows(true),
     _castsShadows(true),
@@ -78,6 +79,7 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) : VROThreadRestr
  _blendMode(material->_blendMode),
  _writesToDepthBuffer(material->_writesToDepthBuffer),
  _readsFromDepthBuffer(material->_readsFromDepthBuffer),
+ _colorWriteMask(material->_colorWriteMask),
  _bloomThreshold(material->_bloomThreshold),
  _receivesShadows(material->_receivesShadows),
  _castsShadows(material->_castsShadows),
@@ -142,6 +144,7 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _blendMode = material->_blendMode;
     _writesToDepthBuffer = material->_writesToDepthBuffer;
     _readsFromDepthBuffer = material->_readsFromDepthBuffer;
+    _colorWriteMask = material->_colorWriteMask;
     _bloomThreshold = material->_bloomThreshold;
     _receivesShadows = material->_receivesShadows;
     _castsShadows = material->_castsShadows;
@@ -324,6 +327,7 @@ void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
     driver->setCullMode(_cullMode);
     driver->setDepthReadingEnabled(_readsFromDepthBuffer);
     driver->setDepthWritingEnabled(_writesToDepthBuffer);
+    driver->setMaterialColorWritingMask(_colorWriteMask);
     driver->setBlendingMode(_blendMode);
     getSubstrate(driver)->bindProperties(driver);
 }
