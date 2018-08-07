@@ -75,6 +75,11 @@ public:
     void setOrientation(VROCameraOrientation orientation);
     void setWorldOrigin(VROMatrix4f relativeTransform);
 
+    void setNumberOfTrackedImages(int numImages) {
+        // no-op (only iOS 12+)
+    }
+
+
     void setAutofocus(bool enabled) {
         // no-op on Android
     };

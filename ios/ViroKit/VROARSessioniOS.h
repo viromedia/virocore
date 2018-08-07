@@ -60,6 +60,7 @@ public:
     void setOrientation(VROCameraOrientation orientation);
     
     void setWorldOrigin(VROMatrix4f relativeTransform);
+    void setNumberOfTrackedImages(int numImages);
     void setAutofocus(bool enabled);
     void setVideoQuality(VROVideoQuality quality);
     

@@ -211,6 +211,19 @@ void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
 #endif
 }
 
+void VROARSessioniOS::setNumberOfTrackedImages(int numImages) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+    if (@available(iOS 12.0, *) && _session && _sessionConfiguration) {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).maximumNumberOfTrackedImages = numImages;
+        } else if ([_sessionConfiguration isKindOfClass:[ARImageTrackingConfiguration class]]) {
+            ((ARImageTrackingConfiguration *) _sessionConfiguration).maximumNumberOfTrackedImages = numImages;
+        }
+        [_session runWithConfiguration:_sessionConfiguration];
+    }
+#endif
+}
+
 #pragma mark - Anchors
 
 bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {

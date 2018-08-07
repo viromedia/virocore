@@ -15,8 +15,8 @@ enum class VROTestSceneType {
     Scene,
 };
 
-static const VROTestSceneType kTestType = VROTestSceneType::Scene;
-static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
+static const VROTestSceneType kTestType = VROTestSceneType::AR;
+static const VRORendererTestType kRendererTest = VRORendererTestType::ARImageTracking;
 static const bool kSceneCheckeredBackground = NO;
 
 @interface VROTestViewController ()
@@ -54,6 +54,11 @@ static const bool kSceneCheckeredBackground = NO;
         self.renderDelegate.view = view;
         self.renderDelegate.test = kRendererTest;
         self.view = view;
+
+        if (kRendererTest == VRORendererTestType::ARImageTracking) {
+            std::shared_ptr<VROARSession> session = [view getARSession];
+            session->setNumberOfTrackedImages(1);
+        }
         
         [self testVideoRecording];
         //[self testScreenshot];

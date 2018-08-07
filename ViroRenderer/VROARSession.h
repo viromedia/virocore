@@ -158,6 +158,12 @@ public:
      Set the provider to use for hosting and resolving cloud anchors.
      */
     virtual void setCloudAnchorProvider(VROCloudAnchorProvider provider) = 0;
+
+    /*
+     Set a number > 0 to enable continuous image tracking (vs static detection).
+     (iOS 12+ only)
+     */
+    virtual void setNumberOfTrackedImages(int numImages) = 0;
     
     /*
      Adds an image target that should be tracked by this session.

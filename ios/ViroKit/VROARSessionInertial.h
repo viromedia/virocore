@@ -48,6 +48,10 @@ public:
 
     void addAnchorNode(std::shared_ptr<VRONode> node);
 
+    void setNumberOfTrackedImages(int numImages) {
+        // no-op
+    }
+    
     void setWorldOrigin(VROMatrix4f relativeTransform) {
         // no-op
     };
