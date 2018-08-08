@@ -58,6 +58,7 @@ void VROPrefilterRenderPass::render(std::shared_ptr<VROScene> scene,
     // Setup for rendering the cube
     driver->setDepthWritingEnabled(true);
     driver->setDepthReadingEnabled(true);
+    driver->setMaterialColorWritingMask(VROColorMaskAll);
     driver->setStencilTestEnabled(false);
 
     // Compile and bind the shader and its corresponding uniforms

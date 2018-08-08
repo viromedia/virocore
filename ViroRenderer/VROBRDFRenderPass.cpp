@@ -56,6 +56,7 @@ void VROBRDFRenderPass::render(std::shared_ptr<VROScene> scene,
     // Setup for rendering the quad
     driver->setDepthWritingEnabled(true);
     driver->setDepthReadingEnabled(true);
+    driver->setMaterialColorWritingMask(VROColorMaskAll);
     driver->setStencilTestEnabled(false);
 
     // Compile and bind the shader and its corresponding uniforms

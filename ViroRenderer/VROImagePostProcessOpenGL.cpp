@@ -59,6 +59,7 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
     
     driver->setDepthWritingEnabled(false);
     driver->setDepthReadingEnabled(false);
+    driver->setMaterialColorWritingMask(VROColorMaskAll);
     driver->setStencilTestEnabled(true);
     
     // Compile and bind the shader and its corresponding uniforms
@@ -77,6 +78,7 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
 void VROImagePostProcessOpenGL::begin(std::shared_ptr<VRODriver> &driver) {
     driver->setDepthWritingEnabled(false);
     driver->setDepthReadingEnabled(false);
+    driver->setMaterialColorWritingMask(VROColorMaskAll);
     driver->setStencilTestEnabled(true);
     
     // Compile and bind the shader
