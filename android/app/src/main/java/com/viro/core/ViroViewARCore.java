@@ -34,7 +34,6 @@ import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
-import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.ViroTouchGestureListener;
 import com.viro.core.internal.CameraPermissionHelper;
 import com.viro.core.internal.GLSurfaceViewQueue;
@@ -371,7 +370,7 @@ public class ViroViewARCore extends ViroView {
      */
     public ViroViewARCore(@NonNull final Context context, @Nullable final AttributeSet attrs, @AttrRes final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (ContextUtils.getActivity(context) == null) {
+        if (!(context instanceof Activity)) {
             throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
         } else {
             init(context, null);
