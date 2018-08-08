@@ -647,6 +647,7 @@ public class Material {
      *
      * Node quadNode = new Node();
      * quadNode.setGeometry(quad);
+     * quadNode.setRenderingOrder(-1); // Ensure the quad renders *before* other Nodes so that it can occlude them
      * quadNode.setPosition(new Vector(0, 0, -4));
      * </pre>
      * </tt>

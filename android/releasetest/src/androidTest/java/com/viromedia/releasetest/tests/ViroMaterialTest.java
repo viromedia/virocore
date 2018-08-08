@@ -326,6 +326,7 @@ public class ViroMaterialTest extends ViroBaseTest {
 
         final Node quadNode = new Node();
         quadNode.setGeometry(quad);
+        quadNode.setRenderingOrder(-1);
         quadNode.setPosition(new Vector(0, 0, -4));
 
         mScene.getRootNode().addChildNode(quadNode);

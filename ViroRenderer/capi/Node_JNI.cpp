@@ -472,6 +472,19 @@ VRO_METHOD(void, nativeSetVisible)(VRO_ARGS
     });
 }
 
+VRO_METHOD(void, nativeSetRenderingOrder)(VRO_ARGS
+                                          VRO_REF(VRONode) native_node_ref,
+                                          VRO_INT renderingOrder) {
+
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, renderingOrder] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setRenderingOrder(renderingOrder);
+        }
+    });
+}
+
 VRO_METHOD(void, nativeSetDragType)(VRO_ARGS
                                     VRO_REF(VRONode) native_node_ref,
                                     VRO_STRING dragType) {

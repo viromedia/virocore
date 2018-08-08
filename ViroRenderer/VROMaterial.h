@@ -553,7 +553,7 @@ private:
      other materials. See VROSortKey for where this falls within the hierarchy of renderinng sort
      concerns.
      */
-    uint32_t _renderingOrder;
+    int _renderingOrder;
     
     /*
      Representation of this material in the underlying graphics hardware.

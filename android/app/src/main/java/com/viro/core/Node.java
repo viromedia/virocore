@@ -209,6 +209,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private EnumSet<TransformBehavior> mTransformBehaviors;
     private String mTag;
     private Camera mCamera;
+    private int mRenderingOrder = 0;
 
     private EventDelegate mEventDelegate;
     private ClickListener mClickListener;
@@ -637,6 +638,30 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public boolean isVisible() {
         return mVisible;
+    }
+
+    /**
+     * Set the rendering order of this Node. This determines the order in which this Node is
+     * rendered relative to other Nodes. Nodes with greater rendering orders are rendered last.
+     * The default rendering order is zero. For example, setting a Node's rendering order to -1
+     * will cause the Node to be rendered <i>before</i> all Nodes with rendering orders greater
+     * than or equal to 0.
+     *
+     * @param renderingOrder The rendering order, as an int.
+     */
+    public void setRenderingOrder(int renderingOrder) {
+        mRenderingOrder = renderingOrder;
+        nativeSetRenderingOrder(mNativeRef, renderingOrder);
+    }
+
+    /**
+     * Get the rendering order of this Node. The rendering order determines the order in which
+     * this Node is rendered relative to other Nodes.
+     *
+     * @return The rendering order, as an int.
+     */
+    public int getRenderingOrder() {
+        return mRenderingOrder;
     }
 
     /**
@@ -1658,6 +1683,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeUpdateWorldTransforms(long nodeReference, long parentReference);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
+    private native void nativeSetRenderingOrder(long nodeReference, int renderingOrder);
     private native void nativeSetDragType(long nodeReference, String dragType);
     private native void nativeSetDragPlanePoint(long nodeReference, float[] planePoint);
     private native void nativeSetDragPlaneNormal(long nodeReference, float[] planeNormal);
