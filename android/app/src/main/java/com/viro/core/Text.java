@@ -354,7 +354,8 @@ public class Text extends Geometry {
      * materials to the text: Material 0 will represent the front of the Text, Material 1 will represent the
      * back of the Text, and Material 2 will represent the sides of the Text. You can set the
      * colors of these Materials to accordingly change the colors of different parts of the
-     * Text. For example:<p><pre>
+     * Text. For example:
+     * <p><pre>
      * Material frontMaterial = new Material();
      * frontMaterial.setDiffuseColor(Color.WHITE);
      *
@@ -363,6 +364,7 @@ public class Text extends Geometry {
      *
      * Material sideMaterial = new Material();
      * sideMaterial.setDiffuseColor(Color.RED);
+     *
      * List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
      * text.setMaterials(materials);
      * </pre><p>
@@ -647,6 +649,7 @@ public class Text extends Geometry {
      *
      * Material sideMaterial = new Material();
      * sideMaterial.setDiffuseColor(Color.RED);
+     *
      * List<Material> materials = Arrays.asList(frontMaterial, backMaterial, sideMaterial);
      * text.setMaterials(materials);
      * </pre><p>

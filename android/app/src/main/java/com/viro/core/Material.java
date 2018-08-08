@@ -497,7 +497,7 @@ public class Material {
 
     /**
      * The bridge creates immutable materials on the UI thread, which are then copied to individual
-     * components. It therefore needs this constructor, because the setters on this constructor
+     * components. It therefore needs this constructor, because the setters of this class
      * all dispatch to the rendering thread -- we can't do that for the bridge because those setters
      * will end up running after the materials have already been copied and assigned to components.
      * Hence this constructor that does it all at once on the UI thread.
@@ -507,10 +507,11 @@ public class Material {
     public Material(LightingModel lightingModel, int diffuseColor, Texture diffuseTexture, float diffuseIntensity, Texture specularTexture,
                     float shininess, float fresnelExponent, Texture normalMap, CullMode cullMode,
                     TransparencyMode transparencyMode, BlendMode blendMode, float bloomThreshold,
-                    boolean writesToDepthBuffer, boolean readsFromDepthBuffer) {
+                    boolean writesToDepthBuffer, boolean readsFromDepthBuffer, EnumSet<ColorWriteMask> colorWriteMask) {
 
         mWritesToDepthBuffer = writesToDepthBuffer;
         mReadsFromDepthBuffer = readsFromDepthBuffer;
+        mColorWriteMask = colorWriteMask;
         mLightingModel = lightingModel;
         mDiffuseTexture = diffuseTexture;
         mDiffuseColor = diffuseColor;
@@ -534,7 +535,8 @@ public class Material {
                 cullMode.getStringValue(),
                 transparencyMode.getStringValue(),
                 blendMode.getStringValue(),
-                bloomThreshold, writesToDepthBuffer, readsFromDepthBuffer);
+                bloomThreshold, writesToDepthBuffer, readsFromDepthBuffer,
+                getMaskArray(colorWriteMask));
     }
     //#ENDIF
     @Override
@@ -656,14 +658,17 @@ public class Material {
      */
     public void setColorWriteMask(EnumSet<ColorWriteMask> mask) {
         mColorWriteMask = mask;
+        nativeSetColorWriteMask(mNativeRef, getMaskArray(mask));
+    }
 
+    private static String[] getMaskArray(EnumSet<ColorWriteMask> mask) {
         int i = 0;
         String[] masks = new String[mask.size()];
         for (ColorWriteMask m : mask) {
             masks[i] = m.getStringValue();
             ++i;
         }
-        nativeSetColorWriteMask(mNativeRef, masks);
+        return masks;
     }
 
     /**
@@ -1216,7 +1221,8 @@ public class Material {
     private native long nativeCreateImmutableMaterial(String lightingModel, long diffuseColor, long diffuseTexture, float diffuseIntensity, long specularTexture,
                                                       float shininess, float fresnelExponent, long normalMap, String cullMode,
                                                       String transparencyMode, String blendMode, float bloomThreshold,
-                                                      boolean writesToDepthBuffer, boolean readsFromDepthBuffer);
+                                                      boolean writesToDepthBuffer, boolean readsFromDepthBuffer,
+                                                      String[] colorWriteMask);
     private native void nativeSetWritesToDepthBuffer(long nativeRef, boolean writesToDepthBuffer);
     private native void nativeSetReadsFromDepthBuffer(long nativeRef, boolean readsFromDepthBuffer);
     private native void nativeSetTexture(long nativeRef, long textureRef, String materialPropertyName);

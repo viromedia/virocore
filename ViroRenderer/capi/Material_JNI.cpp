@@ -114,6 +114,18 @@ VROColorMask parseColorMask(std::string strName) {
     }
 }
 
+VROColorMask parseColorMaskArray(VRO_ENV env, VRO_STRING_ARRAY masks_j) {
+    VROColorMask mask = VROColorMaskNone;
+
+    int numMasks = VRO_ARRAY_LENGTH(masks_j);
+    for (int i = 0; i < numMasks; i++) {
+        VRO_STRING mask_j = VRO_STRING_ARRAY_GET(masks_j, i);
+        std::string mask_s = VRO_STRING_STL(mask_j);
+        mask = (VROColorMask) (mask | parseColorMask(mask_s));
+    }
+    return mask;
+}
+
 VRO_METHOD(VRO_REF(VROMaterial), nativeCreateMaterial)(VRO_NO_ARGS) {
     std::shared_ptr<VROMaterial> materialPtr = std::make_shared<VROMaterial>();
     return VRO_REF_NEW(VROMaterial, materialPtr);
@@ -124,7 +136,8 @@ VRO_METHOD(VRO_REF(VROMaterial), nativeCreateImmutableMaterial)(VRO_ARGS
                                                    VRO_FLOAT diffuseIntensity, VRO_REF(VROTexture) specularTexture,
                                                    VRO_FLOAT shininess, VRO_FLOAT fresnelExponent, VRO_REF(VROTexture) normalMap, VRO_STRING cullMode,
                                                    VRO_STRING transparencyMode, VRO_STRING blendMode, VRO_FLOAT bloomThreshold,
-                                                   VRO_BOOL writesToDepthBuffer, VRO_BOOL readsFromDepthBuffer) {
+                                                   VRO_BOOL writesToDepthBuffer, VRO_BOOL readsFromDepthBuffer,
+                                                   VRO_STRING_ARRAY colorWriteMask) {
     VRO_METHOD_PREAMBLE;
 
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
@@ -144,6 +157,7 @@ VRO_METHOD(VRO_REF(VROMaterial), nativeCreateImmutableMaterial)(VRO_ARGS
     material->setBloomThreshold(bloomThreshold);
     material->setWritesToDepthBuffer(writesToDepthBuffer);
     material->setReadsFromDepthBuffer(readsFromDepthBuffer);
+    material->setColorWriteMask(parseColorMaskArray(env, colorWriteMask));
     material->setThreadRestrictionEnabled(true);
 
     return VRO_REF_NEW(VROMaterial, material);
@@ -461,14 +475,7 @@ VRO_METHOD(void, nativeSetChromaKeyFilteringColor)(VRO_ARGS
 VRO_METHOD(void, nativeSetColorWriteMask)(VRO_ARGS
                                           VRO_REF(VROMaterial) material_j, VRO_STRING_ARRAY masks_j) {
     std::weak_ptr<VROMaterial> material_w = VRO_REF_GET(VROMaterial, material_j);
-    VROColorMask mask = VROColorMaskNone;
-
-    int numMasks = VRO_ARRAY_LENGTH(masks_j);
-    for (int i = 0; i < numMasks; i++) {
-        VRO_STRING mask_j = VRO_STRING_ARRAY_GET(masks_j, i);
-        std::string mask_s = VRO_STRING_STL(mask_j);
-        mask = (VROColorMask) (mask | parseColorMask(mask_s));
-    }
+    VROColorMask mask = parseColorMaskArray(env, masks_j);
 
     VROPlatformDispatchAsyncRenderer([material_w, mask] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
