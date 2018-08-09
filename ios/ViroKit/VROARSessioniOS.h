@@ -43,6 +43,8 @@ public:
     void setCloudAnchorProvider(VROCloudAnchorProvider provider);
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
+    void addARObjectTarget(std::shared_ptr<VROARObjectTarget> target);
+    void removeARObjectTarget(std::shared_ptr<VROARObjectTarget> target);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     void hostCloudAnchor(std::shared_ptr<VROARAnchor> anchor,
@@ -128,6 +130,19 @@ private:
      that was used to create the ARReferenceImage.
      */
     std::map<ARReferenceImage *, std::shared_ptr<VROARImageTarget>> _arKitReferenceImageMap;
+#endif
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+    /*
+     Set of ARReferenceObjects to detect
+     */
+    NSMutableSet<ARReferenceObject *> *_arKitObjectDetectionSet;
+
+    /*
+     Map of ARReferenceObject ObjC objects to a std::shared_ptr<VROARObjectTarget>
+     that was used to create the ARReferenceObject.
+     */
+    std::map<ARReferenceObject *, std::shared_ptr<VROARObjectTarget>> _arKitReferenceObjectMap;
 #endif
     
     /*

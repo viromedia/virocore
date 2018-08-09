@@ -22,7 +22,9 @@
 #include <algorithm>
 #include "VROPlatformUtil.h"
 #include "VROARImageTargetiOS.h"
+#include "VROARObjectTargetiOS.h"
 #include "VROARImageAnchor.h"
+#include "VROARObjectAnchor.h"
 #include "VROPortal.h"
 #include "VROBox.h"
 #include "VROProjector.h"
@@ -73,6 +75,13 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
         if (@available(iOS 11.3, *)) {
             _arKitImageDetectionSet = [[NSMutableSet alloc] init];
             config.detectionImages = _arKitImageDetectionSet;
+        }
+#endif
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+        if (@available(iOS 12.0, *)) {
+            _arKitObjectDetectionSet = [[NSMutableSet alloc] init];
+            config.detectionObjects = _arKitObjectDetectionSet;
         }
 #endif
         
@@ -456,6 +465,63 @@ void VROARSessioniOS::outputTextTapped() {
 }
 #endif /* ENABLE_OPENCV */
 
+#pragma mark - Object Targets
+void VROARSessioniOS::addARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+    if (@available(iOS 12.0, *)) {
+        std::shared_ptr<VROARObjectTargetiOS> objectTarget = std::dynamic_pointer_cast<VROARObjectTargetiOS>(target);
+        
+        if (objectTarget && getTrackingType() == VROTrackingType::DOF6) {
+            ARReferenceObject *refObject = objectTarget->getARReferenceObject();
+            
+            // add the ARReferenceObject & VROARObjectTarget to a map
+            _arKitReferenceObjectMap[refObject] = target;
+            
+            // Add the ARReferenceObject to the set of objects for detection, update the config and "run" session.
+            // Note, we still need to set the config for the ARSession to start detecting the new target (not
+            // just modifying the set).
+            [_arKitObjectDetectionSet addObject:refObject];
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).detectionObjects = _arKitObjectDetectionSet;
+            [_session runWithConfiguration:_sessionConfiguration];
+        }
+    }
+#endif
+}
+
+void VROARSessioniOS::removeARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+    if (@available(iOS 12.0, *)) {
+        std::shared_ptr<VROARObjectTargetiOS> objectTarget = std::dynamic_pointer_cast<VROARObjectTargetiOS>(target);
+        if (objectTarget && getTrackingType() == VROTrackingType::DOF6) {
+            ARReferenceObject *refObject = objectTarget->getARReferenceObject();
+            if (refObject) {
+                
+                // call remove anchor (ARKit should do this IMHO).
+                std::shared_ptr<VROARAnchor> anchor = target->getAnchor();
+                if (anchor) {
+                    removeAnchor(anchor);
+                }
+                
+                // delete the VROARImageTarget from _arKitReferenceImageMap
+                for (auto it = _arKitReferenceObjectMap.begin(); it != _arKitReferenceObjectMap.end();) {
+                    if (it->second == target) {
+                        it = _arKitReferenceObjectMap.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+                
+                // delete the ARReferenceImage from the set of images to detect
+                [_arKitObjectDetectionSet removeObject:refObject];
+                
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).detectionObjects = _arKitObjectDetectionSet;
+                [_session runWithConfiguration:_sessionConfiguration];
+            }
+        }
+    }
+#endif
+}
+
 #pragma mark - Internal Methods
 
 std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *anchor) {
@@ -525,6 +591,17 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
         if (it != _arKitReferenceImageMap.end()) {
             std::shared_ptr<VROARImageTarget> target = it->second;
             vAnchor = std::make_shared<VROARImageAnchor>(target);
+            target->setAnchor(vAnchor);
+        }
+    }
+#endif
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+    else if(@available(iOS 12.0, *) && [anchor isKindOfClass:[ARObjectAnchor class]]) {
+        ARObjectAnchor *objAnchor = (ARObjectAnchor *)anchor;
+        auto it = _arKitReferenceObjectMap.find(objAnchor.referenceObject);
+        if (it != _arKitReferenceObjectMap.end()) {
+            std::shared_ptr<VROARObjectTarget> target = it->second;
+            vAnchor = std::make_shared<VROARObjectAnchor>(target);
             target->setAnchor(vAnchor);
         }
     }

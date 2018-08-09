@@ -29,6 +29,14 @@ public:
     void setCloudAnchorProvider(VROCloudAnchorProvider provider);
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
+    
+    void addARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+        // unsupported
+    }
+    void removeARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+        // unsupported
+    }
+    
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     void updateAnchor(std::shared_ptr<VROARAnchor> anchor);

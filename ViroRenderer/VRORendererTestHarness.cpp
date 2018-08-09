@@ -38,6 +38,7 @@
 
 #if VRO_PLATFORM_IOS
 #include "VROARImageTrackingTest.h"
+#include "VROARObjectTrackingTest.h"
 #endif
 
 VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
@@ -106,6 +107,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
 #if VRO_PLATFORM_IOS
         case VRORendererTestType::ARImageTracking:
             return std::make_shared<VROARImageTrackingTest>();
+        case VRORendererTestType::ARObjectTracking:
+            return std::make_shared<VROARObjectTrackingTest>();
 #endif
         case VRORendererTestType::Portal:
             return std::make_shared<VROPortalTest>();

@@ -32,6 +32,9 @@ void VROARDeclarativeSession::setARSession(std::shared_ptr<VROARSession> session
     for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
         session->addARImageTarget(*it);
     }
+    for (auto it = _objectTargets.begin(); it < _objectTargets.end(); it++) {
+        session->addARObjectTarget(*it);
+    }
 }
 
 void VROARDeclarativeSession::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
@@ -59,6 +62,32 @@ void VROARDeclarativeSession::removeARImageTarget(std::shared_ptr<VROARImageTarg
         }
     }
 }
+
+void VROARDeclarativeSession::addARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+    if (target) {
+        _objectTargets.push_back(target);
+        std::shared_ptr<VROARSession> arSession = _arSession.lock();
+        if (arSession) {
+            arSession->addARObjectTarget(target);
+        }
+    }
+}
+
+void VROARDeclarativeSession::removeARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+    if (target) {
+        _objectTargets.erase(
+                            std::remove_if(_objectTargets.begin(), _objectTargets.end(),
+                                           [target](std::shared_ptr<VROARObjectTarget> candidate) {
+                                               return candidate == target;
+                                           }), _objectTargets.end());
+
+        std::shared_ptr<VROARSession> arSession = _arSession.lock();
+        if (arSession) {
+            arSession->removeARObjectTarget(target);
+        }
+    }
+}
+
 
 void VROARDeclarativeSession::addARNode(std::shared_ptr<VROARDeclarativeNode> node) {
     // TODO: figure out a way to make ARNode simply not be visible at start.
@@ -100,6 +129,9 @@ void VROARDeclarativeSession::sceneWillAppear() {
         for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
             arSession->addARImageTarget(*it);
         }
+        for (auto it = _objectTargets.begin(); it < _objectTargets.end(); it++) {
+            arSession->addARObjectTarget(*it);
+        }
     }
 }
 
@@ -110,6 +142,9 @@ void VROARDeclarativeSession::sceneWillDisappear() {
     if (arSession) {
         for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
             arSession->removeARImageTarget(*it);
+        }
+        for (auto it = _objectTargets.begin(); it < _objectTargets.end(); it++) {
+            arSession->removeARObjectTarget(*it);
         }
     }
 }
