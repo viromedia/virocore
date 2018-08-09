@@ -57,6 +57,15 @@ public:
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
 
+    void addARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+        // no-op
+    }
+
+    void removeARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
+        // no-op
+    }
+
+
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     void updateAnchor(std::shared_ptr<VROARAnchor> anchor);
