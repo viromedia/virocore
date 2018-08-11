@@ -585,6 +585,19 @@
 		1331B60C20C8832C00D1C5F5 /* glm in Copy GLM Files to Framework */ = {isa = PBXBuildFile; fileRef = 8AE44C942021087700CE8394 /* glm */; };
 		13477941207EB78A002CE280 /* VROMetricsRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 13477940207EB78A002CE280 /* VROMetricsRecorder.h */; };
 		13477944207EB936002CE280 /* VROMetricsRecorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13477942207EB936002CE280 /* VROMetricsRecorder.mm */; };
+		13B66D2F211E55960040FB72 /* VROARObjectTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB5B738211B70700030906A /* VROARObjectTarget.h */; };
+		13B66D30211E55A00040FB72 /* VROARObjectAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB5B73A211B72120030906A /* VROARObjectAnchor.h */; };
+		13B66D31211E55FC0040FB72 /* VROARObjectTargetiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD76EA4211B7BF10045BD5F /* VROARObjectTargetiOS.h */; };
+		13B66D32211E55FF0040FB72 /* VROARObjectTargetiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AD76EA3211B7BF10045BD5F /* VROARObjectTargetiOS.cpp */; };
+		13B66D33211E56A30040FB72 /* VROGlyphAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2F342420F54BAD001962D0 /* VROGlyphAtlas.h */; };
+		13B66D34211E56B40040FB72 /* VROTextFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C5E2101624500637A75 /* VROTextFormatter.h */; };
+		13B66D35211E56BD0040FB72 /* VROTextFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C5D2101624500637A75 /* VROTextFormatter.cpp */; };
+		13B66D36211E56CB0040FB72 /* VROContour.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C59210159E600637A75 /* VROContour.h */; };
+		13B66D37211E56D40040FB72 /* VROContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F201C5A210159E700637A75 /* VROContour.cpp */; };
+		13B66D38211E56E70040FB72 /* VROVectorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C562101597200637A75 /* VROVectorizer.h */; };
+		13B66D39211E6DB30040FB72 /* VROARDeclarativeObjectNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD76EA1211B79A50045BD5F /* VROARDeclarativeObjectNode.h */; };
+		13B66D3A211E6DCD0040FB72 /* VROGlyphAtlasOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2F342820F54FAC001962D0 /* VROGlyphAtlasOpenGL.h */; };
+		13B66D3B211E6DF30040FB72 /* VROPolygonTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C4E21010E0B00637A75 /* VROPolygonTest.h */; };
 		13F631AA2065C1EA00A74EFC /* keen_io_sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A72065C1EA00A74EFC /* keen_io_sqlite3ext.h */; };
 		13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 13F631A82065C1EA00A74EFC /* keen_io_sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		13F631AD2065C1EA00A74EFC /* keen_io_sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A92065C1EA00A74EFC /* keen_io_sqlite3.h */; };
@@ -3857,6 +3870,7 @@
 				1331B4EF20C8832C00D1C5F5 /* VROARImageTargetiOS.h in Headers */,
 				1331B4F020C8832C00D1C5F5 /* VROARSession.h in Headers */,
 				1331B4F120C8832C00D1C5F5 /* VROToneMappingRenderPass.h in Headers */,
+				13B66D34211E56B40040FB72 /* VROTextFormatter.h in Headers */,
 				1331B4F220C8832C00D1C5F5 /* VROIBLPreprocess.h in Headers */,
 				1331B4F320C8832C00D1C5F5 /* VROEventDelegate.h in Headers */,
 				1331B4F420C8832C00D1C5F5 /* VROTorusTest.h in Headers */,
@@ -3872,6 +3886,7 @@
 				1331B4FE20C8832C00D1C5F5 /* VROReticle.h in Headers */,
 				1331B4FF20C8832C00D1C5F5 /* VROScene.h in Headers */,
 				1331B50020C8832C00D1C5F5 /* VROCamera.h in Headers */,
+				13B66D30211E55A00040FB72 /* VROARObjectAnchor.h in Headers */,
 				1331B50120C8832C00D1C5F5 /* VROPBRTexturedTest.h in Headers */,
 				1331B50220C8832C00D1C5F5 /* VROPortalTreeRenderPass.h in Headers */,
 				1331B50320C8832C00D1C5F5 /* VROSparseBitSet.h in Headers */,
@@ -3888,6 +3903,7 @@
 				1331B50E20C8832C00D1C5F5 /* VROTimingFunctionLinear.h in Headers */,
 				1331B50F20C8832C00D1C5F5 /* VROARImageTrackingTest.h in Headers */,
 				1331B51020C8832C00D1C5F5 /* VROTorusKnot.h in Headers */,
+				13B66D39211E6DB30040FB72 /* VROARDeclarativeObjectNode.h in Headers */,
 				1331B51120C8832C00D1C5F5 /* VROTrackingHelper.h in Headers */,
 				1331B51220C8832C00D1C5F5 /* VROShaderCapabilities.h in Headers */,
 				1331B51320C8832C00D1C5F5 /* VROFrameSynchronizerInternal.h in Headers */,
@@ -3901,6 +3917,7 @@
 				1331B51B20C8832C00D1C5F5 /* VRODisplayOpenGLiOSGVR.h in Headers */,
 				1331B51C20C8832C00D1C5F5 /* VROARConstraintMatcher.h in Headers */,
 				1331B51D20C8832C00D1C5F5 /* VRONormalMapTest.h in Headers */,
+				13B66D33211E56A30040FB72 /* VROGlyphAtlas.h in Headers */,
 				1331B51E20C8832C00D1C5F5 /* VROGeometrySource.h in Headers */,
 				1331B51F20C8832C00D1C5F5 /* VROMaterial.h in Headers */,
 				1331B52020C8832C00D1C5F5 /* VROConvert.h in Headers */,
@@ -3988,6 +4005,7 @@
 				1331B56F20C8832C00D1C5F5 /* VROHoverDistanceListener.h in Headers */,
 				1331B57020C8832C00D1C5F5 /* VROFrustumBoxIntersectionMetadata.h in Headers */,
 				1331B57120C8832C00D1C5F5 /* VROFrustum.h in Headers */,
+				13B66D31211E55FC0040FB72 /* VROARObjectTargetiOS.h in Headers */,
 				1331B57220C8832C00D1C5F5 /* VROViewRecorder.h in Headers */,
 				1331B57320C8832C00D1C5F5 /* VROShapeUtils.h in Headers */,
 				1331B57420C8832C00D1C5F5 /* VROFrustumPlane.h in Headers */,
@@ -4017,6 +4035,7 @@
 				1331B58C20C8832C00D1C5F5 /* VROARNodeDelegateiOS.h in Headers */,
 				1331B58D20C8832C00D1C5F5 /* VROPortalDelegateiOS.h in Headers */,
 				1331B58E20C8832C00D1C5F5 /* VROARImageTarget.h in Headers */,
+				13B66D38211E56E70040FB72 /* VROVectorizer.h in Headers */,
 				1331B58F20C8832C00D1C5F5 /* VROBox.h in Headers */,
 				1331B59020C8832C00D1C5F5 /* VROSurface.h in Headers */,
 				1331B59120C8832C00D1C5F5 /* VRORenderDelegateiOS.h in Headers */,
@@ -4036,6 +4055,7 @@
 				1331B59F20C8832C00D1C5F5 /* VROHitTestResult.h in Headers */,
 				1331B5A020C8832C00D1C5F5 /* VROOpenGL.h in Headers */,
 				1331B5A120C8832C00D1C5F5 /* VROVideoTextureCacheMetal.h in Headers */,
+				13B66D3A211E6DCD0040FB72 /* VROGlyphAtlasOpenGL.h in Headers */,
 				1331B5A220C8832C00D1C5F5 /* VROARDeclarativeNode.h in Headers */,
 				1331B5A320C8832C00D1C5F5 /* VROTransaction.h in Headers */,
 				1331B5A420C8832C00D1C5F5 /* VROPolyline.h in Headers */,
@@ -4052,6 +4072,7 @@
 				1331B5AE20C8832C00D1C5F5 /* VRORenderUtil.h in Headers */,
 				1331B5AF20C8832C00D1C5F5 /* VROPolylineTest.h in Headers */,
 				1331B5B020C8832C00D1C5F5 /* VROTree.h in Headers */,
+				13B66D36211E56CB0040FB72 /* VROContour.h in Headers */,
 				1331B5B120C8832C00D1C5F5 /* VROARCameraInertial.h in Headers */,
 				1331B5B220C8832C00D1C5F5 /* VROSoundDelegate.h in Headers */,
 				1331B5B320C8832C00D1C5F5 /* VROHDRLoader.h in Headers */,
@@ -4072,6 +4093,7 @@
 				1331B5C220C8832C00D1C5F5 /* VROConcurrentBuffer.h in Headers */,
 				1331B5C320C8832C00D1C5F5 /* VROPortalTraversalListener.h in Headers */,
 				1331B5C420C8832C00D1C5F5 /* VROARSceneDelegateiOS.h in Headers */,
+				13B66D3B211E6DF30040FB72 /* VROPolygonTest.h in Headers */,
 				1331B5C520C8832C00D1C5F5 /* VROAnimationFloat.h in Headers */,
 				1331B5C620C8832C00D1C5F5 /* VROAnimationVector3f.h in Headers */,
 				1331B5C720C8832C00D1C5F5 /* VROKeyframeAnimation.h in Headers */,
@@ -4992,11 +5014,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5090,11 +5108,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5131,11 +5145,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5196,6 +5206,7 @@
 				1331B3E620C8832C00D1C5F5 /* VROTransformConstraint.cpp in Sources */,
 				1331B3E720C8832C00D1C5F5 /* HTTPCodes.m in Sources */,
 				1331B3E820C8832C00D1C5F5 /* VROPlatformUtil.cpp in Sources */,
+				13B66D32211E55FF0040FB72 /* VROARObjectTargetiOS.cpp in Sources */,
 				1331B3E920C8832C00D1C5F5 /* VROARShadow.cpp in Sources */,
 				1331B3EA20C8832C00D1C5F5 /* VROScene.cpp in Sources */,
 				1331B3EB20C8832C00D1C5F5 /* KIOQuery.m in Sources */,
@@ -5235,6 +5246,7 @@
 				1331B40D20C8832C00D1C5F5 /* VROARScene.cpp in Sources */,
 				1331B40E20C8832C00D1C5F5 /* VROSceneController.cpp in Sources */,
 				1331B40F20C8832C00D1C5F5 /* VROVideoTextureCacheOpenGL.cpp in Sources */,
+				13B66D37211E56D40040FB72 /* VROContour.cpp in Sources */,
 				1331B41020C8832C00D1C5F5 /* VRORendererTestHarness.cpp in Sources */,
 				1331B41120C8832C00D1C5F5 /* VROPencil.cpp in Sources */,
 				1331B41220C8832C00D1C5F5 /* VROMaterial.cpp in Sources */,
@@ -5280,6 +5292,7 @@
 				1331B43A20C8832C00D1C5F5 /* VROPortalTest.cpp in Sources */,
 				1331B43B20C8832C00D1C5F5 /* VROGeometrySubstrateOpenGL.cpp in Sources */,
 				1331B43C20C8832C00D1C5F5 /* VROARDeclarativeSession.cpp in Sources */,
+				13B66D35211E56BD0040FB72 /* VROTextFormatter.cpp in Sources */,
 				1331B43D20C8832C00D1C5F5 /* VROMaterialSubstrateMetal.cpp in Sources */,
 				1331B43E20C8832C00D1C5F5 /* VROKeyframeAnimation.cpp in Sources */,
 				1331B43F20C8832C00D1C5F5 /* VRODriverOpenGLiOS.cpp in Sources */,
