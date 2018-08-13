@@ -787,6 +787,7 @@
 		8F1B4AA01F69F4A900156809 /* pug_animated.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */; };
 		8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */; };
 		8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */; };
+		8F1DE3BC21221DDD00C8749D /* VROAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DE3BB21221DDD00C8749D /* VROAtomic.h */; };
 		8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */; };
 		8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DF5A81F36408700886805 /* VROPortalFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F1E01001FD10D7D00DF9068 /* VROViewControllerGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1728,6 +1729,7 @@
 		8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = pug_animated.vrx; path = ViroSample/pug_animated.vrx; sourceTree = "<group>"; };
 		8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_specular.png; path = ViroSample/pug_body_specular.png; sourceTree = "<group>"; };
 		8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_diffuse.png; path = ViroSample/pug_body_diffuse.png; sourceTree = "<group>"; };
+		8F1DE3BB21221DDD00C8749D /* VROAtomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAtomic.h; sourceTree = "<group>"; };
 		8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalFrame.cpp; sourceTree = "<group>"; };
 		8F1DF5A81F36408700886805 /* VROPortalFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalFrame.h; sourceTree = "<group>"; };
 		8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROViewControllerGVR.h; sourceTree = "<group>"; };
@@ -3134,6 +3136,7 @@
 				8FEACF0A2018319C0082D18B /* VRORenderUtil.cpp */,
 				8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */,
 				8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */,
+				8F1DE3BB21221DDD00C8749D /* VROAtomic.h */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -4395,6 +4398,7 @@
 				8FEACF0D2018319C0082D18B /* VRORenderUtil.h in Headers */,
 				8F3AF9931F95024D0087BA73 /* VROPolylineTest.h in Headers */,
 				8FF214111F314E0E005ACA96 /* VROTree.h in Headers */,
+				8F1DE3BC21221DDD00C8749D /* VROAtomic.h in Headers */,
 				8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */,
 				8A130D8C1E3BBEA90050D83B /* VROSoundDelegate.h in Headers */,
 				8FEACEE720169EA90082D18B /* VROHDRLoader.h in Headers */,

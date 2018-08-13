@@ -17,7 +17,12 @@
 #include "VROContour.h"
 #include "VROGlyphAtlasOpenGL.h"
 #include "poly2tri/poly2tri.h"
+
+#if VRO_PLATFORM_WASM
+#include "ftstroke.h"
+#else
 #include "freetype/ftstroke.h"
+#endif
 
 static const int kBezierSteps = 4;
 static const float kExtrusion = 1;

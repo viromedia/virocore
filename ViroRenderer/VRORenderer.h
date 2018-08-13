@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <vector>
+#include "VROAtomic.h"
 #include "VROSceneController.h"
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
@@ -238,7 +239,7 @@ public:
      TODO: Revisit unifying Camera APIs in VIRO-2235.
      */
     VROVector3f getCameraPositionRealTime() const {
-        return _lastComputedCameraPosition.load();
+        return _lastComputedCameraPosition;
     }
     
     /*
@@ -246,7 +247,7 @@ public:
      TODO: Revisit unifying Camera APIs in VIRO-2235.
      */
     VROVector3f getCameraRotationRealTime() const {
-        return _lastComputedCameraRotation.load();
+        return _lastComputedCameraRotation;
     }
     
     /*
@@ -254,7 +255,7 @@ public:
      TODO: Revisit unifying Camera APIs in VIRO-2235.
      */
     VROVector3f getCameraForwardRealTime() const {
-        return _lastComputedCameraForward.load();
+        return _lastComputedCameraForward;
     }
     
     /*
@@ -335,9 +336,9 @@ private:
     /*
      TODO: Revisit unifying Camera APIs in VIRO-2235.
      */
-    std::atomic<VROVector3f> _lastComputedCameraPosition;
-    std::atomic<VROVector3f> _lastComputedCameraRotation;
-    std::atomic<VROVector3f> _lastComputedCameraForward;
+    VROAtomic<VROVector3f> _lastComputedCameraPosition;
+    VROAtomic<VROVector3f> _lastComputedCameraRotation;
+    VROAtomic<VROVector3f> _lastComputedCameraForward;
     std::shared_ptr<VROCameraDelegate> _cameraDelegate;
 
     VROMatrix4f _lastLeftEyeView;

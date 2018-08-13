@@ -141,12 +141,13 @@ const VROBoundingBox &VROGeometry::getBoundingBox() {
         }
     }
     _boundingBoxComputed = true;
-    _lastBounds.store(_bounds);
+    _lastBounds = _bounds;
+
     return _bounds;
 }
 
 VROBoundingBox VROGeometry::getLastBoundingBox() const {
-    return _lastBounds.load();
+    return _lastBounds;
 }
 
 VROVector3f VROGeometry::getCenter() {

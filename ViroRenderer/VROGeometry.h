@@ -13,7 +13,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <atomic>
+#include "VROAtomic.h"
 #include "VRORenderContext.h"
 #include "VRODriver.h"
 #include "VROSortKey.h"
@@ -263,7 +263,7 @@ private:
     /*
      Atomic version of the bounding box. Not used by the rendering thread.
      */
-    std::atomic<VROBoundingBox> _lastBounds;
+    VROAtomic<VROBoundingBox> _lastBounds;
 
     /*
      True if the bounding box for this VROGeometry has been computed.

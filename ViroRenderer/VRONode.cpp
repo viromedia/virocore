@@ -114,6 +114,10 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _dragPlanePoint(node._dragPlanePoint),
     _dragPlaneNormal(node._dragPlaneNormal),
     _dragMaxDistance(node._dragMaxDistance),
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS || VRO_PLATFORM_ANDROID
+    // Atomics need to be explicitly loaded if in initializer lists
+    // (normally the assignment operator will automatically load the
+    // atomic)
     _lastWorldTransform(node._lastWorldTransform.load()),
     _lastWorldPosition(node._lastWorldPosition.load()),
     _lastWorldRotation(node._lastWorldRotation.load()),
@@ -126,6 +130,20 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _lastRotationPivotInverse(node._lastRotationPivotInverse.load()),
     _lastHasScalePivot(node._lastHasScalePivot.load()),
     _lastHasRotationPivot(node._lastHasRotationPivot.load()),
+#else
+    _lastWorldTransform(node._lastWorldTransform),
+    _lastWorldPosition(node._lastWorldPosition),
+    _lastWorldRotation(node._lastWorldRotation),
+    _lastPosition(node._lastPosition),
+    _lastScale(node._lastScale),
+    _lastRotation(node._lastRotation),
+    _lastScalePivot(node._lastScalePivot),
+    _lastScalePivotInverse(node._lastScalePivotInverse),
+    _lastRotationPivot(node._lastRotationPivot),
+    _lastRotationPivotInverse(node._lastRotationPivotInverse),
+    _lastHasScalePivot(node._lastHasScalePivot),
+    _lastHasRotationPivot(node._lastHasRotationPivot),
+#endif
     _holdRendering(node._holdRendering) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
@@ -631,47 +649,47 @@ VROMatrix4f VRONode::getWorldTransform() const {
 }
 
 VROMatrix4f VRONode::getLastWorldTransform() const {
-    return _lastWorldTransform.load();
+    return _lastWorldTransform;
 }
 
 VROVector3f VRONode::getLastWorldPosition() const {
-    return _lastWorldPosition.load();
+    return _lastWorldPosition;
 }
 
 VROMatrix4f VRONode::getLastWorldRotation() const {
-    return _lastWorldRotation.load();
+    return _lastWorldRotation;
 }
 
 VROVector3f VRONode::getLastLocalPosition() const {
-    return _lastPosition.load();
+    return _lastPosition;
 }
 
 VROQuaternion VRONode::getLastLocalRotation() const {
-    return _lastRotation.load();
+    return _lastRotation;
 }
 
 VROVector3f VRONode::getLastLocalScale() const {
-    return _lastScale.load();
+    return _lastScale;
 }
 
 VROMatrix4f VRONode::getLastScalePivot() const {
-    if (_lastHasScalePivot.load()) {
-        return _lastScalePivot.load();
+    if (_lastHasRotationPivot) {
+        return _lastRotationPivot;
     } else {
         return VROMatrix4f::identity();
     }
 }
 
 VROMatrix4f VRONode::getLastRotationPivot() const {
-    if (_lastHasRotationPivot.load()) {
-        return _lastRotationPivot.load();
+    if (_lastHasRotationPivot) {
+        return _lastRotationPivot;
     } else {
         return VROMatrix4f::identity();
     }
 }
 
 VROBoundingBox VRONode::getLastUmbrellaBoundingBox() const {
-    return _lastUmbrellaBoundingBox.load();
+    return _lastUmbrellaBoundingBox;
 }
 
 #pragma mark - Scene Graph
@@ -940,8 +958,8 @@ void VRONode::setHighAccuracyEvents(bool enabled) {
 #pragma mark - Application Thread Setters
 
 void VRONode::setPositionAtomic(VROVector3f position) {
-    _lastPosition.store(position);
-    
+    _lastPosition = position;
+
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
     VROPlatformDispatchAsyncRenderer([node_w, position] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -952,8 +970,8 @@ void VRONode::setPositionAtomic(VROVector3f position) {
 }
 
 void VRONode::setRotationAtomic(VROQuaternion rotation) {
-    _lastRotation.store(rotation);
-    
+    _lastRotation = rotation;
+
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
     VROPlatformDispatchAsyncRenderer([node_w, rotation] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -964,8 +982,8 @@ void VRONode::setRotationAtomic(VROQuaternion rotation) {
 }
 
 void VRONode::setScaleAtomic(VROVector3f scale) {
-    _lastScale.store(scale);
-    
+    _lastScale = scale;
+
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
     VROPlatformDispatchAsyncRenderer([node_w, scale] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -976,10 +994,10 @@ void VRONode::setScaleAtomic(VROVector3f scale) {
 }
 
 void VRONode::setRotationPivotAtomic(VROMatrix4f pivot) {
-    _lastHasRotationPivot.store(true);
-    _lastRotationPivot.store(pivot);
-    _lastRotationPivotInverse.store(pivot.invert());
-    
+    _lastHasRotationPivot = true;
+    _lastRotationPivot = pivot;
+    _lastRotationPivotInverse = pivot.invert();
+
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
     VROPlatformDispatchAsyncRenderer([node_w, pivot] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -990,10 +1008,10 @@ void VRONode::setRotationPivotAtomic(VROMatrix4f pivot) {
 }
 
 void VRONode::setScalePivotAtomic(VROMatrix4f pivot) {
-    _lastHasScalePivot.store(true);
-    _lastScalePivot.store(pivot);
-    _lastScalePivotInverse.store(pivot.invert());
-    
+    _lastHasScalePivot = true;
+    _lastScalePivot = pivot;
+    _lastScalePivotInverse = pivot.invert();
+
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
     VROPlatformDispatchAsyncRenderer([node_w, pivot] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -1004,31 +1022,31 @@ void VRONode::setScalePivotAtomic(VROMatrix4f pivot) {
 }
 
 void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
-    VROQuaternion rotation = _lastRotation.load();
-    VROVector3f position = _lastPosition.load();
+    VROQuaternion rotation = _lastRotation;
+    VROVector3f position = _lastPosition;
     
     // The world transform is aggregated into this matrix
     VROMatrix4f transform;
     
     // First compute scale
-    VROVector3f scale = _lastScale.load();
-    if (_lastHasScalePivot.load()) {
+    VROVector3f scale = _lastScale;
+    if (_lastHasScalePivot) {
         VROMatrix4f scaleMatrix;
         scaleMatrix.scale(scale.x, scale.y, scale.z);
-        transform = _lastScalePivot.load() * scaleMatrix * _lastScalePivotInverse.load();
+        transform = _lastScalePivot * scaleMatrix * _lastScalePivotInverse;
     }
     else {
         transform.scale(scale.x, scale.y, scale.z);
     }
     
     // Rotation is after scale
-    bool hasRotationPivot = _lastHasRotationPivot.load();
+    bool hasRotationPivot = _lastHasRotationPivot;
     if (hasRotationPivot) {
-        transform = _lastRotationPivotInverse.load() * transform;
+        transform = _lastRotationPivotInverse * transform;
     }
     transform = rotation.getMatrix() * transform;
     if (hasRotationPivot) {
-        transform = _lastRotationPivot.load() * transform;
+        transform = _lastRotationPivot * transform;
     }
     
     // Translation is after scale and rotation
@@ -1038,25 +1056,26 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
     
     // Finally multiply by the parent transform to get the final world transform
     transform = parentTransform * transform;
-    
+
     // Store the final values in the atomics
     VROVector3f worldPosition = { transform[12], transform[13], transform[14] };
-    _lastWorldPosition.store(worldPosition);
-    _lastWorldRotation.store(parentRotation.multiply(rotation.getMatrix()));
-    _lastWorldTransform.store(transform);
+    _lastWorldPosition = worldPosition;
+    _lastWorldRotation = parentRotation.multiply(rotation.getMatrix());
+    _lastWorldTransform = transform;
     
     if (_geometry) {
-        _lastWorldBoundingBox.store(_geometry->getLastBoundingBox().transform(transform));
+        _lastWorldBoundingBox = _geometry->getLastBoundingBox().transform(transform);
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
-        _lastWorldBoundingBox.store({ worldPosition.x, worldPosition.x,
-                                      worldPosition.y, worldPosition.y,
-                                      worldPosition.z, worldPosition.z });
+        _lastWorldBoundingBox = { worldPosition.x, worldPosition.x,
+                                  worldPosition.y, worldPosition.y,
+                                  worldPosition.z, worldPosition.z };
     }
+
     
     // TODO VIRO-3701 Currently it is unsafe to compute the umbrella bounding box because the
     //                subnodes cannot be accessed
-    //VROVector3f computedPosition = _lastWorldPosition.load();
+    //VROVector3f computedPosition = _lastWorldPosition;
     //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
     //                                  computedPosition.y, computedPosition.z, computedPosition.z);
     //computeUmbrellaBounds(&umbrellaBoundingBox);
@@ -1065,7 +1084,6 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
 #pragma mark - Sync Rendering Thread <> Application Thread
 
 void VRONode::syncAppThreadProperties() {
-#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
     std::weak_ptr<VRONode> node_w = std::dynamic_pointer_cast<VRONode>(shared_from_this());
 
     /*
@@ -1095,17 +1113,16 @@ void VRONode::syncAppThreadProperties() {
                                          node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->_lastWorldTransform.store(worldTransform);
-            node->_lastWorldPosition.store(worldPosition);
-            node->_lastWorldRotation.store(worldRotation);
-            node->_lastPosition.store(position);
-            node->_lastRotation.store(rotation);
-            node->_lastScale.store(scale);
-            node->_lastWorldBoundingBox.store(worldBoundingBox);
-            node->_lastUmbrellaBoundingBox.store(umbrellaBoundingBox);
+            node->_lastWorldTransform = worldTransform;
+            node->_lastWorldPosition = worldPosition;
+            node->_lastWorldRotation = worldRotation;
+            node->_lastPosition = position;
+            node->_lastRotation = rotation;
+            node->_lastScale = scale;
+            node->_lastWorldBoundingBox = worldBoundingBox;
+            node->_lastUmbrellaBoundingBox = umbrellaBoundingBox;
         }
     });
-#endif
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->syncAppThreadProperties();
     }

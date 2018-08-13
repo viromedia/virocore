@@ -14,10 +14,10 @@
 #include <vector>
 #include <string>
 #include <set>
-#include <atomic>
 #include <algorithm>
 #include <functional>
 #include "optional.hpp"
+#include "VROAtomic.h"
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
 #include "VRORenderContext.h"
@@ -825,22 +825,22 @@ private:
      Properties' pragma above for a more extensive description of why we need these fields.
      The following are computed fields (not directly set by users).
      */
-    std::atomic<VROMatrix4f> _lastWorldTransform;
-    std::atomic<VROVector3f> _lastWorldPosition;
-    std::atomic<VROMatrix4f> _lastWorldRotation;
-    std::atomic<VROBoundingBox> _lastWorldBoundingBox;
-    std::atomic<VROBoundingBox> _lastUmbrellaBoundingBox;
+    VROAtomic<VROMatrix4f> _lastWorldTransform;
+    VROAtomic<VROVector3f> _lastWorldPosition;
+    VROAtomic<VROMatrix4f> _lastWorldRotation;
+    VROAtomic<VROBoundingBox> _lastWorldBoundingBox;
+    VROAtomic<VROBoundingBox> _lastUmbrellaBoundingBox;
     
     /*
      Directly-set application thread properties.
      */
-    std::atomic<VROVector3f> _lastPosition;
-    std::atomic<VROVector3f> _lastScale;
-    std::atomic<VROQuaternion> _lastRotation;
-    std::atomic<VROMatrix4f> _lastScalePivot, _lastScalePivotInverse;
-    std::atomic<VROMatrix4f> _lastRotationPivot, _lastRotationPivotInverse;
-    std::atomic<bool> _lastHasScalePivot;
-    std::atomic<bool> _lastHasRotationPivot;
+    VROAtomic<VROVector3f> _lastPosition;
+    VROAtomic<VROVector3f> _lastScale;
+    VROAtomic<VROQuaternion> _lastRotation;
+    VROAtomic<VROMatrix4f> _lastScalePivot, _lastScalePivotInverse;
+    VROAtomic<VROMatrix4f> _lastRotationPivot, _lastRotationPivotInverse;
+    VROAtomic<bool> _lastHasScalePivot;
+    VROAtomic<bool> _lastHasRotationPivot;
 
     /*
      The transformed bounding box containing this node's geometry. The 
