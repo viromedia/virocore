@@ -8,7 +8,7 @@
 #include <VROPlatformUtil.h>
 #include <VROFixedParticleEmitter.h>
 #include "FixedParticleEmitter_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 #include "ViroContext_JNI.h"
 
 #if VRO_PLATFORM_ANDROID

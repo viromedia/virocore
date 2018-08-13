@@ -13,7 +13,7 @@
 #include "VROCamera.h"
 #include "VROPlatformUtil.h"
 #include "VROTime.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 
 #include "VRODefines.h"
 #include VRO_C_INCLUDE

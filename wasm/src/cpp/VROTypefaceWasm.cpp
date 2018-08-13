@@ -52,9 +52,24 @@ float VROTypefaceWasm::getLineHeight() const {
 }
 
 std::shared_ptr<VROGlyph> VROTypefaceWasm::loadGlyph(uint32_t charCode, uint32_t variantSelector,
-                                                     bool forRendering) {
+                                                     uint32_t outlineWidth, VROGlyphRenderMode renderMode) {
     std::shared_ptr<VROGlyph> glyph = std::make_shared<VROGlyphOpenGL>();
-    glyph->load(_face, charCode, variantSelector, forRendering, _driver.lock());
+    std::shared_ptr<VRODriverOpenGLWasm> driver = std::dynamic_pointer_cast<VRODriverOpenGLWasm>(_driver.lock());
+    if (!driver) {
+        return glyph;
+    }
+
+    if (renderMode == VROGlyphRenderMode::None) {
+        glyph->loadMetrics(_face, charCode, variantSelector);
+    } else if (renderMode == VROGlyphRenderMode::Bitmap) {
+        glyph->loadBitmap(_face, charCode, variantSelector, &_glyphAtlases, driver);
+        if (outlineWidth > 0) {
+            glyph->loadOutlineBitmap(driver->getFreetype(), _face, charCode, variantSelector, outlineWidth,
+                                     &_outlineAtlases[outlineWidth], driver);
+        }
+    } else {
+        glyph->loadVector(_face, charCode, variantSelector);
+    }
 
     return glyph;
 }

@@ -1,6 +1,7 @@
 #include "ARDeclarativeNode_JNI.h"
 #include <VROPlatformUtil.h>
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
+#include "arcore/ARUtils_JNI.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

@@ -7,11 +7,12 @@
 
 #include "EventDelegate_JNI.h"
 #include "Node_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 #include "VROARPointCloud.h"
-#include "arcore/VROARHitTestResultARCore.h"
 
 #if VRO_PLATFORM_ANDROID
+#include "arcore/ARUtils_JNI.h"
+
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_EventDelegate_##method_name
@@ -309,6 +310,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
 }
 
 void EventDelegate_JNI::onCameraARHitTest(std::vector<std::shared_ptr<VROARHitTestResult>> results) {
+#if VRO_PLATFORM_ANDROID
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
@@ -331,9 +333,11 @@ void EventDelegate_JNI::onCameraARHitTest(std::vector<std::shared_ptr<VROARHitTe
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
+#endif
 }
 
 void EventDelegate_JNI::onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> pointCloud) {
+#if VRO_PLATFORM_ANDROID
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
@@ -356,6 +360,7 @@ void EventDelegate_JNI::onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> po
         VRO_DELETE_LOCAL_REF(localObj);
         VRO_DELETE_WEAK_GLOBAL_REF(weakObj);
     });
+#endif
 }
 
 

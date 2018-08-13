@@ -1266,6 +1266,11 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     fcn();
 }
 
+void VROPlatformDispatchAsyncApplication(std::function<void()> fcn) {
+    // Multithreading not supported on WASM
+    fcn();
+}
+
 std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::string, std::string> resourceMap) {
     return "";
 }

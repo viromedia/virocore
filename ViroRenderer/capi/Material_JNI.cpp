@@ -474,6 +474,7 @@ VRO_METHOD(void, nativeSetChromaKeyFilteringColor)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetColorWriteMask)(VRO_ARGS
                                           VRO_REF(VROMaterial) material_j, VRO_STRING_ARRAY masks_j) {
+    VRO_METHOD_PREAMBLE;
     std::weak_ptr<VROMaterial> material_w = VRO_REF_GET(VROMaterial, material_j);
     VROColorMask mask = parseColorMaskArray(env, masks_j);
 

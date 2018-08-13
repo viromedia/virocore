@@ -25,6 +25,8 @@
 #define VRO_REF_NEW(type, ptr) ptr
 #define VRO_REF_GET(type, ref) ref
 #define VRO_REF_DELETE(type, ref)
+#define VRO_REF_NULL(ref) \
+    ref == 0
 
 #define VRO_OBJECT emscripten::val
 #define VRO_OBJECT_NULL emscripten::val::null()

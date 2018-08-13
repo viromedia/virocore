@@ -1,9 +1,11 @@
 #include <VROPlatformUtil.h>
 #include <arcore/VROARAnchorARCore.h>
 #include "ARNode_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 
 #if VRO_PLATFORM_ANDROID
+#include "arcore/ARUtils_JNI.h"
+
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARNode_##method_name
@@ -26,9 +28,13 @@ VRO_METHOD(void, nativeSetPauseUpdates)(VRO_ARGS
 
 VRO_METHOD(VRO_OBJECT, nativeGetAnchor)(VRO_ARGS
                                         VRO_REF(VROARNode) node_j) {
+#ifdef VRO_PLATFORM_ANDROID
     std::shared_ptr<VROARNode> node = VRO_REF_GET(VROARNode, node_j);
     std::shared_ptr<VROARAnchor> anchor = node->getAnchor();
     return ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+#else
+    return nullptr;
+#endif
 }
 
 VRO_METHOD(void, nativeDetach)(VRO_ARGS

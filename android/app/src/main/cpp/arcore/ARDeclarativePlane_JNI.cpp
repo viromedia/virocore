@@ -9,7 +9,7 @@
 #include <VROARDeclarativePlane.h>
 #include <VROStringUtil.h>
 #include "ARDeclarativePlane_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

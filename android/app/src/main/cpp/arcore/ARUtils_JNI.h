@@ -9,22 +9,15 @@
 #define ANDROID_ARUTILS_JNI_H
 
 #include <VROARPlaneAnchor.h>
-#include <arcore/VROARHitTestResultARCore.h>
-
 #include "VRODefines.h"
 #include VRO_C_INCLUDE
 
-// Helper functions to create a Java ARAnchor object
+class VROARHitTestResultARCore;
+
+// Helper functions to create Java AR objects from native their representations
 VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor);
-VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector);
-VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromMatrix(VROMatrix4f matrix);
-VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromBoundingBox(VROBoundingBox boundingBox);
 VRO_STRING ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment);
 VRO_OBJECT ARUtilsCreateARHitTestResult(std::shared_ptr<VROARHitTestResult> result);
-VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points);
-
-// Helper functions to create a Java ARPointCloud object
 VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud);
-
 
 #endif //ANDROID_ARUTILS_JNI_H

@@ -8,7 +8,7 @@
 #include <memory>
 #include "ViroContext_JNI.h"
 #include "EventDelegate_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 #include "VROInputControllerBase.h"
 
 #if VRO_PLATFORM_ANDROID

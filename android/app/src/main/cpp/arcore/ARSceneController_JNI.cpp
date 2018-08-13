@@ -11,7 +11,7 @@
 #include "ARDeclarativeNode_JNI.h"
 #include "VROARImperativeSession.h"
 #include "Node_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 #include "ARNode_JNI.h"
 #include "Surface_JNI.h"
 #include "ARImageTarget_JNI.h"
@@ -19,10 +19,10 @@
 #include "arcore/VROARSessionARCore.h"
 #include "arcore/VROARCameraARCore.h"
 #include "ViroContextAndroid_JNI.h"
+#include "VROARImageTargetAndroid.h"
+#include "arcore/ARUtils_JNI.h"
 
 #if VRO_PLATFORM_ANDROID
-#include "VROARImageTargetAndroid.h"
-
 #define VRO_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_core_ARScene_##method_name

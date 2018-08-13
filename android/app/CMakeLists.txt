@@ -105,14 +105,7 @@ add_library( # Sets the name of the library.
              ${VIRO_CAPI_SRC}/PortalDelegate_JNI.cpp
              ${VIRO_CAPI_SRC}/PhysicsBody_JNI.cpp
              ${VIRO_CAPI_SRC}/AnimationTransaction_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARUtils_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARNode_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARDeclarativeNode_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARDeclarativePlane_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARSceneController_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARImageTarget_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARDeclarativeImageNode_JNI.cpp
-             ${VIRO_CAPI_SRC}/ARHitTestResult_JNI.cpp
+             ${VIRO_CAPI_SRC}/ViroUtils_JNI.cpp
 
              # Math
              ${VIRO_RENDERER_SRC}/VROLineSegment.cpp
@@ -221,6 +214,14 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/arcore/VROARHitTestResultARCore.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROYuvImageConverter.cpp
              ${VIRO_ANDROID_SRC}/arcore/VROCloudAnchorProviderARCore.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARUtils_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARNode_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARDeclarativeNode_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARDeclarativePlane_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARSceneController_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARImageTarget_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARDeclarativeImageNode_JNI.cpp
+             ${VIRO_ANDROID_SRC}/arcore/ARHitTestResult_JNI.cpp
 
              # AR (Image Tracking)
              ../../ViroRenderer/VROARTrackingSession.cpp

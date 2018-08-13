@@ -16,7 +16,7 @@
 class VROInputControllerWasm : public VROInputControllerBase {
 
 public:
-    VROInputControllerWasm() {}
+    VROInputControllerWasm(std::shared_ptr<VRODriver> driver) : VROInputControllerBase(driver) {}
     virtual ~VROInputControllerWasm() {}
     virtual VROVector3f getDragForwardOffset();
     virtual void onProcess(const VROCamera &camera);
@@ -32,7 +32,7 @@ public:
 
 protected:
     
-    std::shared_ptr<VROInputPresenter> createPresenter(){
+    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRODriver> driver) {
         return std::make_shared<VROInputPresenterWasm>();
     }
 

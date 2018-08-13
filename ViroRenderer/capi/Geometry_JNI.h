@@ -23,7 +23,7 @@ public:
         }
 
         // Create a persistent native reference that would represent the jGeom object.
-        VRO_REF(VROMaterial) geomRef = VRO_REF_NEW(VROGeometry, geom);
+        VRO_REF(VROGeometry) geomRef = VRO_REF_NEW(VROGeometry, geom);
         VRO_OBJECT jGeom = VROPlatformConstructHostObject("com/viro/core/Geometry", "(J)V", geomRef);
         VRO_OBJECT arrayList = VROPlatformConstructHostObject("java/util/ArrayList", "()V");
 

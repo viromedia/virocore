@@ -20,7 +20,7 @@
 
 extern "C" {
 
-VRO_METHOD(VRO_REF, nativeTestMethod)(VRO_NO_ARGS) {
+VRO_METHOD(VRO_REF(void), nativeTestMethod)(VRO_NO_ARGS) {
     pinfo("Invoked C method");
 
     VROPlatformCallHostFunction(obj, "callJSMethod", "", 5, 7);

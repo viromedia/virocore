@@ -48,7 +48,7 @@ VROViewScene::VROViewScene(VRORendererTestType test) :
     _driver = std::make_shared<VRODriverOpenGLWasm>();
     _frame = 0;
     _suspendedNotificationTime = 0;//VROTimeCurrentSeconds();
-    _inputController = std::make_shared<VROInputControllerWasm>();
+    _inputController = std::make_shared<VROInputControllerWasm>(_driver);
     
     VRORendererConfiguration config;
     config.enableShadows = false;

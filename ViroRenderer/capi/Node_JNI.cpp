@@ -21,7 +21,7 @@
 #include "PhysicsDelegate_JNI.h"
 #include "TransformDelegate_JNI.h"
 #include "ParticleEmitter_JNI.h"
-#include "ARUtils_JNI.h"
+#include "ViroUtils_JNI.h"
 #include "FixedParticleEmitter_JNI.h"
 
 #include "VRODefines.h"

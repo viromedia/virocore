@@ -453,6 +453,14 @@ VRO_LONG VROPlatformCallHostLongFunction(VRO_OBJECT object,
 }
 
 template<typename... Args>
+VRO_BOOL VROPlatformCallHostBoolFunction(VRO_OBJECT object,
+                                         std::string methodName,
+                                         std::string methodSig,
+                                         Args... args) {
+    return object.call<VRO_BOOL>(methodName.c_str(), std::forward<Args>(args)...);
+}
+
+template<typename... Args>
 VRO_OBJECT VROPlatformConstructHostObject(std::string className,
                                           std::string constructorSig,
                                           Args... args) {
