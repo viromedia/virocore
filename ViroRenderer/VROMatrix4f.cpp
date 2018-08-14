@@ -40,6 +40,26 @@ void VROMatrix4f::toIdentity() {
     _mtx[0] = _mtx[5] = _mtx[10] = _mtx[15] = 1;
 }
 
+bool VROMatrix4f::isIdentity() const {
+    const float epsilon = kMatrixEqualityEpsilon;
+    return (fabs(_mtx[0] - 1)) < epsilon &&
+            fabs(_mtx[1]) < epsilon &&
+            fabs(_mtx[2]) < epsilon &&
+            fabs(_mtx[3]) < epsilon &&
+            fabs(_mtx[4]) < epsilon &&
+            fabs(_mtx[5] - 1) < epsilon &&
+            fabs(_mtx[6]) < epsilon &&
+            fabs(_mtx[7]) < epsilon &&
+            fabs(_mtx[8]) < epsilon &&
+            fabs(_mtx[9]) < epsilon &&
+            fabs(_mtx[10] - 1) < epsilon &&
+            fabs(_mtx[11]) < epsilon &&
+            fabs(_mtx[12]) < epsilon &&
+            fabs(_mtx[13]) < epsilon &&
+            fabs(_mtx[14]) < epsilon &&
+            fabs(_mtx[15] - 1) < epsilon;
+}
+
 void VROMatrix4f::copy(const VROMatrix4f &copy)  {
     memcpy(_mtx, copy._mtx, sizeof(float) * 16);
 }
