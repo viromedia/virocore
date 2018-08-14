@@ -787,7 +787,7 @@
 		8F1B4AA01F69F4A900156809 /* pug_animated.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */; };
 		8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */; };
 		8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */; };
-		8F1DE3BC21221DDD00C8749D /* VROAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DE3BB21221DDD00C8749D /* VROAtomic.h */; };
+		8F1DE3BC21221DDD00C8749D /* VROAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DE3BB21221DDD00C8749D /* VROAtomic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */; };
 		8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DF5A81F36408700886805 /* VROPortalFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F1E01001FD10D7D00DF9068 /* VROViewControllerGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1E00FE1FD10D7D00DF9068 /* VROViewControllerGVR.h */; settings = {ATTRIBUTES = (Public, ); }; };
