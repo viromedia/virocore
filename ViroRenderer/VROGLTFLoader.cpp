@@ -342,7 +342,9 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
         std::vector<std::shared_ptr<VROBone>> bones;
         for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
             int parentJointIndex = skinIndexToJointParentJoint[skinIndex][jointIndex];
-            std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentJointIndex);
+            
+            // TODO We need the bone local transform if we want layered animations to work with GLTF
+            std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentJointIndex, VROMatrix4f::identity());
             bones.push_back(bone);
         }
 
@@ -661,6 +663,9 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         for (int i = 0; i < frames.size(); i++) {
             std::unique_ptr<VROSkeletalAnimationFrame> skeletalFrame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
             skeletalFrame->time = frames[i]->time;
+            
+            // TODO We should support the non-legacy (concatenated transform) format
+            skeletalFrame->boneTransformsLegacy = true;
             skeletalFrames.push_back(std::move(skeletalFrame));
         }
 

@@ -23,6 +23,7 @@ std::shared_ptr<VROExecutableAnimation> VROSkeletalAnimation::copy() {
         frame->time = origFrame->time;
         frame->boneIndices = origFrame->boneIndices;
         frame->boneTransforms = origFrame->boneTransforms;
+        frame->boneTransformsLegacy = origFrame->boneTransformsLegacy;
 
         frames.push_back(std::move(frame));
     }

@@ -116,6 +116,8 @@ void TableStruct::InitDefaultsImpl() {
       ::viro::Node_Geometry_Source::internal_default_instance());
   _Node_Geometry_default_instance_.get_mutable()->skin_ = const_cast< ::viro::Node_Geometry_Skin*>(
       ::viro::Node_Geometry_Skin::internal_default_instance());
+  _Node_Skeleton_Bone_default_instance_.get_mutable()->local_transform_ = const_cast< ::viro::Node_Matrix*>(
+      ::viro::Node_Matrix::internal_default_instance());
   _Node_default_instance_.get_mutable()->geometry_ = const_cast< ::viro::Node_Geometry*>(
       ::viro::Node_Geometry::internal_default_instance());
   _Node_default_instance_.get_mutable()->skeleton_ = const_cast< ::viro::Node_Skeleton*>(
@@ -4533,6 +4535,7 @@ void Node_Geometry::set_allocated_skin(::viro::Node_Geometry_Skin* skin) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Node_Skeleton_Bone::kNameFieldNumber;
 const int Node_Skeleton_Bone::kParentIndexFieldNumber;
+const int Node_Skeleton_Bone::kLocalTransformFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Node_Skeleton_Bone::Node_Skeleton_Bone()
@@ -4552,13 +4555,19 @@ Node_Skeleton_Bone::Node_Skeleton_Bone(const Node_Skeleton_Bone& from)
   if (from.name().size() > 0) {
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
+  if (from.has_local_transform()) {
+    local_transform_ = new ::viro::Node_Matrix(*from.local_transform_);
+  } else {
+    local_transform_ = NULL;
+  }
   parent_index_ = from.parent_index_;
   // @@protoc_insertion_point(copy_constructor:viro.Node.Skeleton.Bone)
 }
 
 void Node_Skeleton_Bone::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  parent_index_ = 0;
+  ::memset(&local_transform_, 0, reinterpret_cast<char*>(&parent_index_) -
+    reinterpret_cast<char*>(&local_transform_) + sizeof(parent_index_));
   _cached_size_ = 0;
 }
 
@@ -4569,6 +4578,9 @@ Node_Skeleton_Bone::~Node_Skeleton_Bone() {
 
 void Node_Skeleton_Bone::SharedDtor() {
   name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) {
+    delete local_transform_;
+  }
 }
 
 void Node_Skeleton_Bone::SetCachedSize(int size) const {
@@ -4592,6 +4604,10 @@ Node_Skeleton_Bone* Node_Skeleton_Bone::New(::google::protobuf::Arena* arena) co
 void Node_Skeleton_Bone::Clear() {
 // @@protoc_insertion_point(message_clear_start:viro.Node.Skeleton.Bone)
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && local_transform_ != NULL) {
+    delete local_transform_;
+  }
+  local_transform_ = NULL;
   parent_index_ = 0;
 }
 
@@ -4627,6 +4643,17 @@ bool Node_Skeleton_Bone::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &parent_index_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Matrix local_transform = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_local_transform()));
         } else {
           goto handle_unusual;
         }
@@ -4672,6 +4699,12 @@ void Node_Skeleton_Bone::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->parent_index(), output);
   }
 
+  // .viro.Node.Matrix local_transform = 3;
+  if (this->has_local_transform()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      3, *this->local_transform_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:viro.Node.Skeleton.Bone)
 }
 
@@ -4684,6 +4717,13 @@ size_t Node_Skeleton_Bone::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->name());
+  }
+
+  // .viro.Node.Matrix local_transform = 3;
+  if (this->has_local_transform()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->local_transform_);
   }
 
   // int32 parent_index = 2;
@@ -4713,6 +4753,9 @@ void Node_Skeleton_Bone::MergeFrom(const Node_Skeleton_Bone& from) {
 
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
+  if (from.has_local_transform()) {
+    mutable_local_transform()->::viro::Node_Matrix::MergeFrom(from.local_transform());
+  }
   if (from.parent_index() != 0) {
     set_parent_index(from.parent_index());
   }
@@ -4735,6 +4778,7 @@ void Node_Skeleton_Bone::Swap(Node_Skeleton_Bone* other) {
 }
 void Node_Skeleton_Bone::InternalSwap(Node_Skeleton_Bone* other) {
   name_.Swap(&other->name_);
+  std::swap(local_transform_, other->local_transform_);
   std::swap(parent_index_, other->parent_index_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -4810,6 +4854,45 @@ void Node_Skeleton_Bone::set_parent_index(::google::protobuf::int32 value) {
   
   parent_index_ = value;
   // @@protoc_insertion_point(field_set:viro.Node.Skeleton.Bone.parent_index)
+}
+
+// .viro.Node.Matrix local_transform = 3;
+bool Node_Skeleton_Bone::has_local_transform() const {
+  return this != internal_default_instance() && local_transform_ != NULL;
+}
+void Node_Skeleton_Bone::clear_local_transform() {
+  if (GetArenaNoVirtual() == NULL && local_transform_ != NULL) delete local_transform_;
+  local_transform_ = NULL;
+}
+const ::viro::Node_Matrix& Node_Skeleton_Bone::local_transform() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Skeleton.Bone.local_transform)
+  return local_transform_ != NULL ? *local_transform_
+                         : *::viro::Node_Matrix::internal_default_instance();
+}
+::viro::Node_Matrix* Node_Skeleton_Bone::mutable_local_transform() {
+  
+  if (local_transform_ == NULL) {
+    local_transform_ = new ::viro::Node_Matrix;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Skeleton.Bone.local_transform)
+  return local_transform_;
+}
+::viro::Node_Matrix* Node_Skeleton_Bone::release_local_transform() {
+  // @@protoc_insertion_point(field_release:viro.Node.Skeleton.Bone.local_transform)
+  
+  ::viro::Node_Matrix* temp = local_transform_;
+  local_transform_ = NULL;
+  return temp;
+}
+void Node_Skeleton_Bone::set_allocated_local_transform(::viro::Node_Matrix* local_transform) {
+  delete local_transform_;
+  local_transform_ = local_transform;
+  if (local_transform) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Skeleton.Bone.local_transform)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -5027,6 +5110,7 @@ Node_Skeleton::bone() const {
 const int Node_SkeletalAnimation_Frame::kTimeFieldNumber;
 const int Node_SkeletalAnimation_Frame::kBoneIndexFieldNumber;
 const int Node_SkeletalAnimation_Frame::kTransformFieldNumber;
+const int Node_SkeletalAnimation_Frame::kLocalTransformFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Node_SkeletalAnimation_Frame::Node_SkeletalAnimation_Frame()
@@ -5042,6 +5126,7 @@ Node_SkeletalAnimation_Frame::Node_SkeletalAnimation_Frame(const Node_SkeletalAn
       _internal_metadata_(NULL),
       bone_index_(from.bone_index_),
       transform_(from.transform_),
+      local_transform_(from.local_transform_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   time_ = from.time_;
@@ -5083,6 +5168,7 @@ void Node_SkeletalAnimation_Frame::Clear() {
 // @@protoc_insertion_point(message_clear_start:viro.Node.SkeletalAnimation.Frame)
   bone_index_.Clear();
   transform_.Clear();
+  local_transform_.Clear();
   time_ = 0;
 }
 
@@ -5138,6 +5224,19 @@ bool Node_SkeletalAnimation_Frame::MergePartialFromCodedStream(
         break;
       }
 
+      // repeated .viro.Node.Matrix local_transform = 4;
+      case 4: {
+        if (tag == 34u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_local_transform()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -5183,6 +5282,12 @@ void Node_SkeletalAnimation_Frame::SerializeWithCachedSizes(
       3, this->transform(i), output);
   }
 
+  // repeated .viro.Node.Matrix local_transform = 4;
+  for (unsigned int i = 0, n = this->local_transform_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      4, this->local_transform(i), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:viro.Node.SkeletalAnimation.Frame)
 }
 
@@ -5216,6 +5321,17 @@ size_t Node_SkeletalAnimation_Frame::ByteSizeLong() const {
     }
   }
 
+  // repeated .viro.Node.Matrix local_transform = 4;
+  {
+    unsigned int count = this->local_transform_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->local_transform(i));
+    }
+  }
+
   // float time = 1;
   if (this->time() != 0) {
     total_size += 1 + 4;
@@ -5239,6 +5355,7 @@ void Node_SkeletalAnimation_Frame::MergeFrom(const Node_SkeletalAnimation_Frame&
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   bone_index_.MergeFrom(from.bone_index_);
   transform_.MergeFrom(from.transform_);
+  local_transform_.MergeFrom(from.local_transform_);
   if (from.time() != 0) {
     set_time(from.time());
   }
@@ -5262,6 +5379,7 @@ void Node_SkeletalAnimation_Frame::Swap(Node_SkeletalAnimation_Frame* other) {
 void Node_SkeletalAnimation_Frame::InternalSwap(Node_SkeletalAnimation_Frame* other) {
   bone_index_.UnsafeArenaSwap(&other->bone_index_);
   transform_.UnsafeArenaSwap(&other->transform_);
+  local_transform_.UnsafeArenaSwap(&other->local_transform_);
   std::swap(time_, other->time_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -5345,6 +5463,36 @@ const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
 Node_SkeletalAnimation_Frame::transform() const {
   // @@protoc_insertion_point(field_list:viro.Node.SkeletalAnimation.Frame.transform)
   return transform_;
+}
+
+// repeated .viro.Node.Matrix local_transform = 4;
+int Node_SkeletalAnimation_Frame::local_transform_size() const {
+  return local_transform_.size();
+}
+void Node_SkeletalAnimation_Frame::clear_local_transform() {
+  local_transform_.Clear();
+}
+const ::viro::Node_Matrix& Node_SkeletalAnimation_Frame::local_transform(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_.Get(index);
+}
+::viro::Node_Matrix* Node_SkeletalAnimation_Frame::mutable_local_transform(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_.Mutable(index);
+}
+::viro::Node_Matrix* Node_SkeletalAnimation_Frame::add_local_transform() {
+  // @@protoc_insertion_point(field_add:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >*
+Node_SkeletalAnimation_Frame::mutable_local_transform() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return &local_transform_;
+}
+const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
+Node_SkeletalAnimation_Frame::local_transform() const {
+  // @@protoc_insertion_point(field_list:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

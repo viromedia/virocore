@@ -23,6 +23,8 @@
 #include "VROTaskQueue.h"
 #include "Nodes.pb.h"
 
+static bool kDebugFBXLoading = false;
+
 VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic) {
     switch (semantic) {
         case viro::Node_Geometry_Source_Semantic_Vertex:
@@ -334,13 +336,16 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 if (i == 0 && !animation->getFrames().empty()) {
                     const std::unique_ptr<VROSkeletalAnimationFrame> &frame = animation->getFrames().front();
                     for (int f = 0; f < frame->boneIndices.size(); f++) {
-                        skeleton->getBone(frame->boneIndices[f])->setTransform(frame->boneTransforms[f]);
+                        std::shared_ptr<VROBone> bone = skeleton->getBone(frame->boneIndices[f]);
+                        bone->setTransform(frame->boneTransforms[f], frame->boneTransformsLegacy ? VROBoneTransformType::Legacy : VROBoneTransformType::Concatenated);
                     }
                 }
             }
             
             if (hasScaling) {
-                pinfo("   At least 1 animation has scaling: using DQ+S modifier");
+                if (kDebugFBXLoading) {
+                    pinfo("   At least 1 animation has scaling: using DQ+S modifier");
+                }
             }
             
             for (const std::shared_ptr<VROMaterial> &material : geo->getMaterials()) {
@@ -360,7 +365,9 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
         }
         
         node->addAnimation(animation->getName(), animation);
-        pinfo("   Added keyframe animation [%s]", animation->getName().c_str());
+        if (kDebugFBXLoading) {
+            pinfo("   Added keyframe animation [%s]", animation->getName().c_str());
+        }
     }
     
     for (int i = 0; i < node_pb.subnode_size(); i++) {
@@ -602,7 +609,16 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
 std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skeleton &skeleton_pb) {
     std::vector<std::shared_ptr<VROBone>> bones;
     for (int i = 0; i < skeleton_pb.bone_size(); i++) {
-        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(skeleton_pb.bone(i).parent_index());
+        int parentIndex = skeleton_pb.bone(i).parent_index();
+        
+        VROMatrix4f boneLocalTransform;
+        if (skeleton_pb.bone(i).has_local_transform() > 0) {
+            for (int m = 0; m < 16; m++) {
+                boneLocalTransform[m] = skeleton_pb.bone(i).local_transform().value(m);
+            }
+        }
+        
+        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentIndex, boneLocalTransform);
         bones.push_back(bone);
     }
     
@@ -667,6 +683,7 @@ std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(con
         const viro::Node::SkeletalAnimation::Frame &frame_pb = animation_pb.frame(f);
         
         std::unique_ptr<VROSkeletalAnimationFrame> frame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
+        frame->boneTransformsLegacy = true;
         frame->time = frame_pb.time();
         
         passert (frame_pb.bone_index_size() == frame_pb.transform_size());
@@ -678,6 +695,17 @@ std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(con
                 mtx[i] = frame_pb.transform(b).value(i);
             }
             frame->boneTransforms.push_back({ mtx });
+            
+            if (frame_pb.local_transform_size() > 0) {
+                for (int i = 0; i < 16; i++) {
+                    mtx[i] = frame_pb.local_transform(b).value(i);
+                }
+                frame->localBoneTransforms.push_back( { mtx });
+                
+                // If we have local bone transforms, that also indicates our concatenated
+                // bone transforms are not legacy
+                frame->boneTransformsLegacy = false;
+            }
         }
         
         frames.push_back(std::move(frame));

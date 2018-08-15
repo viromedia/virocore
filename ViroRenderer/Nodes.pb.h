@@ -1407,6 +1407,15 @@ class Node_Skeleton_Bone : public ::google::protobuf::MessageLite /* @@protoc_in
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
+  // .viro.Node.Matrix local_transform = 3;
+  bool has_local_transform() const;
+  void clear_local_transform();
+  static const int kLocalTransformFieldNumber = 3;
+  const ::viro::Node_Matrix& local_transform() const;
+  ::viro::Node_Matrix* mutable_local_transform();
+  ::viro::Node_Matrix* release_local_transform();
+  void set_allocated_local_transform(::viro::Node_Matrix* local_transform);
+
   // int32 parent_index = 2;
   void clear_parent_index();
   static const int kParentIndexFieldNumber = 2;
@@ -1418,6 +1427,7 @@ class Node_Skeleton_Bone : public ::google::protobuf::MessageLite /* @@protoc_in
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr name_;
+  ::viro::Node_Matrix* local_transform_;
   ::google::protobuf::int32 parent_index_;
   mutable int _cached_size_;
   friend struct  protobuf_Nodes_2eproto::TableStruct;
@@ -1592,6 +1602,18 @@ class Node_SkeletalAnimation_Frame : public ::google::protobuf::MessageLite /* @
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
       transform() const;
 
+  // repeated .viro.Node.Matrix local_transform = 4;
+  int local_transform_size() const;
+  void clear_local_transform();
+  static const int kLocalTransformFieldNumber = 4;
+  const ::viro::Node_Matrix& local_transform(int index) const;
+  ::viro::Node_Matrix* mutable_local_transform(int index);
+  ::viro::Node_Matrix* add_local_transform();
+  ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >*
+      mutable_local_transform();
+  const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
+      local_transform() const;
+
   // float time = 1;
   void clear_time();
   static const int kTimeFieldNumber = 1;
@@ -1605,6 +1627,7 @@ class Node_SkeletalAnimation_Frame : public ::google::protobuf::MessageLite /* @
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > bone_index_;
   mutable int _bone_index_cached_byte_size_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix > transform_;
+  ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix > local_transform_;
   float time_;
   mutable int _cached_size_;
   friend struct  protobuf_Nodes_2eproto::TableStruct;
@@ -3941,6 +3964,45 @@ inline void Node_Skeleton_Bone::set_parent_index(::google::protobuf::int32 value
   // @@protoc_insertion_point(field_set:viro.Node.Skeleton.Bone.parent_index)
 }
 
+// .viro.Node.Matrix local_transform = 3;
+inline bool Node_Skeleton_Bone::has_local_transform() const {
+  return this != internal_default_instance() && local_transform_ != NULL;
+}
+inline void Node_Skeleton_Bone::clear_local_transform() {
+  if (GetArenaNoVirtual() == NULL && local_transform_ != NULL) delete local_transform_;
+  local_transform_ = NULL;
+}
+inline const ::viro::Node_Matrix& Node_Skeleton_Bone::local_transform() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Skeleton.Bone.local_transform)
+  return local_transform_ != NULL ? *local_transform_
+                         : *::viro::Node_Matrix::internal_default_instance();
+}
+inline ::viro::Node_Matrix* Node_Skeleton_Bone::mutable_local_transform() {
+  
+  if (local_transform_ == NULL) {
+    local_transform_ = new ::viro::Node_Matrix;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Skeleton.Bone.local_transform)
+  return local_transform_;
+}
+inline ::viro::Node_Matrix* Node_Skeleton_Bone::release_local_transform() {
+  // @@protoc_insertion_point(field_release:viro.Node.Skeleton.Bone.local_transform)
+  
+  ::viro::Node_Matrix* temp = local_transform_;
+  local_transform_ = NULL;
+  return temp;
+}
+inline void Node_Skeleton_Bone::set_allocated_local_transform(::viro::Node_Matrix* local_transform) {
+  delete local_transform_;
+  local_transform_ = local_transform;
+  if (local_transform) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Skeleton.Bone.local_transform)
+}
+
 // -------------------------------------------------------------------
 
 // Node_Skeleton
@@ -4051,6 +4113,36 @@ inline const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
 Node_SkeletalAnimation_Frame::transform() const {
   // @@protoc_insertion_point(field_list:viro.Node.SkeletalAnimation.Frame.transform)
   return transform_;
+}
+
+// repeated .viro.Node.Matrix local_transform = 4;
+inline int Node_SkeletalAnimation_Frame::local_transform_size() const {
+  return local_transform_.size();
+}
+inline void Node_SkeletalAnimation_Frame::clear_local_transform() {
+  local_transform_.Clear();
+}
+inline const ::viro::Node_Matrix& Node_SkeletalAnimation_Frame::local_transform(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_.Get(index);
+}
+inline ::viro::Node_Matrix* Node_SkeletalAnimation_Frame::mutable_local_transform(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_.Mutable(index);
+}
+inline ::viro::Node_Matrix* Node_SkeletalAnimation_Frame::add_local_transform() {
+  // @@protoc_insertion_point(field_add:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >*
+Node_SkeletalAnimation_Frame::mutable_local_transform() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return &local_transform_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
+Node_SkeletalAnimation_Frame::local_transform() const {
+  // @@protoc_insertion_point(field_list:viro.Node.SkeletalAnimation.Frame.local_transform)
+  return local_transform_;
 }
 
 // -------------------------------------------------------------------

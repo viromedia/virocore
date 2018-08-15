@@ -39,6 +39,13 @@ struct VROSkeletalAnimationFrame {
      */
     std::vector<int> boneIndices;
     std::vector<VROMatrix4f> boneTransforms;
+    std::vector<VROMatrix4f> localBoneTransforms;
+    
+    /*
+     True if the boneTransforms are using VROBoneTransformType::Legacy
+     instead of VROBoneTransformType::Concatenated.
+     */
+    bool boneTransformsLegacy;
     
 };
 

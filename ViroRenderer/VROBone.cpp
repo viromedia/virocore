@@ -9,6 +9,7 @@
 #include "VROBone.h"
 #include "VROAnimationMatrix4f.h"
 
-void VROBone::setTransform(VROMatrix4f transform) {
+void VROBone::setTransform(VROMatrix4f transform, VROBoneTransformType type) {
     _transform = transform;
+    _transformType = type;
 }
