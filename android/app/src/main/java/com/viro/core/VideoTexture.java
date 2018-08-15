@@ -352,6 +352,7 @@ public class VideoTexture extends Texture {
      * @hide
      */
     void onReady() {
+        mReady = true;
         if (mListener != null && mNativeRef != 0) {
             mListener.onReady(this);
         }
