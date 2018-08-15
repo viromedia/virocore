@@ -94,6 +94,7 @@ SET( VIRO_RENDERER_SRC
      ${VIRO_RENDERER_SRC}/VRORenderUtil.cpp
      ${VIRO_RENDERER_SRC}/VROTaskQueue.cpp
      ${VIRO_RENDERER_SRC}/VROFBXLoader.cpp
+     ${VIRO_RENDERER_SRC}/VROGLTFLoader.cpp
      ${VIRO_RENDERER_SRC}/VROCompress.cpp
      ${VIRO_RENDERER_SRC}/VROSparseBitSet.cpp
      ${VIRO_RENDERER_SRC}/Nodes.pb.cc
@@ -149,13 +150,24 @@ SET( VIRO_RENDERER_SRC
      # UI
      ${VIRO_RENDERER_SRC}/VROReticle.cpp
      ${VIRO_RENDERER_SRC}/VROText.cpp
+	 ${VIRO_RENDERER_SRC}/VROTextFormatter.cpp
      ${VIRO_RENDERER_SRC}/VROTypeface.cpp
      ${VIRO_RENDERER_SRC}/VROTypefaceCollection.cpp
+	 ${VIRO_RENDERER_SRC}/VROVectorizer.cpp
+	 ${VIRO_RENDERER_SRC}/VROContour.cpp
      ${VIRO_RENDERER_SRC}/VROFontUtil.cpp
      ${VIRO_RENDERER_SRC}/VROCharmapCoverage.cpp
      ${VIRO_RENDERER_SRC}/VROKnuthPlassFormatter.cpp
      ${VIRO_RENDERER_SRC}/VRODebugHUD.cpp
      ${VIRO_RENDERER_SRC}/VROGlyphOpenGL.cpp
+     ${VIRO_RENDERER_SRC}/VROGlyphAtlasOpenGL.cpp
+
+	 # Poly2Tri
+	 ${VIRO_RENDERER_SRC}/poly2tri/sweep/advancing_front.cc
+	 ${VIRO_RENDERER_SRC}/poly2tri/sweep/cdt.cc
+	 ${VIRO_RENDERER_SRC}/poly2tri/sweep/sweep_context.cc
+	 ${VIRO_RENDERER_SRC}/poly2tri/sweep/sweep.cc
+	 ${VIRO_RENDERER_SRC}/poly2tri/common/shapes.cc
 
      # Physics
      ${VIRO_RENDERER_SRC}/VROPhysicsWorld.cpp
@@ -195,6 +207,7 @@ SET( VIRO_RENDERER_SRC
      ${VIRO_RENDERER_SRC}/VROShapeUtils.cpp
      ${VIRO_RENDERER_SRC}/VROSphere.cpp
      ${VIRO_RENDERER_SRC}/VROPolyline.cpp
+     ${VIRO_RENDERER_SRC}/VROPolygon.cpp
      ${VIRO_RENDERER_SRC}/VROVideoSurface.cpp
      ${VIRO_RENDERER_SRC}/VROPencil.cpp
 
@@ -251,6 +264,9 @@ SET( VIRO_RENDERER_SRC
      ${VIRO_RENDERER_SRC}/VRODiffuseIrradianceTest.cpp
      ${VIRO_RENDERER_SRC}/VROPhotometricLightTest.cpp
      ${VIRO_RENDERER_SRC}/VRORendererSettingsTest.cpp
+     ${VIRO_RENDERER_SRC}/VROGLTFTest.cpp
+     ${VIRO_RENDERER_SRC}/VROToneMappingTest.cpp
+     ${VIRO_RENDERER_SRC}/VROPolygonTest.cpp
 	 ../ViroRenderer/capi/TestAPI.cpp)
 
 ADD_SUBDIRECTORY(libs/bullet/src/LinearMath)
