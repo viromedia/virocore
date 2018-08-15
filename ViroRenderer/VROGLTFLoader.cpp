@@ -37,7 +37,7 @@ std::map<int, std::map<int,int>> VROGLTFLoader::_skinIndexToJointNodeIndex;
 std::map<int, std::map<int,std::vector<int>>> VROGLTFLoader::_skinIndexToJointChildJoints;
 std::map<int, std::map<int, std::shared_ptr<VROKeyframeAnimation>>> VROGLTFLoader::_nodeKeyFrameAnims;
 std::map<int, std::vector<std::shared_ptr<VROSkeletalAnimation>>> VROGLTFLoader::_skinSkeletalAnims;
-std::map<int, std::unique_ptr<VROSkinner>> VROGLTFLoader::_skinMap;
+std::map<int, std::shared_ptr<VROSkinner>> VROGLTFLoader::_skinMap;
 
 VROGeometrySourceSemantic VROGLTFLoader::getGeometryAttribute(std::string name) {
     if (VROStringUtil::strcmpinsensitive(name, "POSITION")) {
@@ -352,7 +352,7 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
         _skinIndexToSkeleton[skinIndex] = skeleton;
 
         // Process and cache a copy of a VROSkinner.
-        std::unique_ptr<VROSkinner> skinnerOut = nullptr;
+        std::shared_ptr<VROSkinner> skinnerOut = nullptr;
         if (!processSkinnerInverseBindData(model, model.skins[skinIndex],
                                            _skinIndexToSkeleton[skinIndex], skinnerOut)) {
             pwarn("Chris. Failed to process Skinner");
@@ -878,7 +878,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
 bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
                                                   const tinygltf::Skin &skin,
                                                   std::shared_ptr<VROSkeleton> &skeleton,
-                                                  std::unique_ptr<VROSkinner> &skinnerOut) {
+                                                  std::shared_ptr<VROSkinner> &skinnerOut) {
     // Process inverseBind Matrices from the gLTF Accessor
     const tinygltf::Accessor &gDataAcessor = gModel.accessors[skin.inverseBindMatrices];
     GLTFTypeComponent gTypeComponent;
@@ -926,7 +926,7 @@ bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
         invBindTransforms.push_back(mat);
     }
 
-    skinnerOut = std::unique_ptr<VROSkinner>(new VROSkinner(skeleton,
+    skinnerOut = std::shared_ptr<VROSkinner>(new VROSkinner(skeleton,
                                                       VROMatrix4f(),
                                                       invBindTransforms,
                                                       nullptr,

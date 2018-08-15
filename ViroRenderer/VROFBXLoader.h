@@ -96,7 +96,7 @@ private:
                                                         std::shared_ptr<VROTaskQueue> taskQueue);
     
     static std::shared_ptr<VROSkeleton> loadFBXSkeleton(const viro::Node_Skeleton &skeleton_pb);
-    static std::unique_ptr<VROSkinner> loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
+    static std::shared_ptr<VROSkinner> loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
                                                       std::shared_ptr<VROSkeleton> skeleton);
     static std::shared_ptr<VROSkeletalAnimation> loadFBXSkeletalAnimation(const viro::Node_SkeletalAnimation &animation_pb,
                                                                           std::shared_ptr<VROSkeleton> skeleton);

@@ -113,7 +113,7 @@ void VROBoneUBO::bind() {
     GL( glBindBufferBase(GL_UNIFORM_BUFFER, VROShaderProgram::sBonesUBOBindingPoint, _bonesUBO) );
 }
 
-void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
+void VROBoneUBO::update(const std::shared_ptr<VROSkinner> &skinner) {
     pglpush("Bones");
     
     VROBonesData data;

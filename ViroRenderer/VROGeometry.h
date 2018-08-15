@@ -189,11 +189,11 @@ public:
         _name = name;
     }
     
-    const std::unique_ptr<VROSkinner> &getSkinner() const {
+    const std::shared_ptr<VROSkinner> &getSkinner() const {
         return _skinner;
     }
-    void setSkinner(std::unique_ptr<VROSkinner> skinner) {
-        _skinner = std::move(skinner);
+    void setSkinner(std::shared_ptr<VROSkinner> skinner) {
+        _skinner = skinner;
     }
     
     std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const;
@@ -278,7 +278,7 @@ private:
     /*
      The skinner ties this geometry to a skeleton, enabling skeletal animation.
      */
-    std::unique_ptr<VROSkinner> _skinner;
+    std::shared_ptr<VROSkinner> _skinner;
 
     /*
      If this geometry has no source data installed (_geometrySources and _geometryElements),

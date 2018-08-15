@@ -64,7 +64,7 @@ public:
      Update the data in this UBO with the latest transformation 
      matrices in the provided skinner.
      */
-    void update(const std::unique_ptr<VROSkinner> &skinner);
+    void update(const std::shared_ptr<VROSkinner> &skinner);
     
 private:
     

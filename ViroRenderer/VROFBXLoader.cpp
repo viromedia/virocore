@@ -625,7 +625,7 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
     return std::make_shared<VROSkeleton>(bones);
 }
 
-std::unique_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
+std::shared_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
                                                          std::shared_ptr<VROSkeleton> skeleton) {
     
     float geometryBindMtx[16];
@@ -672,7 +672,7 @@ std::unique_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
                                                                                          bone_weights_pb.data_offset(),
                                                                                          bone_weights_pb.data_stride());
 
-    return std::unique_ptr<VROSkinner>(new VROSkinner(skeleton, geometryBindTransform, bindTransforms, boneIndices, boneWeights));
+    return std::shared_ptr<VROSkinner>(new VROSkinner(skeleton, geometryBindTransform, bindTransforms, boneIndices, boneWeights));
 }
 
 std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(const viro::Node_SkeletalAnimation &animation_pb,
