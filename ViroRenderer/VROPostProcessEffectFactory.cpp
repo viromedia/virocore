@@ -11,17 +11,17 @@
 #include "VROImageShaderProgram.h"
 #include "VRODriver.h"
 
-static std::shared_ptr<VROImagePostProcess> sGrayScale;
-static std::shared_ptr<VROImagePostProcess> sSepia;
-static std::shared_ptr<VROImagePostProcess> sSinCity;
-static std::shared_ptr<VROImagePostProcess> sBarallel;
-static std::shared_ptr<VROImagePostProcess> sPincushion;
-static std::shared_ptr<VROImagePostProcess> sToonify;
-static std::shared_ptr<VROImagePostProcess> sInverted;
-static std::shared_ptr<VROImagePostProcess> sThermalVision;
-static std::shared_ptr<VROImagePostProcess> sPixellated;
-static std::shared_ptr<VROImagePostProcess> sCrossHatch;
-static std::shared_ptr<VROImagePostProcess> sEmptyEffect;
+static thread_local std::shared_ptr<VROImagePostProcess> sGrayScale;
+static thread_local std::shared_ptr<VROImagePostProcess> sSepia;
+static thread_local std::shared_ptr<VROImagePostProcess> sSinCity;
+static thread_local std::shared_ptr<VROImagePostProcess> sBarallel;
+static thread_local std::shared_ptr<VROImagePostProcess> sPincushion;
+static thread_local std::shared_ptr<VROImagePostProcess> sToonify;
+static thread_local std::shared_ptr<VROImagePostProcess> sInverted;
+static thread_local std::shared_ptr<VROImagePostProcess> sThermalVision;
+static thread_local std::shared_ptr<VROImagePostProcess> sPixellated;
+static thread_local std::shared_ptr<VROImagePostProcess> sCrossHatch;
+static thread_local std::shared_ptr<VROImagePostProcess> sEmptyEffect;
 
 VROPostProcessEffectFactory::VROPostProcessEffectFactory() {}
 VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {

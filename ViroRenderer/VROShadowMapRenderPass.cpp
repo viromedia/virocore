@@ -23,7 +23,7 @@
 #include "VROFieldOfView.h"
 
 // Shader modifier used for writing to depth buffer
-static std::shared_ptr<VROShaderModifier> sShadowDepthWritingModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowDepthWritingModifier;
 
 std::shared_ptr<VROShaderModifier> VROShadowMapRenderPass::getShadowDepthWritingModifier() {
     if (!sShadowDepthWritingModifier) {

@@ -22,34 +22,34 @@
 #include "VRODriverOpenGL.h"
 #include <tuple>
 
-static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
-static std::shared_ptr<VROShaderModifier> sSpecularTextureModifier;
-static std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
-static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
-static std::shared_ptr<VROShaderModifier> sRoughnessTextureModifier;
-static std::shared_ptr<VROShaderModifier> sMetalnessTextureModifier;
-static std::shared_ptr<VROShaderModifier> sAOTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sSpecularTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sRoughnessTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sMetalnessTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sAOTextureModifier;
 
-static std::shared_ptr<VROShaderModifier> sLambertLightingModifier;
-static std::shared_ptr<VROShaderModifier> sPhongLightingModifier;
-static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
-static std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
-static std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
-static std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
-static std::shared_ptr<VROShaderModifier> sPBRDiffuseIrradianceFragmentModifier;
-static std::shared_ptr<VROShaderModifier> sPBRDiffuseAndSpecularIrradianceFragmentModifier;
-static std::shared_ptr<VROShaderModifier> sRGTextureModifier;
-static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
-static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
-static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
-static std::shared_ptr<VROShaderModifier> sBloomModifier;
-static std::shared_ptr<VROShaderModifier> sToneMappingMaskModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sLambertLightingModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPhongLightingModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPBRSurfaceModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPBRDirectLightingModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPBRConstantAmbientFragmentModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPBRDiffuseIrradianceFragmentModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPBRDiffuseAndSpecularIrradianceFragmentModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sRGTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sBloomModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sToneMappingMaskModifier;
 
-static std::map<std::tuple<int, int, int>, std::shared_ptr<VROShaderModifier>> sChromaKeyModifiers;
-static std::map<VROStereoMode, std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
+static thread_local std::map<std::tuple<int, int, int>, std::shared_ptr<VROShaderModifier>> sChromaKeyModifiers;
+static thread_local std::map<VROStereoMode, std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
 // Debugging
-static std::shared_ptr<VROShaderModifier> sShadowMapFragmentModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowMapFragmentModifier;
 
 VROShaderFactory::VROShaderFactory() {
     

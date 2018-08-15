@@ -11,9 +11,9 @@
 #include "VROTexture.h"
 #include "VROImage.h"
 
-static std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
-static std::shared_ptr<VROTexture> staticBlankCubeTexture = nullptr;
-static std::shared_ptr<VROTexture> staticPointCloudTexture = nullptr;
+static thread_local std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
+static thread_local std::shared_ptr<VROTexture> staticBlankCubeTexture = nullptr;
+static thread_local std::shared_ptr<VROTexture> staticPointCloudTexture = nullptr;
 
 std::shared_ptr<VROTexture> getBlankTexture(VROTextureType type) {
     if (type == VROTextureType::None || type == VROTextureType::Texture2D || type == VROTextureType::TextureEGLImage) {

@@ -274,7 +274,7 @@ std::shared_ptr<VROTexture> VROPortal::getLightingEnvironment() const {
 
 #pragma mark - Backgrounds
 
-static std::shared_ptr<VROShaderModifier> sBackgroundShaderModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sBackgroundShaderModifier;
 
 void VROPortal::installBackgroundShaderModifier() {
     /*

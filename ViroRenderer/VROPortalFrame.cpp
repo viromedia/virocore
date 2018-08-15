@@ -12,7 +12,7 @@
 #include "VROShaderModifier.h"
 
 // Shader modifier used for alpha discard
-static std::shared_ptr<VROShaderModifier> sAlphaTestModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sAlphaTestModifier;
 
 std::shared_ptr<VROShaderModifier> VROPortalFrame::getAlphaDiscardModifier() {
     if (!sAlphaTestModifier) {

@@ -17,8 +17,8 @@
 #include "VRODriverOpenGL.h"
 #include "VRODualQuaternion.h"
 
-static std::shared_ptr<VROShaderModifier> sSkinningShaderModifier;
-static std::shared_ptr<VROShaderModifier> sSkinningShaderModifierWithScale;
+static thread_local std::shared_ptr<VROShaderModifier> sSkinningShaderModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sSkinningShaderModifierWithScale;
 
 std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool hasScale) {
     if (kDualQuaternionEnabled) {

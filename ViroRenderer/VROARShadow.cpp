@@ -10,9 +10,9 @@
 #include "VROShaderModifier.h"
 #include "VROMaterial.h"
 
-static std::shared_ptr<VROShaderModifier> sShadowARSurfaceModifier;
-static std::shared_ptr<VROShaderModifier> sShadowARLightingModifier;
-static std::shared_ptr<VROShaderModifier> sShadowARFragmentModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowARSurfaceModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowARLightingModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sShadowARFragmentModifier;
 
 void VROARShadow::apply(std::shared_ptr<VROMaterial> material) {
     createSurfaceModifier();
