@@ -45,6 +45,10 @@ public:
 
     void setDuration(float durationSeconds);
     float getDuration() const;
+    
+    const std::vector<std::shared_ptr<VROExecutableAnimation>> &getAnimations() const {
+        return _animations;
+    }
 
     std::string toString() const;
 

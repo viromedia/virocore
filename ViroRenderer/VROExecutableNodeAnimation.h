@@ -66,6 +66,10 @@ public:
         return _executableAnimation->toString();
     }
     
+    std::shared_ptr<VROExecutableAnimation> getInnerAnimation() const {
+        return _executableAnimation;
+    }
+    
 private:
     
     std::weak_ptr<VRONode> _node;

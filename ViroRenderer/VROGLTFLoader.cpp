@@ -359,7 +359,7 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
             return false;
         }
 
-        _skinMap[skinIndex] = std::move(skinnerOut);
+        _skinMap[skinIndex] = skinnerOut;
     }
     return true;
 }
@@ -671,6 +671,7 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
 
         // Now iterate through each frame and grab the computed transform for each joint/bone.
         std::shared_ptr<VROSkeleton> currentSkeleton = _skinIndexToSkeleton[skinIndex];
+        std::shared_ptr<VROSkinner> currentSkinner = _skinMap[skinIndex];
         for (int i = 0; i < frames.size(); i++) {
             std::map<int, VROMatrix4f> computedAnimatedJointTrans;
             processSkeletalTransformsForFrame(skinIndex, skeletalAnimationIndex, i, 0,
@@ -698,7 +699,7 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
 
         // Finally construct our skeletal animation
         std::shared_ptr<VROSkeletalAnimation> skeletalAnimation
-                = std::make_shared<VROSkeletalAnimation>(currentSkeleton, skeletalFrames, totalDuration);
+                = std::make_shared<VROSkeletalAnimation>(currentSkinner, skeletalFrames, totalDuration);
         skeletalAnimation->setName(keyFrameAnim->getName());
         _skinSkeletalAnims[skinIndex].push_back(skeletalAnimation);
     }
@@ -842,7 +843,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     // After processing the nodes of this model, process skins if any.
     std::shared_ptr<VROGeometry> geom = node->getGeometry();
     if (geom != nullptr && gNode.skin >=0) {
-        geom->setSkinner(std::move(_skinMap[gNode.skin]));
+        geom->setSkinner(_skinMap[gNode.skin]);
         for (const std::shared_ptr<VROMaterial> &material : geom->getMaterials()) {
             material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier(false));
         }

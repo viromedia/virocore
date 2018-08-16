@@ -313,7 +313,8 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
         geo->setName(node_pb.name());
         
         if (geo_pb.has_skin() && skeleton) {
-            geo->setSkinner(loadFBXSkinner(geo_pb.skin(), skeleton));
+            std::shared_ptr<VROSkinner> skinner = loadFBXSkinner(geo_pb.skin(), skeleton);
+            geo->setSkinner(skinner);
             
             bool hasScaling = false;
             for (int i = 0; i < node_pb.skeletal_animation_size(); i++) {
@@ -322,7 +323,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                     hasScaling = true;
                 }
                 
-                std::shared_ptr<VROSkeletalAnimation> animation = loadFBXSkeletalAnimation(animation_pb, skeleton);
+                std::shared_ptr<VROSkeletalAnimation> animation = loadFBXSkeletalAnimation(animation_pb, skinner);
                 if (animation->getName().empty()) {
                     animation->setName("fbx_skel_animation_" + VROStringUtil::toString(i));
                 }
@@ -676,7 +677,7 @@ std::shared_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
 }
 
 std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(const viro::Node_SkeletalAnimation &animation_pb,
-                                                                             std::shared_ptr<VROSkeleton> skeleton) {
+                                                                             std::shared_ptr<VROSkinner> skinner) {
     
     std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> frames;
     for (int f = 0; f < animation_pb.frame_size(); f++) {
@@ -713,7 +714,7 @@ std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(con
     
     float duration = animation_pb.duration();
     
-    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames, duration / 1000.0);
+    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skinner, frames, duration / 1000.0);
     animation->setName(animation_pb.name());
     
     return animation;

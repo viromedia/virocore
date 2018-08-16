@@ -47,6 +47,7 @@ class VROTransformDelegate;
 class VROTransaction;
 class VRORenderMetadata;
 class VROParticleEmitter;
+class VROSkeletalAnimationLayer;
 
 extern bool kDebugSortOrder;
 extern int  kDebugSortOrderFrameFrequency;
@@ -606,6 +607,20 @@ public:
      both will be returned in a single animation group.
      */
     std::shared_ptr<VROExecutableAnimation> getAnimation(std::string key, bool recursive);
+    
+    /*
+     Retrieve all the animations with the given keys as a single, composite executable
+     animation. If multiple animations influence the same bone, the provided weights determine
+     how the animations blend.
+     
+     If recursive is true, this will search subnodes for animations as well.
+     
+     For example, if the animation 'Body' and the animation 'LeftArm' contain torso and left
+     arm animations, both will be returned in a single animation group. If both animations
+     move the left arm, their influences on the left arm will be blended.
+     */
+    std::shared_ptr<VROExecutableAnimation> getLayeredAnimation(std::vector<std::shared_ptr<VROSkeletalAnimationLayer>> layers,
+                                                                bool recursive);
     
     /*
      Remove all animations from this node.

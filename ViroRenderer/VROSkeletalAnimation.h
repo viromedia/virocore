@@ -15,7 +15,7 @@
 #include "VROExecutableAnimation.h"
 
 class VROShaderModifier;
-class VROSkeleton;
+class VROSkinner;
 
 /*
  Single frame of a skeletal animation. Identifies the bones
@@ -59,10 +59,10 @@ class VROSkeletalAnimation : public VROExecutableAnimation, public std::enable_s
     
 public:
         
-    VROSkeletalAnimation(std::shared_ptr<VROSkeleton> skeleton,
+    VROSkeletalAnimation(std::shared_ptr<VROSkinner> skinner,
                          std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &frames,
                          float duration) :
-        _skeleton(skeleton),
+        _skinner(skinner),
         _frames(std::move(frames)),
         _duration(duration) {}
     virtual ~VROSkeletalAnimation() { }
@@ -74,6 +74,9 @@ public:
         return _name;
     }
     
+    std::shared_ptr<VROSkinner> getSkinner() const {
+        return _skinner;
+    }
     const std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &getFrames() const {
         return _frames;
     }
@@ -115,9 +118,10 @@ private:
     std::string _name;
     
     /*
-     The skeleton we are animating.
+     The skinner that connects the animation to the skeleton, and in turn
+     the skeleton to the geometry.
      */
-    std::shared_ptr<VROSkeleton> _skeleton;
+    std::shared_ptr<VROSkinner> _skinner;
     
     /*
      The animation frames, in order of time.

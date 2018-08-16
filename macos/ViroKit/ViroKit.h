@@ -74,6 +74,7 @@
 #import <ViroKit/VROExecutableAnimation.h>
 #import <ViroKit/VROAnimationGroup.h>
 #import <ViroKit/VROAnimationChain.h>
+#import <ViroKit/VROSkeletalAnimationLayer.h>
 #import <ViroKit/VROTimingFunction.h>
 #import <ViroKit/VROTimingFunctionBounce.h>
 #import <ViroKit/VROTimingFunctionCubicBezier.h>

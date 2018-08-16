@@ -13,6 +13,7 @@
 #include "VROSkeleton.h"
 #include "VROShaderModifier.h"
 #include "VROBone.h"
+#include "VROSkinner.h"
 #include <sstream>
 #include <map>
 
@@ -27,7 +28,7 @@ std::shared_ptr<VROExecutableAnimation> VROSkeletalAnimation::copy() {
 
         frames.push_back(std::move(frame));
     }
-    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(_skeleton, frames, _duration);
+    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(_skinner, frames, _duration);
     animation->setName(_name);
     
     return animation;
@@ -60,7 +61,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     
     for (auto kv : boneKeyTimes) {
         int boneIndex = kv.first;
-        std::shared_ptr<VROBone> bone = _skeleton->getBone(boneIndex);
+        std::shared_ptr<VROBone> bone = _skinner->getSkeleton()->getBone(boneIndex);
         
         std::vector<float> &keyTimes = kv.second;
         std::vector<VROMatrix4f> &keyValues = boneKeyValues[boneIndex];

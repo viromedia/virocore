@@ -31,6 +31,9 @@
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
 #include "VROExecutableNodeAnimation.h"
+#include "VROSkeletalAnimation.h"
+#include "VROLayeredSkeletalAnimation.h"
+#include "VROSkeletalAnimationLayer.h"
 #include "VROTransformDelegate.h"
 #include "VROInstancedUBO.h"
 #include "VROPlatformUtil.h"
@@ -1205,6 +1208,14 @@ void VRONode::getAnimations(std::vector<std::shared_ptr<VROExecutableAnimation>>
             subnode->getAnimations(animations, key, recursive);
         }
     }
+}
+
+std::shared_ptr<VROExecutableAnimation> VRONode::getLayeredAnimation(std::vector<std::shared_ptr<VROSkeletalAnimationLayer>> layers,
+                                                                     bool recursive) {
+    for (std::shared_ptr<VROSkeletalAnimationLayer> &layer : layers) {
+        layer->animation = getAnimation(layer->name, recursive);
+    }
+    return VROLayeredSkeletalAnimation::createLayeredAnimation(layers);
 }
 
 std::set<std::string> VRONode::getAnimationKeys(bool recursive) {

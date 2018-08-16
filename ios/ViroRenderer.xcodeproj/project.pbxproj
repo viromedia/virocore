@@ -1016,6 +1016,12 @@
 		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F951F9320583790000DC58F /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F951F9220583790000DC58F /* libfreetype.a */; };
 		8F951F9D20587D6E000DC58F /* VROTypeface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F951F9C20587D6E000DC58F /* VROTypeface.cpp */; };
+		8F98F70B21260E4800917430 /* VROLayeredSkeletalAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F98F70821260E4700917430 /* VROLayeredSkeletalAnimation.cpp */; };
+		8F98F70C21260E4800917430 /* VROLayeredSkeletalAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F98F70821260E4700917430 /* VROLayeredSkeletalAnimation.cpp */; };
+		8F98F70D21260E4800917430 /* VROLayeredSkeletalAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F98F70921260E4700917430 /* VROLayeredSkeletalAnimation.h */; };
+		8F98F70E21260E4800917430 /* VROLayeredSkeletalAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F98F70921260E4700917430 /* VROLayeredSkeletalAnimation.h */; };
+		8F98F70F21260E4800917430 /* VROSkeletalAnimationLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F98F70A21260E4800917430 /* VROSkeletalAnimationLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F98F71021260E4800917430 /* VROSkeletalAnimationLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F98F70A21260E4800917430 /* VROSkeletalAnimationLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -2050,6 +2056,9 @@
 		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
 		8F951F9220583790000DC58F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = Libraries/freetype/armv7_arm64/libfreetype.a; sourceTree = "<group>"; };
 		8F951F9C20587D6E000DC58F /* VROTypeface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTypeface.cpp; sourceTree = "<group>"; };
+		8F98F70821260E4700917430 /* VROLayeredSkeletalAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLayeredSkeletalAnimation.cpp; sourceTree = "<group>"; };
+		8F98F70921260E4700917430 /* VROLayeredSkeletalAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLayeredSkeletalAnimation.h; sourceTree = "<group>"; };
+		8F98F70A21260E4800917430 /* VROSkeletalAnimationLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeletalAnimationLayer.h; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -2843,6 +2852,9 @@
 				8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */,
 				8F129F941ECB41EE00341D83 /* VROSkeletalAnimation.h */,
 				8F129F931ECB41EE00341D83 /* VROSkeletalAnimation.cpp */,
+				8F98F70921260E4700917430 /* VROLayeredSkeletalAnimation.h */,
+				8F98F70821260E4700917430 /* VROLayeredSkeletalAnimation.cpp */,
+				8F98F70A21260E4800917430 /* VROSkeletalAnimationLayer.h */,
 			);
 			name = Skeletal;
 			sourceTree = "<group>";
@@ -3885,6 +3897,7 @@
 				13B6732C212229B20040FB72 /* optional.hpp in Headers */,
 				13B6732D212229B20040FB72 /* VROARPlaneAnchor.h in Headers */,
 				13B6732E212229B20040FB72 /* VROSkinner.h in Headers */,
+				8F98F70E21260E4800917430 /* VROLayeredSkeletalAnimation.h in Headers */,
 				13B6732F212229B20040FB72 /* VROPhysicsBody.h in Headers */,
 				13B67330212229B20040FB72 /* VROImageShaderProgram.h in Headers */,
 				13B67331212229B20040FB72 /* VROPhysicsMotionState.h in Headers */,
@@ -4011,6 +4024,7 @@
 				13B673A8212229B20040FB72 /* VROARSessionInertial.h in Headers */,
 				13B673A9212229B20040FB72 /* VROGlyphAtlas.h in Headers */,
 				13B673AA212229B20040FB72 /* VROPortalTest.h in Headers */,
+				8F98F71021260E4800917430 /* VROSkeletalAnimationLayer.h in Headers */,
 				13B673AB212229B20040FB72 /* VROLight.h in Headers */,
 				13B673AC212229B20040FB72 /* VROTime.h in Headers */,
 				13B673AD212229B20040FB72 /* VRODebugHUD.h in Headers */,
@@ -4204,6 +4218,7 @@
 				8F201C602101624500637A75 /* VROTextFormatter.h in Headers */,
 				A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */,
 				8FEACEED2017AC310082D18B /* VROEquirectangularToCubeRenderPass.h in Headers */,
+				8F98F70D21260E4800917430 /* VROLayeredSkeletalAnimation.h in Headers */,
 				A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */,
 				8FD2A55A1F817D4200E831A6 /* VROPhysicsTest.h in Headers */,
 				A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */,
@@ -4290,6 +4305,7 @@
 				8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
 				8A11C8F51EF5AB9D0003E829 /* VROARDeclarativePlane.h in Headers */,
+				8F98F70F21260E4800917430 /* VROSkeletalAnimationLayer.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				13F631BA2065C21B00A74EFC /* KIOQuery.h in Headers */,
 				8FD2A53F1F813C4100E831A6 /* VROPerfTest.h in Headers */,
@@ -5069,11 +5085,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5167,11 +5179,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5208,11 +5216,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5259,6 +5263,7 @@
 				13B67228212229B20040FB72 /* VRODebugHUD.cpp in Sources */,
 				13B67229212229B20040FB72 /* VROChoreographer.cpp in Sources */,
 				13B6722A212229B20040FB72 /* VROViewGVR.m in Sources */,
+				8F98F70C21260E4800917430 /* VROLayeredSkeletalAnimation.cpp in Sources */,
 				13B6722B212229B20040FB72 /* VROHDRLoader.cpp in Sources */,
 				13B6722C212229B20040FB72 /* VROARAnchoriOS.cpp in Sources */,
 				13B6722D212229B20040FB72 /* VROMath.cpp in Sources */,
@@ -5534,6 +5539,7 @@
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
 				8F0E5E9C1F3BA9120007AD03 /* VROChoreographer.cpp in Sources */,
 				8F0FE6701CD29BF900A4C297 /* VROViewGVR.m in Sources */,
+				8F98F70B21260E4800917430 /* VROLayeredSkeletalAnimation.cpp in Sources */,
 				8FEACEE620169EA90082D18B /* VROHDRLoader.cpp in Sources */,
 				8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */,
 				8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */,
