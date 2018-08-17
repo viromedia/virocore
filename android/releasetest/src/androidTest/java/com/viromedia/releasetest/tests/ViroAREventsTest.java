@@ -75,6 +75,7 @@ public class ViroAREventsTest extends ViroBaseTest {
 
     @Test
     public void testAREvents() {
+        runUITest(()->  testEventsDragOnPlaneListenerPlane());
         runUITest(() -> testEventsARDragListener());
         runUITest(() -> testEventsDragListener());
         runUITest(() -> testEventsGesturePinchListener());
@@ -117,6 +118,35 @@ public class ViroAREventsTest extends ViroBaseTest {
         });
 
         assertPass("All objects can be dragged within fixed distance(not the world).");
+    }
+
+    private void testEventsDragOnPlaneListenerPlane() {
+        boxNode.setDragType(Node.DragType.FIXED_TO_PLANE);
+        objectNode.setDragType(Node.DragType.FIXED_TO_PLANE);
+        sphereNode.setDragType(Node.DragType.FIXED_TO_PLANE);
+
+        boxNode.setDragPlaneNormal(new Vector(0, 1, 0));
+        boxNode.setDragPlanePoint(new Vector(0.0f, 1f, -4f));
+
+        objectNode.setDragPlaneNormal(new Vector(0, 1, 0));
+        objectNode.setDragPlanePoint(new Vector(0.0f, 1f, -4f));
+
+        sphereNode.setDragPlaneNormal(new Vector(0, 1, 0));
+        sphereNode.setDragPlanePoint(new Vector(0.0f, 1f, -4f));
+
+        boxNode.setDragListener((source, node, worldLocation, localLocation) -> {
+            eventText.setText("DragFixedToPlane on box, worldLoc: " + ViroEventsTest.vectorString(worldLocation) + ", localLoc: " + ViroEventsTest.vectorString(localLocation));
+        });
+
+        objectNode.setDragListener((source, node, worldLocation, localLocation) -> {
+            eventText.setText("DragFixedToPlane on obj., worldLoc: " + ViroEventsTest.vectorString(worldLocation) + ", localLoc: " + ViroEventsTest.vectorString(localLocation));
+        });
+
+        sphereNode.setDragListener((source, node, worldLocation, localLocation) -> {
+            eventText.setText("DragFixedToPlane on sphere, worldLoc: " + ViroEventsTest.vectorString(worldLocation) + ", localLoc: " + ViroEventsTest.vectorString(localLocation));
+        });
+
+        assertPass("All objects can be dragged on a plane(0, 1, -4) with normal(0,1,0).");
     }
 
     private void testEventsGesturePinchListener() {
