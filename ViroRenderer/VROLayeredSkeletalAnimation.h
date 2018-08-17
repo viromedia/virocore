@@ -75,7 +75,8 @@ public:
                                 float duration) :
     _skinner(skinner),
     _layers(layers),
-    _duration(duration) {}
+    _duration(duration),
+    _cached(false) {}
     virtual ~VROLayeredSkeletalAnimation() { }
     
     void setName(std::string name) {
@@ -136,10 +137,22 @@ private:
     float _duration;
     
     /*
+     Cache the blended bone times and values so if we re-run this animation these do not have
+     to be recomputed.
+     */
+    bool _cached;
+    std::map<int, std::vector<float>> _boneKeyTimes;
+    std::map<int, std::vector<VROMatrix4f>> _boneTransforms;
+    
+    /*
      If the animation is running, this is its associated transaction.
      */
     std::weak_ptr<VROTransaction> _transaction;
     
+    /*
+     Blending methods to create the unified animation.
+     */
+    void blendAnimations();
     static VROMatrix4f blendBoneTransform(const VROMatrix4f &previous, const VROMatrix4f &next, float weight);
     static VROMatrix4f blendBoneTransforms(std::vector<std::pair<VROMatrix4f, float>> transformsAndWeights);
     

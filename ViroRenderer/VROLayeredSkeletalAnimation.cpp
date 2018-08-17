@@ -124,15 +124,14 @@ std::shared_ptr<VROExecutableAnimation> VROLayeredSkeletalAnimation::copy() {
     return animation;
 }
 
-void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
+void VROLayeredSkeletalAnimation::blendAnimations() {
     std::weak_ptr<VROLayeredSkeletalAnimation> shared_w = shared_from_this();
-    const std::shared_ptr<VROSkeleton> &skeleton = _skinner->getSkeleton();
     
     /*
      This will map each bone index to the layers that modify said bone.
      */
     std::map<int, std::vector<int>> bonesToAnimatingLayers;
-   
+    
     for (int i = 0; i < _layers.size(); i++) {
         std::shared_ptr<VROSkeletalAnimationLayerInternal> &layer = _layers[i];
         std::shared_ptr<VROSkeletalAnimation> animation = layer->animation;
@@ -144,7 +143,7 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
             passert (frame->boneIndices.size() == frame->boneTransforms.size());
             
             for (int f = 0; f < frame->boneIndices.size(); f++) {
-                int boneIndex = frame->boneIndices[f];                
+                int boneIndex = frame->boneIndices[f];
                 layer->boneConcatenatedTransforms[boneIndex].push_back(frame->boneTransforms[f]);
                 layer->boneKeyTimes[boneIndex].push_back(frame->time);
                 layer->boneLocalTransforms[boneIndex].push_back(frame->localBoneTransforms[f]);
@@ -155,14 +154,11 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
     /*
      Combine the keyframe data from each layer to create the layered animation.
      */
-    std::map<int, std::vector<float>> boneKeyTimes;
-    std::map<int, std::vector<VROMatrix4f>> boneTransforms;
-    
     const std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &masterFrames = _layers[0]->animation->getFrames();
     for (int f = 0; f < masterFrames.size(); f++) {
         for (int b = 0; b < masterFrames[f]->boneIndices.size(); b++) {
             int boneIndex = masterFrames[f]->boneIndices[b];
-            boneKeyTimes[boneIndex].push_back(_layers[0]->boneKeyTimes[boneIndex][f]);
+            _boneKeyTimes[boneIndex].push_back(_layers[0]->boneKeyTimes[boneIndex][f]);
             
             // Collect all layers that have a non-zero weight on this bone
             VROMatrix4f boneIdentityTransform = _skinner->getSkeleton()->getBone(boneIndex)->getLocalTransform();
@@ -177,14 +173,22 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
             }
             
             if (boneTransformsToBlend.size() == 0) {
-                boneTransforms[boneIndex].push_back(boneIdentityTransform);
+                _boneTransforms[boneIndex].push_back(boneIdentityTransform);
             } else if (boneTransformsToBlend.size() == 1) {
-                boneTransforms[boneIndex].push_back(boneTransformsToBlend[0].first);
+                _boneTransforms[boneIndex].push_back(boneTransformsToBlend[0].first);
             } else {
-                boneTransforms[boneIndex].push_back(blendBoneTransforms(boneTransformsToBlend));
+                _boneTransforms[boneIndex].push_back(blendBoneTransforms(boneTransformsToBlend));
             }
         }
     }
+}
+
+void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
+    if (!_cached) {
+        blendAnimations();
+        _cached = true;
+    }
+    const std::shared_ptr<VROSkeleton> &skeleton = _skinner->getSkeleton();
     
     /*
      Finally, begin the animation for each bone, all of which we be in a single transaction.
@@ -194,12 +198,12 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     std::string name = _name;
-    for (auto kv : boneKeyTimes) {
+    for (auto kv : _boneKeyTimes) {
         int boneIndex = kv.first;
         std::vector<float> &keyTimes = kv.second;
         
         std::shared_ptr<VROBone> bone = skeleton->getBone(boneIndex);
-        std::vector<VROMatrix4f> &transforms = boneTransforms[boneIndex];
+        std::vector<VROMatrix4f> &transforms = _boneTransforms[boneIndex];
         
         std::shared_ptr<VROAnimation> animation = std::make_shared<VROAnimationMatrix4f>([name](VROAnimatable *const animatable, VROMatrix4f m) {
             VROBone *bone = (VROBone *) animatable;
