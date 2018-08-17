@@ -119,6 +119,7 @@ void setTextureProperties(VROLightingModel lightingModel, const viro::Node::Geom
         texture->setMipFilter(convert(pb.mip_filter()));
         texture->setWrapS(convert(pb.wrap_mode_s()));
         texture->setWrapT(convert(pb.wrap_mode_t()));
+        texture->setName(pb.texture().c_str());
     }
 }
 
@@ -203,7 +204,9 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
             if (!data_pb.empty()) {
                 viro::Node *node_pb = new viro::Node();
                 if (node_pb->ParseFromString(data_pb)) {
-                    pinfo("Read FBX protobuf");
+                    if (kDebugFBXLoading) {
+                        pinfo("Read FBX protobuf");
+                    }
 
                     /*
                      If the ancillary resources (e.g. textures) required by the model are provided in a
@@ -295,7 +298,9 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
                                                    std::shared_ptr<VROTaskQueue> taskQueue) {
     
-    pinfo("Loading node [%s]", node_pb.name().c_str());
+    if (kDebugFBXLoading) {
+        pinfo("Loading node [%s]", node_pb.name().c_str());
+    }
     
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     node->setName(node_pb.name());
@@ -329,7 +334,9 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 }
                 
                 node->addAnimation(animation->getName(), animation);
-                pinfo("   Added skeletal animation [%s]", animation->getName().c_str());
+                if (kDebugFBXLoading) {
+                    pinfo("   Added skeletal animation [%s]", animation->getName().c_str());
+                }
                 
                 // Set the skinner to use the first frame's transform of the first animation; this is
                 // so that we get a natural pose before any animation is run (otherwise the bone transforms

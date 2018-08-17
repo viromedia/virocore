@@ -152,37 +152,6 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
         }
     }
     
-    ///////////////////
-    
-    for (int i = 0; i < _layers.size(); i++) {
-        std::shared_ptr<VROSkeletalAnimationLayerInternal> &layer = _layers[i];
-        std::shared_ptr<VROSkeletalAnimation> animation = layer->animation;
-        
-        if (layer->boneKeyTimes.size() < 10) {
-            continue;
-        }
-        
-        for (auto kv : layer->boneLocalTransforms) {
-            int boneIndex = kv.first;
-            std::vector<VROMatrix4f> transforms = kv.second;
-            
-            bool didChange = false;
-            VROMatrix4f firstMatrix = transforms[0];
-            for (VROMatrix4f matrix : transforms) {
-                if (matrix != firstMatrix) {
-                    didChange = true;
-                    break;
-                }
-            }
-            
-            if (didChange) {
-                pinfo("Layer %d, Bone %d: [INFLUENCE]", i, boneIndex);
-            }
-        }
-    }
-    
-    ///////////////////
-    
     /*
      Combine the keyframe data from each layer to create the layered animation.
      */
@@ -207,9 +176,6 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
                 }
             }
             
-            if (boneIndex == 10 || boneIndex == 15) {
-                pinfo("break!");
-            }
             if (boneTransformsToBlend.size() == 0) {
                 boneTransforms[boneIndex].push_back(boneIdentityTransform);
             } else if (boneTransformsToBlend.size() == 1) {
