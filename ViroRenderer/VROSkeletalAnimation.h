@@ -101,6 +101,7 @@ public:
     void pause();
     void resume();
     void terminate(bool jumpToEnd);
+    void preload() {}
 
     /*
      Override the duration of this skeletal animation, in seconds.

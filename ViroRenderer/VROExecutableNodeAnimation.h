@@ -54,6 +54,9 @@ public:
     void terminate(bool jumpToEnd) {
         _executableAnimation->terminate(jumpToEnd);
     }
+    void preload() {
+        _executableAnimation->preload();
+    }
 
     void setDuration(float durationSeconds) {
         _executableAnimation->setDuration(durationSeconds);

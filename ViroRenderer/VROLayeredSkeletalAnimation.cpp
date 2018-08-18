@@ -21,6 +21,8 @@
 #include <sstream>
 #include <map>
 
+static const float kBlendEpsilon = 0.02;
+
 void VROLayeredSkeletalAnimation::flattenAnimationChain(std::shared_ptr<VROAnimationChain> chain, std::vector<std::shared_ptr<VROExecutableAnimation>> *animations) {
     
     for (const std::shared_ptr<VROExecutableAnimation> child : chain->getAnimations()) {
@@ -128,23 +130,17 @@ void VROLayeredSkeletalAnimation::blendAnimations() {
     std::weak_ptr<VROLayeredSkeletalAnimation> shared_w = shared_from_this();
     
     /*
-     This will map each bone index to the layers that modify said bone.
+     Build the keyframe animation data for each layer.
      */
-    std::map<int, std::vector<int>> bonesToAnimatingLayers;
-    
     for (int i = 0; i < _layers.size(); i++) {
         std::shared_ptr<VROSkeletalAnimationLayerInternal> &layer = _layers[i];
         std::shared_ptr<VROSkeletalAnimation> animation = layer->animation;
         
-        /*
-         Build the keyframe animation data for each layer.
-         */
         for (const std::unique_ptr<VROSkeletalAnimationFrame> &frame : animation->getFrames()) {
             passert (frame->boneIndices.size() == frame->boneTransforms.size());
             
             for (int f = 0; f < frame->boneIndices.size(); f++) {
                 int boneIndex = frame->boneIndices[f];
-                layer->boneConcatenatedTransforms[boneIndex].push_back(frame->boneTransforms[f]);
                 layer->boneKeyTimes[boneIndex].push_back(frame->time);
                 layer->boneLocalTransforms[boneIndex].push_back(frame->localBoneTransforms[f]);
             }
@@ -154,6 +150,8 @@ void VROLayeredSkeletalAnimation::blendAnimations() {
     /*
      Combine the keyframe data from each layer to create the layered animation.
      */
+    std::vector<std::pair<VROMatrix4f, float>> boneTransformsToBlend;
+
     const std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &masterFrames = _layers[0]->animation->getFrames();
     for (int f = 0; f < masterFrames.size(); f++) {
         for (int b = 0; b < masterFrames[f]->boneIndices.size(); b++) {
@@ -163,7 +161,6 @@ void VROLayeredSkeletalAnimation::blendAnimations() {
             // Collect all layers that have a non-zero weight on this bone
             VROMatrix4f boneIdentityTransform = _skinner->getSkeleton()->getBone(boneIndex)->getLocalTransform();
             
-            std::vector<std::pair<VROMatrix4f, float>> boneTransformsToBlend;
             for (int i = 0; i < _layers.size(); i++) {
                 std::shared_ptr<VROSkeletalAnimationLayerInternal> &layer = _layers[i];
                 float weight = layer->getBoneWeight(boneIndex);
@@ -180,17 +177,27 @@ void VROLayeredSkeletalAnimation::blendAnimations() {
             } else if (boneTransformsToBlend.size() == 1) {
                 _boneTransforms[boneIndex].push_back(boneTransformsToBlend[0].first);
             } else {
-                _boneTransforms[boneIndex].push_back(blendBoneTransforms(boneTransformsToBlend));
+                _boneTransforms[boneIndex].push_back(blendBoneTransforms(boneIndex, boneTransformsToBlend));
             }
+            boneTransformsToBlend.clear();
         }
     }
+    
+    /*
+     Once we're blended, we no longer need the layers.
+     */
+    _layers.clear();
 }
 
-void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
+void VROLayeredSkeletalAnimation::preload() {
     if (!_cached) {
         blendAnimations();
         _cached = true;
     }
+}
+
+void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
+    preload();
     const std::shared_ptr<VROSkeleton> &skeleton = _skinner->getSkeleton();
     
     /*
@@ -231,11 +238,11 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
     _transaction = transaction;
 }
 
-VROMatrix4f VROLayeredSkeletalAnimation::blendBoneTransforms(std::vector<std::pair<VROMatrix4f, float>> transformsAndWeights) {
+VROMatrix4f VROLayeredSkeletalAnimation::blendBoneTransforms(int bone, const std::vector<std::pair<VROMatrix4f, float>> &transformsAndWeights) {
     passert (transformsAndWeights.size() >= 2);
     
     /*
-     Reweight the bones so they add to one.
+     Reweight the transforms so they add to one.
      */
     std::vector<std::pair<VROMatrix4f, float>> reweighted;
     float totalWeight = 0;
@@ -256,12 +263,22 @@ VROMatrix4f VROLayeredSkeletalAnimation::blendBoneTransforms(std::vector<std::pa
         VROMatrix4f nextTransform = reweighted[i].first;
         float nextWeight = reweighted[i].second;
         
+        // Skip tranforms that are below a given weight
+        if (nextWeight < kBlendEpsilon) {
+            continue;
+        }
+        
         // Reweight from the cumulative weight across all quaternions into a normalized
         // weight between just the last quaternion and the new one
         float totalWeight = blendedWeight + nextWeight;
         float twoValueBlendWeight = (nextWeight / totalWeight);
         
-        blendedTransform = blendBoneTransform(blendedTransform, nextTransform, twoValueBlendWeight);
+        // Optimization to avoid blending when values are extremely low or high
+        if (twoValueBlendWeight > (1 - kBlendEpsilon)) {
+            blendedTransform = nextTransform;
+        } else if (twoValueBlendWeight > kBlendEpsilon) {
+            blendedTransform = blendBoneTransform(blendedTransform, nextTransform, twoValueBlendWeight);
+        } // else don't bother blending nextTransform into blendedTransform, its weight is too low to matter
         
         // Add the original weight of the latest transform to our total blend weight
         // (note this is distinct from the weight we just used to perform the blend --

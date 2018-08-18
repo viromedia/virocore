@@ -54,7 +54,6 @@ private:
     
     // Derived keyframe data for the animation
     std::map<int, std::vector<float>> boneKeyTimes;
-    std::map<int, std::vector<VROMatrix4f>> boneConcatenatedTransforms;
     std::map<int, std::vector<VROMatrix4f>> boneLocalTransforms;
     
 };
@@ -107,6 +106,11 @@ public:
     void terminate(bool jumpToEnd);
     
     /*
+     Blend the animation layers in advance so this starts without delay.
+     */
+    void preload();
+    
+    /*
      Set the duration of this layered skeletal animation, in seconds.
      */
     void setDuration(float durationSeconds);
@@ -154,7 +158,7 @@ private:
      */
     void blendAnimations();
     static VROMatrix4f blendBoneTransform(const VROMatrix4f &previous, const VROMatrix4f &next, float weight);
-    static VROMatrix4f blendBoneTransforms(std::vector<std::pair<VROMatrix4f, float>> transformsAndWeights);
+    static VROMatrix4f blendBoneTransforms(int bone, const std::vector<std::pair<VROMatrix4f, float>> &transformsAndWeights);
     
     /*
      Recursively flatten out chains of chains.

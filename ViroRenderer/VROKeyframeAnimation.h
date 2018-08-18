@@ -88,6 +88,7 @@ public:
     void pause();
     void resume();
     void terminate(bool jumpToEnd);
+    void preload() {}
     
     std::string toString() const;
 private:

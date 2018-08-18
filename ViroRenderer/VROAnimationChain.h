@@ -42,7 +42,8 @@ public:
     void pause();
     void resume();
     void terminate(bool jumpToEnd);
-
+    void preload();
+    
     void setDuration(float durationSeconds);
     float getDuration() const;
     
