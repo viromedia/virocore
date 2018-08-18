@@ -168,7 +168,10 @@ void VROLayeredSkeletalAnimation::blendAnimations() {
                 std::shared_ptr<VROSkeletalAnimationLayerInternal> &layer = _layers[i];
                 float weight = layer->getBoneWeight(boneIndex);
                 if (weight > 0) {
-                    boneTransformsToBlend.push_back({ layer->boneLocalTransforms[boneIndex][f], weight });
+                    auto boneLocalTransform = layer->boneLocalTransforms.find(boneIndex);
+                    if (boneLocalTransform != layer->boneLocalTransforms.end() && f < boneLocalTransform->second.size()) {
+                        boneTransformsToBlend.push_back({ boneLocalTransform->second[f], weight });
+                    }
                 }
             }
             
