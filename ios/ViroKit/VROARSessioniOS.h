@@ -41,6 +41,15 @@ public:
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
     bool setAnchorDetection(std::set<VROAnchorDetection> types);
     void setCloudAnchorProvider(VROCloudAnchorProvider provider);
+
+    void loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) {
+        // unsupported
+    }
+    
+    void unloadARImageDatabase() {
+        // unsupported
+    }
+
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void addARObjectTarget(std::shared_ptr<VROARObjectTarget> target);

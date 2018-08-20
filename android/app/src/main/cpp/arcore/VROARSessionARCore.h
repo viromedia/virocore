@@ -20,6 +20,7 @@
 #include <VROCameraTexture.h>
 #include <VROARPlaneAnchor.h>
 #include <VROARTrackingSession.h>
+#include <VROARImageDatabase.h>
 
 enum class VROARDisplayRotation {
     R0,
@@ -54,6 +55,12 @@ public:
     bool setAnchorDetection(std::set<VROAnchorDetection> types);
     void setCloudAnchorProvider(VROCloudAnchorProvider provider);
 
+    /*
+     This function loads the ARCore AugmentedImageDatabase from the given database by overwriting
+     the existing one and then adding any individually added targets (from addARImageTarget).
+     */
+    void loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase);
+    void unloadARImageDatabase();
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
 

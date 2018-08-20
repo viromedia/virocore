@@ -29,11 +29,34 @@ void VROARDeclarativeSession::setDelegate(std::shared_ptr<VROARDeclarativeSessio
 
 void VROARDeclarativeSession::setARSession(std::shared_ptr<VROARSession> session) {
     _arSession = session;
+    // load any ARImageDatabase first because it wipes out the existing DB, and then adds any
+    // previously individually added ARImageTargets.
+    if (_arImageDatabase) {
+        session->loadARImageDatabase(_arImageDatabase);
+    }
     for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
         session->addARImageTarget(*it);
     }
     for (auto it = _objectTargets.begin(); it < _objectTargets.end(); it++) {
         session->addARObjectTarget(*it);
+    }
+}
+
+void VROARDeclarativeSession::loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) {
+    if (arImageDatabase) {
+        _arImageDatabase = arImageDatabase;
+        std::shared_ptr<VROARSession> arSession = _arSession.lock();
+        if (arSession) {
+            arSession->loadARImageDatabase(_arImageDatabase);
+        }
+    }
+}
+
+void VROARDeclarativeSession::unloadARImageDatabase() {
+    std::shared_ptr<VROARSession> arSession = _arSession.lock();
+    if (arSession && _arImageDatabase) {
+        arSession->unloadARImageDatabase();
+        _arImageDatabase = nullptr;
     }
 }
 
@@ -140,6 +163,9 @@ void VROARDeclarativeSession::sceneWillDisappear() {
     
     std::shared_ptr<VROARSession> arSession = _arSession.lock();
     if (arSession) {
+        if (_arImageDatabase) {
+            arSession->loadARImageDatabase(_arImageDatabase);
+        }
         for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
             arSession->removeARImageTarget(*it);
         }

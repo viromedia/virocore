@@ -805,6 +805,18 @@ namespace arcore {
         return new AugmentedImageDatabaseNative(database, _session);
     }
 
+    AugmentedImageDatabase *SessionNative::createAugmentedImageDatabase(uint8_t* raw_buffer, int64_t size) {
+        ArAugmentedImageDatabase *database;
+
+        ArStatus status = ArAugmentedImageDatabase_deserialize(_session, raw_buffer, size, &database);
+
+        if (status != AR_SUCCESS) {
+            pinfo("[Viro] Failed to load AugmentedImageDatabase, error: %d", status);
+        }
+
+        return new AugmentedImageDatabaseNative(database, _session);
+    }
+
     Pose *SessionNative::createPose() {
         ArPose *pose;
         ArPose_create(_session, nullptr, &pose);

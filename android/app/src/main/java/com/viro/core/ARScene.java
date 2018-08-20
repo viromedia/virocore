@@ -7,7 +7,13 @@ package com.viro.core;
 //#IFDEF 'viro_react'
 import com.viro.core.internal.ARDeclarativeNode;
 //#ENDIF
+import android.net.Uri;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -169,6 +175,25 @@ public class ARScene extends Scene {
     }
 
     /**
+     * Callback interface for responding to whether or not {@link
+     * ARScene#loadARImageDatabase(Uri, LoadARImageDatabaseListener)} was able to access
+     * the given {@link Uri}
+     */
+    public interface LoadARImageDatabaseListener {
+        /**
+         * Invoked if the given {@link Uri} was successfully downloaded.
+         */
+        void onSuccess();
+
+        /**
+         * Invoked if the given {@link Uri} was invalid.
+         *
+         * @param error The error message
+         */
+        void onFailure(String error);
+    }
+
+    /**
      * Values representing position tracking quality. You can respond to changes in AR tracking
      * quality through {@link Listener#onTrackingUpdated(TrackingState, TrackingStateReason)}.
      */
@@ -228,6 +253,7 @@ public class ARScene extends Scene {
     };
 
     private Listener mListener = null;
+    private LoadARImageDatabaseListener mLoadARImageDatabaseListener;
     private long mNativeARDelegateRef;
     private boolean mHasTrackingInitialized = false;
     private Map<String, CloudAnchorHostListener> mCloudAnchorHostCallbacks = new HashMap<>();
@@ -513,6 +539,25 @@ public class ARScene extends Scene {
     //#ENDIF
 
     /**
+     * Loads the given {@link com.google.ar.core.AugmentedImageDatabase} uri into
+     * the AR subsystem. Once loaded, all the images within will be looked for.
+     *
+     * @param uri - the uri to the {@link com.google.ar.core.AugmentedImageDatabase} file
+     * @param listener - the listener
+     */
+    public void loadARImageDatabase(Uri uri, LoadARImageDatabaseListener listener) {
+        mLoadARImageDatabaseListener = listener;
+        nativeLoadARImageDatabase(mNativeRef, uri.toString(), true);
+    }
+
+    /**
+     * Unloads a previously loaded {@link com.google.ar.core.AugmentedImageDatabase}.
+     */
+    public void unloadARImageDatabase() {
+        nativeUnloadARImageDatabase(mNativeRef, true);
+    }
+
+    /**
      * Add an {@link ARImageTarget} to the Scene. Once added, Viro will search for this reference
      * image in the real-world, and alert you when an instance is found by invoking
      * {@link Listener#onAnchorFound(ARAnchor, ARNode)} with an {@link ARImageAnchor} anchor.
@@ -532,6 +577,25 @@ public class ARScene extends Scene {
     public void removeARImageTarget(ARImageTarget target) {
         nativeRemoveARImageTarget(mNativeRef, target.getNativeRef());
     }
+
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
+    public void loadARImageDatabaseDeclarative(Uri uri, LoadARImageDatabaseListener listener) {
+        mLoadARImageDatabaseListener = listener;
+        nativeLoadARImageDatabase(mNativeRef, uri.toString(), false);
+    }
+    //#ENDIF
+
+    /**
+     * @hide
+     */
+    //#IFDEF 'viro_react'
+    public void unloadARImageDatabaseDeclarative() {
+        nativeUnloadARImageDatabase(mNativeRef, false);
+    }
+    //#ENDIF
 
     /**
      * @hide
@@ -691,9 +755,11 @@ public class ARScene extends Scene {
     private native void nativeSetPointCloudSurface(long sceneControllerRef, long surfaceRef);
     private native void nativeSetPointCloudSurfaceScale(long sceneControllerRef, float scaleX, float scaleY, float scaleZ);
     private native void nativeSetPointCloudMaxPoints(long sceneControllerRef, int maxPoints);
+    private native void nativeLoadARImageDatabase(long sceneControllerRef, String uri, boolean useImperative);
+    private native void nativeUnloadARImageDatabase(long sceneControllerRef, boolean useImperative);
     private native void nativeAddARImageTarget(long sceneControllerRef, long arImageTargetRef);
     private native void nativeRemoveARImageTarget(long sceneControllerRef, long arImageTargetRef);
-    private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
+    private native void nativeAddARImageTargetDeclarative(long sceneControllerRef, long arImagetTargetRef);
     private native void nativeRemoveARImageTargetDeclarative(long sceneControllerRef, long arImageTargetRef);
     private native void nativeHostCloudAnchor(long sceneControllerRef, String anchorId);
     private native void nativeResolveCloudAnchor(long sceneControllerRef, String cloudAnchorId);
@@ -800,6 +866,26 @@ public class ARScene extends Scene {
         }
         if (mListener != null) {
             mListener.onAnchorRemoved(anchor, node);
+        }
+    }
+
+    /**
+     * @hide
+     */
+    /* Called by Native */
+    void onLoadARImageDatabaseSuccess() {
+        if (mLoadARImageDatabaseListener != null) {
+            mLoadARImageDatabaseListener.onSuccess();
+        }
+    }
+
+    /**
+     * @hide
+     */
+    /* Called by Native */
+    void onLoadARImageDatabaseFailure(String message) {
+        if (mLoadARImageDatabaseListener != null) {
+            mLoadARImageDatabaseListener.onFailure(message);
         }
     }
 

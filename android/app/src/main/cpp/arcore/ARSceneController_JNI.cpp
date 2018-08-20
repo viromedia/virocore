@@ -6,6 +6,7 @@
 //
 
 
+#include <jni/ARImageDatabaseLoaderDelegate.h>
 #include "ARSceneController_JNI.h"
 #include "ARDeclarativePlane_JNI.h"
 #include "ARDeclarativeNode_JNI.h"
@@ -223,6 +224,73 @@ VRO_METHOD(void, nativeRemoveARNode)(VRO_ARGS
         }
     });
 }
+
+VRO_METHOD(void, nativeLoadARImageDatabase)(VRO_ARGS
+                                          VRO_REF(VROARSceneController) arSceneControllerPtr,
+                                          VRO_STRING uri,
+                                          VRO_BOOL useImperative) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+
+    std::string sUri = VRO_STRING_STL(uri);
+
+    std::shared_ptr<ARImageDatabaseLoaderDelegate> delegateRef = std::make_shared<ARImageDatabaseLoaderDelegate>(obj, env);
+    std::function<void(bool success, std::string errorMessage)> onFinish = [delegateRef] (bool success, std::string errorMessage) {
+        if (success) {
+            delegateRef->loadSuccess();
+        } else {
+            delegateRef->loadFailure(errorMessage);
+        }
+    };
+
+    VROPlatformDispatchAsyncBackground([arScene_w, sUri, useImperative, onFinish] {
+        bool isTemp, success;
+        std::string pathToFile = VROModelIOUtil::retrieveResource(sUri, VROResourceType::URL, &isTemp, &success);
+        if (success) {
+            onFinish(true, "");
+        } else {
+            onFinish(false, "[Viro] Failed to download image database");
+        }
+
+        std::string databaseAsString = VROPlatformLoadFileAsString(pathToFile);
+
+        VROPlatformDispatchAsyncRenderer([arScene_w, databaseAsString, useImperative] {
+            std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+            if (arScene) {
+                uint8_t *data = const_cast<uint8_t *>(reinterpret_cast<const uint8_t *>(&databaseAsString.front()));
+                std::shared_ptr<VROARImageDatabase> imageDatabase =
+                        std::make_shared<VROARImageDatabase>(data, databaseAsString.size());
+                if (useImperative) {
+                    arScene->getImperativeSession()->loadARImageDatabase(imageDatabase);
+                } else {
+                    arScene->getDeclarativeSession()->loadARImageDatabase(imageDatabase);
+                }
+            }
+        });
+
+        VROPlatformDeleteFile(pathToFile);
+    });
+}
+
+VRO_METHOD(void, nativeUnloadARImageDatabase)(VRO_ARGS
+                                              VRO_REF(VROARSceneController) arSceneControllerPtr,
+                                              VRO_BOOL useImperative) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            VRO_REF_GET(VROARSceneController, arSceneControllerPtr)->getScene());
+
+    VROPlatformDispatchAsyncRenderer([arScene_w, useImperative] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+
+        if (arScene) {
+            if (useImperative) {
+                arScene->getImperativeSession()->unloadARImageDatabase();
+            } else {
+                arScene->getDeclarativeSession()->unloadARImageDatabase();
+            }
+        }
+    });
+}
+
 
 VRO_METHOD(void, nativeAddARImageTarget)(VRO_ARGS
                                          VRO_REF(VROARSceneController) arSceneControllerPtr,

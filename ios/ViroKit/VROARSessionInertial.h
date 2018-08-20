@@ -37,6 +37,15 @@ public:
         // unsupported
     }
     
+    
+    void loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) {
+        // unsupported
+    }
+    
+    void unloadARImageDatabase() {
+        // unsupported
+    }
+    
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     void updateAnchor(std::shared_ptr<VROARAnchor> anchor);

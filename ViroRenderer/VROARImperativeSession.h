@@ -11,6 +11,7 @@
 
 #include <vector>
 #include "VROARSession.h"
+#include "VROARImageDatabase.h"
 
 class VROARScene;
 class VROARImperativeSessionDelegate;
@@ -21,8 +22,10 @@ public:
     VROARImperativeSession(std::shared_ptr<VROARScene> scene);
     virtual ~VROARImperativeSession();
 
-    // TODO: the following 3 functions are also in VROARDeclarativeSession
+    // TODO: the following functions are also in VROARDeclarativeSession
     void setARSession(std::shared_ptr<VROARSession> session);
+    void loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase);
+    void unloadARImageDatabase();
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);
     void removeARImageTarget(std::shared_ptr<VROARImageTarget> target);
 
@@ -42,6 +45,7 @@ private:
     std::weak_ptr<VROARScene> _scene;
     std::weak_ptr<VROARImperativeSessionDelegate> _delegate;
     std::vector<std::shared_ptr<VROARImageTarget>> _imageTargets;
+    std::shared_ptr<VROARImageDatabase> _arImageDatabase;
 
 };
 

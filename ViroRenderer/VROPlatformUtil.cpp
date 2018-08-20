@@ -42,7 +42,7 @@ std::string VROPlatformLoadFileAsString(std::string path) {
         input.read(&contents[0], contents.size());
         input.close();
         
-        return(contents);
+        return contents;
     }
     // return an empty string which indicates the file did not load.
     return {};

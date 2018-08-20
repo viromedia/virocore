@@ -232,6 +232,7 @@ namespace arcore {
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
                                      UpdateMode updateMode, CloudAnchorMode cloudAnchorMode);
         virtual AugmentedImageDatabase *createAugmentedImageDatabase();
+        virtual AugmentedImageDatabase *createAugmentedImageDatabase(uint8_t* raw_buffer, int64_t size);
         virtual Pose *createPose();
         virtual Pose *createPose(float px, float py, float pz, float qx, float qy, float qz, float qw);
         virtual AnchorList *createAnchorList();

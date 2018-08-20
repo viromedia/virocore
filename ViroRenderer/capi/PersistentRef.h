@@ -8,6 +8,7 @@
 #ifndef PERSISTENTREF_H
 #define PERSISTENTREF_H
 #include <iostream>
+#include <memory>
 
 /**
  * Wraps a shared pointer object to keep

@@ -22,6 +22,8 @@ public:
     VROARImageTargetAndroid(jobject bitmapImage, VROImageOrientation orientation,
                             float physicalWidth, std::string id);
 
+    VROARImageTargetAndroid(std::string id);
+
     virtual ~VROARImageTargetAndroid();
 
     void initWithTrackingImpl(VROImageTrackingImpl impl);
@@ -30,6 +32,9 @@ public:
         return _id;
     }
 
+    /*
+     This will return nullptr if the target was found from the image database
+     */
     std::shared_ptr<VROImage> getImage() {
         return _image;
     }

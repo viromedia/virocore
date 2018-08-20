@@ -273,6 +273,60 @@ void VROARSessionARCore::setWorldOrigin(VROMatrix4f relativeTransform) {
 
 #pragma mark - AR Image Targets
 
+void VROARSessionARCore::loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) {
+    std::weak_ptr<VROARSessionARCore> w_arsession = shared_from_this();
+    VROPlatformDispatchAsyncBackground([arImageDatabase, w_arsession] {
+        std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+        if (arsession) {
+
+            // load the image database from the given fileBuffer
+            arcore::AugmentedImageDatabase *loadedDatabase =
+                    arsession->_session->createAugmentedImageDatabase(arImageDatabase->getFileData(),
+                                                                      arImageDatabase->getLength());
+
+            // add all the image targets to the database that were added through addARImageTarget
+            for (int i = 0; i < arsession->_imageTargets.size(); i++) {
+                arsession->addTargetToDatabase(arsession->_imageTargets[i], loadedDatabase);
+            }
+
+            // update the ARCore config on the renderer thread
+            VROPlatformDispatchAsyncRenderer([w_arsession, loadedDatabase] {
+                std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+                if (arsession) {
+                    arsession->_currentARCoreImageDatabase = loadedDatabase;
+                    arsession->updateARCoreConfig();
+                }
+            });
+        }
+    });
+}
+
+void VROARSessionARCore::unloadARImageDatabase() {
+    std::weak_ptr<VROARSessionARCore> w_arsession = shared_from_this();
+    VROPlatformDispatchAsyncBackground([w_arsession] {
+        std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+        if (arsession) {
+
+            // create an empty image database
+            arcore::AugmentedImageDatabase *database = arsession->_session->createAugmentedImageDatabase();
+
+            // add all the image targets to the database that were added through addARImageTarget
+            for (int i = 0; i < arsession->_imageTargets.size(); i++) {
+                arsession->addTargetToDatabase(arsession->_imageTargets[i], database);
+            }
+
+            // update the ARCore config on the renderer thread
+            VROPlatformDispatchAsyncRenderer([w_arsession, database] {
+                std::shared_ptr<VROARSessionARCore> arsession = w_arsession.lock();
+                if (arsession) {
+                    arsession->_currentARCoreImageDatabase = database;
+                    arsession->updateARCoreConfig();
+                }
+            });
+        }
+    });
+}
+
 void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
     // on Android we always use Viro tracking implementation
     target->initWithTrackingImpl(getImageTrackingImpl());
@@ -338,6 +392,12 @@ void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> t
 void VROARSessionARCore::addTargetToDatabase(std::shared_ptr<VROARImageTarget> target,
                                              arcore::AugmentedImageDatabase *database) {
     std::shared_ptr<VROARImageTargetAndroid> targetAndroid = std::dynamic_pointer_cast<VROARImageTargetAndroid>(target);
+
+    // a target w/o an image means it came from the database, so do nothing with them!
+    if (!targetAndroid->getImage()) {
+        return;
+    }
+
     std::shared_ptr<VROImageAndroid> imageAndroid = std::dynamic_pointer_cast<VROImageAndroid>(targetAndroid->getImage());
 
     size_t length;
@@ -787,30 +847,44 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                 // New image tracking target: add it
                 } else {
                     std::shared_ptr<VROARImageTargetAndroid> target;
+
+                    bool haveFoundTarget = false;
+                    // first, loop over all targets to see if the target matches the found ImageAnchor
                     for (int j = 0; j < _imageTargets.size(); j++) {
                         target = std::dynamic_pointer_cast<VROARImageTargetAndroid>(_imageTargets[j]);
-
                         if (key == target->getId()) {
                             pinfo("Detected new anchor tied to image target [%s]", key.c_str());
-
-                            std::shared_ptr<VROARImageAnchor> vImage = std::make_shared<VROARImageAnchor>(_imageTargets[j]);
-                            syncImageAnchorWithARCore(vImage, image);
-
-                            // Create a new anchor to correspond with the found image
-                            arcore::Pose *pose = _session->createPose();
-                            image->getCenterPose(pose);
-
-                            std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(image->acquireAnchor(pose));
-                            if (anchor) {
-                                std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(key, anchor, vImage, session);
-                                vAnchor->sync();
-                                addAnchor(vAnchor);
-                            } else {
-                                pinfo("Failed to create anchor for trackable image target: will try again later");
-                            }
-                            delete (pose);
+                            haveFoundTarget = true;
+                            // break out of the loop since we found a target id that matches the key
+                            break;
                         }
                     }
+                    // No target found means that the AR system found an ImageAnchor w/o us knowing
+                    // the target, this probably means that it was loaded from an ARImageDatabase, so
+                    // lets create a new target
+                    if (!haveFoundTarget) {
+                        target = std::make_shared<VROARImageTargetAndroid>(key);
+                    }
+
+                    std::shared_ptr<VROARImageAnchor> vImage = std::make_shared<VROARImageAnchor>(
+                            target);
+                    syncImageAnchorWithARCore(vImage, image);
+
+                    // Create a new anchor to correspond with the found image
+                    arcore::Pose *pose = _session->createPose();
+                    image->getCenterPose(pose);
+
+                    std::shared_ptr<arcore::Anchor> anchor = std::shared_ptr<arcore::Anchor>(
+                            image->acquireAnchor(pose));
+                    if (anchor) {
+                        std::shared_ptr<VROARAnchorARCore> vAnchor = std::make_shared<VROARAnchorARCore>(
+                                key, anchor, vImage, session);
+                        vAnchor->sync();
+                        addAnchor(vAnchor);
+                    } else {
+                        pinfo("Failed to create anchor for trackable image target: will try again later");
+                    }
+                    delete (pose);
                 }
             // The image is no longer being tracked: remove it
             } else {

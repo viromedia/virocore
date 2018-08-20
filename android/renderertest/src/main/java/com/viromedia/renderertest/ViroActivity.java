@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.ar.core.AugmentedImageDatabase;
 import com.viro.core.ARAnchor;
 import com.viro.core.ARHitTestListener;
 import com.viro.core.ARImageAnchor;
@@ -329,10 +330,12 @@ public class ViroActivity extends AppCompatActivity {
         final ARScene scene = new ARScene();
         final Node rootNode = scene.getRootNode();
 
+
         final List<Node> nodes = new ArrayList<>();
         //nodes.addAll(testBox(this));
-
         //testBackgroundImage(scene);
+
+        testAugmentedImageDatabase(scene);
 
         // Add a box in front of the user
         /*
@@ -371,6 +374,79 @@ public class ViroActivity extends AppCompatActivity {
 
         //testVideoRecording();
         //scene.displayPointCloud(true);
+    }
+
+    private void testAugmentedImageDatabase(final ARScene scene) {
+        try {
+            Uri databaseUrl = Uri.parse("file:///android_asset/mi_posters.imgdb");
+
+            scene.loadARImageDatabase(databaseUrl, new ARScene.LoadARImageDatabaseListener() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onFailure(String error) {
+
+                }
+            });
+        } catch(Exception e) {
+            // do nothing.
+        }
+
+        scene.setListener(new ARScene.Listener() {
+            @Override
+            public void onTrackingInitialized() {
+
+            }
+
+            @Override
+            public void onTrackingUpdated(ARScene.TrackingState state, ARScene.TrackingStateReason reason) {
+
+            }
+
+            @Override
+            public void onAmbientLightUpdate(float intensity, Vector color) {
+
+            }
+
+            @Override
+            public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
+                if (anchor.getType() == ARAnchor.Type.IMAGE) {
+                    Log.d("ViroActivity", "found image: " + anchor.getAnchorId());
+                }
+            }
+
+            @Override
+            public void onAnchorUpdated(ARAnchor anchor, ARNode arNode) {
+
+            }
+
+            @Override
+            public void onAnchorRemoved(ARAnchor anchor, ARNode arNode) {
+
+            }
+        });
+
+        (new Handler()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("ViroActivity"," posting delayed!");
+                scene.unloadARImageDatabase();
+            }
+        }, 10000);
+
+        Bitmap bitmap = null;
+        try {
+            InputStream istr = getAssets().open("boba.png");
+            bitmap = BitmapFactory.decodeStream(istr);
+        } catch (IOException e) {
+            // handle exception
+        }
+
+        ARImageTarget target = new ARImageTarget(bitmap, ARImageTarget.Orientation.Up, .1f);
+        scene.addARImageTarget(target);
     }
 
     private void testEdgeDetect() {

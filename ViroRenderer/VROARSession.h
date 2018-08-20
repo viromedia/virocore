@@ -13,6 +13,7 @@
 #include <set>
 #include "VROLog.h"
 #include "VROMatrix4f.h"
+#include "VROARImageDatabase.h"
 
 class VROARAnchor;
 class VROARFrame;
@@ -165,7 +166,17 @@ public:
      (iOS 12+ only)
      */
     virtual void setNumberOfTrackedImages(int numImages) = 0;
-    
+
+    /*
+     Enables the user to load in a pre-defined set of AR Image Targets
+     */
+    virtual void loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) = 0;
+
+    /*
+     Unloads the most recently loaded ARImageDatabase.
+     */
+    virtual void unloadARImageDatabase() = 0;
+
     /*
      Adds an image target that should be tracked by this session.
      */

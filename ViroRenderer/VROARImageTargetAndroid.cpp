@@ -16,6 +16,11 @@ VROARImageTargetAndroid::VROARImageTargetAndroid(jobject bitmapImage, VROImageOr
     _image = std::make_shared<VROImageAndroid>(bitmapImage);
 }
 
+VROARImageTargetAndroid::VROARImageTargetAndroid(std::string id) :
+    VROARImageTarget(VROImageOrientation::Up, 0),
+    _id(id) {
+}
+
 VROARImageTargetAndroid::~VROARImageTargetAndroid() {
 
 }

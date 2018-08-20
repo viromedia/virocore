@@ -21,8 +21,31 @@ VROARImperativeSession::~VROARImperativeSession() {
 
 void VROARImperativeSession::setARSession(std::shared_ptr<VROARSession> session) {
     _arSession = session;
+    // load any ARImageDatabase first because it wipes out the existing DB, and then adds any
+    // previously individually added ARImageTargets.
+    if (_arImageDatabase) {
+        session->loadARImageDatabase(_arImageDatabase);
+    }
     for (auto it = _imageTargets.begin(); it < _imageTargets.end(); it++) {
         session->addARImageTarget(*it);
+    }
+}
+
+void VROARImperativeSession::loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) {
+    if (arImageDatabase) {
+        _arImageDatabase = arImageDatabase;
+        std::shared_ptr<VROARSession> arSession = _arSession.lock();
+        if (arSession) {
+            arSession->loadARImageDatabase(arImageDatabase);
+        }
+    }
+}
+
+void VROARImperativeSession::unloadARImageDatabase() {
+    std::shared_ptr<VROARSession> arSession = _arSession.lock();
+    if (arSession && _arImageDatabase) {
+        arSession->unloadARImageDatabase();
+        _arImageDatabase = nullptr;
     }
 }
 

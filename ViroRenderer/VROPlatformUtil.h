@@ -46,7 +46,6 @@ void VROPlatformSetType(VROPlatformType type);
 VROPlatformType VROPlatformGetType();
 
 #pragma mark - String Loading
-
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type);
 std::string VROPlatformLoadFileAsString(std::string path);
 
