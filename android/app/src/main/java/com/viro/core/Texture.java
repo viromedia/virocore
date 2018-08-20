@@ -632,8 +632,8 @@ public class Texture {
     private native long nativeCreateImageTextureBitmap(Bitmap image, String format, boolean sRGB, boolean mipmap, String stereoMode);
     private native long nativeCreateImageTextureData(ByteBuffer data, int width, int height, String inputFormat, String storageFormat, boolean sRGB, boolean generateMipmaps, String stereoMode);
     private native long nativeCreateImageTextureVHD(ByteBuffer data, String stereoMode);
-    private native int nativeGetTextureWidth(long nativeRef);
-    private native int nativeGetTextureHeight(long nativeRef);
+    native int nativeGetTextureWidth(long nativeRef);
+    native int nativeGetTextureHeight(long nativeRef);
     private native void nativeSetWrapS(long nativeRef, String wrapS);
     private native void nativeSetWrapT(long nativeRef, String wrapT);
     private native void nativeSetMinificationFilter(long nativeRef, String minificationFilter);

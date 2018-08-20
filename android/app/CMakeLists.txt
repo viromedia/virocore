@@ -73,6 +73,7 @@ add_library( # Sets the name of the library.
              ${VIRO_CAPI_SRC}/Material_JNI.cpp
              ${VIRO_CAPI_SRC}/Texture_JNI.cpp
              ${VIRO_CAPI_SRC}/VideoTexture_JNI.cpp
+             ${VIRO_CAPI_SRC}/AnimatedTexture_JNI.cpp
              ${VIRO_CAPI_SRC}/VideoDelegate_JNI.cpp
              ${VIRO_CAPI_SRC}/ViroContext_JNI.cpp
              ${VIRO_CAPI_SRC}/EventDelegate_JNI.cpp
@@ -139,6 +140,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROModelIOUtil.cpp
              ${VIRO_RENDERER_SRC}/VROOBJLoader.cpp
              ${VIRO_RENDERER_SRC}/VROHDRLoader.cpp
+             ${VIRO_RENDERER_SRC}/VROAnimatedTextureOpenGL.cpp
              ${VIRO_RENDERER_SRC}/tiny_obj_loader.cc
              ${VIRO_RENDERER_SRC}/VROGVRUtil.cpp
              ${VIRO_RENDERER_SRC}/VROThreadRestricted.cpp
@@ -284,6 +286,12 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/poly2tri/sweep/sweep_context.cc
              ${VIRO_RENDERER_SRC}/poly2tri/sweep/sweep.cc
              ${VIRO_RENDERER_SRC}/poly2tri/common/shapes.cc
+
+             # GifLib
+             ${VIRO_RENDERER_SRC}/giflib/openbsd-reallocarray.c
+             ${VIRO_RENDERER_SRC}/giflib/gifalloc.c
+             ${VIRO_RENDERER_SRC}/giflib/dgif_lib.c
+             ${VIRO_RENDERER_SRC}/giflib/gif_hash.c
 
              # GVR Audio
              ${VIRO_RENDERER_SRC}/VROSoundGVR.cpp
