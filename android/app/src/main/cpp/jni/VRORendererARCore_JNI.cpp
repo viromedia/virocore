@@ -143,6 +143,18 @@ void performARHitTest(VROVector3f rayVec, std::weak_ptr<VROSceneRendererARCore> 
     }
 }
 
+void performARHitTestRay(VROVector3f rayOrigin, VROVector3f rayDestination, std::weak_ptr<VROSceneRendererARCore> arRenderer_w,
+                      jweak weakCallback) {
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
+    if (!arRenderer) {
+        invokeEmptyARResultsCallback(weakCallback);
+    }
+    else {
+        std::vector<std::shared_ptr<VROARHitTestResult>> results = arRenderer->performARHitTest(rayOrigin, rayDestination);
+        invokeARResultsCallback(results, weakCallback);
+    }
+}
+
 void performARHitTestPoint(JNIEnv *env, float x, float y, std::weak_ptr<VROSceneRendererARCore> arRenderer_w,
                            jweak weakCallback) {
     std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
@@ -171,6 +183,31 @@ VRO_METHOD(void, nativePerformARHitTestWithRay) (VRO_ARGS
 
     VROPlatformDispatchAsyncRenderer([arRenderer_w, weakCallback, rayVec] {
         performARHitTest(rayVec, arRenderer_w, weakCallback);
+    });
+}
+
+VRO_METHOD(void, nativePerformARHitTestWithOriginDestRay) (VRO_ARGS
+                                                 jlong native_renderer,
+                                                 jfloatArray origin,
+                                                 jfloatArray destination,
+                                                 jobject callback) {
+    // Grab ray origin to perform the AR hit test
+    VRO_FLOAT *rayStart = VRO_FLOAT_ARRAY_GET_ELEMENTS(origin);
+    VROVector3f rayOrigVec = VROVector3f(rayStart[0], rayStart[1], rayStart[2]);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(origin, rayStart);
+
+    // Grab ray destination to perform the AR hit test
+    VRO_FLOAT *rayEnd = VRO_FLOAT_ARRAY_GET_ELEMENTS(destination);
+    VROVector3f rayDestVec = VROVector3f(rayEnd[0], rayEnd[1], rayEnd[2]);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(destination, rayEnd);
+
+    // Create weak pointers for dispatching
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    std::weak_ptr<VROSceneRendererARCore> arRenderer_w = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    jweak weakCallback = env->NewWeakGlobalRef(callback);
+
+    VROPlatformDispatchAsyncRenderer([arRenderer_w, weakCallback, rayOrigVec, rayDestVec] {
+        performARHitTestRay(rayOrigVec, rayDestVec, arRenderer_w, weakCallback);
     });
 }
 
@@ -279,6 +316,28 @@ VRO_METHOD(void, nativeSetCameraImageListener)(VRO_ARGS
         });
     }
 }
+
+VRO_METHOD(void, nativeSetCameraAutoFocusEnabled) (VRO_ARGS
+                                        jlong nativeRenderer,
+                                        jboolean enabled) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(nativeRenderer);
+    std::weak_ptr<VROSceneRendererARCore> arRenderer_w = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+
+    VROPlatformDispatchAsyncRenderer([arRenderer_w, enabled]{
+        std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
+        if (arRenderer) {
+            arRenderer->setCameraAutoFocusEnabled(enabled);
+        }
+    });
+}
+
+VRO_METHOD(VRO_BOOL, nativeisCameraAutoFocusEnabled) (VRO_ARGS
+                                                   jlong nativeRenderer) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(nativeRenderer);
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    return arRenderer->isCameraAutoFocusEnabled();
+}
+
 
 }
 

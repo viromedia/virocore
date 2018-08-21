@@ -101,9 +101,23 @@ public:
     std::vector<std::shared_ptr<VROARHitTestResult>> performARHitTest(VROVector3f ray);
 
     /*
+     AR hit test using a ray from origin to destination in the 3D scene.
+    */
+    std::vector<std::shared_ptr<VROARHitTestResult>> performARHitTest(VROVector3f rayOrigin, VROVector3f rayDestination);
+    /*
      Set the size of the parent view holding the AR screen. Invoked from ViroViewARCore.
      */
     void setDisplayGeometry(int rotation, int width, int height);
+
+    /*
+     * Set camera's ArFocusMode as AUTO_FOCUS if enabled is true, else set to FIXED_FOCUS
+     */
+    void setCameraAutoFocusEnabled(bool enabled);
+
+    /*
+     * Return true if camera's ArFocusMode is set to AUTO_FOCUS;
+     */
+    bool isCameraAutoFocusEnabled();
 
     /*
      Set the anchor detection mode used by ARCore.

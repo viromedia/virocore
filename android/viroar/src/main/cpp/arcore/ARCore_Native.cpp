@@ -575,6 +575,12 @@ namespace arcore {
         ArFrame_hitTest(_session, _frame, x, y, ((HitResultListNative *) outList)->_hitResultList);
     }
 
+    void FrameNative::hitTest(float px, float py, float pz, float qx, float qy, float qz, HitResultList *outList) {
+        float origin[3] = { px, py, pz };
+        float dest[3] = {qx, qy, qz};
+        ArFrame_hitTestRay(_session, _frame, origin, dest, ((HitResultListNative *) outList)->_hitResultList);
+    }
+
     void FrameNative::getBackgroundTexcoords(float *outTexcoords) {
         // BL, TL, BR, TR
         const float source[8] = {0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0};
@@ -733,7 +739,7 @@ namespace arcore {
 
     Config *
     SessionNative::createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                                UpdateMode updateMode, CloudAnchorMode cloudAnchorMode) {
+                                UpdateMode updateMode, CloudAnchorMode cloudAnchorMode, FocusMode focusMode) {
         ArConfig *config;
         ArConfig_create(_session, &config);
 
@@ -795,6 +801,17 @@ namespace arcore {
         }
         ArConfig_setCloudAnchorMode(_session, config, arCloudAnchorMode);
 
+        // Set Camera focus mode
+        ArFocusMode  arFocusMode;
+        switch (focusMode) {
+            case FocusMode::FIXED_FOCUS:
+                arFocusMode = AR_FOCUS_MODE_FIXED;
+                break;
+            case FocusMode::AUTO_FOCUS:
+                arFocusMode = AR_FOCUS_MODE_AUTO;
+                break;
+        }
+        ArConfig_setFocusMode(_session, config, arFocusMode);
         return new ConfigNative(config);
     }
 

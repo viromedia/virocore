@@ -32,6 +32,7 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
     _planeFindingMode(arcore::PlaneFindingMode::Horizontal),
     _updateMode(arcore::UpdateMode::Blocking),
     _cloudAnchorMode(arcore::CloudAnchorMode::Enabled),
+    _focusMode(arcore::FocusMode::FIXED_FOCUS),
     _cameraTextureId(0),
     _displayRotation(VROARDisplayRotation::R0),
     _rotatedImageDataLength(0),
@@ -181,6 +182,22 @@ void VROARSessionARCore::setCloudAnchorProvider(VROCloudAnchorProvider provider)
     updateARCoreConfig();
 }
 
+void VROARSessionARCore::setCameraAutoFocusEnabled(bool enabled) {
+    if (enabled) {
+        _focusMode = arcore::FocusMode::AUTO_FOCUS;
+    } else {
+        _focusMode = arcore::FocusMode::FIXED_FOCUS;
+    }
+    updateARCoreConfig();
+}
+
+bool VROARSessionARCore::isCameraAutoFocusEnabled() {
+    if (_focusMode == arcore::FocusMode::AUTO_FOCUS) {
+        return true;
+    }
+    return false;
+}
+
 void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int width, int height) {
     _width = width;
     _height = height;
@@ -216,7 +233,7 @@ bool VROARSessionARCore::updateARCoreConfig() {
     passert_msg(_session != nullptr, "ARCore must be installed before configuring session");
 
     arcore::Config *config = _session->createConfig(_lightingMode, _planeFindingMode, _updateMode,
-                                                    _cloudAnchorMode);
+                                                    _cloudAnchorMode, _focusMode);
 
     if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore && _currentARCoreImageDatabase) {
         config->setAugmentedImageDatabase(_currentARCoreImageDatabase);
@@ -226,8 +243,8 @@ bool VROARSessionARCore::updateARCoreConfig() {
     delete (config);
 
     if (status == arcore::ConfigStatus::Success) {
-        pinfo("Successfully configured AR session [lighting %d, planes %d, update %d]",
-              _lightingMode, _planeFindingMode, _updateMode);
+        pinfo("Successfully configured AR session [lighting %d, planes %d, update %d, focus %d]",
+              _lightingMode, _planeFindingMode, _updateMode, _focusMode);
         _session->resume();
         return true;
     }

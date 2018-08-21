@@ -162,6 +162,16 @@ public:
     virtual void setCloudAnchorProvider(VROCloudAnchorProvider provider) = 0;
 
     /*
+     * Set camera's ArFocusMode as AUTO_FOCUS if enabled is true, else set to FIXED_FOCUS
+     */
+    virtual void setCameraAutoFocusEnabled(bool enabled) = 0;
+
+    /*
+     * Return true if camera's ArFocusMode is set to AUTO_FOCUS;
+     */
+    virtual bool isCameraAutoFocusEnabled() = 0;
+
+    /*
      Set a number > 0 to enable continuous image tracking (vs static detection).
      (iOS 12+ only)
      */

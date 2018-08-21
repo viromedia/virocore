@@ -54,6 +54,8 @@ public:
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
     bool setAnchorDetection(std::set<VROAnchorDetection> types);
     void setCloudAnchorProvider(VROCloudAnchorProvider provider);
+    void setCameraAutoFocusEnabled(bool enabled);
+    bool isCameraAutoFocusEnabled();
 
     /*
      This function loads the ARCore AugmentedImageDatabase from the given database by overwriting
@@ -189,6 +191,7 @@ private:
     arcore::PlaneFindingMode _planeFindingMode;
     arcore::UpdateMode _updateMode;
     arcore::CloudAnchorMode _cloudAnchorMode;
+    arcore::FocusMode _focusMode;
 
     bool updateARCoreConfig();
 

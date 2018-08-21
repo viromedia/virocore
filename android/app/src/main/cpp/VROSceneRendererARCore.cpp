@@ -374,6 +374,16 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::perform
     return {};
 }
 
+std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::performARHitTest(VROVector3f rayOrigin, VROVector3f rayDestination) {
+    std::unique_ptr<VROARFrame> &frame = _session->getLastFrame();
+    if (frame) {
+        return frame->hitTestRay(&rayOrigin, &rayDestination, { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                           VROARHitTestResultType::ExistingPlane,
+                                                           VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                           VROARHitTestResultType::FeaturePoint });
+    };
+}
+
 std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
     VROVector3f cameraForward = getRenderer()->getCamera().getForward();
     if (cameraForward.dot(ray) <= 0) {
@@ -387,6 +397,14 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::perform
 
 void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int height) {
     _session->setDisplayGeometry((VROARDisplayRotation) rotation, width, height);
+}
+
+void VROSceneRendererARCore::setCameraAutoFocusEnabled(bool enabled) {
+    _session->setCameraAutoFocusEnabled(enabled);
+}
+
+bool VROSceneRendererARCore::isCameraAutoFocusEnabled() {
+    return _session->isCameraAutoFocusEnabled();
 }
 
 void VROSceneRendererARCore::setAnchorDetectionTypes(std::set<VROAnchorDetection> types) {

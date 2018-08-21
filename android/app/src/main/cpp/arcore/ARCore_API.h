@@ -10,6 +10,7 @@
 #define ARCORE_API_h
 
 #include <stdint.h>
+#include <arcore_c_api.h>
 
 typedef struct AImage AImage;
 
@@ -103,6 +104,11 @@ namespace arcore {
     enum class UpdateMode {
         Blocking,
         LatestCameraImage
+    };
+
+    enum class FocusMode {
+        FIXED_FOCUS,
+        AUTO_FOCUS
     };
 
     class Config {
@@ -219,6 +225,7 @@ namespace arcore {
         virtual void getLightEstimate(LightEstimate *outLightEstimate) = 0;
         virtual bool hasDisplayGeometryChanged() = 0;
         virtual void hitTest(float x, float y, HitResultList *outList) = 0;
+        virtual void hitTest(float px, float py, float pz, float qx, float qy, float qz, HitResultList *outList) = 0;
         virtual int64_t getTimestampNs() = 0;
         virtual void getUpdatedAnchors(AnchorList *outList) = 0;
         virtual void getUpdatedTrackables(TrackableList *outList, TrackableType type) = 0;
@@ -262,7 +269,9 @@ namespace arcore {
         virtual void update(Frame *frame) = 0;
 
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                                     UpdateMode updateMode, CloudAnchorMode cloudAnchorMode) = 0;
+                                     UpdateMode updateMode, CloudAnchorMode cloudAnchorMode,
+                                     FocusMode focusMode) = 0;
+
         virtual AugmentedImageDatabase *createAugmentedImageDatabase() = 0;
         virtual AugmentedImageDatabase *createAugmentedImageDatabase(uint8_t* raw_buffer, int64_t size) = 0;
         virtual Pose *createPose() = 0;

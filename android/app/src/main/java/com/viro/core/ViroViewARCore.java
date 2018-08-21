@@ -838,6 +838,21 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
+     * Performs a hit-test along the ray from the given <i>origin</i> and <i>destination</i> in
+     * <i>real-world</i>. The hit-test returns all <i>real-world</i> features that are intersected by the ray.
+     *
+     * @param origin   Vector for ray origin in real-world coordinates.
+     * @param destination   Vector for ray destination in real-world coordinates.
+     * @param callback The callback that will receive the {@link ARHitTestResult}
+     *                 results.
+     */
+    public void performARHitTestWithRay(Vector origin, Vector destination, ARHitTestListener callback) {
+        if (!mDestroyed) {
+            ((RendererARCore) mNativeRenderer).performARHitTestWithRay(origin.toArray(), destination.toArray(), callback);
+        }
+    }
+
+    /**
      * Performs a hit-test along the ray from the camera's current position <i>to</i> the given
      * position in world coordinates. The hit-test returns all <i>real-world</i> features that are
      * intersected by the ray.
@@ -963,5 +978,30 @@ public class ViroViewARCore extends ViroView {
         else {
             return true;
         }
+    }
+
+    /**
+     * Enable auto focusing for the AR Camera's. When this view is created, auto focus is disabled
+     * by default. This is so since ARCore, at the moment, recommends using <i>fixed focus</i> for
+     * <i>optimal AR tracking</i>. Recommended to use auto focus for <i>capturing pictures or videos</i>,
+     * and then reverting to default fixed focus.
+     *
+     * @param enabled True to enable auto focus
+     */
+    public void setCameraAutoFocusEnabled(boolean enabled) {
+        if (!mDestroyed) {
+            ((RendererARCore) mNativeRenderer).setCameraAutoFocusEnabled(enabled);
+        }
+    }
+
+    /**
+     * Returns true if auto focus is enabled
+     * @return True if auto focus is enabled
+     */
+    public boolean isCameraAutoFocusEnabled() {
+        if (!mDestroyed) {
+            return ((RendererARCore) mNativeRenderer).isCameraAutoFocusEnabled();
+        }
+        return false;
     }
 }

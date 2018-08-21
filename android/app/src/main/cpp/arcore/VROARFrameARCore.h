@@ -25,6 +25,7 @@ public:
     
     const std::shared_ptr<VROARCamera> &getCamera() const;
     std::vector<std::shared_ptr<VROARHitTestResult>> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
+    std::vector<std::shared_ptr<VROARHitTestResult>> hitTestRay(VROVector3f *origin, VROVector3f *destination , std::set<VROARHitTestResultType> types);
     VROMatrix4f getViewportToCameraImageTransform();
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     

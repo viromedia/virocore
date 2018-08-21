@@ -107,6 +107,70 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameARCore::hitTest(int x
     return toReturn;
 }
 
+std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameARCore::hitTestRay(VROVector3f *origin, VROVector3f *destination , std::set<VROARHitTestResultType> types) {
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return {};
+    }
+    arcore::Session *session_arc = session->getSessionInternal();
+
+    arcore::HitResultList *hitResultList = session_arc->createHitResultList();
+    _frame->hitTest(origin->x, origin->y, origin->z, destination->x, destination->y, destination->z, hitResultList);
+
+    int listSize = hitResultList->size();
+    std::vector<std::shared_ptr<VROARHitTestResult>> toReturn;
+
+    for (int i = 0; i < listSize; i++) {
+        std::shared_ptr<arcore::HitResult> hitResult = std::shared_ptr<arcore::HitResult>(session_arc->createHitResult());
+        hitResultList->getItem(i, hitResult.get());
+
+        // Get the trackable associated with this hit result. Not all hit results have an
+        // associated trackable. If a hit result does not have a trackable, we can still acquire
+        // an anchor for it via hitResult->acquireAnchor(). This will create an anchor at the hit
+        // result's pose. However, we don't immediately acquire this anchor because the user may
+        // not even use the hit result. Instead we allow the user to manually acquire the anchor via
+        // ARHitTestResult.createAnchoredNode().
+        arcore::Trackable *trackable = hitResult->acquireTrackable();
+
+        arcore::Pose *pose = session_arc->createPose();
+        hitResult->getPose(pose);
+
+        VROARHitTestResultType type;
+
+        if (trackable != nullptr && trackable->getType() == arcore::TrackableType::Plane) {
+            arcore::Plane *plane = (arcore::Plane *) trackable;
+            bool inExtent  = plane->isPoseInExtents(pose);
+            bool inPolygon = plane->isPoseInPolygon(pose);
+
+            if (inExtent || inPolygon) {
+                type = VROARHitTestResultType::ExistingPlaneUsingExtent;
+            } else {
+                type = VROARHitTestResultType::EstimatedHorizontalPlane;
+            }
+        } else {
+            type = VROARHitTestResultType::FeaturePoint;
+        }
+
+        // Get the distance from the camera to the HitResult.
+        float distance = hitResult->getDistance();
+
+        // Get the transform to the HitResult.
+        float worldTransformMtx[16];
+        pose->toMatrix(worldTransformMtx);
+        VROMatrix4f worldTransform(worldTransformMtx);
+        VROMatrix4f localTransform = VROMatrix4f::identity();
+
+        std::shared_ptr<VROARHitTestResult> vResult = std::make_shared<VROARHitTestResultARCore>(type, distance, hitResult,
+                                                                                                 worldTransform, localTransform,
+                                                                                                 session);
+        toReturn.push_back(vResult);
+        delete (pose);
+        delete (trackable);
+    }
+
+    delete (hitResultList);
+    return toReturn;
+}
 VROMatrix4f VROARFrameARCore::getViewportToCameraImageTransform() {
     pabort("Not supported on ARCore");
 }

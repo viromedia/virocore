@@ -19,7 +19,6 @@ namespace arcore {
         ConfigNative(ArConfig *config) : _config(config) {}
         virtual ~ConfigNative();
         virtual void setAugmentedImageDatabase(AugmentedImageDatabase *database);
-
         ArConfig *_config;
     };
 
@@ -171,6 +170,7 @@ namespace arcore {
         virtual void getLightEstimate(LightEstimate *outLightEstimate);
         virtual bool hasDisplayGeometryChanged();
         virtual void hitTest(float x, float y, HitResultList *outList);
+        virtual void hitTest(float px, float py, float pz, float qx, float qy, float qz, HitResultList *outList);
         virtual int64_t getTimestampNs();
         virtual void getUpdatedAnchors(AnchorList *outList);
         virtual void getUpdatedTrackables(TrackableList *outList, TrackableType type);
@@ -230,7 +230,8 @@ namespace arcore {
         virtual void update(Frame *frame);
 
         virtual Config *createConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
-                                     UpdateMode updateMode, CloudAnchorMode cloudAnchorMode);
+                                     UpdateMode updateMode, CloudAnchorMode cloudAnchorMode,
+                                     FocusMode focusMode);
         virtual AugmentedImageDatabase *createAugmentedImageDatabase();
         virtual AugmentedImageDatabase *createAugmentedImageDatabase(uint8_t* raw_buffer, int64_t size);
         virtual Pose *createPose();

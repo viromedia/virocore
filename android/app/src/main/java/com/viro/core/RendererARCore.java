@@ -55,6 +55,10 @@ public class RendererARCore extends Renderer {
         nativePerformARHitTestWithRay(mNativeRef, ray, callback);
     }
 
+    public void performARHitTestWithRay(float[] origin, float[] destination, ARHitTestListener callback) {
+        nativePerformARHitTestWithOriginDestRay(mNativeRef, origin, destination, callback);
+    }
+
     public void performARHitTestWithPosition(float[] position, ARHitTestListener callback) {
         nativePerformARHitTestWithPosition(mNativeRef, position, callback);
     }
@@ -71,6 +75,14 @@ public class RendererARCore extends Renderer {
         nativeSetCameraImageListener(mNativeRef, context.mNativeRef, listener);
     }
 
+    public void setCameraAutoFocusEnabled(boolean enabled) {
+        nativeSetCameraAutoFocusEnabled(mNativeRef, enabled);
+    }
+
+    public boolean isCameraAutoFocusEnabled() {
+        return nativeisCameraAutoFocusEnabled(mNativeRef);
+    }
+
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
                                                    AssetManager assets, PlatformUtil platformUtil,
                                                    boolean enableShadows, boolean enableHDR, boolean enablePBR, boolean enableBloom);
@@ -80,9 +92,11 @@ public class RendererARCore extends Renderer {
     private native void nativeSetARCoreSession(long nativeRef, long sessionRef);
     private native int nativeGetCameraTextureId(long nativeRenderer);
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
+    private native void nativePerformARHitTestWithOriginDestRay(long nativeRenderer, float[] origin, float[] destination, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
     private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
     private native void nativeEnableTracking(long nativeRenderer, boolean shouldTrack);
     private native void nativeSetCameraImageListener(long nativeRenderer, long contextRef, CameraImageListener listener);
-
+    private native void nativeSetCameraAutoFocusEnabled(long nativeRenderer, boolean enabled);
+    private native boolean nativeisCameraAutoFocusEnabled(long nativeRenderer);
 }
