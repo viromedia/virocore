@@ -8,12 +8,8 @@ package com.viro.core;
 import com.viro.core.internal.ARDeclarativeNode;
 //#ENDIF
 import android.net.Uri;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
