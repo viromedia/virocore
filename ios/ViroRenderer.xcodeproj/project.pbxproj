@@ -2389,7 +2389,7 @@
 		A5A10737212D4108008B2DFB /* dgif_lib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = dgif_lib.c; path = giflib/dgif_lib.c; sourceTree = "<group>"; };
 		A5A10738212D4108008B2DFB /* gifalloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gifalloc.c; path = giflib/gifalloc.c; sourceTree = "<group>"; };
 		A5A10739212D4108008B2DFB /* openbsd-reallocarray.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = "openbsd-reallocarray.c"; path = "giflib/openbsd-reallocarray.c"; sourceTree = "<group>"; };
-		A5A1073E212D417A008B2DFB /* VROAnimatedTextureOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROAnimatedTextureOpenGL.cpp; sourceTree = "<group>"; };
+		A5A1073E212D417A008B2DFB /* VROAnimatedTextureOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAnimatedTextureOpenGL.cpp; sourceTree = "<group>"; };
 		A5A1073F212D417A008B2DFB /* VROAnimatedTextureOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatedTextureOpenGL.h; sourceTree = "<group>"; };
 		A5ABB1B91E93300700E07EBC /* chillroots.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = chillroots.mp4; path = ViroSample/chillroots.mp4; sourceTree = "<group>"; };
 		A5ABB1C01E95703200E07EBC /* stereo1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo1.jpg; path = ViroSample/stereo1.jpg; sourceTree = "<group>"; };
