@@ -400,7 +400,7 @@ void VROSceneRendererARCore::setDisplayGeometry(int rotation, int width, int hei
 }
 
 void VROSceneRendererARCore::setCameraAutoFocusEnabled(bool enabled) {
-    _session->setCameraAutoFocusEnabled(enabled);
+    _session->setAutofocus(enabled);
 }
 
 bool VROSceneRendererARCore::isCameraAutoFocusEnabled() {

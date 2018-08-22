@@ -76,11 +76,16 @@ public:
     void setAutofocus(bool enabled) {
         // no-op
     };
-    
+  
+    bool isCameraAutoFocusEnabled() {
+        // no-op
+      return false;
+    };
+
     void setVideoQuality(VROVideoQuality quality) {
         // no-op
     };
-    
+  
 private:
     
     std::unique_ptr<VROARFrame> _currentFrame;

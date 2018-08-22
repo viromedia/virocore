@@ -164,7 +164,7 @@ public:
     /*
      * Set camera's ArFocusMode as AUTO_FOCUS if enabled is true, else set to FIXED_FOCUS
      */
-    virtual void setCameraAutoFocusEnabled(bool enabled) = 0;
+    virtual void setAutofocus(bool enabled) = 0;
 
     /*
      * Return true if camera's ArFocusMode is set to AUTO_FOCUS;
@@ -276,12 +276,7 @@ public:
      Sets AR world origin to the given transform.
      */
     virtual void setWorldOrigin(VROMatrix4f relativeTransform) = 0;
-    
-    /*
-     Sets whether or not to enable autofocus.
-     */
-    virtual void setAutofocus(bool enabled) = 0;
-    
+
     /*
      Sets the video quality to use.
      */

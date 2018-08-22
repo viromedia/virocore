@@ -54,7 +54,7 @@ public:
     void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
     bool setAnchorDetection(std::set<VROAnchorDetection> types);
     void setCloudAnchorProvider(VROCloudAnchorProvider provider);
-    void setCameraAutoFocusEnabled(bool enabled);
+    void setAutofocus(bool enabled);
     bool isCameraAutoFocusEnabled();
 
     /*
@@ -97,10 +97,6 @@ public:
         // no-op (only iOS 12+)
     }
 
-
-    void setAutofocus(bool enabled) {
-        // no-op on Android
-    };
 
     void setVideoQuality(VROVideoQuality quality) {
         // no-op on Android

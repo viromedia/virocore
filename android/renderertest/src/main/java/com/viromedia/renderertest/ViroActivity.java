@@ -324,11 +324,11 @@ public class ViroActivity extends AppCompatActivity {
         final ARScene scene = new ARScene();
         final Node rootNode = scene.getRootNode();
 
+        ((ViroViewARCore)mViroView).setCameraAutoFocusEnabled(true);
 
         final List<Node> nodes = new ArrayList<>();
         //nodes.addAll(testBox(this));
         //testBackgroundImage(scene);
-
         testAugmentedImageDatabase(scene);
 
         // Add a box in front of the user

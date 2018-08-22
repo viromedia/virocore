@@ -182,7 +182,7 @@ void VROARSessionARCore::setCloudAnchorProvider(VROCloudAnchorProvider provider)
     updateARCoreConfig();
 }
 
-void VROARSessionARCore::setCameraAutoFocusEnabled(bool enabled) {
+void VROARSessionARCore::setAutofocus(bool enabled) {
     if (enabled) {
         _focusMode = arcore::FocusMode::AUTO_FOCUS;
     } else {

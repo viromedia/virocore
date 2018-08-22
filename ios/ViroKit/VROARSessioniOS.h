@@ -73,6 +73,10 @@ public:
     void setWorldOrigin(VROMatrix4f relativeTransform);
     void setNumberOfTrackedImages(int numImages);
     void setAutofocus(bool enabled);
+    bool isCameraAutoFocusEnabled() {
+      // unsupported
+      return false;
+    }
     void setVideoQuality(VROVideoQuality quality);
     
     /*
