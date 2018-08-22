@@ -1414,12 +1414,24 @@
 		A597F8F2201ADD49007EE387 /* VROBRDFRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = A597F8EE201ADD16007EE387 /* VROBRDFRenderPass.h */; };
 		A59E113B1F5396BF00EB2CEB /* VROPostProcessEffectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59E11381F53951700EB2CEB /* VROPostProcessEffectFactory.cpp */; };
 		A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E11391F53951700EB2CEB /* VROPostProcessEffectFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A5A1073C212D4109008B2DFB /* gifalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10738212D4108008B2DFB /* gifalloc.c */; };
-		A5A1073D212D4109008B2DFB /* openbsd-reallocarray.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10739212D4108008B2DFB /* openbsd-reallocarray.c */; };
 		A5A10740212D417B008B2DFB /* VROAnimatedTextureOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A1073E212D417A008B2DFB /* VROAnimatedTextureOpenGL.cpp */; };
 		A5A10741212D417B008B2DFB /* VROAnimatedTextureOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A1073E212D417A008B2DFB /* VROAnimatedTextureOpenGL.cpp */; };
-		A5A10742212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A1073F212D417A008B2DFB /* VROAnimatedTextureOpenGL.h */; };
-		A5A10743212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A1073F212D417A008B2DFB /* VROAnimatedTextureOpenGL.h */; };
+		A5A10742212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A1073F212D417A008B2DFB /* VROAnimatedTextureOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A10743212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A1073F212D417A008B2DFB /* VROAnimatedTextureOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A1074A212D5188008B2DFB /* gif_lib_private.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A10734212D4107008B2DFB /* gif_lib_private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A1074B212D5189008B2DFB /* gif_lib_private.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A10734212D4107008B2DFB /* gif_lib_private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A1074C212D518B008B2DFB /* gif_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A10733212D4107008B2DFB /* gif_lib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A1074D212D518C008B2DFB /* gif_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A10733212D4107008B2DFB /* gif_lib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A1074E212D51A0008B2DFB /* gif_hash.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A10735212D4107008B2DFB /* gif_hash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A1074F212D51A0008B2DFB /* gif_hash.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A10735212D4107008B2DFB /* gif_hash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A10750212D51DC008B2DFB /* dgif_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10737212D4108008B2DFB /* dgif_lib.c */; };
+		A5A10751212D51DD008B2DFB /* dgif_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10737212D4108008B2DFB /* dgif_lib.c */; };
+		A5A10752212D51DF008B2DFB /* gif_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10736212D4108008B2DFB /* gif_hash.c */; };
+		A5A10753212D51DF008B2DFB /* gif_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10736212D4108008B2DFB /* gif_hash.c */; };
+		A5A10754212D51E8008B2DFB /* gifalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10738212D4108008B2DFB /* gifalloc.c */; };
+		A5A10755212D51E8008B2DFB /* gifalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10738212D4108008B2DFB /* gifalloc.c */; };
+		A5A10756212D51EB008B2DFB /* openbsd-reallocarray.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10739212D4108008B2DFB /* openbsd-reallocarray.c */; };
+		A5A10757212D51EC008B2DFB /* openbsd-reallocarray.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A10739212D4108008B2DFB /* openbsd-reallocarray.c */; };
 		A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1B91E93300700E07EBC /* chillroots.mp4 */; };
 		A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1C01E95703200E07EBC /* stereo1.jpg */; };
 		A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1C91E95703200E07EBC /* stereo3601.jpg */; };
@@ -2388,7 +2400,7 @@
 		A5A10736212D4108008B2DFB /* gif_hash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gif_hash.c; path = giflib/gif_hash.c; sourceTree = "<group>"; };
 		A5A10737212D4108008B2DFB /* dgif_lib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = dgif_lib.c; path = giflib/dgif_lib.c; sourceTree = "<group>"; };
 		A5A10738212D4108008B2DFB /* gifalloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gifalloc.c; path = giflib/gifalloc.c; sourceTree = "<group>"; };
-		A5A10739212D4108008B2DFB /* openbsd-reallocarray.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = "openbsd-reallocarray.c"; path = "giflib/openbsd-reallocarray.c"; sourceTree = "<group>"; };
+		A5A10739212D4108008B2DFB /* openbsd-reallocarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "openbsd-reallocarray.c"; path = "giflib/openbsd-reallocarray.c"; sourceTree = "<group>"; };
 		A5A1073E212D417A008B2DFB /* VROAnimatedTextureOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAnimatedTextureOpenGL.cpp; sourceTree = "<group>"; };
 		A5A1073F212D417A008B2DFB /* VROAnimatedTextureOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatedTextureOpenGL.h; sourceTree = "<group>"; };
 		A5ABB1B91E93300700E07EBC /* chillroots.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = chillroots.mp4; path = ViroSample/chillroots.mp4; sourceTree = "<group>"; };
@@ -3901,6 +3913,7 @@
 				13B67348212229B20040FB72 /* VROSceneDelegateiOS.h in Headers */,
 				13B67349212229B20040FB72 /* VROInputPresenterCardboardiOS.h in Headers */,
 				13B6734A212229B20040FB72 /* VROInputControllerBase.h in Headers */,
+				A5A1074D212D518C008B2DFB /* gif_lib.h in Headers */,
 				13B6734B212229B20040FB72 /* VROInputControllerCardboardiOS.h in Headers */,
 				13B6734C212229B20040FB72 /* VROSceneController.h in Headers */,
 				13B6734D212229B20040FB72 /* VROARImageTargetiOS.h in Headers */,
@@ -4014,6 +4027,7 @@
 				13B673B8212229B20040FB72 /* VROByteBuffer.h in Headers */,
 				13B673B9212229B20040FB72 /* VROAudioPlayeriOS.h in Headers */,
 				13B673BA212229B20040FB72 /* VROTimingFunctionBounce.h in Headers */,
+				A5A1074F212D51A0008B2DFB /* gif_hash.h in Headers */,
 				13B673BB212229B20040FB72 /* VROCameraTexture.h in Headers */,
 				13B673BC212229B20040FB72 /* VROInputControllerAR.h in Headers */,
 				13B673BD212229B20040FB72 /* Nodes.pb.h in Headers */,
@@ -4108,6 +4122,7 @@
 				13B67415212229B20040FB72 /* VROPolylineTest.h in Headers */,
 				13B67416212229B20040FB72 /* VROTree.h in Headers */,
 				13B67417212229B20040FB72 /* VROARCameraInertial.h in Headers */,
+				A5A1074B212D5189008B2DFB /* gif_lib_private.h in Headers */,
 				13B67418212229B20040FB72 /* VROSoundDelegate.h in Headers */,
 				13B67419212229B20040FB72 /* VROHDRLoader.h in Headers */,
 				13B6741A212229B20040FB72 /* VROView.h in Headers */,
@@ -4235,6 +4250,7 @@
 				8FD2A53D1F813C4100E831A6 /* VROTorusTest.h in Headers */,
 				8FD2A5441F813C4100E831A6 /* VROFBXTest.h in Headers */,
 				8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */,
+				A5A1074C212D518B008B2DFB /* gif_lib.h in Headers */,
 				A5A10742212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */,
 				8F9278081C670FD900FF892A /* VROTriangle.h in Headers */,
 				8F65F78E1C90D83600415115 /* VROTransformConstraint.h in Headers */,
@@ -4292,6 +4308,7 @@
 				8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */,
 				8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */,
 				8AABB6FC1F1ECD4E00D48D5C /* VROWeakProxy.h in Headers */,
+				A5A1074A212D5188008B2DFB /* gif_lib_private.h in Headers */,
 				8FEF37201FCF77B600FE7D56 /* VRODriverOpenGLiOSGVR.h in Headers */,
 				8AE44C982021317A00CE8394 /* VROARImageAnchor.h in Headers */,
 				8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */,
@@ -4390,6 +4407,7 @@
 				8F37D9F41F4CD6810029D23E /* VRODisplayOpenGLiOS.h in Headers */,
 				8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */,
 				8FD06F221E832760003D3BC4 /* VROCameraTextureiOS.h in Headers */,
+				A5A1074E212D51A0008B2DFB /* gif_hash.h in Headers */,
 				8F2657471F0E808C0031DE17 /* VROCompress.h in Headers */,
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
@@ -5281,6 +5299,7 @@
 				13B67250212229B20040FB72 /* VROShaderModifier.cpp in Sources */,
 				13B67251212229B20040FB72 /* KIOReachability.m in Sources */,
 				13B67252212229B20040FB72 /* VROCameraTextureiOS.cpp in Sources */,
+				A5A10757212D51EC008B2DFB /* openbsd-reallocarray.c in Sources */,
 				13B67253212229B20040FB72 /* VROARImperativeSession.cpp in Sources */,
 				13B67254212229B20040FB72 /* VROGVRUtil.cpp in Sources */,
 				13B67255212229B20040FB72 /* VROThreadRestricted.cpp in Sources */,
@@ -5363,6 +5382,7 @@
 				13B672A1212229B20040FB72 /* VROStereoscopicTest.cpp in Sources */,
 				13B672A2212229B20040FB72 /* VROPhysicsWorld.cpp in Sources */,
 				13B672A3212229B20040FB72 /* VRORenderer.cpp in Sources */,
+				A5A10751212D51DD008B2DFB /* dgif_lib.c in Sources */,
 				13B672A4212229B20040FB72 /* VROVector3f.cpp in Sources */,
 				13B672A5212229B20040FB72 /* VROARImageTrackingTest.cpp in Sources */,
 				13B672A6212229B20040FB72 /* VROGeometryElement.cpp in Sources */,
@@ -5378,6 +5398,7 @@
 				13B672B0212229B20040FB72 /* VROViewScene.mm in Sources */,
 				13B672B1212229B20040FB72 /* VROTypeface.cpp in Sources */,
 				13B672B2212229B20040FB72 /* VROARCameraInertial.cpp in Sources */,
+				A5A10753212D51DF008B2DFB /* gif_hash.c in Sources */,
 				13B672B3212229B20040FB72 /* KIODBStore.m in Sources */,
 				13B672B4212229B20040FB72 /* VROScreen.cpp in Sources */,
 				13B672B5212229B20040FB72 /* VROApiMetricsIncrementRequest.m in Sources */,
@@ -5449,6 +5470,7 @@
 				13B672F7212229B20040FB72 /* VROGeometryUtil.cpp in Sources */,
 				13B672F8212229B20040FB72 /* VROTorusKnot.cpp in Sources */,
 				13B672F9212229B20040FB72 /* tiny_obj_loader.cc in Sources */,
+				A5A10755212D51E8008B2DFB /* gifalloc.c in Sources */,
 				13B672FA212229B20040FB72 /* VROSkeletalAnimation.cpp in Sources */,
 				13B672FB212229B20040FB72 /* VROARSessioniOS.cpp in Sources */,
 				13B672FC212229B20040FB72 /* VROPBRTexturedTest.cpp in Sources */,
@@ -5466,11 +5488,9 @@
 			files = (
 				A597F8F0201ADD17007EE387 /* VROBRDFRenderPass.cpp in Sources */,
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
-				A5A1073C212D4109008B2DFB /* gifalloc.c in Sources */,
 				A5B433EC204E64A600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */,
 				8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */,
 				8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */,
-				A5A1073D212D4109008B2DFB /* openbsd-reallocarray.c in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 			);
@@ -5554,6 +5574,7 @@
 				8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */,
 				13F631C12065C26E00A74EFC /* KIOReachability.m in Sources */,
 				8FD06F211E832760003D3BC4 /* VROCameraTextureiOS.cpp in Sources */,
+				A5A10756212D51EB008B2DFB /* openbsd-reallocarray.c in Sources */,
 				8F828EFA1FAF83840068159E /* VROARImperativeSession.cpp in Sources */,
 				8F17D5421FCF1E7500141042 /* VROGVRUtil.cpp in Sources */,
 				8F705DF01E8D5337008BE8F8 /* VROThreadRestricted.cpp in Sources */,
@@ -5636,6 +5657,7 @@
 				8FD2A54B1F813C4100E831A6 /* VROStereoscopicTest.cpp in Sources */,
 				A5EC659E1EBD34C000FE220E /* VROPhysicsWorld.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
+				A5A10750212D51DC008B2DFB /* dgif_lib.c in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
 				8AE44CA62023AFC400CE8394 /* VROARImageTrackingTest.cpp in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
@@ -5651,6 +5673,7 @@
 				8FFA8A0720485A9500C4D99B /* VROViewScene.mm in Sources */,
 				8F951F9D20587D6E000DC58F /* VROTypeface.cpp in Sources */,
 				8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */,
+				A5A10752212D51DF008B2DFB /* gif_hash.c in Sources */,
 				13F631B82065C21B00A74EFC /* KIODBStore.m in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
@@ -5722,6 +5745,7 @@
 				8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */,
 				8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */,
 				8F53C8F81E00F03E008314B4 /* tiny_obj_loader.cc in Sources */,
+				A5A10754212D51E8008B2DFB /* gifalloc.c in Sources */,
 				8F129F951ECB41EE00341D83 /* VROSkeletalAnimation.cpp in Sources */,
 				8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */,
 				8FEACEE1201262EE0082D18B /* VROPBRTexturedTest.cpp in Sources */,
