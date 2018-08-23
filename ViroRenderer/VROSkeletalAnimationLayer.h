@@ -11,6 +11,8 @@
 
 #include <map>
 
+class VROSkeletalAnimationLayerInternal;
+
 /*
  A single layer of a VROLayeredSkeletalAnimation. Each layer is comprised of a skeletal
  animation and the properties that define how it blends with the other skeletal animations.
@@ -41,6 +43,11 @@ private:
     
     // Overriden specific weights for bones
     std::map<int, float> boneWeights;
+    
+    // Holds the derived data for the animation, making it possible to cache
+    // an animation
+    std::map<std::shared_ptr<VROSkinner>, std::shared_ptr<VROSkeletalAnimationLayerInternal>> _internal;
+    
     
 };
 

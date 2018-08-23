@@ -56,6 +56,9 @@ private:
     std::map<int, std::vector<float>> boneKeyTimes;
     std::map<int, std::vector<VROMatrix4f>> boneLocalTransforms;
     
+    // Convert animation into keyframe data
+    void buildKeyframes();
+    
 };
 
 /*

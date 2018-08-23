@@ -23,6 +23,22 @@
 
 static const float kBlendEpsilon = 0.02;
 
+void VROSkeletalAnimationLayerInternal::buildKeyframes() {
+    // If the keyframes are already built, nothing to do here
+    if (boneKeyTimes.size() > 0) {
+        return;
+    }
+    for (const std::unique_ptr<VROSkeletalAnimationFrame> &frame : animation->getFrames()) {
+        passert (frame->boneIndices.size() == frame->boneTransforms.size());
+        
+        for (int f = 0; f < frame->boneIndices.size(); f++) {
+            int boneIndex = frame->boneIndices[f];
+            boneKeyTimes[boneIndex].push_back(frame->time);
+            boneLocalTransforms[boneIndex].push_back(frame->localBoneTransforms[f]);
+        }
+    }
+}
+
 void VROLayeredSkeletalAnimation::flattenAnimationChain(std::shared_ptr<VROAnimationChain> chain, std::vector<std::shared_ptr<VROExecutableAnimation>> *animations) {
     
     for (const std::shared_ptr<VROExecutableAnimation> child : chain->getAnimations()) {
@@ -74,11 +90,19 @@ std::shared_ptr<VROExecutableAnimation> VROLayeredSkeletalAnimation::createLayer
                     // Note we may have multiple skeletal animations that share the same name. In this case
                     // we give them all the same assigned weight. Same-name animations shouldn't together
                     // influence the same bones so this should be fine.
-                    std::shared_ptr<VROSkeletalAnimationLayerInternal> newLayer = std::make_shared<VROSkeletalAnimationLayerInternal>(layer->name, layer->defaultBoneWeight);
-                    newLayer->animation = skeletal;
-                    newLayer->boneWeights = layer->boneWeights;
-                    layersForSkinner.push_back(newLayer);
+                    std::shared_ptr<VROSkeletalAnimationLayerInternal> layerInternal;
+                    auto layerSkeletalIt = layer->_internal.find(animationSkinner);
+                    if (layerSkeletalIt == layer->_internal.end()) {
+                        layerInternal = std::make_shared<VROSkeletalAnimationLayerInternal>(layer->name, layer->defaultBoneWeight);
+                        layerInternal->animation = skeletal;
+                        layerInternal->boneWeights = layer->boneWeights;
+                        
+                        layer->_internal[animationSkinner] = layerInternal;
+                    } else {
+                        layerInternal = layerSkeletalIt->second;
+                    }
                     
+                    layersForSkinner.push_back(layerInternal);
                     maxDuration = fmax(maxDuration, skeletal->getDuration());
                     
                 } else {
@@ -133,18 +157,7 @@ void VROLayeredSkeletalAnimation::blendAnimations() {
      Build the keyframe animation data for each layer.
      */
     for (int i = 0; i < _layers.size(); i++) {
-        std::shared_ptr<VROSkeletalAnimationLayerInternal> &layer = _layers[i];
-        std::shared_ptr<VROSkeletalAnimation> animation = layer->animation;
-        
-        for (const std::unique_ptr<VROSkeletalAnimationFrame> &frame : animation->getFrames()) {
-            passert (frame->boneIndices.size() == frame->boneTransforms.size());
-            
-            for (int f = 0; f < frame->boneIndices.size(); f++) {
-                int boneIndex = frame->boneIndices[f];
-                layer->boneKeyTimes[boneIndex].push_back(frame->time);
-                layer->boneLocalTransforms[boneIndex].push_back(frame->localBoneTransforms[f]);
-            }
-        }
+        _layers[i]->buildKeyframes();
     }
     
     /*
