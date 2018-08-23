@@ -836,6 +836,23 @@ double VROMathInterpolate_d(double input, double inMin, double inMax, double out
     return outMin + position;
 }
 
+float VROMathInterpolateKeyFrameIndex(float input, const std::vector<float> &inputs) {
+    if (input < inputs.front()) {
+        return 0;
+    }
+    if (input >= inputs.back()) {
+        return inputs.size() - 1;
+    }
+    
+    for (int i = 1; i < inputs.size(); i++) {
+        if (input < inputs[i]) {
+            return i - 1;
+        }
+    }
+    pabort();
+    return 0;
+}
+
 float VROMathInterpolateKeyFrame(float input, const std::vector<float> &inputs, const std::vector<float> &outputs) {
     passert (inputs.size() == outputs.size());
     if (input < inputs.front()) {

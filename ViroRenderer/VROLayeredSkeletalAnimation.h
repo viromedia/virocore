@@ -145,9 +145,9 @@ private:
     
     /*
      Cache the blended bone times and values so if we re-run this animation these do not have
-     to be recomputed.
+     to be recomputed. The _cached vector indicates which frames are already cached.
      */
-    bool _cached;
+    std::vector<bool> _cached;
     std::map<int, std::vector<float>> _boneKeyTimes;
     std::map<int, std::vector<VROMatrix4f>> _boneTransforms;
     
@@ -159,7 +159,7 @@ private:
     /*
      Blending methods to create the unified animation.
      */
-    void blendAnimations();
+    void blendFrame(int f);
     static VROMatrix4f blendBoneTransform(const VROMatrix4f &previous, const VROMatrix4f &next, float weight);
     static VROMatrix4f blendBoneTransforms(int bone, const std::vector<std::pair<VROMatrix4f, float>> &transformsAndWeights);
     
