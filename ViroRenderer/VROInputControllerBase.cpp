@@ -130,8 +130,14 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
          in reference to the controller's movement.
          */
         std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
-        draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
-        draggedObject->_originalHitLocation = _hitResult->getLocation();
+        if (draggableNode->getDragType() == VRODragType::FixedDistanceOrigin) {
+            draggedObject->_draggedDistanceFromController = draggableNode->getWorldPosition().distanceAccurate(_lastKnownPosition);
+            draggedObject->_originalHitLocation = draggableNode->getWorldPosition();
+        } else {
+            draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
+            draggedObject->_originalHitLocation = _hitResult->getLocation();
+        }
+
         draggedObject->_originalDraggedNodePosition = draggableNode->getWorldPosition();
         draggedObject->_originalDraggedNodeRotation = draggableNode->getWorldRotation();
         draggedObject->_draggedNode = draggableNode;
@@ -205,6 +211,7 @@ void VROInputControllerBase::processDragging(int source) {
             break;
         case VRODragType::FixedToWorld: // this is only supported in AR, so default to FixedDistance here
         case VRODragType::FixedDistance:
+        case VRODragType::FixedDistanceOrigin:
             draggedToPosition = getDragPositionFixedDistance();
             break;
     }

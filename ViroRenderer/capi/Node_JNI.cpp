@@ -494,9 +494,10 @@ VRO_METHOD(void, nativeSetDragType)(VRO_ARGS
     // default type to FixedDistance if we don't recognize the given string
     VRODragType type = VRODragType::FixedDistance;
     std::string dragTypeStr = VRO_STRING_STL(dragType);
-
     if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistance")) {
         type = VRODragType::FixedDistance;
+    } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistanceOrigin")) {
+        type = VRODragType::FixedDistanceOrigin;
     } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedToWorld")) {
         type = VRODragType::FixedToWorld;
     } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedToPlane")) {

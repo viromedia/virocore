@@ -578,13 +578,6 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
         setPosition(currentTransform.extractTranslation());
         setRotation(currentTransform.extractRotation(currentTransform.extractScale()));
     }
-
-    if (getParentNode() == nullptr){
-        return;
-    }
-    // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
-    // child's node transforms recursively.
-    computeTransforms(getParentNode()->getWorldTransform(), getParentNode()->getWorldRotation());
 }
 
 #pragma mark - Visibility

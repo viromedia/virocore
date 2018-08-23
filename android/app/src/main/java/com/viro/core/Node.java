@@ -73,15 +73,24 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public enum DragType {
         /**
-         * Dragging is limited to a fixed radius around the user. That is, as you drag a Node
-         * around, it never changes its distance from the user: it stays fixed as though you are
-         * dragging the Node around the inner surface of sphere.
+         * Dragging is limited to a fixed radius around the user, dragged from the point at which
+         * the user has grabbed the geometry containing this draggable node. That is, as you drag
+         * a Node around, it never changes its distance from the user: it stays fixed as though
+         * you are dragging the Node around the inner surface of sphere.
          */
         FIXED_DISTANCE("FixedDistance"),
 
         /**
+         * Dragging is limited to a fixed radius around the user, dragged from the point of this
+         * node's position in world space. That is, as you drag a Node around, it never changes
+         * its distance from the user: it stays fixed as though you are dragging the Node around
+         * the inner surface of sphere.
+         */
+        FIXED_DISTANCE_ORIGIN("FixedDistanceOrigin"),
+
+        /**
          * Dragging is based on intersection with real-world object. This is only available in
-         * AR. This setting is used when ou wish to drag a Node off a table and onto the ground,
+         * AR. This setting is used when you wish to drag a Node off a table and onto the ground,
          * for example.
          */
         FIXED_TO_WORLD("FixedToWorld"),

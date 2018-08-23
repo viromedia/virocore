@@ -64,11 +64,20 @@ enum class VROSilhouetteMode {
 };
 
 enum class VRODragType {
-    FixedDistance,  // Drags objects with a fixed distance to camera/controller/etc.
-    FixedToPlane,   // Drags object along a given plane (point + normal)
-    FixedToWorld,   // Currently available to AR only. Attempts to drag object w.r.t. the real world.
-};
+    // Drags objects with a fixed distance to camera/controller/etc, from the point at which
+    // the user has grabbed the geometry containing this draggable node.
+    FixedDistance,
 
+    // Drags objects with a fixed distance to camera/controller/etc, from the point of this
+    // node's position in world space.
+    FixedDistanceOrigin,
+
+    // Drags object along a given plane (point + normal)
+    FixedToPlane,
+
+    // Currently available to AR only. Attempts to drag object w.r.t. the real world.
+    FixedToWorld,
+};
 
 class VRONode : public VROAnimatable, public VROThreadRestricted {
     
