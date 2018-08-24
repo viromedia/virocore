@@ -29,7 +29,7 @@ public class ViroPolygonTest extends ViroBaseTest {
 
     private Node mPolygonNode;
     private Handler mHandler;
-    private Material mMaterial;`
+    private Material mMaterial;
 
     @Override
     void configureTestScene() {
