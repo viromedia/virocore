@@ -50,7 +50,7 @@ public class ViroAnimatedTextureTest extends ViroBaseTest {
 
     private void testAnimatedTexture() {
         AnimatedTexture text = new AnimatedTexture(mViroView.getViroContext(),
-                Uri.parse("file:///android_asset/testingGifplz1.gif"), new AnimatedTexture.OnLoadComplete() {
+                Uri.parse("file:///android_asset/testingGifplz.gif"), new AnimatedTexture.OnLoadComplete() {
             @Override
             public void onSuccess(AnimatedTexture texture) {
                 // No-op
@@ -68,7 +68,7 @@ public class ViroAnimatedTextureTest extends ViroBaseTest {
 
     private void testAnimatedTexturePausePlay() {
         AnimatedTexture text = new AnimatedTexture(mViroView.getViroContext(),
-                Uri.parse("file:///android_asset/testingGifplz1.gif"), new AnimatedTexture.OnLoadComplete() {
+                Uri.parse("file:///android_asset/testingGifplz.gif"), new AnimatedTexture.OnLoadComplete() {
             @Override
             public void onSuccess(AnimatedTexture texture) {
                 // No-op
@@ -97,7 +97,7 @@ public class ViroAnimatedTextureTest extends ViroBaseTest {
 
     private void testAnimatedTextureCallback() {
         AnimatedTexture text = new AnimatedTexture(mViroView.getViroContext(),
-                Uri.parse("file:///android_asset/testingGifplz1.gif"), new AnimatedTexture.OnLoadComplete() {
+                Uri.parse("file:///android_asset/testingGifplz.gif"), new AnimatedTexture.OnLoadComplete() {
             @Override
             public void onSuccess(AnimatedTexture texture) {
                 mAnimMat.setDiffuseTexture(null);
