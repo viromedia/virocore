@@ -4,6 +4,7 @@
  */
 package com.viro.core;
 
+import java.lang.ref.WeakReference;
 import java.util.Stack;
 
 /**
@@ -130,7 +131,7 @@ public class AnimationTransaction {
      * @param listener The {@link Listener} to use for the current transaction.
      */
     public static void setListener(Listener listener) {
-        sOpenTransactions.peek().mListener = listener;
+        sOpenTransactions.peek().mListener =  new WeakReference<Listener>(listener);
     }
 
     /**
@@ -148,7 +149,7 @@ public class AnimationTransaction {
 // +---------------------------------------------------------------------------+
 
     private long mNativeRef;
-    private Listener mListener;
+    private WeakReference<Listener> mListener;
 
     private AnimationTransaction(long nativeRef) {
         mNativeRef = nativeRef;
@@ -213,8 +214,9 @@ public class AnimationTransaction {
      Invoked by JNI.
      */
     void onAnimationFinished() {
-        if (mListener != null) {
-            mListener.onFinish(this);
+        Listener listener = mListener == null ? null : mListener.get();
+        if (listener != null) {
+            listener.onFinish(this);
         }
     }
 }
