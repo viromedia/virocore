@@ -158,7 +158,6 @@ void VROLayeredSkeletalAnimation::blendFrame(int f) {
 
     for (int b = 0; b < masterFrames[f]->boneIndices.size(); b++) {
         int boneIndex = masterFrames[f]->boneIndices[b];
-        //_boneKeyTimes[boneIndex].push_back(_layers[0]->boneKeyTimes[boneIndex][f]);
         
         // Collect all layers that have a non-zero weight on this bone
         VROMatrix4f boneIdentityTransform = _skinner->getSkeleton()->getBone(boneIndex)->getLocalTransform();
@@ -201,8 +200,6 @@ void VROLayeredSkeletalAnimation::preload() {
                 _boneKeyTimes[boneIndex].push_back(_layers[0]->boneKeyTimes[boneIndex][f]);
                 _boneTransforms[boneIndex].push_back(VROMatrix4f::identity());
             }
-            
-            // TODO find a faster way?
             _cached.push_back(false);
         }
     }
