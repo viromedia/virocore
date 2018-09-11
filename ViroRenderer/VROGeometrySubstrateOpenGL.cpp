@@ -92,6 +92,9 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
      */
     for (std::shared_ptr<VROGeometrySource> source : sources) {
         std::shared_ptr<VROData> data = source->getData();
+        if (data == nullptr || data->getDataLength() == 0) {
+            continue;
+        }
         
         auto it = dataMap.find(data);
         if (it == dataMap.end()) {
