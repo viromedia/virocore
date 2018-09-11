@@ -65,6 +65,9 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
 
 void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     for (std::shared_ptr<VROGeometryElement> element : elements) {
+        if (element->getData() == nullptr) {
+            continue;
+        }
         VROGeometryElementOpenGL elementOGL;
         
         int indexCount = VROGeometryUtilGetIndicesCount(element->getPrimitiveCount(), element->getPrimitiveType());

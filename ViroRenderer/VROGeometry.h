@@ -195,18 +195,27 @@ public:
     void setSkinner(std::shared_ptr<VROSkinner> skinner) {
         _skinner = skinner;
     }
-    
+
+    /*
+     Remove all other geometry sources for this semantic and replace them with the given source.
+     */
+    void setGeometrySourceForSemantic(VROGeometrySourceSemantic semantic, std::shared_ptr<VROGeometrySource> source);
+
+    /*
+     Get all geometry sources that match the given semantic.
+     */
     std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const;
 
     void setInstancedUBO(std::shared_ptr<VROInstancedUBO> instancedUBO) {
         _instancedUBO = instancedUBO;
     }
-
     const std::shared_ptr<VROInstancedUBO> &getInstancedUBO() const{
         return _instancedUBO;
     }
-protected:
-    
+
+    /*
+     Set the geometry sources and/or elements used by this geometry. Triggers a substrate update.
+     */
     void setSources(std::vector<std::shared_ptr<VROGeometrySource>> sources) {
         _geometrySources = sources;
         updateSubstrate();

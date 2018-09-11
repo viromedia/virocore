@@ -154,9 +154,20 @@ VROVector3f VROGeometry::getCenter() {
     return getBoundingBox().getCenter();
 }
 
+void VROGeometry::setGeometrySourceForSemantic(VROGeometrySourceSemantic semantic,
+                                               std::shared_ptr<VROGeometrySource> source) {
+    std::vector<std::shared_ptr<VROGeometrySource>> sources;
+    for (const std::shared_ptr<VROGeometrySource> &source : _geometrySources) {
+        if (source->getSemantic() != semantic) {
+            sources.push_back(source);
+        }
+    }
+    sources.push_back(source);
+    setSources(sources);
+}
+
 std::vector<std::shared_ptr<VROGeometrySource>> VROGeometry::getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
-    
     for (const std::shared_ptr<VROGeometrySource> &source : _geometrySources) {
         if (source->getSemantic() == semantic) {
             sources.push_back(source);
@@ -167,7 +178,20 @@ std::vector<std::shared_ptr<VROGeometrySource>> VROGeometry::getGeometrySourcesF
 }
 
 bool VROGeometry::isRenderable() const {
-    return !_geometrySources.empty() && !_geometryElements.empty();
+    if (_geometrySources.empty()) {
+        return false;
+    }
+    if (_geometryElements.empty()) {
+        return false;
+    }
+
+    // At least one element should have data
+    for (const std::shared_ptr<VROGeometryElement> &element : _geometryElements) {
+        if (element->getData() != nullptr) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void VROGeometry::updateSubstrate() {

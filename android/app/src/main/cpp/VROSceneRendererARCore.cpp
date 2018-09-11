@@ -381,7 +381,9 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::perform
                                                            VROARHitTestResultType::ExistingPlane,
                                                            VROARHitTestResultType::EstimatedHorizontalPlane,
                                                            VROARHitTestResultType::FeaturePoint });
-    };
+    } else {
+        return {};
+    }
 }
 
 std::vector<std::shared_ptr<VROARHitTestResult>> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {

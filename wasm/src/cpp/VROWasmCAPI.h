@@ -91,8 +91,14 @@
     array->data()
 #define VRO_DOUBLE_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
-
 #define VRO_INT_ARRAY std::shared_ptr<std::vector<int>>
+#define VRO_NEW_INT_ARRAY(size) \
+    std::make_shared<std::vector<int>>(size)
+#define VRO_INT_ARRAY_SET(dest, start, len, src) \
+    dest->insert(dest->begin() + start, &src[0], &src[len])
+#define VRO_INT_ARRAY_GET_ELEMENTS(array) \
+    array->data()
+#define VRO_INT_ARRAY_RELEASE_ELEMENTS(array, elements) \
 
 #define VRO_REF_ARRAY(type) std::shared_ptr<std::vector<std::shared_ptr<type>>>
 #define VRO_NEW_REF_ARRAY(size, type) \

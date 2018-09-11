@@ -107,6 +107,14 @@
     env->ReleaseDoubleArrayElements(array, elements, 0)
 
 #define VRO_INT_ARRAY jintArray
+#define VRO_NEW_INT_ARRAY(size) \
+    env->NewIntArray(size)
+#define VRO_INT_ARRAY_SET(dest, start, len, src) \
+    env->SetIntArrayRegion(dest, start, len, src)
+#define VRO_INT_ARRAY_GET_ELEMENTS(array) \
+    env->GetIntArrayElements(array, 0)
+#define VRO_INT_ARRAY_RELEASE_ELEMENTS(array, elements) \
+    env->ReleaseIntArrayElements(array, elements, 0)
 
 #define VRO_REF_ARRAY(type) jlongArray
 #define VRO_NEW_REF_ARRAY(size, type) \

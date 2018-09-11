@@ -62,6 +62,7 @@ add_library( # Sets the name of the library.
              # C API
              ${VIRO_CAPI_SRC}/Node_JNI.cpp
              ${VIRO_CAPI_SRC}/Geometry_JNI.cpp
+             ${VIRO_CAPI_SRC}/Submesh_JNI.cpp
              ${VIRO_CAPI_SRC}/SceneController_JNI.cpp
              ${VIRO_CAPI_SRC}/Camera_JNI.cpp
              ${VIRO_CAPI_SRC}/Box_JNI.cpp
