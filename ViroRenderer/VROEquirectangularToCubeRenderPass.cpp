@@ -58,6 +58,7 @@ void VROEquirectangularToCubeRenderPass::render(std::shared_ptr<VROScene> scene,
     driver->bindRenderTarget(_cubeRenderTarget, VRORenderTargetUnbindOp::Invalidate);
     
     // Setup for rendering the cube
+    driver->setCullMode(VROCullMode::None);
     driver->setDepthWritingEnabled(true);
     driver->setDepthReadingEnabled(true);
     driver->setMaterialColorWritingMask(VROColorMaskAll);

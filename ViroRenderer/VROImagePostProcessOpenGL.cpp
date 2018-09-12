@@ -56,7 +56,8 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
     if (!bind(textures, driver)) {
         return;
     }
-    
+
+    driver->setCullMode(VROCullMode::None);
     driver->setDepthWritingEnabled(false);
     driver->setDepthReadingEnabled(false);
     driver->setMaterialColorWritingMask(VROColorMaskAll);
@@ -76,6 +77,7 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
 }
 
 void VROImagePostProcessOpenGL::begin(std::shared_ptr<VRODriver> &driver) {
+    driver->setCullMode(VROCullMode::None);
     driver->setDepthWritingEnabled(false);
     driver->setDepthReadingEnabled(false);
     driver->setMaterialColorWritingMask(VROColorMaskAll);

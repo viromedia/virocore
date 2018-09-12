@@ -54,6 +54,7 @@ void VROBRDFRenderPass::render(std::shared_ptr<VROScene> scene,
     driver->bindRenderTarget(_BRDFRenderTarget, VRORenderTargetUnbindOp::Invalidate);
 
     // Setup for rendering the quad
+    driver->setCullMode(VROCullMode::None);
     driver->setDepthWritingEnabled(true);
     driver->setDepthReadingEnabled(true);
     driver->setMaterialColorWritingMask(VROColorMaskAll);
