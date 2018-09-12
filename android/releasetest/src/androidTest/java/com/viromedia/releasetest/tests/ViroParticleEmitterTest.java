@@ -15,6 +15,7 @@ import android.graphics.Color;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.ParticleEmitter;
+import com.viro.core.Quad;
 import com.viro.core.Surface;
 import com.viro.core.Texture;
 import com.viro.core.Vector;
@@ -37,19 +38,19 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
         float height = 2;
 
         // Construct particle Geometry.
-        Surface nativeSurface = new Surface(1,1);
-        nativeSurface.setWidth(width);
-        nativeSurface.setHeight(height);
+        Quad quad = new Quad(1,1);
+        quad.setWidth(width);
+        quad.setHeight(height);
 
         // Construct Particle Image
         final Bitmap result = this.getBitmapFromAssets(mActivity, "particle_snow.png");
         final Texture snowTexture = new Texture(result, Texture.Format.RGBA8, true, true);
         Material material = new Material();
         material.setDiffuseTexture(snowTexture);
-        nativeSurface.setMaterials(Arrays.asList(material));
+        quad.setMaterials(Arrays.asList(material));
 
         // Finally construct the particle with the geometry and node.
-        return new ParticleEmitter(context, nativeSurface);
+        return new ParticleEmitter(context, quad);
     }
 
     @Override
