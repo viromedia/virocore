@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
+import com.viro.core.AmbientLight;
 import com.viro.core.Box;
 import com.viro.core.Camera;
 import com.viro.core.DirectionalLight;
@@ -21,6 +22,7 @@ import com.viro.core.Node;
 import com.viro.core.Quad;
 import com.viro.core.Sphere;
 
+import com.viro.core.Spotlight;
 import com.viro.core.Texture;
 import com.viro.core.Vector;
 
@@ -40,23 +42,31 @@ public class ViroMaterialTest extends ViroBaseTest {
     private Node mSphereNode;
     private Box mBox;
     private Node mNodeBox;
+    private AmbientLight mAmbientLight;
     private DirectionalLight mDirectionalLight;
     private ArrayList<Material> mMaterialBoxList;
     private Texture mBobaTexture;
+    private Texture mSpecularTexture;
 
     @Override
     void configureTestScene() {
         mScene.setBackgroundCubeWithColor(Color.BLUE);
-        mDirectionalLight = new DirectionalLight(Color.WHITE, 2000.0f, new Vector(0, 0, -1));
+        mAmbientLight = new AmbientLight(Color.WHITE, 200);
+        mScene.getRootNode().addLight(mAmbientLight);
+        mDirectionalLight = new DirectionalLight(Color.RED, 1000.0f, new Vector(0, -1, -1));
         mScene.getRootNode().addLight(mDirectionalLight);
 
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
         mBobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
 
+        Bitmap specularBitmap = this.getBitmapFromAssets(mActivity, "specular.png");
+        mSpecularTexture = new Texture(specularBitmap, Texture.Format.RGBA8, true, true);
+
         mMaterial = new Material();
         mMaterial.setDiffuseTexture(mBobaTexture);
         mMaterial.setDiffuseColor(Color.RED);
-        mMaterial.setLightingModel(Material.LightingModel.BLINN);
+        mMaterial.setSpecularTexture(mSpecularTexture);
+        mMaterial.setLightingModel(Material.LightingModel.PHONG);
 
         mSphere = new Sphere(5);
         mSphere.setMaterials(Arrays.asList(mMaterial));
@@ -91,11 +101,10 @@ public class ViroMaterialTest extends ViroBaseTest {
     @Test
     public void testMaterial() {
         runUITest(() -> testMaterialLightingModelConstant());
+        runUITest(() -> testMaterialLightingModelLambert());
         runUITest(() -> testMaterialLightingModelBlinn());
         runUITest(() -> testMaterialLightingModelPhong());
-        runUITest(() -> testMaterialLightingModelLambert());
 
-        runUITest(() -> testMaterialSpecularTexture());
         runUITest(() -> testMaterialNormalMapTexture());
         runUITest(() -> testMaterialShininess());
 
@@ -120,35 +129,33 @@ public class ViroMaterialTest extends ViroBaseTest {
     }
 
     private void testMaterialLightingModelConstant() {
+        mMaterial.setDiffuseColor(Color.WHITE);
         mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         assertPass("Lighting model on material is Constant");
     }
 
+    private void testMaterialLightingModelLambert() {
+        mMaterial.setDiffuseColor(Color.WHITE);
+        mMaterial.setLightingModel(Material.LightingModel.LAMBERT);
+        assertPass("Lighting model on material is Lambert");
+    }
+
     private void testMaterialLightingModelBlinn() {
+        mMaterial.setDiffuseColor(Color.WHITE);
         mMaterial.setLightingModel(Material.LightingModel.BLINN);
         mSphere.setMaterials(Arrays.asList(mMaterial));
         assertPass("Lighting model on material is Blinn");
     }
 
     private void testMaterialLightingModelPhong() {
+        mMaterial.setDiffuseColor(Color.WHITE);
         mMaterial.setLightingModel(Material.LightingModel.PHONG);
         assertPass("Lighting model on material is Phong");
     }
 
-    private void testMaterialLightingModelLambert() {
-        mMaterial.setLightingModel(Material.LightingModel.LAMBERT);
-        assertPass("Lighting model on material is Lambert");
-    }
-
-    private void testMaterialSpecularTexture() {
-        Bitmap specBitmap = this.getBitmapFromAssets(mActivity, "specular.png");
-        Texture specTexture = new Texture(specBitmap, Texture.Format.RGBA8, true, true);
-        mMaterial.setSpecularTexture(specTexture);
-        mSphere.setMaterials(Arrays.asList(mMaterial));
-        assertPass("Added specular texture to the material");
-    }
-
     private void testMaterialNormalMapTexture() {
+        mMaterial.setDiffuseColor(Color.WHITE);
+
         Bitmap specBitmap = this.getBitmapFromAssets(mActivity, "earth_normal.jpg");
         Texture specTexture = new Texture(specBitmap, Texture.Format.RGBA8, true, true);
         mMaterial.setNormalMap(specTexture);
@@ -157,6 +164,8 @@ public class ViroMaterialTest extends ViroBaseTest {
     }
 
     private void testMaterialShininess() {
+        mMaterial.setDiffuseColor(Color.WHITE);
+
         mMutableTestMethod = () -> {
             if (mMaterial != null && mMaterial.getShininess() < 10) {
                 mMaterial.setShininess(mMaterial.getShininess() + .5f);
@@ -170,6 +179,8 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.setBackgroundCubeWithColor(Color.WHITE);
         mSphereNode.setOpacity(0.5f);
         mMaterial.setDiffuseTexture(null);
+        mMaterial.setSpecularTexture(null);
+        mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         mMaterial.setBlendMode(Material.BlendMode.NONE);
         assertPass("Blend mode is NONE: red sphere over white background");
     }
@@ -178,6 +189,8 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.setBackgroundCubeWithColor(Color.WHITE);
         mSphereNode.setOpacity(0.5f);
         mMaterial.setDiffuseTexture(null);
+        mMaterial.setSpecularTexture(null);
+        mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         mMaterial.setBlendMode(Material.BlendMode.ALPHA);
         assertPass("Blend mode is Alpha: faded red sphere over white background");
     }
@@ -186,13 +199,18 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.setBackgroundCubeWithColor(Color.GREEN);
         mSphereNode.setOpacity(0.5f);
         mMaterial.setDiffuseTexture(null);
+        mMaterial.setSpecularTexture(null);
+        mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         mMaterial.setBlendMode(Material.BlendMode.ADD);
         assertPass("Blend mode is ADD: yellow sphere over green background");
     }
 
     private void testMaterialBlendSubtract() {
         mScene.setBackgroundCubeWithColor(Color.YELLOW);
+        mSphereNode.setOpacity(0.5f);
         mMaterial.setDiffuseTexture(null);
+        mMaterial.setSpecularTexture(null);
+        mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         mMaterial.setBlendMode(Material.BlendMode.SUBTRACT);
         assertPass("Blend mode is SUBTRACT: green sphere over yellow background");
     }
@@ -201,6 +219,8 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.setBackgroundCubeWithColor(Color.GRAY);
         mMaterial.setDiffuseTexture(null);
         mMaterial.setDiffuseColor(Color.GRAY);
+        mMaterial.setSpecularTexture(null);
+        mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         mMaterial.setBlendMode(Material.BlendMode.MULTIPLY);
         assertPass("Blend mode is MULTIPLY: sphere is darker gray than background");
     }
@@ -209,6 +229,8 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.setBackgroundCubeWithColor(Color.GRAY);
         mMaterial.setDiffuseTexture(null);
         mMaterial.setDiffuseColor(Color.GRAY);
+        mMaterial.setSpecularTexture(null);
+        mMaterial.setLightingModel(Material.LightingModel.CONSTANT);
         mMaterial.setBlendMode(Material.BlendMode.SCREEN);
         assertPass("Blend mode is SCREEN: sphere is lighter gray than background");
     }
@@ -221,7 +243,6 @@ public class ViroMaterialTest extends ViroBaseTest {
         mSphere.setMaterials(Arrays.asList(mMaterial));
         assertPass("TransparencyMode set to A_ONE");
     }
-
 
     private void testMaterialTransparencyModeRGBZero() {
         mScene.setBackgroundCubeWithColor(Color.BLUE);
@@ -253,18 +274,23 @@ public class ViroMaterialTest extends ViroBaseTest {
     }
 
     private void testMaterialReadsFromDepthBuffer() {
+        mScene.getRootNode().addChildNode(mNodeBox);
+        mNodeBox.setOpacity(1.0f);
+
         mMutableTestMethod = () -> {
             mMaterial.setReadsFromDepthBuffer(!mMaterial.getReadsFromDepthBuffer());
-            mSphere.setMaterials(Arrays.asList(mMaterial));
         };
         assertPass("Sphere should flip from being drawn in front of box to behind.");
     }
 
     private void testMaterialWritesToDepthBuffer() {
+        mScene.getRootNode().addChildNode(mNodeBox);
+        mNodeBox.setOpacity(1.0f);
         mNodeBox.setPosition(new Vector(0, 0, -15));
+        mNodeBox.setRenderingOrder(1);
+
         mMutableTestMethod = () -> {
             mMaterial.setWritesToDepthBuffer(!mMaterial.getWritesToDepthBuffer());
-            mSphere.setMaterials(Arrays.asList(mMaterial));
         };
         assertPass("Box should appear and disappear.");
     }
@@ -274,13 +300,14 @@ public class ViroMaterialTest extends ViroBaseTest {
         mMaterial.setBloomThreshold(0.0f);
         mMutableTestMethod = () -> {
             if (mMaterial.getBloomThreshold() <= 1.0f) {
-                mMaterial.setBloomThreshold(mMaterial.getBloomThreshold() + .1f);
+                mMaterial.setBloomThreshold(mMaterial.getBloomThreshold() + .02f);
             }
         };
         assertPass("Bloom threshold changes low to high (sphere goes from bright to dim)");
     }
 
     private void testMaterialColorWriteMaskCycling() {
+        mScene.getRootNode().removeLight(mDirectionalLight);
         mScene.setBackgroundCubeWithColor(Color.BLACK);
         mNodeBox.setPosition(new Vector(0, 0, -15));
         mMaterial.setDiffuseTexture(null);
@@ -298,6 +325,7 @@ public class ViroMaterialTest extends ViroBaseTest {
     }
 
     private void testMaterialColorWriteMaskMultipleCycling() {
+        mScene.getRootNode().removeLight(mDirectionalLight);
         mScene.setBackgroundCubeWithColor(Color.BLACK);
         mNodeBox.setPosition(new Vector(0, 0, -15));
         mMaterial.setColorWriteMask(EnumSet.of(Material.ColorWriteMask.RED, Material.ColorWriteMask.GREEN));
