@@ -108,14 +108,15 @@ public abstract class ViroBaseTest {
         mTestThreadHander = new Handler();
         mUIThreadHandler = new Handler(Looper.getMainLooper());
 
-        runOnUiThread(new Runnable() {
+        Runnable setup = new Runnable() {
             @Override
             public void run() {
                 createBaseTestScene();
                 configureTestScene();
                 mViroView.setScene(mScene);
             }
-        });
+        };
+        mUIThreadHandler.post(setup);
 
         mUIThreadHandler.postDelayed(new Runnable(){
             public void run() {
@@ -238,6 +239,8 @@ public abstract class ViroBaseTest {
     }
 
     protected void assertPass(final String expectedMessage) {
+        // Display the scene when assertPass is invoked
+        mScene.getRootNode().setVisible(true);
         mTestButtonsClicked.set(false);
         mTestResult.set(-1);
 
@@ -272,6 +275,9 @@ public abstract class ViroBaseTest {
 
         createBaseTestScene();
         configureTestScene();
+
+        // Hide the scene until assertPass is invoked (to prevent scene construction noise)
+        mScene.getRootNode().setVisible(false);
         mViroView.setScene(mScene);
     };
 
