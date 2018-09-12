@@ -767,7 +767,8 @@ public class Material {
      */
     public void setSpecularTexture(Texture texture) {
         mSpecularTexture = texture;
-        nativeSetTexture(mNativeRef, texture.mNativeRef, "specularTexture");
+        long nativeRef = (texture != null) ? texture.mNativeRef : 0;
+        nativeSetTexture(mNativeRef, nativeRef, "specularTexture");
     }
 
     /**
@@ -793,7 +794,8 @@ public class Material {
      */
     public void setNormalMap(Texture normalMap) {
         mNormalMap = normalMap;
-        nativeSetTexture(mNativeRef, normalMap.mNativeRef, "normalTexture");
+        long nativeRef = (normalMap != null) ? normalMap.mNativeRef : 0;
+        nativeSetTexture(mNativeRef, nativeRef, "normalTexture");
     }
 
     /**
@@ -817,7 +819,8 @@ public class Material {
      */
     public void setMetalnessMap(Texture metalnessMap) {
         mMetalnessMap = metalnessMap;
-        nativeSetTexture(mNativeRef, metalnessMap.mNativeRef, "metalnessTexture");
+        long nativeRef = (metalnessMap != null) ? metalnessMap.mNativeRef : 0;
+        nativeSetTexture(mNativeRef, nativeRef, "metalnessTexture");
     }
 
     /**
@@ -878,7 +881,8 @@ public class Material {
      */
     public void setRoughnessMap(Texture roughnessMap) {
         mRoughnessMap = roughnessMap;
-        nativeSetTexture(mNativeRef, roughnessMap.mNativeRef, "roughnessTexture");
+        long nativeRef = (roughnessMap != null) ? roughnessMap.mNativeRef : 0;
+        nativeSetTexture(mNativeRef, nativeRef, "roughnessTexture");
     }
 
     /**
@@ -947,7 +951,8 @@ public class Material {
      */
     public void setAmbientOcclusionMap(Texture ambientOcclusionMap) {
         mAmbientOcclusionMap = ambientOcclusionMap;
-        nativeSetTexture(mNativeRef, ambientOcclusionMap.mNativeRef, "ambientOcclusionTexture");
+        long nativeRef = (ambientOcclusionMap != null) ? ambientOcclusionMap.mNativeRef : 0;
+        nativeSetTexture(mNativeRef, nativeRef, "ambientOcclusionTexture");
     }
 
     /**
