@@ -10,6 +10,18 @@
 #include "VROOpenGL.h"
 #include "VROTexture.h"
 #include "VROTextureSubstrateOpenGL.h"
+#include "VRODriver.h"
+#include "VROMaterial.h"
+
+void VRORenderUtil::prepareForBlit(std::shared_ptr<VRODriver> &driver, bool enableDepth,
+                                   bool enableStencil) {
+    driver->setCullMode(VROCullMode::None);
+    driver->setDepthWritingEnabled(enableDepth);
+    driver->setDepthReadingEnabled(enableDepth);
+    driver->setMaterialColorWritingMask(VROColorMaskAll);
+    driver->setStencilTestEnabled(enableStencil);
+    driver->setBlendingMode(VROBlendMode::Alpha);
+}
 
 void VRORenderUtil::renderUnitCube(unsigned int *vao, unsigned int *vbo) {
     if (*vao == 0) {

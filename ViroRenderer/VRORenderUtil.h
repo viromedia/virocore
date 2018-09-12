@@ -19,6 +19,12 @@ class VRODriver;
  */
 class VRORenderUtil {
 public:
+
+    /*
+     Set all properties in the driver required for successful blit operations.
+     */
+    static void prepareForBlit(std::shared_ptr<VRODriver> &driver, bool enableDepth,
+                               bool enableStencil);
     
     /*
      Render a unit cube. The cube will be rendered using the given VAO

@@ -56,11 +56,7 @@ void VROPrefilterRenderPass::render(std::shared_ptr<VROScene> scene,
     driver->bindRenderTarget(_prefilterRenderTarget, VRORenderTargetUnbindOp::Invalidate);
 
     // Setup for rendering the cube
-    driver->setCullMode(VROCullMode::None);
-    driver->setDepthWritingEnabled(true);
-    driver->setDepthReadingEnabled(true);
-    driver->setMaterialColorWritingMask(VROColorMaskAll);
-    driver->setStencilTestEnabled(false);
+    VRORenderUtil::prepareForBlit(driver, true, false);
 
     // Compile and bind the shader and its corresponding uniforms
     if (!_shader->isHydrated()) {

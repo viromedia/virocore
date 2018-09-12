@@ -54,11 +54,7 @@ void VROBRDFRenderPass::render(std::shared_ptr<VROScene> scene,
     driver->bindRenderTarget(_BRDFRenderTarget, VRORenderTargetUnbindOp::Invalidate);
 
     // Setup for rendering the quad
-    driver->setCullMode(VROCullMode::None);
-    driver->setDepthWritingEnabled(true);
-    driver->setDepthReadingEnabled(true);
-    driver->setMaterialColorWritingMask(VROColorMaskAll);
-    driver->setStencilTestEnabled(false);
+    VRORenderUtil::prepareForBlit(driver, true, false);
 
     // Compile and bind the shader and its corresponding uniforms
     if (!_shader->isHydrated()) {

@@ -57,12 +57,8 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
         return;
     }
 
-    driver->setCullMode(VROCullMode::None);
-    driver->setDepthWritingEnabled(false);
-    driver->setDepthReadingEnabled(false);
-    driver->setMaterialColorWritingMask(VROColorMaskAll);
-    driver->setStencilTestEnabled(true);
-    
+    VRORenderUtil::prepareForBlit(driver, false, true);
+
     // Compile and bind the shader and its corresponding uniforms
     if (!_shader->isHydrated()) {
         _shader->hydrate();
