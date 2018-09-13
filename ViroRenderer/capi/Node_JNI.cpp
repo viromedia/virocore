@@ -175,7 +175,10 @@ VRO_METHOD(void, nativeRemoveParticleEmitter)(VRO_ARGS
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
+        if (!node) {
+            return;
+        }
+        if (node->getParticleEmitter()) {
             node->removeParticleEmitter();
         }
     });
