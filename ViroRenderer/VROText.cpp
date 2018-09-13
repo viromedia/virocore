@@ -450,6 +450,15 @@ void VROText::buildBitmapText(std::wstring &text,
                                          const VROGlyphBitmap &bitmap = glyph->getBitmap(0);
                                          buildBitmapChar(bitmap, x, y, 0, 0, var, materialMap[bitmap.atlas].second);
                                      });
+
+    // If no text geometry was constructed as a result of text formatting, return to prevent
+    // rendering of malformed geometry.
+    if (var.size() <= 0) {
+        *outRealizedWidth = 0;
+        *outRealizedHeight = 0;
+        return;
+    }
+
     buildBitmapGeometry(var, materialMap, sources, elements, materials);
 }
 
