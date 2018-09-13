@@ -475,9 +475,12 @@ public class ViroMediaRecorder {
     private boolean cleanup() {
         boolean cleanupSucceded = true;
         try{
-            mRecorder.stop();
-            cleanupSucceded = mInputSurface.destroy();
-            mRecorder.release();
+            // Check if recording was already stopped before
+            if (mIsRecording && mRecorder != null) {
+                mRecorder.stop();
+                cleanupSucceded = mInputSurface.destroy();
+                mRecorder.release();
+            }
         } catch(RuntimeException ex) {
             Log.e("Viro","Viro media recorder cleanup failed", ex);
             cleanupSucceded = false;
