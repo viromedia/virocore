@@ -265,8 +265,14 @@ bool VROAnimatedTextureOpenGL::parseGIFFile(std::string path, std::string &error
                     lastFrameCache[masterIndex] = color;
                 }
 
-                if (clrIndex == gcb.TransparentColor){
-                    color = lastFrameCache[masterIndex];
+                if (clrIndex == gcb.TransparentColor) {
+                    if (gcb.DisposalMode == 2) {
+                        // Restore to background color.
+                        color = clrIndex == gifFile->SBackGroundColor;
+                    } else  {
+                        // Restore to Previous color.
+                        color = lastFrameCache[masterIndex];
+                    }
                 } else {
                     lastFrameCache[masterIndex] = color;
                 }
