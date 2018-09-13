@@ -509,7 +509,12 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     _worldTransform = parentTransform * _worldTransform;
     _worldPosition = { _worldTransform[12], _worldTransform[13], _worldTransform[14] };
     if (_geometry) {
-        _worldBoundingBox = _geometry->getBoundingBox().transform(_worldTransform);
+        // Determine if the bounding box has changed, if so refresh any rigid body transforms
+        VROBoundingBox bb = _geometry->getBoundingBox().transform(_worldTransform);
+        if (_physicsBody != nullptr && _worldBoundingBox.getPlanes() != bb.getPlanes()) {
+            _physicsBody->refreshBody();
+        }
+        _worldBoundingBox = bb;
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
         _worldBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
