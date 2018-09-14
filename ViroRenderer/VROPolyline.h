@@ -69,7 +69,7 @@ private:
     static size_t encodeQuad(VROLineSegment segment, bool beginDegenerate, bool endDegenerate, VROByteBuffer &buffer);
     static size_t encodeCircularEndcap(VROVector3f center, bool beginDegenerate, bool endDegenerate, VROByteBuffer &buffer);
 
-    static void writeCorner(VROVector3f position, VROVector3f normal, VROByteBuffer &buffer);
+    static void writeCorner(VROVector3f position, VROVector3f direction, VROByteBuffer &buffer);
     static std::shared_ptr<VROShaderModifier> createPolylineShaderModifier();
     
 };

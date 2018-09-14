@@ -39,9 +39,10 @@ void VROPolylineTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VRONode> polylineNode = std::make_shared<VRONode>();
     polylineNode->setPosition({ 0, 0, -2 });
+    polylineNode->setIgnoreEventHandling(true);
     
     _polyline = std::make_shared<VROPolyline>();
-    _polyline->setThickness(0.25);
+    _polyline->setThickness(0.1);
     polylineNode->setGeometry(_polyline);
     
     scene->getRootNode()->addChildNode(polylineNode);
@@ -50,7 +51,7 @@ void VROPolylineTest::build(std::shared_ptr<VRORenderer> renderer,
     surfaceNode->setPosition({ 0, 0, -2 });
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
-    surface->getMaterialForElement(0)->getDiffuse().setColor({0.0, 1.0, 0.0, 1.0});
+    surface->getMaterialForElement(0)->getDiffuse().setColor({0.0, 0.2, 0.0, 1.0});
     surfaceNode->setGeometry(surface);
     scene->getRootNode()->addChildNode(surfaceNode);
     

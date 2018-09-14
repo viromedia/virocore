@@ -121,6 +121,7 @@ void VROPolyline::appendPoint(VROVector3f point) {
         setSources(newSources);
         setElements(newElements);
     }
+    updateBoundingBox();
 }
 
 bool VROPolyline::isEmpty() const {
@@ -158,8 +159,10 @@ void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,
 
     VROByteBuffer buffer;
     size_t numVertices = 0;
-    for (std::vector<VROVector3f> &path : paths){
-        numVertices = numVertices + encodeLine(path, buffer);
+    for (std::vector<VROVector3f> &path : paths) {
+        if (!path.empty()) {
+            numVertices = numVertices + encodeLine(path, buffer);
+        }
     }
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) buffer.getData(), buffer.getPosition());
 
@@ -219,21 +222,21 @@ size_t VROPolyline::encodeQuad(VROLineSegment segment,
     
     buffer.grow(numCorners * sizeof(VROShapeVertexLayout));
     
-    VROVector3f positiveNormal = segment.normal2DUnitVector(true);
-    VROVector3f negativeNormal = segment.normal2DUnitVector(false);
-    
+    VROVector3f positiveDirection = segment.ray();
+    VROVector3f negativeDirection = positiveDirection.scale(-1);
+
     if (beginDegenerate) {
-        writeCorner(segment.getA(), negativeNormal, buffer);
+        writeCorner(segment.getA(), negativeDirection, buffer);
     }
     
-    writeCorner(segment.getA(), negativeNormal, buffer);
-    writeCorner(segment.getA(), positiveNormal, buffer);
+    writeCorner(segment.getA(), negativeDirection, buffer);
+    writeCorner(segment.getA(), positiveDirection, buffer);
     
-    writeCorner(segment.getB(), negativeNormal, buffer);
-    writeCorner(segment.getB(), positiveNormal, buffer);
+    writeCorner(segment.getB(), negativeDirection, buffer);
+    writeCorner(segment.getB(), positiveDirection, buffer);
     
     if (endDegenerate) {
-        writeCorner(segment.getB(), positiveNormal, buffer);
+        writeCorner(segment.getB(), positiveDirection, buffer);
     }
     
     return numCorners;
@@ -285,15 +288,18 @@ size_t VROPolyline::encodeCircularEndcap(VROVector3f center,
     return numCorners;
 }
 
-void VROPolyline::writeCorner(VROVector3f position, VROVector3f normal, VROByteBuffer &buffer) {
+void VROPolyline::writeCorner(VROVector3f position, VROVector3f direction, VROByteBuffer &buffer) {
     buffer.writeFloat(position.x);
     buffer.writeFloat(position.y);
     buffer.writeFloat(position.z);
     buffer.writeFloat(0); // u
     buffer.writeFloat(0); // v
-    buffer.writeFloat(normal.x); // nx
-    buffer.writeFloat(normal.y); // ny
-    buffer.writeFloat(normal.z); // nz
+
+    // We encode the direction of the polyline (normalized) in the normal slot.
+    // The shader will use the direction to compute the thickness of the line
+    buffer.writeFloat(direction.x); // nx
+    buffer.writeFloat(direction.y); // ny
+    buffer.writeFloat(direction.z); // nz
     buffer.writeFloat(0); // tx
     buffer.writeFloat(0); // ty
     buffer.writeFloat(0); // tz
@@ -318,11 +324,17 @@ void VROPolyline::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materia
 
 std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
     /*
-     Modifier that sets the polyline thickness.
+     Modifier that sets the polyline thickness. Our normal attribute here is actually the
+     direction of the polyline segment. We can use that along with the camera's view vector
+     to compute a plane. The line's offset is then either the positive or negative normal
+     vector of the plane.
      */
     if (!sPolylineShaderModifier) {
         std::vector<std::string> modifierCode = { "uniform float thickness;",
-            "vec3 normal_offset = (thickness / 2.0) * normal;",
+            "vec3 world_pos = (_transforms.model_matrix * vec4(_geometry.position, 1.0)).xyz;",
+            "vec3 camera_ray = normalize(world_pos - camera_position);",
+            "vec3 line_normal = cross(camera_ray, _geometry.normal);",
+            "vec3 normal_offset = (thickness / 2.0) * line_normal;",
             "_geometry.position = _geometry.position + normal_offset;"
         };
 
