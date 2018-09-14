@@ -380,7 +380,10 @@
     NSDictionary *videoSetting = @{
                                    AVVideoCodecKey : AVVideoCodecH264,
                                    AVVideoWidthKey : @(width),
-                                   AVVideoHeightKey : @(height)
+                                   AVVideoHeightKey : @(height),
+                                   AVVideoCompressionPropertiesKey:
+                                     @{AVVideoAverageBitRateKey : @(7000000),
+                                       }
                                    };
     
     _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSetting];
