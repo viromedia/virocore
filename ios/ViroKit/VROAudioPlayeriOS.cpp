@@ -106,7 +106,6 @@ VROAudioPlayeriOS::~VROAudioPlayeriOS() {
 }
 
 void VROAudioPlayeriOS::updatePlayerProperties() {
-    _player.numberOfLoops = _loop ? -1 : 0;
     _player.volume = _muted ? 0 : _playVolume;
 }
 
@@ -117,8 +116,6 @@ void VROAudioPlayeriOS::setLoop(bool loop) {
     
     _loop = loop;
     if (_player) {
-        _player.numberOfLoops = loop ? -1 : 0;
-        
         // If we were not explicitly paused and loop was activated,
         // play the sound (so it turns back on)
         if (!_paused && _loop) {
