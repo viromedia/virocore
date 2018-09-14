@@ -29,5 +29,8 @@ void SoundDelegate::soundDidFinish() {
 }
 
 void SoundDelegate::soundDidFail(std::string error) {
-    VROPlatformCallHostFunction(_javaObject, "soundDidFail", "(Ljava/lang/String;)V");
+    VRO_ENV env = VROPlatformGetJNIEnv();
+    VRO_STRING jerror = VRO_NEW_STRING(error.c_str());
+    VROPlatformCallHostFunction(_javaObject, "soundDidFail", "(Ljava/lang/String;)V", jerror);
+    VRO_DELETE_LOCAL_REF(jerror);
 }
