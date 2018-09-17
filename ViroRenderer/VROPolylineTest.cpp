@@ -28,30 +28,45 @@ void VROPolylineTest::build(std::shared_ptr<VRORenderer> renderer,
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
-    rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
     
-    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
-    std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
-    cameraNode->setCamera(camera);
-    rootNode->addChildNode(cameraNode);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    light->setColor({ 0.0, 0.0, 1.0 });
+    light->setPosition( { 0, 0, 0 });
+    light->setDirection( { 0, 0, -1.0 });
+    light->setAttenuationStartDistance(25);
+    light->setAttenuationEndDistance(50);
+    light->setSpotInnerAngle(35);
+    light->setSpotOuterAngle(60);
+    light->setIntensity(1000);
     
-    _pointOfView = cameraNode;
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({ 1.0, 1.0, 1.0 });
+    ambient->setIntensity(400);
     
-    std::shared_ptr<VRONode> polylineNode = std::make_shared<VRONode>();
-    polylineNode->setPosition({ 0, 0, -2 });
-    polylineNode->setIgnoreEventHandling(true);
+    std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
+    
+    rootNode->addLight(light);
+    rootNode->addLight(ambient);
+    rootNode->setLightingEnvironment(environment);
+    rootNode->setBackgroundSphere(environment);
     
     _polyline = std::make_shared<VROPolyline>();
-    _polyline->setThickness(0.1);
+    _polyline->setThickness(0.25);
+    _polyline->getMaterials()[0]->setLightingModel(VROLightingModel::Lambert);
+    
+    std::shared_ptr<VRONode> polylineNode = std::make_shared<VRONode>();
+    polylineNode->setPosition({ 0, 0, 0 });
+    polylineNode->setIgnoreEventHandling(true);
     polylineNode->setGeometry(_polyline);
     
     scene->getRootNode()->addChildNode(polylineNode);
+
+    std::shared_ptr<VROBox> surface = VROBox::createBox(10, 10, 10);
+    surface->getMaterials()[0]->setCullMode(VROCullMode::None);
+    surface->getMaterials()[0]->getDiffuse().setColor({0.0, 0.2, 0.0, 1.0});
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setPosition({ 0, 0, -2 });
-    
-    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
-    surface->getMaterialForElement(0)->getDiffuse().setColor({0.0, 0.2, 0.0, 1.0});
     surfaceNode->setGeometry(surface);
     scene->getRootNode()->addChildNode(surfaceNode);
     
@@ -66,7 +81,10 @@ void VROPolylineEventDelegate::onClick(int source, std::shared_ptr<VRONode> node
                                        ClickState clickState, std::vector<float> position) {
     std::shared_ptr<VROPolyline> polyline = _polyline.lock();
     if (clickState == ClickState::Clicked && polyline && position.size() > 2) {
-        polyline->appendPoint({ position[0], position[1], 0.1 });
+        VROVector3f pt = { position[0], position[1], position[2] };
+        
+        // Draw the next point interior to the box to avoid z-fighting
+        polyline->appendPoint(pt.normalize().scale(pt.magnitude() * 0.98));
     }
 }
 

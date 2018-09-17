@@ -71,13 +71,13 @@ void VROPolyline::appendPoint(VROVector3f point) {
     VROByteBuffer buffer;
     size_t numCorners = 0;
     if (isEmpty()) {
-        numCorners += encodeCircularEndcap(point, true, true, buffer);
+        numCorners += encodeCircularEndcap(point, {1, 0, 0}, true, true, buffer);
     }
     else {
         VROVector3f lastPoint = getLastPoint();
         VROLineSegment segment({lastPoint.x, lastPoint.y, lastPoint.z}, {point.x, point.y, point.z});
         numCorners += encodeQuad(segment, true, true, buffer);
-        numCorners += encodeCircularEndcap(point, true, true, buffer);
+        numCorners += encodeCircularEndcap(point, segment.ray(), true, true, buffer);
     }
     
     // If there are no sources, create new ones
@@ -193,18 +193,22 @@ size_t VROPolyline::encodeLine(const std::vector<VROVector3f> &path,
     
     size_t numCorners = 0;
     const size_t pathSize = path.size();
-    
+
+    VROVector3f unit(1, 0, 0);
+    VROLineSegment lastSegment({0, 0, 0}, unit);
     for (size_t i = 1; i < pathSize; i++) {
         const VROVector3f &previousCoord = path[i - 1];
         const VROVector3f &currentCoord = path[i];
         
-        VROLineSegment segment({previousCoord.x, previousCoord.y, previousCoord.z}, {currentCoord.x, currentCoord.y, currentCoord.z});
-        numCorners += encodeCircularEndcap(previousCoord, true, true, outBuffer);
-        numCorners += encodeQuad(segment, true, true, outBuffer);
+        VROLineSegment nextSegment = VROLineSegment(previousCoord, currentCoord);
+        numCorners += encodeCircularEndcap(previousCoord, lastSegment.ray(), true, true, outBuffer);
+        numCorners += encodeQuad(nextSegment, true, true, outBuffer);
+        
+        lastSegment = nextSegment;
     }
     
-    const VROVector3f &last = path.back();
-    numCorners += encodeCircularEndcap(last, true, true, outBuffer);
+    const VROVector3f &lastCoord = path.back();
+    numCorners += encodeCircularEndcap(lastCoord, lastSegment.ray(), true, true, outBuffer);
     
     return numCorners;
 }
@@ -242,47 +246,35 @@ size_t VROPolyline::encodeQuad(VROLineSegment segment,
     return numCorners;
 }
 
-size_t VROPolyline::encodeCircularEndcap(VROVector3f center,
+size_t VROPolyline::encodeCircularEndcap(VROVector3f center, VROVector3f direction,
                                          bool beginDegenerate, bool endDegenerate, VROByteBuffer &buffer) {
-    
-    float sincos[2];
-    VROMathFastSinCos(2 * M_PI / kNumJointSegments, sincos);
-    const float angleSin = sincos[0];
-    const float angleCos = sincos[1];
-    
-    float x = 1;
-    float y = 0;
-    
     size_t numCorners = 2 * (kNumJointSegments + 1);
     if (beginDegenerate) {
         ++numCorners;
     }
-    
     if (endDegenerate) {
         ++numCorners;
     }
     
     buffer.grow(numCorners * sizeof(VROShapeVertexLayout));
-    
     if (beginDegenerate) {
-        writeCorner(center, { x, y, 0 }, buffer);
+        writeEndcapCorner(center, direction, 0, buffer);
     }
-    
     for (int i = 0; i < kNumJointSegments; ++i) {
-        writeCorner(center, { x, y, 0 }, buffer);
-        writeCorner(center, { 0, 0, 0 }, buffer);
-        
-        const float temp = x;
-        x = angleCos * x - angleSin * y;
-        y = angleSin * temp + angleCos * y;
+        // Write the endcap circle by rendering two points per rotation increment:
+        // one at the center of the circle, and one at the radius of the circle. The
+        // shader will perform the rotation across the appropriate axis, given the
+        // angle.
+        float rotation = i * 2 * M_PI / kNumJointSegments;
+        writeEndcapCorner(center, direction, rotation, buffer);
+        writeEndcapCorner(center, { 0, 0, 0 }, rotation, buffer);
     }
     
-    // close the circle
-    writeCorner(center, { 1, 0, 0 }, buffer);
-    writeCorner(center, { 0, 0, 0 }, buffer);
-    
+    // Close the circle
+    writeEndcapCorner(center, direction, 2 * M_PI, buffer);
+    writeEndcapCorner(center, { 0, 0, 0 }, 2 * M_PI, buffer);
     if (endDegenerate) {
-        writeCorner(center, { 0, 0, 0, }, buffer);
+        writeEndcapCorner(center, { 0, 0, 0, }, 2 * M_PI, buffer);
     }
     
     return numCorners;
@@ -296,11 +288,35 @@ void VROPolyline::writeCorner(VROVector3f position, VROVector3f direction, VROBy
     buffer.writeFloat(0); // v
 
     // We encode the direction of the polyline (normalized) in the normal slot.
-    // The shader will use the direction to compute the thickness of the line
+    // The shader will use the direction to compute the vector along which to
+    // stroke the line (e.g. the vector across which the thickness of the line
+    // spans).
     buffer.writeFloat(direction.x); // nx
     buffer.writeFloat(direction.y); // ny
     buffer.writeFloat(direction.z); // nz
     buffer.writeFloat(0); // tx
+    buffer.writeFloat(0); // ty
+    buffer.writeFloat(0); // tz
+    buffer.writeFloat(0); // tw
+}
+
+void VROPolyline::writeEndcapCorner(VROVector3f position, VROVector3f direction, float rotation, VROByteBuffer &buffer) {
+    buffer.writeFloat(position.x);
+    buffer.writeFloat(position.y);
+    buffer.writeFloat(position.z);
+    buffer.writeFloat(0); // u
+    buffer.writeFloat(0); // v
+    
+    // We encode the direction of the polyline (normalized) in the normal slot.
+    // The shader will use the direction to compute the orientation of the endcap.
+    buffer.writeFloat(direction.x); // nx
+    buffer.writeFloat(direction.y); // ny
+    buffer.writeFloat(direction.z); // nz
+    
+    // Encode the rotation in the tangent.x vector (this is an arbitrary choice).
+    // The shader uses this angle of rotation to determine what triangle in the
+    // endcap circle we are drawing.
+    buffer.writeFloat(rotation); // tx
     buffer.writeFloat(0); // ty
     buffer.writeFloat(0); // tz
     buffer.writeFloat(0); // tw
@@ -324,18 +340,44 @@ void VROPolyline::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materia
 
 std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
     /*
-     Modifier that sets the polyline thickness. Our normal attribute here is actually the
-     direction of the polyline segment. We can use that along with the camera's view vector
-     to compute a plane. The line's offset is then either the positive or negative normal
-     vector of the plane.
+     Modifier that strokes a line and creates circular endcaps.
+     
+     For the straight segments of a line, the normal attribute is actually the
+     direction of the segment. We can use that along with the camera's view vector
+     to compute a plane. The normal of that plane then represents the vector along the
+     width of the line (e.g. the vector along which the 'thickness' of the line is
+     applied). Effectively this amounts to 'billboarding' each 2D line segment.
+     
+     Endcaps work similarly, except we encode a rotation value in _geometry.tangent.x.
+     That rotation indicates which triangle in the circle we are currently rendering.
+     We compute the width vector (stroke_offset) just as before, except this time we
+     rotate it by that angle, across the the axis defined by the camera view vector.
+     This effectively billboards the circular endcap (we're rotating the polyline
+     direction vector about the camera view vector as we create each triangle in the
+     endcap circle).
      */
     if (!sPolylineShaderModifier) {
-        std::vector<std::string> modifierCode = { "uniform float thickness;",
+        std::vector<std::string> modifierCode = {
+            "uniform float thickness;",
             "vec3 world_pos = (_transforms.model_matrix * vec4(_geometry.position, 1.0)).xyz;",
             "vec3 camera_ray = normalize(world_pos - camera_position);",
-            "vec3 line_normal = cross(camera_ray, _geometry.normal);",
-            "vec3 normal_offset = (thickness / 2.0) * line_normal;",
-            "_geometry.position = _geometry.position + normal_offset;"
+
+            "vec3 stroke_offset_direction = cross(camera_ray, _geometry.normal);",
+            "if (dot(stroke_offset_direction, stroke_offset_direction) > 0.0) {",
+            "   highp vec3 stroke_offset = normalize(stroke_offset_direction) * (thickness / 2.0);"
+            "   if (_geometry.tangent.x > 0.0) {",
+            "      highp vec3 axis = camera_ray;",
+            "      highp float s = sin(_geometry.tangent.x);",
+            "      highp float c = cos(_geometry.tangent.x);",
+            "      highp float oc = 1.0 - c;",
+            "      highp mat3 rotation = mat3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,",
+            "                                 oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,",
+            "                                 oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c);",
+            "      _geometry.position += rotation * stroke_offset;",
+            "   } else {",
+            "      _geometry.position += stroke_offset;",
+            "   }",
+            "}",
         };
 
         sPolylineShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
