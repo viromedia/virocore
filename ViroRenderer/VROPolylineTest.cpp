@@ -41,7 +41,7 @@ void VROPolylineTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(400);
+    ambient->setIntensity(200);
     
     std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
     

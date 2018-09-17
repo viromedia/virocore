@@ -355,20 +355,25 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
      This effectively billboards the circular endcap (we're rotating the polyline
      direction vector about the camera view vector as we create each triangle in the
      endcap circle).
+     
+     Lastly, we input the *correct* normal vector at the end of this modifier to that
+     lighting works as expected.
      */
     if (!sPolylineShaderModifier) {
         std::vector<std::string> modifierCode = {
             "uniform float thickness;",
             "vec3 world_pos = (_transforms.model_matrix * vec4(_geometry.position, 1.0)).xyz;",
             "vec3 camera_ray = normalize(world_pos - camera_position);",
-
             "vec3 stroke_offset_direction = cross(camera_ray, _geometry.normal);",
+            
+            // Ensure we are not dealing with a 0 length vector (creates NaN when normalizing)
             "if (dot(stroke_offset_direction, stroke_offset_direction) > 0.0) {",
             "   highp vec3 stroke_offset = normalize(stroke_offset_direction) * (thickness / 2.0);"
-            "   if (_geometry.tangent.x > 0.0) {",
+            "   highp float angle = _geometry.tangent.x;"
+            "   if (angle > 0.0) {",
             "      highp vec3 axis = camera_ray;",
-            "      highp float s = sin(_geometry.tangent.x);",
-            "      highp float c = cos(_geometry.tangent.x);",
+            "      highp float s = sin(angle);",
+            "      highp float c = cos(angle);",
             "      highp float oc = 1.0 - c;",
             "      highp mat3 rotation = mat3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,",
             "                                 oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,",
@@ -378,6 +383,9 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
             "      _geometry.position += stroke_offset;",
             "   }",
             "}",
+            
+            // Set the normal to the inverse of the camera vector (since we're billboarding)
+            "_geometry.normal = -camera_ray;"
         };
 
         sPolylineShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
