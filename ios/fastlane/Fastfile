@@ -44,9 +44,9 @@ platform :ios do
        # clean
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release clean | xcpretty -c")
        # build scheme for simulator
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator11.4 -arch x86_64| xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator -arch x86_64| xcpretty -c")
        # build scheme for devices
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos11.4 | xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos | xcpretty -c")
      end
     rescue => exception
            on_error(exception)
@@ -59,17 +59,17 @@ platform :ios do
        # clean
        sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release clean | xcpretty -c")
        # build scheme for simulator
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator11.4 -arch x86_64| xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator -arch x86_64| xcpretty -c")
        # build scheme for devices
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos11.4 | xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos | xcpretty -c")
 
        # The above two builds seem to have intermittent failures (with no explaination),
        # adding them to be built twice (just in case)
        
        # build scheme for simulator
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator11.4 -arch x86_64| xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator -arch x86_64| xcpretty -c")
        # build scheme for devices
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos11.4 | xcpretty -c")
+       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos | xcpretty -c")
      end
     rescue => exception
            on_error(exception)
