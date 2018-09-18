@@ -445,7 +445,6 @@
 		13B673CC212229B20040FB72 /* VROData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE421BFBECC400061DD7 /* VROData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673CD212229B20040FB72 /* VROTextTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5211F813C3D00E831A6 /* VROTextTest.h */; };
 		13B673CE212229B20040FB72 /* VRORenderMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB9EA4B1F6B12580068FCA7 /* VRORenderMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B673CF212229B20040FB72 /* VROQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE2E1BFA8D5D00061DD7 /* VROQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673D0212229B20040FB72 /* VROSound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130D731E3A93720050D83B /* VROSound.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673D1212229B20040FB72 /* VROVideoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673D2212229B20040FB72 /* VROPhotometricLightTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */; };
@@ -545,7 +544,6 @@
 		13B67430212229B20040FB72 /* VRORenderToTextureDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F292BCA20A9125E00635C0D /* VRORenderToTextureDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67431212229B20040FB72 /* VRORendererTestHarness.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A50C1F81283800E831A6 /* VRORendererTestHarness.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67432212229B20040FB72 /* VROARObjectAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB5B73A211B72120030906A /* VROARObjectAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B67433212229B20040FB72 /* VROARFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065A1EF06FBB006FC8C2 /* VROARFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67434212229B20040FB72 /* VROARCameraiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */; };
 		13B67435212229B20040FB72 /* VROMetricsRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 13477940207EB78A002CE280 /* VROMetricsRecorder.h */; };
 		13B67436212229B20040FB72 /* VROSoundDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130D8B1E3BBCA40050D83B /* VROSoundDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -608,6 +606,11 @@
 		13B67470212229B20040FB72 /* constant_q_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB328662033694D0026375A /* constant_q_fsh_adreno.glsl */; };
 		13B67471212229B20040FB72 /* constant_q_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1D11CECB364008EFD5F /* constant_q_fsh.glsl */; };
 		13B67473212229B20040FB72 /* glm in Copy GLM Files to Framework */ = {isa = PBXBuildFile; fileRef = 8AE44C942021087700CE8394 /* glm */; };
+		13BC8FA621507B5100479BE0 /* VROAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DE3BB21221DDD00C8749D /* VROAtomic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		13BC8FA721507E2300479BE0 /* VROARFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065A1EF06FBB006FC8C2 /* VROARFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		13BC8FA821507E2300479BE0 /* VROARFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065A1EF06FBB006FC8C2 /* VROARFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		13BC8FA921507E4600479BE0 /* VROQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE2E1BFA8D5D00061DD7 /* VROQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		13BC8FAA21507E4700479BE0 /* VROQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE2E1BFA8D5D00061DD7 /* VROQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13F631AA2065C1EA00A74EFC /* keen_io_sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A72065C1EA00A74EFC /* keen_io_sqlite3ext.h */; };
 		13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 13F631A82065C1EA00A74EFC /* keen_io_sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		13F631AD2065C1EA00A74EFC /* keen_io_sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A92065C1EA00A74EFC /* keen_io_sqlite3.h */; };
@@ -1284,7 +1287,6 @@
 		8FD4DF3D1C18F5EA003DC425 /* VROByteBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5C414D1BD825B1006D7A77 /* VROByteBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF3E1C18F5EA003DC425 /* VROImageUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5C41571BD8300E006D7A77 /* VROImageUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE421BFBECC400061DD7 /* VROData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE2E1BFA8D5D00061DD7 /* VROQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE201BF7EAF900061DD7 /* VROPlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE291BF8318100061DD7 /* VROFrustum.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE231BF7ECC800061DD7 /* VROFrustumPlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1316,7 +1318,6 @@
 		8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */; };
 		8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDDE2111CD00F2600674DE2 /* CoreText.framework */; };
 		8FE382101EF06FED005038CB /* VROARSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065D1EF06FBB006FC8C2 /* VROARSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FE382111EF06FED005038CB /* VROARFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065A1EF06FBB006FC8C2 /* VROARFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382121EF06FED005038CB /* VROARCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06591EF06FBB006FC8C2 /* VROARCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3991,6 +3992,7 @@
 				13B67388212229B20040FB72 /* KIODBStore.h in Headers */,
 				13B67389212229B20040FB72 /* VROFrameSynchronizer.h in Headers */,
 				A5A10743212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */,
+				13BC8FA721507E2300479BE0 /* VROARFrame.h in Headers */,
 				13B6738A212229B20040FB72 /* VROSoundData.h in Headers */,
 				13B6738B212229B20040FB72 /* VROPortalFrame.h in Headers */,
 				13B6738C212229B20040FB72 /* VROWeakProxy.h in Headers */,
@@ -4062,7 +4064,6 @@
 				13B673CC212229B20040FB72 /* VROData.h in Headers */,
 				13B673CD212229B20040FB72 /* VROTextTest.h in Headers */,
 				13B673CE212229B20040FB72 /* VRORenderMetadata.h in Headers */,
-				13B673CF212229B20040FB72 /* VROQuaternion.h in Headers */,
 				13B673D0212229B20040FB72 /* VROSound.h in Headers */,
 				13B673D1212229B20040FB72 /* VROVideoSurface.h in Headers */,
 				8A53ABF3212B824A0005D7F9 /* VROARImageDatabase.h in Headers */,
@@ -4087,6 +4088,7 @@
 				13B673E4212229B20040FB72 /* VROMatrix4f.h in Headers */,
 				13B673E5212229B20040FB72 /* VROAnimatable.h in Headers */,
 				13B673E6212229B20040FB72 /* VROSkeletalAnimation.h in Headers */,
+				13BC8FA621507B5100479BE0 /* VROAtomic.h in Headers */,
 				13B673E7212229B20040FB72 /* VROBRDFRenderPass.h in Headers */,
 				13B673E8212229B20040FB72 /* VROPrefilterRenderPass.h in Headers */,
 				13B673E9212229B20040FB72 /* VROInputPresenterAR.h in Headers */,
@@ -4164,8 +4166,8 @@
 				13B67430212229B20040FB72 /* VRORenderToTextureDelegate.h in Headers */,
 				13B67431212229B20040FB72 /* VRORendererTestHarness.h in Headers */,
 				13B67432212229B20040FB72 /* VROARObjectAnchor.h in Headers */,
-				13B67433212229B20040FB72 /* VROARFrame.h in Headers */,
 				13B67434212229B20040FB72 /* VROARCameraiOS.h in Headers */,
+				13BC8FAA21507E4700479BE0 /* VROQuaternion.h in Headers */,
 				13B67435212229B20040FB72 /* VROMetricsRecorder.h in Headers */,
 				13B67436212229B20040FB72 /* VROSoundDelegateiOS.h in Headers */,
 				13B67437212229B20040FB72 /* VRODefines.h in Headers */,
@@ -4319,6 +4321,7 @@
 				8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */,
 				8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */,
 				8FEACEF52018061B0082D18B /* VROPreprocess.h in Headers */,
+				13BC8FA821507E2300479BE0 /* VROARFrame.h in Headers */,
 				13F631B72065C21B00A74EFC /* KIODBStore.h in Headers */,
 				8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */,
 				8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */,
@@ -4391,7 +4394,6 @@
 				8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */,
 				8FD2A5411F813C4100E831A6 /* VROTextTest.h in Headers */,
 				8FB9EA4C1F6B12580068FCA7 /* VRORenderMetadata.h in Headers */,
-				8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */,
 				8A130D761E3A93820050D83B /* VROSound.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,
 				8FE39F80201FB2D70088A175 /* VROPhotometricLightTest.h in Headers */,
@@ -4493,8 +4495,8 @@
 				8F292BCB20A9125F00635C0D /* VRORenderToTextureDelegate.h in Headers */,
 				8FD2A50E1F81283800E831A6 /* VRORendererTestHarness.h in Headers */,
 				8AB5B73B211B72120030906A /* VROARObjectAnchor.h in Headers */,
-				8FE382111EF06FED005038CB /* VROARFrame.h in Headers */,
 				8FAE18CC1EE79D880021C7BB /* VROARCameraiOS.h in Headers */,
+				13BC8FA921507E4600479BE0 /* VROQuaternion.h in Headers */,
 				13477941207EB78A002CE280 /* VROMetricsRecorder.h in Headers */,
 				8A130D8D1E3BBEAE0050D83B /* VROSoundDelegateiOS.h in Headers */,
 				8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */,
