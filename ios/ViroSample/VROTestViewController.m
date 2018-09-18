@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 };
 
 static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::ARImageTracking;
+static const VRORendererTestType kRendererTest = VRORendererTestType::BodyMeshing;
 static const bool kSceneCheckeredBackground = NO;
 
 @interface VROTestViewController ()
@@ -60,7 +60,7 @@ static const bool kSceneCheckeredBackground = NO;
             session->setNumberOfTrackedImages(1);
         }
         
-        [self testVideoRecording];
+        //[self testVideoRecording];
         //[self testScreenshot];
     }
     else {

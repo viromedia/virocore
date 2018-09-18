@@ -16,6 +16,8 @@
 #include <map>
 #include <vector>
 
+#include "VROARBodyMeshingPointsiOS.h"
+
 // image tracking inports
 #include "VROTrackingHelper.h"
 #include "VRORenderer.h"
@@ -78,6 +80,7 @@ public:
       return false;
     }
     void setVideoQuality(VROVideoQuality quality);
+    void setBodyMeshing(std::shared_ptr<VROARBodyMeshingPointsiOS> bodyMeshingiOS);
     
     /*
      Internal methods.
@@ -89,6 +92,8 @@ public:
     void addAnchor(ARAnchor *anchor);
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
+    
+    
 
 #if ENABLE_OPENCV
     // -- Image tracking functions --
@@ -199,6 +204,7 @@ private:
      */
     UITextView *_trackerOutputText;
     
+    
     /*
      The node will be moved according to the results of image tracking.
      */
@@ -207,7 +213,8 @@ private:
     std::shared_ptr<VRONode> _imageResultsContainer;
 
 #endif /* ENABLE_OPENCV */
-
+    
+    std::shared_ptr<VROARBodyMeshingPointsiOS> _bodyMeshingiOS;
 };
 
 /*

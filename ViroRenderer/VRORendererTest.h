@@ -36,6 +36,7 @@
 #include "VROFBXLoader.h"
 #include "VROText.h"
 #include "VROTextureUtil.h"
+#include "VROSphere.h"
 
 class VRORenderer;
 
@@ -54,9 +55,16 @@ public:
                        std::shared_ptr<VRODriver> driver) = 0;
     virtual std::shared_ptr<VRONode> getPointOfView() = 0;
     virtual std::shared_ptr<VROSceneController> getSceneController() = 0;
+    void setView(id<VROView> vroView) {
+        _vroView = vroView;
+    }
+    
+    id<VROView> getView() {
+        return _vroView;
+    }
     
 private:
-    
+    id<VROView> _vroView;
     VRORendererTestType _type;
     
 };

@@ -35,6 +35,8 @@
 #include "VRORendererSettingsTest.h"
 #include "VROToneMappingTest.h"
 #include "VROPolygonTest.h"
+#include "VROBodyMeshingTest.h"
+
 
 #if VRO_PLATFORM_IOS
 #include "VROARImageTrackingTest.h"
@@ -43,10 +45,11 @@
 
 VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
                                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                               std::shared_ptr<VRODriver> driver) :
+                                               std::shared_ptr<VRODriver> driver, id<VROView> view) :
     _renderer(renderer),
     _frameSynchronizer(frameSynchronizer),
-    _driver(driver) {
+    _driver(driver),
+    _view(view) {
     
 }
 
@@ -68,6 +71,7 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::loadNextTest() {
 
 std::shared_ptr<VRORendererTest> VRORendererTestHarness::loadTest(VRORendererTestType type) {
     _currentTest = createTest(type);
+    _currentTest->setView(_view);
     _currentTest->build(_renderer, _frameSynchronizer, _driver);
     return _currentTest;
 }
@@ -138,6 +142,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VROToneMappingTest>();
         case VRORendererTestType::Polygon:
             return std::make_shared<VROPolygonTest>();
+        case VRORendererTestType::BodyMeshing:
+            return std::make_shared<VROBodyMeshingTest>();
         default:
             pabort();
             return nullptr;

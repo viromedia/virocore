@@ -47,6 +47,8 @@ public:
 
     // TODO: the following functions are also in VROARImperativeSession
     void setARSession(std::shared_ptr<VROARSession> session);
+    std::weak_ptr<VROARSession> getARSession();
+        
     void loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase);
     void unloadARImageDatabase();
     void addARImageTarget(std::shared_ptr<VROARImageTarget> target);

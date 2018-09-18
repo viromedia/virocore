@@ -28,7 +28,7 @@
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    _harness = std::make_shared<VRORendererTestHarness>(self.view.renderer, self.view.frameSynchronizer, driver);
+    _harness = std::make_shared<VRORendererTestHarness>(self.view.renderer, self.view.frameSynchronizer, driver, self.view);
     std::shared_ptr<VRORendererTest> test = _harness->loadTest(self.test);
     
     self.view.sceneController = test->getSceneController();
