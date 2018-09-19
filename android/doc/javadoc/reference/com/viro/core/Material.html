@@ -200,12 +200,14 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           
     <li><h2>Interfaces</h2>
       <ul>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.Listener.html">ARScene.Listener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.LoadARImageDatabaseListener.html">ARScene.LoadARImageDatabaseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraImageListener.html">CameraImageListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/CameraListener.html">CameraListener</a></li>
@@ -249,6 +251,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimatedTexture.html">AnimatedTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -269,6 +272,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
           <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
@@ -310,6 +314,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sphere.html">Sphere</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Spotlight.html">Spotlight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Spotlight.SpotlightBuilder.html">Spotlight.SpotlightBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Submesh.html">Submesh</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Submesh.SubmeshBuilder.html">Submesh.SubmeshBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Surface.html">Surface</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.html">Text</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.TextBuilder.html">Text.TextBuilder</a></li>
@@ -341,6 +347,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
@@ -682,6 +689,24 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         enum</code></td>
       <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>
+        <p>ColorWriteMask indicates what colors should be written to the screen when rendering a
+ Material.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
         <code><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></code>
         <p>CullMode determines whether we render front faces, back faces, or both.&nbsp;
         
@@ -976,6 +1001,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Returns the chroma key filtering color.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="http://d.android.com/reference/java/util/EnumSet.html">EnumSet</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a>&gt;</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#getColorWriteMask()">getColorWriteMask</a>()
+      </code>
+      
+        <p>Get the color channels to which this Material is writing.
         
     
 </p>
@@ -1572,6 +1624,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Enable chroma key filtering for this material.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.html#setColorWriteMask(java.util.EnumSet<com.viro.core.Material.ColorWriteMask>)">setColorWriteMask</a>(<a href="http://d.android.com/reference/java/util/EnumSet.html">EnumSet</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a>&gt; mask)
+      </code>
+      
+        <p>Set what color channels this Material will write to when rendered.
         
     
 </p>
@@ -2247,6 +2326,36 @@ int getChromaKeyFilteringColor ()</pre>
       <tr>
         <td><code>int</code></td>
         <td width="100%">The chroma key filtering color.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getColorWriteMask()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getColorWriteMask</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/util/EnumSet.html">EnumSet</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a>&gt; getColorWriteMask ()</pre>
+    
+    
+
+    
+  <p>Get the color channels to which this Material is writing. See <code><a href="../../../../reference/com/viro/core/Material.html#setColorWriteMask(java.util.EnumSet<com.viro.core.Material.ColorWriteMask>)">setColorWriteMask(EnumSet)</a></code>
+ for more details.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/util/EnumSet.html">EnumSet</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a>&gt;</code></td>
+        <td width="100%">The color channels to which this Material is writing.
 </p></td>
       </tr>
     </table>
@@ -2955,6 +3064,66 @@ void setChromaKeyFilteringEnabled (boolean enabled)</pre>
         <td><code>enabled</code></td>
         <td width="100%">
           <code>boolean</code>: True to enable chroma key filtering.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setColorWriteMask(java.util.EnumSet<com.viro.core.Material.ColorWriteMask>)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setColorWriteMask</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setColorWriteMask (<a href="http://d.android.com/reference/java/util/EnumSet.html">EnumSet</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a>&gt; mask)</pre>
+    
+    
+
+    
+  <p>Set what color channels this Material will write to when rendered. One use of this method is
+ to filter out a base color (e.g. red), so that when this material is rendered, only its blue
+ and green components will be rendered to the screen. The more common usage of this method,
+ however, is to turn off <i>all</i> color writing for a Material, by using
+ EnumSet.of(ColorMask.NONE).<p>
+ <p>
+ By doing this, the Material will not be written to the color buffer. If
+ getWritesToDepthBuffer() is true, then the Material will <i>still</i> be written to the depth
+ buffer, so that surfaces rendered with this Material will occlude other geometry. This
+ approach can be used to implement "transparent occlusion planes", or surfaces that occlude
+ other geometry without themselves being visible to the user. This is particularly useful in
+ AR, in cases where you want it to appear as though real-world features are occluding virtual
+ objects. You can do this by creating surfaces that align with the real-world features and
+ setting their material color masks to EnumSet.of(ColorMask.NONE). For example, the following
+ code snippet creates a 5x5 Quad 4 meters away from the user, which will not be visible to the
+ user but will occlude all objects behind it:
+ <p>
+ <tt>
+ <pre>
+ Quad quad = new Quad(5, 5);
+
+ Material material = new Material();
+ material.setColorWriteMask(EnumSet.of(Material.ColorWriteMask.NONE));
+ quad.setMaterials(Arrays.asList(material));
+
+ Node quadNode = new Node();
+ quadNode.setGeometry(quad);
+ quadNode.setRenderingOrder(-1); // Ensure the quad renders *before* other Nodes so that it can occlude them
+ quadNode.setPosition(new Vector(0, 0, -4));
+ </pre>
+ </tt></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>mask</code></td>
+        <td width="100%">
+          <code>EnumSet</code>: The colors channels to which this Material should write.
 </p></td>
       </tr>
     </table>
