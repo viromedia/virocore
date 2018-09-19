@@ -300,9 +300,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         String expectedValues= "Expected Values:\n" +
                 "mName: object_star(some number)\n" +
-                "mDiffuseIntensity: 0.8\n" +
                 "mShininess: 6.311791\n" +
-                "mFresnelExponent: 0.5\n" +
                 "mBloomThreshold: -1.0\n" +
                 "mRoughness: 0.484529\n" +
                 "mMetalness: 0.0\n" +
@@ -315,11 +313,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
                 "mBlendMode: ALPHA\n" +
                 "mShadowMode: NORMAL\n" +
                 "mDiffuseTexture S: REPEAT\n" +
-                "mNormalMap S: CLAMP\n" +
-                "mSpecularTexture S: REPEAT\n" +
-                "mMetalnessMap S: CLAMP\n" +
-                "mRoughnessMap S: CLAMP\n" +
-                "mAmbientOcclusionMap S: CLAMP";
+                "mSpecularTexture S: REPEAT\n";
         text1.setText(expectedValues);
 
         // Creation of ObjectJni to the right
@@ -358,17 +352,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
                 builder.append(mat.getShadowMode().toString());
                 builder.append("\nmDiffuseTexture S: ");
                 builder.append(mat.getDiffuseTexture().getWrapS().toString());
-                builder.append("\nmNormalMap S: ");
-                builder.append(mat.getNormalMap().getWrapS().toString());
                 builder.append("\nmSpecularTexture S: ");
                 builder.append(mat.getSpecularTexture().getWrapS().toString());
-                builder.append("\nmMetalnessMap S: ");
-                builder.append(mat.getMetalnessMap().getWrapS().toString());
-                builder.append("\nmRoughnessMap S: ");
-                builder.append(mat.getRoughnessMap().getWrapS().toString());
-                builder.append("\nmAmbientOcclusionMap S: ");
-                builder.append(mat.getAmbientOcclusionMap().getWrapS().toString());
-
                 text2.setText(builder.toString());
             }
 
