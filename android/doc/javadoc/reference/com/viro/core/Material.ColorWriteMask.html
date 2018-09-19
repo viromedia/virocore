@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AnimationTransaction.Listener | Viro Developers
+  <title>Material.ColorWriteMask | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -202,7 +202,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
@@ -347,7 +347,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ClickState.html">ClickState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ControllerStatus.html">ControllerStatus</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.BlendMode.html">Material.BlendMode</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.CullMode.html">Material.CullMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.LightingModel.html">Material.LightingModel</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.ShadowMode.html">Material.ShadowMode</a></li>
@@ -577,18 +577,32 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">AnimationTransaction.Listener</h1>
+<h1 class="api-title">Material.ColorWriteMask</h1>
 <p>
 <code class="api-signature">
   public
   static
+  final
   
-  
-  interface
-  AnimationTransaction.Listener
+  enum
+  Material.ColorWriteMask
 </code>
 <br>
 
+
+<code class="api-signature">
+  
+  
+  
+</code>
+
+<code class="api-signature">
+  
+    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a>&gt;
+  
+  
+  
+</code>
 
 <code class="api-signature">
   
@@ -601,7 +615,27 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.AnimationTransaction.Listener
+    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">com.viro.core.Material.ColorWriteMask</a>&gt;
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Material.ColorWriteMask
     </td>
   </tr>
   
@@ -614,7 +648,12 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Callback interface for responding to the end of an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code>.
+  <p>ColorWriteMask indicates what colors should be written to the screen when rendering a
+ Material. This is commonly used for two purposes: one, to filter out a base color (e.g. red)
+ from the Material, or two, to turn off <i>all</i> color writing for a Material, so that
+ the Material is only written to the depth buffer. This latter approach can be used to
+ implement "transparent occlusion planes", or surfaces that occlude other geometry without
+ being visible to the user.
 </p>
 
 
@@ -635,6 +674,85 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+
+
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+<table id="enumconstants" class="responsive constants">
+  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
+
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>ALL</code>
+      <p>Write all colors for the Material.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>ALPHA</code>
+      <p>Write only the alpha channel for the Material.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>BLUE</code>
+      <p>Write only blue colors for the Material.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>GREEN</code>
+      <p>Write only green colors for the Material.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>NONE</code>
+      <p>Do not write any colors for the Material.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>RED</code>
+      <p>Write only red colors for the Material.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
 
 
 
@@ -664,24 +782,40 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
-        abstract
         
         
+        static
         
         
-        void</code>
+        <a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html#onFinish(com.viro.core.AnimationTransaction)">onFinish</a>(<a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a> transaction)
+      <a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
       </code>
       
-        <p>Invoked when an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code> naturally finishes, or when it is
- forcibly terminated through <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#terminate()">terminate()</a></code>.
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
         
-    
-</p>
+        
+        static
+        final
+        
+        <a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">ColorWriteMask[]</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html#values()">values</a>()
+      </code>
       
     </td>
   </tr>
@@ -701,6 +835,157 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Enum Values -->
+
+
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
+<h2 class="api-section">Enum values</h2>
+
+
+
+
+<A NAME="ALL"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ALL</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> ALL</pre>
+    
+    
+
+    
+  <p>Write all colors for the Material.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="ALPHA"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ALPHA</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> ALPHA</pre>
+    
+    
+
+    
+  <p>Write only the alpha channel for the Material.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="BLUE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">BLUE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> BLUE</pre>
+    
+    
+
+    
+  <p>Write only blue colors for the Material.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="GREEN"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">GREEN</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> GREEN</pre>
+    
+    
+
+    
+  <p>Write only green colors for the Material.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="NONE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">NONE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> NONE</pre>
+    
+    
+
+    
+  <p>Do not write any colors for the Material.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="RED"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">RED</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> RED</pre>
+    
+    
+
+    
+  <p>Write only red colors for the Material.
+</p></p>
+
+    
+</div>
+
+
 
 
 <!-- Constants -->
@@ -725,10 +1010,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="onFinish(com.viro.core.AnimationTransaction)"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">onFinish</h3>
+    <h3 class="api-name">valueOf</h3>
     <div class="api-level">
       <div></div>
       
@@ -736,21 +1021,53 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void onFinish (<a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a> transaction)</pre>
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
     
     
 
     
-  <p>Invoked when an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code> naturally finishes, or when it is
- forcibly terminated through <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#terminate()">terminate()</a></code>. For looping
- animations, this callback is invoked on the completion of each loop.</p></p>
+  <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>transaction</code></td>
+        <td><code>name</code></td>
         <td width="100%">
-          <code>AnimationTransaction</code>: The transaction that finished.
-</p></td>
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">Material.ColorWriteMask</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="values()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">values</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">ColorWriteMask[]</a> values ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Material.ColorWriteMask.html">ColorWriteMask[]</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 

@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AnimationTransaction.Listener | Viro Developers
+  <title>Geometry.GeometryBuilder | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -202,7 +202,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.Listener.html">Animation.Listener</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorHostListener.html">ARScene.CloudAnchorHostListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.CloudAnchorResolveListener.html">ARScene.CloudAnchorResolveListener</a></li>
@@ -272,7 +272,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.DirectionalLightBuilder.html">DirectionalLight.DirectionalLightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
@@ -577,18 +577,26 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">AnimationTransaction.Listener</h1>
+<h1 class="api-title">Geometry.GeometryBuilder</h1>
 <p>
 <code class="api-signature">
   public
   static
   
   
-  interface
-  AnimationTransaction.Listener
+  class
+  Geometry.GeometryBuilder
 </code>
 <br>
 
+
+<code class="api-signature">
+  
+    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
+  
+  
+  
+</code>
 
 <code class="api-signature">
   
@@ -601,7 +609,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.AnimationTransaction.Listener
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Geometry.GeometryBuilder
     </td>
   </tr>
   
@@ -614,7 +631,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Callback interface for responding to the end of an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code>.
+  <p>Builder for creating <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code> objects.
 </p>
 
 
@@ -649,6 +666,29 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="responsive constructors">
+<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
+
+
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html#Geometry.GeometryBuilder()">Geometry.GeometryBuilder</a>()
+      </code>
+      
+    </td>
+  </tr>
+  
+
+
+</table>
+
+
 
 
 
@@ -664,21 +704,74 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
-        abstract
         
         
         
         
-        void</code>
+        
+        <a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html#onFinish(com.viro.core.AnimationTransaction)">onFinish</a>(<a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a> transaction)
+      <a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html#build()">build</a>()
       </code>
       
-        <p>Invoked when an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code> naturally finishes, or when it is
- forcibly terminated through <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#terminate()">terminate()</a></code>.
+        <p>Return the built <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html#materials(java.util.List<com.viro.core.Material>)">materials</a>(<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; materials)
+      </code>
+      
+        <p>Set the <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>s to be used for building this <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html#submeshes(java.util.List<com.viro.core.Submesh>)">submeshes</a>(<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Submesh.html">Submesh</a>&gt; submeshes)
+      </code>
+      
+        <p>Set the <code><a href="../../../../reference/com/viro/core/Submesh.html">Submesh</a></code>es to be used for building this <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>.
         
     
 </p>
@@ -712,6 +805,34 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2 class="api-section">Public constructors</h2>
+
+
+
+<A NAME="Geometry.GeometryBuilder()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Geometry.GeometryBuilder</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Geometry.GeometryBuilder ()</pre>
+    
+    
+
+    
+  <p></p></p>
+
+</div>
+
+
+
+
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -725,10 +846,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="onFinish(com.viro.core.AnimationTransaction)"></A>
+<A NAME="build()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">onFinish</h3>
+    <h3 class="api-name">build</h3>
     <div class="api-level">
       <div></div>
       
@@ -736,20 +857,91 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void onFinish (<a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a> transaction)</pre>
+<a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a> build ()</pre>
     
     
 
     
-  <p>Invoked when an <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></code> naturally finishes, or when it is
- forcibly terminated through <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#terminate()">terminate()</a></code>. For looping
- animations, this callback is invoked on the completion of each loop.</p></p>
+  <p>Return the built <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code></td>
+        <td width="100%">The built Geometry.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="materials(java.util.List<com.viro.core.Material>)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">materials</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a> materials (<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; materials)</pre>
+    
+    
+
+    
+  <p>Set the <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>s to be used for building this <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>transaction</code></td>
+        <td><code>materials</code></td>
         <td width="100%">
-          <code>AnimationTransaction</code>: The transaction that finished.
+          <code>List</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></code></td>
+        <td width="100%">This builder.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="submeshes(java.util.List<com.viro.core.Submesh>)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">submeshes</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a> submeshes (<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Submesh.html">Submesh</a>&gt; submeshes)</pre>
+    
+    
+
+    
+  <p>Set the <code><a href="../../../../reference/com/viro/core/Submesh.html">Submesh</a></code>es to be used for building this <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>submeshes</code></td>
+        <td width="100%">
+          <code>List</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></code></td>
+        <td width="100%">This builder.
 </p></td>
       </tr>
     </table>
