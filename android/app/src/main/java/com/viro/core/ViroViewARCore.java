@@ -838,13 +838,13 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * Performs a hit-test along the ray from the given <i>origin</i> and <i>destination</i> in
-     * <i>real-world</i>. The hit-test returns all <i>real-world</i> features that are intersected by the ray.
+     * Performs a hit-test along the ray defined by the the given <i>origin</i> and
+     * <i>destination</i> in world coordinates. The hit-test returns all <i>real-world</i> features
+     * that are intersected by the ray.
      *
-     * @param origin   Vector for ray origin in real-world coordinates.
-     * @param destination   Vector for ray destination in real-world coordinates.
-     * @param callback The callback that will receive the {@link ARHitTestResult}
-     *                 results.
+     * @param origin      The ray origin in world coordinates.
+     * @param destination The ray destination in world coordinates.
+     * @param callback    The callback that will receive the {@link ARHitTestResult} results.
      */
     public void performARHitTestWithRay(Vector origin, Vector destination, ARHitTestListener callback) {
         if (!mDestroyed) {
@@ -981,10 +981,10 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * Enable auto focusing for the AR Camera's. When this view is created, auto focus is disabled
-     * by default. This is so since ARCore, at the moment, recommends using <i>fixed focus</i> for
-     * <i>optimal AR tracking</i>. Recommended to use auto focus for <i>capturing pictures or videos</i>,
-     * and then reverting to default fixed focus.
+     * Enable auto focusing for the AR camera. Auto focus is disabled by default. This is because
+     * ARCore, at the moment, recommends using <i>fixed focus</i> for <i>optimal AR tracking</i>,
+     * and auto focus for <i>capturing pictures or videos</i>. If you enable auto focus, it is
+     * recommended that you revert to default fixed focus when finished capturing.
      *
      * @param enabled True to enable auto focus
      */
@@ -995,8 +995,9 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * Returns true if auto focus is enabled
-     * @return True if auto focus is enabled
+     * Returns true if auto focus is enabled.
+     *
+     * @return True if auto focus is enabled.
      */
     public boolean isCameraAutoFocusEnabled() {
         if (!mDestroyed) {
