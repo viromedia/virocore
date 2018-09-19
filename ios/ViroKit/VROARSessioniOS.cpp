@@ -175,26 +175,32 @@ void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
     if (@available(iOS 11.3, *)) {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
             NSArray<ARVideoFormat *> *videoFormats = ARWorldTrackingConfiguration.supportedVideoFormats;
-            if (quality == VROVideoQuality::High) {
+            int numberOfSupportedVideoFormats = [videoFormats count];
+            // Since iOS 12, ARWorldTrackingConfiguration.supportedVideoFormats started returning 0 ////
+            // supportedVideoFormats here, for simulator targets. In that case, we'll skip the following and
+            // run session with default videoformat value
+            if (numberOfSupportedVideoFormats > 0) {
+              if (quality == VROVideoQuality::High) {
                 ARVideoFormat *highestFormat;
                 float high = 0;
                 for (ARVideoFormat *format in videoFormats) {
-                    if (format.imageResolution.height > high) {
-                        high = format.imageResolution.height;
-                        highestFormat = format;
-                    }
+                  if (format.imageResolution.height > high) {
+                    high = format.imageResolution.height;
+                    highestFormat = format;
+                  }
                 }
                 ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = highestFormat;
-            } else {
+              } else {
                 ARVideoFormat *lowestFormat;
                 float low = CGFLOAT_MAX;
                 for (ARVideoFormat *format in videoFormats) {
-                    if (format.imageResolution.height < low) {
-                        low = format.imageResolution.height;
-                        lowestFormat = format;
-                    }
+                  if (format.imageResolution.height < low) {
+                    low = format.imageResolution.height;
+                    lowestFormat = format;
+                  }
                 }
                 ((ARWorldTrackingConfiguration *) _sessionConfiguration).videoFormat = lowestFormat;
+              }
             }
         }
         [_session runWithConfiguration:_sessionConfiguration];

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <random>
-#include <VROTime.h>
+#include "VROTime.h"
 #include "VROEye.h"
 #include "VROGVRUtil.h"
 #include "VROViewport.h"
