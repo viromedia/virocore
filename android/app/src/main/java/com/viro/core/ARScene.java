@@ -171,20 +171,20 @@ public class ARScene extends Scene {
     }
 
     /**
-     * Callback interface for responding to whether or not {@link
-     * ARScene#loadARImageDatabase(Uri, LoadARImageDatabaseListener)} was able to access
-     * the given {@link Uri}
+     * Callback interface for responding to requests for loading AR image databases. Used by
+     * {@link ARScene#loadARImageDatabase(Uri, LoadARImageDatabaseListener)}.
      */
     public interface LoadARImageDatabaseListener {
+
         /**
-         * Invoked if the given {@link Uri} was successfully downloaded.
+         * Invoked if the AR image database at the provided {@link Uri} was successfully loaded.
          */
         void onSuccess();
 
         /**
-         * Invoked if the given {@link Uri} was invalid.
+         * Invoked if the AR image database at the given {@link Uri} failed to load.
          *
-         * @param error The error message
+         * @param error The error message.
          */
         void onFailure(String error);
     }
@@ -535,11 +535,13 @@ public class ARScene extends Scene {
     //#ENDIF
 
     /**
-     * Loads the given {@link com.google.ar.core.AugmentedImageDatabase} uri into
-     * the AR subsystem. Once loaded, all the images within will be looked for.
+     * Loads the {@link com.google.ar.core.AugmentedImageDatabase} at the given URI into the AR
+     * subsystem. Once loaded, all the images within will be recognized as they appear in the scene.
+     * Viro will alert you whenever an instance of any image is found by invoking {@link
+     * Listener#onAnchorFound(ARAnchor, ARNode)} with an {@link ARImageAnchor} anchor.
      *
-     * @param uri - the uri to the {@link com.google.ar.core.AugmentedImageDatabase} file
-     * @param listener - the listener
+     * @param uri      The URI of the {@link com.google.ar.core.AugmentedImageDatabase}.
+     * @param listener Listener to respond to load success or failure.
      */
     public void loadARImageDatabase(Uri uri, LoadARImageDatabaseListener listener) {
         mLoadARImageDatabaseListener = listener;
