@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VideoTexture | Viro Developers
+  <title>AnimatedTexture | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -251,7 +251,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.html">AmbientLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AmbientLight.AmbientLightBuilder.html">AmbientLight.AmbientLightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AndroidViewTexture.html">AndroidViewTexture</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimatedTexture.html">AnimatedTexture</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/AnimatedTexture.html">AnimatedTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
@@ -322,7 +322,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.TextureBuilder.html">Texture.TextureBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.html">VideoTexture</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.html">VideoTexture</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html">ViroMediaRecorder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></li>
@@ -577,7 +577,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">VideoTexture</h1>
+<h1 class="api-title">AnimatedTexture</h1>
 <p>
 <code class="api-signature">
   public
@@ -585,7 +585,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  VideoTexture
+  AnimatedTexture
 </code>
 <br>
 
@@ -635,7 +635,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.VideoTexture
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.AnimatedTexture
     </td>
   </tr>
   
@@ -648,21 +648,20 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>VideoTexture plays video from local or remote sources. VideoTexture extends from <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>,
- so it can be used with any <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> for display on any geometry. To make a video render
- on a <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code>, for example, use:
+  <p>AnimatedTexture plays animated GIF images from local or remote sources. AnimatedTexture
+ extends from <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>, so it can be used with any <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> for display
+ on any geometry. To make an AnimatedTexture for rendering GIF images on a <code><a href="../../../../reference/com/viro/core/Quad.html">Quad</a></code>,
+ for example, use:
  <p>
  <tt>
  <pre>
- VideoTexture videoTexture = new VideoTexture(...);
+ AnimatedTexture animTexture = new AnimatedTexture(...);
  Material material = new Material();
- material.setDiffuseTexture(videoTexture);
+ material.setDiffuseTexture(animTexture);
 
- Quad quad = new Quad(10, 10);
+ Quad quad = new Quad(1, 1);
  quad.setMaterials(Arrays.asList(material));</pre>
  </tt>
- VideoTexture can also be rendered directly to the background of a <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code>, which is useful
- for displaying spherical, immersive video in VR. To do so, use <code><a href="../../../../reference/com/viro/core/Scene.html#setBackgroundTexture(com.viro.core.Texture)">setBackgroundTexture(Texture)</a></code>.
 </p>
 
 
@@ -691,8 +690,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         interface</code></td>
       <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code>
-        <p>Callback interface for responding to video lifecycle and playback events.&nbsp;
+        <code><a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a></code>
+        <p>Callback interface for responding to an AnimatedTexture's lifecycle events.&nbsp;
         
     
 </p>
@@ -735,46 +734,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#VideoTexture(com.viro.core.ViroContext, android.net.Uri)">VideoTexture</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri)
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#AnimatedTexture(com.viro.core.ViroContext, android.net.Uri, com.viro.core.AnimatedTexture.OnLoadComplete)">AnimatedTexture</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> context, <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a> listener)
       </code>
       
-        <p>Construct a new VideoTexture that will play the video at the provided URI.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#VideoTexture(com.viro.core.ViroContext, android.net.Uri, com.viro.core.VideoTexture.PlaybackListener)">VideoTexture</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> listener)
-      </code>
-      
-        <p>Construct a new VideoTexture that will play the video at the provided URI.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#VideoTexture(com.viro.core.ViroContext, android.net.Uri, com.viro.core.VideoTexture.PlaybackListener, com.viro.core.Texture.StereoMode)">VideoTexture</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> listener, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
-      </code>
-      
-        <p>Construct a new <i>stereo</i> VideoTexture that will play the video at the provided URI.
+        <p>Construct a new AnimatedTexture that will play the animation given the provided URI.
         
     
 </p>
@@ -812,10 +775,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#dispose()">dispose</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#dispose()">dispose</a>()
       </code>
       
-        <p>Release native resources associated with this VideoTexture.
+        <p>Release native resources associated with this AnimationTexture.
         
     
 </p>
@@ -839,64 +802,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#getLoop()">getLoop</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#getLoop()">getLoop</a>()
       </code>
       
-        <p>Return true if the video is currently set to loop after finishing playback.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#getPlaybackListener()">getPlaybackListener</a>()
-      </code>
-      
-        <p>Get the <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code> used to receive callbacks for this VideoTexture.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#getVolume()">getVolume</a>()
-      </code>
-      
-        <p>Get the volume of the video, between 0.0 and 1.0.
+        <p>Return true if the animated texture is currently set to loop after finishing playback.
         
     
 </p>
@@ -920,10 +829,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#isLoading()">isLoading</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#isLoading()">isLoading</a>()
       </code>
       
-        <p>Return true if the video is loading.
+        <p>Return true if the animation is loading.
         
     
 </p>
@@ -947,10 +856,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#isMuted()">isMuted</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#isPaused()">isPaused</a>()
       </code>
       
-        <p>Return true if the video is currently muted.
+        <p>Return true if the animation is paused.
         
     
 </p>
@@ -974,37 +883,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#isPaused()">isPaused</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#isPlaying()">isPlaying</a>()
       </code>
       
-        <p>Return true if the video is paused.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        boolean</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#isPlaying()">isPlaying</a>()
-      </code>
-      
-        <p>Return true if the video is currently playing.
+        <p>Return true if the AnimatedTexture is currently playing.
         
     
 </p>
@@ -1028,10 +910,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#pause()">pause</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#pause()">pause</a>()
       </code>
       
-        <p>Pause the video.
+        <p>Pauses the animated texture.
         
     
 </p>
@@ -1055,10 +937,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#play()">play</a>()
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#play()">play</a>()
       </code>
       
-        <p>Play the video.
+        <p>Plays the animated texture.
         
     
 </p>
@@ -1082,119 +964,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#seekToTime(float)">seekToTime</a>(float seconds)
+      <a href="../../../../reference/com/viro/core/AnimatedTexture.html#setLoop(boolean)">setLoop</a>(boolean loop)
       </code>
       
-        <p>Seek to the given point in the video, in seconds.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#setLoop(boolean)">setLoop</a>(boolean loop)
-      </code>
-      
-        <p>Set to true to make the video automatically loop to the beginning when playback finishes.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#setMuted(boolean)">setMuted</a>(boolean muted)
-      </code>
-      
-        <p>Set to true to mute the video.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#setPlaybackListener(com.viro.core.VideoTexture.PlaybackListener)">setPlaybackListener</a>(<a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> listener)
-      </code>
-      
-        <p>Set the <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code>, which can be used to respond to video loading and playback
- events.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/VideoTexture.html#setVolume(float)">setVolume</a>(float volume)
-      </code>
-      
-        <p>Set the volume to the given value, where 0.0 is mute and 1.0 is the maximum volume.
+        <p>Set to true to make the AnimatedTexture automatically loop to the beginning when playback finishes.
         
     
 </p>
@@ -1233,10 +1006,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="VideoTexture(com.viro.core.ViroContext, android.net.Uri)"></A>
+<A NAME="AnimatedTexture(com.viro.core.ViroContext, android.net.Uri, com.viro.core.AnimatedTexture.OnLoadComplete)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">VideoTexture</h3>
+    <h3 class="api-name">AnimatedTexture</h3>
     <div class="api-level">
       <div></div>
       
@@ -1244,126 +1017,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-VideoTexture (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
-                <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri)</pre>
-    
-    
-
-    
-  <p>Construct a new VideoTexture that will play the video at the provided URI.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>viroContext</code></td>
-        <td width="100%">
-          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to play videos.</p></td>
-      </tr>
-      <tr>
-        <td><code>uri</code></td>
-        <td width="100%">
-          <code>Uri</code>: The URI of the video. To load the video from an Android asset, use URI's
-                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="VideoTexture(com.viro.core.ViroContext, android.net.Uri, com.viro.core.VideoTexture.PlaybackListener)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">VideoTexture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-VideoTexture (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
+AnimatedTexture (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> context, 
                 <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
-                <a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> listener)</pre>
+                <a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a> listener)</pre>
     
     
 
     
-  <p>Construct a new VideoTexture that will play the video at the provided URI.</p></p>
+  <p>Construct a new AnimatedTexture that will play the animation given the provided URI.
+ If a <code><a href="../../../../reference/com/viro/core/AnimatedTexture.OnLoadComplete.html">AnimatedTexture.OnLoadComplete</a></code> is provided, its success or failure callbacks will be
+ triggered once the image data has been loaded.
+</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>viroContext</code></td>
+        <td><code>context</code></td>
         <td width="100%">
-          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to play videos.</p></td>
+          <code>ViroContext</code> <!-- no parameter comment --></p></td>
       </tr>
       <tr>
         <td><code>uri</code></td>
         <td width="100%">
-          <code>Uri</code>: The URI of the video. To load the video from an Android asset, use URI's
-                    of the form <tt>file:///android_asset/[asset-name]</tt>.</p></td>
+          <code>Uri</code> <!-- no parameter comment --></p></td>
       </tr>
       <tr>
         <td><code>listener</code></td>
         <td width="100%">
-          <code>VideoTexture.PlaybackListener</code>: <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code> which can be used to respond to video loading and
-                    playback events. May be null.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="VideoTexture(com.viro.core.ViroContext, android.net.Uri, com.viro.core.VideoTexture.PlaybackListener, com.viro.core.Texture.StereoMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">VideoTexture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-VideoTexture (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
-                <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
-                <a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> listener, 
-                <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
-    
-    
-
-    
-  <p>Construct a new <i>stereo</i> VideoTexture that will play the video at the provided URI.
- This constructor should be used when loading a stereo video. Stereo videos are designed to
- simulate 3D by rendering slightly different images to each eye, creating a realistic depth
- illusion. The StereoMode indicates how the stereo image is divided between the left eye and
- the right eye.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>viroContext</code></td>
-        <td width="100%">
-          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to play videos.</p></td>
-      </tr>
-      <tr>
-        <td><code>uri</code></td>
-        <td width="100%">
-          <code>Uri</code>: The URI of the video. To load the video from an Android asset, use URI's
-                    of the form <tt>file:///android_asset/[asset-name]</tt>.</p></td>
-      </tr>
-      <tr>
-        <td><code>listener</code></td>
-        <td width="100%">
-          <code>VideoTexture.PlaybackListener</code>: <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code> which can be used to respond to video loading and
-                    playback events. May be null.</p></td>
-      </tr>
-      <tr>
-        <td><code>stereoMode</code></td>
-        <td width="100%">
-          <code>Texture.StereoMode</code>: The <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code> indicating which half of the
-                    video to render to the left eye, and which to render to the right eye.
-                    Null if the video is not stereo.
-</p></td>
+          <code>AnimatedTexture.OnLoadComplete</code> <!-- no parameter comment --></p></td>
       </tr>
     </table>
 
@@ -1401,7 +1081,7 @@ void dispose ()</pre>
     
 
     
-  <p>Release native resources associated with this VideoTexture.
+  <p>Release native resources associated with this AnimationTexture.
 </p></p>
 
 </div>
@@ -1423,70 +1103,12 @@ boolean getLoop ()</pre>
     
 
     
-  <p>Return true if the video is currently set to loop after finishing playback.</p></p>
+  <p>Return true if the animated texture is currently set to loop after finishing playback.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code>boolean</code></td>
         <td width="100%">True if loop is enabled.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getPlaybackListener()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getPlaybackListener</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> getPlaybackListener ()</pre>
-    
-    
-
-    
-  <p>Get the <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code> used to receive callbacks for this VideoTexture.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code></td>
-        <td width="100%">The listener, or null if none is attached.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getVolume()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getVolume</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getVolume ()</pre>
-    
-    
-
-    
-  <p>Get the volume of the video, between 0.0 and 1.0.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The volume.
 </p></td>
       </tr>
     </table>
@@ -1510,41 +1132,12 @@ boolean isLoading ()</pre>
     
 
     
-  <p>Return true if the video is loading.</p></p>
+  <p>Return true if the animation is loading.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code>boolean</code></td>
-        <td width="100%">True if the video is loading.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="isMuted()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">isMuted</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-boolean isMuted ()</pre>
-    
-    
-
-    
-  <p>Return true if the video is currently muted.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>boolean</code></td>
-        <td width="100%">True if muted.
+        <td width="100%">True if the animation is loading.
 </p></td>
       </tr>
     </table>
@@ -1568,12 +1161,12 @@ boolean isPaused ()</pre>
     
 
     
-  <p>Return true if the video is paused. The video can be played by invoking <code><a href="../../../../reference/com/viro/core/VideoTexture.html#play()">play()</a></code>.</p></p>
+  <p>Return true if the animation is paused. The video can be played by invoking <code><a href="../../../../reference/com/viro/core/AnimatedTexture.html#play()">play()</a></code>.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code>boolean</code></td>
-        <td width="100%">True if the video is paused.
+        <td width="100%">True if the animation is paused.
 </p></td>
       </tr>
     </table>
@@ -1597,13 +1190,13 @@ boolean isPlaying ()</pre>
     
 
     
-  <p>Return true if the video is currently playing. This returns false if the video
- is loading or paused.</p></p>
+  <p>Return true if the AnimatedTexture is currently playing. This returns false if the
+ animation is loading or paused.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code>boolean</code></td>
-        <td width="100%">True if the video is playing.
+        <td width="100%">True if the animation is playing.
 </p></td>
       </tr>
     </table>
@@ -1627,7 +1220,7 @@ void pause ()</pre>
     
 
     
-  <p>Pause the video.
+  <p>Pauses the animated texture.
 </p></p>
 
 </div>
@@ -1649,38 +1242,9 @@ void play ()</pre>
     
 
     
-  <p>Play the video.
+  <p>Plays the animated texture. The animation automatically restarts if had previously
+ ended and loop is set to true.
 </p></p>
-
-</div>
-
-
-<A NAME="seekToTime(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">seekToTime</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void seekToTime (float seconds)</pre>
-    
-    
-
-    
-  <p>Seek to the given point in the video, in seconds.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>seconds</code></td>
-        <td width="100%">
-          <code>float</code>: The seek position in seconds.
-</p></td>
-      </tr>
-    </table>
 
 </div>
 
@@ -1701,105 +1265,13 @@ void setLoop (boolean loop)</pre>
     
 
     
-  <p>Set to true to make the video automatically loop to the beginning when playback finishes.</p></p>
+  <p>Set to true to make the AnimatedTexture automatically loop to the beginning when playback finishes.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>loop</code></td>
         <td width="100%">
           <code>boolean</code>: True to loop.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setMuted(boolean)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setMuted</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setMuted (boolean muted)</pre>
-    
-    
-
-    
-  <p>Set to true to mute the video.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>muted</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to mute.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPlaybackListener(com.viro.core.VideoTexture.PlaybackListener)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPlaybackListener</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPlaybackListener (<a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a> listener)</pre>
-    
-    
-
-    
-  <p>Set the <code><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></code>, which can be used to respond to video loading and playback
- events.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>listener</code></td>
-        <td width="100%">
-          <code>VideoTexture.PlaybackListener</code>: The listener to use for this video.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setVolume(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setVolume</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setVolume (float volume)</pre>
-    
-    
-
-    
-  <p>Set the volume to the given value, where 0.0 is mute and 1.0 is the maximum volume. The
- default is 1.0.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>volume</code></td>
-        <td width="100%">
-          <code>float</code>: The value between 0.0 and 1.0.
 </p></td>
       </tr>
     </table>

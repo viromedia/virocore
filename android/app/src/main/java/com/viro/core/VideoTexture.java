@@ -17,7 +17,7 @@ import android.net.Uri;
 /**
  * VideoTexture plays video from local or remote sources. VideoTexture extends from {@link Texture},
  * so it can be used with any {@link Material} for display on any geometry. To make a video render
- * on a {@link Surface}, for example, use:
+ * on a {@link Quad}, for example, use:
  * <p>
  * <tt>
  * <pre>
@@ -25,8 +25,8 @@ import android.net.Uri;
  * Material material = new Material();
  * material.setDiffuseTexture(videoTexture);
  *
- * Surface surface = new Surface(10, 10);
- * surface.setMaterials(Arrays.asList(material));</pre>
+ * Quad quad = new Quad(10, 10);
+ * quad.setMaterials(Arrays.asList(material));</pre>
  * </tt>
  * VideoTexture can also be rendered directly to the background of a {@link Scene}, which is useful
  * for displaying spherical, immersive video in VR. To do so, use {@link

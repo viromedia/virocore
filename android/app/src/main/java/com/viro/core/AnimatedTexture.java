@@ -132,7 +132,7 @@ public class AnimatedTexture extends Texture {
     }
 
     /**
-     * Set to true to make the Animated Texture automatically loop to the beginning when playback finishes.
+     * Set to true to make the AnimatedTexture automatically loop to the beginning when playback finishes.
      *
      * @param loop True to loop.
      */
