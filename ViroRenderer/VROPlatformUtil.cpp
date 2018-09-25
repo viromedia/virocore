@@ -406,6 +406,7 @@ std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsig
 
 #include "VROImageAndroid.h"
 #include "VROStringUtil.h"
+#include "VROByteBuffer.h"
 #include <mutex>
 #include <thread>
 #include <android/bitmap.h>
@@ -809,26 +810,50 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
     getJNIEnv(&env);
 
     AndroidBitmapInfo bitmapInfo;
-    AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
+    int result = AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
+    if (result != ANDROID_BITMAP_RESULT_SUCCESS) {
+        pinfo("Failed to retrieve android bitmap info [code %d]", result);
+    }
 
-    *width = bitmapInfo.width;
-    *height = bitmapInfo.height;
-    *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
+    // This typically occurs if we have 16 bit pixel depth, in which case we can't
+    // extract the pixel data directly but have to get Android to extract it as a
+    // packed int array, which we can then return
+    if (bitmapInfo.format == ANDROID_BITMAP_FORMAT_NONE) {
+        pinfo("Image format unknown to jnigraphics, falling back to Android");
 
-    jclass cls = env->GetObjectClass(jbitmap);
-    jmethodID jbitmapHasAlpha = env->GetMethodID(cls, "hasAlpha", "()Z");
-    *hasAlpha = env->CallBooleanMethod(jbitmap, jbitmapHasAlpha, jbitmap);
+        *width = VROPlatformCallHostIntFunction(jbitmap, "getWidth", "()I");
+        *height = VROPlatformCallHostIntFunction(jbitmap, "getHeight", "()I");
+        *bitmapLength = VROPlatformCallHostIntFunction(jbitmap, "getAllocationByteCount", "()I");
+        *hasAlpha = VROPlatformCallHostBoolFunction(jbitmap, "hasAlpha", "()Z");
 
-    void *bitmapData;
-    AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);
+        void *data = malloc(*width * *height * 4);
+        jobject jbuffer = env->NewDirectByteBuffer(data, *width * *height * 4);
+        VROPlatformCallHostFunction(sPlatformUtil, "getBitmapPixels", "(Landroid/graphics/Bitmap;Ljava/nio/ByteBuffer;)V", jbitmap, jbuffer);
+        env->DeleteLocalRef(jbuffer);
+        env->DeleteLocalRef(jbitmap);
 
-    void *safeData = malloc(*bitmapLength);
-    memcpy(safeData, bitmapData, *bitmapLength);
+        return data;
+    }
+    else {
+        *width = bitmapInfo.width;
+        *height = bitmapInfo.height;
+        *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
+        *hasAlpha = VROPlatformCallHostBoolFunction(jbitmap, "hasAlpha", "()Z");
 
-    AndroidBitmap_unlockPixels(env, jbitmap);
+        void *bitmapData;
+        result = AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);
+        if (result != ANDROID_BITMAP_RESULT_SUCCESS) {
+            pinfo("Failed to lock pixel address for bitmap [code %d]", result);
+        }
 
-    env->DeleteLocalRef(jbitmap);
-    return safeData;
+        void *safeData = malloc(*bitmapLength);
+        memcpy(safeData, bitmapData, *bitmapLength);
+
+        AndroidBitmap_unlockPixels(env, jbitmap);
+
+        env->DeleteLocalRef(jbitmap);
+        return safeData;
+    }
 }
 
 void VROPlatformSaveRGBAImage(void *data, int length, int width, int height, std::string filename) {
@@ -1244,7 +1269,7 @@ void VROPlatformDownloadURLToFileAsync(std::string url,
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
     // In WebAssembly, "resources" are preloaded files at the root of the virtual filesystem
     *isTemp = false;
-    return "/" + asset;
+    return "/" + asset; 
 }
 
 void VROPlatformDeleteFile(std::string filename) {

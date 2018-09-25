@@ -28,7 +28,7 @@ VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFor
     _internalFormat(internalFormat),
     _stereoMode(stereoMode),
 
-    // Note these parameters are irrelevent for this constructor, since they are used
+    // Note these parameters are irrelevant for this constructor, since they are used
     // to generate a substrate, and for this constructor the substrate is injected externally
     _sRGB(false),
     _wrapS(VROWrapMode::Clamp),

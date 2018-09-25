@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Surface;
 
 import com.viro.core.FrameListener;
+import com.viro.core.ViroViewScene;
 import com.viro.core.internal.font.FontFamily;
 import com.viro.core.internal.font.SystemFontLoader;
 
@@ -34,6 +35,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -139,6 +142,14 @@ public class PlatformUtil {
         }
 
         return bitmap;
+    }
+
+    // Accessed by Native code
+    public void getBitmapPixels(Bitmap bitmap, ByteBuffer buffer) {
+        IntBuffer intBuffer = buffer.order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
+        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        intBuffer.put(pixels);
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
