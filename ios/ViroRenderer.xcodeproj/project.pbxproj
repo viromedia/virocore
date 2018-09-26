@@ -710,7 +710,6 @@
 		8B2F2A481F6B9D0A000C9924 /* VROPortalDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B7B9F5F2150AFEC00ED6EC6 /* model_cpm.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */; };
 		8B9989002143564600EA9ED3 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B9988FF2143564600EA9ED3 /* CoreML.framework */; };
-		8B99890121435E1B00EA9ED3 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B9988FF2143564600EA9ED3 /* CoreML.framework */; };
 		8B9989032146338400EA9ED3 /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B9989022146338400EA9ED3 /* Vision.framework */; };
 		8B99890421463D6C00EA9ED3 /* VROBodyMeshingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9988FC21431BFF00EA9ED3 /* VROBodyMeshingTest.h */; };
 		8B99890521463D6C00EA9ED3 /* VROBodyMeshingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9988FC21431BFF00EA9ED3 /* VROBodyMeshingTest.h */; };
@@ -2492,7 +2491,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B99890121435E1B00EA9ED3 /* CoreML.framework in Frameworks */,
 				8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */,
 				8F129FA61ECF323300341D83 /* ViroKit.framework in Frameworks */,
 				647A0F137242382CD008BE56 /* Pods_ViroSample.framework in Frameworks */,
@@ -6211,7 +6209,7 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 				);
 				INFOPLIST_FILE = ViroSample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6277,7 +6275,7 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 				);
 				INFOPLIST_FILE = ViroSample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
