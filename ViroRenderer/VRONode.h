@@ -1020,7 +1020,8 @@ private:
      */
     void hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
                  bool boundsOnly, std::vector<VROHitTestResult> &results);
-    bool hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f transform);
+    bool hitTestGeometry(VROVector3f origin, VROVector3f ray,
+                         VROMatrix4f transform, VROVector3f *intPt);
     
     /*
      The light and shadow bit masks. These are logically ANDed with each light's

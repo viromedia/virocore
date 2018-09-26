@@ -1294,7 +1294,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold && _visible) {
         VROVector3f intPt;
         if (getBoundingBox().intersectsRay(ray, origin, &intPt)) {
-            if (boundsOnly || hitTestGeometry(origin, ray, transform)) {
+            if (boundsOnly || hitTestGeometry(origin, ray, transform, &intPt)) {
                 results.push_back( {std::static_pointer_cast<VRONode>(shared_from_this()),
                                     intPt,
                                     origin.distance(intPt), false,
@@ -1308,17 +1308,25 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     }
 }
 
-bool VRONode::hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f transform) {
+bool VRONode::hitTestGeometry(VROVector3f origin, VROVector3f ray,
+                              VROMatrix4f transform, VROVector3f *intPt) {
     passert_thread(__func__);
     std::shared_ptr<VROGeometrySource> vertexSource = _geometry->getGeometrySourcesForSemantic(VROGeometrySourceSemantic::Vertex).front();
     
     bool hit = false;
+    float currentDistance = FLT_MAX;
     for (std::shared_ptr<VROGeometryElement> element : _geometry->getGeometryElements()) {
-         element->processTriangles([&hit, ray, origin, transform](int index, VROTriangle triangle) {
+         element->processTriangles([&hit, ray, origin, transform, &intPt, &currentDistance](int index, VROTriangle triangle) {
              VROTriangle transformed = triangle.transformByMatrix(transform);
              
-             VROVector3f intPt;
-             if (transformed.intersectsRay(ray, origin, &intPt)) {
+             VROVector3f intPtGeom;
+             if (triangle.intersectsRay(ray, origin, &intPtGeom)) {
+                 float distance = intPtGeom.distance(origin);
+                 if (distance < currentDistance){
+                     currentDistance = distance;
+                     *intPt = intPtGeom;
+                 }
+
                  hit = true;
                  //TODO Offer a way to break out of here, as optimization
              }
