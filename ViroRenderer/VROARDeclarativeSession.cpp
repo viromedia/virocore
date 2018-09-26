@@ -42,10 +42,6 @@ void VROARDeclarativeSession::setARSession(std::shared_ptr<VROARSession> session
     }
 }
 
-std::weak_ptr<VROARSession> VROARDeclarativeSession::getARSession() {
-    return _arSession;
-}
-
 void VROARDeclarativeSession::loadARImageDatabase(std::shared_ptr<VROARImageDatabase> arImageDatabase) {
     if (arImageDatabase) {
         _arImageDatabase = arImageDatabase;

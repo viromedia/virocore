@@ -19,10 +19,9 @@
 #include "VROARBodyMeshingPointsiOS.h"
 #include "VROARSessioniOS.h"
 
-
-
-class VROBodyMeshingTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate, public VROARBodyMeshingPointsiOS::VROBodyMeshingDelegate,
-public std::enable_shared_from_this<VROBodyMeshingTest> {
+class VROBodyMeshingTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
+                           public VROARBodyMeshingPointsiOS::VROBodyMeshingDelegate,
+                           public std::enable_shared_from_this<VROBodyMeshingTest> {
 public:
     
     VROBodyMeshingTest();
@@ -31,6 +30,7 @@ public:
     void build(std::shared_ptr<VRORenderer> renderer,
                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                std::shared_ptr<VRODriver> driver);
+    
     std::shared_ptr<VRONode> getPointOfView() {
         return _pointOfView;
     }
@@ -42,9 +42,8 @@ public:
        
     }
     virtual void onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
-        std::shared_ptr<VROARDeclarativeSession> arDeclarativeSession = _arScene->getDeclarativeSession();
-        std::weak_ptr<VROARSession> arSessionWeak = arDeclarativeSession->getARSession();
-        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSessionWeak.lock());
+        std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
+        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
         arSessioniOS->setBodyMeshing(_bodyMeshingPoints);
     }
     virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
@@ -54,6 +53,7 @@ public:
     }
     
     virtual void onBodyMeshJointsAvail(NSDictionary *joints);
+    
 private:
     
     std::shared_ptr<VRONode> _pointOfView;
@@ -64,8 +64,5 @@ private:
     std::shared_ptr<VRORenderer> _renderer;
 
 };
-
-
-
 
 #endif /* VROARObjectTrackingTest_h  */
