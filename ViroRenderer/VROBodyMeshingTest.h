@@ -62,7 +62,6 @@ private:
     std::shared_ptr<VROARScene> _arScene;
     std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
     std::shared_ptr<VRORenderer> _renderer;
-    bool _is2DHitPoints;
 
 };
 

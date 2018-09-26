@@ -11,7 +11,6 @@
 
 #include <vector>
 #include <memory>
-#include "VROView.h"
 
 class VRODriver;
 class VRORenderer;
@@ -58,7 +57,7 @@ public:
     
     VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
                            std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                           std::shared_ptr<VRODriver> driver,  id<VROView> view);
+                           std::shared_ptr<VRODriver> driver);
     virtual ~VRORendererTestHarness();
     
     std::shared_ptr<VRORendererTest> loadNextTest();
@@ -73,7 +72,6 @@ private:
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
     std::shared_ptr<VRODriver> _driver;
-    id<VROView> _view;
     
 };
 
