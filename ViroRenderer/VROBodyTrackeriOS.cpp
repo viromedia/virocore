@@ -6,14 +6,12 @@
 //  Copyright © 2018 Viro Media. All rights reserved.
 //
 
-#include "VROARBodyMeshingPointsiOS.h"
+#include "VROBodyTrackeriOS.h"
 #include "VROLog.h"
 #include "Endian.h"
 #import "model_cpm.h"
 #import <UIKit/UIKit.h>
 #include <Accelerate/Accelerate.h>
-
-
 
 #define clamp(a) (a>255?255:(a<0?0:a));
 
@@ -39,47 +37,35 @@
 
 @end
 
-VROARBodyMeshingPointsiOS::VROARBodyMeshingPointsiOS() {
+VROBodyTrackeriOS::VROBodyTrackeriOS() {
     _fps = 15;
 }
 
-bool VROARBodyMeshingPointsiOS::initBodyTracking(VROCameraPosition position,
+bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                      std::shared_ptr<VRODriver> driver) {
     
     _model = [[[model_cpm alloc] init] model];
-    
     _coreMLModel =  [VNCoreMLModel modelForMLModel: _model error:nil];
-    
-    _coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel completionHandler: (VNRequestCompletionHandler) ^(VNRequest *request, NSError *error) {
+    _coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
+                                          completionHandler:(VNRequestCompletionHandler) ^(VNRequest *request, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            
             NSArray *array = [request results];
-             VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
+            VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
             MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
             NSDictionary *k_dPoints = convert(heatmap);
             
-            std::shared_ptr<VROBodyMeshingDelegate> delegate = _bodyMeshDelegateWeak.lock();
+            std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegateWeak.lock();
             if (delegate) {
-                delegate->onBodyMeshJointsAvail(k_dPoints);
+                delegate->onBodyJointsFound(k_dPoints);
             }
-
         });
     }];
     
     _coreMLRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
-    _delegate = [[VROBodyMeshingCaptureDelegate alloc] initWithMLRequest:_coreMLRequest];
-    // Create a capture session
-    _captureSession = [[AVCaptureSession alloc] init];
-    
-    if (!_captureSession) {
-        pinfo("Error: Could not create a capture session");
-        return false;
-    }
-
     return true;
 }
 
-void VROARBodyMeshingPointsiOS::printBodyPoint(NSDictionary *bodyPoints, VROBodyMeshingJoints jointType) {
+void VROBodyTrackeriOS::printBodyPoint(NSDictionary *bodyPoints, VROBodyMeshingJoints jointType) {
     NSNumber *index = [NSNumber numberWithInt:static_cast<int>(jointType)];
     if(bodyPoints[index] == [NSNull null]) {
         NSLog(@"Joint type %d is NULL", jointType);
@@ -95,8 +81,7 @@ void VROARBodyMeshingPointsiOS::printBodyPoint(NSDictionary *bodyPoints, VROBody
     }
 }
 
-NSDictionary* VROARBodyMeshingPointsiOS::convert(MLMultiArray *heatmap) {
-    
+NSDictionary *VROBodyTrackeriOS::convert(MLMultiArray *heatmap) {
     if(heatmap.shape.count < 3) {
         //print("heatmap's shape is invalid. \(heatmap.shape)")
         return nil;// nullptr;
@@ -160,7 +145,7 @@ NSDictionary* VROARBodyMeshingPointsiOS::convert(MLMultiArray *heatmap) {
     return dict;
 }
                        
-bool VROARBodyMeshingPointsiOS::isBodyPointConfidenceLessThan(BodyPointImpl *bodyPoint, float confidence) {
+bool VROBodyTrackeriOS::isBodyPointConfidenceLessThan(BodyPointImpl *bodyPoint, float confidence) {
     if(bodyPoint._confidence < confidence) {
         return true;
     } else {
@@ -168,12 +153,12 @@ bool VROARBodyMeshingPointsiOS::isBodyPointConfidenceLessThan(BodyPointImpl *bod
     }
 }
 
-void VROARBodyMeshingPointsiOS::startBodyTracking() {
-    [_captureSession startRunning];
+void VROBodyTrackeriOS::startBodyTracking() {
+    
 }
 
-void VROARBodyMeshingPointsiOS::stopBodyTracking() {
-    [_captureSession stopRunning];
+void VROBodyTrackeriOS::stopBodyTracking() {
+    
 }
 
 void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress)
@@ -181,15 +166,15 @@ void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress)
     free((void *)baseAddress);
 }
 
-void VROARBodyMeshingPointsiOS::processBuffer(CVPixelBufferRef sampleBuffer) {
+void VROBodyTrackeriOS::processBuffer(CVPixelBufferRef sampleBuffer) {
     NSLog(@"CaptureOutput invoked");
     //CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     CMTime timestamp = CMClockGetTime(CMClockGetHostTimeClock());
-    CMTime deltaTime = CMTimeSubtract(timestamp,_lastTimestamp);
+    CMTime deltaTime = CMTimeSubtract(timestamp, _lastTimestamp);
     //format is equal to '420f'.
     OSType format = CVPixelBufferGetPixelFormatType(sampleBuffer);
     
-    if (CMTimeCompare(deltaTime, CMTimeMake(1,_fps))) {
+    if (CMTimeCompare(deltaTime, CMTimeMake(1, _fps))) {
         NSLog(@"Running frame!!");
         _lastTimestamp = timestamp;
         CVPixelBufferRef convertedImage = convertImage(sampleBuffer);
@@ -238,7 +223,7 @@ void VROARBodyMeshingPointsiOS::processBuffer(CVPixelBufferRef sampleBuffer) {
     }
 }
 
-void VROARBodyMeshingPointsiOS::writeImageToDisk(CVPixelBufferRef imageBuffer) {
+void VROBodyTrackeriOS::writeImageToDisk(CVPixelBufferRef imageBuffer) {
 
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     Byte *rawImageBytes = (Byte *)CVPixelBufferGetBaseAddress(imageBuffer);
@@ -264,14 +249,9 @@ void VROARBodyMeshingPointsiOS::writeImageToDisk(CVPixelBufferRef imageBuffer) {
      UIImageWriteToSavedPhotosAlbum(FinalImage, nil, nil, nil);
 }
 
-uint8_t VROARBodyMeshingPointsiOS::ClampIntToByte(int n) {
-    n = n > 255 ? 255 : n;
-    return n < 0 ? 0 : n;
-}
-
 static const int kMaxChannelValue = 262143;
 
-CVPixelBufferRef VROARBodyMeshingPointsiOS::convertImage(CVImageBufferRef imageBuffer) {
+CVPixelBufferRef VROBodyTrackeriOS::convertImage(CVImageBufferRef imageBuffer) {
     
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
@@ -320,41 +300,4 @@ CVPixelBufferRef VROARBodyMeshingPointsiOS::convertImage(CVImageBufferRef imageB
     CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, rgbBuffer, width * 4, stillImageDataReleaseCallback, NULL, NULL, &pixel_buffer);
     return pixel_buffer;
 }
-
-#pragma VROBodyMeshingCaptureDelegate
-@implementation VROBodyMeshingCaptureDelegate 
-
-- (id)initWithMLRequest:(VNCoreMLRequest *)coreMLRequest {
-    self = [super init];
-    _fps = 15;
-    _coreMLRequest = coreMLRequest;
-    return self;
-}
-
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-       fromConnection:(AVCaptureConnection *)connection {
-    NSLog(@"CaptureOutput invoked");
-    CMTime timestamp = CMClockGetTime(CMClockGetHostTimeClock());
-    //CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    CMTime deltaTime = CMTimeSubtract(timestamp,_lastTimestamp);
-   
-    if (CMTimeCompare(deltaTime, CMTimeMake(1,_fps))) {
-      
-            _lastTimestamp = timestamp;
-        CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-            //run custom code here.
-        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:imageBuffer options:nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [handler performRequests:@[_coreMLRequest] error:nil];
-        });
-    }
-}
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer
-       fromConnection:(AVCaptureConnection *)connection {
-    NSLog(@"Dropped frame!!");
-}
-
-@end
 

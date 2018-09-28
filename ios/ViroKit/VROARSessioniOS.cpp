@@ -30,6 +30,7 @@
 #include "VROProjector.h"
 #include "VROARCameraiOS.h"
 #include "VROARImageTracker.h"
+#include "VROBodyTrackeriOS.h"
 
 #pragma mark - Lifecycle and Initialization
 
@@ -107,7 +108,6 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     _imageResultsContainer = std::make_shared<VRONode>();
     _imageResultsContainer->addChildNode(_imageTrackingResultNode);
 #endif /* ENABLE_OPENCV */
-    _bodyMeshingiOS = nil;
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -338,9 +338,10 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     _background->setSubstrate(0, std::move(substrates[0]));
     _background->setSubstrate(1, std::move(substrates[1]));
 
-    if(_bodyMeshingiOS != nil) {
-        _bodyMeshingiOS->processBuffer(frameiOS->getImage());
+    if (_bodyTracker) {
+        _bodyTracker->processBuffer(frameiOS->getImage());
     }
+    
 #if ENABLE_OPENCV
     if (isReady()) {
 
@@ -544,8 +545,8 @@ std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *ancho
     }
 }
 
-void VROARSessioniOS::setBodyMeshing(std::shared_ptr<VROARBodyMeshingPointsiOS> bodyMeshingiOS) {
-    _bodyMeshingiOS = bodyMeshingiOS;
+void VROARSessioniOS::setBodyMeshing(std::shared_ptr<VROBodyTrackeriOS> bodyTracker) {
+    _bodyTracker = bodyTracker;
 } 
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {

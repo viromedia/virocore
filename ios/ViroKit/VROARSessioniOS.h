@@ -16,14 +16,13 @@
 #include <map>
 #include <vector>
 
-#include "VROARBodyMeshingPointsiOS.h"
-
 // image tracking inports
 #include "VROTrackingHelper.h"
 #include "VRORenderer.h"
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
+class VROBodyTrackeriOS;
 @class VROARKitSessionDelegate;
 
 class VROARSessioniOS : public VROARSession, public std::enable_shared_from_this<VROARSessioniOS> {
@@ -80,7 +79,7 @@ public:
       return false;
     }
     void setVideoQuality(VROVideoQuality quality);
-    void setBodyMeshing(std::shared_ptr<VROARBodyMeshingPointsiOS> bodyMeshingiOS);
+    void setBodyMeshing(std::shared_ptr<VROBodyTrackeriOS> bodyMeshingiOS);
     
     /*
      Internal methods.
@@ -214,7 +213,8 @@ private:
 
 #endif /* ENABLE_OPENCV */
     
-    std::shared_ptr<VROARBodyMeshingPointsiOS> _bodyMeshingiOS;
+    std::shared_ptr<VROBodyTrackeriOS> _bodyTracker;
+    
 };
 
 /*

@@ -16,11 +16,11 @@
 #include "VRORendererTest.h"
 #include "VROARDeclarativeNode.h"
 #include "VROSceneController.h"
-#include "VROARBodyMeshingPointsiOS.h"
+#include "VROBodyTrackeriOS.h"
 #include "VROARSessioniOS.h"
 
 class VROBodyMeshingTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
-                           public VROARBodyMeshingPointsiOS::VROBodyMeshingDelegate,
+                           public VROBodyTrackerDelegate,
                            public std::enable_shared_from_this<VROBodyMeshingTest> {
 public:
     
@@ -52,12 +52,12 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onBodyMeshJointsAvail(NSDictionary *joints);
+    virtual void onBodyJointsFound(NSDictionary *joints);
     
 private:
     
     std::shared_ptr<VRONode> _pointOfView;
-    std::shared_ptr<VROARBodyMeshingPointsiOS> _bodyMeshingPoints;
+    std::shared_ptr<VROBodyTrackeriOS> _bodyMeshingPoints;
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROARScene> _arScene;
     std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;

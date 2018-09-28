@@ -25,8 +25,8 @@ VROBodyMeshingTest::~VROBodyMeshingTest() {
 }
 
 void VROBodyMeshingTest::build(std::shared_ptr<VRORenderer> renderer,
-                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                    std::shared_ptr<VRODriver> driver) {
+                               std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                               std::shared_ptr<VRODriver> driver) {
     _renderer = renderer;
     _sceneController = std::make_shared<VROARSceneController>();
     _sceneController->setDelegate(shared_from_this());
@@ -34,7 +34,7 @@ void VROBodyMeshingTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
     _arScene->initDeclarativeSession();
         
-    _bodyMeshingPoints = std::make_shared<VROARBodyMeshingPointsiOS>();
+    _bodyMeshingPoints = std::make_shared<VROBodyTrackeriOS>();
     _bodyMeshingPoints->initBodyTracking(VROCameraPosition::Back, driver);
     _bodyMeshingPoints->startBodyTracking();
     _bodyMeshingPoints->setDelegate(shared_from_this());
@@ -57,7 +57,7 @@ void VROBodyMeshingTest::build(std::shared_ptr<VRORenderer> renderer,
     }
 }
 
-void VROBodyMeshingTest::onBodyMeshJointsAvail(NSDictionary *joints) {
+void VROBodyMeshingTest::onBodyJointsFound(NSDictionary *joints) {
     for(id key in joints) {
         id value = [joints objectForKey:key];
         
