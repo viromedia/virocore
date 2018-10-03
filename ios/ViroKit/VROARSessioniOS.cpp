@@ -339,7 +339,8 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     _background->setSubstrate(1, std::move(substrates[1]));
 
     if (_bodyTracker) {
-        _bodyTracker->processBuffer(frameiOS->getImage());
+        _bodyTracker->trackWithVision(frameiOS->getImage(), frameiOS->getCameraImageToViewportTransform(),
+                                      frameiOS->getCameraOrientation());
     }
     
 #if ENABLE_OPENCV
@@ -545,8 +546,8 @@ std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *ancho
     }
 }
 
-void VROARSessioniOS::setBodyMeshing(std::shared_ptr<VROBodyTrackeriOS> bodyTracker) {
-    _bodyTracker = bodyTracker;
+void VROARSessioniOS::setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker) {
+    _bodyTracker = std::dynamic_pointer_cast<VROBodyTrackeriOS>(bodyTracker);
 } 
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {

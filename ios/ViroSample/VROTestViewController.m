@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 };
 
 static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::BodyMeshing;
+static const VRORendererTestType kRendererTest = VRORendererTestType::BodyTracker;
 static const bool kSceneCheckeredBackground = NO;
 
 @interface VROTestViewController ()

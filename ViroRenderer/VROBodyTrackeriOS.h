@@ -9,54 +9,18 @@
 #ifndef VROBodyTrackeriOS_h
 #define VROBodyTrackeriOS_h
 
-#include <memory>
+#include "VROBodyTracker.h"
+#include <map>
 #include "VROCameraTexture.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreML/CoreML.h>
 #import <Vision/Vision.h>
+#include "VROMatrix4f.h"
 
 class VRODriver;
 
-enum class VROBodyMeshingJoints {
-    kTop = 0,
-    kNeck = 1,
-    kRightShoulder = 2,
-    kRightElbow = 3,
-    kRightWrist = 4,
-    kLeftShoulder = 5,
-    kLeftElbow =6,
-    kLeftWrist = 7,
-    kRightHip = 8,
-    kRightKnee = 9,
-    kRightAnkle = 10,
-    kLeftHip = 11,
-    kLeftKnee = 12,
-    kLeftAngle = 13,
-};
-
-class BodyPoint  {
-public:
-    BodyPoint(CGPoint point, double confidence) {
-        _point = point;
-        _confidence = confidence;
-    }
-
-    CGPoint _point;
-    double _confidence;
-};
-
-@interface BodyPointImpl: NSObject
-    @property (readwrite, nonatomic) CGPoint _point;
-    @property (readwrite, nonatomic) double _confidence;
-@end
-
-class VROBodyTrackerDelegate {
-public:
-    virtual void onBodyJointsFound(NSDictionary *joints) = 0;
-};
-
-class VROBodyTrackeriOS {
+class VROBodyTrackeriOS : public VROBodyTracker {
     
 public:
     
@@ -64,32 +28,29 @@ public:
     virtual ~VROBodyTrackeriOS() {}
     
     bool initBodyTracking(VROCameraPosition position, std::shared_ptr<VRODriver> driver);
-    bool isBodyPointConfidenceLessThan(BodyPointImpl *bodyPoint, float confidence);
     void startBodyTracking();
     void stopBodyTracking();
-    void processBuffer(CVPixelBufferRef sampleBuffer);
     
-    void setDelegate(std::shared_ptr<VROBodyTrackerDelegate> delegate) {
-        auto autoWeakDelegate = delegate;
-        _bodyMeshDelegateWeak = autoWeakDelegate;
-    }
+    void trackWithVision(CVPixelBufferRef image, VROMatrix4f transform, VROCameraOrientation orientation);
     
 private:
     
     MLModel *_model;
     VNCoreMLModel *_coreMLModel;
     VNCoreMLRequest *_coreMLRequest;
-    CMTime _lastTimestamp;
+    double _lastTimestamp;
     int32_t _fps;
     dispatch_queue_t bodyMeshingQueue;
-    std::weak_ptr<VROBodyTrackerDelegate> _bodyMeshDelegateWeak;
-    CVPixelBufferRef rotatedBuffer;
     
-    CVPixelBufferRef convertImage(CVImageBufferRef imageBuffer);
-    NSDictionary *convert(MLMultiArray *heatmap);
+    VROMatrix4f _transform;
     
+    static CVPixelBufferRef convertImage(CVImageBufferRef image);
+    static CVPixelBufferRef rotateImage(CVPixelBufferRef image, uint8_t rotation, size_t resultWidth, size_t resultHeight);
+    static CVPixelBufferRef transformImage(CVPixelBufferRef image, CGAffineTransform transform);
+    static std::map<VROBodyJointType, VROBodyJoint> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
+    
+    // Debug method
     void writeImageToDisk(CVPixelBufferRef imageBuffer);
-    void printBodyPoint(NSDictionary *bodyPoints, VROBodyMeshingJoints jointType);
 
 };
 

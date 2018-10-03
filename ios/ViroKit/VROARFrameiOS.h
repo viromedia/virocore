@@ -25,6 +25,7 @@ public:
     
     CVPixelBufferRef getImage() const;
     double getTimestamp() const;
+    VROCameraOrientation getCameraOrientation() const { return _orientation; }
     
     const std::shared_ptr<VROARCamera> &getCamera() const;
     std::vector<std::shared_ptr<VROARHitTestResult>> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
@@ -35,6 +36,8 @@ public:
       std::vector<std::shared_ptr<VROARHitTestResult>> emptyResults;
       return emptyResults;
     }
+    
+    VROMatrix4f getCameraImageToViewportTransform();
     VROMatrix4f getViewportToCameraImageTransform();
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     

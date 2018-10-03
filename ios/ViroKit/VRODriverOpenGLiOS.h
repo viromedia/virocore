@@ -124,6 +124,8 @@ public:
     void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
                       std::string ceilingMaterial, std::string floorMaterial);
     
+    GLKView *getView() { return _viewGL; }
+    
 protected:
     
     __weak GLKView *_viewGL;

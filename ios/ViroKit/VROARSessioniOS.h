@@ -22,6 +22,7 @@
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
+class VROBodyTracker;
 class VROBodyTrackeriOS;
 @class VROARKitSessionDelegate;
 
@@ -79,7 +80,7 @@ public:
       return false;
     }
     void setVideoQuality(VROVideoQuality quality);
-    void setBodyMeshing(std::shared_ptr<VROBodyTrackeriOS> bodyMeshingiOS);
+    void setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker);
     
     /*
      Internal methods.
@@ -92,8 +93,6 @@ public:
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
     
-    
-
 #if ENABLE_OPENCV
     // -- Image tracking functions --
     void setTrackerOutputView(UIImageView *view) {

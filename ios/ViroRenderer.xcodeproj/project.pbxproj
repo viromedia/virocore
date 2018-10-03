@@ -706,10 +706,10 @@
 		8B7B9F5F2150AFEC00ED6EC6 /* model_cpm.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */; };
 		8B9989002143564600EA9ED3 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B9988FF2143564600EA9ED3 /* CoreML.framework */; };
 		8B9989032146338400EA9ED3 /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B9989022146338400EA9ED3 /* Vision.framework */; };
-		8B99890421463D6C00EA9ED3 /* VROBodyMeshingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9988FC21431BFF00EA9ED3 /* VROBodyMeshingTest.h */; };
-		8B99890521463D6C00EA9ED3 /* VROBodyMeshingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9988FC21431BFF00EA9ED3 /* VROBodyMeshingTest.h */; };
-		8B99890621463D6F00EA9ED3 /* VROBodyMeshingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B9988FD21431BFF00EA9ED3 /* VROBodyMeshingTest.cpp */; };
-		8B99890721463D7000EA9ED3 /* VROBodyMeshingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B9988FD21431BFF00EA9ED3 /* VROBodyMeshingTest.cpp */; };
+		8B99890421463D6C00EA9ED3 /* VROBodyTrackerTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9988FC21431BFF00EA9ED3 /* VROBodyTrackerTest.h */; };
+		8B99890521463D6C00EA9ED3 /* VROBodyTrackerTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9988FC21431BFF00EA9ED3 /* VROBodyTrackerTest.h */; };
+		8B99890621463D6F00EA9ED3 /* VROBodyTrackerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B9988FD21431BFF00EA9ED3 /* VROBodyTrackerTest.cpp */; };
+		8B99890721463D7000EA9ED3 /* VROBodyTrackerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B9988FD21431BFF00EA9ED3 /* VROBodyTrackerTest.cpp */; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
@@ -1669,8 +1669,8 @@
 		8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegate.h; sourceTree = "<group>"; };
 		8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegateiOS.h; sourceTree = "<group>"; };
 		8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_cpm.mlmodel; sourceTree = "<group>"; };
-		8B9988FC21431BFF00EA9ED3 /* VROBodyMeshingTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyMeshingTest.h; sourceTree = "<group>"; };
-		8B9988FD21431BFF00EA9ED3 /* VROBodyMeshingTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyMeshingTest.cpp; sourceTree = "<group>"; };
+		8B9988FC21431BFF00EA9ED3 /* VROBodyTrackerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyTrackerTest.h; sourceTree = "<group>"; };
+		8B9988FD21431BFF00EA9ED3 /* VROBodyTrackerTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyTrackerTest.cpp; sourceTree = "<group>"; };
 		8B9988FF2143564600EA9ED3 /* CoreML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreML.framework; path = System/Library/Frameworks/CoreML.framework; sourceTree = SDKROOT; };
 		8B9989022146338400EA9ED3 /* Vision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vision.framework; path = System/Library/Frameworks/Vision.framework; sourceTree = SDKROOT; };
 		8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLazyMaterial.h; sourceTree = "<group>"; };
@@ -1843,6 +1843,7 @@
 		8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pbr_fsh.glsl; sourceTree = "<group>"; };
 		8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPBRDirectTest.cpp; sourceTree = "<group>"; };
 		8F3CE70A201113B900FF0214 /* VROPBRDirectTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPBRDirectTest.h; sourceTree = "<group>"; };
+		8F3F138121654E0A00A3CEFB /* VROBodyTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyTracker.h; sourceTree = "<group>"; };
 		8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROGaussianBlurRenderPass.cpp; sourceTree = "<group>"; };
 		8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROGaussianBlurRenderPass.h; sourceTree = "<group>"; };
 		8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = portal_ring.obj; path = ViroSample/portal_ring.obj; sourceTree = "<group>"; };
@@ -2614,7 +2615,7 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		8A497A7F2048E701004EBC33 /* ImageTracking */ = {
+		8A497A7F2048E701004EBC33 /* Image Tracking */ = {
 			isa = PBXGroup;
 			children = (
 				8A35172E1EE09E3F00B6E786 /* VROARImageTracker.h */,
@@ -2622,7 +2623,7 @@
 				8A35CE8E2058386100ADD393 /* VROARTrackingSession.h */,
 				8A35CE8F2058386200ADD393 /* VROARTrackingSession.cpp */,
 			);
-			name = ImageTracking;
+			name = "Image Tracking";
 			sourceTree = "<group>";
 		};
 		8F0FE6601CD25A2300A4C297 /* Drivers */ = {
@@ -2884,7 +2885,8 @@
 		8F3E405B1EE76E2E004CDE01 /* AR */ = {
 			isa = PBXGroup;
 			children = (
-				8A497A7F2048E701004EBC33 /* ImageTracking */,
+				8F3F138021654DF100A3CEFB /* Body Tracking */,
+				8A497A7F2048E701004EBC33 /* Image Tracking */,
 				8F828EF71FAF83770068159E /* Imperative */,
 				8F828EEE1FACB34B0068159E /* Declarative */,
 				8A2DA3AD1F8B2C0F001FC3BA /* VROInputControllerAR.h */,
@@ -2911,6 +2913,14 @@
 				8F2F82F51F4E627C00D1CBFA /* VROARShadow.cpp */,
 			);
 			name = AR;
+			sourceTree = "<group>";
+		};
+		8F3F138021654DF100A3CEFB /* Body Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				8F3F138121654E0A00A3CEFB /* VROBodyTracker.h */,
+			);
+			name = "Body Tracking";
 			sourceTree = "<group>";
 		};
 		8F4DCE441BFBF3A800061DD7 /* Shapes */ = {
@@ -3560,8 +3570,8 @@
 				8FA81D592023771900B04790 /* VRORendererSettingsTest.cpp */,
 				8AD76EAE211CD27B0045BD5F /* VROARObjectTrackingTest.h */,
 				8AD76EAD211CD27B0045BD5F /* VROARObjectTrackingTest.cpp */,
-				8B9988FC21431BFF00EA9ED3 /* VROBodyMeshingTest.h */,
-				8B9988FD21431BFF00EA9ED3 /* VROBodyMeshingTest.cpp */,
+				8B9988FC21431BFF00EA9ED3 /* VROBodyTrackerTest.h */,
+				8B9988FD21431BFF00EA9ED3 /* VROBodyTrackerTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -3994,7 +4004,7 @@
 				13B67370212229B20040FB72 /* VROTimingFunctionLinear.h in Headers */,
 				13B67371212229B20040FB72 /* VROARDeclarativeObjectNode.h in Headers */,
 				13B67372212229B20040FB72 /* VROARImageTrackingTest.h in Headers */,
-				8B99890521463D6C00EA9ED3 /* VROBodyMeshingTest.h in Headers */,
+				8B99890521463D6C00EA9ED3 /* VROBodyTrackerTest.h in Headers */,
 				13B67373212229B20040FB72 /* VROTorusKnot.h in Headers */,
 				13B67374212229B20040FB72 /* VROTrackingHelper.h in Headers */,
 				13B67375212229B20040FB72 /* VROShaderCapabilities.h in Headers */,
@@ -4337,7 +4347,7 @@
 				8F98F70F21260E4800917430 /* VROSkeletalAnimationLayer.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				13F631BA2065C21B00A74EFC /* KIOQuery.h in Headers */,
-				8B99890421463D6C00EA9ED3 /* VROBodyMeshingTest.h in Headers */,
+				8B99890421463D6C00EA9ED3 /* VROBodyTrackerTest.h in Headers */,
 				8FD2A53F1F813C4100E831A6 /* VROPerfTest.h in Headers */,
 				8FEF37211FCF77BA00FE7D56 /* VRODisplayOpenGLiOSGVR.h in Headers */,
 				8A11C8F91EF5B2270003E829 /* VROARConstraintMatcher.h in Headers */,
@@ -5397,7 +5407,7 @@
 				13B6727D212229B20040FB72 /* VROPolyline.cpp in Sources */,
 				13B6727E212229B20040FB72 /* VROPhysicsTest.cpp in Sources */,
 				13B6727F212229B20040FB72 /* VROMaterialVisual.cpp in Sources */,
-				8B99890721463D7000EA9ED3 /* VROBodyMeshingTest.cpp in Sources */,
+				8B99890721463D7000EA9ED3 /* VROBodyTrackerTest.cpp in Sources */,
 				13B67280212229B20040FB72 /* VROPlane.cpp in Sources */,
 				13B67281212229B20040FB72 /* VROSphere.cpp in Sources */,
 				13B67282212229B20040FB72 /* VROPhysicsBody.cpp in Sources */,
@@ -5695,7 +5705,7 @@
 				8F201C5C210159E700637A75 /* VROContour.cpp in Sources */,
 				8F5CAA181F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp in Sources */,
 				8F2F342920F54FAC001962D0 /* VROGlyphAtlasOpenGL.cpp in Sources */,
-				8B99890621463D6F00EA9ED3 /* VROBodyMeshingTest.cpp in Sources */,
+				8B99890621463D6F00EA9ED3 /* VROBodyTrackerTest.cpp in Sources */,
 				8FCD02B51FD6F8E0001813D8 /* VRODriverOpenGLiOS.cpp in Sources */,
 				8F292BC820A38F2F00635C0D /* VROToneMappingTest.cpp in Sources */,
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,

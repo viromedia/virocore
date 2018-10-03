@@ -1,5 +1,5 @@
 //
-//  VROARBodyMeshingPoints.m
+//  VROBodyTrackeriOS.cpp
 //  ViroKit
 //
 //  Created by vik.advani on 9/4/18.
@@ -9,11 +9,16 @@
 #include "VROBodyTrackeriOS.h"
 #include "VROLog.h"
 #include "Endian.h"
+#include "VROTime.h"
 #import "model_cpm.h"
 #import <UIKit/UIKit.h>
 #include <Accelerate/Accelerate.h>
 
-#define clamp(a) (a>255?255:(a<0?0:a));
+#include "VRODriverOpenGLiOS.h"
+
+#define clamp(a) (a > 255 ? 255 : (a < 0 ? 0 : a));
+
+static int kImageWriteFrame = 0;
 
 @interface NSArray (Map)
 
@@ -33,124 +38,94 @@
 
 @end
 
-@implementation BodyPointImpl
-
-@end
-
 VROBodyTrackeriOS::VROBodyTrackeriOS() {
-    _fps = 15;
+    _fps = 0;
+    _lastTimestamp = 0;
 }
 
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
-                                     std::shared_ptr<VRODriver> driver) {
-    
+                                         std::shared_ptr<VRODriver> driver) {
+        
     _model = [[[model_cpm alloc] init] model];
     _coreMLModel =  [VNCoreMLModel modelForMLModel: _model error:nil];
     _coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler) ^(VNRequest *request, NSError *error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
             NSArray *array = [request results];
             VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
             MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
-            NSDictionary *k_dPoints = convert(heatmap);
+            std::map<VROBodyJointType, VROBodyJoint> joints = convertHeatmap(heatmap, _transform);
             
-            std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegateWeak.lock();
-            if (delegate) {
-                delegate->onBodyJointsFound(k_dPoints);
-            }
-        });
+            dispatch_async(dispatch_get_main_queue(), ^{
+                std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
+                if (delegate) {
+                    delegate->onBodyJointsFound(joints);
+                }
+            });
     }];
     
+    _coreMLRequest.preferBackgroundProcessing = YES;
     _coreMLRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
+    
     return true;
 }
 
-void VROBodyTrackeriOS::printBodyPoint(NSDictionary *bodyPoints, VROBodyMeshingJoints jointType) {
-    NSNumber *index = [NSNumber numberWithInt:static_cast<int>(jointType)];
-    if(bodyPoints[index] == [NSNull null]) {
-        NSLog(@"Joint type %d is NULL", jointType);
-    } else {
-        NSValue *bodyPointValue = (NSValue *)bodyPoints[index];
-        if(bodyPointValue != nil) {
-            BodyPoint *bodyPoint = (BodyPoint *)bodyPointValue.pointerValue;
-            float x= bodyPoint->_point.x;
-            float y = bodyPoint->_point.y;
-            float confidence = bodyPoint->_confidence;
-            NSLog(@"Joint %d, values x,y:(%f, %f), confidence: %f", jointType, x,y, confidence);
-        }
+std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
+    if (heatmap.shape.count < 3) {
+        return {};
     }
-}
-
-NSDictionary *VROBodyTrackeriOS::convert(MLMultiArray *heatmap) {
-    if(heatmap.shape.count < 3) {
-        //print("heatmap's shape is invalid. \(heatmap.shape)")
-        return nil;// nullptr;
-    }
-   
-    NSInteger keypoint_number = heatmap.shape[0].integerValue;
-    NSInteger heatmap_w = heatmap.shape[1].integerValue;
-    NSInteger heatmap_h = heatmap.shape[2].integerValue;
- 
-    NSMutableDictionary *n_kpoints = [[NSMutableDictionary alloc] init];
-   
-    for (int k=0; k<keypoint_number; k++) {
-        NSNumber *keyIndex = [NSNumber numberWithInt:k];
-        [n_kpoints setObject:[NSNull null] forKey:keyIndex];
-    }
+        
+    int keypoint = (int) heatmap.shape[0].integerValue;
+    int heatmapWidth = (int) heatmap.shape[1].integerValue;
+    int heatmapHeight = (int) heatmap.shape[2].integerValue;
     
-    for (int k=0; k<keypoint_number; k++) {
-        for(int i=0; i<heatmap_w; i++) {
-            for(int j=0; j<heatmap_h; j++) {
-                long index = k*(heatmap_w*heatmap_h) + i*(heatmap_h) + j;
+    std::map<VROBodyJointType, VROBodyJoint> bodyMap;
+    
+    /*
+     The ML model will return the heatmap tiles for each joint; choose the highest
+     confidence tile for each joint.
+     */
+    for (int k = 0; k < keypoint; k++) {
+        VROBodyJointType type = (VROBodyJointType) k;
+        
+        for (int i = 0; i < heatmapWidth; i++) {
+            for (int j = 0; j < heatmapHeight; j++) {
+                long index = k * (heatmapWidth * heatmapHeight) + i * (heatmapHeight) + j;
                 double confidence = heatmap[index].doubleValue;
-                if(confidence > 0.5) {
-                    NSLog(@"ChatH");
+                
+                if (confidence > 0) {
+                    auto kv = bodyMap.find(type);
+                    
+                    /*
+                     The point we create here is just the index of the heatmap tile
+                     (i and j). We will convert this into a floating point value once
+                     we find the highest confidence tile.
+                     */
+                    if (kv == bodyMap.end() || confidence > kv->second.getConfidence()) {
+                        VROVector3f point(CGFloat(j), CGFloat(i), 0);
+                        bodyMap[type] = { type, point, confidence };
+                    }
                 }
-                NSNumber *keyIndex = [NSNumber numberWithInt:k];
-                if(confidence > 0) {
-                   if (n_kpoints[keyIndex] == [NSNull null] ||
-                       (n_kpoints[keyIndex] != [NSNull null] && isBodyPointConfidenceLessThan((BodyPointImpl *)n_kpoints[keyIndex], confidence))) {
-                           CGPoint cgPoint;
-                           cgPoint.x = CGFloat(j);
-                           cgPoint.y = CGFloat(i);
-                            BodyPointImpl *bodyImpl = [[BodyPointImpl alloc] init];
-                            bodyImpl._point = cgPoint;
-                            bodyImpl._confidence = confidence;
-                           [n_kpoints setObject:bodyImpl forKey:keyIndex];
-                        }
-                } else {
-                    continue;
-                }
-           }
-       }
-   }
-   
-   // transpose to (1.0, 1.0)
-    for(id key in n_kpoints) {
-        id value = [n_kpoints objectForKey:key];
-        if(value == [NSNull null]) {
-            
-        } else {
-            BodyPointImpl *bodyImpl = (BodyPointImpl *)value;
-            CGFloat x = (bodyImpl._point.x + 0.5)/CGFloat(heatmap_w);
-            CGFloat y = (bodyImpl._point.y + 0.5)/CGFloat(heatmap_h);
-            CGPoint newPoint;
-            newPoint.x = x;
-            newPoint.y = y;
-            bodyImpl._point = newPoint;
+            }
         }
     }
     
-    NSDictionary *dict = [NSDictionary dictionaryWithDictionary:n_kpoints];
-    return dict;
-}
-                       
-bool VROBodyTrackeriOS::isBodyPointConfidenceLessThan(BodyPointImpl *bodyPoint, float confidence) {
-    if(bodyPoint._confidence < confidence) {
-        return true;
-    } else {
-        return false;
+    /*
+     Now we have a map with the highest confidence tile for each joint. Convert the
+     heatmap tile indices into normalized coordinates [0, 1].
+     */
+    for (auto &kv : bodyMap) {
+        VROBodyJoint &joint = kv.second;
+        VROVector3f tilePoint = joint.getPoint();
+        
+        // Convert tile indices to normalized camera image coordinates [0, 1]
+        VROVector3f imagePoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
+                                   (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
+        
+        // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
+        VROVector3f viewportPoint = transform.multiply(imagePoint);
+        joint.setPoint(viewportPoint);
     }
+    return bodyMap;
 }
 
 void VROBodyTrackeriOS::startBodyTracking() {
@@ -161,98 +136,116 @@ void VROBodyTrackeriOS::stopBodyTracking() {
     
 }
 
-void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress)
-{
+void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress) {
     free((void *)baseAddress);
 }
 
-void VROBodyTrackeriOS::processBuffer(CVPixelBufferRef sampleBuffer) {
-    NSLog(@"CaptureOutput invoked");
-    //CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    CMTime timestamp = CMClockGetTime(CMClockGetHostTimeClock());
-    CMTime deltaTime = CMTimeSubtract(timestamp, _lastTimestamp);
-    //format is equal to '420f'.
-    OSType format = CVPixelBufferGetPixelFormatType(sampleBuffer);
+void VROBodyTrackeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMatrix4f transform, VROCameraOrientation orientation) {
+    double timestamp = VROTimeCurrentMillis();
+    VROVector3f scale = transform.extractScale();
+    VROVector3f translation = transform.extractTranslation();
     
-    if (CMTimeCompare(deltaTime, CMTimeMake(1, _fps))) {
-        NSLog(@"Running frame!!");
+    if ((timestamp - _lastTimestamp) > _fps) {
         _lastTimestamp = timestamp;
-        CVPixelBufferRef convertedImage = convertImage(sampleBuffer);
-        CVPixelBufferLockBaseAddress(convertedImage, 0);
-       
-        //rotate image
-        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(convertedImage);
-        size_t width = CVPixelBufferGetWidth(convertedImage);
-        size_t height = CVPixelBufferGetHeight(convertedImage);
-        size_t currSize = bytesPerRow*height*sizeof(unsigned char);
-        size_t bytesPerRowOut = 4*height*sizeof(unsigned char);
+        CVPixelBufferRef convertedImage = convertImage(cameraImage);
 
-        void *srcBuff = CVPixelBufferGetBaseAddress(convertedImage);
-        unsigned char *outBuff = (unsigned char*)malloc(currSize);
-        
-        size_t outputHeight = width;
-        size_t outputWidth = height;
-        vImage_Buffer ibuff = { srcBuff, height, width, bytesPerRow};
-        vImage_Buffer ubuff = { outBuff, outputHeight, outputWidth, bytesPerRowOut};
-        
-        uint8_t rotConst = 3;   // 0, 1, 2, 3 is equal to 0, 90, 180, 270 degrees rotation
-        
-        uint8_t bgColor[4]  = {0, 0, 0, 0};
-        vImage_Error err= vImageRotate90_ARGB8888(&ibuff, &ubuff, rotConst, bgColor, 0);
-        CVPixelBufferUnlockBaseAddress(convertedImage, 0);
-        
-        
-        rotatedBuffer = NULL;
-        CVPixelBufferCreateWithBytes(NULL,
-                                     outputWidth,
-                                     outputHeight,
-                                     kCVPixelFormatType_32BGRA,
-                                     ubuff.data,
-                                     bytesPerRowOut,
-                                     stillImageDataReleaseCallback,
-                                     NULL,
-                                     NULL,
-                                     &rotatedBuffer);
-        CVPixelBufferRelease(convertedImage);
-        //writeImageToDisk(rotatedBuffer);
-        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedBuffer options:nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [handler performRequests:@[_coreMLRequest] error:nil];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            NSDictionary *visionOptions = [NSDictionary dictionary];
+
+            size_t imageWidth = CVPixelBufferGetWidth(convertedImage);
+            size_t imageHeight = CVPixelBufferGetHeight(convertedImage);
+            
+            // The logic below accomplishes two things: it rotates the image right-side-up so that
+            // it can be used by the ML algorithm, and it derives the _transform matrix, which is used
+            // to convert *rotated* image coordinates to viewport coordinates. This matrix is derived
+            // from the scale and translation components of ARKit's displayTransform metrix (we remove
+            // the rotation part from the ARKit matrix because we're physically rotating the image
+            // ourselves here).
+            if (orientation == VROCameraOrientation::Portrait || orientation == VROCameraOrientation::PortraitUpsideDown) {
+                // Remove rotation from the transformation matrix. Since this was a 90 degree rotation, X and Y are
+                // reversed.
+                _transform[0] = scale.y;
+                _transform[1] = 0;
+                _transform[4] = 0;
+                _transform[5] = scale.x;
+                _transform[12] = (1 - scale.y) / 2.0;
+                _transform[13] = translation.y;
+                
+                // The '3' here indicates 270 degree rotation
+                CVPixelBufferRef rotatedImage = rotateImage(convertedImage, 3, imageHeight, imageWidth);
+                
+                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedImage options:visionOptions];
+                [handler performRequests:@[_coreMLRequest] error:nil];
+                CVPixelBufferRelease(rotatedImage);
+            }
+            else if (orientation == VROCameraOrientation::LandscapeLeft) {
+                // Remove rotation from the transformation matrix
+                _transform[0] = scale.x;
+                _transform[1] = 0;
+                _transform[4] = 0;
+                _transform[5] = scale.y;
+                _transform[12] = (1 - scale.x) / 2.0;
+                _transform[13] = (1 - scale.y) / 2.0;
+                
+                // The '2' here indicates 180 degree rotation
+                CVPixelBufferRef rotatedImage = rotateImage(convertedImage, 2, imageWidth, imageHeight);
+                
+                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedImage options:visionOptions];
+                [handler performRequests:@[_coreMLRequest] error:nil];
+                CVPixelBufferRelease(rotatedImage);
+            }
+            else if (orientation == VROCameraOrientation::LandscapeRight) {
+                // In landscape right, the camera image is already right-side up, and ready for the ML
+                // algorithm.
+                _transform = transform;
+                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:convertedImage options:visionOptions];
+                [handler performRequests:@[_coreMLRequest] error:nil];
+            }
+            
+            CVPixelBufferRelease(convertedImage);
         });
-        CVPixelBufferRelease(rotatedBuffer);
     }
 }
 
-void VROBodyTrackeriOS::writeImageToDisk(CVPixelBufferRef imageBuffer) {
+CVPixelBufferRef VROBodyTrackeriOS::rotateImage(CVPixelBufferRef image, uint8_t rotation,
+                                                size_t resultWidth, size_t resultHeight) {
+    CVPixelBufferLockBaseAddress(image, 0);
 
-    CVPixelBufferLockBaseAddress(imageBuffer, 0);
-    Byte *rawImageBytes = (Byte *)CVPixelBufferGetBaseAddress(imageBuffer);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-    size_t width = CVPixelBufferGetWidth(imageBuffer);
-    size_t height = CVPixelBufferGetHeight(imageBuffer);
-    NSData *dataForRawBytes = [NSData dataWithBytes:rawImageBytes length:bytesPerRow * CVPixelBufferGetHeight(imageBuffer)];
-    // Do whatever with your bytes
-
-    // create suitable color space
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-
-    //Create suitable context (suitable for camera output setting kCVPixelFormatType_32BGRA)
-    CGContextRef newContext = CGBitmapContextCreate(rawImageBytes, width, height, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
-    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-
-    // release color space
-    CGColorSpaceRelease(colorSpace);
-
-    //Create a CGImageRef from the CVImageBufferRef
-    CGImageRef newImage = CGBitmapContextCreateImage(newContext);
-    UIImage *FinalImage = [[UIImage alloc] initWithCGImage:newImage];
-     UIImageWriteToSavedPhotosAlbum(FinalImage, nil, nil, nil);
+    size_t width = CVPixelBufferGetWidth(image);
+    size_t height = CVPixelBufferGetHeight(image);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(image);
+    size_t bytesPerRowOut = 4 * resultWidth * sizeof(unsigned char);
+    size_t currSize = bytesPerRow * height * sizeof(unsigned char);
+    
+    void *srcBuff = CVPixelBufferGetBaseAddress(image);
+    unsigned char *outBuff = (unsigned char *) malloc(currSize);
+    
+    vImage_Buffer ibuff = { srcBuff, height, width, bytesPerRow};
+    vImage_Buffer ubuff = { outBuff, resultHeight, resultWidth, bytesPerRowOut};
+    uint8_t bgColor[4]  = {0, 0, 0, 0};
+    
+    // For the rotation parameter [0, 1, 2, 3] map to [0, 90, 180, 270] degree rotation
+    vImage_Error err = vImageRotate90_ARGB8888(&ibuff, &ubuff, rotation, bgColor, 0);
+    if (err != kvImageNoError) {
+        pinfo("Error performing image rotation");
+    }
+    CVPixelBufferUnlockBaseAddress(image, 0);
+    
+    CVPixelBufferRef rotatedBuffer = NULL;
+    CVPixelBufferCreateWithBytes(NULL,
+                                 resultWidth,
+                                 resultHeight,
+                                 kCVPixelFormatType_32BGRA,
+                                 ubuff.data,
+                                 bytesPerRowOut,
+                                 stillImageDataReleaseCallback,
+                                 NULL,
+                                 NULL,
+                                 &rotatedBuffer);
+    return rotatedBuffer;
 }
 
-static const int kMaxChannelValue = 262143;
-
 CVPixelBufferRef VROBodyTrackeriOS::convertImage(CVImageBufferRef imageBuffer) {
-    
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
     size_t width = CVPixelBufferGetWidth(imageBuffer);
@@ -267,37 +260,64 @@ CVPixelBufferRef VROBodyTrackeriOS::convertImage(CVImageBufferRef imageBuffer) {
     NSUInteger cbCrOffset = EndianU32_BtoN(bufferInfo->componentInfoCbCr.offset);
     NSUInteger cbCrPitch = EndianU32_BtoN(bufferInfo->componentInfoCbCr.rowBytes);
     int bytesPerPixel = 4;
-    uint8_t *rgbBuffer = (uint8_t *)malloc(width * height * bytesPerPixel);
+    uint8_t *rgbBuffer = (uint8_t *) malloc(width * height * bytesPerPixel);
     uint8_t *yBuffer = baseAddress + yOffset;
     uint8_t *cbCrBuffer = baseAddress + cbCrOffset;
     
-    for(int y = 0; y < height; y++)
-    {
+    for (int y = 0; y < height; y++) {
         uint8_t *rgbBufferLine = &rgbBuffer[y * width * bytesPerPixel];
         uint8_t *yBufferLine = &yBuffer[y * yPitch];
         uint8_t *cbCrBufferLine = &cbCrBuffer[(y >> 1) * cbCrPitch];
         
-        for(int x = 0; x < width; x++)
-        {
+        for (int x = 0; x < width; x++) {
             // from ITU-R BT.601, rounded to integers
             int16_t y = yBufferLine[x] - 16;
             int16_t cb = cbCrBufferLine[x & ~1] - 128;
             int16_t cr = cbCrBufferLine[x | 1] - 128;
             
-            uint8_t *rgbOutput = &rgbBufferLine[x*bytesPerPixel];
-            int16_t r = (int16_t)roundf( y + cr *  1.4 );
+            uint8_t *rgbOutput = &rgbBufferLine[x * bytesPerPixel];
+            
+            int16_t r = (int16_t)roundf( y + cr * 1.4 );
             int16_t g = (int16_t)roundf( y + cb * -0.343 + cr * -0.711 );
             int16_t b = (int16_t)roundf( y + cb *  1.765);
+            
+            //int16_t r = (int16_t)roundf( y + cb *  0.0    + cr *  1.4020 - 0.7010);
+            //int16_t g = (int16_t)roundf( y + cb * -0.3441 + cr * -0.7141 + 0.5291);
+            //int16_t b = (int16_t)roundf( y + cb *  1.7720 + cr *  0.0    - 0.8660);
+            
             //BGRA
-             rgbOutput[0] = clamp(b);
-             rgbOutput[1] = clamp(g);
-             rgbOutput[2] = clamp(r);
-             rgbOutput[3] = 0xFF;
-          }
+            rgbOutput[0] = clamp(b);
+            rgbOutput[1] = clamp(g);
+            rgbOutput[2] = clamp(r);
+            rgbOutput[3] = 0xFF;
+        }
     }
+    
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
     CVPixelBufferRef pixel_buffer = NULL;
-    CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, rgbBuffer, width * 4, stillImageDataReleaseCallback, NULL, NULL, &pixel_buffer);
+    CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, rgbBuffer,
+                                 width * 4, stillImageDataReleaseCallback, NULL, NULL, &pixel_buffer);
     return pixel_buffer;
 }
 
+void VROBodyTrackeriOS::writeImageToDisk(CVPixelBufferRef image) {
+    CVPixelBufferLockBaseAddress(image, 0);
+    Byte *rawImageBytes = (Byte *) CVPixelBufferGetBaseAddress(image);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(image);
+    size_t width = CVPixelBufferGetWidth(image);
+    size_t height = CVPixelBufferGetHeight(image);
+    
+    // Create suitable color space
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    // Create a suitable CGContext (suitable for camera output setting kCVPixelFormatType_32BGRA)
+    CGContextRef newContext = CGBitmapContextCreate(rawImageBytes, width, height, 8, bytesPerRow, colorSpace,
+                                                    kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
+    CVPixelBufferUnlockBaseAddress(image, 0);
+    CGColorSpaceRelease(colorSpace);
+    
+    // Create a CGImage from the CFContext, then a UIImage from the CGImage
+    CGImageRef newImage = CGBitmapContextCreateImage(newContext);
+    UIImage *finalImage = [[UIImage alloc] initWithCGImage:newImage];
+    UIImageWriteToSavedPhotosAlbum(finalImage, nil, nil, nil);
+}

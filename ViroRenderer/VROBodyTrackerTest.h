@@ -1,31 +1,37 @@
 //
-//  VROBodyMeshingTest.h
+//  VROBodyTrackerTest.h
 //  ViroSample
 //
 //  Created by vik.advani on 9/7/18.
 //  Copyright © 2018 Viro Media. All rights reserved.
 //
 //
-//  VROBodyMeshingTest.h
+//  VROBodyTrackerTest.h
 //  ViroSample
 //
 
-#ifndef VROBodyMeshingTest_h
-#define VROBodyMeshingTest_h
+#ifndef VROBodyTrackerTest_h
+#define VROBodyTrackerTest_h
 
 #include "VRORendererTest.h"
 #include "VROARDeclarativeNode.h"
 #include "VROSceneController.h"
-#include "VROBodyTrackeriOS.h"
-#include "VROARSessioniOS.h"
+#include "VRODefines.h"
+#include "VROBodyTracker.h"
 
-class VROBodyMeshingTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
+#if VRO_PLATFORM_IOS
+#include "VROARSessioniOS.h"
+#include "VROViewAR.h"
+#import <UIKit/UIKit.h>
+#endif
+
+class VROBodyTrackerTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
                            public VROBodyTrackerDelegate,
-                           public std::enable_shared_from_this<VROBodyMeshingTest> {
+                           public std::enable_shared_from_this<VROBodyTrackerTest> {
 public:
     
-    VROBodyMeshingTest();
-    virtual ~VROBodyMeshingTest();
+    VROBodyTrackerTest();
+    virtual ~VROBodyTrackerTest();
     
     void build(std::shared_ptr<VRORenderer> renderer,
                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
@@ -42,9 +48,11 @@ public:
        
     }
     virtual void onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+#if VRO_PLATFORM_IOS
         std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
         std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
-        arSessioniOS->setBodyMeshing(_bodyMeshingPoints);
+        arSessioniOS->setBodyTracker(_bodyTracker);
+#endif
     }
     virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
 
@@ -52,16 +60,21 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onBodyJointsFound(NSDictionary *joints);
+    virtual void onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints);
     
 private:
     
     std::shared_ptr<VRONode> _pointOfView;
-    std::shared_ptr<VROBodyTrackeriOS> _bodyMeshingPoints;
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROARScene> _arScene;
     std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
     std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VROBodyTracker> _bodyTracker;
+
+#if VRO_PLATFORM_IOS
+    UIView *_bodyViews[14];
+    VROViewAR *_view;
+#endif
 
 };
 
