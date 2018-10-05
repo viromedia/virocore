@@ -277,7 +277,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     
     passert (elementIndex < _vaos.size() && elementIndex >= 0);
     GL (glBindVertexArray(_vaos[elementIndex]) );
-    glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, material, substrate, element, opacity, context, driver);
     GL (glBindVertexArray(0) );
     
