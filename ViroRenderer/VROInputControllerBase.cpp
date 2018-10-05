@@ -62,7 +62,7 @@ void VROInputControllerBase::setProjection(VROMatrix4f projection) {
     _projection = projection;
 }
 
-void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState){
+void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState) {
     // Return if we have not focused on any node upon which to trigger events.
     if (_hitResult == nullptr) {
         return;
@@ -104,6 +104,7 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         }
         _lastClickedNode = nullptr;
         if (_lastDraggedNode != nullptr) {
+            _lastDraggedNode->_dragState = VROEventDelegate::DragState::End;
             _lastDraggedNode->_draggedNode->setIsBeingDragged(false);
         }
         _lastDraggedNode = nullptr;
@@ -118,8 +119,6 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         if (draggableNode == nullptr){
             return;
         }
-        
-        draggableNode->setIsBeingDragged(true);
 
         /*
          Grab and save a reference to the draggedNode that we will be tracking.
@@ -130,22 +129,12 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
          in reference to the controller's movement.
          */
         std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
-        if (draggableNode->getDragType() == VRODragType::FixedDistanceOrigin) {
-            draggedObject->_draggedDistanceFromController = draggableNode->getWorldPosition().distanceAccurate(_lastKnownPosition);
-            draggedObject->_originalHitLocation = draggableNode->getWorldPosition();
-        } else {
-            draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
-            draggedObject->_originalHitLocation = _hitResult->getLocation();
-        }
-
         draggedObject->_originalDraggedNodePosition = draggableNode->getWorldPosition();
         draggedObject->_originalDraggedNodeRotation = draggableNode->getWorldRotation();
         draggedObject->_draggedNode = draggableNode;
-
-        // Grab the forwardOffset (delta from the controller's forward in reference to the user).
-        draggedObject->_forwardOffset = getDragForwardOffset();
-
         _lastDraggedNode = draggedObject;
+        _lastDraggedNode->_dragState = VROEventDelegate::DragState::Start;
+        draggableNode->setIsBeingDragged(true);
     }
 }
 
@@ -204,6 +193,41 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
 void VROInputControllerBase::processDragging(int source) {
     std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
 
+    // Calculate starting pre-drag properties if needed (hit locations, offsets, etc).
+    if (_lastDraggedNode->_dragState == VROEventDelegate::DragState::Start) {
+        if (draggedNode->getDragType() == VRODragType::FixedDistanceOrigin) {
+            _lastDraggedNode->_draggedDistanceFromController = draggedNode->getWorldPosition().distanceAccurate(_lastKnownPosition);
+            _lastDraggedNode->_originalHitLocation = draggedNode->getWorldPosition();
+        } else if (draggedNode->getDragType() == VRODragType::FixedToPlane) {
+            _lastDraggedNode->_originalHitLocation = getPlaneIntersect(draggedNode);
+
+            // Snap object onto the plane if need be.
+            VROVector3f p = draggedNode->getDragPlanePoint();
+            VROVector3f n = draggedNode->getDragPlaneNormal();
+            VROVector3f c = draggedNode->getWorldPosition();
+            float isOnPlane = (n.x * (c.x - p.x)) + (n.y * (c.y - p.y)) + (n.z * (c.z -p.z));
+            isOnPlane = floorf(isOnPlane * 100) / 100;
+            if (isOnPlane != 0.0){
+                _lastDraggedNode->_originalDraggedNodePosition = _lastDraggedNode->_originalHitLocation;
+            }
+        } else {
+            _lastDraggedNode->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
+            _lastDraggedNode->_originalHitLocation = _hitResult->getLocation();
+        }
+
+        // Grab the forwardOffset (delta from the controller's forward in reference to the user).
+        _lastDraggedNode->_forwardOffset = getDragForwardOffset();
+        _lastDraggedNode->_dragState = VROEventDelegate::DragState::Dragging;
+    }
+
+    // Only calculate drag-to node positions for nodes in dragging states.
+    if (!_lastDraggedNode->_dragState == VROEventDelegate::DragState::Dragging) {
+        return;
+    }
+
+    /*
+     * Calculate the new drag-to world position based on the DragType for this node.
+     */
     VROVector3f draggedToPosition;
     switch(draggedNode->getDragType()) {
         case VRODragType::FixedToPlane:
@@ -251,16 +275,15 @@ VROVector3f VROInputControllerBase::getDragPositionFixedDistance() {
     return _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
 }
 
-VROVector3f VROInputControllerBase::getDragPositionFixedToPlane() {
+VROVector3f VROInputControllerBase::getPlaneIntersect(std::shared_ptr<VRONode> node) {
     // get the information from the node (set by the dev)
-    std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
-    VROVector3f planePoint = draggedNode->getDragPlanePoint();
-    VROVector3f planeNormal = draggedNode->getDragPlaneNormal();
-    float maxDistance = draggedNode->getDragMaxDistance();
+    VROVector3f planePoint = node->getDragPlanePoint();
+    VROVector3f planeNormal = node->getDragPlaneNormal();
+    float maxDistance = node->getDragMaxDistance();
 
     // if the plane info hasn't been set, then just return the current position.
     if (planeNormal.isZero()) { // we don't check if planePoint is zero because that's a "valid" point
-        return draggedNode->getPosition();
+        return node->getPosition();
     }
 
     // Find the intersection between the plane and the controller forward
@@ -278,14 +301,14 @@ VROVector3f VROInputControllerBase::getDragPositionFixedToPlane() {
         VROVector3f controllerProj;
         success = _lastKnownPosition.projectOnPlane(planePoint, planeNormal, &controllerProj);
         if (!success) {
-            return draggedNode->getPosition();
+            return node->getPosition();
         }
 
         // second, project the controller's position + forward onto the plane
         VROVector3f forwardProj;
         success = _lastKnownPosition.add(_lastKnownForward).projectOnPlane(planePoint, planeNormal, &forwardProj);
         if (!success) {
-            return draggedNode->getPosition();
+            return node->getPosition();
         }
 
         // find the length of the 3rd side of the right handed triangle formed by the controller's
@@ -296,8 +319,13 @@ VROVector3f VROInputControllerBase::getDragPositionFixedToPlane() {
         intersectionPoint = controllerProj.add(forwardProj.subtract(controllerProj).normalize().scale(length));
     }
 
+    return intersectionPoint;
+}
+
+VROVector3f VROInputControllerBase::getDragPositionFixedToPlane() {
     // The offset is the intersectionPoint minus the original HitTest location
-    VROVector3f draggedOffset = intersectionPoint - _lastDraggedNode->_originalHitLocation;
+    std::shared_ptr<VRONode> node = _lastDraggedNode->_draggedNode;
+    VROVector3f draggedOffset = getPlaneIntersect(node) - _lastDraggedNode->_originalHitLocation;
 
     // Finally, the position returned is the "starting" position of the dragged object + the offset.
     // This positions the dragged node relative to its parent.
