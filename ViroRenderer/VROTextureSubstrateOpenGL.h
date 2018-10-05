@@ -69,7 +69,11 @@ public:
     void setTexture(GLuint texture) {
         _texture = texture;
     }
-    
+
+    /*
+     Updates the wrap mode of the glTexture representing this substrate
+     */
+    void updateWrapMode(VROWrapMode wrapModeS, VROWrapMode wrapModeT);
 private:
     
     GLenum _target;

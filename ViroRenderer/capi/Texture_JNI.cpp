@@ -302,7 +302,10 @@ VRO_METHOD(void, nativeSetWrapS)(VRO_ARGS
                                  VRO_STRING wrapS) {
     VRO_METHOD_PREAMBLE;
     std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
-    texture->setWrapS(Texture::getWrapMode(env, wrapS));
+    VROWrapMode mode = Texture::getWrapMode(env, wrapS);
+    VROPlatformDispatchAsyncRenderer([texture, mode] {
+        texture->setWrapS(mode);
+    });
 }
 
 VRO_METHOD(void, nativeSetWrapT)(VRO_ARGS
@@ -310,7 +313,10 @@ VRO_METHOD(void, nativeSetWrapT)(VRO_ARGS
                                  VRO_STRING wrapT) {
     VRO_METHOD_PREAMBLE;
     std::shared_ptr<VROTexture> texture = VRO_REF_GET(VROTexture, nativeRef);
-    texture->setWrapT(Texture::getWrapMode(env, wrapT));
+    VROWrapMode mode = Texture::getWrapMode(env, wrapT);
+    VROPlatformDispatchAsyncRenderer([texture, mode] {
+        texture->setWrapT(mode);
+    });
 }
 
 VRO_METHOD(void, nativeSetMinificationFilter)(VRO_ARGS

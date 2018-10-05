@@ -211,15 +211,11 @@ public:
     VROWrapMode getWrapS() const {
         return _wrapS;
     }
-    void setWrapS(VROWrapMode wrapMode) {
-        _wrapS = wrapMode;
-    }
+    void setWrapS(VROWrapMode wrapMode);
     VROWrapMode getWrapT() const {
         return _wrapT;
     }
-    void setWrapT(VROWrapMode wrapMode) {
-        _wrapT = wrapMode;
-    }
+    void setWrapT(VROWrapMode wrapMode);
     
     /*
      Access and set filtering properties.

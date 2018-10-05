@@ -11,10 +11,12 @@
 
 #include <stdio.h>
 
+enum class VROWrapMode;
+
 class VROTextureSubstrate {
 public:
     virtual ~VROTextureSubstrate() {}
-    
+    virtual void updateWrapMode(VROWrapMode wrapModeS, VROWrapMode wrapModeT) = 0;
 };
 
 #endif /* VROTextureSubstrate_h */

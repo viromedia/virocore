@@ -39,6 +39,14 @@ VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
     }
 }
 
+void VROTextureSubstrateOpenGL::updateWrapMode(VROWrapMode wrapModeS, VROWrapMode wrapModeT) {
+    GL( glActiveTexture(GL_TEXTURE0) );
+    GL( glBindTexture(_target, _texture) );
+    GL( glTexParameteri(_target, GL_TEXTURE_WRAP_S, convertWrapMode(wrapModeS)) );
+    GL( glTexParameteri(_target, GL_TEXTURE_WRAP_T, convertWrapMode(wrapModeT)) );
+    GL( glBindTexture(_target, 0) );
+}
+
 void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
                                             VROTextureFormat format,
                                             VROTextureInternalFormat internalFormat, bool sRGB,

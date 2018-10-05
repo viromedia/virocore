@@ -271,4 +271,26 @@ bool VROTexture::hasAlpha() const {
     return _format != VROTextureFormat::RGB565 && _format != VROTextureFormat::RGB8;
 }
 
+void VROTexture::setWrapS(VROWrapMode wrapMode) {
+    _wrapS =  wrapMode;
 
+    if (!isHydrated()) {
+        return;
+    }
+
+    for (int i = 0; i < _substrates.size(); i ++) {
+        _substrates[i]->updateWrapMode(wrapMode, _wrapT);
+    }
+}
+
+void VROTexture::setWrapT(VROWrapMode wrapMode) {
+    _wrapT = wrapMode;
+
+    if (!isHydrated()) {
+        return;
+    }
+
+    for (int i = 0; i < _substrates.size(); i ++) {
+        _substrates[i]->updateWrapMode(_wrapS, wrapMode);
+    }
+}
