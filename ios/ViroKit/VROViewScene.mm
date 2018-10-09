@@ -276,6 +276,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     return _renderer->setBloomEnabled(enabled);
 }
 
+- (VROVector3f)unprojectPoint:(VROVector3f)point {
+    return self.renderer->unprojectPoint(point);
+}
+
+- (VROVector3f)projectPoint:(VROVector3f)point {
+    return self.renderer->projectPoint(point);
+}
+
 #pragma mark - Recording and Screenshots
 
 - (void)startVideoRecording:(NSString *)fileName
@@ -361,6 +369,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node {
     _renderer->setPointOfView(node);
 }
+
 
 #pragma mark - Scene Loading
 

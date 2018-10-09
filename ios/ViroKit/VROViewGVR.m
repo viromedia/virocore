@@ -438,6 +438,14 @@
     self.renderer->setPointOfView(node);
 }
 
+- (VROVector3f)unprojectPoint:(VROVector3f)point {
+    return self.renderer->unprojectPoint(point);
+}
+
+- (VROVector3f)projectPoint:(VROVector3f)point {
+    return self.renderer->projectPoint(point);
+}
+
 - (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
     _sceneController = sceneController;
     _renderer->setSceneController(_sceneController, _driver);
