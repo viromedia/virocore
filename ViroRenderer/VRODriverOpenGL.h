@@ -74,6 +74,7 @@ public:
         
         _cullMode = VROCullMode::None;
         GL( glDisable(GL_CULL_FACE) );
+        GL( glCullFace(GL_BACK) );
         
         _blendMode = VROBlendMode::Alpha;
         GL( glEnable(GL_BLEND) );
@@ -159,10 +160,10 @@ public:
         _cullMode = cullMode;
         if (cullMode == VROCullMode::None) {
             GL( glDisable(GL_CULL_FACE) );
+            GL( glCullFace(GL_BACK) );
         }
         else if (cullMode == VROCullMode::Back) {
             GL( glEnable(GL_CULL_FACE) );
-            GL( glCullFace(GL_BACK) );
         }
         else if (cullMode == VROCullMode::Front) {
             GL( glEnable(GL_CULL_FACE) );
@@ -256,10 +257,10 @@ public:
         }
     }
     
-    void bindRenderTarget(std::shared_ptr<VRORenderTarget> target, VRORenderTargetUnbindOp unbindOp) {
+    bool bindRenderTarget(std::shared_ptr<VRORenderTarget> target, VRORenderTargetUnbindOp unbindOp) {
         std::shared_ptr<VRORenderTarget> boundRenderTarget = _boundRenderTarget.lock();
         if (boundRenderTarget == target) {
-            return;
+            return false;
         }
         
         if (boundRenderTarget) {
@@ -288,6 +289,7 @@ public:
             target->bind();
         }
         _boundRenderTarget = target;
+        return true;
     }
     
     void unbindRenderTarget() {

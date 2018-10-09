@@ -39,11 +39,15 @@ void VROPortalTreeRenderPass::render(std::shared_ptr<VROScene> scene,
 
     std::shared_ptr<VRORenderTarget> target = inputs.outputTarget;
     passert (target);
-    driver->bindRenderTarget(target, VRORenderTargetUnbindOp::Invalidate);
-
+    bool didBindNew = driver->bindRenderTarget(target, VRORenderTargetUnbindOp::Invalidate);
     driver->setRenderTargetColorWritingMask(VROColorMaskAll);
-    target->clearDepthAndColor();
-    target->clearStencil(0);
+
+    // The bind operation automatically clears; only clear if we didn't bind the new
+    // buffer (e.g. because it was already bound).
+    if (!didBindNew) {
+        target->clearDepthAndColor();
+        target->clearStencil(0);
+    }
 
     // Get the top portal for the outgoing tree if we have an outgoing scene; this
     // way we can render the background of the outgoing scene with the background
