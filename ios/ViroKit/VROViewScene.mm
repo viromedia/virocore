@@ -95,7 +95,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     self.drawableColorFormat = GLKViewDrawableColorFormatSRGBA8888;
     self.drawableStencilFormat = GLKViewDrawableStencilFormat8;
     self.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-    self.drawableMultisample = GLKViewDrawableMultisample4X;
+    if (config.enableMultisampling) {
+        self.drawableMultisample = GLKViewDrawableMultisample4X;
+    }
     
     [EAGLContext setCurrentContext:self.context];
     
