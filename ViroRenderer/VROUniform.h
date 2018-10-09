@@ -17,6 +17,8 @@
 #include "VROLog.h"
 #include "VROOpenGL.h"
 
+static const float kInitialValue = -9999;
+
 class VROShaderModifier;
 class VROGeometry;
 class VROMaterial;
@@ -77,22 +79,23 @@ public:
         if (_location == -1) {
             return;
         }
-        GL( glUniform3f(_location, value.x, value.y, value.z) );
+        float array[3] = { value.x, value.y, value.z };
+        set(array, nullptr, nullptr);
     }
     
     void setVec4(VROVector4f value) {
         if (_location == -1) {
             return;
         }
-        GL( glUniform4f(_location, value.x, value.y, value.z, value.w); )
+        float array[4] = { value.x, value.y, value.z, value.w };
+        set(array, nullptr, nullptr);
     }
     
     void setMat4(VROMatrix4f value) {
         if (_location == -1) {
             return;
         }
-        
-        GL( glUniformMatrix4fv(_location, 1, GL_FALSE, value.getArray()) );
+        set(value.getArray(), nullptr, nullptr);
     }
     
     void setInt(int value) {
@@ -106,7 +109,7 @@ public:
         if (_location == -1) {
             return;
         }
-        GL( glUniform1f(_location, value) );
+        set(&value, nullptr, nullptr);
     }
     
 protected:
@@ -197,7 +200,7 @@ class VROUniform1f: public VROUniform {
 public:
     
     VROUniform1f(const std::string &name, int arraySize) :
-    VROUniform(name), _arraySize(arraySize), _curValue(9999) {
+    VROUniform(name), _arraySize(arraySize), _curValue(kInitialValue) {
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
@@ -213,7 +216,7 @@ public:
     }
     
     void reset() {
-        _curValue = 9999;
+        _curValue = kInitialValue;
     }
     
 private:
@@ -226,15 +229,21 @@ class VROUniform2f: public VROUniform {
 public:
     VROUniform2f(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize) {
+        for (int i = 0; i < 2; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
-        //passert (_location != -1);
-        GL( glUniform2fv(_location, _arraySize, (GLfloat *) value) );
+        if (_arraySize > 1 || memcmp(value, _curValue, sizeof(GLfloat) * 2) != 0) {
+            GL( glUniform2fv(_location, _arraySize, (GLfloat *) value) );
+            memcpy(_curValue, value, sizeof(GLfloat) * 2);
+        }
     }
     
 private:
     const int _arraySize;
+    GLfloat _curValue[2];
     
 };
 
@@ -242,9 +251,9 @@ class VROUniform3f: public VROUniform {
 public:
     VROUniform3f(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize) {
-        _curValue[0] = 0;
-        _curValue[1] = 0;
-        _curValue[2] = 0;
+        for (int i = 0; i < 3; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
@@ -264,9 +273,9 @@ public:
     }
     
     void reset() {
-        _curValue[0] = 0;
-        _curValue[1] = 0;
-        _curValue[2] = 0;
+        for (int i = 0; i < 3; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
 private:
@@ -279,15 +288,21 @@ class VROUniform4f: public VROUniform {
 public:
     VROUniform4f(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize) {
+        for (int i = 0; i < 4; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
-        //passert (_location != -1);
-        GL( glUniform4fv(_location, _arraySize, (GLfloat *) value) );
+        if (_arraySize > 1 || memcmp(value, _curValue, sizeof(GLfloat) * 4) != 0) {
+            GL( glUniform4fv(_location, _arraySize, (GLfloat *) value) );
+            memcpy(_curValue, value, sizeof(GLfloat) * 4);
+        }
     }
     
 private:
     const int _arraySize;
+    GLfloat _curValue[4];
     
 };
 
@@ -295,12 +310,20 @@ class VROUniformMat2: public VROUniform {
 public:
     VROUniformMat2(const std::string &name) :
     VROUniform(name) {
+        for (int i = 0; i < 4; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
-        //passert (_location != -1);
-        GL( glUniformMatrix2fv(_location, 1, GL_FALSE, (GLfloat *) value) );
+        if (memcmp(value, _curValue, sizeof(GLfloat) * 4) != 0) {
+            GL( glUniformMatrix2fv(_location, 1, GL_FALSE, (GLfloat *) value) );
+            memcpy(_curValue, value, sizeof(GLfloat) * 4);
+        }
     }
+    
+private:
+    GLfloat _curValue[4];
     
 };
 
@@ -308,12 +331,20 @@ class VROUniformMat3: public VROUniform {
 public:
     VROUniformMat3(const std::string &name) :
     VROUniform(name) {
+        for (int i = 0; i < 9; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
-        //passert (_location != -1);
-        GL( glUniformMatrix3fv(_location, 1, GL_FALSE, (GLfloat *) value) );
+        if (memcmp(value, _curValue, sizeof(GLfloat) * 9) != 0) {
+            GL( glUniformMatrix3fv(_location, 1, GL_FALSE, (GLfloat *) value) );
+            memcpy(_curValue, value, sizeof(GLfloat) * 9);
+        }
     }
+    
+private:
+    GLfloat _curValue[9];
     
 };
 
@@ -321,12 +352,20 @@ class VROUniformMat4: public VROUniform {
 public:
     VROUniformMat4(const std::string &name) :
     VROUniform(name) {
+        for (int i = 0; i < 16; i++) {
+            _curValue[i] = kInitialValue;
+        }
     }
     
     void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
-        //passert (_location != -1);
-        GL( glUniformMatrix4fv(_location, 1, GL_FALSE, (GLfloat *) value) );
+        if (memcmp(value, _curValue, sizeof(GLfloat) * 16) != 0) {
+            GL( glUniformMatrix4fv(_location, 1, GL_FALSE, (GLfloat *) value) );
+            memcpy(_curValue, value, sizeof(GLfloat) * 16);
+        }
     }
+    
+private:
+    GLfloat _curValue[16];
     
 };
 
