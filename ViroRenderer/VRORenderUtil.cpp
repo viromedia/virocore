@@ -124,7 +124,7 @@ bool VRORenderUtil::bindTexture(int unit, const std::shared_ptr<VROTexture> &tex
     }
     std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
     
-    GL( glActiveTexture(GL_TEXTURE0 + unit) );
-    GL( glBindTexture(targetAndTexture.first, targetAndTexture.second) );
+    driver->setActiveTextureUnit(GL_TEXTURE0 + unit);
+    driver->bindTexture(targetAndTexture.first, targetAndTexture.second);
     return true;
 }

@@ -188,6 +188,8 @@ public:
      should store a CPU copy of current state to avoid sending unnecessary
      instructions to the GPU.
      */
+    virtual void setActiveTextureUnit(int unit) = 0;
+    virtual void bindTexture(int target, int texture) = 0;
     virtual void setDepthWritingEnabled(bool enabled) = 0;
     virtual void setDepthReadingEnabled(bool enabled) = 0;
     virtual void setStencilTestEnabled(bool enabled) = 0;

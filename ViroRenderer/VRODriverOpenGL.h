@@ -57,11 +57,16 @@ public:
         // state, in case a part of the renderer outside our control (e.g. Cardboard,
         // etc.) changes OpenGL state outside of the VRODriver.
         _boundRenderTarget.reset();
+        VROShaderProgram::unbind();
         
         _materialColorWritingMask = VROColorMaskAll;
         _renderTargetColorWritingMask = VROColorMaskAll;
         _aggregateColorWritingMask = VROColorMaskAll;
         GL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
+        
+        _activeTextureUnit = GL_TEXTURE0;
+        GL( glActiveTexture(GL_TEXTURE0) );
+        _activeTexturesByTarget.clear();
 
         _depthWritingEnabled = true;
         _depthReadingEnabled = true;
@@ -108,6 +113,22 @@ public:
          does get switched external to the VRODriver between eyes.
          */
         unbindRenderTarget();
+    }
+    
+    void setActiveTextureUnit(int unit) {
+        if (_activeTextureUnit == unit) {
+            return;
+        }
+        _activeTextureUnit = unit;
+        GL( glActiveTexture(unit) );
+    }
+    
+    void bindTexture(int target, int texture) {
+        auto boundTexture = _activeTexturesByTarget.find(target);
+        if (boundTexture == _activeTexturesByTarget.end() || boundTexture->second != texture) {
+            _activeTexturesByTarget[target] = texture;
+            GL (glBindTexture(target, texture) );
+        }
     }
     
     void setDepthWritingEnabled(bool enabled) {
@@ -495,6 +516,8 @@ private:
     /*
      Current context-wide state.
      */
+    int _activeTextureUnit;
+    std::map<int, int> _activeTexturesByTarget;
     bool _depthWritingEnabled, _depthReadingEnabled;
     VROColorMask _renderTargetColorWritingMask, _materialColorWritingMask, _aggregateColorWritingMask;
     bool _stencilTestEnabled;

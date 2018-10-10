@@ -26,6 +26,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
     _driver(driver) {
     
     bool linearRenderingEnabled = driver->isLinearRenderingEnabled();
+    driver->setActiveTextureUnit(GL_TEXTURE0);
     loadTexture(type, format, internalFormat, linearRenderingEnabled && sRGB, mipmapMode, data, width, height, mipSizes,
                 wrapS, wrapT, minFilter, magFilter, mipFilter);
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
@@ -51,7 +52,6 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
     _target = GL_TEXTURE_2D;
     
     GL( glGenTextures(1, &_texture) );
-    GL( glActiveTexture(GL_TEXTURE0) );
     
     if (type == VROTextureType::Texture2D) {
         GL( glBindTexture(GL_TEXTURE_2D, _texture) );
