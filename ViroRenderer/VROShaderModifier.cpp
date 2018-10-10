@@ -56,24 +56,17 @@ VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector
 }
 
 VROShaderModifier::~VROShaderModifier() {
+    for (auto kv : _uniformBinders) {
+        delete (kv.second);
+    }
     ALLOCATION_TRACKER_SUB(ShaderModifiers, 1);
 }
 
 void VROShaderModifier::setUniformBinder(std::string uniform,
+                                         VROShaderProperty type,
                                          VROUniformBindingBlock bindingBlock) {
-    
-    _uniformBinders[uniform] = bindingBlock;
-}
-
-void VROShaderModifier::bindUniform(VROUniform *uniform, GLuint location,
-                                    const VROGeometry *geometry, const VROMaterial *material) {
-    auto it = _uniformBinders.find(uniform->getName());
-    if (it == _uniformBinders.end()) {
-        pabort("No binder was found for uniform %s", uniform->getName().c_str());
-    }
-    
-    VROUniformBindingBlock block = it->second;
-    block(uniform, location, geometry, material);
+    VROUniformBinder *binder = new VROUniformBinder(uniform, type, bindingBlock);
+    _uniformBinders[uniform] = binder;
 }
 
 std::vector<std::string> VROShaderModifier::getUniforms() const {

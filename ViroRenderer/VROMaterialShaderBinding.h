@@ -19,6 +19,7 @@ class VROGeometry;
 class VRODriver;
 class VROTextureReference;
 class VROUniform;
+class VROUniformBinder;
 class VROShaderProgram;
 enum class VROEyeType;
 
@@ -97,7 +98,7 @@ private:
     
     VROUniform *_cameraPositionUniform;
     VROUniform *_eyeTypeUniform;
-    std::vector<VROUniform *> _shaderModifierUniforms;
+    std::vector<VROUniformBinder *> _modifierUniformBinders;
     
     /*
      The textures of the material, in order of the samplers in the shader program.

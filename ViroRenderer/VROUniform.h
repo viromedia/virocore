@@ -11,6 +11,7 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"
@@ -22,6 +23,10 @@ static const float kInitialValue = -9999;
 class VROShaderModifier;
 class VROGeometry;
 class VROMaterial;
+class VROUniform;
+
+typedef std::function<void(VROUniform *uniform,
+                           const VROGeometry *geometry, const VROMaterial *material)> VROUniformBindingBlock;
 
 /*
  The various types of properties that may be set for a shader.
@@ -65,11 +70,12 @@ public:
         return _name;
     }
     
-    virtual void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) = 0;
+    virtual void set(const void *value) = 0;
     
-    inline void setLocation(int location) {
+    void setLocation(int location) {
         this->_location = location;
     }
+    int getLocation() const { return _location; }
     
     virtual void reset() {
         //sublcass to reset any cached value
@@ -80,7 +86,7 @@ public:
             return;
         }
         float array[3] = { value.x, value.y, value.z };
-        set(array, nullptr, nullptr);
+        set(array);
     }
     
     void setVec4(VROVector4f value) {
@@ -88,14 +94,14 @@ public:
             return;
         }
         float array[4] = { value.x, value.y, value.z, value.w };
-        set(array, nullptr, nullptr);
+        set(array);
     }
     
     void setMat4(VROMatrix4f value) {
         if (_location == -1) {
             return;
         }
-        set(value.getArray(), nullptr, nullptr);
+        set(value.getArray());
     }
     
     void setInt(int value) {
@@ -109,10 +115,14 @@ public:
         if (_location == -1) {
             return;
         }
-        set(&value, nullptr, nullptr);
+        set(&value);
     }
     
 protected:
+    
+    /*
+     Location of the uniform in the shader.
+     */
     int _location;
 
 private:
@@ -125,8 +135,9 @@ public:
     VROUniform1i(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize), _curValue(0) {
     }
+    virtual ~VROUniform1i() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (_location == -1) {
             return;
         }
@@ -153,8 +164,9 @@ public:
     VROUniform2i(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize) {
     }
+    virtual ~VROUniform2i() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         //passert (_location != -1);
         GL( glUniform2iv(_location, _arraySize, (GLint *) value) );
     }
@@ -169,8 +181,9 @@ public:
     VROUniform3i(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize) {
     }
+    virtual ~VROUniform3i() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         passert (_location != -1);
         GL( glUniform3iv(_location, _arraySize, (GLint *) value) );
     }
@@ -185,8 +198,9 @@ public:
     VROUniform4i(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize) {
     }
+    virtual ~VROUniform4i() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         //passert (_location != -1);
         GL( glUniform4iv(_location, _arraySize, (GLint *) value) );
     }
@@ -202,8 +216,9 @@ public:
     VROUniform1f(const std::string &name, int arraySize) :
     VROUniform(name), _arraySize(arraySize), _curValue(kInitialValue) {
     }
+    virtual ~VROUniform1f() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (_location == -1) {
             return;
         }
@@ -233,8 +248,9 @@ public:
             _curValue[i] = kInitialValue;
         }
     }
+    virtual ~VROUniform2f() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (_arraySize > 1 || memcmp(value, _curValue, sizeof(GLfloat) * 2) != 0) {
             GL( glUniform2fv(_location, _arraySize, (GLfloat *) value) );
             memcpy(_curValue, value, sizeof(GLfloat) * 2);
@@ -255,8 +271,9 @@ public:
             _curValue[i] = kInitialValue;
         }
     }
+    virtual ~VROUniform3f() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (_location == -1) {
             return;
         }
@@ -292,8 +309,9 @@ public:
             _curValue[i] = kInitialValue;
         }
     }
+    virtual ~VROUniform4f() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (_arraySize > 1 || memcmp(value, _curValue, sizeof(GLfloat) * 4) != 0) {
             GL( glUniform4fv(_location, _arraySize, (GLfloat *) value) );
             memcpy(_curValue, value, sizeof(GLfloat) * 4);
@@ -314,8 +332,9 @@ public:
             _curValue[i] = kInitialValue;
         }
     }
+    virtual ~VROUniformMat2() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (memcmp(value, _curValue, sizeof(GLfloat) * 4) != 0) {
             GL( glUniformMatrix2fv(_location, 1, GL_FALSE, (GLfloat *) value) );
             memcpy(_curValue, value, sizeof(GLfloat) * 4);
@@ -335,8 +354,9 @@ public:
             _curValue[i] = kInitialValue;
         }
     }
+    virtual ~VROUniformMat3() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (memcmp(value, _curValue, sizeof(GLfloat) * 9) != 0) {
             GL( glUniformMatrix3fv(_location, 1, GL_FALSE, (GLfloat *) value) );
             memcpy(_curValue, value, sizeof(GLfloat) * 9);
@@ -356,8 +376,9 @@ public:
             _curValue[i] = kInitialValue;
         }
     }
+    virtual ~VROUniformMat4() {}
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
+    void set(const void *value) {
         if (memcmp(value, _curValue, sizeof(GLfloat) * 16) != 0) {
             GL( glUniformMatrix4fv(_location, 1, GL_FALSE, (GLfloat *) value) );
             memcpy(_curValue, value, sizeof(GLfloat) * 16);
@@ -369,17 +390,22 @@ private:
     
 };
 
-class VROUniformShaderModifier : public VROUniform {
+class VROUniformBinder {
 public:
-    VROUniformShaderModifier(const std::string &name, std::shared_ptr<VROShaderModifier> modifier) :
-        VROUniform(name),
-        _modifier(modifier) {
+    VROUniformBinder(const std::string &name, VROShaderProperty type, VROUniformBindingBlock bindingBlock) :
+        _bindingBlock(bindingBlock) {
+        _uniform = VROUniform::newUniformForType(name, type, 1);
+    }
+    virtual ~VROUniformBinder() {
+        delete (_uniform);
     }
     
-    void set(const void *value, const VROGeometry *geometry, const VROMaterial *material);
+    VROUniform *getUniform() { return _uniform; }
+    void setForMaterial(const void *value, const VROGeometry *geometry, const VROMaterial *material);
     
 private:
-    std::shared_ptr<VROShaderModifier> _modifier;
+    VROUniform *_uniform;
+    VROUniformBindingBlock _bindingBlock;
     
 };
 

@@ -889,9 +889,10 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createChromaKeyModifier(int
     VROVector3f chromaKey = { (float) (r / 255.0), (float) (g / 255.0), (float) (b / 255.0) };
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                                       modifierCode);
-    modifier->setUniformBinder("color_to_replace", [chromaKey](VROUniform *uniform, GLuint location,
-                                                       const VROGeometry *geometry,
-                                                       const VROMaterial *material) {
+    modifier->setUniformBinder("color_to_replace", VROShaderProperty::Vec3,
+                               [chromaKey](VROUniform *uniform,
+                                           const VROGeometry *geometry,
+                                           const VROMaterial *material) {
         uniform->setVec3(chromaKey);
     });
     modifier->setName("chromakey");
@@ -915,8 +916,9 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
             "}",
         };
         sBloomModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
-        sBloomModifier->setUniformBinder("bloom_threshold", [](VROUniform *uniform, GLuint location,
-                                                               const VROGeometry *geometry, const VROMaterial *material) {
+        sBloomModifier->setUniformBinder("bloom_threshold", VROShaderProperty::Float,
+                                         [](VROUniform *uniform,
+                                            const VROGeometry *geometry, const VROMaterial *material) {
             uniform->setFloat(material->getBloomThreshold());
         });
         sBloomModifier->setName("bloom");
@@ -1004,8 +1006,9 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createToneMappingMaskModifi
             "tone_mapping_mask = vec4(tone_mapped * _output_color.a);"
         };
         sToneMappingMaskModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
-        sToneMappingMaskModifier->setUniformBinder("tone_mapped", [](VROUniform *uniform, GLuint location,
-                                                                     const VROGeometry *geometry, const VROMaterial *material) {
+        sToneMappingMaskModifier->setUniformBinder("tone_mapped", VROShaderProperty::Float,
+                                                   [](VROUniform *uniform,
+                                                      const VROGeometry *geometry, const VROMaterial *material) {
             uniform->setFloat(material->needsToneMapping() ? 1.0 : 0.0);
         });
         sToneMappingMaskModifier->setName("tm");

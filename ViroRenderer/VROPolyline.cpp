@@ -389,8 +389,9 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
         };
 
         sPolylineShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
-        sPolylineShaderModifier->setUniformBinder("thickness", [](VROUniform *uniform, GLuint location,
-                                                                  const VROGeometry *geometry, const VROMaterial *material) {
+        sPolylineShaderModifier->setUniformBinder("thickness", VROShaderProperty::Float,
+                                                  [](VROUniform *uniform,
+                                                     const VROGeometry *geometry, const VROMaterial *material) {
             const VROPolyline *polyline = dynamic_cast<const VROPolyline *>(geometry);
             uniform->setFloat(polyline->getThickness());
         });

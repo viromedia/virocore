@@ -136,8 +136,9 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     
     if (method == VROToneMappingMethod::Exposure || method == VROToneMappingMethod::Hable || method == VROToneMappingMethod::HableLuminanceOnly) {
         std::weak_ptr<VROToneMappingRenderPass> weakSelf = std::dynamic_pointer_cast<VROToneMappingRenderPass>(shared_from_this());
-        modifier->setUniformBinder("exposure", [weakSelf] (VROUniform *uniform, GLuint location,
-                                                           const VROGeometry *geometry, const VROMaterial *material) {
+        modifier->setUniformBinder("exposure", VROShaderProperty::Float,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
             std::shared_ptr<VROToneMappingRenderPass> strongSelf = weakSelf.lock();
             if (strongSelf) {
                 uniform->setFloat(strongSelf->_exposure);
@@ -146,8 +147,9 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     }
     if (method == VROToneMappingMethod::Hable || method == VROToneMappingMethod::HableLuminanceOnly) {
         std::weak_ptr<VROToneMappingRenderPass> weakSelf = std::dynamic_pointer_cast<VROToneMappingRenderPass>(shared_from_this());
-        modifier->setUniformBinder("white_point", [weakSelf] (VROUniform *uniform, GLuint location,
-                                                              const VROGeometry *geometry, const VROMaterial *material) {
+        modifier->setUniformBinder("white_point", VROShaderProperty::Float,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
             std::shared_ptr<VROToneMappingRenderPass> strongSelf = weakSelf.lock();
             if (strongSelf) {
                 uniform->setFloat(strongSelf->_whitePoint);

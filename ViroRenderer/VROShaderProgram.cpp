@@ -110,8 +110,6 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
         
     _modifiers = modifiers;
     addStandardUniforms();
-    addModifierUniforms();
-
     ALLOCATION_TRACKER_ADD(Shaders, 1);
 }
 
@@ -181,10 +179,9 @@ void VROShaderProgram::evict() {
     }
 
     _uniformsNeedRebind = true;
-    for (VROUniform *uniform : _uniforms) {
+    processUniforms([this] (VROUniform *uniform) {
         uniform->reset();
-    }
-
+    });
     _program = 0;
 }
 
@@ -382,58 +379,56 @@ VROUniform *VROShaderProgram::addUniform(VROShaderProperty type, int arraySize, 
     return uniform;
 }
 
-int VROShaderProgram::getUniformIndex(const std::string &name) {
-    int idx = 0;
-
-    for (VROUniform *uniform : _uniforms) {
-        if (uniform->getName() == name) {
-            return idx;
-        }
-
-        ++idx;
-    }
-
-    return -1;
-}
-
 VROUniform *VROShaderProgram::getUniform(const std::string &name) {
     for (VROUniform *uniform : _uniforms) {
         if (uniform->getName() == name) {
             return uniform;
         }
     }
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _modifiers) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+        
+        for (std::string &uniformName : uniformNames) {
+            if (uniformName == name) {
+                VROUniformBinder *binder = modifier->getUniformBinder(uniformName);
+                if (binder != nullptr) {
+                    return binder->getUniform();
+                }
+            }
+        }
+    }
 
     return nullptr;
 }
 
-VROUniform *VROShaderProgram::getUniform(int index) {
-    return _uniforms[index];
+void VROShaderProgram::processUniforms(std::function<void(VROUniform *uniform)> function) {
+    for (VROUniform *uniform : _uniforms) {
+        function(uniform);
+    }
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _modifiers) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+        
+        for (std::string &uniformName : uniformNames) {
+            VROUniformBinder *binder = modifier->getUniformBinder(uniformName);
+            if (binder != nullptr) {
+                function(binder->getUniform());
+            }
+        }
+    }
 }
 
 void VROShaderProgram::findUniformLocations() {
-    for (VROUniform *uniform : _uniforms) {
+    processUniforms([this] (VROUniform *uniform) {
         int location = GL( glGetUniformLocation(_program, uniform->getName().c_str()) );
         uniform->setLocation(location);
-    }
+    });
     
     int samplerIdx = 0;
-    
     for (std::string &samplerName : _samplers) {
         int location = GL( glGetUniformLocation(_program, samplerName.c_str()) );
         GL( glUniform1i(location, samplerIdx) );
         
         ++samplerIdx;
-    }
-}
-
-void VROShaderProgram::addModifierUniforms() {
-    for (const std::shared_ptr<VROShaderModifier> &modifier : _modifiers) {
-        std::vector<std::string> uniformNames = modifier->getUniforms();
-        
-        for (std::string &uniformName : uniformNames) {
-            VROUniform *uniform = new VROUniformShaderModifier(uniformName, modifier);
-            _uniforms.push_back(uniform);
-        }
     }
 }
 
