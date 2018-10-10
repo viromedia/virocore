@@ -156,6 +156,73 @@ public class ViroViewScene extends ViroView {
         }
     }
 
+    private static class ViroEGLConfigChooser implements GLTextureView.EGLConfigChooser {
+
+        private boolean mMultisamplingEnabled;
+
+        public ViroEGLConfigChooser(boolean multisamplingEnabled) {
+            mMultisamplingEnabled = multisamplingEnabled;
+        }
+
+        private int[] getMultisamplingAttributes(int colorBits, int alphaBits, int depthBits, int stencilBits) {
+            return new int[] {
+                    EGL10.EGL_LEVEL, 0,
+                    EGL10.EGL_RENDERABLE_TYPE, 0x00000040,  // EGL_OPENGL_ES3_BIT
+                    EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER,
+                    EGL10.EGL_RED_SIZE, colorBits,
+                    EGL10.EGL_GREEN_SIZE, colorBits,
+                    EGL10.EGL_BLUE_SIZE, colorBits,
+                    EGL10.EGL_ALPHA_SIZE, alphaBits,
+                    EGL10.EGL_DEPTH_SIZE, depthBits,
+                    EGL10.EGL_STENCIL_SIZE, stencilBits,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1,
+                    EGL10.EGL_SAMPLES, 4,  // This is for 4x MSAA.
+                    EGL10.EGL_NONE
+            };
+        }
+
+        private int[] getBaseAttributes(int colorBits, int alphaBits, int depthBits, int stencilBits) {
+            return new int[] {
+                    EGL10.EGL_LEVEL, 0,
+                    EGL10.EGL_RENDERABLE_TYPE, 0x00000040,  // EGL_OPENGL_ES3_BIT
+                    EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER,
+                    EGL10.EGL_RED_SIZE, colorBits,
+                    EGL10.EGL_GREEN_SIZE, colorBits,
+                    EGL10.EGL_BLUE_SIZE, colorBits,
+                    EGL10.EGL_ALPHA_SIZE, alphaBits,
+                    EGL10.EGL_DEPTH_SIZE, depthBits,
+                    EGL10.EGL_STENCIL_SIZE, stencilBits,
+                    EGL10.EGL_NONE
+            };
+        }
+
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+            int colorBits = 8;
+            int alphaBits = 8;
+            int depthBits = 16;
+            int stencilBits = 8;
+
+            int[] attribs = null;
+            if (mMultisamplingEnabled) {
+                attribs = getMultisamplingAttributes(colorBits, alphaBits, depthBits, stencilBits);
+            } else {
+                attribs = getBaseAttributes(colorBits, alphaBits, depthBits, stencilBits);
+            }
+
+            EGLConfig[] configs = new EGLConfig[1];
+            int[] configCounts = new int[1];
+            egl.eglChooseConfig(display, attribs, configs, 1, configCounts);
+
+            if (configCounts[0] == 0) {
+                // Failed! Error handling.
+                return null;
+            } else {
+                return configs[0];
+            }
+        }
+    }
+
     private Renderer mRenderer;
     private GLTextureView mSurfaceView;
     private AssetManager mAssetManager;
@@ -261,6 +328,7 @@ public class ViroViewScene extends ViroView {
 
     /**
      * Used by release tests.
+     *
      * @hide
      * @param listener
      */
@@ -269,13 +337,8 @@ public class ViroViewScene extends ViroView {
     }
 
     private void initSurfaceView() {
-        int colorBits = 8;
-        int alphaBits = 8;
-        int depthBits = 16;
-        int stencilBits = 8;
-
         mSurfaceView.setEGLContextClientVersion(3);
-        mSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
+        mSurfaceView.setEGLConfigChooser(new ViroEGLConfigChooser(mRendererConfig.isMultisamplingEnabled()));
         mSurfaceView.setPreserveEGLContextOnPause(true);
         mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLTextureWindowSurfaceFactory());
         mSurfaceView.setRenderer(new ViroSceneRenderer(this));

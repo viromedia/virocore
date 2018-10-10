@@ -15,6 +15,7 @@ public class RendererConfiguration {
     private boolean mHDREnabled = true;
     private boolean mPBREnabled = true;
     private boolean mBloomEnabled = true;
+    private boolean mMultisamplingEnabled = false;
 
     /**
      * Create a new default RendererConfiguration. The default RendererConfiguration enables
@@ -111,4 +112,22 @@ public class RendererConfiguration {
     public boolean isBloomEnabled() {
         return mBloomEnabled;
     }
+
+    /**
+     * Set to true to enable 4x full-screen multisampling. This helps reduce jagged edges in
+     * geometry, but takes <i>significantly</i> more GPU processing time and will drain battery
+     * at a faster rate. This defaults to false and is not recommended except on low resolution
+     * devices.
+     *
+     * @param enabled True to enable 4x multisampling.
+     */
+    public void setMultisamplingEnabled(boolean enabled) { mMultisamplingEnabled = enabled; }
+
+    /**
+     * Return true if 4x multisampling is enabled for this configuration.
+     *
+     * @return True if 4x multisampling is enabled.
+     */
+    public boolean isMultisamplingEnabled() { return mMultisamplingEnabled; }
+
 }

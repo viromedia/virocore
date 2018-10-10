@@ -27,9 +27,10 @@ static const bool kSceneCheckeredBackground = NO;
 
 - (void)loadView {
     VRORendererConfiguration config;
-    config.enableHDR = YES;
-    config.enablePBR = YES;
-    config.enableBloom = YES;
+    config.enableHDR = NO;
+    config.enablePBR = NO;
+    config.enableBloom = NO;
+    config.enableMultisampling = NO;
     
     if (kTestType == VROTestSceneType::VR) {
         VROViewGVR *view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds
