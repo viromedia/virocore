@@ -39,10 +39,15 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
     ambient->setColor({ 1.0, 1.0, 1.0 });
     ambient->setIntensity(250);
     
+    std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
+    
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->addLight(ambient);
+    rootNode->setLightingEnvironment(environment);
+    rootNode->setBackgroundSphere(environment);
+    
     
     std::shared_ptr<VROPortal> portalNode = std::make_shared<VROPortal>();
     portalNode->setBackgroundCube(VROTestUtil::loadCloudBackground());
