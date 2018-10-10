@@ -34,9 +34,12 @@ VROImagePostProcessOpenGL::VROImagePostProcessOpenGL(std::shared_ptr<VROShaderPr
         
         for (std::string &uniformName : uniformNames) {
             VROUniformBinder *binder = modifier->getUniformBinder(uniformName);
+            VROUniform *uniform = _shader->getUniform(binder->getName());
             passert_msg (binder != nullptr, "Failed to find binder for uniform '%s' in program!",
                          uniformName.c_str());
-            _uniformBinders.push_back(binder);
+            passert_msg (uniform != nullptr, "Failed to find uniform for modifier uniform '%s' in program!",
+                         uniformName.c_str());
+            _uniformBinders.push_back({ binder, uniform });
         }
     }
 }
@@ -64,8 +67,8 @@ void VROImagePostProcessOpenGL::blit(std::vector<std::shared_ptr<VROTexture>> te
         _shader->hydrate();
     }
     driver->bindShader(_shader);
-    for (VROUniformBinder *uniform : _uniformBinders) {
-        uniform->setForMaterial(nullptr, nullptr, nullptr);
+    for (auto uniform_binder : _uniformBinders) {
+        uniform_binder.first->setForMaterial(uniform_binder.second, nullptr, nullptr);
     }
     
     drawScreenSpaceVAR();
@@ -93,8 +96,8 @@ void VROImagePostProcessOpenGL::blitOpt(std::vector<std::shared_ptr<VROTexture>>
     if (!bind(textures, driver)) {
         return;
     }
-    for (VROUniformBinder *uniform : _uniformBinders) {
-        uniform->setForMaterial(nullptr, nullptr, nullptr);
+    for (auto uniform_binder : _uniformBinders) {
+        uniform_binder.first->setForMaterial(uniform_binder.second, nullptr, nullptr);
     }
     drawScreenSpaceVAR();
 }

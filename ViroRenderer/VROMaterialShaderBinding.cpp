@@ -69,9 +69,12 @@ void VROMaterialShaderBinding::loadUniforms() {
         
         for (std::string &uniformName : uniformNames) {
             VROUniformBinder *binder = modifier->getUniformBinder(uniformName);
+            VROUniform *uniform = _program->getUniform(binder->getName());
             passert_msg (binder != nullptr, "Failed to find binder for uniform '%s' in program!",
                          uniformName.c_str());
-            _modifierUniformBinders.push_back(binder);
+            passert_msg (uniform != nullptr, "Failed to find uniform for modifier uniform '%s' in program!",
+                         uniformName.c_str());
+            _modifierUniformBinders.push_back({ binder, uniform });
         }
     }
 }
@@ -175,7 +178,7 @@ void VROMaterialShaderBinding::bindGeometryUniforms(float opacity, const VROGeom
     if (_alphaUniform != nullptr) {
         _alphaUniform->setFloat(material.getTransparency() * opacity);
     }
-    for (VROUniformBinder *uniform : _modifierUniformBinders) {
-        uniform->setForMaterial(nullptr, &geometry, &material);
+    for (auto binder_uniform : _modifierUniformBinders) {
+        binder_uniform.first->setForMaterial(binder_uniform.second, &geometry, &material);
     }
 }

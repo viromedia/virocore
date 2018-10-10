@@ -14,6 +14,7 @@
 
 class VROShaderProgram;
 class VROUniformBinder;
+class VROUniform;
 
 class VROImagePostProcessOpenGL : public VROImagePostProcess {
 public:
@@ -52,7 +53,7 @@ private:
      associated with each of these is run, and the uniform bound, before
      rendering the post-process.
      */
-    std::vector<VROUniformBinder *> _uniformBinders;
+    std::vector<std::pair<VROUniformBinder *, VROUniform *>> _uniformBinders;
     
     /*
      Perform common operations before running the post process. Returns true

@@ -98,7 +98,7 @@ private:
     
     VROUniform *_cameraPositionUniform;
     VROUniform *_eyeTypeUniform;
-    std::vector<VROUniformBinder *> _modifierUniformBinders;
+    std::vector<std::pair<VROUniformBinder *, VROUniform *>> _modifierUniformBinders;
     
     /*
      The textures of the material, in order of the samplers in the shader program.

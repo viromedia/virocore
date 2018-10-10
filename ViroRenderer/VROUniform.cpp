@@ -65,9 +65,9 @@ VROUniform *VROUniform::newUniformForType(const std::string &name, VROShaderProp
     return uniform;
 }
 
-void VROUniformBinder::setForMaterial(const void *value, const VROGeometry *geometry, const VROMaterial *material) {
-    if (_uniform->getLocation() == -1) {
+void VROUniformBinder::setForMaterial(VROUniform *uniform, const VROGeometry *geometry, const VROMaterial *material) {
+    if (uniform->getLocation() == -1) {
         return;
     }
-    _bindingBlock(_uniform, geometry, material);
+    _bindingBlock(uniform, geometry, material);
 }
