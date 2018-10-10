@@ -30,6 +30,7 @@
 static const bool kEnableStencilCopy = true;
 static const int kResourcePurgeFrameInterval = 120;
 static const int kResourcePurgeForceFrameInterval = 1200;
+static const int kMaxTextureUnits = 32;
 
 class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VRODriverOpenGL> {
 
@@ -64,9 +65,11 @@ public:
         _aggregateColorWritingMask = VROColorMaskAll;
         GL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
         
-        _activeTextureUnit = GL_TEXTURE0;
+        _activeTextureUnit = 0;
         GL( glActiveTexture(GL_TEXTURE0) );
-        _activeTexturesByTarget.clear();
+        for (int i = 0; i < kMaxTextureUnits; i++) {
+            _activeTextures[i].clear();
+        }
 
         _depthWritingEnabled = true;
         _depthReadingEnabled = true;
@@ -116,18 +119,33 @@ public:
     }
     
     void setActiveTextureUnit(int unit) {
-        if (_activeTextureUnit == unit) {
+        int unitInt = unit - GL_TEXTURE0;
+        if (_activeTextureUnit == unitInt) {
             return;
         }
-        _activeTextureUnit = unit;
+        _activeTextureUnit = unitInt;
         GL( glActiveTexture(unit) );
     }
     
     void bindTexture(int target, int texture) {
-        auto boundTexture = _activeTexturesByTarget.find(target);
-        if (boundTexture == _activeTexturesByTarget.end() || boundTexture->second != texture) {
-            _activeTexturesByTarget[target] = texture;
+        std::map<int, int> &activeTexturesInUnit = _activeTextures[_activeTextureUnit];
+        
+        auto boundTexture = activeTexturesInUnit.find(target);
+        if (boundTexture == activeTexturesInUnit.end() || boundTexture->second != texture) {
+            activeTexturesInUnit[target] = texture;
             GL (glBindTexture(target, texture) );
+        }
+    }
+    
+    void bindTexture(int unit, int target, int texture) {
+        // This method avoids the glActiveTexture call if the texture is already bound
+        // to the unit and target
+        int unitInt = unit - GL_TEXTURE0;
+        if (_activeTextureUnit == unitInt) {
+            bindTexture(target, texture);
+        } else {
+            setActiveTextureUnit(unit);
+            bindTexture(target, texture);
         }
     }
     
@@ -514,10 +532,16 @@ private:
     bool _softwareGammaPass;
     
     /*
-     Current context-wide state.
+     Active texture unit, and the bound texture on each unit (32 units total).
+     Within each unit, there can be multiple textures bound to each target type
+     (e.g. GL_TEXTURE_2D, etc.)
      */
     int _activeTextureUnit;
-    std::map<int, int> _activeTexturesByTarget;
+    std::map<int, int> _activeTextures[kMaxTextureUnits];
+    
+    /*
+     Current context-wide state.
+     */
     bool _depthWritingEnabled, _depthReadingEnabled;
     VROColorMask _renderTargetColorWritingMask, _materialColorWritingMask, _aggregateColorWritingMask;
     bool _stencilTestEnabled;

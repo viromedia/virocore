@@ -317,9 +317,7 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             }
             
             std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
-            driver->setActiveTextureUnit(GL_TEXTURE0 + activeTexture);
-            driver->bindTexture(targetAndTexture.first, targetAndTexture.second);
-            
+            driver->bindTexture(GL_TEXTURE0 + activeTexture, targetAndTexture.first, targetAndTexture.second);
             ++activeTexture;
         }
     }
