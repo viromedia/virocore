@@ -670,8 +670,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     _pointOfView->getCamera()->setPosition(position);
     _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
-    
-    GL( glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight()) );
     _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
     _renderer->endFrame(_driver);
@@ -685,7 +683,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     
     _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
-    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
     _renderer->endFrame(_driver);

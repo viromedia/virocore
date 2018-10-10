@@ -26,12 +26,11 @@ public:
         [_view bindDrawable];
         
         /*
-         Bind the viewport and scissor when the render target changes. The scissor
-         ensures we only clear (e.g. glClear) over the designated area; this is
-         particularly important in VR mode where we have two 'eyes' each with a
-         different viewport over the same framebuffer.
+         The viewport is already set by [_view bindDrawable] so we do not need to set
+         that here. We still set the scissor, so ensure we only clear (e.g. glClear)
+         over the designated area; this is particularly important in VR mode where we have
+         two 'eyes' each with different viewport over the same framebuffer.
          */
-        glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
         glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
         
         /*
