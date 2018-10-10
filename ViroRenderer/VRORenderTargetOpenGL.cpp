@@ -51,6 +51,11 @@ VRORenderTargetOpenGL::~VRORenderTargetOpenGL() {
 }
 
 void VRORenderTargetOpenGL::bind() {
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (!driver) {
+        return;
+    }
+    
     GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer) );
 
     /*
@@ -61,6 +66,13 @@ void VRORenderTargetOpenGL::bind() {
      */
     GL( glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight()) );
     GL( glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight()) );
+    
+    /*
+     Ensure the clears wipe out everything by resetting all masks.
+     */
+    driver->setDepthWritingEnabled(true);
+    driver->setRenderTargetColorWritingMask(VROColorMaskAll);
+    GL (glStencilMask(0xFF) );
     
     /*
      Prevent logical buffer load by immediately clearing.
@@ -713,11 +725,9 @@ bool VRORenderTargetOpenGL::createDepthTextureTarget() {
 
 #pragma mark - Rendering Operations
 
-void VRORenderTargetOpenGL::clearStencil(int bits)  {
+void VRORenderTargetOpenGL::clearStencil()  {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (driver) {
-        GL (glStencilMask(0xFF) );
-        GL (glClearStencil(bits) );
         GL (glClear(GL_STENCIL_BUFFER_BIT) );
     }
     else {

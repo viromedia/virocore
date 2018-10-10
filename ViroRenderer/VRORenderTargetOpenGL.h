@@ -56,7 +56,7 @@ public:
     
 #pragma mark - Render Target Rendering
     
-    void clearStencil(int bits);
+    void clearStencil();
     void clearDepth();
     void clearColor();
     void clearDepthAndColor();

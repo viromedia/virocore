@@ -111,7 +111,7 @@ public:
     }
     
     /*
-     Bind this render-target. This will bind target only for drawing.
+     Bind this render-target. This will bind the target only for drawing.
      */
     virtual void bind() = 0;
 
@@ -227,9 +227,9 @@ public:
 #pragma mark - Rendering Operations
     
     /*
-     Clear the stencil buffer with the given clear value.
+     Clear the stencil buffer.
      */
-    virtual void clearStencil(int bits) = 0;
+    virtual void clearStencil() = 0;
     
     /*
      Clear the depth buffer.
