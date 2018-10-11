@@ -127,12 +127,16 @@ public:
         GL( glActiveTexture(unit) );
     }
     
-    void bindTexture(int target, int texture) {
-        std::map<int, int> &activeTexturesInUnit = _activeTextures[_activeTextureUnit];
+    bool isTextureBound(int unit, int target, int texture) {
+        std::map<int, int> &activeTexturesInUnit = _activeTextures[unit];
         
         auto boundTexture = activeTexturesInUnit.find(target);
-        if (boundTexture == activeTexturesInUnit.end() || boundTexture->second != texture) {
-            activeTexturesInUnit[target] = texture;
+        return boundTexture != activeTexturesInUnit.end() && boundTexture->second == texture;
+    }
+    
+    void bindTexture(int target, int texture) {
+        if (!isTextureBound(_activeTextureUnit, target, texture)) {
+            _activeTextures[_activeTextureUnit][target] = texture;
             GL (glBindTexture(target, texture) );
         }
     }
@@ -144,8 +148,10 @@ public:
         if (_activeTextureUnit == unitInt) {
             bindTexture(target, texture);
         } else {
-            setActiveTextureUnit(unit);
-            bindTexture(target, texture);
+            if (!isTextureBound(unitInt, target, texture)) {
+                setActiveTextureUnit(unit);
+                bindTexture(target, texture);
+            }
         }
     }
     
