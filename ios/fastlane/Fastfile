@@ -19,6 +19,9 @@ platform :ios do
   before_all do
     BUILD_INTERMEDIATES = "/var/tmp/build_intermediates/"
     GIT_BRANCH = git_branch
+    Dir.chdir("../") do
+    	sh("pod repo update")
+    end
     cocoapods
   end
 
