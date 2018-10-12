@@ -89,15 +89,18 @@ public class PlatformUtil {
         }
     }
 
-    private void dispose(){
-        // Ensure that all referenced video sinks that were created are cleaned up.
-        Iterator it = mVideoSinks.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            VideoSink videoSink = (VideoSink) pair.getValue();
-            mFrameListeners.remove(videoSink);
-            videoSink.releaseSurface();
-            it.remove();
+    public void dispose() {
+
+        if (mVideoSinks != null && mFrameListeners != null) {
+            // Ensure that all referenced video sinks that were created are cleaned up.
+            Iterator it = mVideoSinks.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                VideoSink videoSink = (VideoSink) pair.getValue();
+                mFrameListeners.remove(videoSink);
+                videoSink.releaseSurface();
+                it.remove();
+            }
         }
 
         mVideoSinks = null;

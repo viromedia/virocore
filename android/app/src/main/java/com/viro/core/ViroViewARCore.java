@@ -796,6 +796,10 @@ public class ViroViewARCore extends ViroView {
         // When the ViroViewARCore object is disposed, we want the ARNode's nodeARMap to also clear itself.
         ARNode.nodeARMap.clear();
 
+        if (mPlatformUtil != null) {
+            mPlatformUtil.dispose();
+        }
+
         mViroTouchGestureListener = null;
         mPlatformUtil = null;
         mAssetManager = null;
