@@ -238,14 +238,16 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                         // Process and cache skinner and skeletal data needed for skeletal animation
                         // and skinner geometry to be set later on our nodes.
                         if (!processSkinner(model)) {
-                            perr("Error when processing the skinner of gltf model!");
+                            perr("Error when processing the skinner of GLTF model!");
+                            onFinish(nullptr, false);
                             return;
                         }
 
                         // Now generate our KeyFrame and skeletal animations and cache them to be
                         // set later on our nodes (when we iterate through the scene hierarchy).
                         if (!processAnimations(model)) {
-                            pwarn("Error when processing animation data of the gltf model!");
+                            pwarn("Error when processing animation data of the GLTF model!");
+                            onFinish(nullptr, false);
                             return;
                         }
 
@@ -435,7 +437,7 @@ bool VROGLTFLoader::processAnimations(const tinygltf::Model &model) {
 bool VROGLTFLoader::processAnimationKeyFrame(const tinygltf::Model &model,
                                              std::map<int, std::map<int, std::map<int, std::vector<int>>>> &animatedNodes) {
     // Iterate through all animations that are mapped to a node in nodeIndex within
-    // animatedNodes. For each animation, proccess its data via animation channels
+    // animatedNodes. For each animation, process its data via animation channels
     // and create a VROKeyframeAnimation from it. Cache the results in _nodeKeyFrameAnim.
     for (auto const& animNode : animatedNodes) {
 

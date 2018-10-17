@@ -43,7 +43,7 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, modelType, requestId](std::shared_ptr<VRONode> node, bool success) {
                 if (!success) {
-                    delegateRef->objFailed("Failed to load OBJ");
+                    delegateRef->objFailed("Failed to load model");
                 }
                 else {
                     delegateRef->objLoaded(node, modelType, requestId);
@@ -83,7 +83,7 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, modelType, requestId](std::shared_ptr<VRONode> node, bool success) {
                 if (!success) {
-                    delegateRef->objFailed("Failed to load OBJ");
+                    delegateRef->objFailed("Failed to load model");
                 }
                 else {
                     delegateRef->objLoaded(node, modelType, requestId);
