@@ -23,6 +23,11 @@ VRO_METHOD(VRO_REF(VROGeometry), nativeCreateGeometry)(VRO_NO_ARGS) {
     return VRO_REF_NEW(VROGeometry, geo);
 }
 
+VRO_METHOD(void, nativeDestroyGeometry)(VRO_ARGS
+                                   VRO_REF(VROGeometry) nativeGeometryRef) {
+    VRO_REF_DELETE(VROGeometry, nativeGeometryRef);
+}
+
 VRO_METHOD(void, nativeSetMaterials)(VRO_ARGS
                                      VRO_REF(VROGeometry) geo_j,
                                      VRO_REF_ARRAY(VROMaterial) materials_j) {

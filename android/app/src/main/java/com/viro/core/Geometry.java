@@ -34,6 +34,25 @@ public class Geometry {
         mNativeRef = nativeRef;
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
+    }
+
+    /**
+     * Release native resources associated with this Box.
+     */
+    public void dispose() {
+        if (mNativeRef != 0) {
+            nativeDestroyGeometry(mNativeRef);
+            mNativeRef = 0;
+        }
+    }
+
     /**
      * Get the {@link Material} objects used by this Geometry.
      *
@@ -182,6 +201,7 @@ public class Geometry {
     //#ENDIF
 
     private native long nativeCreateGeometry();
+    private native void nativeDestroyGeometry(long nativeRef);
     private native void nativeSetMaterials(long nativeRef, long[] materials);
     private native void nativeCopyAndSetMaterials(long nativeRef, long[] materials);
     private native void nativeSetGeometryElements(long nativeRef, long[] elements);
