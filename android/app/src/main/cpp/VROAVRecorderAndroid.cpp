@@ -65,6 +65,7 @@ bool VROAVRecorderAndroid::onRenderedFrameTexture(std::shared_ptr<VRORenderTarge
             std::shared_ptr<VRODriverOpenGL> openGLDriver = std::static_pointer_cast<VRODriverOpenGL>(driver);
             _recorderDisplay = std::make_shared<VRORecorderEglSurfaceDisplay>(openGLDriver, shared_from_this());
         }
+        _recorderDisplay->setViewport({0, 0, input->getWidth(), input->getHeight()});
 
         driver->bindRenderTarget(_recorderDisplay, VRORenderTargetUnbindOp::Invalidate);
         _recordingPostProcess->blit({ input->getTexture(0) }, driver);
@@ -139,8 +140,8 @@ std::shared_ptr<VRORenderTarget> VROAVRecorderAndroid::bindScreenshotLDRTarget(i
     if (!_screenshotLDRTarget) {
         pinfo("Creating screenshot LDR render target");
         _screenshotLDRTarget = driver->newRenderTarget( VRORenderTargetType::ColorTexture, 1, 1, false);
-        _screenshotLDRTarget->setViewport( {0, 0, width, height});
     }
+    _screenshotLDRTarget->setViewport({0, 0, width, height});
     driver->bindRenderTarget(_screenshotLDRTarget, VRORenderTargetUnbindOp::Invalidate);
     return _screenshotLDRTarget;
 }

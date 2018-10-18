@@ -255,6 +255,10 @@ public class ViroViewARCore extends ViroView {
             view.mWidth = width;
             view.mHeight = height;
             ((RendererARCore) view.mNativeRenderer).setARDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
+            if (view.mMediaRecorder != null){
+                view.mMediaRecorder.setHeight(height);
+                view.mMediaRecorder.setWidth(width);
+            }
         }
 
         @Override
