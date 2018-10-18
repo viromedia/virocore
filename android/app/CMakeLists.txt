@@ -43,6 +43,7 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/debug_stacktrace.cpp
              ${VIRO_ANDROID_SRC}/debug_mapinfo.cpp
              ${VIRO_ANDROID_SRC}/VROLooper.cpp
+             ${VIRO_ANDROID_SRC}/VROSceneRenderer.cpp
              ${VIRO_ANDROID_SRC}/VROSceneRendererGVR.cpp
              ${VIRO_ANDROID_SRC}/VROSceneRendererOVR.cpp
              ${VIRO_ANDROID_SRC}/VROSceneRendererSceneView.cpp

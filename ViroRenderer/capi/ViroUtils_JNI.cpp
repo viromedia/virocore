@@ -7,6 +7,9 @@
 
 #include <VROPlatformUtil.h>
 #include "ViroUtils_JNI.h"
+#include "VROHitTestResult.h"
+#include "VRONode.h"
+#
 
 VRO_FLOAT_ARRAY ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
     VRO_ENV env = VROPlatformGetJNIEnv();
@@ -53,5 +56,27 @@ VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
     VRO_FLOAT_ARRAY jPointsArray = VRO_NEW_FLOAT_ARRAY(points.size() * 3);
     VRO_FLOAT_ARRAY_SET(jPointsArray, 0, points.size() * 3, tempPointsArr);
     return jPointsArray;
+}
+
+VRO_OBJECT ARUtilsCreateHitTestResult(VROHitTestResult result) {
+    VRO_ENV env = VROPlatformGetJNIEnv();
+
+    VRO_FLOAT distance;
+    VRO_FLOAT_ARRAY jIntersectionPoint = VRO_NEW_FLOAT_ARRAY(3);
+    VROVector3f intersectionVec = result.getLocation();
+
+    VRO_STRING tag = NULL;
+    if(result.getNode() != NULL) {
+        std::string tag_s = result.getNode()->getTag();
+        if (!tag_s.empty()) {
+            tag = VRO_NEW_STRING(tag_s.c_str());
+        }
+    }
+
+    float intersectionPoint[3] = {intersectionVec.x, intersectionVec.y, intersectionVec.z};
+    VRO_FLOAT_ARRAY_SET(jIntersectionPoint, 0, 3, intersectionPoint);
+
+    return VROPlatformConstructHostObject("com/viro/core/HitTestResult",
+                                          "(Ljava/lang/String;F[F)V", tag, distance, jIntersectionPoint);
 }
 

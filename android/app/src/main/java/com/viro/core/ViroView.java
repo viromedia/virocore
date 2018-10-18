@@ -10,6 +10,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -552,6 +553,41 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      */
     public Vector unprojectPoint(Vector point) {
         return mNativeRenderer.unprojectPoint(point.x, point.y, point.z);
+    }
+
+
+    /**
+     * Performs a hit-test an x,y screen point The
+     * hit-test returns all virtual world features that are intersected by the ray.
+     *
+     * @param point      Perform the hit-test from this x,y screen point.
+     * @param isHighAccuracyTest True if you want this hit test to use the geometry of each object to find intersection points
+     *                           instead of the bounding box. Performing high accuracy hit tests have a performance impact.
+     * @param callback The callback that will receive the {@link HitTestResult}
+     *                 results.
+     */
+
+    public void performSceneHitTestWithPoint(Point point, boolean isHighAccuracyTest, HitTestListener callback) {
+        if (!mDestroyed) {
+           mNativeRenderer.performHitTestWithPoint(point.x, point.y, !isHighAccuracyTest, callback);
+        }
+    }
+
+    /**
+     * Performs a hit-test from the camera's position in the direction of the given ray. The
+     * hit-test returns all virtual world features that are intersected by the ray.
+     *
+     * @param origin   Perform the hit-test from the this origin point.
+     * @param ray      A normalized ray that will be cast from the origin.
+     * @param isHighAccuracyTest True if you want this hit test to use geometry of each object to find intersection points
+     *                           instead of the bounding box. Performing high accuracy hit tests have a performance impact.
+     * @param callback The callback that will receive the {@link HitTestResult}
+     *                 results.
+     */
+    public void performSceneHitTestRay(Vector origin, Vector ray, boolean isHighAccuracyTest, HitTestListener callback) {
+        if (!mDestroyed) {
+            mNativeRenderer.performARHitTestWithRay(origin.toArray(), ray.toArray(), !isHighAccuracyTest, callback);
+        }
     }
 
     /**

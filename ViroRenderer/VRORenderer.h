@@ -269,6 +269,8 @@ public:
     void setInputController(std::shared_ptr<VROInputControllerBase> inputController) {
         _inputController = inputController;
     }
+
+    void performSceneHitTestWithPoint(int x, int y);
     
 #pragma mark - VR Framework Specific
     

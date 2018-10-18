@@ -152,7 +152,6 @@ private:
 
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;
-    std::shared_ptr<VROSceneController> _sceneController;
 };
 
 #endif  // VRO_SCENE_RENDERER_ARCORE_H  // NOLINT

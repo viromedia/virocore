@@ -1290,7 +1290,6 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     
     VROMatrix4f transform = _worldTransform;
     boundsOnly = boundsOnly && !getHighAccuracyEvents();
-    
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold && _visible) {
         VROVector3f intPt;
         if (getBoundingBox().intersectsRay(ray, origin, &intPt)) {
@@ -1315,19 +1314,19 @@ bool VRONode::hitTestGeometry(VROVector3f origin, VROVector3f ray,
     
     bool hit = false;
     float currentDistance = FLT_MAX;
+    std::string tag = getTag();
     for (std::shared_ptr<VROGeometryElement> element : _geometry->getGeometryElements()) {
-         element->processTriangles([&hit, ray, origin, transform, &intPt, &currentDistance](int index, VROTriangle triangle) {
+         element->processTriangles([&hit, ray, origin, transform, &intPt, &currentDistance, tag](int index, VROTriangle triangle) {
              VROTriangle transformed = triangle.transformByMatrix(transform);
-             
              VROVector3f intPtGeom;
-             if (triangle.intersectsRay(ray, origin, &intPtGeom)) {
+             if (transformed.intersectsRay(ray, origin, &intPtGeom)) {
                  float distance = intPtGeom.distance(origin);
                  if (distance < currentDistance){
                      currentDistance = distance;
                      *intPt = intPtGeom;
+                     hit = true;
                  }
 
-                 hit = true;
                  //TODO Offer a way to break out of here, as optimization
              }
          }, vertexSource);

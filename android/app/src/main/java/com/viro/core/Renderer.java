@@ -128,6 +128,14 @@ public class Renderer {
         }
     }
 
+    public void performHitTestWithPoint(int x, int y, boolean useBoundsOnly, HitTestListener callback) {
+        nativePerformHitTestWithPoint(mNativeRef, x, y, useBoundsOnly, callback);
+    }
+
+    public void performARHitTestWithRay(float[] origin, float[] ray, boolean useBoundsOnly, HitTestListener callback) {
+        nativePerformHitTestWithRay(mNativeRef, origin, ray,useBoundsOnly, callback);
+    }
+
     public void onSurfaceCreated(Surface surface) { nativeOnSurfaceCreated(surface, mNativeRef); }
     public void onSurfaceChanged(Surface surface, int width, int height) { nativeOnSurfaceChanged(surface, width, height, mNativeRef); }
 
@@ -312,5 +320,7 @@ public class Renderer {
     private native float[] nativeProjectPoint(long nativeRenderer, float x, float y, float z);
     private native float[] nativeUnprojectPoint(long nativeRenderer, float x, float y, float z);
     private native float nativeGetFieldOfView(long nativeRef);
+    private native void nativePerformHitTestWithPoint(long nativeRef, int x, int y, boolean boundsOnly, HitTestListener callback);
+    private native void nativePerformHitTestWithRay(long nativeRef, float origin[], float ray[], boolean boundsOnly, HitTestListener callback);
 
 }

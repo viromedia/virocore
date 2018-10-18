@@ -108,6 +108,7 @@ public:
      */
     virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                     VROTimingFunctionType timingFunction) {
+        _sceneController = sceneController;
         _renderer->setSceneController(sceneController, seconds, timingFunction, _driver);
     }
 
@@ -124,11 +125,16 @@ public:
     void setClearColor(VROVector4f color) {
         _renderer->setClearColor(color, _driver);
     }
+
+    std::vector<VROHitTestResult> performHitTest(int x, int y, bool boundsOnly);
+
+    std::vector<VROHitTestResult> performHitTest(VROVector3f origin, VROVector3f ray, bool boundsOnly);
 protected:
 
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VRODriverOpenGLAndroid> _driver;
+    std::shared_ptr<VROSceneController> _sceneController;
 
 };
 
