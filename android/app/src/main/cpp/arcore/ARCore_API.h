@@ -239,6 +239,7 @@ namespace arcore {
         virtual ~PointCloud() {}
         virtual const float *getPoints() = 0;
         virtual int getNumPoints() = 0;
+        virtual const int *getPointIds() = 0;
     };
 
     class HitResultList {

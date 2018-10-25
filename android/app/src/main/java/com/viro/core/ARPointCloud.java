@@ -11,12 +11,14 @@ package com.viro.core;
  */
 public class ARPointCloud {
     private float[] mPoints;
+    private long[] mIds;
 
-    ARPointCloud(float[] points) {
+    ARPointCloud(float[] points, long[] ids) {
         // The reason why ARPointCloud simply contains a float[] is because each frame can contain
         // hundreds of points which, if converted to Vectors would result in hundreds of Java objects
         // created each frame (I tried this and would overflow local memory space in JNI).
         mPoints = points;
+        mIds = ids;
     }
 
     /**
@@ -28,6 +30,16 @@ public class ARPointCloud {
      */
     public float[] getPoints() {
         return mPoints;
+    }
+
+    /**
+     * Returns a long array containing the id of each point in the point cloud
+     * The points are arranged in no particular order.
+     *
+     * @return A long array contained the identifiers for each point in the point cloud.
+     */
+    public long[] getIds() {
+        return mIds;
     }
 
     /**

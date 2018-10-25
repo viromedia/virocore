@@ -162,13 +162,15 @@ public class ViroARSceneTest extends ViroBaseTest {
             public void onUpdate(ARPointCloud pointCloud) {
                 Log.i("ViroARSceneTest", "Point cloud values: " + pointCloud.size());
                 float []pointCloudArray = pointCloud.getPoints();
+                long []ids =  pointCloud.getIds();
                 String pointCloudStr = "Point clouds: ";
                 for(int i =0; i< pointCloud.size(); i++) {
                     float x= pointCloudArray[i*4+0];
                     float y = pointCloudArray[i*4 + 1];
                     float z = pointCloudArray[i*4 + 2];
+                    long pointID = ids[i];
                     pointCloudStr += "(" + x + "," + y + "," + z  + "), ";
-                    Log.i("ViroARSceneTest", "point i" + i + "(x,y,z)->" + "(" + x + "," + y + "," + z  + ")");
+                    Log.i("ViroARSceneTest", "point i" + i + "(x,y,z) id ->" + "(" + x + "," + y + "," + z  + ") id:" + pointID);
                 }
 
                 pointCloudText.setText(pointCloudStr);

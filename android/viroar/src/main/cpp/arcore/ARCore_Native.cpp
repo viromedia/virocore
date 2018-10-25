@@ -593,6 +593,7 @@ namespace arcore {
         return new PointCloudNative(cloud, _session);
     }
 
+
     ImageRetrievalStatus FrameNative::acquireCameraImage(Image **outImage) {
         ArImage *arImage;
         ArStatus status = ArFrame_acquireCameraImage(_session, _frame, &arImage);
@@ -628,6 +629,12 @@ namespace arcore {
         int numPoints;
         ArPointCloud_getNumberOfPoints(_session, _pointCloud, &numPoints);
         return numPoints;
+    }
+
+    const int * PointCloudNative::getPointIds() {
+        const int* point_cloud_ids;
+        ArPointCloud_getPointIds(_session, _pointCloud, &point_cloud_ids);
+        return point_cloud_ids;
     }
 
 #pragma mark - HitResultList

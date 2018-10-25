@@ -148,7 +148,9 @@ VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud
     VRO_ENV env = VROPlatformGetJNIEnv();
 
     std::vector<VROVector4f> points = pointCloud->getPoints();
+    std::vector<uint64_t> identifiers = pointCloud->getIdentifiers();
     VRO_FLOAT tempConfidencesArr[points.size() * 4];
+    VRO_LONG identifiersArr[identifiers.size()];
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
@@ -158,11 +160,18 @@ VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud
         tempConfidencesArr[i * 4 + 3] = points[i].w;
     }
 
+    for(int i = 0; i< identifiers.size(); i++) {
+        identifiersArr[i] = (jlong)identifiers[i];
+    }
+
     // copy confidence values over to a VRO_FLOAT_ARRAY
     VRO_FLOAT_ARRAY jConfidencesArray = VRO_NEW_FLOAT_ARRAY(points.size() * 4);
     VRO_FLOAT_ARRAY_SET(jConfidencesArray, 0, points.size() * 4, tempConfidencesArr);
 
+    jlongArray jCloudIdArray = env->NewLongArray(identifiers.size());
+    env->SetLongArrayRegion(jCloudIdArray, 0, identifiers.size(), identifiersArr);
+
     // get constructor, create and return an ARPointCloud Java object
-    return VROPlatformConstructHostObject("com/viro/core/ARPointCloud", "([F)V", jConfidencesArray);
+    return VROPlatformConstructHostObject("com/viro/core/ARPointCloud", "([F[J)V", jConfidencesArray, jCloudIdArray);
 }
 

@@ -263,6 +263,7 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
     arcore::PointCloud *pointCloud = _frame->acquirePointCloud();
     if (pointCloud != NULL) {
         const float *pointsArray = pointCloud->getPoints();
+        const int *pointsIdArray = pointCloud->getPointIds();
         int numPoints = pointCloud->getNumPoints();
 
         for (int i = 0; i < numPoints; i++) {
@@ -272,7 +273,13 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
             if (pointsArray[i * 4 + 3] > .1) {
                 VROVector4f point = VROVector4f(pointsArray[i * 4 + 0], pointsArray[i * 4 + 1],
                                                 pointsArray[i * 4 + 2], pointsArray[i * 4 + 3]);
-                points.push_back(point);
+                if(pointsIdArray != NULL) {
+                    int pointId = pointsIdArray[i];
+                    points.push_back(point);
+                    //TODO: Does android return negative points ids? If not, this cast to uint64 shouldn't
+                    //be a problem.
+                    identifiers.push_back((uint64_t) pointId);
+                }
             }
         }
         delete (pointCloud);
