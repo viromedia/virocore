@@ -66,6 +66,9 @@ void VROAudioPlayeriOS::setup() {
                 _delegate->soundDidFail("Failed to load sound");
                 return;
             }
+            _audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
+            _player.delegate = _audioDelegate;
+            _delegate->soundIsReady();
 
             [_player prepareToPlay];
         }
