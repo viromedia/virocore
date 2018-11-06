@@ -580,16 +580,22 @@ bool VRORenderTargetOpenGL::restoreFramebuffers() {
 }
 
 void VRORenderTargetOpenGL::deleteFramebuffers() {
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+    if (!driver) {
+        pinfo("Failed delete render target: driver was released");
+        return;
+    }
+
     if (_framebuffer) {
-        GL (glDeleteFramebuffers(1, &_framebuffer) );
+        driver->deleteFramebuffer(_framebuffer);
         _framebuffer = 0;
     }
     if (_colorbuffer) {
-        GL (glDeleteRenderbuffers(1, &_colorbuffer) );
+        driver->deleteRenderbuffer(_colorbuffer);
         _colorbuffer = 0;
     }
     if (_depthStencilbuffer) {
-        GL (glDeleteRenderbuffers(1, &_depthStencilbuffer) );
+        driver->deleteRenderbuffer(_depthStencilbuffer);
         _depthStencilbuffer = 0;
     }
     

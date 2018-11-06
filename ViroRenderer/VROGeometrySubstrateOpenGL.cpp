@@ -40,19 +40,18 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
 }
 
 VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
-    std::vector<GLuint> buffers;
-    for (VROGeometryElementOpenGL &element : _elements) {
-        buffers.push_back(element.buffer);
-    }
-
-    for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
-        buffers.push_back(vd.buffer);
-    }
-
     // Ensure we are deleting GL objects with the current GL context
-    if (_driver.lock()) {
-        GL( glDeleteBuffers((int) buffers.size(), buffers.data()) );
-        GL( glDeleteVertexArrays((int) _vaos.size(), _vaos.data()) );
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+    if (driver) {
+        for (VROGeometryElementOpenGL &element : _elements) {
+            driver->deleteBuffer(element.buffer);
+        }
+        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
+            driver->deleteBuffer(vd.buffer);
+        }
+        for (GLuint vao : _vaos) {
+            driver->deleteVertexArray(vao);
+        }
     }
 
     std::map<int, std::vector<VROVertexDescriptorOpenGL>>::iterator it;

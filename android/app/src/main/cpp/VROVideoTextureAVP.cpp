@@ -9,6 +9,7 @@
 #include "VROVideoTextureAVP.h"
 #include "VROTextureSubstrateOpenGL.h"
 #include "VROPlatformUtil.h"
+#include "VRODriverOpenGL.h"
 
 VROVideoTextureAVP::VROVideoTextureAVP(VROStereoMode stereoMode) :
     VROVideoTexture(VROTextureType::TextureEGLImage, stereoMode),
@@ -20,8 +21,9 @@ VROVideoTextureAVP::VROVideoTextureAVP(VROStereoMode stereoMode) :
 VROVideoTextureAVP::~VROVideoTextureAVP() {
     delete (_player);
 
-    if (_textureId) {
-        glDeleteTextures(1, &_textureId);
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+    if (_textureId && driver) {
+        driver->deleteTexture(_textureId);
     }
 }
 
@@ -39,6 +41,7 @@ void VROVideoTextureAVP::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    std::shared_ptr<VRODriver> driver) {
     _player->setDataSourceURL(url.c_str());
+    _driver = std::dynamic_pointer_cast<VRODriverOpenGL>(driver);
 
     frameSynchronizer->removeFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
     frameSynchronizer->addFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));

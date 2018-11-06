@@ -129,8 +129,9 @@ VROShaderProgram::~VROShaderProgram() {
     }
 
     // Ensure we are deleting GL objects with the current GL context
-    if (_driver.lock()) {
-        GL( glDeleteShader(_program) );
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+    if (driver) {
+        driver->deleteProgram(_program);
     }
     
     ALLOCATION_TRACKER_SUB(Shaders, 1);
@@ -175,8 +176,9 @@ bool VROShaderProgram::isHydrated() const {
 
 void VROShaderProgram::evict() {
     if (_program != 0) {
-        if (_driver.lock()) {
-            GL( glDeleteProgram(_program) );
+        std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+        if (driver) {
+            driver->deleteProgram(_program);
         }
     }
 

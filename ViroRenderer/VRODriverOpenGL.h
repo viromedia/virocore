@@ -88,6 +88,40 @@ public:
         GL( glEnable(GL_BLEND) );
         GL( glBlendEquation(GL_FUNC_ADD) );
         GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+
+        // Delete all moribund GL objects
+        {
+            std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+            for (GLuint shader : _moribundShaders) {
+                GL( glDeleteShader(shader) );
+            }
+            _moribundShaders.clear();
+
+            for (GLuint program : _moribundPrograms) {
+                GL( glDeleteProgram(program) );
+            }
+            _moribundPrograms.clear();
+
+            GLsizei count = (GLsizei) _moribundBuffers.size();
+            GL( glDeleteBuffers(count, _moribundBuffers.data()) );
+            _moribundBuffers.clear();
+
+            count = (GLsizei) _moribundVertexArrays.size();
+            GL( glDeleteVertexArrays(count, _moribundVertexArrays.data()) );
+            _moribundVertexArrays.clear();
+
+            count = (GLsizei) _moribundFramebuffers.size();
+            GL( glDeleteFramebuffers(count, _moribundFramebuffers.data()) );
+            _moribundFramebuffers.clear();
+
+            count = (GLsizei) _moribundRenderbuffers.size();
+            GL( glDeleteRenderbuffers(count, _moribundRenderbuffers.data()) );
+            _moribundRenderbuffers.clear();
+
+            count = (GLsizei) _moribundTextures.size();
+            GL( glDeleteTextures(count, _moribundTextures.data()) );
+            _moribundTextures.clear();
+        }
     }
     
     void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) {
@@ -493,6 +527,39 @@ public:
         return _scheduler;
     }
 
+    /*
+     Queue various GL objects for deletion in a thread-safe manner. This ensures that we only
+     delete these objects when the GL context is bound, on the rendering thread.
+     */
+    void deleteBuffer(GLuint buffer) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundBuffers.push_back(buffer);
+    }
+    void deleteShader(GLuint shader) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundShaders.push_back(shader);
+    }
+    void deleteProgram(GLuint program) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundPrograms.push_back(program);
+    }
+    void deleteFramebuffer(GLuint framebuffer) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundFramebuffers.push_back(framebuffer);
+    }
+    void deleteRenderbuffer(GLuint renderbuffer) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundRenderbuffers.push_back(renderbuffer);
+    }
+    void deleteTexture(GLuint texture) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundTextures.push_back(texture);
+    }
+    void deleteVertexArray(GLuint array) {
+        std::lock_guard<std::recursive_mutex> lock(_deletionMutex);
+        _moribundVertexArrays.push_back(array);
+    }
+
 protected:
     
     /*
@@ -556,6 +623,15 @@ private:
     
     std::weak_ptr<VRORenderTarget> _boundRenderTarget;
     std::shared_ptr<VROShaderProgram> _boundShader;
+
+    std::recursive_mutex _deletionMutex;
+    std::vector<GLuint> _moribundBuffers;
+    std::vector<GLuint> _moribundShaders;
+    std::vector<GLuint> _moribundPrograms;
+    std::vector<GLuint> _moribundFramebuffers;
+    std::vector<GLuint> _moribundRenderbuffers;
+    std::vector<GLuint> _moribundTextures;
+    std::vector<GLuint> _moribundVertexArrays;
 
     /*
      Caches typeface collections.

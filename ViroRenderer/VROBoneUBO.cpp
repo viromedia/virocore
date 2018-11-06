@@ -105,7 +105,7 @@ VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
 VROBoneUBO::~VROBoneUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
-        GL( glDeleteBuffers(1, &_bonesUBO) );
+        driver->deleteBuffer(_bonesUBO);
     }
 }
 

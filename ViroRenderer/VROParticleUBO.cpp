@@ -37,10 +37,10 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
 }
 
 VROParticleUBO::~VROParticleUBO() {
-    std::shared_ptr<VRODriver> driver = _driver.lock();
+    std::shared_ptr<VRODriverOpenGL> driver = std::dynamic_pointer_cast<VRODriverOpenGL>(_driver.lock());
     if (driver) {
-        GL( glDeleteBuffers(1, &_particleVertexUBO) );
-        GL( glDeleteBuffers(1, &_particleFragmentUBO) );
+        driver->deleteBuffer(_particleVertexUBO);
+        driver->deleteBuffer(_particleFragmentUBO);
     }
 }
 

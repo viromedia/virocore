@@ -38,8 +38,8 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
 VROLightingUBO::~VROLightingUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
-        GL( glDeleteBuffers(1, &_lightingFragmentUBO) );
-        GL( glDeleteBuffers(1, &_lightingVertexUBO) );
+        driver->deleteBuffer(_lightingFragmentUBO);
+        driver->deleteBuffer(_lightingVertexUBO);
     }
 }
 

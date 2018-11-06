@@ -34,8 +34,10 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
 
 VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
     ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
-    if (_owned && _driver.lock()) {
-        GL( glDeleteTextures(1, &_texture) );
+
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+    if (_owned && driver) {
+        driver->deleteTexture(_texture);
     }
 }
 

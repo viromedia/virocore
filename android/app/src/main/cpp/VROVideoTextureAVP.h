@@ -86,6 +86,7 @@ private:
 
     VROAVPlayer *_player;
     GLuint _textureId;
+    std::weak_ptr<VRODriverOpenGL> _driver;
 
 };
 
