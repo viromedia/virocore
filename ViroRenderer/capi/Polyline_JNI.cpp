@@ -65,11 +65,6 @@ VRO_METHOD(VRO_REF(VROPolyline), nativeCreatePolyline)(VRO_ARGS
     return VRO_REF_NEW(VROPolyline, polyline);
 }
 
-VRO_METHOD(void, nativeDestroyPolyline)(VRO_ARGS
-                                        VRO_REF(VROPolyline) nativePolylineRef) {
-    VRO_REF_DELETE(VROPolyline, nativePolylineRef);
-}
-
 VRO_METHOD(void, nativeAppendPoint)(VRO_ARGS
                                     VRO_REF(VROPolyline) polyline_j,
                                     VRO_FLOAT_ARRAY point_j) {

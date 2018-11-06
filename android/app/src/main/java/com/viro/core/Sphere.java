@@ -32,6 +32,7 @@ public class Sphere extends Geometry {
      * @param radius The radius of the Sphere.
      */
     public Sphere(float radius) {
+        super(false);
         mNativeRef = nativeCreateSphere(radius);
     }
 
@@ -45,6 +46,8 @@ public class Sphere extends Geometry {
      * @param facesOutward       True to have the Sphere face outward.
      */
     public Sphere(float radius, int widthSegmentCount, int heightSegmentCount, boolean facesOutward) {
+        super(false);
+
         mRadius = radius;
         mWidthSegmentCount = widthSegmentCount;
         mHeightSegmentCount = heightSegmentCount;
@@ -69,10 +72,7 @@ public class Sphere extends Geometry {
      * Release native resources associated with this Sphere.
      */
     public void dispose() {
-        if (mNativeRef != 0) {
-            nativeDestroySphere(mNativeRef);
-            mNativeRef = 0;
-        }
+        super.dispose();
     }
 
     /**
@@ -171,7 +171,6 @@ public class Sphere extends Geometry {
     private native void nativeSetHeightSegmentCount(long nodeReference, int heightSegmentCount);
     private native void nativeSetRadius(long nodeReference, float radius);
     private native void nativeSetFacesOutward(long nodeReference, boolean facesOutward);
-    private native void nativeDestroySphere(long nodeReference);
     private native void nativeSetVideoTexture(long nodeReference, long textureRef);
 
     /**

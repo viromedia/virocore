@@ -25,6 +25,15 @@ public class Geometry {
     }
 
     /**
+     * @hide
+     * This constructor to be called by child classes that want to
+     * override mNativeRef
+     */
+    protected Geometry(boolean dummyArg) {
+        // No-op.
+    }
+
+    /**
      * Construct a Geometry to wrap the given native reference.
      *
      * @param nativeRef The native reference.

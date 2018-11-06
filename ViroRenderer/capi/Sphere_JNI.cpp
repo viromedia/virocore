@@ -44,11 +44,6 @@ VRO_METHOD(VRO_REF(VROSphere), nativeCreateSphereParameterized)(VRO_ARGS
     return VRO_REF_NEW(VROSphere, sphere);
 }
 
-VRO_METHOD(void, nativeDestroySphere)(VRO_ARGS
-                                      VRO_REF(VROSphere) nativeNode) {
-    VRO_REF_DELETE(VROSphere, nativeNode);
-}
-
 VRO_METHOD(void, nativeSetVideoTexture)(VRO_ARGS
                                         VRO_REF(VROSphere) sphereRef,
                                         VRO_REF(VROVideoTexture) textureRef) {

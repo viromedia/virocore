@@ -57,6 +57,7 @@ public class Quad extends Geometry {
      * @param v1     The texture coordinate that specifies the end {@link Texture} top edge.
      */
     public Quad(float width, float height, float u0, float v0, float u1, float v1) {
+        super(false);
         mWidth = width;
         mHeight = height;
         mNativeRef = nativeCreateQuad(width, height, u0, v0, u1, v1);
@@ -68,6 +69,7 @@ public class Quad extends Geometry {
     //#IFDEF 'viro_react'
     public Quad(float width, float height, float u0, float v0, float u1, float v1,
                 Quad oldQuad) {
+        super(false);
         mNativeRef = nativeCreateQuadFromQuad(width, height, u0, v0, u1, v1,
                 oldQuad.mNativeRef);
     }
@@ -85,10 +87,7 @@ public class Quad extends Geometry {
      * Release native resources associated with this Quad.
      */
     public void dispose(){
-        if (mNativeRef != 0) {
-            nativeDestroyQuad(mNativeRef);
-            mNativeRef = 0;
-        }
+        super.dispose();
     }
 
     /**
@@ -133,7 +132,6 @@ public class Quad extends Geometry {
     private native long nativeCreateQuadFromQuad(float width, float height,
                                                        float u0, float v0, float u1, float v1,
                                                        long oldSurfaceRef);
-    private native void nativeDestroyQuad(long quadRef);
     private native void nativeSetWidth(long quadRef, float width);
     private native void nativeSetHeight(long quadRef, float height);
     private native void nativeSetVideoTexture(long quadRef, long textureRef);

@@ -22,6 +22,7 @@ public class Polyline extends Geometry {
      * @param thickness The thickness of the Polyline.
      */
     public Polyline(float thickness) {
+        super(false);
         mPoints = new ArrayList<Vector>();
         mNativeRef = nativeCreatePolylineEmpty(thickness);
     }
@@ -73,10 +74,7 @@ public class Polyline extends Geometry {
      * Release native resources associated with this Polyline.
      */
     public void dispose() {
-        if (mNativeRef != 0) {
-            nativeDestroyPolyline(mNativeRef);
-            mNativeRef = 0;
-        }
+        super.dispose();
     }
 
     /**
@@ -138,7 +136,6 @@ public class Polyline extends Geometry {
 
     private native long nativeCreatePolylineEmpty(float width);
     private native long nativeCreatePolyline(float[][] points, float width);
-    private native void nativeDestroyPolyline(long lineReference);
     private native void nativeAppendPoint(long lineReference, float[] point);
     private native void nativeSetPoints(long lineReference, float[][] points);
     private native void nativeSetThickness(long lineReference, float thickness);

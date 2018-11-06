@@ -30,11 +30,6 @@ VRO_METHOD(VRO_REF(VROBox), nativeCreateBox)(VRO_ARGS
     return VRO_REF_NEW(VROBox, box);
 }
 
-VRO_METHOD(void, nativeDestroyBox)(VRO_ARGS
-                                   VRO_REF(VROBox) nativeBoxRef) {
-    VRO_REF_DELETE(VROBox, nativeBoxRef);
-}
-
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF(VROBox) native_box_ref,
                                  VRO_FLOAT width) {

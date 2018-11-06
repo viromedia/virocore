@@ -62,9 +62,4 @@ VRO_METHOD(VRO_REF(VROPolygon), nativeCreatePolygon)(VRO_ARGS
     return VRO_REF_NEW(VROPolygon, surface);
 }
 
-VRO_METHOD(void, nativeDestroyPolygon)(VRO_ARGS
-                                       VRO_REF(VROPolygon) polygon) {
-    VRO_REF_DELETE(VROPolygon, polygon);
-}
-
 }  // extern "C"

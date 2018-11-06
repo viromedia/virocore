@@ -50,11 +50,6 @@ VRO_METHOD(VRO_REF(VROSurface), nativeCreateSurfaceFromSurface)(VRO_ARGS
     return VRO_REF_NEW(VROSurface, surface);
 }
 
-VRO_METHOD(void, nativeDestroySurface)(VRO_ARGS
-                                       VRO_REF(VROSurface) nativeSurface) {
-    VRO_REF_DELETE(VROSurface, nativeSurface);
-}
-
 VRO_METHOD(void, nativeSetWidth)(VRO_ARGS
                                  VRO_REF(VROSurface) nativeSurface,
                                  VRO_FLOAT width) {

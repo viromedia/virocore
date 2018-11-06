@@ -441,6 +441,8 @@ public class Text extends Geometry {
                  float width, float height,
                  HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
                  LineBreakMode lineBreakMode, ClipMode clipMode, int maxLines) {
+        super(false);
+
         mViroContext = viroContext;
         mText = text;
         mFontFamilyName = fontFamilies;
@@ -480,10 +482,7 @@ public class Text extends Geometry {
      * Release native resources associated with this Text.
      */
     public void dispose() {
-        if (mNativeRef != 0) {
-            nativeDestroyText(mNativeRef);
-            mNativeRef = 0;
-        }
+        super.dispose();
     }
 
     /**
@@ -891,7 +890,6 @@ public class Text extends Geometry {
                                          float width, float height,
                                          String horizontalAlignment, String verticalAlignment,
                                          String lineBreakMode, String clipMode, int maxLines);
-    private native void nativeDestroyText(long textRef);
     private native void nativeSetText(long textRef, String text);
     private native void nativeSetFont(long viroContext, long textRef, String family, int size, int style, int weight);
     private native void nativeSetColor(long textRef, long color);

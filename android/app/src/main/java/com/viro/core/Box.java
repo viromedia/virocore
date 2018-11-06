@@ -27,6 +27,8 @@ public class Box extends Geometry {
      * @param length The length of the box (Z dimension).
      */
     public Box(float width, float height, float length) {
+        super(false);
+
         mWidth = width;
         mHeight = height;
         mLength = length;
@@ -46,10 +48,7 @@ public class Box extends Geometry {
      * Release native resources associated with this Box.
      */
     public void dispose() {
-        if (mNativeRef != 0) {
-            nativeDestroyBox(mNativeRef);
-            mNativeRef = 0;
-        }
+        super.dispose();
     }
 
     /**
@@ -110,7 +109,6 @@ public class Box extends Geometry {
     }
 
     private native long nativeCreateBox(float width, float height, float length);
-    private native void nativeDestroyBox(long nodeReference);
     private native void nativeSetWidth(long boxReference, float width);
     private native void nativeSetHeight(long boxReference, float height);
     private native void nativeSetLength(long boxReference, float length);

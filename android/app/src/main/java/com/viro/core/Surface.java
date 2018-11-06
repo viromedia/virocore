@@ -61,6 +61,7 @@ public class Surface extends Geometry {
      * @param v1     The texture coordinate that specifies the end {@link Texture} top edge.
      */
     public Surface(float width, float height, float u0, float v0, float u1, float v1) {
+        super(false);
         mWidth = width;
         mHeight = height;
         mNativeRef = nativeCreateSurface(width, height, u0, v0, u1, v1);
@@ -88,11 +89,8 @@ public class Surface extends Geometry {
     /**
      * Release native resources associated with this Surface.
      */
-    public void dispose(){
-        if (mNativeRef != 0) {
-            nativeDestroySurface(mNativeRef);
-            mNativeRef = 0;
-        }
+    public void dispose() {
+        super.dispose();
     }
 
     /**
@@ -137,7 +135,6 @@ public class Surface extends Geometry {
     private native long nativeCreateSurfaceFromSurface(float width, float height,
                                                        float u0, float v0, float u1, float v1,
                                                        long oldSurfaceRef);
-    private native void nativeDestroySurface(long surfaceRef);
     private native void nativeSetWidth(long surfaceRef, float width);
     private native void nativeSetHeight(long surfaceRef, float height);
     private native void nativeSetVideoTexture(long surfaceRef, long textureRef);

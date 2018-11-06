@@ -58,12 +58,6 @@ VRO_METHOD(VRO_REF(VROSurface), nativeCreateQuadFromQuad)(JNIEnv *env,
     return VRO_REF_NEW(VROSurface, surface);
 }
 
-VRO_METHOD(void, nativeDestroyQuad)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong nativeSurface) {
-    VRO_REF_DELETE(VROSurface, nativeSurface);
-}
-
 VRO_METHOD(void, nativeSetWidth)(JNIEnv *env,
                                  jclass clazz,
                                  jlong nativeSurface,

@@ -44,6 +44,8 @@ public class Polygon extends Geometry {
      * @param v1       The texture coordinate that specifies the end {@link Texture} top edge.
      */
     public Polygon(List<Vector> vertices, float u0, float v0, float u1, float v1) {
+        super(false);
+
         float[][] data = new float[vertices.size()][2];
         for (int i = 0; i < vertices.size(); i ++) {
             Vector point = vertices.get(i);
@@ -83,6 +85,8 @@ public class Polygon extends Geometry {
      * @param v1       The texture coordinate that specifies the end {@link Texture} top edge.
      */
     public Polygon(List<Vector> vertices, List<List<Vector>> holes, float u0, float v0, float u1, float v1) {
+        super(false);
+
         float[][] path = new float[vertices.size()][2];
         for (int i = 0; i < vertices.size(); i ++) {
             Vector point = vertices.get(i);
@@ -120,12 +124,8 @@ public class Polygon extends Geometry {
      * Release native resources associated with this Polygon.
      */
     public void dispose() {
-        if (mNativeRef != 0) {
-            nativeDestroyPolygon(mNativeRef);
-            mNativeRef = 0;
-        }
+        super.dispose();
     }
 
     private native long nativeCreatePolygon(float[][] path, float[][][] holes, float u0, float v0, float u1, float v1);
-    private native void nativeDestroyPolygon(long polygonRef);
 }

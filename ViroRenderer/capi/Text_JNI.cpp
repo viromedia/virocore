@@ -165,11 +165,6 @@ VRO_METHOD(VRO_REF(VROText), nativeCreateText)(VRO_ARGS
     return VRO_REF_NEW(VROText, vroText);
 }
 
-VRO_METHOD(void, nativeDestroyText)(VRO_ARGS
-                                    VRO_REF(VROText) text_j) {
-    VRO_REF_DELETE(VROText, text_j);
-}
-
 VRO_METHOD(void, nativeSetText)(VRO_ARGS
                                 VRO_REF(VROText) text_j,
                                 VRO_STRING_WIDE text_string_j) {
