@@ -188,7 +188,7 @@ namespace arcore {
         virtual ~PointCloudNative();
         virtual const float *getPoints();
         virtual int getNumPoints();
-        virtual const int * getPointIds();
+        virtual const int *getPointIds();
     private:
         ArPointCloud *_pointCloud;
         ArSession *_session;

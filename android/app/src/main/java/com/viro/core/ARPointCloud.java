@@ -33,8 +33,8 @@ public class ARPointCloud {
     }
 
     /**
-     * Returns a long array containing the id of each point in the point cloud
-     * The points are arranged in no particular order.
+     * Returns a long array containing the ID of each point in the point cloud. These IDs are
+     * constant across frames, but their <i>order</i> in the returned array may change.
      *
      * @return A long array contained the identifiers for each point in the point cloud.
      */

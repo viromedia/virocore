@@ -593,7 +593,6 @@ namespace arcore {
         return new PointCloudNative(cloud, _session);
     }
 
-
     ImageRetrievalStatus FrameNative::acquireCameraImage(Image **outImage) {
         ArImage *arImage;
         ArStatus status = ArFrame_acquireCameraImage(_session, _frame, &arImage);

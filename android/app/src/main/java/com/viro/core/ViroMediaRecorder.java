@@ -233,20 +233,23 @@ public class ViroMediaRecorder {
         mAppContext = context.getApplicationContext();
         mUIHandler = new Handler(Looper.getMainLooper());
 
-        // Ensure width and height are even, otherwise we can get a crash in stagefright when
-        // it does conversions (SoftVideoEncoderOMXComponent::ConvertRGB32ToPlanar)
         setWidth(width);
         setHeight(height);
+
         mQueuedScreenShots = new ArrayList<ScreenShotRunnable>();
         mVideoRecordingErrorDelegate = null;
         mNativeRecorderRef = nativeCreateNativeRecorder(rendererJni.mNativeRef);
     }
 
     void setWidth(int width) {
+        // Ensure width is even, otherwise we can get a crash in stagefright when
+        // it does conversions (SoftVideoEncoderOMXComponent::ConvertRGB32ToPlanar)
         mViewportWidth = (width % 2 == 0) ? width : width - 1;
     }
 
     void setHeight(int height) {
+        // Ensure the height is even, otherwise we can get a crash in stagefright when
+        // it does conversions (SoftVideoEncoderOMXComponent::ConvertRGB32ToPlanar)
         mViewportHeight = (height % 2 == 0) ? height : height - 1;
     }
 

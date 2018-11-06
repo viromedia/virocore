@@ -273,7 +273,6 @@ bool VROTexture::hasAlpha() const {
 
 void VROTexture::setWrapS(VROWrapMode wrapMode) {
     _wrapS =  wrapMode;
-
     if (!isHydrated()) {
         return;
     }
@@ -285,7 +284,6 @@ void VROTexture::setWrapS(VROWrapMode wrapMode) {
 
 void VROTexture::setWrapT(VROWrapMode wrapMode) {
     _wrapT = wrapMode;
-
     if (!isHydrated()) {
         return;
     }

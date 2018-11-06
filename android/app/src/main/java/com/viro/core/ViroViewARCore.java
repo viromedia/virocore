@@ -255,7 +255,7 @@ public class ViroViewARCore extends ViroView {
             view.mWidth = width;
             view.mHeight = height;
             ((RendererARCore) view.mNativeRenderer).setARDisplayGeometry(view.mRotation, view.mWidth, view.mHeight);
-            if (view.mMediaRecorder != null){
+            if (view.mMediaRecorder != null) {
                 view.mMediaRecorder.setHeight(height);
                 view.mMediaRecorder.setWidth(width);
             }
@@ -733,7 +733,7 @@ public class ViroViewARCore extends ViroView {
      */
     @Override
     public void onActivityPaused(Activity activity) {
-        if (mWeakActivity.get() != activity){
+        if (mWeakActivity.get() != activity) {
             return;
         }
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
@@ -833,7 +833,7 @@ public class ViroViewARCore extends ViroView {
         if (mNativeRenderer == null) {
             return;
         }
-        if (mWeakActivity.get() != activity){
+        if (mWeakActivity.get() != activity) {
             return;
         }
         mNativeRenderer.onStart();
@@ -847,7 +847,7 @@ public class ViroViewARCore extends ViroView {
         if (mNativeRenderer == null) {
             return;
         }
-        if (mWeakActivity.get() != activity){
+        if (mWeakActivity.get() != activity) {
             return;
         }
         mNativeRenderer.onStop();
@@ -1001,7 +1001,7 @@ public class ViroViewARCore extends ViroView {
      *                 results.
      */
     public void setCameraARHitTestListener(ARHitTestListener hitTestListener){
-        if (mCurrentScene == null){
+        if (mCurrentScene == null) {
             return;
         }
 

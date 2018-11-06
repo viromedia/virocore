@@ -71,9 +71,10 @@ public:
     }
 
     /*
-     Updates the wrap mode of the glTexture representing this substrate
+     Updates the wrap mode of the GL texture underlying this substrate.
      */
     void updateWrapMode(VROWrapMode wrapModeS, VROWrapMode wrapModeT);
+
 private:
     
     GLenum _target;
