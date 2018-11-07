@@ -172,8 +172,7 @@ private:
     std::shared_ptr<VROImagePostProcess> _blitPostProcess;
     
     /*
-     Intermediate render target used for recording video, and other
-     post processes.
+     Intermediate render target used for various post processes.
      */
     std::shared_ptr<VRORenderTarget> _blitTarget;
     
@@ -192,6 +191,18 @@ private:
                      VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 #pragma mark - Render to Texture
+    
+    /*
+     Intermediate (non-HDR) target used to store the final rendered scene (everything
+     except sRGB/gamma correction) when RTT is enabled.
+     */
+    std::shared_ptr<VRORenderTarget> _rttTarget;
+    
+    /*
+     Delegate set by recorders to be notified of 'blitted' render targets containing texture
+     representing the rendered scene that is needed for recording / screen capturing.
+     */
+    std::shared_ptr<VRORenderToTextureDelegate> _renderToTextureDelegate;
 
     /*
      Render the given tone-mapped and gamma-corrected input to the
@@ -199,12 +210,6 @@ private:
      */
     void renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
                                    std::shared_ptr<VRODriver> driver);
-
-    /*
-     Delegate set by recorders to be notified of 'blitted' render targets containing texture
-     representing the rendered scene that is needed for recording / screen capturing.
-     */
-    std::shared_ptr<VRORenderToTextureDelegate> _renderToTextureDelegate;
     
 #pragma mark - Shadows
     

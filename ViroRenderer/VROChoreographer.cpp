@@ -71,6 +71,7 @@ void VROChoreographer::createRenderTargets() {
     
     _blitPostProcess.reset();
     _blitTarget.reset();
+    _rttTarget.reset();
     _postProcessTargetA.reset();
     _postProcessTargetB.reset();
     _hdrTarget.reset();
@@ -92,6 +93,7 @@ void VROChoreographer::createRenderTargets() {
         std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
         _blitPostProcess = driver->newImagePostProcess(blitShader);
         _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
+        _rttTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false);
 
         _preprocesses.clear();
         if (_shadowsEnabled) {
@@ -174,6 +176,12 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
     if (_blitTarget) {
         if (!_blitTarget->setViewport(rtViewport)) {
             pwarn("Blit target creation failed");
+            failed = true;
+        }
+    }
+    if (_rttTarget) {
+        if (!_rttTarget->setViewport(rtViewport)) {
+            pwarn("RTT target creation failed");
             failed = true;
         }
     }
@@ -274,11 +282,9 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.textures[kToneMappingMaskInput] = _hdrTarget->getTexture(1);
             
             if (_renderToTextureDelegate) {
-                std::shared_ptr<VRORenderTarget> toneMappingTarget = postProcessTarget == _blitTarget ? _postProcessTargetA : _blitTarget;
-                
-                inputs.outputTarget = toneMappingTarget;
+                inputs.outputTarget = _rttTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
-                renderToTextureAndDisplay(toneMappingTarget, driver);
+                renderToTextureAndDisplay(_rttTarget, driver);
             }
             else {
                 inputs.outputTarget = driver->getDisplay();
@@ -301,9 +307,9 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.textures[kToneMappingMaskInput] = _hdrTarget->getTexture(1);
 
             if (_renderToTextureDelegate) {
-                inputs.outputTarget = _blitTarget;
+                inputs.outputTarget = _rttTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
-                renderToTextureAndDisplay(_blitTarget, driver);
+                renderToTextureAndDisplay(_rttTarget, driver);
             }
             else {
                 inputs.outputTarget = driver->getDisplay();
@@ -312,9 +318,9 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
         }
     }
     else if (_mrtSupported && _renderToTextureDelegate) {
-        inputs.outputTarget = _blitTarget;
+        inputs.outputTarget = _rttTarget;
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
-        renderToTextureAndDisplay(_blitTarget, driver);
+        renderToTextureAndDisplay(_rttTarget, driver);
     }
     else {
         // Render to the display directly
@@ -329,6 +335,9 @@ void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODrive
     driver->getDisplay()->setClearColor(color);
     if (_blitTarget) {
         _blitTarget->setClearColor(color);
+    }
+    if (_rttTarget) {
+        _rttTarget->setClearColor(color);
     }
     if (_hdrTarget) {
         _hdrTarget->setClearColor(color);
