@@ -97,12 +97,14 @@ void VRORenderTargetOpenGL::invalidate() {
         case VRORenderTargetType::CubeTexture:
         case VRORenderTargetType::CubeTextureHDR16:
         case VRORenderTargetType::CubeTextureHDR32:
-            GLenum attachments[2];
-            attachments[0] = GL_DEPTH_ATTACHMENT;
-            attachments[1] = GL_STENCIL_ATTACHMENT;
+            if (_depthStencilbuffer) {
+                GLenum attachments[2];
+                attachments[0] = GL_DEPTH_ATTACHMENT;
+                attachments[1] = GL_STENCIL_ATTACHMENT;
 #if !VRO_PLATFORM_MACOS
-            glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments);
+                glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments);
 #endif
+            }
             break;
             
         case VRORenderTargetType::DepthTexture:
@@ -359,7 +361,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GL (glDrawBuffers(_numAttachments, attachments) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve framebuffer object for 2D texture [error %x]", glCheckFramebufferStatus(GL_FRAMEBUFFER));
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
                 pinfo("   Incomplete attachment");
             }
@@ -398,6 +400,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GL (glGenTextures(_numAttachments, texNames) );
         
         for (int i = 0 ; i < _numAttachments; i++) {
+            GLenum attachment = getTextureAttachmentType(i);
             GL (glBindTexture(target, texNames[i]) );
             
             GL (glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
@@ -409,6 +412,8 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
             for (int s = 0; s < 6; s++) {
                 GL( glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + s, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(),
                                  0, format, texType, nullptr) );
+                GL( glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X + s,
+                                           texNames[i], 0) );
             }
             if (_mipmapsEnabled) {
                 // Allocates memory for the mipmaps
@@ -443,7 +448,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GL (glDrawBuffers(_numAttachments, attachments) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve framebuffer object for cube texture [error %x]", glCheckFramebufferStatus(GL_FRAMEBUFFER));
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
                 pinfo("   Incomplete attachment");
             }
@@ -481,7 +486,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GL (glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texName, 0) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pinfo("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve depth framebuffer object [error %x]", glCheckFramebufferStatus(GL_FRAMEBUFFER));
             return false;
         }
         
@@ -513,7 +518,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
         GL (glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texName, 0, 0) );
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pinfo("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve depth framebuffer object [error %x]", glCheckFramebufferStatus(GL_FRAMEBUFFER));
             return false;
         }
         
@@ -686,7 +691,7 @@ bool VRORenderTargetOpenGL::createColorTextureTarget() {
     }
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        pinfo("Failed to make complete framebuffer object for color texture %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
             pinfo("   Incomplete attachment");
@@ -724,7 +729,7 @@ bool VRORenderTargetOpenGL::createDepthTextureTarget() {
     GL (glReadBuffer(GL_NONE) );
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        pinfo("Failed to make complete framebuffer object for depth texture %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
             pinfo("   Incomplete attachment");
