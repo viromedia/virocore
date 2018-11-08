@@ -166,6 +166,13 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
         GL( glTexImage2D(target, 0, GL_RGB9_E5, width, height, 0,
                          GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV, faceData->getData()) );
     }
+    else if (format == VROTextureFormat::RGB16F) {
+        passert_msg (internalFormat == VROTextureInternalFormat::RGB16F,
+                     "RGB16F internal format requires RGB16F source data!");
+        
+        GL( glTexImage2D(target, 0, GL_RGB16F, width, height, 0,
+                         GL_RGB, GL_FLOAT, faceData->getData()) );
+    }
     else if (format == VROTextureFormat::RGB565) {
         passert_msg (internalFormat == VROTextureInternalFormat::RGB565,
                      "RGB565 source format is only compatible with RGB565 internal format!");

@@ -40,6 +40,7 @@ enum class VROTextureFormat {
     RGB565,
     RGB8,
     RGB9_E5,
+    RGB16F,
 };
 
 // Texture formats for storage on the GPU
@@ -54,6 +55,7 @@ enum class VROTextureInternalFormat {
     RGB565,
     YCBCR,
     RGB9_E5,
+    RGB16F,
     RG8,
 };
 
