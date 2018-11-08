@@ -522,7 +522,7 @@ VROViewRecorderRTTDelegate::VROViewRecorderRTTDelegate(VROViewRecorder *recorder
     _texture(texture),
     _renderer(renderer) {
     _recorder = recorder;
-    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false);
+    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false, false);
     _renderToTextureTarget->attachTexture(_texture, 0);
 };
 
