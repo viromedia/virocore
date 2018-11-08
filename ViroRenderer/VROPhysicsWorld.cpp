@@ -63,7 +63,7 @@ void VROPhysicsWorld::addPhysicsBody(std::shared_ptr<VROPhysicsBody> body) {
 
     _activePhysicsBodies[body->getKey()] = body;
     btRigidBody* bulletBody = body->getBulletRigidBody();
-    if (bulletBody){
+    if (bulletBody && body->getIsSimulated()){
         _dynamicsWorld->addRigidBody(bulletBody);
     } else {
         perror("Attempted to re-add a VROPhysics body with a mis-configured bulletBody!");
