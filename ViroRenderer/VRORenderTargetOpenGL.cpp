@@ -23,13 +23,15 @@
 #endif
 
 VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAttachments, int numImages,
-                                             bool enableMipmaps, std::shared_ptr<VRODriverOpenGL> driver) :
+                                             bool enableMipmaps, bool needsDepthStencil,
+                                             std::shared_ptr<VRODriverOpenGL> driver) :
     VRORenderTarget(type, numAttachments),
     _framebuffer(0),
     _depthStencilbuffer(0),
     _colorbuffer(0),
     _numImages(numImages),
     _mipmapsEnabled(enableMipmaps),
+    _needsDepthStencil(needsDepthStencil),
     _driver(driver),
     _stencilRef(0xFF),
     _stencilFunc(VROStencilFunc::Always) {
@@ -251,8 +253,11 @@ void VRORenderTargetOpenGL::setMipLevel(int mipLevel, int attachmentIndex) {
     
     unsigned int mipWidth  = _viewport.getWidth()  * std::pow(0.5, mipLevel);
     unsigned int mipHeight = _viewport.getHeight() * std::pow(0.5, mipLevel);
-    GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
-    GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, mipWidth, mipHeight) );
+    
+    if (_depthStencilbuffer) {
+        GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
+        GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, mipWidth, mipHeight) );
+    }
     GL (glViewport(0, 0, mipWidth, mipHeight) );
 }
 
@@ -325,7 +330,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
          Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to
          the framebuffer's depth attachment point.
          */
-        if (_depthStencilbuffer == 0) {
+        if (_needsDepthStencil && _depthStencilbuffer == 0) {
             _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
             GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
             GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
@@ -411,7 +416,7 @@ bool VRORenderTargetOpenGL::attachNewTextures() {
          Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to
          the framebuffer's depth attachment point.
          */
-        if (_depthStencilbuffer == 0) {
+        if (_needsDepthStencil && _depthStencilbuffer == 0) {
             _depthStencilRenderbufferStorage = GL_DEPTH_COMPONENT24;
             GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
             GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
@@ -629,13 +634,15 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
      Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to the
      framebuffer's depth attachment point.
      */
-    _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
-    GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
-    GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
-    GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight()) );
-    
-    GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
-    GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
+    if (_needsDepthStencil) {
+        _depthStencilRenderbufferStorage = GL_DEPTH24_STENCIL8;
+        GL (glGenRenderbuffers(1, &_depthStencilbuffer) );
+        GL (glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer) );
+        GL (glRenderbufferStorage(GL_RENDERBUFFER, _depthStencilRenderbufferStorage, _viewport.getWidth(), _viewport.getHeight()) );
+        
+        GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
+        GL (glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer) );
+    }
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));

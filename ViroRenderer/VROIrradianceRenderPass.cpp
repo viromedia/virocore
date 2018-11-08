@@ -39,7 +39,7 @@ void VROIrradianceRenderPass::init(std::shared_ptr<VRODriver> driver) {
     _shader = std::make_shared<VROShaderProgram>("irradiance_convolution_vsh", "irradiance_convolution_fsh", samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     
-    _irradianceRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false);
+    _irradianceRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false, false);
     _irradianceRenderTarget->setViewport( { 0, 0, 32, 32 });
 }
 

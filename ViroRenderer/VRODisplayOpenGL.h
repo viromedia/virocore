@@ -18,7 +18,7 @@ class VRODisplayOpenGL : public VRORenderTargetOpenGL {
 public:
     
     VRODisplayOpenGL(GLint framebuffer, std::shared_ptr<VRODriverOpenGL> driver) :
-        VRORenderTargetOpenGL(VRORenderTargetType::Display, 1, 1, false, driver) {
+        VRORenderTargetOpenGL(VRORenderTargetType::Display, 1, 1, false, true, driver) {
         _framebuffer = framebuffer;
     }
     virtual ~VRODisplayOpenGL() {}

@@ -19,10 +19,10 @@ VROShadowPreprocess::VROShadowPreprocess(std::shared_ptr<VRODriver> driver) :
      _maxSupportedShadowMapSize(2048) {
          
     if (kDebugShadowMaps) {
-        _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxShadowMaps, false);
+        _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxShadowMaps, false, true);
     }
     else {
-        _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, 1, kMaxShadowMaps, false);
+        _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, 1, kMaxShadowMaps, false, true);
     }
 }
 

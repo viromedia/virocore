@@ -37,7 +37,7 @@ void VROBRDFRenderPass::init(std::shared_ptr<VRODriver> driver) {
                                                  "brdf_fsh",
                                                  samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
-    _BRDFRenderTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureRG16, 1, 1, false);
+    _BRDFRenderTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureRG16, 1, 1, false, false);
     _BRDFRenderTarget->setViewport({ 0, 0, 512, 512 });
 }
 

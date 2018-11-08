@@ -92,8 +92,8 @@ void VROChoreographer::createRenderTargets() {
         };
         std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
         _blitPostProcess = driver->newImagePostProcess(blitShader);
-        _blitTarget = driver->newRenderTarget(colorType, 1, 1, false);
-        _rttTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false);
+        _blitTarget = driver->newRenderTarget(colorType, 1, 1, false, true);
+        _rttTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false, false);
 
         _preprocesses.clear();
         if (_shadowsEnabled) {
@@ -106,15 +106,15 @@ void VROChoreographer::createRenderTargets() {
     }
     
     if (_hdrEnabled) {
-        _postProcessTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
-        _postProcessTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+        _postProcessTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
+        _postProcessTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
 
         if (_bloomEnabled) {
             // The HDR target includes an additional attachment to which we render a tone-mapping mask
             // (indicating what fragments require tone-mapping), and one to which we render bloom
-            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 3, 1, false);
-            _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
-            _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false);
+            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 3, 1, false, true);
+            _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
+            _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
             _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
             
             std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
@@ -135,7 +135,7 @@ void VROChoreographer::createRenderTargets() {
         else {
             // The HDR target includes an additional attachment to which we render a tone-mapping mask
             // (indicating what fragments require tone-mapping)
-            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false);
+            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false, true);
         }
 
         bool needsSoftwareGammaPass = driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware;

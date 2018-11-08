@@ -24,7 +24,8 @@ public:
      for array types.
      */
     VRORenderTargetOpenGL(VRORenderTargetType type, int numAttachments, int numImages,
-                          bool enableMipmaps, std::shared_ptr<VRODriverOpenGL> driver);
+                          bool enableMipmaps, bool needsDepthStencil,
+                          std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VRORenderTargetOpenGL();
     
 #pragma mark - VRORenderTarget Implementation
@@ -100,6 +101,13 @@ private:
      setTextureCubeFace.
      */
     bool _mipmapsEnabled;
+    
+    /*
+     If true then this render target requires a depth/stencil renderbuffer. This can
+     be safely set to false (in the constructor) to save memory for render targets
+     that just perform color blitting.
+     */
+    bool _needsDepthStencil;
     
     /*
      The setting for passing the stencil test operation. These are determined by the

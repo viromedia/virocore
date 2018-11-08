@@ -256,7 +256,7 @@ public:
                                                      VROWrapMode wrapS, VROWrapMode wrapT,
                                                      VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter) = 0;
     virtual std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type, int numAttachments, int numImages,
-                                                             bool enableMipmaps) = 0;
+                                                             bool enableMipmaps, bool needsDepthStencil) = 0;
     virtual std::shared_ptr<VRORenderTarget> getDisplay() = 0;
     virtual std::shared_ptr<VROImagePostProcess> newImagePostProcess(std::shared_ptr<VROShaderProgram> shader) = 0;
     virtual std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() = 0;

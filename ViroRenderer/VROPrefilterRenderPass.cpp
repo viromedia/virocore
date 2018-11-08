@@ -36,7 +36,7 @@ void VROPrefilterRenderPass::init(std::shared_ptr<VRODriver> driver) {
     _shader = std::make_shared<VROShaderProgram>("prefilter_convolution_vsh",
                                                  "prefilter_convolution_fsh", samplers, modifiers, 0,
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
-    _prefilterRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, true);
+    _prefilterRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, true, false);
     _prefilterRenderTarget->setViewport( { 0, 0, 128, 128 });
 }
 

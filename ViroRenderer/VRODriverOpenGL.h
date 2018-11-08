@@ -412,10 +412,11 @@ public:
                                              driver);
     }
     
-    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type, int numAttachments, int numImages, bool enableMipmaps) {
+    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type, int numAttachments, int numImages, bool enableMipmaps,
+                                                     bool needsDepthStencil) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
         std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, numAttachments, numImages,
-                                                                                          enableMipmaps, driver);
+                                                                                          enableMipmaps, needsDepthStencil, driver);
         return target;
     }
     
