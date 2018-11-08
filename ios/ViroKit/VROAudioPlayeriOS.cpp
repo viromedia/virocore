@@ -160,25 +160,8 @@ void VROAudioPlayeriOS::pause() {
     _paused = true;
     if (_player) {
         if([_player isPlaying]) {
-            doFadeThenPause();
+            [_player pause];
         }
-    }
-}
-
-void VROAudioPlayeriOS::doFadeThenPause() {
-    // Grab the shared_ptr to this, so that we retain this in the dispatch_after;
-    // otherwise only 'this' is captured, so the ref-count can slip to zero and
-    // cause a crash
-    std::shared_ptr<VROAudioPlayeriOS> capturedSelf = shared_from_this();
-    
-    if (_player.volume > 0.1) {
-        _player.volume = _player.volume - 0.1;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            capturedSelf->doFadeThenPause();
-        });
-    }
-    else {
-        [_player pause];
     }
 }
 
