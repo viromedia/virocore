@@ -139,7 +139,7 @@ std::shared_ptr<VRORenderTarget> VROAVRecorderAndroid::bindScreenshotLDRTarget(i
                                                                                std::shared_ptr<VRODriver> &driver) {
     if (!_screenshotLDRTarget) {
         pinfo("Creating screenshot LDR render target");
-        _screenshotLDRTarget = driver->newRenderTarget( VRORenderTargetType::ColorTexture, 1, 1, false);
+        _screenshotLDRTarget = driver->newRenderTarget( VRORenderTargetType::ColorTexture, 1, 1, false, false);
     }
     _screenshotLDRTarget->setViewport({0, 0, width, height});
     driver->bindRenderTarget(_screenshotLDRTarget, VRORenderTargetUnbindOp::Invalidate);
