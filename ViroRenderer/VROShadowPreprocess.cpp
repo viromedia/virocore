@@ -53,7 +53,8 @@ void VROShadowPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderCont
     // requested size, cut the size in half. If we continue to fail, then shadows map not
     // be supported by this device; in this case, return without rendering them.
     while (shadowMapSize >= minRequiredShadowMapSize) {
-        if (_shadowTarget->setViewport({ 0, 0, shadowMapSize, shadowMapSize })) {
+        _shadowTarget->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+        if (_shadowTarget->hydrate()) {
             break;
         }
         else {

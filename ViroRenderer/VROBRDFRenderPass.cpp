@@ -39,12 +39,13 @@ void VROBRDFRenderPass::init(std::shared_ptr<VRODriver> driver) {
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     _BRDFRenderTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureRG16, 1, 1, false, false);
     _BRDFRenderTarget->setViewport({ 0, 0, 512, 512 });
+    _BRDFRenderTarget->hydrate();
 }
 
 void VROBRDFRenderPass::render(std::shared_ptr<VROScene> scene,
-                                     std::shared_ptr<VROScene> outgoingScene,
-                                     VRORenderPassInputOutput &output,
-                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
+                               std::shared_ptr<VROScene> outgoingScene,
+                               VRORenderPassInputOutput &output,
+                               VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     if (!_shader) {
         init(driver);
     }

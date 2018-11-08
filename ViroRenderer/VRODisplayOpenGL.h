@@ -24,6 +24,7 @@ public:
     virtual ~VRODisplayOpenGL() {}
     virtual void invalidate() {};
     bool setViewport(VROViewport viewport) { _viewport = viewport; return true; }
+    bool hydrate() { return true; }
     
 #pragma mark - Unsupported by Displays
     

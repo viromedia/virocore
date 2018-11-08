@@ -41,6 +41,7 @@ void VROIrradianceRenderPass::init(std::shared_ptr<VRODriver> driver) {
     
     _irradianceRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false, false);
     _irradianceRenderTarget->setViewport( { 0, 0, 32, 32 });
+    _irradianceRenderTarget->hydrate();
 }
 
 void VROIrradianceRenderPass::render(std::shared_ptr<VROScene> scene,

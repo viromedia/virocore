@@ -40,6 +40,7 @@ void VROEquirectangularToCubeRenderPass::init(std::shared_ptr<VRODriver> driver)
     
     _cubeRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, false, false);
     _cubeRenderTarget->setViewport( { 0, 0, 512, 512 });
+    _cubeRenderTarget->hydrate();
 }
 
 void VROEquirectangularToCubeRenderPass::render(std::shared_ptr<VROScene> scene,

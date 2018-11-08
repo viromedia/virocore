@@ -88,9 +88,18 @@ public:
      If the viewport size is changed, this may invalidate the current texture.
      This must be invoked before using the render target.
      
-     Returns true on success, false if the viewport size is not supported.
+     Return true if the viewport changed. If the viepwort changes, the old
+     graphics resources used by this render target will be deleted, and this
+     render target will need to be re-hydrated.
      */
     virtual bool setViewport(VROViewport viewport) = 0;
+    
+    /*
+     Allocates the underlying graphics resources for this render target. Returns
+     false if the resources could not be allocated. No-op if this render target
+     is already hydrated.
+     */
+    virtual bool hydrate() = 0;
     
     /*
      Get the dimensions of this render target.

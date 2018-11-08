@@ -154,13 +154,22 @@ bool VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
     
     _viewport = viewport;
 
-    // If size changed, recreate the target
+    // If size changed, delete the previous attachments: the render target will
+    // need to be re-hydrated
     if (previousWidth  != viewport.getWidth() || previousHeight != viewport.getHeight()) {
         deleteFramebuffers();
-        return restoreFramebuffers();
-    }
-    else {
         return true;
+    } else {
+        return false;
+    }
+}
+
+bool VRORenderTargetOpenGL::hydrate() {
+    if (_framebuffer) {
+        // No-op if already hydrated
+        return true;
+    } else {
+        return restoreFramebuffers();
     }
 }
 

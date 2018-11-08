@@ -39,6 +39,7 @@ public:
                              std::shared_ptr<VRODriver> driver);
     
     virtual bool setViewport(VROViewport viewport);
+    virtual bool hydrate();
     int getWidth() const;
     int getHeight() const;
     

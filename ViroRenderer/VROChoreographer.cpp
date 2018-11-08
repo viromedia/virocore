@@ -172,50 +172,42 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
      */
     VROViewport rtViewport = VROViewport(0, 0, viewport.getWidth(), viewport.getHeight());
 
+    /*
+     We immediately hydrate only core render targets, and disable HDR if any of them
+     fail. Other (non-core) render targets are only hydrated when used, in order to
+     conserve memory.
+     */
     bool failed = false;
     if (_blitTarget) {
-        if (!_blitTarget->setViewport(rtViewport)) {
+        _blitTarget->setViewport(rtViewport);
+        if (!_blitTarget->hydrate()) {
             pwarn("Blit target creation failed");
             failed = true;
         }
     }
     if (_rttTarget) {
-        if (!_rttTarget->setViewport(rtViewport)) {
-            pwarn("RTT target creation failed");
-            failed = true;
-        }
+        _rttTarget->setViewport(rtViewport);
     }
     if (_postProcessTargetA) {
-        if (!_postProcessTargetA->setViewport(rtViewport)) {
-            pwarn("Post process render target (A) creation failed");
-            failed = true;
-        }
+        _postProcessTargetA->setViewport(rtViewport);
     }
     if (_postProcessTargetB) {
-        if (!_postProcessTargetB->setViewport(rtViewport)) {
-            pwarn("Post process render target (B) creation failed");
-            failed = true;
-        }
+        _postProcessTargetB->setViewport(rtViewport);
     }
     if (_hdrTarget) {
-        if (!_hdrTarget->setViewport(rtViewport)) {
+        _hdrTarget->setViewport(rtViewport);
+        if (!_hdrTarget->hydrate()) {
             pwarn("HDR render target creation failed");
             failed = true;
         }
     }
     if (_blurTargetA) {
-        if (!_blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
-                                                                               (int)(rtViewport.getHeight() * _blurScaling) })) {
-            pwarn("Blur render target (A) creation failed");
-            failed = true;
-        }
+        _blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(), (int) (rtViewport.getWidth()  * _blurScaling),
+                                                                          (int) (rtViewport.getHeight() * _blurScaling) });
     }
     if (_blurTargetB) {
-        if (!_blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
-                                                                               (int)(rtViewport.getHeight() * _blurScaling) })) {
-            pwarn("Blur render target (B) creation failed");
-            failed = true;
-        }
+        _blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int) (rtViewport.getWidth()  * _blurScaling),
+                                                                          (int) (rtViewport.getHeight() * _blurScaling) });
     }
 
     if (failed) {
@@ -252,6 +244,9 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
     VRORenderPassInputOutput inputs;
     if (_hdrEnabled) {
         if (_bloomEnabled && metadata->requiresBloomPass()) {
+            _blurTargetA->hydrate();
+            _blurTargetB->hydrate();
+            
             // Render the scene + bloom to the floating point HDR MRT target
             inputs.outputTarget = _hdrTarget;
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
@@ -282,6 +277,8 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.textures[kToneMappingMaskInput] = _hdrTarget->getTexture(1);
             
             if (_renderToTextureDelegate) {
+                _rttTarget->hydrate();
+                
                 inputs.outputTarget = _rttTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_rttTarget, driver);
@@ -307,6 +304,8 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             inputs.textures[kToneMappingMaskInput] = _hdrTarget->getTexture(1);
 
             if (_renderToTextureDelegate) {
+                _rttTarget->hydrate();
+                
                 inputs.outputTarget = _rttTarget;
                 _toneMappingPass->render(scene, outgoingScene, inputs, context, driver);
                 renderToTextureAndDisplay(_rttTarget, driver);
@@ -318,6 +317,8 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
         }
     }
     else if (_mrtSupported && _renderToTextureDelegate) {
+        _rttTarget->hydrate();
+        
         inputs.outputTarget = _rttTarget;
         _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
         renderToTextureAndDisplay(_rttTarget, driver);

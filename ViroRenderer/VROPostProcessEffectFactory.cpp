@@ -101,6 +101,8 @@ std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::handlePostProcessi
                                                                                    std::shared_ptr<VRORenderTarget> targetB,
                                                                                    std::shared_ptr<VRODriver> driver) {
     if (_cachedPrograms.size() > 0) {
+        targetA->hydrate();
+        targetB->hydrate();
         return renderEffects(source, targetA, targetB, driver);
     } else {
         return source;

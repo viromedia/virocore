@@ -38,6 +38,7 @@ void VROPrefilterRenderPass::init(std::shared_ptr<VRODriver> driver) {
                                                  std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     _prefilterRenderTarget = driver->newRenderTarget(VRORenderTargetType::CubeTextureHDR16, 1, 6, true, false);
     _prefilterRenderTarget->setViewport( { 0, 0, 128, 128 });
+    _prefilterRenderTarget->hydrate();
 }
 
 void VROPrefilterRenderPass::render(std::shared_ptr<VROScene> scene,
