@@ -97,7 +97,7 @@ void VRODiffuseIrradianceTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
-    cameraNode->setPosition({ 0, 0, 9 });
+    cameraNode->setPosition({ 0, 0, 20 });  // 9 is good for VR, for for Scene we push further back
     cameraNode->setCamera(camera);
     rootNode->addChildNode(cameraNode);
     
@@ -115,22 +115,21 @@ void VRODiffuseIrradianceTest::nextEnvironment() {
     std::shared_ptr<VROTexture> environment;
     if (_textureIndex == 0) {
         environment = VROTestUtil::loadRadianceHDRTexture("ibl_newport_loft");
-    }
-    else if (_textureIndex == 1) {
+    } else if (_textureIndex == 1) {
         environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
-    }
-    else if (_textureIndex == 2) {
+    } else if (_textureIndex == 2) {
         environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");
-    }
-    else if (_textureIndex == 3) {
+    } else if (_textureIndex == 3) {
         environment = VROTestUtil::loadRadianceHDRTexture("ibl_wooden_door");
+    } else if (_textureIndex == 4) {
+        environment = VROTestUtil::loadRadianceHDRTexture("san_giuseppe_bridge_1k");
     }
     
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
     scene->getRootNode()->setLightingEnvironment(environment);
     scene->getRootNode()->setBackgroundSphere(environment);
     
-    _textureIndex = (_textureIndex + 1) % 4;
+    _textureIndex = (_textureIndex + 1) % 5;
 }
 
 void VROIBLEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
