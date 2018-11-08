@@ -15,8 +15,8 @@ void main() {
     up               = cross(N, right);
     
     // This value controls how much we sample the cubemap for convolution.
-    // Using 0.025 is too low, causes GPU hang errors on iOS
-    highp float sample_delta = 0.05;
+    // Using 0.05 is too low, causes GPU hang errors on iOS (IOAF code 5)
+    highp float sample_delta = 0.075;
     highp float sample_count = 0.0f;
     
     for (highp float phi = 0.0; phi < 2.0 * PI; phi += sample_delta) {
