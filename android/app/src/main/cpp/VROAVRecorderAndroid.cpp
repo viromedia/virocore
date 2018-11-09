@@ -76,29 +76,17 @@ bool VROAVRecorderAndroid::onRenderedFrameTexture(std::shared_ptr<VRORenderTarge
         if (jRecorder) {
             passert (driver->getRenderTarget() == input);
 
-            // If we were using hardware gamma correction, then we have to emulate that when taking the
-            // screenshot by using software gamma correction
+            // The input target is LDR and has already been tone-mapped, but may need gamma correction.
+            // We need gamma correction if we're in linear color space.
             if (driver->getColorRenderingMode() == VROColorRenderingMode::Linear) {
                 std::shared_ptr<VRORenderTarget> ldrTarget = bindScreenshotLDRTarget(input->getWidth(), input->getHeight(), driver);
                 getGammaPostProcess(driver)->blit({ input->getTexture(0) }, driver);
                 ldrTarget->bindRead();
             }
-
-            // Otherwise the texture is already tone-mapped so we can perform a direct read or blit
+            // Otherwise we can perform a direct read or blit
             else {
-                // If the input was an LDR color target, we can directly read from it
-                if (input->getType() == VRORenderTargetType::ColorTexture) {
-                    input->bindRead();
-                }
-                    // Otherwise create an LDR render target and render to it
-                else {
-                    std::shared_ptr<VRORenderTarget> ldrTarget = bindScreenshotLDRTarget(input->getWidth(), input->getHeight(), driver);
-                    input->blitColor(ldrTarget, false, driver);
-                    ldrTarget->bindRead();
-                }
+                input->bindRead();
             }
-
-
 
             // This will call glReadPixels up in Java, reading from the currently bound (READ) framebuffer
             jRecorder->onTakeScreenshot();
@@ -142,6 +130,8 @@ std::shared_ptr<VRORenderTarget> VROAVRecorderAndroid::bindScreenshotLDRTarget(i
         _screenshotLDRTarget = driver->newRenderTarget( VRORenderTargetType::ColorTexture, 1, 1, false, false);
     }
     _screenshotLDRTarget->setViewport({0, 0, width, height});
+    _screenshotLDRTarget->hydrate();
+
     driver->bindRenderTarget(_screenshotLDRTarget, VRORenderTargetUnbindOp::Invalidate);
     return _screenshotLDRTarget;
 }
