@@ -87,6 +87,8 @@ VRO_METHOD(void, nativeAttachDelegate)(VRO_ARGS
 
 VRO_METHOD(void, nativeDeleteVideoTexture)(VRO_ARGS
                                            VRO_REF(VROVideoTexture) textureRef) {
+    std::shared_ptr<VROVideoTexture> videoTexture = VRO_REF_GET(VROVideoTexture, textureRef);
+    videoTexture->pause();
     VRO_REF_DELETE(VROVideoTexture, textureRef);
 }
 
