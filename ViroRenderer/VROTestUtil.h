@@ -40,7 +40,7 @@ public:
     static std::shared_ptr<VROTexture> loadRadianceHDRTexture(std::string texture);
     static std::shared_ptr<VROTexture> loadHDRTexture(std::string texture);
     
-    static std::shared_ptr<VRONode> loadFBXModel(std::string model, VROVector3f position, VROVector3f scale,
+    static std::shared_ptr<VRONode> loadFBXModel(std::string model, VROVector3f position, VROVector3f scale, VROVector3f rotation,
                                                  int lightMask, std::string animation, std::shared_ptr<VRODriver> driver);
     static std::shared_ptr<VRONode> loadGLTFModel(std::string model, std::string ext, VROVector3f position, VROVector3f scale,
                                                        int lightMask, std::string animation, std::shared_ptr<VRODriver> driver,

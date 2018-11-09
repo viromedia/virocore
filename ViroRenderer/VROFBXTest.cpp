@@ -27,19 +27,20 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     VROVector3f crPosition = { 0, -1, -4 };
     VROVector3f crScale = { .25, .25, .25 };
     
-    VROFBXModel cars("cr_cars", crPosition, crScale, 1, "01");
-    VROFBXModel city("cr_city", crPosition, crScale, 1, "01");
-    VROFBXModel floorplan("cr_floorplan", crPosition, crScale, 1, "01");
-    VROFBXModel labels("cr_labels", crPosition, crScale, 1, "01");
-    VROFBXModel logo("cr_logo", crPosition, crScale, 1, "01");
+    VROFBXModel bumblebeecar("bumblebee_body", { 0, -2, -4 }, { 1, 1, 1 }, { 0, toRadians(70), 0 }, 1, "01");
+    VROFBXModel cars("cr_cars", crPosition, crScale, { 0, 0, 0 }, 1, "01");
+    VROFBXModel city("cr_city", crPosition, crScale, { 0, 0, 0 }, 1, "01");
+    VROFBXModel floorplan("cr_floorplan", crPosition, crScale, { 0, 0, 0 }, 1, "01");
+    VROFBXModel labels("cr_labels", crPosition, crScale, { 0, 0, 0 }, 1, "01");
+    VROFBXModel logo("cr_logo", crPosition, crScale, { 0, 0, 0 }, 1, "01");
+    VROFBXModel worm("worm", { 0, 0, -3 }, { .2, .2, .2 }, { 0, 0, 0 }, 1, "Take 001");
+    VROFBXModel panther("object_bpanther_anim", { 0, -1.5, -8 }, { 2, 2, 2 }, { 0, 0, 0 }, 1, "01");
+    VROFBXModel lamborghini("lamborghini_v2", { 0, -1.5, -6 }, { .015, .015, .015 }, { 0, 0, 0 }, 1, "02");
+    VROFBXModel cylinder("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, { 0, 0, 0 }, 1, "02_spin");
+    VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, { 0, 0, 0 }, 1, "01");
+    VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, { 0, 0, 0 }, 1, "02");
     
-    VROFBXModel worm("worm", { 0, 0, -3 }, { .2, .2, .2 }, 1, "Take 001");
-    VROFBXModel panther("object_bpanther_anim", { 0, -1.5, -8 }, { 2, 2, 2 }, 1, "01");
-    VROFBXModel lamborghini("lamborghini_v2", { 0, -1.5, -6 }, { .015, .015, .015 }, 1, "02");
-    VROFBXModel cylinder("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, 1, "02_spin");
-    VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, 1, "01");
-    VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, 1, "02");
-    
+    _models.push_back({ bumblebeecar });
     _models.push_back({ worm });
     _models.push_back({ cars, city, floorplan, labels, logo });
     _models.push_back({ panther });
@@ -53,19 +54,20 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 1.0, 1.0 });
-    light->setPosition( { 0, 10, 10 });
-    light->setDirection( { 0, -1.0, -1.0 });
+    light->setPosition( { 0, 3, -4 });
+    light->setDirection( { 0, -1, 0 });
     light->setAttenuationStartDistance(25);
     light->setAttenuationEndDistance(50);
     light->setSpotInnerAngle(35);
     light->setSpotOuterAngle(60);
-    light->setCastsShadow(true);
-    light->setIntensity(1000);
+    light->setCastsShadow(false);
+    light->setIntensity(10);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(100);
+    ambient->setIntensity(200);
     
+    //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("san_giuseppe_bridge_1k");
     std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
     //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");
     //std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_wooden_door");
@@ -118,7 +120,7 @@ void VROFBXTest::rotateFBX() {
 
     std::vector<VROFBXModel> models = _models[_fbxIndex];
     for (VROFBXModel &model : models) {
-        std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel(model.name, model.position, model.scale,
+        std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel(model.name, model.position, model.scale, model.rotation,
                                                                      model.lightMask, model.animation, _driver);
         _fbxContainerNode->addChildNode(fbxNode);
     }

@@ -236,7 +236,7 @@ std::shared_ptr<VROTexture> VROTestUtil::loadTexture(std::string texture, bool s
 #endif
 }
 
-std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3f position, VROVector3f scale,
+std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3f position, VROVector3f scale, VROVector3f rotation,
                                                    int lightMask, std::string animation, std::shared_ptr<VRODriver> driver) {
     std::string url;
     std::string base;
@@ -262,13 +262,14 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
 
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     VROFBXLoader::loadFBXFromResource(url, resourceType, node, driver,
-                                        [scale, position, lightMask, animation](std::shared_ptr<VRONode> node, bool success) {
+                                        [scale, position, rotation, lightMask, animation](std::shared_ptr<VRONode> node, bool success) {
                                             if (!success) {
                                                 return;
                                             }
                                             
                                             node->setScale(scale);
                                             node->setPosition(position);
+                                            node->setRotation(rotation);
                                             setLightMasks(node, lightMask);
                                             
                                             if (node->getGeometry()) {

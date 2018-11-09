@@ -28,11 +28,13 @@ public:
     std::string name;
     VROVector3f position;
     VROVector3f scale;
+    VROVector3f rotation;
     int lightMask;
     std::string animation;
     
-    VROFBXModel(std::string name, VROVector3f position, VROVector3f scale, int lightMask, std::string animation) :
-        name(name), position(position), scale(scale), lightMask(lightMask), animation(animation) {}
+    VROFBXModel(std::string name, VROVector3f position, VROVector3f scale, VROVector3f rotation,
+                int lightMask, std::string animation) :
+        name(name), position(position), scale(scale), rotation(rotation), lightMask(lightMask), animation(animation) {}
     ~VROFBXModel() {}
 };
 

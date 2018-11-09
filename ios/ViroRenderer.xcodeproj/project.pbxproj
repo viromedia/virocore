@@ -735,6 +735,13 @@
 		8F0E5EA91F3BB81A0007AD03 /* VRODisplayOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5EA71F3BB81A0007AD03 /* VRODisplayOpenGL.h */; };
 		8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */; };
 		8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */; };
+		8F0F13DD21934D6000E8810B /* bumblebee_Metallic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13CD21934D5E00E8810B /* bumblebee_Metallic.jpg */; };
+		8F0F13E221934D6000E8810B /* bumblebee_Roughness.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13D221934D5F00E8810B /* bumblebee_Roughness.jpg */; };
+		8F0F13E521934D6000E8810B /* bumblebee_body.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13D521934D5F00E8810B /* bumblebee_body.vrx */; };
+		8F0F13E621934D6000E8810B /* bumblebee_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13D621934D5F00E8810B /* bumblebee_Base_Color.png */; };
+		8F0F13E721934D6000E8810B /* bumblebee_cone.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13D721934D6000E8810B /* bumblebee_cone.vrx */; };
+		8F0F13E921934D6000E8810B /* bumblebee_Normal_OpenGL.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13D921934D6000E8810B /* bumblebee_Normal_OpenGL.jpg */; };
+		8F0F13EB21934D6000E8810B /* bumblebee_shadow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13DB21934D6000E8810B /* bumblebee_shadow.png */; };
 		8F0F13EE2193812E00E8810B /* san_giuseppe_bridge_1k.hdr in Resources */ = {isa = PBXBuildFile; fileRef = 8F0F13ED2193812E00E8810B /* san_giuseppe_bridge_1k.hdr */; };
 		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0FE6701CD29BF900A4C297 /* VROViewGVR.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE66E1CD29BF900A4C297 /* VROViewGVR.m */; };
@@ -1700,6 +1707,13 @@
 		8F0E5EA71F3BB81A0007AD03 /* VRODisplayOpenGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODisplayOpenGL.h; sourceTree = "<group>"; };
 		8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalTreeRenderPass.cpp; sourceTree = "<group>"; };
 		8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalTreeRenderPass.h; sourceTree = "<group>"; };
+		8F0F13CD21934D5E00E8810B /* bumblebee_Metallic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bumblebee_Metallic.jpg; path = ViroSample/bumblebee_Metallic.jpg; sourceTree = "<group>"; };
+		8F0F13D221934D5F00E8810B /* bumblebee_Roughness.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bumblebee_Roughness.jpg; path = ViroSample/bumblebee_Roughness.jpg; sourceTree = "<group>"; };
+		8F0F13D521934D5F00E8810B /* bumblebee_body.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = bumblebee_body.vrx; path = ViroSample/bumblebee_body.vrx; sourceTree = "<group>"; };
+		8F0F13D621934D5F00E8810B /* bumblebee_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bumblebee_Base_Color.png; path = ViroSample/bumblebee_Base_Color.png; sourceTree = "<group>"; };
+		8F0F13D721934D6000E8810B /* bumblebee_cone.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = bumblebee_cone.vrx; path = ViroSample/bumblebee_cone.vrx; sourceTree = "<group>"; };
+		8F0F13D921934D6000E8810B /* bumblebee_Normal_OpenGL.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bumblebee_Normal_OpenGL.jpg; path = ViroSample/bumblebee_Normal_OpenGL.jpg; sourceTree = "<group>"; };
+		8F0F13DB21934D6000E8810B /* bumblebee_shadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bumblebee_shadow.png; path = ViroSample/bumblebee_shadow.png; sourceTree = "<group>"; };
 		8F0F13ED2193812E00E8810B /* san_giuseppe_bridge_1k.hdr */ = {isa = PBXFileReference; lastKnownFileType = file; name = san_giuseppe_bridge_1k.hdr; path = ViroSample/san_giuseppe_bridge_1k.hdr; sourceTree = "<group>"; };
 		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
 		8F0FE66D1CD29BF900A4C297 /* VROViewGVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewGVR.h; sourceTree = "<group>"; };
@@ -3624,6 +3638,13 @@
 			isa = PBXGroup;
 			children = (
 				8F0F13ED2193812E00E8810B /* san_giuseppe_bridge_1k.hdr */,
+				8F0F13D621934D5F00E8810B /* bumblebee_Base_Color.png */,
+				8F0F13D521934D5F00E8810B /* bumblebee_body.vrx */,
+				8F0F13D721934D6000E8810B /* bumblebee_cone.vrx */,
+				8F0F13CD21934D5E00E8810B /* bumblebee_Metallic.jpg */,
+				8F0F13D921934D6000E8810B /* bumblebee_Normal_OpenGL.jpg */,
+				8F0F13D221934D5F00E8810B /* bumblebee_Roughness.jpg */,
+				8F0F13DB21934D6000E8810B /* bumblebee_shadow.png */,
 				8AD76EB5211CD59B0045BD5F /* alcohol_bottle.arobject */,
 				8AD76EB4211CD59B0045BD5F /* diet_coke.arobject */,
 				8AD76EB6211CD59C0045BD5F /* google_home.arobject */,
@@ -4849,9 +4870,11 @@
 				8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
+				8F0F13E921934D6000E8810B /* bumblebee_Normal_OpenGL.jpg in Resources */,
 				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
 				8FEACEDB2012605F0082D18B /* pbr_sample_normal.png in Resources */,
 				8F5EEE9120323E9F0059C9E7 /* dragao_map.jpg in Resources */,
+				8F0F13DD21934D6000E8810B /* bumblebee_Metallic.jpg in Resources */,
 				8FEACEDA2012605F0082D18B /* pbr_sample_albedo.png in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */,
@@ -4859,11 +4882,13 @@
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				A517D2CC1F41A16400A22219 /* cloud.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
+				8F0F13E721934D6000E8810B /* bumblebee_cone.vrx in Resources */,
 				A597F8E4201AB412007EE387 /* prefilter_convolution_vsh.glsl in Resources */,
 				8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
+				8F0F13E221934D6000E8810B /* bumblebee_Roughness.jpg in Resources */,
 				8A35CEFB2060711300ADD393 /* george.jpg in Resources */,
 				8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */,
 				8FEACEDC2012605F0082D18B /* pbr_sample_metallic.png in Resources */,
@@ -4895,7 +4920,9 @@
 				8F6E5B2020DD335B00BEE45F /* cr_ar_badges_Normal_OpenGL.png in Resources */,
 				8FA9A251207E83980022C55D /* Lamborginhi_glass_Base_Color.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
+				8F0F13E521934D6000E8810B /* bumblebee_body.vrx in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
+				8F0F13EB21934D6000E8810B /* bumblebee_shadow.png in Resources */,
 				A5BE9E1620E14F7700DB4E7A /* RiggedSimple.glb in Resources */,
 				8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
@@ -4933,6 +4960,7 @@
 				8F0F13EE2193812E00E8810B /* san_giuseppe_bridge_1k.hdr in Resources */,
 				A57CA8E020AE027400DE85A1 /* DuckCM.png in Resources */,
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
+				8F0F13E621934D6000E8810B /* bumblebee_Base_Color.png in Resources */,
 				A57CA8E220AE027400DE85A1 /* Duck0.bin in Resources */,
 				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
@@ -5130,7 +5158,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5224,7 +5256,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5261,7 +5297,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5884,8 +5924,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -5902,8 +5948,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -5986,8 +6044,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6007,8 +6071,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -6364,8 +6440,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6382,8 +6464,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -6467,8 +6561,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6488,8 +6588,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

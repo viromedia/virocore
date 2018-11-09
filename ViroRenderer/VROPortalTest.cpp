@@ -51,7 +51,8 @@ void VROPortalTest::build(std::shared_ptr<VRORenderer> renderer,
     
     std::shared_ptr<VROPortal> portalNode = std::make_shared<VROPortal>();
     portalNode->setBackgroundCube(VROTestUtil::loadCloudBackground());
-    portalNode->addChildNode(VROTestUtil::loadFBXModel("aliengirl", { 0, -3, -6 }, { 0.04, 0.04, 0.04 }, 1, "Take 001", driver));
+    portalNode->addChildNode(VROTestUtil::loadFBXModel("aliengirl", { 0, -3, -6 }, { 0.04, 0.04, 0.04 }, { 0, 0, 0 },
+                                                       1, "Take 001", driver));
     portalNode->setPassable(true);
     portalNode->setScale({0.1, 0.1, 0.1});
     portalNode->setPosition({0, 0, -2});
