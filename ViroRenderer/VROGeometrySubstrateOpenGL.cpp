@@ -154,7 +154,7 @@ void VROGeometrySubstrateOpenGL::createVAO() {
     
     for (int i = 0; i < _elements.size(); i++) {
         GL( glBindVertexArray(vaos[i]) );
-        std::vector<VROVertexDescriptorOpenGL> &vertexDescriptors = _vertexDescriptors;
+        std::vector<VROVertexDescriptorOpenGL> vertexDescriptors = _vertexDescriptors;
         if (_elementToDescriptorsMap.size() > 0
                 && _elementToDescriptorsMap.find(i) != _elementToDescriptorsMap.end()) {
             vertexDescriptors = _elementToDescriptorsMap[i];
