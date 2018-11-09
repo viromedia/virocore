@@ -18,7 +18,7 @@
 
 // Set to true to display the generated irradiance map as the background, and to
 // deactivate specular IBL
-static bool kDebugIrradiance = true;
+static bool kDebugIrradiance = false;
 
 VROIBLPreprocess::VROIBLPreprocess() {
     _phase = VROIBLPhase::Idle;

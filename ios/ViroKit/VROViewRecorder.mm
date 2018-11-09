@@ -542,6 +542,7 @@ void VROViewRecorderRTTDelegate::didRenderFrame(std::shared_ptr<VRORenderTarget>
     
     // If the viewport changed, re-attach the video texture
     if (_renderToTextureTarget->setViewport(rtViewport)) {
+        _renderToTextureTarget->hydrate();
         _renderToTextureTarget->attachTexture(_texture, 0);
     }
 
