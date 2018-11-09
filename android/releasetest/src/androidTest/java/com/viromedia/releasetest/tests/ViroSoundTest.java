@@ -45,8 +45,9 @@ public class ViroSoundTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(textNode);
 
         final ViroContext context = mViroView.getViroContext();
-
-        mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/mpthreetest.mp3"), null);
+        if (mSound == null) {
+            mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/mpthreetest.mp3"), null);
+        }
 
         mSound.setLoop(true);
         mSound.setVolume(1);
@@ -98,6 +99,7 @@ public class ViroSoundTest extends ViroBaseTest {
     }
 
     private void testSetVolume() {
+        mSound.play();
         mSound.setVolume(0);
 
         mMutableTestMethod = () -> {
