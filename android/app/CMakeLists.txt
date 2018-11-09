@@ -151,6 +151,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROTaskQueue.cpp
              ${VIRO_RENDERER_SRC}/VROSparseBitSet.cpp
              ${VIRO_RENDERER_SRC}/Nodes.pb.cc
+             ${VIRO_RENDERER_SRC}/gzip_stream.cpp
 
              # Renderer
              ${VIRO_RENDERER_SRC}/VROScene.cpp

@@ -19,9 +19,15 @@
 #include "VROSkeletalAnimation.h"
 #include "VROBoneUBO.h"
 #include "VROKeyframeAnimation.h"
-#include "VROCompress.h"
 #include "VROTaskQueue.h"
 #include "Nodes.pb.h"
+#include <google/protobuf/io/gzip_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+
+#include "VRODefines.h"
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_MACOS
+#define google google_public
+#endif
 
 static bool kDebugFBXLoading = false;
 
@@ -196,62 +202,58 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                                         std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
     VROPlatformDispatchAsyncBackground([resource, type, node, path, resourceMap, driver, onFinish, isTemp, loadingTexturesFromResourceMap] {
         pinfo("Loading FBX from file %s", path.c_str());
-        
+
         std::string data_pb_gzip = VROPlatformLoadFileAsString(path);
         if (!data_pb_gzip.empty()) {
-            std::string data_pb = VROCompress::decompress(data_pb_gzip);
-
-            if (!data_pb.empty()) {
-                viro::Node *node_pb = new viro::Node();
-                if (node_pb->ParseFromString(data_pb)) {
-                    if (kDebugFBXLoading) {
-                        pinfo("Read FBX protobuf");
-                    }
-
-                    /*
-                     If the ancillary resources (e.g. textures) required by the model are provided in a
-                     resource map, then generate the corresponding fileMap (this copies those resources
-                     into local files).
-                     */
-                    std::shared_ptr<std::map<std::string, std::string>> fileMap;
-                    if (loadingTexturesFromResourceMap) {
-                        fileMap = VROModelIOUtil::createResourceMap(resourceMap, type);
-                    }
-
-                    VROPlatformDispatchAsyncRenderer(
-                            [node, node_pb, resource, type, loadingTexturesFromResourceMap, fileMap, driver, onFinish] {
-                                std::string base = resource.substr(0, resource.find_last_of('/'));
-
-                                // Load the FBX from the protobuf on the rendering thread, accumulating additional
-                                // tasks (e.g. async texture download) in the task queue
-                                std::shared_ptr<VROTaskQueue> taskQueue = std::make_shared<VROTaskQueue>(
-                                        VROTaskExecutionOrder::Serial);
-
-                                std::map<std::string, std::shared_ptr<VROTexture>> *textureCache = new std::map<std::string, std::shared_ptr<VROTexture>>();
-                                std::shared_ptr<VRONode> fbxNode = loadFBX(*node_pb, base,
-                                                                           loadingTexturesFromResourceMap
-                                                                           ? VROResourceType::LocalFile
-                                                                           : type,
-                                                                           loadingTexturesFromResourceMap
-                                                                           ? fileMap : nullptr,
-                                                                           textureCache, taskQueue);
-
-                                // Run all the async tasks. When they're complete, inject the finished FBX into the
-                                // node
-                                taskQueue->processTasksAsync(
-                                        [fbxNode, node, textureCache, node_pb, driver, onFinish] {
-                                            injectFBX(fbxNode, node, driver, onFinish);
-                                            delete (textureCache);
-                                            delete (node_pb);
-                                        });
-                            });
-                } else {
-                    delete (node_pb);
-                    pinfo("Failed to parse FBX protobuf");
-                    onFinish(node, false);
+            google::protobuf::io::ArrayInputStream input(data_pb_gzip.data(), (int) data_pb_gzip.size());
+            google::protobuf::io::GzipInputStream gzipIn(&input);
+            
+            viro::Node *node_pb = new viro::Node();
+            if (node_pb->ParseFromZeroCopyStream(&gzipIn)) {
+                if (kDebugFBXLoading) {
+                    pinfo("Read FBX protobuf");
                 }
+
+                /*
+                 If the ancillary resources (e.g. textures) required by the model are provided in a
+                 resource map, then generate the corresponding fileMap (this copies those resources
+                 into local files).
+                 */
+                std::shared_ptr<std::map<std::string, std::string>> fileMap;
+                if (loadingTexturesFromResourceMap) {
+                    fileMap = VROModelIOUtil::createResourceMap(resourceMap, type);
+                }
+
+                VROPlatformDispatchAsyncRenderer(
+                        [node, node_pb, resource, type, loadingTexturesFromResourceMap, fileMap, driver, onFinish] {
+                            std::string base = resource.substr(0, resource.find_last_of('/'));
+
+                            // Load the FBX from the protobuf on the rendering thread, accumulating additional
+                            // tasks (e.g. async texture download) in the task queue
+                            std::shared_ptr<VROTaskQueue> taskQueue = std::make_shared<VROTaskQueue>(
+                                    VROTaskExecutionOrder::Serial);
+
+                            std::map<std::string, std::shared_ptr<VROTexture>> *textureCache = new std::map<std::string, std::shared_ptr<VROTexture>>();
+                            std::shared_ptr<VRONode> fbxNode = loadFBX(*node_pb, base,
+                                                                       loadingTexturesFromResourceMap
+                                                                       ? VROResourceType::LocalFile
+                                                                       : type,
+                                                                       loadingTexturesFromResourceMap
+                                                                       ? fileMap : nullptr,
+                                                                       textureCache, taskQueue);
+
+                            // Run all the async tasks. When they're complete, inject the finished FBX into the
+                            // node
+                            taskQueue->processTasksAsync(
+                                    [fbxNode, node, textureCache, node_pb, driver, onFinish] {
+                                        injectFBX(fbxNode, node, driver, onFinish);
+                                        delete (textureCache);
+                                        delete (node_pb);
+                                    });
+                        });
             } else {
-                pinfo("Failed to decompress FBX protobuf");
+                delete (node_pb);
+                pinfo("Failed to parse FBX protobuf");
                 onFinish(node, false);
             }
         }
