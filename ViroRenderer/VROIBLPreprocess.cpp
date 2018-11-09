@@ -16,6 +16,10 @@
 #include "VROPrefilterRenderPass.h"
 #include "VROBRDFRenderPass.h"
 
+// Set to true to display the generated irradiance map as the background, and to
+// deactivate specular IBL
+static bool kDebugIrradiance = true;
+
 VROIBLPreprocess::VROIBLPreprocess() {
     _phase = VROIBLPhase::Idle;
     _equirectangularToCubePass = std::make_shared<VROEquirectangularToCubeRenderPass>();
@@ -62,6 +66,12 @@ void VROIBLPreprocess::execute(std::shared_ptr<VROScene> scene, VRORenderContext
         doIrradianceConvolutionPhase(scene, context, driver);
         context->setIrradianceMap(_irradianceMap);
         _phase = VROIBLPhase::PrefilterConvolution;
+        
+        if (kDebugIrradiance) {
+            std::shared_ptr<VROPortal> portal = scene->getActivePortal();
+            portal->setBackgroundCube(_irradianceMap);
+            _phase = VROIBLPhase::Idle;
+        }
     }
 
     else if (_phase == VROIBLPhase::PrefilterConvolution) {
@@ -98,7 +108,7 @@ void VROIBLPreprocess::doIrradianceConvolutionPhase(std::shared_ptr<VROScene> sc
 }
 
 void VROIBLPreprocess::doPrefilterConvolutionPhase(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                                                    std::shared_ptr<VRODriver> driver) {
+                                                   std::shared_ptr<VRODriver> driver) {
     pinfo("   Convoluting texture to create prefiltered map");
 
     VRORenderPassInputOutput inputs;

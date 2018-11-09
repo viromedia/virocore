@@ -114,15 +114,15 @@ void VRODiffuseIrradianceTest::build(std::shared_ptr<VRORenderer> renderer,
 void VRODiffuseIrradianceTest::nextEnvironment() {
     std::shared_ptr<VROTexture> environment;
     if (_textureIndex == 0) {
-        environment = VROTestUtil::loadRadianceHDRTexture("ibl_newport_loft");
+        environment = VROTestUtil::loadRadianceHDRTexture("san_giuseppe_bridge_1k");
     } else if (_textureIndex == 1) {
-        environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
+        environment = VROTestUtil::loadRadianceHDRTexture("ibl_newport_loft");
     } else if (_textureIndex == 2) {
         environment = VROTestUtil::loadRadianceHDRTexture("ibl_ridgecrest_road");
     } else if (_textureIndex == 3) {
         environment = VROTestUtil::loadRadianceHDRTexture("ibl_wooden_door");
     } else if (_textureIndex == 4) {
-        environment = VROTestUtil::loadRadianceHDRTexture("san_giuseppe_bridge_1k");
+        environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
     }
     
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
