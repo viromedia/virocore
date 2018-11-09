@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -37,10 +38,14 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -51,6 +56,36 @@ import java.util.concurrent.Executors;
  * @hide
  */
 public class PlatformUtil {
+
+    // Avoids creating a new Runnable each time we dispatch a task to another thread.
+    // After the task is run, this TaskRunnable is returned to the pool
+    static class TaskRunnable implements Runnable {
+
+        public int taskId;
+        private WeakReference<List<TaskRunnable>> mPool;
+
+        public TaskRunnable(List<TaskRunnable> pool) {
+            mPool = new WeakReference<>(pool);
+        }
+
+        @Override
+        public void run() {
+            if (taskId == 0) {
+                Log.w("Viro", "Invalid task ID [0] provided for asynchronous task!");
+                return;
+            }
+
+            PlatformUtil.runTask(taskId);
+            taskId = 0;
+
+            List pool = mPool.get();
+            if (pool != null) {
+                synchronized (pool) {
+                    pool.add(this);
+                }
+            }
+        }
+    };
 
     private static final String TAG = "Viro";
     private static String ASSET_URL_PREFIX = "file:///android_asset";
@@ -63,6 +98,7 @@ public class PlatformUtil {
     private Handler mApplicationHandler;
     private RandomString mRandomStringGenerator = new RandomString();
     private ExecutorService mExecutorService = Executors.newCachedThreadPool();
+    private List<TaskRunnable> mTaskRunnablePool = new ArrayList<>();
 
     public PlatformUtil(RenderCommandQueue queue, List<FrameListener> frameListeners,
                         Context context, AssetManager assetManager) {
@@ -400,12 +436,7 @@ public class PlatformUtil {
      * asynchronously on a background thread
      */
     public void dispatchAsyncBackground(final int taskId) {
-        mExecutorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                runTask(taskId);
-            }
-        });
+        mExecutorService.execute(getTaskRunnable(taskId));
     }
 
     /*
@@ -413,12 +444,7 @@ public class PlatformUtil {
      * asynchronously on the rendering thread.
      */
     public void dispatchRenderer(final int taskId) {
-        mRenderQueue.queueEvent(new Runnable() {
-                @Override
-                public void run() {
-                    runTask(taskId);
-                }
-        });
+        mRenderQueue.queueEvent(getTaskRunnable(taskId));
     }
 
     /*
@@ -426,16 +452,31 @@ public class PlatformUtil {
      * asynchronously on the application UI thread.
      */
     public void dispatchApplication(final int taskId) {
-        Runnable myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                runTask(taskId);
-            }
-        };
-        mApplicationHandler.post(myRunnable);
+        mApplicationHandler.post(getTaskRunnable(taskId));
     }
 
     private static native void runTask(int taskId);
+
+    /**
+     * Get a new {@link TaskRunnable} for executing the given task ID. This grabs a
+     * {@link TaskRunnable} from the queue, so that we can reduce object creation churn.
+     *
+     * @param taskId The ID of the native task ro run.
+     * @return The {@link TaskRunnable}.
+     */
+    private TaskRunnable getTaskRunnable(int taskId) {
+        TaskRunnable task = null;
+        synchronized (mTaskRunnablePool) {
+            if (!mTaskRunnablePool.isEmpty()) {
+                task = mTaskRunnablePool.remove(mTaskRunnablePool.size() - 1);
+            }
+        }
+        if (task == null) {
+            task = new TaskRunnable(mTaskRunnablePool);
+        }
+        task.taskId = taskId;
+        return task;
+    }
 
     /**
      * Copies an {@link InputStream} to an {@link OutputStream}.

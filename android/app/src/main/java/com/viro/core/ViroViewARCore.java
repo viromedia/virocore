@@ -268,8 +268,8 @@ public class ViroViewARCore extends ViroView {
                 return;
             }
 
-            for (FrameListener listener : view.mFrameListeners) {
-                listener.onDrawFrame();
+            for (int i = 0; i < view.mFrameListeners.size(); i++) {
+                view.mFrameListeners.get(i).onDrawFrame();
             }
             view.mNativeRenderer.drawFrame();
         }
