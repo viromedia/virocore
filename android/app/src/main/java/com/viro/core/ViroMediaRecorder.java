@@ -716,7 +716,7 @@ public class ViroMediaRecorder {
             }
 
             BufferedOutputStream bos = null;
-            File output = new File(appDir + "/" + mFileName+".png");
+            File output = new File(appDir + "/" + mFileName+".jpg");
             Bitmap bitmap;
             try {
                 bos = new BufferedOutputStream(new FileOutputStream(output.getAbsolutePath()));
@@ -724,7 +724,7 @@ public class ViroMediaRecorder {
                 mPixelBuf.rewind();
                 reverseBuf(mPixelBuf, mWidth, mHeight);
                 bitmap.copyPixelsFromBuffer(mPixelBuf);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 mCompletionCallback.onError(Error.WRITE_TO_FILE);
