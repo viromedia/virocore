@@ -29,6 +29,10 @@
 #include "VROSkeleton.h"
 #include "VROBoneUBO.h"
 #include "VROLog.h"
+#include "VROShaderFactory.h"
+#include "VROShaderModifier.h"
+#include "VROShaderProgram.h"
+#include "VROMorpher.h"
 
 static std::string kVROGLTFInputSamplerKey = "timeInput";
 std::map<std::string, std::shared_ptr<VROData>> VROGLTFLoader::_dataCache;
@@ -530,7 +534,7 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
     std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> frames;
     tinygltf::AnimationChannel inputChannel = anim.channels[targetedChannelIndexes.front()];
     tinygltf::AnimationSampler inputSampler = anim.samplers[inputChannel.sampler];
-    if (!processRawChannelData(gModel, kVROGLTFInputSamplerKey, inputSampler, frames)) {
+    if (!processRawChannelData(gModel, kVROGLTFInputSamplerKey, inputChannel.target_node, inputSampler, frames)) {
         return false;
     }
 
@@ -552,10 +556,11 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
     bool hasTranslation = false;
     bool hasRotation = false;
     bool hasScale = false;
+    bool hasMorphWeights = false;
     for (int channelIndex : targetedChannelIndexes) {
         tinygltf::AnimationChannel channel = anim.channels[channelIndex];
         tinygltf::AnimationSampler gSampler = anim.samplers[channel.sampler];
-        if (!processRawChannelData(gModel, channel.target_path, gSampler, frames)) {
+        if (!processRawChannelData(gModel, channel.target_path, channel.target_node, gSampler, frames)) {
             perr("Failed to process channel index %s for gltf model!", channel.target_path.c_str());
             return false;
         }
@@ -566,15 +571,18 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
             hasScale = true;
         } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "rotation")) {
             hasRotation = true;
+        }  else if (VROStringUtil::strcmpinsensitive(channel.target_path, "weights")) {
+            hasMorphWeights = true;
         }
     }
 
-    animOut = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale);
+    animOut = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale, hasMorphWeights);
     return true;
 }
 
 bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
                                           std::string channelProperty,
+                                          int channelTarget,
                                           const tinygltf::AnimationSampler &channelSampler,
                                           std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &framesOut) {
     // TODO VIRO-3848: Support additional 3D Model Interpolation types
@@ -597,19 +605,18 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
         return false;
     }
 
-    if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
-        // A kVROGLTFInputSamplerKey channelProperty param is provided when creating new, empty
-        // VROKeyFrameAnimations to be used for storing animation data.
-        for (int i = 0; i < gDataAcessor.count; i++) {
-            std::unique_ptr<VROKeyframeAnimationFrame> frame
-                    = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
-            framesOut.push_back(std::move(frame));
+    // Since GLTF does not tell us which primitive the morph targets belong to,
+    // we always grab the targets of the first primitive from the target node's mesh.
+    int numberOfMorphTargets = 0;
+    if (VROStringUtil::strcmpinsensitive(channelProperty, "weights")) {
+        int meshIndex = gModel.nodes[channelTarget].mesh;
+        if (gModel.meshes[meshIndex].primitives.size() <= 0) {
+            perr("Missing morph targets needed for animation!");
+            return false;
         }
-    } else if (gDataAcessor.count != framesOut.size()) {
-        // Else if we are processing an output channel (animation data relating to key frames),
-        // ensure that the size of the data aligns with the number of expected key frames.
-        perr("Animation frame %s do not match number of keyframes", channelProperty.c_str());
-        return false;
+        
+        // Always assume that all primitives have the same amount of targets.
+        numberOfMorphTargets = gModel.meshes[meshIndex].primitives.front().targets.size();
     }
 
     // Calculate the byte stride size if none is provided from the BufferView.
@@ -625,9 +632,31 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
     size_t dataOffset = gDataAcessor.byteOffset + gIndiceBufferView.byteOffset;
     size_t dataLength = elementCount * bufferViewStride;
 
+    if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
+        // A kVROGLTFInputSamplerKey channelProperty param is provided when creating new, empty
+        // VROKeyFrameAnimations to be used for storing animation data.
+        for (int i = 0; i < elementCount; i ++) {
+            std::unique_ptr<VROKeyframeAnimationFrame> frame
+                    = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
+            framesOut.push_back(std::move(frame));
+        }
+    } else if (VROStringUtil::strcmpinsensitive(channelProperty, "weights")) {
+        if ((elementCount != (framesOut.size() * numberOfMorphTargets))) {
+            perr("Animation frame %s do not match number of morph keyframes %d, %d",
+                 channelProperty.c_str(), elementCount, framesOut.size() * numberOfMorphTargets);
+            return false;
+        }
+    } else if (elementCount != framesOut.size()) {
+        // Else if we are processing an output channel (animation data relating to key frames),
+        // ensure that the size of the data aligns with the number of expected key frames.
+        perr("Animation frame %s do not match number of keyframes %d, %d", channelProperty.c_str(), elementCount, framesOut.size());
+        return false;
+    }
+
     // Now process that buffer to produce the right output data.
     const tinygltf::Buffer &gBuffer = gModel.buffers[gIndiceBufferView.buffer];
     std::vector<float> tempVec;
+    int morphIndex = 0;
     VROByteBuffer buffer((char *)gBuffer.data.data() + dataOffset, dataLength, false);
     for (int elementIndex = 0; elementIndex < elementCount; elementIndex++) {
 
@@ -672,8 +701,22 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
         } else if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
             framesOut[elementIndex]->time = tempVec[0];
         } else if (VROStringUtil::strcmpinsensitive(channelProperty, "weights")) {
-            pwarn("Viro does not support morph targets yet at the moment");
-            return false;
+            // GLTF only supports animating one primitive's morph target on a node at a time
+            // and as such we process only a single morph target per channel.
+            int meshIndex = gModel.nodes[channelTarget].mesh;
+            std::string key = getMorphTargetName(gModel,
+                                                 gModel.meshes[meshIndex].primitives.front(),
+                                                 morphIndex);
+            framesOut[elementIndex/numberOfMorphTargets]->morphWeights[key] = tempVec[0];
+
+            // The weights for all morph targets are tightly interleaved. As such, use
+            // morphIndex to increment, track and accumulate all morph data for this frame.
+            // Once we have hit the numberOfMorphTargets, we reset this to 0 to move
+            // onto the next frame containing the new set of morph data.
+            morphIndex ++;
+            if (morphIndex >= numberOfMorphTargets) {
+                morphIndex = 0;
+            }
         } else {
             pwarn("Invalid target path %s with data size %d provided for gLTF.", channelProperty.c_str(), (int) tempVec.size());
             return false;
@@ -989,6 +1032,7 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     std::vector<std::shared_ptr<VROMaterial>> materials;
+    std::map<int, std::shared_ptr<VROMorpher>> morphers;
 
     // A single mesh may contain more than one type of primitive type to be drawn. Cycle through them here.
     const std::vector<tinygltf::Primitive> &gPrimitives = gMesh.primitives;
@@ -1006,9 +1050,20 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
 
         // Grab the material pertaining to this primitive in this mesh.
         int gMatIndex = gPrimitive.material;
+        std::shared_ptr<VROMaterial> material = nullptr;
         if (gMatIndex >= 0) {
             const tinygltf::Material &gMat = gModel.materials[gMatIndex];
-            materials.push_back(getMaterial(gModel, gMat));
+            material = getMaterial(gModel, gMat);
+        }
+
+        // Process Morph targets for each primitive.
+        if (!processMorphTargets(gModel, gMesh, gPrimitive, material, sources, elements, morphers)) {
+            pwarn("Failed to process morph target for mesh %s.", gMesh.name.c_str());
+            return false;
+        }
+
+        if (material != nullptr) {
+            materials.push_back(material);
         }
     }
 
@@ -1022,6 +1077,7 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
     geometry->setName(gMesh.name);
     rootNode->setGeometry(geometry);
     geometry->setMaterials(materials);
+    geometry->setMorphers(morphers);
     return true;
 }
 
@@ -1063,18 +1119,18 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
     }
 
     std::vector<VROVector3f> posArray;
-    pos->processVertices([&posArray](int index, VROVector3f vertex) {
-        posArray.push_back(vertex);
+    pos->processVertices([&posArray](int index, VROVector4f vertex) {
+        posArray.push_back(VROVector3f(vertex.x, vertex.y, vertex.z));
     });
 
     std::vector<VROVector3f> normArray;
-    normal->processVertices([&normArray](int index, VROVector3f vertex) {
-        normArray.push_back(vertex);
+    normal->processVertices([&normArray](int index, VROVector4f vertex) {
+        normArray.push_back(VROVector3f(vertex.x, vertex.y, vertex.z));
     });
 
     std::vector<VROVector3f> texCoordArray;
-    texcoord->processVertices([&texCoordArray](int index, VROVector3f vertex) {
-        texCoordArray.push_back(vertex);
+    texcoord->processVertices([&texCoordArray](int index, VROVector4f vertex) {
+        texCoordArray.push_back(VROVector3f(vertex.x, vertex.y, vertex.z));
     });
 
     std::vector<int> elementIndicesArray;
@@ -1291,6 +1347,9 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
                                             std::map<std::string, int> &gAttributes,
                                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                             size_t geoElementIndex) {
+    if (gAttributes.size() <= 0) {
+        return false;
+    }
 
     // Iterate through each Vertex Attribute (Position / Normals / etc) to parse its data
     for (auto const& gAttribute : gAttributes) {
@@ -1415,6 +1474,96 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
     }
 
     return true;
+}
+
+bool VROGLTFLoader::processMorphTargets(const tinygltf::Model &gModel,
+                                        const tinygltf::Mesh &gMesh,
+                                        const tinygltf::Primitive &gPrimitive,
+                                        std::shared_ptr<VROMaterial> &mat,
+                                        std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                                        std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                                        std::map<int, std::shared_ptr<VROMorpher>> &morphers) {
+    // Return early if we have no morph data to process for this geometry.
+    if (gPrimitive.targets.size() <= 0) {
+        return true;
+    }
+
+    // Error out if the mesh does not contain the material required for
+    // implementing morph target shaders.
+    if (mat == nullptr) {
+        return false;
+    }
+
+    // Create a base set of geometry sources, required by VROMorpher.
+    int elementIndex = elements.size() -1;
+    std::vector<std::shared_ptr<VROGeometrySource>> baseSources;
+    for (std::shared_ptr<VROGeometrySource> &src : sources) {
+        if (src->getGeometryElementIndex() == elementIndex) {
+            baseSources.push_back(src);
+        }
+    }
+
+    // Create our VROMorpher class with the base set of geometry sources.
+    std::shared_ptr<VROMorpher> morpher = std::make_shared<VROMorpher>(baseSources, mat);
+
+    // Next, grab the morph targets that we'll be applying onto our base geometry in VROMorpher.
+    // We parse each raw gLTF morph target below, save it in our VROMorpher, and refer to it by
+    // it's name / key.
+    for (int targetIndex = 0; targetIndex < gPrimitive.targets.size(); targetIndex ++) {
+        std::vector<std::shared_ptr<VROGeometrySource>> morphTargetSources;
+        std::map<std::string, int> gAttributes = gPrimitive.targets[targetIndex];
+        if (!processVertexAttributes(gModel, gAttributes, morphTargetSources, elements.size() -1)) {
+            pwarn("Invalid Attribute found for morph target!");
+            return false;
+        }
+
+        // Quick sanity check to ensure we have the proper morphing data type.
+        for (std::shared_ptr<VROGeometrySource> source : morphTargetSources) {
+            if (source->getSemantic() != VROGeometrySourceSemantic::Vertex &&
+                source->getSemantic() != VROGeometrySourceSemantic::Tangent &&
+                source->getSemantic() != VROGeometrySourceSemantic::Normal) {
+                pwarn("Unsupported Attribute found for morph target!");
+                return false;
+            }
+        }
+
+        // Grab the rest of the target's properties.
+        std::string key = getMorphTargetName(gModel, gPrimitive, targetIndex);
+        float weight = 0.0;
+        if (targetIndex < gMesh.weights.size()) {
+            weight = gMesh.weights[targetIndex];
+        }
+
+        // Add the new target back to the VROMorpher.
+        morpher->addTarget(morphTargetSources, key, weight);
+    }
+
+    morphers[elementIndex] = morpher;
+    return true;
+}
+
+std::string VROGLTFLoader::getMorphTargetName(const tinygltf::Model &gModel,
+                                              const tinygltf::Primitive &gPrimitive,
+                                              int targetIndex) {
+    std::string key = VROStringUtil::toString(targetIndex);
+
+    // Iterate through the property accessors of the mesh target to grab it's name.
+    std::map<std::string, int> gAttributes = gPrimitive.targets[targetIndex];
+    if (gAttributes.size() > 0) {
+        for (auto const& gAttribute : gAttributes) {
+            int attributeAccessorIndex = gAttribute.second;
+            const tinygltf::Accessor &gAttributeAccesor = gModel.accessors[attributeAccessorIndex];
+            std::string name = gAttributeAccesor.name;
+
+            // Break out as all accessors will have the same name.
+            if (name.size() > 0) {
+                key = name;
+                break;
+            }
+        }
+    }
+
+    return key;
 }
 
 std::shared_ptr<VROMaterial> VROGLTFLoader::getMaterial(const tinygltf::Model &gModel, const tinygltf::Material &gMat) {

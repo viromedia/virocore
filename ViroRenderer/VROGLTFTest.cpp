@@ -10,6 +10,8 @@
 #include "VROExecutableAnimation.h"
 #include "VRONode.h"
 #include "VROLog.h"
+#include "VROMorpher.h"
+
 VROGLTFTest::VROGLTFTest() :
     VRORendererTest(VRORendererTestType::GLTF) {
     _angle = 0;
@@ -24,19 +26,23 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
                        std::shared_ptr<VRODriver> driver) {
 
     _driver = driver;
-    VROGLTFModel duck("Duck", "gltf", { 0, -1.5, -5 }, { 1, 1, 1 }, 1, "");
-    VROGLTFModel buggy("Buggy", "glb", { -0.75, -1.5, -5 }, { 0.03, 0.03, 0.03 }, 1, "");
-    VROGLTFModel anim1("RiggedSimple", "glb", { 0, 0, -5 }, { 0.5,  0.5,  0.5 }, 1, "");
-    VROGLTFModel anim2("RiggedFigure", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "");
-    VROGLTFModel anim3("CesiumMan", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "");
-    VROGLTFModel anim4("Monster", "glb", { -1, 0, -3 }, { 0.001,  0.001,  0.001 }, 1, "");
+    VROGLTFModel duck("SimpleMeshes", "gltf", { 0, -1.5, -5 }, { 1, 1, 1 }, 1, "");
+    //VROGLTFModel buggy("Buggy", "glb", { -0.75, -1.5, -5 }, { 0.03, 0.03, 0.03 }, 1, "");
+    VROGLTFModel anim1("RiggedSimple", "glb", { 0, 0, -5 }, { 0.5,  0.5,  0.5 }, 1, "animation_0");
+    VROGLTFModel anim2("RiggedFigure", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "animation_0");
+    VROGLTFModel anim3("CesiumMan", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "animation_0");
+    VROGLTFModel anim4("Monster", "glb", { -1, 0, -3 }, { 0.001,  0.001,  0.001 }, 1, "animation_0");
+    VROGLTFModel anim5("AnimatedMorphCube", "glb", { 0, -0.3, -3.5 }, { 1,1,1 }, 1, "Square");
+    VROGLTFModel anim6("AnimatedMorphSphere", "gltf", { 0, -0.3, -3.5 }, { 1,1,1 }, 1, "Globe");
 
     _models.push_back(duck);
-    _models.push_back(buggy);
+    //_models.push_back(buggy);
     _models.push_back(anim1);
     _models.push_back(anim2);
     _models.push_back(anim3);
     _models.push_back(anim4);
+    _models.push_back(anim5);
+    _models.push_back(anim6);
 
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = _sceneController->getScene();
@@ -49,6 +55,11 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
 
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
+    
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({ 1.0, 1.0, 1.0 });
+    ambient->setIntensity(300);
+    rootNode->addLight(ambient);
 
 #if VRO_PLATFORM_ANDROID
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
@@ -61,13 +72,7 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
     light->setSpotOuterAngle(60);
     light->setCastsShadow(true);
     light->setIntensity(800);
-
-    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(300);
-
     rootNode->addLight(light);
-    rootNode->addLight(ambient);
 #else
     rootNode->setLightingEnvironment(environment);
 #endif
@@ -75,7 +80,7 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
 
     _gltfContainerNode = std::make_shared<VRONode>();
     rootNode->addChildNode(_gltfContainerNode);
-
+    _computeLocation = VROMorpher::ComputeLocation::GPU;
     _gltfIndex = 0;
     rotateModel();
     
@@ -109,11 +114,32 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->setEventDelegate(_eventDelegate);
 }
 
-void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode){
-    std::shared_ptr<VROExecutableAnimation> anim = gltfNode->getAnimation("animation_0", true);
+void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode, std::string name){
+    //std::set<std::shared_ptr<VROMorpher>> morphers = gltfNode->getMorphers(true);
+    //std::shared_ptr<VROMorpher> morpher = *morphers.begin();
+
+    //VROTransaction::begin();
+    //VROTransaction::setAnimationDuration(3);
+    //morpher->setWeightForTarget("thin", 1.0);
+    //VROTransaction::setAnimationLoop(true);
+    //VROTransaction::commit();
+    
+    std::shared_ptr<VROExecutableAnimation> anim = gltfNode->getAnimation(name, true);
     if (anim != nullptr){
-        anim->execute(gltfNode, [this, gltfNode]() {
-            animate(gltfNode);
+        anim->execute(gltfNode, [this, name, gltfNode]() {
+            if (gltfNode->getMorphers(true).size() != 0) {
+                if (_computeLocation == VROMorpher::ComputeLocation ::GPU){
+                    _computeLocation = VROMorpher::ComputeLocation::CPU;
+                } else if (_computeLocation == VROMorpher::ComputeLocation::CPU){
+                    _computeLocation = VROMorpher::ComputeLocation::Hybrid;
+                } else if (_computeLocation == VROMorpher::ComputeLocation::Hybrid){
+                    _computeLocation = VROMorpher::ComputeLocation::GPU;
+                }
+                
+                (*gltfNode->getMorphers(true).begin())->setComputeLocation(_computeLocation);
+            }
+            
+            animate(gltfNode, name);
         });
     }
 }
@@ -123,8 +149,8 @@ void VROGLTFTest::rotateModel() {
     std::shared_ptr<VRONode> gltfNode = VROTestUtil::loadGLTFModel(model.name, model.ext,
                                                                    model.position, model.scale,
                                                                    model.lightMask, model.animation, _driver,
-                                                                   [this](std::shared_ptr<VRONode> node, bool success){
-                                                                       animate(node);
+                                                                   [this, model](std::shared_ptr<VRONode> node, bool success){
+                                                                       animate(node, model.animation);
                                                                    });
     _gltfContainerNode->removeAllChildren();
     _gltfContainerNode->addChildNode(gltfNode);

@@ -254,6 +254,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROSkeletalAnimation.cpp
              ${VIRO_RENDERER_SRC}/VROLayeredSkeletalAnimation.cpp
              ${VIRO_RENDERER_SRC}/VROKeyframeAnimation.cpp
+             ${VIRO_RENDERER_SRC}/VROMorpher.cpp
 
              # Shapes
              ${VIRO_RENDERER_SRC}/VROBox.cpp

@@ -20,6 +20,7 @@
 #include "VROModelIOUtil.h"
 #include "VROByteBuffer.h"
 
+class VROMorpher;
 class VRONode;
 class VROTexture;
 class VROGeometry;
@@ -105,6 +106,16 @@ private:
                                   std::vector<VROVector3f> &texCoordArray,
                                   std::vector<int> &elementIndicesArray,
                                   std::vector<VROVector4f> &generatedTangents);
+    static bool processMorphTargets(const tinygltf::Model &gModel,
+                                    const tinygltf::Mesh &gMesh,
+                                    const tinygltf::Primitive &gPrimitive,
+                                    std::shared_ptr<VROMaterial> &material,
+                                    std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                                    std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                                    std::map<int, std::shared_ptr<VROMorpher>> &morphers);
+    static std::string getMorphTargetName(const tinygltf::Model &gModel,
+                                          const tinygltf::Primitive &gPrimtive, int targetIndex);
+
     static void injectGLTF(std::shared_ptr<VRONode> gltfNode, std::shared_ptr<VRONode> rootNode,
                            std::shared_ptr<VRODriver> driver, std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish);
 
@@ -133,6 +144,7 @@ private:
                                          std::shared_ptr<VROKeyframeAnimation> &animKeyFrameOut);
     static bool processRawChannelData(const tinygltf::Model &gModel,
                                       std::string channelProperty,
+                                      int channelTarget,
                                       const tinygltf::AnimationSampler &gChannelSampler,
                                       std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &framesOut);
     static void processSkeletalAnimation(const tinygltf::Model &gModel,

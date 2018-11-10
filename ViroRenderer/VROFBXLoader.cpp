@@ -825,7 +825,7 @@ std::shared_ptr<VROKeyframeAnimation> VROFBXLoader::loadFBXKeyframeAnimation(con
     
     float duration = animation_pb.duration();
     
-    std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, duration / 1000.0, hasTranslation, hasRotation, hasScale);
+    std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, duration / 1000.0, hasTranslation, hasRotation, hasScale, false);
     animation->setName(animation_pb.name());
     
     return animation;

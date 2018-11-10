@@ -16,7 +16,8 @@ import com.viro.core.Object3D;
 import com.viro.core.Text;
 import com.viro.core.Vector;
 import com.viro.core.Surface;
-
+import com.viro.core.AnimationTimingFunction;
+import com.viro.core.AnimationTransaction;
 
 
 import org.junit.FixMethodOrder;
@@ -35,6 +36,7 @@ import java.util.List;
 public class Viro3DObjectTest extends ViroBaseTest {
     private Object3D mObject3D;
     private Animation mAnimation;
+    private Object3D.MorphMode mMorphMode;
     private boolean mIsAnimPaused = false;
     private AmbientLight mAmbientLight;
 
@@ -51,6 +53,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
     @Test
     public void test() {
         runUITest(() -> stage0_testLoadModelGLTF());
+        runUITest(() -> stage0_testLoadModelGLTFMorph());
         runUITest(() -> stage1_testLoadModelFBX());
         runUITest(() -> stage2_testFBXAnimPause());
         runUITest(() -> stage3_testFBXAnimStop());
@@ -119,6 +122,100 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
 
         assertPass("You should see 3 Ducks Render in the scene.", ()->{
+            node.removeFromParentNode();
+        });
+    }
+
+    public void stage0_testLoadModelGLTFMorph() {
+        Node node = new Node();
+        node.setScale(new Vector(0.15, 0.15 , 0.15));
+        node.setPosition(new Vector(0,-0.7, -1));
+
+        Object3D gltfModel = new Object3D();
+        Object3D gltfModelGLB = new Object3D();
+        Object3D gltfModelBase64 = new Object3D();
+
+        gltfModelGLB.setPosition(new Vector(-1.75,0,0));
+        gltfModelBase64.setPosition(new Vector(1.75,0,0));
+
+        node.addChildNode(gltfModel);
+        node.addChildNode(gltfModelBase64);
+        node.addChildNode(gltfModelGLB);
+        mScene.getRootNode().addChildNode(node);
+
+        gltfModelGLB.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/AnimatedMorphCube.glb"), Object3D.Type.GLB, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                Log.w("Viro", "GLTF load successful with bounds " + object.getBoundingBox() + ", type [" + type + "]");
+
+                boolean foundMorph = false;
+                for (String s : object.getMorphTargetKeys()){
+                    Log.e("Daniel"," Keys -> " + s);
+                    if (s.equalsIgnoreCase("thin")){
+                        foundMorph = true;
+                        break;
+                    }
+                }
+
+                if (!foundMorph) {
+                    return;
+                }
+
+                AnimationTransaction.begin();
+                AnimationTransaction.setAnimationDuration(2000);
+                AnimationTransaction.setAnimationLoop(true);
+                AnimationTransaction.setTimingFunction(AnimationTimingFunction.Linear);
+                gltfModelGLB.setMorphTargetWeight("thin", 1.0f);
+                AnimationTransaction.commit();
+
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+                Log.w("Viro", "GLTF failed to load: " + error);
+            }
+        });
+
+        mMorphMode = Object3D.MorphMode.GPU;
+
+        gltfModelBase64.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/AnimatedMorphCube.glb"), Object3D.Type.GLB, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                Log.w("Viro", "GLTF load successful with bounds " + object.getBoundingBox() + ", type [" + type + "]");
+                mAnimation = object.getAnimation("Square");
+                mAnimation.setLoop(true);
+                mAnimation.play();
+                mAnimation.setListener(new Animation.Listener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationFinish(Animation animation, boolean canceled) {
+                        Log.e("Daniel"," Mode : " + mMorphMode.mStringValue);
+                        switch (mMorphMode){
+                            case CPU:
+                                mMorphMode = Object3D.MorphMode.GPU;
+                                break;
+                            case GPU:
+                                mMorphMode = Object3D.MorphMode.HYBRID;
+                                break;
+                            case HYBRID:
+                                mMorphMode = Object3D.MorphMode.GPU;
+                                break;
+                        }
+                        object.setMorphMode(mMorphMode);
+                    }
+                });
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+                Log.w("Viro", "GLTF failed to load: " + error);
+            }
+        });
+
+        assertPass("Both GLTF Morph cubes SHOULD Animate (wait for 3 cycles).", ()->{
             node.removeFromParentNode();
         });
     }

@@ -52,8 +52,8 @@ std::shared_ptr<VROData> VROGeometryUtilExtractAndCenter(std::shared_ptr<VROGeom
                                                          std::shared_ptr<VROGeometrySource> geometrySource,
                                                          VROVector3f *outCenter) {
     std::vector<VROVector3f> allVertices;
-    geometrySource->processVertices([&allVertices](int index, VROVector3f vertex) {
-        allVertices.push_back(vertex);
+    geometrySource->processVertices([&allVertices](int index, VROVector4f vertex) {
+        allVertices.push_back(VROVector3f(vertex.x, vertex.y, vertex.z));
     });
     
     /*
@@ -147,6 +147,20 @@ int VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic semantic) {
             return 7;
         case VROGeometrySourceSemantic::BoneIndices:
             return 8;
+        case VROGeometrySourceSemantic::Morph_0:
+            return 9;
+        case VROGeometrySourceSemantic::Morph_1:
+            return 10;
+        case VROGeometrySourceSemantic::Morph_2:
+            return 11;
+        case VROGeometrySourceSemantic::Morph_3:
+            return 12;
+        case VROGeometrySourceSemantic::Morph_4:
+            return 13;
+        case VROGeometrySourceSemantic::Morph_5:
+            return 14;
+        case VROGeometrySourceSemantic::Morph_6:
+            return 15;
         default:
             return 0;
     }

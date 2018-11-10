@@ -11,6 +11,7 @@
 #include "VROFBXLoader.h"
 #include "VROGeometry.h"
 #include "VRONode.h"
+#include "VROMorpher.h"
 #include "Node_JNI.h"
 #include "OBJLoaderDelegate_JNI.h"
 #include "ViroContext_JNI.h"
@@ -182,6 +183,76 @@ VRO_METHOD(void, nativeIntializeNode)(VRO_ARGS
        VROPlatformSetObject(env, jNode, "mGeometry", "Lcom/viro/core/Geometry;", jgeom);
        VRO_DELETE_LOCAL_REF(jgeom);
     }
+}
+
+VRO_METHOD(void, nativeSetMorphTargetWithWeight)(VRO_ARGS
+                                                 VRO_REF(VRONode) native_node_ref,
+                                                 VRO_STRING jTarget,
+                                                 VRO_FLOAT jWeight) {
+    VRO_METHOD_PREAMBLE;
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
+    std::string target = VRO_STRING_STL(jTarget);
+
+    VROPlatformDispatchAsyncRenderer([node_w, target, jWeight] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            // Set the target's weight for all VROMorpher containing the matching jTarget key
+            // in this 3D model.
+            std::set<std::shared_ptr<VROMorpher>> morphers = node->getMorphers(true);
+            for (auto morpher : morphers) {
+                morpher->setWeightForTarget(target, jWeight);
+            }
+        }
+    });
+}
+
+VRO_METHOD(VRO_STRING_ARRAY, nativeGetMorphTargetKeys)(VRO_ARGS
+                                                       VRO_REF(VRONode) nativeRef) {
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, nativeRef);
+
+    // Iterate through each morph target in this model to create a list of morph keys.
+    std::set<std::shared_ptr<VROMorpher>> morphers = node->getMorphers(true);
+    std::set<std::string> keys;
+    for (auto morpher : morphers) {
+        std::set<std::string> morphKeys = morpher->getMorphTargetKeys();
+        keys.insert(morphKeys.begin(), morphKeys.end());
+    }
+
+    // Pack the result up into a jString array and return
+    VRO_STRING_ARRAY array = VRO_NEW_STRING_ARRAY(keys.size());
+    int i = 0;
+    for (const std::string &key : keys) {
+        VRO_STRING_ARRAY_SET(array, i, key);
+        ++i;
+    }
+    return array;
+}
+
+VRO_METHOD(void, nativeSetMorphMode)(VRO_ARGS
+                                           VRO_REF(VRONode) nativeRef,
+                                           VRO_STRING jMode) {
+    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
+    std::string modeString = VRO_STRING_STL(jMode);
+    VROPlatformDispatchAsyncRenderer([node_w, modeString] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node == nullptr){
+            return;
+        }
+
+        VROMorpher::ComputeLocation mode = VROMorpher::ComputeLocation::CPU;
+        if (VROStringUtil::strcmpinsensitive("gpu", modeString)) {
+            mode = VROMorpher::ComputeLocation::GPU;
+        } else if (VROStringUtil::strcmpinsensitive("hybrid", modeString)) {
+            mode = VROMorpher::ComputeLocation::Hybrid;
+        }
+
+        std::set<std::shared_ptr<VROMorpher>> morphers = node->getMorphers(true);
+        for (auto morpher : morphers) {
+            if (!morpher->setComputeLocation(mode)) {
+                pwarn("Unable to set render mode %s.", modeString.c_str());
+            }
+        }
+    });
 }
 
 } // extern "C"

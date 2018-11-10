@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
 #include "VROExecutableAnimation.h"
@@ -35,7 +36,7 @@ struct VROKeyframeAnimationFrame {
     VROVector3f translation;
     VROVector3f scale;
     VROQuaternion rotation;
-    
+    std::map<std::string, float> morphWeights;
 };
 
 /*
@@ -46,13 +47,14 @@ class VROKeyframeAnimation : public VROExecutableAnimation, public std::enable_s
 public:
 
     VROKeyframeAnimation(std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames,
-                         float duration, bool hasTranslation, bool hasRotation, bool hasScale)
-    {
+                         float duration, bool hasTranslation, bool hasRotation, bool hasScale,
+                         float hasMorphWeights) {
         _hasTranslation = hasTranslation;
         _hasRotation = hasRotation;
         _hasScale = hasScale;
         _frames = std::move(frames);
         _duration = duration;
+        _hasMorphWeights = hasMorphWeights;
     }
 
     virtual ~VROKeyframeAnimation() { }
@@ -107,8 +109,8 @@ private:
     /*
      The types of properties animated by this keyframe animation.
      */
-    bool _hasTranslation, _hasRotation, _hasScale;
-    
+    bool _hasTranslation, _hasRotation, _hasScale, _hasMorphWeights;
+
     /*
      The animation frames, in order of time.
      */

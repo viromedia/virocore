@@ -16,6 +16,7 @@
 #include "VROGeometryUtil.h"
 #include "VROMaterial.h"
 #include "VRORenderMetadata.h"
+#include "VROMorpher.h"
 
 VROGeometry::~VROGeometry() {
     delete (_substrate);
@@ -41,7 +42,6 @@ void VROGeometry::render(int elementIndex,
                          float opacity,
                          const VRORenderContext &context,
                          std::shared_ptr<VRODriver> &driver) {
-    
     prewarm(driver);
     if (_substrate) {
         _substrate->render(*this, elementIndex, transform, normalMatrix,
@@ -77,7 +77,7 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
                                  const VRORenderContext &context,
                                  std::shared_ptr<VRODriver> &driver) {
     _sortKeys.clear();
-    
+
     size_t numElements = _geometryElements.size();
     for (size_t i = 0; i < numElements; i++) {
         int materialIndex = i % (int) _materials.size();
@@ -119,6 +119,19 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
     }
     
     if (_substrate) {
+        bool updatedMorphSources = false;
+        for (int i = 0; i < _elementsToMorphers.size(); i ++) {
+            if (_elementsToMorphers[i]->update(_geometrySources)){
+                updatedMorphSources = true;
+            }
+        }
+
+        // Process morph target data, if any.
+        if (updatedMorphSources) {
+            setSources(_geometrySources);
+            prewarm(driver);
+        }
+
         _substrate->update(*this, driver);
     }
 }

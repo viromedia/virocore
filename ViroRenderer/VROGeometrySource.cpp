@@ -13,13 +13,13 @@
 #include "VROLog.h"
 #include <float.h>
 
-void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> function) const {
+void VROGeometrySource::processVertices(std::function<void (int, VROVector4f)> function) const {
     VROByteBuffer buffer(_data->getData(), _data->getDataLength(), false);
     
     for (int i = 0; i < _vertexCount; i++) {
         buffer.setPosition(i * _dataStride + _dataOffset);
         
-        float x = 0, y = 0, z = 0;
+        float x = 0, y = 0, z = 0, w = 0;
         
         if (_floatComponents) {
             if (_bytesPerComponent == 2) {
@@ -30,7 +30,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         if (_componentsPerVertex > 2) {
                             z = buffer.readHalf();
                             if (_componentsPerVertex > 3) {
-                                buffer.readHalf();
+                                w = buffer.readHalf();
                             }
                         }
                     }
@@ -44,7 +44,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         if (_componentsPerVertex > 2) {
                             z = buffer.readFloat();
                             if (_componentsPerVertex > 3) {
-                                buffer.readFloat();
+                                w = buffer.readFloat();
                             }
                         }
                     }
@@ -63,7 +63,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         if (_componentsPerVertex > 2) {
                             z = buffer.readByte();
                             if (_componentsPerVertex > 3) {
-                                buffer.readByte();
+                                w = buffer.readByte();
                             }
                         }
                     }
@@ -77,7 +77,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         if (_componentsPerVertex > 2) {
                             z = buffer.readShort();
                             if (_componentsPerVertex > 3) {
-                                buffer.readShort();
+                                w = buffer.readShort();
                             }
                         }
                     }
@@ -91,7 +91,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         if (_componentsPerVertex > 2) {
                             z = buffer.readInt();
                             if (_componentsPerVertex > 3) {
-                                buffer.readInt();
+                                w = buffer.readInt();
                             }
                         }
                     }
@@ -102,7 +102,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
             }
         }
         
-        function(i, { x, y, z});
+        function(i, { x, y, z, w});
     }
 }
 
@@ -289,7 +289,7 @@ VROBoundingBox VROGeometrySource::getBoundingBox() const {
     float minZ =  FLT_MAX;
     float maxZ = -FLT_MAX;
     
-    processVertices([&minX, &maxX, &minY, &maxY, &minZ, &maxZ](int index, VROVector3f vertex) {
+    processVertices([&minX, &maxX, &minY, &maxY, &minZ, &maxZ](int index, VROVector4f vertex) {
         if (vertex.x < minX) {
             minX = vertex.x;
         }

@@ -439,6 +439,27 @@ void VROShaderProgram::bindAttributes() {
     if ((_attributes & (int)VROShaderMask::BoneWeight) != 0) {
         GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneWeights), "bone_weights") );
     }
+    if ((_attributes & (int)VROShaderMask::Morph_0) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_0), "morph_0") );
+    }
+    if ((_attributes & (int)VROShaderMask::Morph_1) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_1), "morph_1") );
+    }
+    if ((_attributes & (int)VROShaderMask::Morph_2) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_2), "morph_2") );
+    }
+    if ((_attributes & (int)VROShaderMask::Morph_3) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_3), "morph_3") );
+    }
+    if ((_attributes & (int)VROShaderMask::Morph_4) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_4), "morph_4") );
+    }
+    if ((_attributes & (int)VROShaderMask::Morph_5) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_5), "morph_5") );
+    }
+    if ((_attributes & (int)VROShaderMask::Morph_6) != 0) {
+        GL( glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Morph_6), "morph_6") );
+    }
 }
 
 void VROShaderProgram::bindUniformBlocks() {

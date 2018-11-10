@@ -16,8 +16,8 @@ void VROGeometryElement::processTriangles(std::function<void(int index, VROTrian
                                           std::shared_ptr<VROGeometrySource> geometrySource) const {
     
     std::vector<VROVector3f> vertices;
-    geometrySource->processVertices([&vertices](int index, VROVector3f vertex) {
-        vertices.push_back(vertex);
+    geometrySource->processVertices([&vertices](int index, VROVector4f vertex) {
+        vertices.push_back(VROVector3f(vertex.x, vertex.y, vertex.z));
     });
     
     VROVector3f A, B, C;

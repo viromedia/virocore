@@ -9,10 +9,13 @@
 #include "VROKeyframeAnimation.h"
 #include "VROTransaction.h"
 #include "VROLog.h"
+#include "VROAnimationFloat.h"
+#include "VROGeometry.h"
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
 #include "VROShaderModifier.h"
 #include "VRONode.h"
+#include "VROMorpher.h"
 #include <sstream>
 #include <map>
 
@@ -24,11 +27,12 @@ std::shared_ptr<VROExecutableAnimation> VROKeyframeAnimation::copy() {
         frame->translation = origFrame->translation;
         frame->scale = origFrame->scale;
         frame->rotation = origFrame->rotation;
+        frame->morphWeights = origFrame->morphWeights;
 
         frames.push_back(std::move(frame));
     }
     std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, _duration, _hasTranslation,
-                                                                                             _hasRotation, _hasScale);
+                                                                                             _hasRotation, _hasScale, _hasMorphWeights);
     animation->setName(_name);
     animation->setSpeed(_speed);
     animation->setTimeOffset(_timeOffset);
@@ -45,7 +49,8 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     std::vector<VROVector3f> translationValues;
     std::vector<VROVector3f> scaleValues;
     std::vector<VROQuaternion> rotationValues;
-    
+    std::map<std::string, std::vector<float>> morphWeightValues;
+
     /*
      Flatten out the data structure so we can pass the keyframes to our
      animation constructors.
@@ -60,6 +65,18 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
         }
         if (_hasRotation) {
             rotationValues.push_back(frame->rotation);
+        }
+        if (_hasMorphWeights) {
+            for (auto target : frame->morphWeights) {
+                morphWeightValues[target.first].push_back(target.second);
+            }
+        }
+    }
+
+    // Assume that all key frames have the same number of targets with weighted data.
+    if (_hasMorphWeights) {
+        for (auto targetWeights : morphWeightValues) {
+            passert(_frames.size() == targetWeights.second.size());
         }
     }
     
@@ -104,7 +121,31 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
         
         node->animate(animation);
     }
-    
+
+    if (_hasMorphWeights) {
+        // Iterate through each target and its vec of keyframe weights and create
+        // a keyframe animation out of them.
+        std::map<std::string, std::vector<float>>::iterator it;
+        for (it = morphWeightValues.begin(); it != morphWeightValues.end(); it++) {
+            std::string morphKey = it->first;
+            const std::vector<float> &morphValues = it->second;
+
+            std::shared_ptr<VROAnimation> animation = std::make_shared<VROAnimationFloat>([shared_w, morphKey](VROAnimatable *const animatable, float value) {
+                std::shared_ptr<VROKeyframeAnimation> shared = shared_w.lock();
+                if (!shared) {
+                    return;
+                }
+
+                for (auto morpher: ((VROGeometry *)animatable)->getMorphers()) {
+                    // Avoid a second costly callback by not triggering
+                    // a transaction animation on the VROMorpher itself
+                    morpher.second->setWeightForTarget(morphKey, value, false);
+                }
+            }, keyTimes, morphValues);
+            node->getGeometry()->animate(animation);
+        }
+    }
+
     std::weak_ptr<VROKeyframeAnimation> weakSelf = shared_from_this();
     VROTransaction::setFinishCallback([weakSelf, onFinished](bool terminate) {
         std::shared_ptr<VROKeyframeAnimation> keyframeAnim = weakSelf.lock();

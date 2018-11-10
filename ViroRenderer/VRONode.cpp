@@ -38,6 +38,7 @@
 #include "VROTransformDelegate.h"
 #include "VROInstancedUBO.h"
 #include "VROPlatformUtil.h"
+#include "VROMorpher.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -1364,6 +1365,24 @@ void VRONode::onAnimationFinished() {
     if (body){
         body->refreshBody();
     }
+}
+
+std::set<std::shared_ptr<VROMorpher>> VRONode::getMorphers(bool recursive) {
+    std::set<std::shared_ptr<VROMorpher>> result;
+    if (_geometry != nullptr) {
+        for (auto morph : _geometry->getMorphers()) {
+            result.insert(morph.second);
+        }
+    }
+
+    if (recursive && getChildNodes().size() > 0) {
+        for (auto childNode : _subnodes) {
+            std::set<std::shared_ptr<VROMorpher>> subResults = childNode->getMorphers(recursive);
+            result.insert(subResults.begin(), subResults.end());
+        }
+    }
+
+    return result;
 }
 
 #pragma mark - Hit Testing

@@ -10,6 +10,7 @@
 
 #include "VRORendererTest.h"
 #include "VROEventDelegate.h"
+#include "VROMorpher.h"
 
 class VROGLTFTest;
 
@@ -54,10 +55,10 @@ public:
     }
     
     void rotateModel();
-    void animate(std::shared_ptr<VRONode> gltfNode);
+    void animate(std::shared_ptr<VRONode> gltfNode, std::string name);
     
 private:
-
+    VROMorpher::ComputeLocation _computeLocation;
     std::shared_ptr<VRODriver> _driver;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
