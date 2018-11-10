@@ -46,7 +46,8 @@ public class ViroViewARCoreTest {
              * Remove this once Google fixes the above issue. As of 02/05/2018, the issue is being
              * marked as "fixed in an upcoming release.
              */
-            assertFalse("Expected ViroViewARCore to NOT be supported", ViroViewARCore.isDeviceCompatible(mActivity));
+            ViroViewARCore.ARCoreAvailability availability = ViroViewARCore.isARSupportedOnDevice(mActivity);
+            assertFalse("Expected ViroViewARCore to NOT be supported", availability == ViroViewARCore.ARCoreAvailability.SUPPORTED);
             return;
         }
     }

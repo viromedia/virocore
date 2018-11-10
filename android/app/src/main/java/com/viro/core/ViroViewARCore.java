@@ -105,6 +105,32 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
+     * Enum describing current state of ARCore availability on device.
+     */
+    public enum ARCoreAvailability {
+
+        /**
+         * The device is <b>supported</b> by ARCore
+         */
+        SUPPORTED,
+
+        /**
+         * The device is <b>unsupported</b> by ARCore
+         */
+        UNSUPPORTED,
+
+        /**
+         * ARCore support is <b>unknown</b> for this device
+         */
+        UNKNOWN,
+
+        /**
+         * ARCore is still checking. This is a temporary state. Application should check again soon.
+         */
+        TRANSIENT
+    }
+
+    /**
      * Errors returned by the {@link StartupListener}, in response to Viro failing to
      * initialize.
      */
@@ -141,6 +167,12 @@ public class ViroViewARCore extends ViroView {
          * Indicates an unknown error detecting ARCore on the device.
          */
         ARCORE_UNKNOWN,
+
+        /**
+         * Indicates ARCore SDK returned TRANSIENT state while detecting ARCore on device.
+         * Application should try again soon.
+         */
+        ARCORE_TRANSIENT,
 
         /**
          * Indicates AR could not be started because camera permissions were not granted to the
@@ -364,7 +396,7 @@ public class ViroViewARCore extends ViroView {
     /**
      * Create a new ViroViewARCore with the default {@link RendererConfiguration}. This constructor
      * will immediately throw a {@link DeviceNotCompatibleException} if ARCore is not compatible with
-     * this device. You can also check for this condition with the static {@link #isDeviceCompatible(Context)}
+     * this device. You can also check for this condition with the static {@link #isARSupportedOnDevice(Context)}
      * method.
      * <p>
      * If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
@@ -388,7 +420,7 @@ public class ViroViewARCore extends ViroView {
      * Create a new ViroViewARCore with the given {@link RendererConfiguration}, which determines
      * the rendering techniques and rendering fidelity to use for this View. This constructor will
      * immediately throw a {@link DeviceNotCompatibleException} if ARCore is not compatible with this
-     * device. You can also check for this condition with the static {@link #isDeviceCompatible(Context)}
+     * device. You can also check for this condition with the static {@link #isARSupportedOnDevice(Context)}
      * method.
      * <p>
      * If ARCore <i>is</i> compatible with the device, then Viro will check if it is installed and
@@ -450,9 +482,23 @@ public class ViroViewARCore extends ViroView {
 
     private void init(final Context context, final StartupListener startupListener) {
         mStartupListener = startupListener;
-        if (!isDeviceCompatible(context)) {
-            notifyRendererFailed(StartupError.ARCORE_NOT_SUPPORTED,
-                    "This device is not compatible with ARCore");
+        ARCoreAvailability availability = isARSupportedOnDevice(context);
+
+        if (availability != ARCoreAvailability.SUPPORTED) { // UNSUPPORTED, UNKNOWN or TRANSIENT
+            switch (availability) {
+                case UNKNOWN:
+                    notifyRendererFailed(StartupError.ARCORE_UNKNOWN,
+                            "Unknown error detecting ARCore on the device.");
+                    break;
+                case TRANSIENT:
+                    notifyRendererFailed(StartupError.ARCORE_TRANSIENT,
+                            "Transient error detecting ARCore on the device. " +
+                                    "Application should check again soon.");
+                    break;
+                default: //UNSUPPORTED
+                    notifyRendererFailed(StartupError.ARCORE_NOT_SUPPORTED,
+                            "This device is not compatible with ARCore");
+            }
             throw new DeviceNotCompatibleException();
         }
 
@@ -1038,6 +1084,8 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
+     * @deprecated  As of ViroCore version 1.12.0, replaced by {@link #isARSupportedOnDevice(Context)}
+     *
      * Checks if ARCore is compatible with the target device. This does <i>not</i> indicate whether ARCore is
      * installed. If this method returns false, attempts to create {@link ViroViewARCore} will throw
      * an exception.
@@ -1045,6 +1093,7 @@ public class ViroViewARCore extends ViroView {
      * @param context The {@link Context} of your application.
      * @return True if the current device is compatible with ARCore.
      */
+    @Deprecated
     public static boolean isDeviceCompatible(Context context) {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
         Log.i(TAG, "ARCore availability check returned [" + availability   + "]");
@@ -1056,6 +1105,33 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
+    /**
+     * Checks if ARCore is supported on the target device. This does <i>not</i> indicate whether
+     * ARCore is installed. If this method returns anything except {@link ARCoreAvailability#SUPPORTED},
+     * attempts to create {@link ViroViewARCore} will throw an exception. If the method returns
+     * {@link ARCoreAvailability#TRANSIENT}, according to
+     * <a href="https://developers.google.com/ar/reference/java/com/google/ar/core/ArCoreApk.Availability">ARCore docs</a>,
+     * the application should check again soon.
+     *
+     * @param context The {@link Context} of your application.
+     * @return ARCoreAvailability Enum for ARCore support on this device. See {@link ARCoreAvailability}
+     */
+    public static ARCoreAvailability isARSupportedOnDevice(Context context) {
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
+        Log.i(TAG, "ARCore availability check returned [" + availability   + "]");
+        if (availability.isTransient()) {
+            return ARCoreAvailability.TRANSIENT;
+        }
+        if (availability.isSupported()) {
+            return ARCoreAvailability.SUPPORTED;
+        }
+        if (availability.isUnknown()) {
+            return ARCoreAvailability.UNKNOWN;
+        }
+
+        // If availability.isUnsupported()
+        return ARCoreAvailability.UNSUPPORTED;
+    }
     /**
      * Enable auto focusing for the AR camera. Auto focus is disabled by default. This is because
      * ARCore, at the moment, recommends using <i>fixed focus</i> for <i>optimal AR tracking</i>,
