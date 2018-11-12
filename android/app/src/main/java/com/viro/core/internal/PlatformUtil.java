@@ -444,7 +444,9 @@ public class PlatformUtil {
      * asynchronously on the rendering thread.
      */
     public void dispatchRenderer(final int taskId) {
-        mRenderQueue.queueEvent(getTaskRunnable(taskId));
+        if( mRenderQueue != null) {
+            mRenderQueue.queueEvent(getTaskRunnable(taskId));
+        }
     }
 
     /*

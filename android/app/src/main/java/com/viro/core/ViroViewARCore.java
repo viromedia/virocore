@@ -800,9 +800,7 @@ public class ViroViewARCore extends ViroView {
         // When the ViroViewARCore object is disposed, we want the ARNode's nodeARMap to also clear itself.
         ARNode.nodeARMap.clear();
 
-        if (mPlatformUtil != null) {
-            mPlatformUtil.dispose();
-        }
+
 
         mViroTouchGestureListener = null;
         mPlatformUtil = null;
@@ -815,6 +813,15 @@ public class ViroViewARCore extends ViroView {
         }
 
         super.dispose();
+
+        // VA: WE call mPlatformUtil.dispose() here instead of before super.dispose, since super.dispose
+        // leads to a crash if the mPlatformUtil renderQueue is null. Proper thing to do is to move this
+        // to end of ViroView.dispose() and ensure that doesn't crash any life cycle crashes. JIRA issue filed is
+        // VIRO-4537.
+
+        if (mPlatformUtil != null) {
+            mPlatformUtil.dispose();
+        }
     }
 
     /**
