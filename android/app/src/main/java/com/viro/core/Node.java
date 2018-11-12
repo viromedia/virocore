@@ -283,7 +283,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Release native resources associated with this Node.
+     * Release native resources associated with this Node. This will not dispose of the Geometry
+     * and Materials used by this Node: to remove those resources as well, consider invoking
+     * {@link #disposeAll(boolean)}.
      */
     public void dispose() {
         mDestroyed = true;
@@ -296,6 +298,39 @@ public class Node implements EventDelegate.EventDelegateCallback {
         if (mEventDelegate != null) {
             mEventDelegate.dispose();
         }
+    }
+
+    /**
+     * Dispose this Node <i>and</i> its {@link Geometry} <i>and</i> the {@link Material}s used
+     * by said Geometry. If <tt>recursive</tt> is set to true, then this method will also do the
+     * same to the entire subtree of the scene graph below this Node.
+     */
+    public void disposeAll(boolean recursive) {
+        if (recursive) {
+            // First remove the child nodes
+            List<Node> children = new ArrayList<Node>(mChildren);
+            for (Node child : children) {
+                child.removeFromParentNode();
+            }
+
+            // Ensure that we also remove any native nodes that may not be tracked in java
+            nativeRemoveAllChildNodes(mNativeRef);
+
+            // Then dispose the child nodes
+            for (Node child : children) {
+                child.disposeAll(recursive);
+            }
+        }
+
+        // Remove and dispose this Node's geometry and materials
+        if (mGeometry != null) {
+            for (Material material : mGeometry.getMaterials()) {
+                material.disposeAll();
+            }
+            mGeometry.dispose();
+        }
+        removeFromParentNode();
+        dispose();
     }
 
     /**
@@ -1678,7 +1713,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
     private native void nativeRemoveFromParent(long nodeReference);
-    private native void nativeRemoveAllChildNodes(long nodeReference);
+    protected native void nativeRemoveAllChildNodes(long nodeReference);
     private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
     private native void nativeSetName(long nodeReference, String name);
     private native void nativeSetGeometry(long nodeReference, long geoReference);

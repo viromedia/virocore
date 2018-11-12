@@ -559,6 +559,38 @@ public class Material {
     }
 
     /**
+     * Release native resources used by this Material and release the resources used by
+     * all of this Material's textures.
+     */
+    public void disposeAll() {
+        if (mDiffuseTexture != null) {
+            mDiffuseTexture.dispose();
+            mDiffuseTexture = null;
+        }
+        if (mSpecularTexture != null) {
+            mSpecularTexture.dispose();
+            mSpecularTexture = null;
+        }
+        if (mNormalMap != null) {
+            mNormalMap.dispose();
+            mNormalMap = null;
+        }
+        if (mMetalnessMap != null) {
+            mMetalnessMap.dispose();
+            mMetalnessMap = null;
+        }
+        if (mRoughnessMap != null) {
+            mRoughnessMap.dispose();
+            mRoughnessMap = null;
+        }
+        if (mAmbientOcclusionMap != null) {
+            mAmbientOcclusionMap.dispose();
+            mAmbientOcclusionMap = null;
+        }
+        dispose();
+    }
+
+    /**
      * @hide
      * @return
      */

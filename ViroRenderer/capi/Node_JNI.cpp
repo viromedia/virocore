@@ -75,7 +75,9 @@ VRO_METHOD(void, nativeRemoveAllChildNodes)(VRO_ARGS
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
-        node->removeAllChildren();
+        if (node) {
+            node->removeAllChildren();
+        }
     });
 }
 

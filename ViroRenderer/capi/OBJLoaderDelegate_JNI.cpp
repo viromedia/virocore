@@ -28,13 +28,6 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, ModelType model
     VRO_ENV env = VROPlatformGetJNIEnv();
     VRO_WEAK weakObj = VRO_NEW_WEAK_GLOBAL_REF(_javaObject);
 
-    // If the request is antiquated, clear the node
-    VRO_LONG activeRequestID = VROPlatformCallHostLongFunction(_javaObject, "getActiveRequestID", "()J");
-    if (activeRequestID != requestId) {
-        pinfo("Received antiquated Object3D load, discarding");
-        node->removeAllChildren();
-        return;
-    }
 
     VROPlatformDispatchAsyncApplication([weakObj, node, modelType] {
         VRO_ENV env = VROPlatformGetJNIEnv();

@@ -14,6 +14,8 @@
 package com.viro.core;
 
 import android.net.Uri;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +47,7 @@ public class Object3D extends Node {
     private AsyncObject3DListener mAsyncListener = null;
     private AtomicLong mActiveRequestID;
     private List<Material> mMaterialList;
+    private QueuedModel mQueuedModel;
 
     /**
      * Supported model formats for loading into an {@link Object3D}.
@@ -117,11 +120,28 @@ public class Object3D extends Node {
     }
 
     /**
+     * For use when an Object load request is issued while another request is ongoing.
+     */
+    private static class QueuedModel {
+        ViroContext mContext;
+        Uri mUri;
+        Type mType;
+        AsyncObject3DListener mListener;
+
+        public QueuedModel(ViroContext viroContext, Uri uri, Type type, AsyncObject3DListener asyncListener) {
+            mContext = viroContext;
+            mUri = uri;
+            mType = type;
+            mListener = asyncListener;
+        }
+    }
+
+    /**
      * Construct a new Object3D. To load 3D model data into this Node, use
      * {@link #loadModel(ViroContext, Uri, Type, AsyncObject3DListener)}.
      */
     public Object3D() {
-        mActiveRequestID = new AtomicLong();
+        mActiveRequestID = new AtomicLong(0);
     }
 
     /**
@@ -133,6 +153,9 @@ public class Object3D extends Node {
      * resources are expected to be found at the same base path as the model URI. For GLTB and GLB
      * models, resources are expected at the relative paths specified in the GLTF JSON.
      * <p>
+     * If another model is already loaded into this Object3D, that model will be immediately
+     * removed. If the Object3D is currently loading another model, that model will be disposed.
+     * <p>
      *
      * @param viroContext   The {@link ViroContext} is required to load models.
      * @param uri           The URI of the model to load.
@@ -140,10 +163,42 @@ public class Object3D extends Node {
      * @param asyncListener Listener to respond to model loading status.
      */
     public void loadModel(ViroContext viroContext, Uri uri, Type type, AsyncObject3DListener asyncListener) {
-        removeAllChildNodes();
-        long requestID = mActiveRequestID.incrementAndGet();
-        nativeLoadModelFromURL(uri.toString(), mNativeRef, viroContext.mNativeRef, type.id, requestID);
-        mAsyncListener = asyncListener;
+        // If we're not currently loading any model
+        if (mActiveRequestID.get() == 0) {
+            removeAllChildNodes();
+            long requestID = mActiveRequestID.incrementAndGet();
+            nativeLoadModelFromURL(uri.toString(), mNativeRef, viroContext.mNativeRef, type.id, requestID);
+            mAsyncListener = asyncListener;
+        }
+        else {
+            // Otherwise we're currently loading a model; queue this for when the current load ends
+            mQueuedModel = new QueuedModel(viroContext, uri, type, asyncListener);
+        }
+    }
+
+    /**
+     * Remove and dispose the model that was loaded in this Object3D. This will remove and delete all the
+     * {@link Node}, {@link Geometry}, and {@link Material} objects used this Object3D. This should be used
+     * to quickly clean up memory in the sub-tree, if required. This is especially useful when removing
+     * models with a large memory footprint, to ensure they're deleted quickly without having to wait
+     * for GC. Note this method does not dispose of <i>this</i> Node; you can still load a new model
+     * into this Node via {@link #loadModel(ViroContext, Uri, Type, AsyncObject3DListener)}.
+     */
+    public void disposeModel() {
+        List<Node> children = new ArrayList<>(getChildNodes());
+        for (Node child : children) {
+            child.disposeAll(true);
+        }
+
+        if (mMaterialList != null) {
+            for (Material material : mMaterialList) {
+                material.dispose();
+            }
+            mMaterialList = null;
+        }
+
+        // Ensure that we also remove any native nodes that may not be tracked in java
+        nativeRemoveAllChildNodes(mNativeRef);
     }
 
     /**
@@ -223,6 +278,13 @@ public class Object3D extends Node {
         if (mAsyncListener != null) {
             mAsyncListener.onObject3DLoaded(this, type);
         }
+        mActiveRequestID.set(0);
+        if (mQueuedModel != null) {
+            // Immediately dispose the just-loaded model since we're replacing it
+            disposeModel();
+            loadModel(mQueuedModel.mContext, mQueuedModel.mUri, mQueuedModel.mType, mQueuedModel.mListener);
+            mQueuedModel = null;
+        }
     }
 
     private void inflateChildNodes(Node currentNode) {
@@ -268,6 +330,12 @@ public class Object3D extends Node {
     void nodeDidFailOBJLoad(String error) {
         if (!mDestroyed && mAsyncListener != null) {
             mAsyncListener.onObject3DFailed(error);
+        }
+
+        mActiveRequestID.set(0);
+        if (mQueuedModel != null) {
+            loadModel(mQueuedModel.mContext, mQueuedModel.mUri, mQueuedModel.mType, mQueuedModel.mListener);
+            mQueuedModel = null;
         }
     }
 
