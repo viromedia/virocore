@@ -27,9 +27,9 @@ static const bool kSceneCheckeredBackground = NO;
 
 - (void)loadView {
     VRORendererConfiguration config;
-    config.enableHDR = NO;
-    config.enablePBR = NO;
-    config.enableBloom = NO;
+    config.enableHDR = YES;
+    config.enablePBR = YES;
+    config.enableBloom = YES;
     config.enableMultisampling = NO;
     
     if (kTestType == VROTestSceneType::VR) {

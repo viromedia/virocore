@@ -32,11 +32,8 @@ void VROToneMappingTest::build(std::shared_ptr<VRORenderer> renderer,
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     
-    /*
-     Load the background texture.
-     */
-    //rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
-    //rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
+    std::shared_ptr<VROTexture> environment = VROTestUtil::loadRadianceHDRTexture("ibl_mans_outside");
+    rootNode->setBackgroundSphere(environment);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
@@ -89,9 +86,18 @@ void VROToneMappingTest::build(std::shared_ptr<VRORenderer> renderer,
     boxNode->setGeometry(box);
     
     std::shared_ptr<VRONode> boxParentNode = std::make_shared<VRONode>();
-    boxParentNode->setPosition({0, 0, -5});
+    boxParentNode->setPosition({0, -1, -5});
     boxParentNode->addChildNode(boxNode);
     rootNode->addChildNode(boxParentNode);
+    
+    std::shared_ptr<VROTexture> texture = VROTestUtil::loadDiffuseTexture("floor_transparent_03", VROMipmapMode::None);
+    std::shared_ptr<VROSurface> quad = VROSurface::createSurface(2, 2);
+    quad->getMaterials()[0]->getDiffuse().setTexture(texture);
+    
+    std::shared_ptr<VRONode> quadNode = std::make_shared<VRONode>();
+    quadNode->setGeometry(quad);
+    quadNode->setPosition({0, 1, -2});
+    rootNode->addChildNode(quadNode);
     
     VROTransaction::begin();
     VROTransaction::setAnimationDelay(2);
@@ -106,7 +112,7 @@ void VROToneMappingTest::build(std::shared_ptr<VRORenderer> renderer,
     boxParentNode->setRotationEulerZ(M_PI_2);
     VROTransaction::commit();
     
-    int width = 10;
+    int width = 7;
     int height = 4;
     
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
@@ -117,7 +123,7 @@ void VROToneMappingTest::build(std::shared_ptr<VRORenderer> renderer,
                                                         linebreakMode, clipMode, 0, driver);
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
     textNode->setGeometry(text);
-    textNode->setPosition({0, -1, -2});
+    textNode->setPosition({0, -2.5f, -4});
     rootNode->addChildNode(textNode);
     
     _eventDelegate = std::make_shared<VROToneMappingEventDelegate>(scene, text);

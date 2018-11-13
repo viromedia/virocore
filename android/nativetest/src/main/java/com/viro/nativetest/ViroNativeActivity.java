@@ -89,16 +89,7 @@ public class ViroNativeActivity extends AppCompatActivity {
                     onRendererFailed(error.toString(), errorMessage);
                 }
             }, config);
-
-
-            mViroView.setPadding(60, 60, 60, 60);
-            mViroView.setBackgroundColor(Color.argb(0, 0, 0, 0));
-
-            FrameLayout frameLayout = new FrameLayout(this);
-            frameLayout.addView(mViroView);
-            frameLayout.setBackgroundColor(Color.BLUE);
-
-            setContentView(frameLayout);
+            setContentView(mViroView);
 
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             mViroView = new ViroViewARCore(this, new ViroViewARCore.StartupListener() {
