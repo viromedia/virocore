@@ -38,17 +38,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
         "uniform sampler2D tone_mapping_mask;",
         "highp vec4 hdr_color = texture(hdr_texture, v_texcoord).rgba;",
         "lowp float tone_mapped = texture(tone_mapping_mask, v_texcoord).r;",
-
-        // The tone-mapping value stored in the texture is, for each fragment, the material's
-        // tone mapping setting (1.0 to tone-map, 0.0 to not). Multiple fragments are blended
-        // together [source * alpha + destination * (1 - alpha)] to get the final pixel value.
-        // We use a threshold of 0.2. If the blended result is less than that value, then we
-        // do not tone-map. See VROShaderFactory::createToneMappingMaskModifier for details.
-
         "highp vec3 mapped;",
-        "if (tone_mapped < 0.2) {",
-        "    mapped = hdr_color.rgb;",
-        "} else {",
     };
     
     /*
@@ -115,10 +105,23 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     }
     code.insert(code.end(), toneMappingCode.begin(), toneMappingCode.end());
     
+    // The tone_mapped value stored in the tone_mapping_mask texture is, for each fragment,
+    // the material's tone mapping setting (1.0 to tone-map, 0.0 to not). Multiple fragments
+    // are blended together [source * alpha + destination * (1 - alpha)] to get the final
+    // tone_mapped value that is received here.
+    //
+    // This final tone_mapped value will range from 0.0 (no tone-mapping) to 1.0 (full
+    // tone-mapping). We blend by this value to determine the amount of tone-mapping to apply.
+    // This ensures that tone-mapped alpha surfaces displayed over not-tone-mapped backgrounds
+    // blend smoothly from tone-mapped to not-tone-mapped.
+    //
+    // See VROShaderFactory::createToneMappingMaskModifier for more details on the tone-mapped
+    // mask.
+    code.push_back("mapped = mix(hdr_color.rgb, mapped, tone_mapped);");
+    
     /*
      Gamma correct in the shader if software gamma correction was requested.
      */
-    code.push_back("}");
     if (_gammaCorrectionEnabled) {
         code.push_back("const highp float gamma = 2.2;");
         code.push_back("mapped = pow(mapped, vec3(1.0 / gamma));");
