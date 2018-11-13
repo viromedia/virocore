@@ -117,7 +117,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     //
     // See VROShaderFactory::createToneMappingMaskModifier for more details on the tone-mapped
     // mask.
-    code.push_back("mapped = mix(hdr_color.rgb, mapped, tone_mapped);");
+    code.push_back("mapped = mix(hdr_color.rgb, mapped, clamp(tone_mapped, 0.0, 1.0));");
     
     /*
      Gamma correct in the shader if software gamma correction was requested.
