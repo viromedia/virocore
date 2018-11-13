@@ -71,7 +71,7 @@ void VROParticleEmitter::setDefaultValues() {
     _maxParticles = 500;
     _particlesEmittedPerMeter = std::pair<int, int>(0, 0);
     _particlesEmittedPerSecond = std::pair<int, int>(10, 10);
-    _particleLifeTime = std::pair<int, int>(2000,2000);
+    _particleLifeTime = std::pair<int, int>(2000, 2000);
     _loop = true;
     _run = false;
     _requestRun = false;
@@ -638,7 +638,7 @@ VROVector3f VROParticleEmitter::getExplosionAccel(VROVector3f intialVelocity){
     return (intialVelocity / _impulseDeaccelerationExplosionPeriod) * -1.0;
 }
 
-void VROParticleEmitter::setBlendMode(VROBlendMode mode){
+void VROParticleEmitter::setBlendMode(VROBlendMode mode) {
     std::shared_ptr<VROMaterial> mat = _particleGeometry->getMaterials()[0];
     mat->setBlendMode(mode);
 }
