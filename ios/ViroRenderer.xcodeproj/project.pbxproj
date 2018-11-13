@@ -963,6 +963,9 @@
 		8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F660AB91E9554B8006D063F /* VROFrameScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F67B59F1DF1DC930096C26F /* VROKnuthPlassFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F67B59D1DF1DC920096C26F /* VROKnuthPlassFormatter.cpp */; };
 		8F67B5A01DF1DC930096C26F /* VROKnuthPlassFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */; };
+		8F68E3A1219A35EE000A7C64 /* floor_transparent_03.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F68E3A0219A35ED000A7C64 /* floor_transparent_03.png */; };
+		8F68E3A4219B3050000A7C64 /* darkerSmoke.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F68E3A2219B3050000A7C64 /* darkerSmoke.png */; };
+		8F68E3A5219B3050000A7C64 /* darkSmoke.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F68E3A3219B3050000A7C64 /* darkSmoke.png */; };
 		8F6E5B1520DD335B00BEE45F /* cr_cars_BaseColor.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0720DD335800BEE45F /* cr_cars_BaseColor.png */; };
 		8F6E5B1620DD335B00BEE45F /* cr_ar_badges_Metallic.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0820DD335900BEE45F /* cr_ar_badges_Metallic.png */; };
 		8F6E5B1720DD335B00BEE45F /* cr_ar_badges_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B0920DD335900BEE45F /* cr_ar_badges_Roughness.png */; };
@@ -2013,6 +2016,9 @@
 		8F660AB91E9554B8006D063F /* VROFrameScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameScheduler.h; sourceTree = "<group>"; };
 		8F67B59D1DF1DC920096C26F /* VROKnuthPlassFormatter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROKnuthPlassFormatter.cpp; sourceTree = "<group>"; };
 		8F67B59E1DF1DC920096C26F /* VROKnuthPlassFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROKnuthPlassFormatter.h; sourceTree = "<group>"; };
+		8F68E3A0219A35ED000A7C64 /* floor_transparent_03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = floor_transparent_03.png; path = ViroSample/floor_transparent_03.png; sourceTree = "<group>"; };
+		8F68E3A2219B3050000A7C64 /* darkerSmoke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = darkerSmoke.png; path = ViroSample/darkerSmoke.png; sourceTree = "<group>"; };
+		8F68E3A3219B3050000A7C64 /* darkSmoke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = darkSmoke.png; path = ViroSample/darkSmoke.png; sourceTree = "<group>"; };
 		8F6E5B0720DD335800BEE45F /* cr_cars_BaseColor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_cars_BaseColor.png; path = ViroSample/cr_cars_BaseColor.png; sourceTree = "<group>"; };
 		8F6E5B0820DD335900BEE45F /* cr_ar_badges_Metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Metallic.png; path = ViroSample/cr_ar_badges_Metallic.png; sourceTree = "<group>"; };
 		8F6E5B0920DD335900BEE45F /* cr_ar_badges_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Roughness.png; path = ViroSample/cr_ar_badges_Roughness.png; sourceTree = "<group>"; };
@@ -3641,6 +3647,9 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F68E3A2219B3050000A7C64 /* darkerSmoke.png */,
+				8F68E3A3219B3050000A7C64 /* darkSmoke.png */,
+				8F68E3A0219A35ED000A7C64 /* floor_transparent_03.png */,
 				8F0F13ED2193812E00E8810B /* san_giuseppe_bridge_1k.hdr */,
 				8F0F13D621934D5F00E8810B /* bumblebee_Base_Color.png */,
 				8F0F13D521934D5F00E8810B /* bumblebee_body.vrx */,
@@ -4852,6 +4861,7 @@
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */,
+				8F68E3A4219B3050000A7C64 /* darkerSmoke.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8FFA8A0A2048703500C4D99B /* check.png in Resources */,
 				8FA9A264207E96240022C55D /* object_bpanther_Normal_OpenGL.png in Resources */,
@@ -4957,10 +4967,12 @@
 				8FD2A5941F868B1200E831A6 /* sunrise.vhd in Resources */,
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
+				8F68E3A1219A35EE000A7C64 /* floor_transparent_03.png in Resources */,
 				A547DB6B2022EC8900C8FE67 /* brdf_fsh.glsl in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
 				8FA9A24F207E83980022C55D /* Lamborginhi_glass_Metallic.png in Resources */,
+				8F68E3A5219B3050000A7C64 /* darkSmoke.png in Resources */,
 				8F0F13EE2193812E00E8810B /* san_giuseppe_bridge_1k.hdr in Resources */,
 				A57CA8E020AE027400DE85A1 /* DuckCM.png in Resources */,
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
