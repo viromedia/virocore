@@ -24,6 +24,15 @@ public class Image {
         mNativeRef = nativeCreateImageFromBitmap(bitmap, format.getStringValue());
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            destroy();
+        } finally {
+            super.finalize();
+        }
+    }
+
     public long getWidth() {
         return nativeGetWidth(mNativeRef);
     }
@@ -33,7 +42,10 @@ public class Image {
     }
 
     public void destroy() {
-        nativeDestroyImage(mNativeRef);
+        if (mNativeRef != 0) {
+            nativeDestroyImage(mNativeRef);
+            mNativeRef = 0;
+        }
     }
 
     private native long nativeCreateImage(String resource, String format);
