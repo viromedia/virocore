@@ -338,10 +338,12 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     _background->setSubstrate(0, std::move(substrates[0]));
     _background->setSubstrate(1, std::move(substrates[1]));
 
+    /*
     if (_bodyTracker) {
         _bodyTracker->trackWithVision(frameiOS->getImage(), frameiOS->getCameraImageToViewportTransform(),
                                       frameiOS->getCameraOrientation());
     }
+     */
     
 #if ENABLE_OPENCV
     if (isReady()) {
@@ -546,9 +548,12 @@ std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *ancho
     }
 }
 
+/*
+// Commented out for Viro React release 2.12.0
 void VROARSessioniOS::setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker) {
     _bodyTracker = std::dynamic_pointer_cast<VROBodyTrackeriOS>(bodyTracker);
-} 
+}
+ */
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {
     _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameiOS(frame, _viewport, _orientation, shared_from_this()));

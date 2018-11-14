@@ -80,7 +80,8 @@ public:
       return false;
     }
     void setVideoQuality(VROVideoQuality quality);
-    void setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker);
+    // Commented out for Viro React release 2.12.0
+    //void setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker);
     
     /*
      Internal methods.

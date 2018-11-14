@@ -10,7 +10,7 @@
 #include "VROLog.h"
 #include "Endian.h"
 #include "VROTime.h"
-#import "model_cpm.h"
+//#import "model_cpm.h"
 #import <UIKit/UIKit.h>
 #include <Accelerate/Accelerate.h>
 
@@ -45,8 +45,9 @@ VROBodyTrackeriOS::VROBodyTrackeriOS() {
 
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                          std::shared_ptr<VRODriver> driver) {
-        
-    _model = [[[model_cpm alloc] init] model];
+    
+    //VA: Removed body meshing for release.
+    _model = nil; //[[[model_cpm alloc] init] model];
     _coreMLModel =  [VNCoreMLModel modelForMLModel: _model error:nil];
     _coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler) ^(VNRequest *request, NSError *error) {
