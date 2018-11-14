@@ -30,7 +30,15 @@ public:
     void objLoaded(std::shared_ptr<VRONode> node, ModelType type, VRO_LONG requestId);
     void objFailed(std::string error);
 private:
-    VRO_OBJECT _javaObject;
+
+    /*
+     If the model is removed before load completes, this delegate (which is held by the
+     finishCallback, which in turn is held by hydrationCallbacks within the VRONode) will
+     only be cleaned up if the source Object3D is cleaned up; therefore it must hold a weak
+     pointer to OBJ. Otherwise we will have a strong reference cycle between Object3D and resources
+     used by VRONode.
+     */
+    VRO_WEAK _javaObject;
 
     /*
      Creates a map of unique jMaterials for a given VRONode, recursively.

@@ -773,13 +773,21 @@ void VROGLTFLoader::injectGLTF(std::shared_ptr<VRONode> gltfNode,
         rootNode->recomputeUmbrellaBoundingBox();
         rootNode->syncAppThreadProperties();
         rootNode->setIgnoreEventHandling(rootNode->getIgnoreEventHandling());
-
         rootNode->setHoldRendering(true);
-        VROModelIOUtil::hydrateAsync(rootNode, [rootNode, onFinish] {
-            if (onFinish) {
-                onFinish(rootNode, true);
+
+        // Don't hold a strong reference to the Node: hydrateAsync stores its callback (and
+        // thus all associated lambda variables, including the Node) in VROTexture, exposing us
+        // to strong reference cycles that will not be cleaned up if hydrateAsync never doesn't
+        // complete (if, for example, the Node is removed before hydration completes).
+        std::weak_ptr<VRONode> node_w = rootNode;
+        VROModelIOUtil::hydrateAsync(rootNode, [node_w, onFinish] {
+            std::shared_ptr<VRONode> node_s = node_w.lock();
+            if (node_s) {
+                if (onFinish) {
+                    onFinish(node_s, true);
+                }
+                node_s->setHoldRendering(false);
             }
-            rootNode->setHoldRendering(false);
         }, driver);
     }
     else {

@@ -181,11 +181,20 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode,
         // invoked before rendering (this way position/rotation can be set in the callback without
         // causing any flicker).
         node->setHoldRendering(true);
-        VROModelIOUtil::hydrateAsync(node, [node, onFinish] {
-            if (onFinish) {
-                onFinish(node, true);
+
+        // Don't hold a strong reference to the Node: hydrateAsync stores its callback (and
+        // thus all associated lambda variables, including the Node) in VROTexture, exposing us
+        // to strong reference cycles that will not be cleaned up if hydrateAsync never doesn't
+        // complete (if, for example, the Node is removed before hydration completes).
+        std::weak_ptr<VRONode> node_w = node;
+        VROModelIOUtil::hydrateAsync(node, [node_w, onFinish] {
+            std::shared_ptr<VRONode> node_s = node_w.lock();
+            if (node_s) {
+                if (onFinish) {
+                    onFinish(node_s, true);
+                }
+                node_s->setHoldRendering(false);
             }
-            node->setHoldRendering(false);
         }, driver);
     }
     else {
