@@ -28,7 +28,8 @@ public class Image {
     protected void finalize() throws Throwable {
         try {
             destroy();
-        } finally {
+        }
+        finally {
             super.finalize();
         }
     }
