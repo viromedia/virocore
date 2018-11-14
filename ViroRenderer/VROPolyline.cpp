@@ -364,11 +364,12 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
             "uniform float thickness;",
             "vec3 world_pos = (_transforms.model_matrix * vec4(_geometry.position, 1.0)).xyz;",
             "vec3 camera_ray = normalize(world_pos - camera_position);",
-            "vec3 stroke_offset_direction = cross(camera_ray, _geometry.normal);",
+            "vec4 line_dir = normal_matrix * vec4(_geometry.normal, 0.0);",
+            "vec3 stroke_offset_dir = cross(camera_ray, line_dir.xyz);",
             
             // Ensure we are not dealing with a 0 length vector (creates NaN when normalizing)
-            "if (dot(stroke_offset_direction, stroke_offset_direction) > 0.0) {",
-            "   highp vec3 stroke_offset = normalize(stroke_offset_direction) * (thickness / 2.0);"
+            "if (length(stroke_offset_dir) > 0.0) {",
+            "   highp vec3 stroke_offset = normalize(stroke_offset_dir) * (thickness / 2.0);"
             "   highp float angle = _geometry.tangent.x;"
             "   if (angle > 0.0) {",
             "      highp vec3 axis = camera_ray;",
