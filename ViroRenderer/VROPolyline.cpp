@@ -22,7 +22,8 @@
 #include "VROAnimationFloat.h"
 
 static const int kNumJointSegments = 16;
-static std::shared_ptr<VROShaderModifier> sPolylineShaderModifier;
+static std::shared_ptr<VROShaderModifier> sPolylineShaderGeometryModifier;
+static std::shared_ptr<VROShaderModifier> sPolylineShaderVertexModifier;
 
 std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float thickness) {
     std::vector<std::vector<VROVector3f>> paths;
@@ -329,18 +330,22 @@ void VROPolyline::setThickness(float thickness) {
 }
 
 void VROPolyline::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materials) {
-    createPolylineShaderModifier();
+    createPolylineShaderModifiers();
 
-    if (!materials.front()->hasShaderModifier(sPolylineShaderModifier)) {
-        materials.front()->addShaderModifier(sPolylineShaderModifier);
+    if (!materials.front()->hasShaderModifier(sPolylineShaderGeometryModifier)) {
+        materials.front()->addShaderModifier(sPolylineShaderGeometryModifier);
+    }
+    if (!materials.front()->hasShaderModifier(sPolylineShaderVertexModifier)) {
+        materials.front()->addShaderModifier(sPolylineShaderVertexModifier);
     }
     materials.front()->setCullMode(VROCullMode::None);
     VROGeometry::setMaterials(materials);
 }
 
-std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
+void VROPolyline::createPolylineShaderModifiers() {
     /*
-     Modifier that strokes a line and creates circular endcaps.
+     Modifiers that stroke a line and create circular endcaps. There is a Geometry
+     and a Vertex component.
      
      For the straight segments of a line, the normal attribute is actually the
      direction of the segment. We can use that along with the camera's view vector
@@ -359,13 +364,15 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
      Lastly, we input the *correct* normal vector at the end of this modifier to that
      lighting works as expected.
      */
-    if (!sPolylineShaderModifier) {
-        std::vector<std::string> modifierCode = {
+    if (!sPolylineShaderGeometryModifier) {
+        std::vector<std::string> geometryCode = {
             "uniform float thickness;",
-            "vec3 world_pos = (_transforms.model_matrix * vec4(_geometry.position, 1.0)).xyz;",
-            "vec3 camera_ray = normalize(world_pos - camera_position);",
+            "vec4 world_position = _transforms.model_matrix * vec4(_geometry.position, 1.0);",
+            "vec3 camera_ray = normalize(world_position.xyz - camera_position);",
             "vec4 line_dir = normal_matrix * vec4(_geometry.normal, 0.0);",
             "vec3 stroke_offset_dir = cross(camera_ray, line_dir.xyz);",
+            
+            "highp vec3 world_vertex_offset = vec3(0.0);",
             
             // Ensure we are not dealing with a 0 length vector (creates NaN when normalizing)
             "if (length(stroke_offset_dir) > 0.0) {",
@@ -379,25 +386,31 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
             "      highp mat3 rotation = mat3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,",
             "                                 oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,",
             "                                 oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c);",
-            "      _geometry.position += rotation * stroke_offset;",
+            "      world_vertex_offset = rotation * stroke_offset;",
             "   } else {",
-            "      _geometry.position += stroke_offset;",
+            "      world_vertex_offset = stroke_offset;",
             "   }",
             "}",
-            
             // Set the normal to the inverse of the camera vector (since we're billboarding)
             "_geometry.normal = -camera_ray;"
         };
 
-        sPolylineShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
-        sPolylineShaderModifier->setUniformBinder("thickness", VROShaderProperty::Float,
-                                                  [](VROUniform *uniform,
-                                                     const VROGeometry *geometry, const VROMaterial *material) {
+        sPolylineShaderGeometryModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, geometryCode);
+        sPolylineShaderGeometryModifier->setUniformBinder("thickness", VROShaderProperty::Float,
+                                                          [](VROUniform *uniform,
+                                                             const VROGeometry *geometry, const VROMaterial *material) {
             const VROPolyline *polyline = dynamic_cast<const VROPolyline *>(geometry);
             uniform->setFloat(polyline->getThickness());
         });
-        sPolylineShaderModifier->setName("line");
+        sPolylineShaderGeometryModifier->setName("line_g");
+        
+        /*
+         The Vertex component simply adds the computed vertex offset to the world position.
+         */
+        std::vector<std::string> vertexCode = {
+            "_vertex.position = _transforms.projection_matrix * _transforms.view_matrix * (vec4(world_vertex_offset, 0.0) + world_position);",
+        };
+        sPolylineShaderVertexModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Vertex, vertexCode);
+        sPolylineShaderVertexModifier->setName("line_v");
     }
-    
-    return sPolylineShaderModifier;
 }

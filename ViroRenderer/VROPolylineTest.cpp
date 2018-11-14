@@ -51,14 +51,18 @@ void VROPolylineTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->setBackgroundSphere(environment);
     
     _polyline = std::make_shared<VROPolyline>();
-    _polyline->setThickness(0.25);
+    _polyline->setThickness(0.1);
     _polyline->getMaterials()[0]->setLightingModel(VROLightingModel::Lambert);
+    _polyline->appendPoint({ -1, 0, 0 });
+    _polyline->appendPoint({ 0, 0, .5 });
+    _polyline->appendPoint({ 1, 0, 0 });
     
     std::shared_ptr<VRONode> polylineNode = std::make_shared<VRONode>();
-    polylineNode->setPosition({ 0, 0, 0 });
     polylineNode->setIgnoreEventHandling(true);
     polylineNode->setGeometry(_polyline);
-    
+    polylineNode->setScale({ 0.5, 0.5, 0.5 });
+    polylineNode->setPosition({ 0, 0, -1 });
+    polylineNode->setRotationEuler({ M_PI / 6.0, 0, 0 });
     scene->getRootNode()->addChildNode(polylineNode);
 
     std::shared_ptr<VROBox> surface = VROBox::createBox(10, 10, 10);
@@ -75,6 +79,16 @@ void VROPolylineTest::build(std::shared_ptr<VRORenderer> renderer,
     _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnMove, true);
     _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnDrag, true);
     surfaceNode->setEventDelegate(_eventDelegate);
+    
+    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
+    camera->setRotationType(VROCameraRotationType::Orbit);
+    camera->setOrbitFocalPoint({ 0, 0, -2 });
+    
+    std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
+    cameraNode->setCamera(camera);
+    rootNode->addChildNode(cameraNode);
+    
+    _pointOfView = cameraNode;
 }
 
 void VROPolylineEventDelegate::onClick(int source, std::shared_ptr<VRONode> node,
