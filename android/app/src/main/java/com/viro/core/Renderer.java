@@ -133,7 +133,7 @@ public class Renderer {
     }
 
     public void performARHitTestWithRay(float[] origin, float[] ray, boolean useBoundsOnly, HitTestListener callback) {
-        nativePerformHitTestWithRay(mNativeRef, origin, ray,useBoundsOnly, callback);
+        nativePerformHitTestWithRay(mNativeRef, origin, ray, useBoundsOnly, callback);
     }
 
     public void onSurfaceCreated(Surface surface) { nativeOnSurfaceCreated(surface, mNativeRef); }

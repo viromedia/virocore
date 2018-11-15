@@ -557,32 +557,38 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
 
 
     /**
-     * Performs a hit-test an x,y screen point The
-     * hit-test returns all virtual world features that are intersected by the ray.
+     * Performs a hit-test searching for all <i>virtual world</i> features at the given 2D point on
+     * the view. Note that since a single 2D point on view corresponds to a 3D ray in the scene,
+     * multiple results may be returned (each at a different depth).
      *
-     * @param point      Perform the hit-test from this x,y screen point.
-     * @param isHighAccuracyTest True if you want this hit test to use the geometry of each object to find intersection points
-     *                           instead of the bounding box. Performing high accuracy hit tests have a performance impact.
-     * @param callback The callback that will receive the {@link HitTestResult}
-     *                 results.
+     * @param point              Perform the hit-test from this X, Y screen point.
+     * @param isHighAccuracyTest True if you want this hit-test to use the geometry of each object
+     *                           to find intersection points, false if you want to only use the
+     *                           bounding box of each object. Performing high accuracy hit-tests has
+     *                           a significant performance impact.
+     * @param callback           The callback that will receive the {@link HitTestResult} results.
      */
-
     public void performSceneHitTestWithPoint(Point point, boolean isHighAccuracyTest, HitTestListener callback) {
         if (!mDestroyed) {
-           mNativeRenderer.performHitTestWithPoint(point.x, point.y, !isHighAccuracyTest, callback);
+            mNativeRenderer.performHitTestWithPoint(point.x, point.y, !isHighAccuracyTest, callback);
         }
     }
 
     /**
-     * Performs a hit-test from the camera's position in the direction of the given ray. The
-     * hit-test returns all virtual world features that are intersected by the ray.
+     * Performs a hit-test along the ray defined by the the given <i>origin</i> and
+     * <i>direction</i> in world coordinates. The hit-test returns all <i>real-world</i> features
+     * that are intersected by the ray.
      *
-     * @param origin   Perform the hit-test from the this origin point.
-     * @param ray      A normalized ray that will be cast from the origin.
-     * @param isHighAccuracyTest True if you want this hit test to use geometry of each object to find intersection points
-     *                           instead of the bounding box. Performing high accuracy hit tests have a performance impact.
-     * @param callback The callback that will receive the {@link HitTestResult}
-     *                 results.
+     * @param origin             The ray origin in world coordinates.
+     * @param ray                The normalized direction of the ray in world coordinates.
+     * @param isHighAccuracyTest True if you want this hit-test to use the geometry of each object
+     *                           to find intersection points, false if you want to only use the
+     *                           bounding box of each object. Performing high accuracy hit-tests has
+     *                           a significant performance impact.
+     * @param callback           The callback that will receive the {@link ARHitTestResult} results.
+     *                           Performs a hit-test from the camera's position in the direction of
+     *                           the given ray. The hit-test returns all virtual world features that
+     *                           are intersected by the ray.
      */
     public void performSceneHitTestRay(Vector origin, Vector ray, boolean isHighAccuracyTest, HitTestListener callback) {
         if (!mDestroyed) {
