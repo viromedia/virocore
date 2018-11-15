@@ -301,9 +301,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Dispose this Node <i>and</i> its {@link Geometry} <i>and</i> the {@link Material}s used
-     * by said Geometry. If <tt>recursive</tt> is set to true, then this method will also do the
-     * same to the entire subtree of the scene graph below this Node.
+     * Dispose of this Node, its {@link Geometry}, and the {@link Material}s and
+     * {@link Texture}s used by said Geometry. If <tt>recursive</tt> is set to true, then this
+     * will recurse and do the same to the entire subtree of Nodes below this one.
      */
     public void disposeAll(boolean recursive) {
         if (recursive) {

@@ -549,7 +549,8 @@ public class Material {
     }
 
     /**
-     * Release native resources associated with this Material.
+     * Release native resources associated with this Material. Note this will not release the
+     * resources used by this Material's textures; to do that as well, use {@link #disposeAll()}.
      */
     public void dispose() {
         if (mNativeRef != 0) {

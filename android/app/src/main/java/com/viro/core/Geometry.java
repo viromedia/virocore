@@ -53,7 +53,7 @@ public class Geometry {
     }
 
     /**
-     * Release native resources associated with this Box.
+     * Release native resources associated with this Geometry.
      */
     public void dispose() {
         if (mNativeRef != 0) {

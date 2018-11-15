@@ -177,12 +177,14 @@ public class Object3D extends Node {
     }
 
     /**
-     * Remove and dispose the model that was loaded in this Object3D. This will remove and delete all the
-     * {@link Node}, {@link Geometry}, and {@link Material} objects used this Object3D. This should be used
-     * to quickly clean up memory in the sub-tree, if required. This is especially useful when removing
-     * models with a large memory footprint, to ensure they're deleted quickly without having to wait
-     * for GC. Note this method does not dispose of <i>this</i> Node; you can still load a new model
-     * into this Node via {@link #loadModel(ViroContext, Uri, Type, AsyncObject3DListener)}.
+     * Remove and dispose the model that was loaded in this Object3D. This will remove and delete
+     * all the {@link Node}, {@link Geometry}, {@link Material}, and {@link Texture} objects created
+     * during the last call to {@link #loadModel(ViroContext, Uri, Type, AsyncObject3DListener)}.
+     * <p>
+     * This is especially useful when removing models with a large memory footprint, to ensure
+     * they're deleted quickly without having to wait for GC. Note this method does not dispose of
+     * <i>this</i> Node; you can still load a new model into this Node via {@link
+     * #loadModel(ViroContext, Uri, Type, AsyncObject3DListener)}.
      */
     public void disposeModel() {
         List<Node> children = new ArrayList<>(getChildNodes());
