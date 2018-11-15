@@ -105,27 +105,28 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * Enum describing current state of ARCore availability on device.
+     * Enum describing state of ARCore availability on device.
      */
     public enum ARCoreAvailability {
 
         /**
-         * The device is <b>supported</b> by ARCore
+         * The device is <b>supported</b> by ARCore.
          */
         SUPPORTED,
 
         /**
-         * The device is <b>unsupported</b> by ARCore
+         * The device is <b>unsupported</b> by ARCore.
          */
         UNSUPPORTED,
 
         /**
-         * ARCore support is <b>unknown</b> for this device
+         * ARCore support is <b>unknown</b> for this device.
          */
         UNKNOWN,
 
         /**
-         * ARCore is still checking. This is a temporary state. Application should check again soon.
+         * ARCore is still checking for support. This is a temporary state, and the application should
+         * check again soon.
          */
         TRANSIENT
     }
@@ -169,8 +170,9 @@ public class ViroViewARCore extends ViroView {
         ARCORE_UNKNOWN,
 
         /**
-         * Indicates ARCore SDK returned TRANSIENT state while detecting ARCore on device.
-         * Application should try again soon.
+         * Indicates the ARCore SDK returned TRANSIENT state while detecting if ARCore is
+         * supported on the current device. In response to this error the application should try
+         * again after a short delay.
          */
         ARCORE_TRANSIENT,
 
@@ -1084,7 +1086,7 @@ public class ViroViewARCore extends ViroView {
     }
 
     /**
-     * @deprecated  As of ViroCore version 1.12.0, replaced by {@link #isARSupportedOnDevice(Context)}
+     * @deprecated As of ViroCore version 1.12.0, replaced by {@link #isARSupportedOnDevice(Context)}.
      *
      * Checks if ARCore is compatible with the target device. This does <i>not</i> indicate whether ARCore is
      * installed. If this method returns false, attempts to create {@link ViroViewARCore} will throw
@@ -1107,18 +1109,19 @@ public class ViroViewARCore extends ViroView {
 
     /**
      * Checks if ARCore is supported on the target device. This does <i>not</i> indicate whether
-     * ARCore is installed. If this method returns anything except {@link ARCoreAvailability#SUPPORTED},
-     * attempts to create {@link ViroViewARCore} will throw an exception. If the method returns
-     * {@link ARCoreAvailability#TRANSIENT}, according to
-     * <a href="https://developers.google.com/ar/reference/java/com/google/ar/core/ArCoreApk.Availability">ARCore docs</a>,
-     * the application should check again soon.
+     * ARCore is installed. If this method returns anything except {@link
+     * ARCoreAvailability#SUPPORTED}, attempts to create {@link ViroViewARCore} will throw an
+     * exception. If the method returns {@link ARCoreAvailability#TRANSIENT}, then ARCore is
+     * actively checking for support and -- in compliance with <a href="https://developers.google.com/ar/reference/java/com/google/ar/core/ArCoreApk.Availability">ARCore
+     * documentation</a> -- the application should check again after a short delay.
      *
      * @param context The {@link Context} of your application.
-     * @return ARCoreAvailability Enum for ARCore support on this device. See {@link ARCoreAvailability}
+     * @return ARCoreAvailability Enum for ARCore support on this device. See {@link
+     * ARCoreAvailability}
      */
     public static ARCoreAvailability isARSupportedOnDevice(Context context) {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
-        Log.i(TAG, "ARCore availability check returned [" + availability   + "]");
+        Log.i(TAG, "ARCore availability check returned [" + availability + "]");
         if (availability.isTransient()) {
             return ARCoreAvailability.TRANSIENT;
         }
