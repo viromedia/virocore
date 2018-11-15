@@ -218,6 +218,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FuseListener.html">FuseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/GesturePinchListener.html">GesturePinchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/GestureRotateListener.html">GestureRotateListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/HitTestListener.html">HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/HoverListener.html">HoverListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.TransformListener.html">Node.TransformListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.ParticleModifier.html">ParticleEmitter.ParticleModifier</a></li>
@@ -273,6 +274,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FixedParticleEmitter.html">FixedParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.GeometryBuilder.html">Geometry.GeometryBuilder</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/HitTestResult.html">HitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.LightBuilder.html">Light.LightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
@@ -376,6 +378,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.ARCoreAvailability.html">ViroViewARCore.ARCoreAvailability</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.StartupError.html">ViroViewARCore.StartupError</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewGVR.StartupError.html">ViroViewGVR.StartupError</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewOVR.StartupError.html">ViroViewOVR.StartupError</a></li>
@@ -775,6 +778,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#isMultisamplingEnabled()">isMultisamplingEnabled</a>()
+      </code>
+      
+        <p>Return true if 4x multisampling is enabled for this configuration.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/RendererConfiguration.html#isPBREnabled()">isPBREnabled</a>()
       </code>
       
@@ -862,6 +892,33 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
         <p>When HDR rendering is enabled, Viro uses a deeper color space and renders to a floating point
  texture, where a tone-mapping algorithm is applied to preserve fine details in both bright
  and dark regions of the scene.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/RendererConfiguration.html#setMultisamplingEnabled(boolean)">setMultisamplingEnabled</a>(boolean enabled)
+      </code>
+      
+        <p>Set to true to enable 4x full-screen multisampling.
         
     
 </p>
@@ -1051,6 +1108,35 @@ boolean isHDREnabled ()</pre>
 </div>
 
 
+<A NAME="isMultisamplingEnabled()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">isMultisamplingEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean isMultisamplingEnabled ()</pre>
+    
+    
+
+    
+  <p>Return true if 4x multisampling is enabled for this configuration.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if 4x multisampling is enabled.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="isPBREnabled()"></A>
 
 <div class="api apilevel-">
@@ -1169,6 +1255,39 @@ void setHDREnabled (boolean enabled)</pre>
         <td><code>enabled</code></td>
         <td width="100%">
           <code>boolean</code>: True to enable HDR for this configuration.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setMultisamplingEnabled(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setMultisamplingEnabled</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setMultisamplingEnabled (boolean enabled)</pre>
+    
+    
+
+    
+  <p>Set to true to enable 4x full-screen multisampling. This helps reduce jagged edges in
+ geometry, but takes <i>significantly</i> more GPU processing time and will drain battery
+ at a faster rate. This defaults to false and is not recommended except on low resolution
+ devices.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>enabled</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to enable 4x multisampling.
 </p></td>
       </tr>
     </table>
