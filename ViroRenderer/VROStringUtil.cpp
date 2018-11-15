@@ -254,7 +254,7 @@ std::string VROStringUtil::encodeURL(std::string url) {
     return s.str();
 }
 
-void VROStringUtil::printCode(std::string &code) {
+void VROStringUtil::printCode(const std::string &code) {
     std::vector<std::string> lines = split(code, "\n", true);
     
     int lineNumber = 0;

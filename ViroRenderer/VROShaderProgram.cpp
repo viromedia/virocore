@@ -197,16 +197,14 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
     GL( glShaderSource(*shader, 1, &source, &len) );
     GL( glCompileShader(*shader) );
 
-#if kDebugShaders
-    GLint logLength;
-    GL( glGetShaderInfoLog(*shader, shaderMaxLogLength, &logLength, shaderLog) );
-    if (logLength > 1) { // when there are no logs we have just a '\n', don't print that out
-        perr("Shader compile log:\n%s", shaderLog);
-    }
-#endif
-
     GL( glGetShaderiv(*shader, GL_COMPILE_STATUS, &status) );
     if (status == 0) {
+        GLint logLength;
+        GL( glGetShaderInfoLog(*shader, shaderMaxLogLength, &logLength, shaderLog) );
+        if (logLength > 1) { // when there are no logs we have just a '\n', don't print that out
+            perr("Shader compile log:\n%s", shaderLog);
+        }
+
         GL( glDeleteShader(*shader) );
         return false;
     }
@@ -218,16 +216,13 @@ bool VROShaderProgram::linkProgram(GLuint prog) {
     GLint status;
     GL( glLinkProgram(prog) );
 
-#if kDebugShaders
-    GLint logLength;
-    GL( glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog) );
-    if (logLength > 1) {
-        perr("Program link log:\n%s", shaderLog);
-    }
-#endif
-
     GL( glGetProgramiv(prog, GL_LINK_STATUS, &status) );
     if (status == 0) {
+        GLint logLength;
+        GL( glGetProgramInfoLog(prog, shaderMaxLogLength, &logLength, shaderLog) );
+        if (logLength > 1) {
+            perr("Program link log:\n%s", shaderLog);
+        }
         return false;
     }
 
