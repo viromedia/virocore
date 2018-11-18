@@ -13,6 +13,7 @@
 #include <map>
 #include <limits>
 #include <atomic>
+#include "VROTaskQueue.h"
 
 #define ALLOCATION_TRACKING_FREQUENCY 1 // in Hz
 
@@ -69,4 +70,5 @@ void VROAllocationTracker::printNow() {
     pinfo("    Glyph Atlases:       %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::GlyphAtlases)].load()));
     pinfo("    Render Targets:      %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::RenderTargets)].load()));
     pinfo("    Task Queues:         %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TaskQueues)].load()));
+    VROTaskQueue::printTaskQueues();
 }

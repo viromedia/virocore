@@ -62,9 +62,9 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
         pinfo("Loading OBJ from file %s", path.c_str());
         std::string base = resource.substr(0, resource.find_last_of('/'));
 
-        tinyobj::attrib_t *attrib = new tinyobj::attrib_t();
-        std::vector<tinyobj::shape_t> *shapes = new std::vector<tinyobj::shape_t>();
-        std::vector<tinyobj::material_t> *materials = new std::vector<tinyobj::material_t>();
+        std::shared_ptr<tinyobj::attrib_t> attrib = std::make_shared<tinyobj::attrib_t>();
+        std::shared_ptr<std::vector<tinyobj::shape_t>> shapes = std::make_shared<std::vector<tinyobj::shape_t>>();
+        std::shared_ptr<std::vector<tinyobj::material_t>> materials = std::make_shared<std::vector<tinyobj::material_t>>();
         
         /*
          If the ancillary resources (e.g. textures) required by the model are provided in a
@@ -76,49 +76,84 @@ void VROOBJLoader::readOBJFileAsync(std::string resource, VROResourceType type, 
             fileMap = VROModelIOUtil::createResourceMap(resourceMap, type);
         }
         
+        // This task queue is used to coordinate asynchronous downloading of resources
+        // used by the OBJ loader. Add it to the Node so it doesn't get deleted until the model is loaded.
+        std::shared_ptr<VROTaskQueue> objTaskQueue = std::make_shared<VROTaskQueue>(resource, VROTaskExecutionOrder::Serial);
+        node->addTaskQueue(objTaskQueue);
+        
         std::string err;
+        std::weak_ptr<VROTaskQueue> objTaskQueue_w = objTaskQueue;
+        std::weak_ptr<VRONode> node_w = node;
+        
         tinyobj::LoadObj(attrib, shapes, materials, &err,
                          path.c_str(),
                          base.c_str(),
                          type == VROResourceType::URL, // base is URL?
                          loadingTexturesFromResourceMap ? fileMap.get() : nullptr,
-                         [err, node, attrib, shapes, materials, resource, type, loadingTexturesFromResourceMap,
-                          fileMap, driver, onFinish](bool ret) {
+                         objTaskQueue,
+                         [err, node_w, attrib, shapes, materials, resource, type, loadingTexturesFromResourceMap,
+                          fileMap, objTaskQueue_w, driver, onFinish] (bool success) {
                              if (!err.empty()) {
                                  pinfo("OBJ loading warning [%s]", err.c_str());
                              }
+
+                             // Must use a weak pointer for node here because this onFinished call
+                             // gets passed into tinyObj::LoadObj, which in turn passes it into a
+                             // taskQueue held by the node -- potential strong reference cycle
+                             std::shared_ptr<VRONode> node_s = node_w.lock();
+                             if (!node_s) {
+                                 return;
+                             }
                              
-                             if (ret) {
+                             if (success) {
                                  std::string base = resource.substr(0, resource.find_last_of('/'));
-                                 
-                                 // Load the FBX from the protobuf on the rendering thread, accumulating additional
-                                 // tasks (e.g. async texture download) in the task queue
-                                 std::shared_ptr<VROTaskQueue> taskQueue = std::make_shared<VROTaskQueue>(VROTaskExecutionOrder::Serial);
-                                 std::map<std::string, std::shared_ptr<VROTexture>> *textureCache = new std::map<std::string, std::shared_ptr<VROTexture>>();
-                                 std::shared_ptr<VROGeometry> geo = processOBJ(*attrib, *shapes, *materials, base,
-                                                                               loadingTexturesFromResourceMap ? VROResourceType::LocalFile : type,
-                                                                               loadingTexturesFromResourceMap ? fileMap : nullptr,
-                                                                               *textureCache, taskQueue);
-                                 
+
+                                 // This task queue is used for donwloading textures
+                                 std::shared_ptr<VROTaskQueue> taskQueue = std::make_shared<VROTaskQueue>(
+                                         "obj-normal", VROTaskExecutionOrder::Serial);
+                                 node_s->addTaskQueue(taskQueue);
+
+                                 std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache = std::make_shared<std::map<std::string, std::shared_ptr<VROTexture>>>();
+                                 std::shared_ptr<VROGeometry> geo = processOBJ(*attrib, *shapes,
+                                                                               *materials, base,
+                                                                               loadingTexturesFromResourceMap
+                                                                               ? VROResourceType::LocalFile
+                                                                               : type,
+                                                                               loadingTexturesFromResourceMap
+                                                                               ? fileMap : nullptr,
+                                                                               textureCache,
+                                                                               taskQueue);
+
                                  // Run all the async tasks. When they're complete, inject the finished FBX into the
                                  // node
-                                 taskQueue->processTasksAsync([geo, node, attrib, shapes, materials, fileMap, textureCache, driver, onFinish] {
-                                     injectOBJ(geo, node, driver, onFinish);
-                                     delete (textureCache);
-                                     delete (attrib);
-                                     delete (shapes);
-                                     delete (materials);
-                                 });
-                             }
-                             else {
+                                 std::weak_ptr<VROTaskQueue> taskQueue_w = taskQueue;
+                                 taskQueue->processTasksAsync(
+                                         [geo, node_w, taskQueue_w, objTaskQueue_w, attrib, shapes, materials,
+                                          fileMap, textureCache, driver, onFinish] {
+                                             std::shared_ptr<VRONode> node_s2 = node_w.lock();
+                                             if (node_s2) {
+                                                 injectOBJ(geo, node_s2, driver, onFinish);
+
+                                                 std::shared_ptr<VROTaskQueue> taskQueue_s = taskQueue_w.lock();
+                                                 if (taskQueue_s) {
+                                                     node_s2->removeTaskQueue(taskQueue_s);
+                                                 }
+                                                 std::shared_ptr<VROTaskQueue> objTaskQueue_s = objTaskQueue_w.lock();
+                                                 if (objTaskQueue_s) {
+                                                     node_s2->removeTaskQueue(objTaskQueue_s);
+                                                 }
+                                             }
+                                         });
+                             } else {
                                  pinfo("Failed to load OBJ data");
-                                 onFinish(node, false);
-                                 delete (attrib);
-                                 delete (shapes);
-                                 delete (materials);
+
+                                 onFinish(node_s, false);
+                                 std::shared_ptr<VROTaskQueue> objTaskQueue_s = objTaskQueue_w.lock();
+                                 if (objTaskQueue_s) {
+                                     node_s->removeTaskQueue(objTaskQueue_s);
+                                 }
                              }
                          });
-        
         if (isTemp) {
             VROPlatformDeleteFile(path);
         }
@@ -140,9 +175,10 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
         node->setHoldRendering(true);
 
         // Don't hold a strong reference to the Node: hydrateAsync stores its callback (and
-        // thus all associated lambda variables, including the Node) in VROTexture, exposing us
-        // to strong reference cycles that will not be cleaned up if hydrateAsync never doesn't
-        // complete (if, for example, the Node is removed before hydration completes).
+        // thus all copied lambda variables, including the Node) in VROTexture, which can
+        // expose us to strong reference cycles (Node <--> Texture). While the callback is
+        // cleaned up after hydration completes, it's possible that hydrate will never
+        // complete if the Node is quickly removed.
         std::weak_ptr<VRONode> node_w = node;
         VROModelIOUtil::hydrateAsync(node, [node_w, onFinish] {
             std::shared_ptr<VRONode> node_s = node_w.lock();
@@ -167,7 +203,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t &attrib,
                                                       std::string base,
                                                       VROResourceType type,
                                                       std::shared_ptr<std::map<std::string, std::string>> resourceMap,
-                                                      std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
+                                                      std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache,
                                                       std::shared_ptr<VROTaskQueue> taskQueue) {
     pinfo("OBJ # of vertices  = %d", (int)(attrib.vertices.size()) / 3);
     pinfo("OBJ # of normals   = %d", (int)(attrib.normals.size()) / 3);
@@ -209,48 +245,63 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t &attrib,
         
         std::string diffuseTexname = m.diffuse_texname;
         if (diffuseTexname.length() > 0) {
-            taskQueue->addTask([material, diffuseTexname, base, type, resourceMap, &textureCache, taskQueue] {
+            std::weak_ptr<VROTaskQueue> taskQueue_w = taskQueue;
+
+            taskQueue->addTask([material, diffuseTexname, base, type, resourceMap, textureCache, taskQueue_w] {
                 VROModelIOUtil::loadTextureAsync(diffuseTexname, base, type, true, resourceMap, textureCache,
-                     [material, taskQueue, diffuseTexname](std::shared_ptr<VROTexture> texture) {
+                     [material, taskQueue_w, diffuseTexname](std::shared_ptr<VROTexture> texture) {
                          if (texture) {
                              material->getDiffuse().setTexture(texture);
                          }
                          else {
                              pinfo("Failed to load diffuse texture [%s] for OBJ", diffuseTexname.c_str());
                          }
-                         taskQueue->onTaskComplete();
+                         std::shared_ptr<VROTaskQueue> taskQueue = taskQueue_w.lock();
+                         if (taskQueue) {
+                             taskQueue->onTaskComplete();
+                         }
                      });
             });
         }
         
         std::string specularTexname = m.specular_texname;
         if (specularTexname.length() > 0) {
-            taskQueue->addTask([material, specularTexname, base, type, resourceMap, &textureCache, taskQueue] {
+            std::weak_ptr<VROTaskQueue> taskQueue_w = taskQueue;
+
+            taskQueue->addTask([material, specularTexname, base, type, resourceMap, textureCache, taskQueue_w] {
                 VROModelIOUtil::loadTextureAsync(specularTexname, base, type, false, resourceMap, textureCache,
-                     [material, taskQueue, specularTexname](std::shared_ptr<VROTexture> texture) {
+                     [material, taskQueue_w, specularTexname](std::shared_ptr<VROTexture> texture) {
                          if (texture) {
                              material->getSpecular().setTexture(texture);
                          }
                          else {
                              pinfo("Failed to load specular texture [%s] for OBJ", specularTexname.c_str());
                          }
-                         taskQueue->onTaskComplete();
+                         std::shared_ptr<VROTaskQueue> taskQueue = taskQueue_w.lock();
+                         if (taskQueue) {
+                             taskQueue->onTaskComplete();
+                         }
                      });
             });
         }
         
         std::string normalTexname = m.bump_texname;
         if (normalTexname.length() > 0) {
-            taskQueue->addTask([material, normalTexname, base, type, resourceMap, &textureCache, taskQueue] {
+            std::weak_ptr<VROTaskQueue> taskQueue_w = taskQueue;
+
+            taskQueue->addTask([material, normalTexname, base, type, resourceMap, textureCache, taskQueue_w] {
                 VROModelIOUtil::loadTextureAsync(normalTexname, base, type, false, resourceMap, textureCache,
-                     [material, taskQueue, normalTexname](std::shared_ptr<VROTexture> texture) {
+                     [material, taskQueue_w, normalTexname](std::shared_ptr<VROTexture> texture) {
                          if (texture) {
                              material->getNormal().setTexture(texture);
                          }
                          else {
                              pinfo("Failed to load normal map texture [%s] for OBJ", normalTexname.c_str());
                          }
-                         taskQueue->onTaskComplete();
+                         std::shared_ptr<VROTaskQueue> taskQueue = taskQueue_w.lock();
+                         if (taskQueue) {
+                             taskQueue->onTaskComplete();
+                         }
                      });
             });
         }
@@ -259,16 +310,21 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t &attrib,
         material->getRoughness().setColor({ m.roughness, m.roughness, m.roughness, 1.0 });
         std::string roughnessTexname = m.roughness_texname;
         if (roughnessTexname.length() > 0) {
-            taskQueue->addTask([material, roughnessTexname, base, type, resourceMap, &textureCache, taskQueue] {
+            std::weak_ptr<VROTaskQueue> taskQueue_w = taskQueue;
+
+            taskQueue->addTask([material, roughnessTexname, base, type, resourceMap, textureCache, taskQueue_w] {
                 VROModelIOUtil::loadTextureAsync(roughnessTexname, base, type, false, resourceMap, textureCache,
-                     [material, taskQueue, roughnessTexname](std::shared_ptr<VROTexture> texture) {
+                     [material, taskQueue_w, roughnessTexname](std::shared_ptr<VROTexture> texture) {
                          if (texture) {
                              material->getRoughness().setTexture(texture);
                          }
                          else {
                              pinfo("Failed to load roughness map [%s] for OBJ", roughnessTexname.c_str());
                          }
-                         taskQueue->onTaskComplete();
+                         std::shared_ptr<VROTaskQueue> taskQueue = taskQueue_w.lock();
+                         if (taskQueue) {
+                             taskQueue->onTaskComplete();
+                         }
                      });
             });
         }
@@ -276,16 +332,21 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t &attrib,
         material->getMetalness().setColor({ m.metallic, m.metallic, m.metallic, 1.0 });
         std::string metalnessTexname = m.metallic_texname;
         if (metalnessTexname.length() > 0) {
-            taskQueue->addTask([material, metalnessTexname, base, type, resourceMap, &textureCache, taskQueue] {
+            std::weak_ptr<VROTaskQueue> taskQueue_w = taskQueue;
+            
+            taskQueue->addTask([material, metalnessTexname, base, type, resourceMap, textureCache, taskQueue_w] {
                 VROModelIOUtil::loadTextureAsync(metalnessTexname, base, type, false, resourceMap, textureCache,
-                     [material, taskQueue, metalnessTexname](std::shared_ptr<VROTexture> texture) {
+                     [material, taskQueue_w, metalnessTexname](std::shared_ptr<VROTexture> texture) {
                          if (texture) {
                              material->getMetalness().setTexture(texture);
                          }
                          else {
                              pinfo("Failed to load metalness map [%s] for OBJ", metalnessTexname.c_str());
                          }
-                         taskQueue->onTaskComplete();
+                         std::shared_ptr<VROTaskQueue> taskQueue = taskQueue_w.lock();
+                         if (taskQueue) {
+                             taskQueue->onTaskComplete();
+                         }
                      });
             });
         }

@@ -1419,3 +1419,16 @@ void VRONode::removeParticleEmitter() {
 std::shared_ptr<VROParticleEmitter> VRONode::getParticleEmitter() const {
     return _particleEmitter;
 }
+
+#pragma mark - Task Queues
+
+void VRONode::addTaskQueue(std::shared_ptr<VROTaskQueue> queue) {
+    _taskQueues.push_back(queue);
+}
+
+void VRONode::removeTaskQueue(std::shared_ptr<VROTaskQueue> queue) {
+    auto it = std::find(_taskQueues.begin(), _taskQueues.end(), queue);
+    if (it != _taskQueues.end()) {
+        _taskQueues.erase(it);
+    }
+}

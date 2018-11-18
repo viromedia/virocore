@@ -39,6 +39,7 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
     VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
     ModelType modelType = VROGetModelType(jModelType);
     std::string URL = VRO_STRING_STL(jURL);
+
     std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(obj, env);
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, modelType, requestId](std::shared_ptr<VRONode> node, bool success) {
@@ -53,6 +54,7 @@ VRO_METHOD(void, nativeLoadModelFromURL)(VRO_ARGS
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
+
     VROPlatformDispatchAsyncRenderer([modelType, node, URL, driver, onFinish] {
         if (modelType == ModelType::FBX) {
             VROFBXLoader::loadFBXFromResource(URL, VROResourceType::URL, node, driver, onFinish);
@@ -79,6 +81,7 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
     VROPlatformSetEnv(env); // Invoke in case renderer has not yet initialized
     ModelType modelType = VROGetModelType(jModelType);
     std::string resource = VRO_STRING_STL(jresource);
+
     std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(obj, env);
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, modelType, requestId](std::shared_ptr<VRONode> node, bool success) {
@@ -100,6 +103,7 @@ VRO_METHOD(void, nativeLoadModelFromResources)(VRO_ARGS
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     std::shared_ptr<ViroContext> context = VRO_REF_GET(ViroContext, context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
+
     VROPlatformDispatchAsyncRenderer([modelType, resource, hasResourceMap, resourceMap, node, driver, onFinish] {
         if (modelType == ModelType::FBX) {
             if (!hasResourceMap) {

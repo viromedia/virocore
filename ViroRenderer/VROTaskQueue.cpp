@@ -11,9 +11,35 @@
 #include "VROPlatformUtil.h"
 #include "VRODefines.h"
 #include "VROAllocationTracker.h"
+#include <mutex>
+#include <algorithm>
 
-VROTaskQueue::VROTaskQueue(VROTaskExecutionOrder executionOrder) :
+#if kDebugTaskQueues
+static std::mutex sMapMutex;
+static std::vector<std::weak_ptr<VROTaskQueue>> _currentTaskQueues;
+#endif
+
+void VROTaskQueue::printTaskQueues() {
+#if kDebugTaskQueues
+    std::lock_guard<std::mutex> guard(sMapMutex);
+
+    pinfo("   Outstanding task queues");
+    int index = 0;
+    for (std::weak_ptr<VROTaskQueue> queue_w : _currentTaskQueues) {
+        std::shared_ptr<VROTaskQueue> queue_s = queue_w.lock();
+        if (queue_s) {
+            pinfo("   Queue %d: %s", index, queue_s->_name.c_str());
+            queue_s->printOutstandingTasks();
+
+            ++index;
+        }
+    }
+#endif
+}
+
+VROTaskQueue::VROTaskQueue(std::string name, VROTaskExecutionOrder executionOrder) :
     _started(false),
+    _name(name),
     _executionOrder(executionOrder) {
         
     ALLOCATION_TRACKER_ADD(TaskQueues, 1);
@@ -21,6 +47,21 @@ VROTaskQueue::VROTaskQueue(VROTaskExecutionOrder executionOrder) :
 
 VROTaskQueue::~VROTaskQueue() {
     ALLOCATION_TRACKER_SUB(TaskQueues, 1);
+
+#if kDebugTaskQueues
+    std::lock_guard<std::mutex> guard(sMapMutex);
+    auto it = std::find_if(_currentTaskQueues.begin(), _currentTaskQueues.end(), [this](std::weak_ptr<VROTaskQueue> taskQueue_w) {
+        std::shared_ptr<VROTaskQueue> q = taskQueue_w.lock();
+        if (q && q.get() == this) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    if (it != _currentTaskQueues.end()) {
+        _currentTaskQueues.erase(it);
+    }
+#endif
 }
 
 void VROTaskQueue::addTask(std::function<void()> task) {
@@ -29,6 +70,14 @@ void VROTaskQueue::addTask(std::function<void()> task) {
 }
 
 void VROTaskQueue::processTasksAsync(std::function<void()> onFinished) {
+#if kDebugTaskQueues
+    {
+        std::lock_guard<std::mutex> guard(sMapMutex);
+        std::weak_ptr<VROTaskQueue> p = shared_from_this();
+        _currentTaskQueues.push_back(p);
+    }
+#endif
+    
     _started = true;
     _onFinished = onFinished;
     _numOpenTasks = (int) _tasks.size();

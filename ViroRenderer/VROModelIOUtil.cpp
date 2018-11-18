@@ -21,12 +21,12 @@ const std::string kAssetURLPrefix = "file:///android_asset";
 
 void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string &base, VROResourceType type, bool sRGB,
                                       std::shared_ptr<std::map<std::string, std::string>> resourceMap,
-                                      std::map<std::string, std::shared_ptr<VROTexture>> &textureCache,
+                                      std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache,
                                       std::function<void(std::shared_ptr<VROTexture> texture)> onFinished) {
     
     // First check the cache, which can only be accessed on the rendering thread
-    auto it = textureCache.find(name);
-    if (it != textureCache.end()) {
+    auto it = textureCache->find(name);
+    if (it != textureCache->end()) {
         onFinished(it->second);
         return;
     }
@@ -39,19 +39,19 @@ void VROModelIOUtil::loadTextureAsync(const std::string &name, const std::string
     }
 
     retrieveResourceAsync(textureFile, type,
-          [name, sRGB, onFinished, &textureCache](std::string path, bool isTemp) {
+          [name, sRGB, onFinished, textureCache](std::string path, bool isTemp) {
               // Abort (return empty texture) if the file wasn't found
               if (path.length() == 0) {
                   onFinished(nullptr);
                   return;
               }
               
-              VROPlatformDispatchAsyncBackground([name, path, sRGB, isTemp, &textureCache, onFinished]() {
+              VROPlatformDispatchAsyncBackground([name, path, sRGB, isTemp, textureCache, onFinished]() {
                   std::shared_ptr<VROTexture> texture = loadLocalTexture(name, path, sRGB, isTemp);
 
-                  VROPlatformDispatchAsyncRenderer([name, texture, &textureCache, onFinished]() {
+                  VROPlatformDispatchAsyncRenderer([name, texture, textureCache, onFinished]() {
                       if (texture != nullptr) {
-                          textureCache.insert(std::make_pair(name, texture));
+                          textureCache->insert(std::make_pair(name, texture));
                       }
                       onFinished(texture);
                   });
