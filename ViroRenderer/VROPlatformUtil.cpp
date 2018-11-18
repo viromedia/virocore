@@ -956,8 +956,20 @@ void VROPlatformRunTask(int taskId) {
         }
     }
 
-    if (fcn) {
-        fcn();
+    try {
+        if (fcn) {
+            fcn();
+        }
+    }
+    catch (const std::runtime_error& re) {
+        std::cerr << "Runtime error: " << re.what() << std::endl;
+        pabort("Runtime error occurred in rendering task [%s]", re.what());
+    }
+    catch (const std::exception& ex) {
+        pabort("Error occurred in rendering task [%s]", ex.what());
+    }
+    catch (...) {
+        pabort("Unknown failure occurred: possible memory corruption");
     }
 }
 
