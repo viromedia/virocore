@@ -436,6 +436,12 @@ static std::vector<int> sBackgroundQueue;
 static std::vector<int> sRendererQueue;
 static std::vector<int> sAsyncQueue;
 
+// Mutexes for the queues. Note that in normal operation we never need to lock the queues; they're
+// only used during startup while waiting for initialization to complete.
+static std::mutex sBackgroundQueueMutex;
+static std::mutex sRendererQueueMutex;
+static std::mutex sAsyncQueueMutex;
+
 // Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
 // current thread, attach it
 void getJNIEnv(JNIEnv **jenv) {
@@ -962,7 +968,6 @@ void VROPlatformRunTask(int taskId) {
         }
     }
     catch (const std::runtime_error& re) {
-        std::cerr << "Runtime error: " << re.what() << std::endl;
         pabort("Runtime error occurred in rendering task [%s]", re.what());
     }
     catch (const std::exception& ex) {
@@ -977,6 +982,7 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
 
     if (!sPlatformUtil) {
+        std::lock_guard<std::mutex> guard(sBackgroundQueueMutex);
         sBackgroundQueue.push_back(task);
         return;
     }
@@ -994,6 +1000,7 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
     if (!sPlatformUtil) {
+        std::lock_guard<std::mutex> guard(sRendererQueueMutex);
         sRendererQueue.push_back(task);
         return;
     }
@@ -1004,6 +1011,7 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
 void VROPlatformDispatchAsyncApplication(std::function<void()> fcn){
     int task = VROPlatformGenerateTask(fcn);
     if (!sPlatformUtil) {
+        std::lock_guard<std::mutex> guard(sAsyncQueueMutex);
         sAsyncQueue.push_back(task);
         return;
     }
@@ -1012,29 +1020,38 @@ void VROPlatformDispatchAsyncApplication(std::function<void()> fcn){
 }
 
 void VROPlatformFlushTaskQueues() {
-    for (int task : sBackgroundQueue) {
-        JNIEnv *env;
-        getJNIEnv(&env);
+    {
+        std::lock_guard<std::mutex> guard(sBackgroundQueueMutex);
+        for (int task : sBackgroundQueue) {
+            JNIEnv *env;
+            getJNIEnv(&env);
 
-        jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
-        jmethodID jmethod = env->GetMethodID(cls, "dispatchAsyncBackground", "(I)V");
-        env->CallVoidMethod(sPlatformUtil, jmethod, task);
+            jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
+            jmethodID jmethod = env->GetMethodID(cls, "dispatchAsyncBackground", "(I)V");
+            env->CallVoidMethod(sPlatformUtil, jmethod, task);
 
-        env->DeleteLocalRef(cls);
+            env->DeleteLocalRef(cls);
+        }
+        sBackgroundQueue.clear();
     }
-    sBackgroundQueue.clear();
 
-    for (int task : sRendererQueue) {
-        VROPlatformCallHostFunction(sPlatformUtil,
-                                    "dispatchRenderer", "(I)V", task);
+    {
+        std::lock_guard<std::mutex> guard(sRendererQueueMutex);
+        for (int task : sRendererQueue) {
+            VROPlatformCallHostFunction(sPlatformUtil,
+                                        "dispatchRenderer", "(I)V", task);
+        }
+        sRendererQueue.clear();
     }
-    sRendererQueue.clear();
 
-    for (int task : sAsyncQueue) {
-        VROPlatformCallHostFunction(sPlatformUtil,
-                                    "dispatchApplication", "(I)V", task);
+    {
+        std::lock_guard<std::mutex> guard(sAsyncQueueMutex);
+        for (int task : sAsyncQueue) {
+            VROPlatformCallHostFunction(sPlatformUtil,
+                                        "dispatchApplication", "(I)V", task);
+        }
+        sAsyncQueue.clear();
     }
-    sAsyncQueue.clear();
 }
 
 jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext) {
