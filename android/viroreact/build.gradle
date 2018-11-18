@@ -109,3 +109,19 @@ tasks.whenTaskAdded { task ->
     }
 }
 
+task copyDebugAAR(type: Copy) {
+    from('build/outputs/aar')
+
+    // Change the next line to reflect the path to your react-viro repo
+    into('../../../react-viro/android/viro_renderer/')
+    include('viroreact-debug.aar')
+    rename('viroreact-debug.aar', 'viro_renderer-release.aar')
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleDebug') {
+        task.dependsOn ':viroar:assembleDebug'
+        task.finalizedBy 'copyDebugAAR'
+    }
+}
+
