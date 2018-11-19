@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <queue>
+#include <string>
 #include <memory>
 #include <functional>
 
