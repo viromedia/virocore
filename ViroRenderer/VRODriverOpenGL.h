@@ -36,21 +36,8 @@ class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VR
 
 public:
     
-    VRODriverOpenGL() :
-        _gpuType(VROGPUType::Normal),
-        _lastPurgeFrame(0),
-        _softwareGammaPass(false),
-        _depthWritingEnabled(true),
-        _depthReadingEnabled(true),
-        _materialColorWritingMask(VROColorMaskAll),
-        _renderTargetColorWritingMask(VROColorMaskAll),
-        _aggregateColorWritingMask(VROColorMaskAll),
-        _cullMode(VROCullMode::None),
-        _blendMode(VROBlendMode::Alpha) {
-        
-        _shaderFactory = std::unique_ptr<VROShaderFactory>(new VROShaderFactory());
-        _scheduler = std::make_shared<VROFrameScheduler>();
-    }
+    VRODriverOpenGL();
+    virtual ~VRODriverOpenGL();
 
     void willRenderFrame(const VRORenderContext &context) {
         // Initialize OpenGL state for this frame, matching GL state with CPU state

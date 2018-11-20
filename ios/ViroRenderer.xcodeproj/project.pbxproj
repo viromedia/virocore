@@ -1093,6 +1093,10 @@
 		8FB3286D203369740026375A /* constant_q_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB328662033694D0026375A /* constant_q_fsh_adreno.glsl */; };
 		8FB32873203369D00026375A /* standard_vsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB3286F203369BC0026375A /* standard_vsh_adreno.glsl */; };
 		8FB32874203369D60026375A /* surface_functions_fsh_adreno.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FB32870203369BC0026375A /* surface_functions_fsh_adreno.glsl */; };
+		8FB4AE1321A440C30026096E /* VRODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB4AE1221A440C20026096E /* VRODriver.cpp */; };
+		8FB4AE1421A440C30026096E /* VRODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB4AE1221A440C20026096E /* VRODriver.cpp */; };
+		8FB4AE1621A440E60026096E /* VRODriverOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB4AE1521A440E60026096E /* VRODriverOpenGL.cpp */; };
+		8FB4AE1721A440E60026096E /* VRODriverOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB4AE1521A440E60026096E /* VRODriverOpenGL.cpp */; };
 		8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */; };
 		8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -2145,6 +2149,8 @@
 		8FB328672033694D0026375A /* constant_fsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_fsh_adreno.glsl; sourceTree = "<group>"; };
 		8FB3286F203369BC0026375A /* standard_vsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_vsh_adreno.glsl; sourceTree = "<group>"; };
 		8FB32870203369BC0026375A /* surface_functions_fsh_adreno.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = surface_functions_fsh_adreno.glsl; sourceTree = "<group>"; };
+		8FB4AE1221A440C20026096E /* VRODriver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODriver.cpp; sourceTree = "<group>"; };
+		8FB4AE1521A440E60026096E /* VRODriverOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODriverOpenGL.cpp; sourceTree = "<group>"; };
 		8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFBXLoader.cpp; sourceTree = "<group>"; };
 		8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFBXLoader.h; sourceTree = "<group>"; };
 		8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Nodes.pb.cc; sourceTree = "<group>"; };
@@ -2779,6 +2785,7 @@
 				8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */,
 				8FCB10001DD0055400FE425C /* VRORenderDelegateInternal.h */,
 				8FA9D0A21CC947DD00B00B93 /* VRODriver.h */,
+				8FB4AE1221A440C20026096E /* VRODriver.cpp */,
 				8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */,
 				8F660AB61E955286006D063F /* VROFrameTimer.h */,
 				8F660AB91E9554B8006D063F /* VROFrameScheduler.h */,
@@ -3426,6 +3433,7 @@
 			children = (
 				8F0FE6771CD3DFC800A4C297 /* Shaders */,
 				8FB659161CD839A000D036EB /* VRODriverOpenGL.h */,
+				8FB4AE1521A440E60026096E /* VRODriverOpenGL.cpp */,
 				8FB659191CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h */,
 				8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */,
 				8FB6591D1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h */,
@@ -5387,6 +5395,7 @@
 				13B6724E212229B20040FB72 /* VROReticle.cpp in Sources */,
 				13B6724F212229B20040FB72 /* VRORenderTargetOpenGL.cpp in Sources */,
 				13B67250212229B20040FB72 /* VROShaderModifier.cpp in Sources */,
+				8FB4AE1421A440C30026096E /* VRODriver.cpp in Sources */,
 				13B67251212229B20040FB72 /* KIOReachability.m in Sources */,
 				13B67252212229B20040FB72 /* VROCameraTextureiOS.cpp in Sources */,
 				A5A10757212D51EC008B2DFB /* openbsd-reallocarray.c in Sources */,
@@ -5483,6 +5492,7 @@
 				13B672AC212229B20040FB72 /* VROInputControllerAR.cpp in Sources */,
 				13B672AD212229B20040FB72 /* VROConcurrentBuffer.cpp in Sources */,
 				13B672AE212229B20040FB72 /* VROGeometry.cpp in Sources */,
+				8FB4AE1721A440E60026096E /* VRODriverOpenGL.cpp in Sources */,
 				13B672AF212229B20040FB72 /* VROTimingFunction.cpp in Sources */,
 				13B672B0212229B20040FB72 /* VROViewScene.mm in Sources */,
 				13B672B1212229B20040FB72 /* VROTypeface.cpp in Sources */,
@@ -5664,6 +5674,7 @@
 				8FA2E1601C45DD270070DB26 /* VROReticle.cpp in Sources */,
 				8F0E5E981F3B52480007AD03 /* VRORenderTargetOpenGL.cpp in Sources */,
 				8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */,
+				8FB4AE1321A440C30026096E /* VRODriver.cpp in Sources */,
 				13F631C12065C26E00A74EFC /* KIOReachability.m in Sources */,
 				8FD06F211E832760003D3BC4 /* VROCameraTextureiOS.cpp in Sources */,
 				A5A10756212D51EB008B2DFB /* openbsd-reallocarray.c in Sources */,
@@ -5760,6 +5771,7 @@
 				8A2DA3B11F8B2D84001FC3BA /* VROInputControllerAR.cpp in Sources */,
 				8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */,
 				8FD4DF0B1C18ED3C003DC425 /* VROGeometry.cpp in Sources */,
+				8FB4AE1621A440E60026096E /* VRODriverOpenGL.cpp in Sources */,
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
 				8FFA8A0720485A9500C4D99B /* VROViewScene.mm in Sources */,
 				8F951F9D20587D6E000DC58F /* VROTypeface.cpp in Sources */,

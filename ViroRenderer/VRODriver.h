@@ -138,8 +138,9 @@ enum class VRORenderTargetUnbindOp {
 class VRODriver {
     
 public:
-    
-    virtual ~VRODriver() {}
+
+    VRODriver();
+    virtual ~VRODriver();
     
     /*
      Provides the driver an opportunity to update any sub-components

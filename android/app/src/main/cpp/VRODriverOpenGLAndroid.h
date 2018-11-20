@@ -24,16 +24,8 @@ class VRODriverOpenGLAndroid : public VRODriverOpenGL {
 
 public:
 
-    VRODriverOpenGLAndroid(std::shared_ptr<gvr::AudioApi> gvrAudio) :
-        _gvrAudio(gvrAudio),
-        _ft(nullptr) {
-    }
-    virtual ~VRODriverOpenGLAndroid() {
-        if (_ft != nullptr) {
-            FT_Done_FreeType(_ft);
-            _ft = nullptr;
-        }
-    }
+    VRODriverOpenGLAndroid(std::shared_ptr<gvr::AudioApi> gvrAudio);
+    virtual ~VRODriverOpenGLAndroid();
 
     virtual VROColorRenderingMode getColorRenderingMode() {
         switch (getGPUType()) {

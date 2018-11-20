@@ -59,6 +59,7 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/VROAVRecorderAndroid.cpp
              ${VIRO_ANDROID_SRC}/VROTextureReader.cpp
              ${VIRO_ANDROID_SRC}/VROAndroidViewTexture.cpp
+             ${VIRO_ANDROID_SRC}/VRODriverOpenGLAndroid.cpp
 
              # C API
              ${VIRO_CAPI_SRC}/Node_JNI.cpp
@@ -154,6 +155,8 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/gzip_stream.cpp
 
              # Renderer
+             ${VIRO_RENDERER_SRC}/VRODriver.cpp
+             ${VIRO_RENDERER_SRC}/VRODriverOpenGL.cpp
              ${VIRO_RENDERER_SRC}/VROScene.cpp
              ${VIRO_RENDERER_SRC}/VROSceneController.cpp
              ${VIRO_RENDERER_SRC}/VROCamera.cpp
