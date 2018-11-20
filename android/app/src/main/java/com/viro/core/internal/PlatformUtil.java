@@ -204,9 +204,6 @@ public class PlatformUtil {
         } catch(FileNotFoundException e) {
             Log.w(TAG, "File not found for bitmap at path [" + path + "]");
             return null;
-        } catch(IOException e) {
-            Log.w(TAG, "IO error loading bitmap at path [" + path + "]");
-            return null;
         } catch(Exception e) {
             Log.w(TAG, "Unknown error loading bitmap at path [" + path + "]", e);
             return null;
