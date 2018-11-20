@@ -384,11 +384,11 @@ set_target_properties( lib-freetype
                        ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libfreetyped.so )
 
 add_library( lib-protobuf
-             SHARED
+             STATIC
              IMPORTED )
 set_target_properties( lib-protobuf
                        PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libprotobuf-lite.so )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libprotobuf-lite.a )
 
 add_library( lib-BulletCollision
              SHARED
@@ -483,7 +483,7 @@ add_library( lib-OpenCV-TP-JPEG
                IMPORTED )
 set_target_properties (lib-OpenCV-TP-JPEG
                        PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibjpeg.a )
+                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibjpeg-turbo.a )
 
 add_library( lib-OpenCV-TP-PNG
                STATIC
@@ -534,6 +534,9 @@ find_library( lib-egl EGL )
 find_library( lib-GLESv3 GLESv3 )
 find_library( lib-z z )
 
+include(AndroidNdkModules)
+android_ndk_import_module_cpufeatures()
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in the
 # build script, prebuilt third-party libraries, or system libraries.
@@ -576,4 +579,6 @@ target_link_libraries( # Specifies the target library.
                        lib-OpenCV-TP-TIFF
                        lib-OpenCV-TP-WebP
                        lib-OpenCV-TP-TBB
-                       lib-OpenCV-TP-Tegra-Hal)
+                       lib-OpenCV-TP-Tegra-Hal
+                       cpufeatures
+        )
