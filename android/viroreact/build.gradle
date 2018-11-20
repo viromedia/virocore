@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
@@ -21,7 +21,7 @@ android {
         externalNativeBuild {
             cmake {
                 targets "viro_renderer"
-                cppFlags "-std=c++14 -frtti -fcxx-exceptions"
+                cppFlags "-std=c++14 -frtti -fexceptions"
             }
         }
 

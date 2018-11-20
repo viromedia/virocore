@@ -9,7 +9,7 @@ apply from: 'maven-push.gradle'
 android {
     flavorDimensions  "product"
     compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
