@@ -8,11 +8,11 @@ apply from: 'maven-push.gradle'
 
 android {
     flavorDimensions  "product"
-    compileSdkVersion 25
+    compileSdkVersion 26
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -42,7 +42,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:25.0.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
     implementation project(':libs:gvr')
     implementation project(':libs:arcore')
