@@ -153,10 +153,6 @@ public class ViroViewGVR extends ViroView {
              * if the dimensions of the surface has changed (for example
              * during a rotation).
              */
-            final GvrApi gvr = view.mGVRLayout.getGvrApi();
-            if (gvr != null) {
-                gvr.refreshDisplayMetrics();
-            }
 
             view.mNativeRenderer.onSurfaceChanged(surface.getHolder().getSurface(), width, height);
         }

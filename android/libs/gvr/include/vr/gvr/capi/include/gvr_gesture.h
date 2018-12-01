@@ -40,6 +40,9 @@ extern "C" {
 /// If you are writing C++ code, you might prefer to use the C++ wrapper rather
 /// than implement this C API directly.
 ///
+/// If you are using multiple controllers, you will need to create multiple
+/// gvr_gesture_context objects, one for each controller.
+///
 /// Example API usage:
 ///
 /// Initialization:
@@ -64,13 +67,13 @@ extern "C" {
 ///         case GVR_GESTURE_SWIPE:
 ///           // Handle swipe gesture.
 ///           break;
-///         case GVR_GESTURE__SCROLL_START:
+///         case GVR_GESTURE_SCROLL_START:
 ///           // Handle the start of a sequence of scroll gestures.
 ///           break;
-///         case GVR_GESTURE__SCROLL_UPDATE:
+///         case GVR_GESTURE_SCROLL_UPDATE:
 ///           // Handle an update in a sequence of scroll gestures.
 ///           break;
-///         case GVR_GESTURE__SCROLL_END:
+///         case GVR_GESTURE_SCROLL_END:
 ///           // Handle the end of a sequence of scroll gestures.
 ///           break;
 ///         default:
@@ -216,6 +219,9 @@ typedef gvr_gesture Gesture;
 /// calls to C calls provided by this wrapper runs entirely in the client's
 /// binary and is compiled by the client's compiler.
 ///
+/// If you are using multiple controllers, you will need to create multiple
+/// GestureApi objects, one for each controller.
+///
 /// Methods in this class are only documented insofar as the C++ wrapping logic
 /// is concerned; for information about the method itself, please refer to the
 /// corresponding function in the C API.
@@ -243,13 +249,13 @@ typedef gvr_gesture Gesture;
 ///         case GVR_GESTURE_SWIPE:
 ///           // Handle swipe gesture.
 ///           break;
-///         case GVR_GESTURE__SCROLL_START:
+///         case GVR_GESTURE_SCROLL_START:
 ///           // Handle the start of a sequence of scroll gestures.
 ///           break;
-///         case GVR_GESTURE__SCROLL_UPDATE:
+///         case GVR_GESTURE_SCROLL_UPDATE:
 ///           // Handle an update in a sequence of scroll gestures.
 ///           break;
-///         case GVR_GESTURE__SCROLL_END:
+///         case GVR_GESTURE_SCROLL_END:
 ///           // Handle the end of a sequence of scroll gestures.
 ///           break;
 ///         default:

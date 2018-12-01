@@ -254,15 +254,17 @@ typedef enum {
 
 /// @}
 
-/// Event data associated with a system-initiated GVR_EVENT_RECENTER event. The
-/// client may wish to handle this event to provide custom recentering logic.
+/// Event data associated with a GVR_EVENT_RECENTER event, which indicates head
+/// tracking recentering. (Controller recentering is signaled separately
+/// through gvr_controller_state_get_recentered().) The client may wish to
+/// handle this event to provide custom recentering logic.
 typedef struct gvr_recenter_event_data {
   int32_t recenter_type;  // gvr_recenter_event_type
   gvr_flags recenter_event_flags;
 
-  /// The new transform that maps from "sensor" space to the recentered "start"
-  /// space. This transform can also be retrieved by querying for the
-  /// GVR_PROPERTY_RECENTER_TRANSFORM property.
+  /// The new transform that maps from headset's "sensor" space to the
+  /// recentered "start" space. This transform can also be retrieved by querying
+  /// for the GVR_PROPERTY_RECENTER_TRANSFORM property.
   gvr_mat4f start_space_from_tracking_space_transform;
 } gvr_recenter_event_data;
 
@@ -324,11 +326,12 @@ enum {
   GVR_CONTROLLER_ENABLE_GESTURES = 1 << 4,
   /// Indicates that controller pose prediction should be enabled.
   GVR_CONTROLLER_ENABLE_POSE_PREDICTION = 1 << 5,
-  /// Indicates that controller position data should be reported.
+  /// Indicates that system should provide real position data if available.
   GVR_CONTROLLER_ENABLE_POSITION = 1 << 6,
   /// Indicates that controller battery data should be reported.
   GVR_CONTROLLER_ENABLE_BATTERY = 1 << 7,
-  /// Indicates that elbow model should be enabled.
+  /// Indicates that elbow model should be enabled if the system doesn't provide
+  /// real position data.
   GVR_CONTROLLER_ENABLE_ARM_MODEL = 1 << 8,
 };
 
@@ -378,8 +381,8 @@ typedef enum {
   GVR_CONTROLLER_BUTTON_APP = 3,
   GVR_CONTROLLER_BUTTON_VOLUME_UP = 4,
   GVR_CONTROLLER_BUTTON_VOLUME_DOWN = 5,
-  GVR_CONTROLLER_BUTTON_RESERVED0 = 6,
-  GVR_CONTROLLER_BUTTON_RESERVED1 = 7,
+  GVR_CONTROLLER_BUTTON_TRIGGER = 6,
+  GVR_CONTROLLER_BUTTON_GRIP = 7,
   GVR_CONTROLLER_BUTTON_RESERVED2 = 8,
 
   /// Note: there are 8 buttons on the controller, but the state arrays have
@@ -635,12 +638,12 @@ typedef enum {
   /// Type: float
   GVR_PROPERTY_TRACKING_FLOOR_HEIGHT = 1,
 
-  /// The current transform that maps from "sensor" space to the recentered
-  /// "start" space. Apps can optionally undo or extend this transform to
-  /// perform custom recentering logic with the returned pose, but all poses
-  /// supplied during frame submission are assumed to be in start space. This
-  /// transform matches the one reported in the most
-  /// recent gvr_recenter_event_data.
+  /// The current transform that maps from headset's "sensor" space to the
+  /// recentered "start" space. Apps can optionally undo or extend this
+  /// transform to perform custom recentering logic with the SDK-provided poses,
+  /// but the SDK assumes poses supplied during frame submission are in start
+  /// space. This transform matches the one reported in the most recent
+  /// gvr_recenter_event_data.
   /// Type: gvr_mat4f
   GVR_PROPERTY_RECENTER_TRANSFORM = 2,
 
@@ -699,7 +702,9 @@ typedef enum {
 
 /// The type of gvr_event.
 typedef enum {
-  /// Notification that a global recentering event has occurred.
+  /// Notification that head tracking has been recentered. (Note that controller
+  /// recentering is signaled separately through
+  /// gvr_controller_state_get_recentered().)
   /// Event data type: gvr_recenter_event_data
   GVR_EVENT_RECENTER = 1,
 
@@ -850,6 +855,12 @@ const ControllerButton kControllerButtonVolumeUp =
     static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_VOLUME_UP);
 const ControllerButton kControllerButtonVolumeDown =
     static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_VOLUME_DOWN);
+const ControllerButton kControllerButtonTrigger =
+    static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_TRIGGER);
+const ControllerButton kControllerButtonGrip =
+    static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_GRIP);
+const ControllerButton kControllerButtonReserved2 =
+    static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_RESERVED2);
 const ControllerButton kControllerButtonCount =
     static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_COUNT);
 
@@ -967,7 +978,6 @@ class AudioApi;
 class BufferSpec;
 class ControllerApi;
 class ControllerState;
-class Frame;
 class GvrApi;
 class BufferViewport;
 class BufferViewportList;
