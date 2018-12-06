@@ -84,11 +84,11 @@ dependencies {
     implementation project(':libs:gvr')
     implementation project(':libs:arcore')
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
-    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.7.7'
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.7.7'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.7.7'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.7.7'
+    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.7.7'
 }
 
 // We have to add dependencies to Android tasks in this deferred way because these tasks
