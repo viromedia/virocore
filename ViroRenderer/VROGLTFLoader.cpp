@@ -854,6 +854,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     // After processing the nodes of this model, process skins if any.
     std::shared_ptr<VROGeometry> geom = node->getGeometry();
     if (geom != nullptr && gNode.skin >=0) {
+        _skinMap[gNode.skin]->setSkinnerNode(node);
         geom->setSkinner(_skinMap[gNode.skin]);
         for (const std::shared_ptr<VROMaterial> &material : geom->getMaterials()) {
             material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier(false));

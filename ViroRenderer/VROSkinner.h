@@ -14,6 +14,7 @@
 #include <vector>
 #include <memory>
 
+class VRONode;
 class VROGeometry;
 class VROSkeleton;
 
@@ -124,9 +125,28 @@ public:
     const std::vector<VROMatrix4f> &getInverseBindTransforms() const {
         return _inverseBindTransforms;
     }
-    
+
+    /*
+     Set and grabs the VRONode containing this skinner, if any.
+     */
+    void setSkinnerNode(std::shared_ptr<VRONode> node) {
+        _skinnerNodeWeak = node;
+    }
+    std::shared_ptr<VRONode> getSkinnerNode() {
+        return _skinnerNodeWeak.lock();
+    }
+
+    /*
+     Returns the world transform of the bone matching the given boneId.
+     */
+    VROMatrix4f getCurrentBoneWorldTransform(int boneId);
+
+    /*
+     Sets the world transform of the bone matching the given boneId.
+     */
+    void setCurrentBoneWorldTransform(int boneId, VROMatrix4f transform, bool recurse = false);
+
 private:
-    
     /*
      The geometry being animated, with coordinates in model space.
      */
@@ -172,7 +192,11 @@ private:
      via _boneIndices) has in influencing the vertex.
      */
     std::shared_ptr<VROGeometrySource> _boneWeights;
-    
+
+    /*
+     Weak pointer to the node containing this VROSKinner.
+     */
+    std::weak_ptr<VRONode> _skinnerNodeWeak;
 };
 
 #endif /* VROSkinner_h */

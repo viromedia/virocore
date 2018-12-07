@@ -12,40 +12,83 @@
 #include <memory>
 #include <map>
 #include "VROVector3f.h"
-
-enum class VROBodyJointType {
-    Top = 0,
-    Neck = 1,
-    RightShoulder = 2,
-    RightElbow = 3,
-    RightWrist = 4,
-    LeftShoulder = 5,
-    LeftElbow = 6,
-    LeftWrist = 7,
-    RightHip = 8,
-    RightKnee = 9,
-    RightAnkle = 10,
-    LeftHip = 11,
-    LeftKnee = 12,
-    LeftAnkle = 13,
+#include "VROMatrix4f.h"
+enum VROBodyJointType {
+    Top                 = 0,
+    Neck                = 1,
+    RightShoulder       = 2,
+    RightElbow          = 3,
+    RightWrist          = 4,
+    LeftShoulder        = 5,
+    LeftElbow           = 6,
+    LeftWrist           = 7,
+    RightHip            = 8,
+    RightKnee           = 9,
+    RightAnkle          = 10,
+    LeftHip             = 11,
+    LeftKnee            = 12,
+    LeftAnkle           = 13,
 };
 
 class VROBodyJoint {
 public:
     VROBodyJoint() : _type(VROBodyJointType::Top), _confidence(0) {}
-    VROBodyJoint(VROBodyJointType type, VROVector3f point, double confidence) :
-    _type(type), _point(point), _confidence(confidence) {
+    VROBodyJoint(VROBodyJointType type, VROVector3f screenCoords, double confidence) :
+    _type(type),
+    _screenCoords(screenCoords),
+    _confidence(confidence),
+    _projectedTransform(VROMatrix4f::identity()),
+    _hasValidProjectedTransform(false){}
+
+    const VROVector3f &getScreenCoords() const {
+        return _screenCoords;
     }
-    
-    const VROVector3f &getPoint() const { return _point; }
-    void setPoint(VROVector3f point) { _point = point; }
-    VROBodyJointType getType() const { return _type; }
-    double getConfidence() const { return _confidence; }
-    
+
+    void setScreenCoords(VROVector3f screenCoords) {
+        _screenCoords = screenCoords;
+    }
+
+    const VROMatrix4f &getProjectedTransform() const {
+        return _projectedTransform;
+    }
+
+    void setProjectedTransform(VROMatrix4f transform) {
+        _projectedTransform = transform;
+        _hasValidProjectedTransform = true;
+    }
+
+    void clearPojectedTransform() {
+        _projectedTransform.toIdentity();
+        _hasValidProjectedTransform = false;
+    }
+
+    bool hasValidProjectedTransform() const {
+        return _hasValidProjectedTransform;
+    }
+
+    void setSpawnTimeMs(double ts) {
+        _spawnTimeMs = ts;
+    }
+
+    double getSpawnTimeMs() const {
+        return _spawnTimeMs;
+    }
+
+    VROBodyJointType getType() const {
+        return _type;
+    }
+
+    double getConfidence() const {
+        return _confidence;
+    }
+
 private:
+    VROVector3f _screenCoords;
+    VROMatrix4f _projectedTransform;
+    bool _hasValidProjectedTransform;
     VROBodyJointType _type;
-    VROVector3f _point;
     double _confidence;
+    double _spawnTimeMs;
 };
 
 class VROBodyTrackerDelegate {

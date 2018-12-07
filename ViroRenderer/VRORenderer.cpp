@@ -445,6 +445,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
             outgoingScene->computePhysics(context);
             outgoingScene->applyConstraints(context);
+            outgoingScene->computeIKRig(context);
             outgoingScene->updateParticles(context);
             outgoingScene->updateVisibility(context);
             outgoingScene->updateSortKeys(_renderMetadata, context, driver);
@@ -454,6 +455,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
         scene->computePhysics(context);
         scene->applyConstraints(context);
+        scene->computeIKRig(context);
         scene->updateParticles(context);
         scene->updateVisibility(context);
         scene->updateSortKeys(_renderMetadata, context, driver);

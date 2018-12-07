@@ -49,6 +49,8 @@ class VROTransaction;
 class VRORenderMetadata;
 class VROParticleEmitter;
 class VROSkeletalAnimationLayer;
+class VROSkinner;
+class VROIKRig;
 
 extern bool kDebugSortOrder;
 extern int  kDebugSortOrderFrameFrequency;
@@ -235,7 +237,20 @@ public:
     std::shared_ptr<VROGeometry> getGeometry() const {
         return _geometry;
     }
-    
+
+    void setIKRig(std::shared_ptr<VROIKRig> rig) {
+        _IKRig = rig;
+    }
+    std::shared_ptr<VROIKRig> getIKRig() {
+        return _IKRig;
+    }
+
+    /*
+     Called during a render pass to perform a full IK calculation on the rig
+     attached to this node.
+     */
+    void computeIKRig();
+
 #pragma mark - Camera
     
     void setCamera(std::shared_ptr<VRONodeCamera> camera) {
@@ -545,7 +560,13 @@ public:
     std::shared_ptr<VROScene> getScene() const {
         return _scene.lock();
     }
-    
+
+    /*
+     Returns a vec of skinners associated with this node. If recurse is true, we also
+     examine recursively down the subtree and return any found skinners as well.
+     */
+    void getSkinner(std::vector<std::shared_ptr<VROSkinner>> &skinnerOut, bool recurse);
+
     /*
      Set the parent scene of this node. Internal use only.
      */
@@ -769,7 +790,13 @@ protected:
      The geometry in the node. Null means the node has no geometry.
      */
     std::shared_ptr<VROGeometry> _geometry;
-    
+
+    /*
+     The inverse kinematic rig associated with this node, set when this node is
+     considered the root node joint of the rig.
+     */
+    std::shared_ptr<VROIKRig> _IKRig;
+
     /*
      True if this node was found visible during the last call to computeVisibility().
      */

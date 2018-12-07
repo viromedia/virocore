@@ -115,7 +115,7 @@ std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMul
      */
     for (auto &kv : bodyMap) {
         VROBodyJoint &joint = kv.second;
-        VROVector3f tilePoint = joint.getPoint();
+        VROVector3f tilePoint = joint.getScreenCoords();
         
         // Convert tile indices to normalized camera image coordinates [0, 1]
         VROVector3f imagePoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
@@ -123,7 +123,8 @@ std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMul
         
         // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
         VROVector3f viewportPoint = transform.multiply(imagePoint);
-        joint.setPoint(viewportPoint);
+        joint.setScreenCoords(viewportPoint);
+        joint.setSpawnTimeMs(VROTimeCurrentMillis());
     }
     return bodyMap;
 }

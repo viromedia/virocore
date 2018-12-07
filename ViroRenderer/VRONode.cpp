@@ -7,6 +7,7 @@
 //
 
 #include "VRONode.h"
+#include "VROIKRig.h"
 #include "VROGeometry.h"
 #include "VROLight.h"
 #include "VROAnimation.h"
@@ -555,6 +556,18 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
 }
 
+void VRONode::computeIKRig() {
+    std::shared_ptr<VROIKRig> rig = getIKRig();
+    if (rig != nullptr) {
+        rig->processRig();
+        return;
+    }
+
+    for (auto node : _subnodes) {
+        node->computeIKRig();
+    }
+}
+
 void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation, bool animated) {
     // Create a final compute transform representing the desired, final world position and rotation.
     VROVector3f worldScale = getWorldTransform().extractScale();
@@ -581,6 +594,10 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
         setPosition(currentTransform.extractTranslation());
         setRotation(currentTransform.extractRotation(currentTransform.extractScale()));
     }
+
+    // Finally calculate and set the world transform for this node.
+    doComputeTransform(parentTransform);
+    _worldRotation = parentTransform.multiply(_rotation.getMatrix());
 }
 
 #pragma mark - Visibility
@@ -729,6 +746,20 @@ void VRONode::removeFromParentNode() {
 
 std::vector<std::shared_ptr<VRONode>> VRONode::getChildNodes() const {
     return _subnodes;
+}
+
+void VRONode::getSkinner(std::vector<std::shared_ptr<VROSkinner>> &skinnersOut, bool recurse) {
+    if (_geometry != nullptr && _geometry->getSkinner() != nullptr) {
+        skinnersOut.push_back(_geometry->getSkinner());
+    }
+
+    if (!recurse) {
+        return;
+    }
+
+    for (auto child : _subnodes) {
+        child->getSkinner(skinnersOut, recurse);
+    }
 }
 
 void VRONode::setScene(std::shared_ptr<VROScene> scene, bool recursive) {

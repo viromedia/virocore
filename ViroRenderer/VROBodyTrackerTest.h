@@ -18,15 +18,18 @@
 #include "VROSceneController.h"
 #include "VRODefines.h"
 #include "VROBodyTracker.h"
+#include "VROEventDelegate.h"
+#include "VROBodyTrackerController.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROARSessioniOS.h"
-#include "VROViewAR.h"
 #import <UIKit/UIKit.h>
 #endif
 
-class VROBodyTrackerTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
-                           public VROBodyTrackerDelegate,
+class VROBodyTrackerTest : public VRORendererTest,
+                           public VROEventDelegate,
+                           public VROSceneController::VROSceneControllerDelegate,
+                           public VROBodyTrackerControllerDelegate,
                            public std::enable_shared_from_this<VROBodyTrackerTest> {
 public:
     
@@ -36,7 +39,7 @@ public:
     void build(std::shared_ptr<VRORenderer> renderer,
                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                std::shared_ptr<VRODriver> driver);
-    
+
     std::shared_ptr<VRONode> getPointOfView() {
         return _pointOfView;
     }
@@ -45,7 +48,6 @@ public:
     }
     
     virtual void onSceneWillAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
-       
     }
     virtual void onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
 #if VRO_PLATFORM_IOS
@@ -59,23 +61,25 @@ public:
     }
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
-    
-    virtual void onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints);
-    
+
+    virtual void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position) {
+        if (VROStringUtil::strcmpinsensitive(node->getTag(), "Recalibrate")) {
+            _bodyMLController->startCalibration();
+        }
+    }
+
+    void onModelLoaded(std::shared_ptr<VRONode> node);
+    void onBodyTrackStateUpdate(VROBodyTrackedState state);
+
 private:
-    
     std::shared_ptr<VRONode> _pointOfView;
-    std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROARScene> _arScene;
-    std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
     std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VRONode> _gltfNodeContainer;
     std::shared_ptr<VROBodyTracker> _bodyTracker;
-
-#if VRO_PLATFORM_IOS
-    UIView *_bodyViews[14];
-    VROViewAR *_view;
-#endif
-
+    std::shared_ptr<VROBodyTrackerController> _bodyMLController;
+    std::shared_ptr<VROText> _trackingStateText;
 };
 
-#endif /* VROARObjectTrackingTest_h  */
+#endif /* VROBodyTrackerTest_h  */

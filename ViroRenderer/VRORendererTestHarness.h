@@ -28,6 +28,7 @@ enum class VRORendererTestType {
     Stereoscopic,
     FBX,
     GLTF,
+    InverseKinematics,
     ARPlane,
     ARDraggableNode,
     ARImageTracking,

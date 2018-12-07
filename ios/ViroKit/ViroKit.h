@@ -144,6 +144,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROInputControllerBase.h>
 #import <ViroKit/VROInputControllerCardboardiOS.h>
 #import <ViroKit/VROInputPresenterCardboardiOS.h>
+#import <ViroKit/VROBodyTrackerController.h>
 
 // Util
 #import <ViroKit/VROTime.h>

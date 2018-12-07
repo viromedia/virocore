@@ -11,6 +11,7 @@
 #include "VROBone.h"
 #include "VROMatrix4f.h"
 #include "VROMath.h"
+#include "VRONode.h"
 
 VROSkinner::VROSkinner(std::shared_ptr<VROSkeleton> skeleton,
                        VROMatrix4f geometryBindTransform,
@@ -20,7 +21,7 @@ VROSkinner::VROSkinner(std::shared_ptr<VROSkeleton> skeleton,
     _skeleton(skeleton),
     _boneIndices(boneIndices),
     _boneWeights(boneWeights) {
-        
+
     /*
      We are given geometryBindTransform, which moves the model to the bind pose, and
      the boneSpaceTransforms, which for each bone move from model space
@@ -74,5 +75,79 @@ VROMatrix4f VROSkinner::getModelTransform(int boneIndex) {
             boneIndex = bone->getParentIndex();
         }
         return transform;
+    }
+}
+
+VROMatrix4f VROSkinner::getCurrentBoneWorldTransform(int boneId) {
+    // TODO VIRO-4712: Account for Non-Legacy Bones when setting bone transforms
+    if (_skeleton->getBone(boneId)->getTransformType() != VROBoneTransformType::Legacy) {
+        pwarn("Unable to grab world transform of non-Legacy bone types");
+        return VROMatrix4f::identity();
+    }
+
+    // Grab the skinner's node transform
+    std::shared_ptr<VRONode> skinnerNode = _skinnerNodeWeak.lock();
+    VROMatrix4f skinnerWorldTrans = VROMatrix4f::identity();
+    if (skinnerNode != nullptr) {
+        skinnerWorldTrans = skinnerNode->getWorldTransform();
+    }
+
+    // Grab the bone's transform, convert it into geometry and then finally world space.
+    const std::shared_ptr<VROBone> &bone = _skeleton->getBone(boneId);
+    VROMatrix4f transform = _inverseBindTransforms[boneId].multiply(bone->getTransform());
+    return skinnerWorldTrans.multiply(transform);
+}
+
+void VROSkinner::setCurrentBoneWorldTransform(int boneId, VROMatrix4f targetWorldTrans, bool recurse) {
+    // TODO VIRO-4712: Account for Non-Legacy Bones when setting bone transforms
+    if (_skeleton->getBone(boneId)->getTransformType() != VROBoneTransformType::Legacy) {
+        pwarn("Unable to set world transform of non-Legacy bone types");
+        return;
+    }
+
+    // First grab the original bone transform in case we'll need to use it later
+    VROMatrix4f originalTransform = getCurrentBoneWorldTransform(boneId);
+
+    // Grab the skinner's node transform
+    VROMatrix4f skinnerWorldTrans = VROMatrix4f::identity();
+    std::shared_ptr<VRONode> skinnerNode = _skinnerNodeWeak.lock();
+    if (skinnerNode != nullptr) {
+        skinnerWorldTrans = skinnerNode->getWorldTransform();
+    }
+
+    // Convert the desired targetWorldTransform into skinner node space
+    VROMatrix4f targetSkinnerTrans = skinnerWorldTrans.invert().multiply(targetWorldTrans);
+
+    // Convert targetSkinnerTransform into boneSpace - say targetedBoneSpace (note this is
+    // done by inverseBind.invert). Since the bindTransform already considers the starting
+    // geometryBounded bone transform, this also produces the bone delta tha twe can set
+    // on the skeleton.
+    VROMatrix4f delta = _inverseBindTransforms[boneId].invert().multiply(targetSkinnerTrans);
+    const std::shared_ptr<VROBone> &joint = _skeleton->getBone(boneId);
+    joint->setTransform(delta, VROBoneTransformType::Legacy);
+
+    // If we are not recursing this calculation down to child bones, return.
+    if (!recurse) {
+        return;
+    }
+
+    // Grab all the child bones from the current boneId.
+    std::vector<int> childBoneIndexes;
+    for (int i = 0; i < _skeleton->getNumBones(); i ++) {
+        if (_skeleton->getBone(i)->getParentIndex() == boneId && i != boneId) {
+            childBoneIndexes.push_back(i);
+        }
+    }
+
+    if (childBoneIndexes.size() <=0) {
+        return;
+    }
+
+    // Now calculate the child's transform in reference to the parent.
+    for (auto childBoneIndex : childBoneIndexes) {
+        VROMatrix4f childWorldTrans = getCurrentBoneWorldTransform(childBoneIndex);
+        VROMatrix4f transformToChild = originalTransform.invert().multiply(childWorldTrans);
+        VROMatrix4f newChildTransform = targetWorldTrans.multiply(transformToChild);
+        setCurrentBoneWorldTransform(childBoneIndex, newChildTransform, recurse);
     }
 }

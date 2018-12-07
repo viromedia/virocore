@@ -24,7 +24,7 @@ void VROSample::loadTestHarness(std::shared_ptr<VRORenderer> renderer,
                                 std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                 std::shared_ptr<VRODriver> driver) {
     _harness = std::make_shared<VRORendererTestHarness>(renderer, frameSynchronizer, driver);
-    _harness->loadTest(VRORendererTestType::DiffuseIrradiance);
+    _harness->loadTest(VRORendererTestType::InverseKinematics);
 }
 
 std::shared_ptr<VROSceneController> VROSample::getSceneController() {
@@ -34,5 +34,3 @@ std::shared_ptr<VROSceneController> VROSample::getSceneController() {
 std::shared_ptr<VRONode> VROSample::getPointOfView() {
     return _harness->getCurrentTest()->getPointOfView();
 }
-
-

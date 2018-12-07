@@ -16,6 +16,7 @@
 #include "VROParticleTest.h"
 #include "VROFBXTest.h"
 #include "VROGLTFTest.h"
+#include "VROIKTest.h"
 #include "VROHDRTest.h"
 #include "VRONormalMapTest.h"
 #include "VROOBJTest.h"
@@ -101,6 +102,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VROFBXTest>();
         case VRORendererTestType::GLTF:
             return std::make_shared<VROGLTFTest>();
+        case VRORendererTestType::InverseKinematics:
+            return std::make_shared<VROIKTest>();
         case VRORendererTestType::ARPlane:
             return std::make_shared<VROARPlaneTest>();
         case VRORendererTestType::ARDraggableNode:

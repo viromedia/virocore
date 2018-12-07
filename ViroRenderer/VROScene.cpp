@@ -54,6 +54,10 @@ void VROScene::applyConstraints(const VRORenderContext &context) {
     _rootNode->applyConstraints(context, {}, false);
 }
 
+void VROScene::computeIKRig(const VRORenderContext &context) {
+    _rootNode->computeIKRig();
+}
+
 void VROScene::syncAtomicRenderProperties() {
     _rootNode->syncAppThreadProperties();
 }
