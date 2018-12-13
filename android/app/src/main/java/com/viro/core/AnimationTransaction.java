@@ -98,6 +98,27 @@ public class AnimationTransaction {
     }
 
     /**
+     * Set the speed at which the animation runs. The default value is 1.0, which runs the animation at normal speed.
+     * A value of 0.0 freezes the animation; a value of 2.0 will run the animation at double speed.
+     *
+     * @param speed A multiplier which represents the speed at which to run the animation. For example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is half normal speed,
+     *              2.0 doubles the normal speed.
+     */
+    public static void setAnimationSpeed(float speed) {
+        nativeSetAnimationSpeed(speed);
+    }
+
+    /**
+     * Set an time offset from the start of animation. When {@link #commit()} is invoked the animation
+     * will start from this time offset.
+     *
+     * @param timeOffset The time offset in milliseconds.
+     */
+    public static void setAnimationTimeOffset(long timeOffset) {
+        nativeSetAnimationTimeOffset(timeOffset / 1000f);
+    }
+
+    /**
      * Set the duration of all animations in this AnimationTransaction, in seconds.
      *
      * @param durationMillis The duration of the transaction, in milliseconds.
@@ -201,8 +222,10 @@ public class AnimationTransaction {
 
     private static native long nativeBegin();
     private static native void nativeCommit(AnimationTransaction transaction);
+    private static native void nativeSetAnimationSpeed(float speed);
     private static native void nativeSetAnimationDuration(float durationSeconds);
     private static native void nativeSetAnimationDelay(float delaySeconds);
+    private static native void nativeSetAnimationTimeOffset(float timeOffset);
     private static native void nativeSetAnimationLoop(boolean loop);
     private static native void nativeSetTimingFunction(String timingFunction);
     private native void nativeDispose(long nativeRef);

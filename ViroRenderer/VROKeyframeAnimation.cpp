@@ -30,12 +30,14 @@ std::shared_ptr<VROExecutableAnimation> VROKeyframeAnimation::copy() {
     std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, _duration, _hasTranslation,
                                                                                              _hasRotation, _hasScale);
     animation->setName(_name);
+    animation->setSpeed(_speed);
+    animation->setTimeOffset(_timeOffset);
     return animation;
 }
 
 void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished) {
     std::weak_ptr<VROKeyframeAnimation> shared_w = shared_from_this();
-    
+
     /*
      Build the key frame animation data.
      */
@@ -63,6 +65,8 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(_duration);
+    VROTransaction::setAnimationTimeOffset(_timeOffset);
+    VROTransaction::setAnimationSpeed(_speed);
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     if (_hasTranslation) {
@@ -135,6 +139,14 @@ void VROKeyframeAnimation::terminate(bool jumpToEnd) {
     if (transaction) {
         VROTransaction::terminate(transaction, jumpToEnd);
         _transaction.reset();
+    }
+}
+
+void VROKeyframeAnimation::setSpeed(float speed) {
+    _speed = speed;
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::setAnimationSpeed(transaction, _speed);
     }
 }
 

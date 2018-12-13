@@ -52,6 +52,19 @@ VRO_METHOD(void, nativeSetAnimationDelay)(VRO_ARGS_STATIC
     });
 }
 
+VRO_METHOD(void, nativeSetAnimationTimeOffset)(VRO_ARGS_STATIC float timeOffset) {
+    VROPlatformDispatchAsyncRenderer([timeOffset] {
+        VROTransaction::setAnimationTimeOffset(timeOffset);
+    });
+}
+
+VRO_METHOD(void, nativeSetAnimationSpeed)(VRO_ARGS_STATIC float speed) {
+    VROPlatformDispatchAsyncRenderer([speed] {
+        VROTransaction::setAnimationSpeed(speed);
+    });
+}
+
+
 VRO_METHOD(void, nativeSetAnimationDuration)(VRO_ARGS_STATIC
                                              float duration) {
     VROPlatformDispatchAsyncRenderer([duration] {

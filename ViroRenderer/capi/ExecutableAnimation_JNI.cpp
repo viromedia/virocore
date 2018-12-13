@@ -137,6 +137,28 @@ VRO_METHOD(void, nativeSetDuration)(VRO_ARGS
     });
 }
 
+VRO_METHOD(void, nativeSetTimeOffset)(VRO_ARGS VRO_REF(VROExecutableAnimation) nativeRef, VRO_FLOAT timeOffset) {
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
+    VROPlatformDispatchAsyncRenderer([animation_w, timeOffset] {
+        std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
+        if (!animation) {
+            return;
+        }
+        animation->setTimeOffset(timeOffset);
+    });
+}
+
+VRO_METHOD(void, nativeSetSpeed)(VRO_ARGS VRO_REF(VROExecutableAnimation) nativeRef, VRO_FLOAT speed) {
+    std::weak_ptr<VROExecutableAnimation> animation_w = VRO_REF_GET(VROExecutableAnimation, nativeRef);
+    VROPlatformDispatchAsyncRenderer([animation_w, speed] {
+        std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
+        if (!animation) {
+            return;
+        }
+        animation->setSpeed(speed);
+    });
+}
+
 // This should only be invoked on initialization to grab the initial duration
 VRO_METHOD(VRO_FLOAT, nativeGetDuration)(VRO_ARGS
                                          VRO_REF(VROExecutableAnimation) nativeRef) {

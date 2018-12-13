@@ -6,6 +6,7 @@ import android.support.test.espresso.core.deps.guava.collect.Iterables;
 import android.util.Log;
 
 import com.viro.core.AmbientLight;
+import com.viro.core.AnimationTransaction;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Animation;
 import com.viro.core.AsyncObject3DListener;
@@ -59,6 +60,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
         runUITest(() -> stage6_testLoadModelOBJMaterials());
         runUITest(() -> stage7_testLoadModelVRXReplaceMaterial());
         runUITest(() -> stage8_testLoadModelAnimateVRXWithShadow());
+        runUITest(() -> stage8_testLoadModelAnimateVRXFreeze());
+        runUITest(() -> stage8_testLoadModelAnimateVRXDifferentSpeeds());
         runUITest(() -> stage8_testLoadModelAnimateSlow());
     }
 
@@ -449,6 +452,126 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
     }
 
+    public void stage8_testLoadModelAnimateVRXFreeze() {
+        DirectionalLight light = new DirectionalLight();
+        light.setColor(Color.WHITE);
+        light.setDirection(new Vector(0, -1, 0));
+        light.setShadowOrthographicPosition(new Vector(0, 20, -9));
+        light.setShadowOrthographicSize(60);
+        light.setShadowNearZ(1);
+        light.setShadowFarZ(60);
+        light.setShadowOpacity(1.0f);
+        light.setCastsShadow(true);
+        mScene.getRootNode().removeLight(mAmbientLight);
+        mScene.getRootNode().addLight(light);
+
+        Material coloredMaterial = new Material();
+        coloredMaterial.setDiffuseColor(Color.RED);
+        coloredMaterial.setLightingModel(Material.LightingModel.BLINN);
+        //used to be 60 for width and height
+        Surface surface = new Surface(60, 60);
+        surface.setMaterials(Arrays.asList(coloredMaterial));
+        Node surfaceNode = new Node();
+        surfaceNode.setGeometry(surface);
+        surfaceNode.setRotation(new Vector((float) -Math.PI / 2.0f, 0, 0));
+        surfaceNode.setPosition(new Vector(0, -5, -9));
+        mScene.getRootNode().addChildNode(surfaceNode);
+
+        final Object3D object3D = new Object3D();
+        mScene.getRootNode().addChildNode(object3D);
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/dragao.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -9));
+                object.setScale(new Vector(0.2f, 0.2f, 0.2f));
+                mAnimation = object.getAnimation("01");
+                mAnimation.setDelay(0);
+                mAnimation.setTimeOffset(4500);
+                mAnimation.setSpeed(0);
+                mAnimation.setLoop(true);
+                mAnimation.play();
+
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        final List<Integer> timeOffsetList = Arrays.asList(4500, 6000, 1000, 0);
+        final Iterator<Integer> itr = Iterables.cycle(timeOffsetList).iterator();
+        mMutableTestMethod = () -> {
+            if (mAnimation != null) {
+                mAnimation.stop();
+                mAnimation.setTimeOffset(itr.next());
+                mAnimation.play();
+            }
+        };
+
+        assertPass("You should see an animated dragon frozen at timestamp 4.5 seconds, 6s, 1s, 0s",()->{
+            object3D.removeFromParentNode();
+        });
+    }
+
+    public void stage8_testLoadModelAnimateVRXDifferentSpeeds() {
+        DirectionalLight light = new DirectionalLight();
+        light.setColor(Color.WHITE);
+        light.setDirection(new Vector(0, -1, 0));
+        light.setShadowOrthographicPosition(new Vector(0, 20, -9));
+        light.setShadowOrthographicSize(60);
+        light.setShadowNearZ(1);
+        light.setShadowFarZ(60);
+        light.setShadowOpacity(1.0f);
+        light.setCastsShadow(true);
+        mScene.getRootNode().removeLight(mAmbientLight);
+        mScene.getRootNode().addLight(light);
+
+        Material coloredMaterial = new Material();
+        coloredMaterial.setDiffuseColor(Color.RED);
+        coloredMaterial.setLightingModel(Material.LightingModel.BLINN);
+        //used to be 60 for width and height
+        Surface surface = new Surface(60, 60);
+        surface.setMaterials(Arrays.asList(coloredMaterial));
+        Node surfaceNode = new Node();
+        surfaceNode.setGeometry(surface);
+        surfaceNode.setRotation(new Vector((float) -Math.PI / 2.0f, 0, 0));
+        surfaceNode.setPosition(new Vector(0, -5, -9));
+        mScene.getRootNode().addChildNode(surfaceNode);
+
+        final Object3D object3D = new Object3D();
+        mScene.getRootNode().addChildNode(object3D);
+        object3D.loadModel(mViroView.getViroContext(), Uri.parse("file:///android_asset/dragao.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -9));
+                object.setScale(new Vector(0.2f, 0.2f, 0.2f));
+                mAnimation = object.getAnimation("01");
+                mAnimation.setDelay(0);
+                mAnimation.setTimeOffset(0);
+                mAnimation.setSpeed(1);
+                mAnimation.setLoop(true);
+                mAnimation.play();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+
+        final List<Float> speedList = Arrays.asList(1f, .2f, .1f, 1f);
+        final Iterator<Float> itr = Iterables.cycle(speedList).iterator();
+        mMutableTestMethod = () -> {
+            if (mAnimation != null) {
+               mAnimation.setSpeed(itr.next());
+            }
+        };
+        assertPass("You should see an animated dragon move at different speeds: normal, slow, slower, then normal.",()->{
+            object3D.removeFromParentNode();
+        });
+    }
+
     public void stage8_testLoadModelAnimateSlow() {
         DirectionalLight light = new DirectionalLight();
         light.setColor(Color.WHITE);
@@ -484,6 +607,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
                 mAnimation = object.getAnimation("01");
                 mAnimation.setDelay(1000);
                 mAnimation.setLoop(true);
+
                 mAnimation.setDuration(mAnimation.getDuration() * 4);
                 mAnimation.play();
             }

@@ -44,14 +44,17 @@ struct VROKeyframeAnimationFrame {
 class VROKeyframeAnimation : public VROExecutableAnimation, public std::enable_shared_from_this<VROKeyframeAnimation> {
     
 public:
-    
+
     VROKeyframeAnimation(std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames,
-                         float duration, bool hasTranslation, bool hasRotation, bool hasScale) :
-    _hasTranslation(hasTranslation),
-    _hasRotation(hasRotation),
-    _hasScale(hasScale),
-    _frames(std::move(frames)),
-    _duration(duration) {}
+                         float duration, bool hasTranslation, bool hasRotation, bool hasScale)
+    {
+        _hasTranslation = hasTranslation;
+        _hasRotation = hasRotation;
+        _hasScale = hasScale;
+        _frames = std::move(frames);
+        _duration = duration;
+    }
+
     virtual ~VROKeyframeAnimation() { }
     
     void setName(std::string name) {
@@ -68,9 +71,12 @@ public:
     void setDuration(float durationSeconds) {
         _duration = durationSeconds;
     }
+
     float getDuration() const {
         return _duration;
     }
+
+    void setSpeed(float speed);
 
 #pragma mark - Executable Animation API
     

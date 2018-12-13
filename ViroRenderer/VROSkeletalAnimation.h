@@ -61,10 +61,12 @@ public:
         
     VROSkeletalAnimation(std::shared_ptr<VROSkinner> skinner,
                          std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &frames,
-                         float duration) :
-        _skinner(skinner),
-        _frames(std::move(frames)),
-        _duration(duration) {}
+                         float duration)  {
+        _skinner = skinner;
+        _frames = std::move(frames);
+        _duration = duration;
+    }
+
     virtual ~VROSkeletalAnimation() { }
     
     void setName(std::string name) {
@@ -108,7 +110,8 @@ public:
      */
     void setDuration(float durationSeconds);
     float getDuration() const;
-    
+
+    void setSpeed(float speed);
     std::string toString() const;
     
 private:

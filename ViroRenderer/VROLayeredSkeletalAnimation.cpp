@@ -54,7 +54,6 @@ void VROLayeredSkeletalAnimation::flattenAnimationChain(std::shared_ptr<VROAnima
 std::shared_ptr<VROExecutableAnimation> VROLayeredSkeletalAnimation::createLayeredAnimation(std::vector<std::shared_ptr<VROSkeletalAnimationLayer>> layers) {
     // Accumulate the finished animations (VROLayeredSkeletalAnimations and individual non-skeletal animations) here
     std::vector<std::shared_ptr<VROExecutableAnimation>> animations;
-    
     // Accumulate weighted skeletal animations here. These are first sorted by the skinner (e.g. geo) each is using
     std::map<std::shared_ptr<VROSkinner>, std::vector<std::shared_ptr<VROSkeletalAnimationLayerInternal>>> skeletalLayers;
     float maxDuration = 0;
@@ -148,7 +147,8 @@ std::shared_ptr<VROExecutableAnimation> VROLayeredSkeletalAnimation::copy() {
     
     std::shared_ptr<VROLayeredSkeletalAnimation> animation = std::make_shared<VROLayeredSkeletalAnimation>(_skinner, layers, _duration);
     animation->setName(_name);
-    
+    animation->setTimeOffset(_timeOffset);
+    animation->setSpeed(_speed);
     return animation;
 }
 
@@ -214,6 +214,8 @@ void VROLayeredSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::fu
      */
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(_duration);
+    VROTransaction::setAnimationSpeed(_speed);
+    VROTransaction::setAnimationTimeOffset(_timeOffset);
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     std::string name = _name;
@@ -321,6 +323,14 @@ VROMatrix4f VROLayeredSkeletalAnimation::blendBoneTransform(const VROMatrix4f &p
     VROVector3f averageTranslation = previousTranslation.interpolate(currentTranslation, weight);
     averageTransform.translate(averageTranslation);
     return averageTransform;
+}
+
+void VROLayeredSkeletalAnimation::setSpeed(float speed) {
+    _speed = speed;
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::setAnimationSpeed(transaction, _speed);
+    }
 }
 
 void VROLayeredSkeletalAnimation::pause() {

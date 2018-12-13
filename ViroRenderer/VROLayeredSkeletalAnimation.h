@@ -71,14 +71,15 @@ class VROLayeredSkeletalAnimation : public VROExecutableAnimation, public std::e
 public:
     
     static std::shared_ptr<VROExecutableAnimation> createLayeredAnimation(std::vector<std::shared_ptr<VROSkeletalAnimationLayer>> layers);
-    
+
     VROLayeredSkeletalAnimation(std::shared_ptr<VROSkinner> skinner,
                                 std::vector<std::shared_ptr<VROSkeletalAnimationLayerInternal>> &layers,
                                 float duration) :
-    _skinner(skinner),
-    _layers(layers),
-    _duration(duration),
-    _cached(false) {}
+            _skinner(skinner),
+            _layers(layers),
+            _duration(duration),
+            _cached(false) {}
+
     virtual ~VROLayeredSkeletalAnimation() { }
     
     void setName(std::string name) {
@@ -118,7 +119,9 @@ public:
      */
     void setDuration(float durationSeconds);
     float getDuration() const;
-    
+
+    void setSpeed(float speed);
+
     std::string toString() const;
     
 private:

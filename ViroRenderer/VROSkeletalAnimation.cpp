@@ -28,9 +28,11 @@ std::shared_ptr<VROExecutableAnimation> VROSkeletalAnimation::copy() {
 
         frames.push_back(std::move(frame));
     }
+
     std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(_skinner, frames, _duration);
     animation->setName(_name);
-    
+    animation->setTimeOffset(_timeOffset);
+    animation->setSpeed(_speed);
     return animation;
 }
 
@@ -57,6 +59,8 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(_duration);
+    VROTransaction::setAnimationTimeOffset(_timeOffset);
+    VROTransaction::setAnimationSpeed(_speed);
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     for (auto kv : boneKeyTimes) {
@@ -89,6 +93,14 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     transaction->holdExecutableAnimation(shared_from_this());
     
     _transaction = transaction;
+}
+
+void VROSkeletalAnimation::setSpeed(float speed) {
+    _speed = speed;
+    std::shared_ptr<VROTransaction> transaction = _transaction.lock();
+    if (transaction) {
+        VROTransaction::setAnimationSpeed(transaction, speed);
+    }
 }
 
 void VROSkeletalAnimation::pause() {

@@ -56,6 +56,15 @@ std::shared_ptr<VROTransaction> VROTransaction::commit() {
     return animation;
 }
 
+void VROTransaction::setAnimationTimeOffset(float timeOffset) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+
+    animation->_offsetTimeSeconds = timeOffset;
+}
+
 void VROTransaction::setFinishCallback(std::function<void (bool terminate)> finishCallback) {
     std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
@@ -96,6 +105,15 @@ void VROTransaction::setAnimationDuration(float durationSeconds) {
     animation->_durationSeconds = durationSeconds;
 }
 
+void VROTransaction::setAnimationSpeed(float speed) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+
+    animation->_speed = speed;
+}
+
 void VROTransaction::setAnimationLoop(bool loop) {
     std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
@@ -111,6 +129,17 @@ float VROTransaction::getAnimationDuration() {
     }
 
     return animation->_durationSeconds;
+}
+
+void VROTransaction::setAnimationSpeed(std::shared_ptr<VROTransaction> transaction, float speed) {
+    double currentTime = VROTimeCurrentSeconds();
+    float passedTime = currentTime - (transaction->_startTimeSeconds);
+    transaction->_startTimeSeconds = currentTime;
+    // Increase or decrease passage of time based on speed. 1 is normal speed. 0 freezes animation.
+    transaction->_currentSpeedModulatedTime = passedTime * transaction->_speed + transaction->_currentSpeedModulatedTime;
+    // switch to new speed.
+    transaction->_speed = speed;
+
 }
 
 void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction) {
@@ -168,6 +197,7 @@ void VROTransaction::terminate(std::shared_ptr<VROTransaction> transaction, bool
 
 void VROTransaction::update() {
     double time = VROTimeCurrentSeconds();
+
     /*
      Copy the vector over, because the committedTransactions vector can be modified
      by finish callbacks during this iteration.
@@ -177,8 +207,11 @@ void VROTransaction::update() {
 
     for (it = runningTransactions.begin(); it != runningTransactions.end(); ++it) {
         std::shared_ptr<VROTransaction> transaction = *it;
+        float passedTime = time - (transaction->_startTimeSeconds);
+        // Increase or decrease passage of time based on speed. 1 is normal speed. 0 freezes animation.
+        passedTime = passedTime * transaction->_speed + transaction->_currentSpeedModulatedTime;
 
-        float passedTimeInSeconds = (time - (transaction->_startTimeSeconds));
+        float passedTimeInSeconds = passedTime + transaction->_offsetTimeSeconds;
         if (transaction->_paused || passedTimeInSeconds <= transaction->_delayTimeSeconds){
             continue;
         }
@@ -192,6 +225,7 @@ void VROTransaction::update() {
                     transaction -> _finishCallback(false);
                 }
                 transaction->_startTimeSeconds = VROTimeCurrentSeconds();
+                transaction->_currentSpeedModulatedTime = 0;
                 transaction->processAnimations(0);
             } else {
                 transaction->onTermination();
@@ -216,9 +250,12 @@ void VROTransaction::update() {
 VROTransaction::VROTransaction() :
         _paused(false),
         _t(0),
+        _speed(1),
+        _offsetTimeSeconds(0),
         _durationSeconds(0),
         _startTimeSeconds(0),
         _delayTimeSeconds(0),
+        _currentSpeedModulatedTime(0),
         _loop(false) {
     _timingFunction = std::unique_ptr<VROTimingFunction>(new VROTimingFunctionLinear());
 }

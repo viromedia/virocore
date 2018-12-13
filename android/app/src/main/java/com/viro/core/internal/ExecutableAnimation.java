@@ -18,6 +18,8 @@ public class ExecutableAnimation {
 
     protected long mNativeRef;
     protected float mDurationSeconds;
+    protected float mTimeOffsetSeconds;
+    protected float mSpeed;
     protected AnimationDelegate mDelegate;
 
     /**
@@ -44,6 +46,16 @@ public class ExecutableAnimation {
         nativeSetDuration(mNativeRef, durationSeconds);
     }
 
+    public void setTimeOffset(float timeOffset) {
+        mTimeOffsetSeconds = timeOffset;
+        nativeSetTimeOffset(mNativeRef, timeOffset);
+    }
+
+    public void setSpeed(float speed) {
+        mSpeed = speed;
+        nativeSetSpeed(mNativeRef, speed);
+    }
+
     public float getDuration() {
         return mDurationSeconds;
     }
@@ -55,7 +67,6 @@ public class ExecutableAnimation {
 
     public void execute(Node node) {
         if (node.getNativeRef() == 0) {
-            Log.i("Viro", "Node has been disposed, will not execute animation");
             return;
         }
         nativeExecuteAnimation(mNativeRef, node.getNativeRef());
@@ -90,7 +101,9 @@ public class ExecutableAnimation {
     private native void nativePauseAnimation(long nativeRef);
     private native void nativeResumeAnimation(long nativeRef);
     private native void nativeTerminateAnimation(long nativeRef, boolean allowInterruptable);
+    private native void nativeSetSpeed(long nativeRef, float speed);
     private native void nativeSetDuration(long nativeRef, float durationSeconds);
+    private native void nativeSetTimeOffset(long nativeRef, float timeOffset);
     private native void nativeDestroyAnimation(long nativeRef);
 
     // This should only be invoked on construction to get the initial duration for mDurationSeconds

@@ -121,6 +121,27 @@ public class Animation {
     }
 
     /**
+     * Set an time offset from the start of animation. When starting an animation with {@link #play()} the animation
+     * will start from this offset.
+     *
+     * @param timeOffset The time offset in milliseconds.
+     */
+    public void setTimeOffset(long timeOffset) {
+        mExecutableAnimation.setTimeOffset((float) timeOffset / 1000.0f);
+    }
+
+    /**
+     * Set the speed at which the animation runs. The default value is 1.0, which runs the animation at normal speed.
+     * A value of 0.0 freezes the animation; a value of 2.0 will run the animation at double speed.
+     *
+     * @param speed A multiplier which represents the speed at which to run the animation. For example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is half normal speed,
+     *              2.0 doubles the normal speed.
+     */
+    public void setSpeed(float speed) {
+        mExecutableAnimation.setSpeed(speed);
+    }
+
+    /**
      * Set to true to make the Animation automatically loop to the beginning when playback finishes.
      *
      * @param loop True to loop.

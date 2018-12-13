@@ -119,6 +119,26 @@ float VROAnimationChain::getDuration() const {
     return maxDuration;
 }
 
+float VROAnimationChain::getTimeOffset() const {
+    float maxTimeOffset = 0;
+    for (std::shared_ptr<VROExecutableAnimation> animation : _animations) {
+        maxTimeOffset = fmax(maxTimeOffset, animation->getTimeOffset());
+    }
+    return maxTimeOffset;
+}
+
+void VROAnimationChain::setTimeOffset(float timeOffset) {
+    for (std::shared_ptr<VROExecutableAnimation> animation : _animations) {
+        animation->setTimeOffset(timeOffset);
+    }
+}
+
+void VROAnimationChain::setSpeed(float speed) {
+    for (std::shared_ptr<VROExecutableAnimation> animation : _animations) {
+        animation->setSpeed(speed);
+    }
+}
+
 void VROAnimationChain::addAnimation(std::shared_ptr<VROExecutableAnimation> animation) {
     _animations.push_back(animation);
 }

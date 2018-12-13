@@ -64,7 +64,19 @@ public:
     float getDuration() const {
         return _executableAnimation->getDuration();
     }
-    
+
+    void setTimeOffset(float timeOffset) {
+        _executableAnimation->setTimeOffset(timeOffset);
+    }
+
+    void setSpeed(float speed) {
+        _executableAnimation->setSpeed(speed);
+    }
+
+    float getTimeOffset() const {
+        return _executableAnimation->getTimeOffset();
+    }
+
     std::string toString() const {
         return _executableAnimation->toString();
     }

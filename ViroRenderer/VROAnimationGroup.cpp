@@ -71,6 +71,8 @@ void VROAnimationGroup::execute(std::shared_ptr<VRONode> node,
     VROTransaction::setAnimationDelay(_delay);
     VROTransaction::setAnimationDuration(_duration);
     VROTransaction::setTimingFunction(_timingFunctionType);
+    VROTransaction::setAnimationSpeed(_speed);
+    VROTransaction::setAnimationTimeOffset(_timeOffset);
   
     animateMaterial(node);
     animatePosition(node);
@@ -256,6 +258,13 @@ void VROAnimationGroup::setDuration(float durationSeconds) {
 
 float VROAnimationGroup::getDuration() const {
     return _duration;
+}
+
+void VROAnimationGroup::setSpeed(float speed) {
+    _speed = speed;
+    if (_transaction) {
+        VROTransaction::setAnimationSpeed(_transaction, _speed);
+    }
 }
 
 std::string VROAnimationGroup::toString() const {
