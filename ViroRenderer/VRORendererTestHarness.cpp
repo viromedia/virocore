@@ -139,9 +139,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VROToneMappingTest>();
         case VRORendererTestType::Polygon:
             return std::make_shared<VROPolygonTest>();
-        // Commented out for Viro React release 2.12.0
-        //case VRORendererTestType::BodyTracker:
-        //    return std::make_shared<VROBodyTrackerTest>();
+        case VRORendererTestType::BodyTracker:
+            return std::make_shared<VROBodyTrackerTest>();
         default:
             pabort();
             return nullptr;

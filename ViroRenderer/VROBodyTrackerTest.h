@@ -51,8 +51,7 @@ public:
 #if VRO_PLATFORM_IOS
         std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
         std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
-        // Commented out for Viro React release 2.12.0
-        //arSessioniOS->setBodyTracker(_bodyTracker);
+        arSessioniOS->setBodyTracker(_bodyTracker);
 #endif
     }
     virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
