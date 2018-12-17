@@ -386,7 +386,7 @@ void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> t
             if (arsession) {
                 // Now add all the targets back into the database...
                 for (int i = 0; i < arsession->_imageTargets.size(); i++) {
-                    arsession->addTargetToDatabase(target, arsession->_currentARCoreImageDatabase);
+                    arsession->addTargetToDatabase(arsession->_imageTargets[i], arsession->_currentARCoreImageDatabase);
                 }
 
                 // update the ARCore config on the renderer thread
