@@ -60,8 +60,9 @@ class VROBone : public VROAnimatable {
     
 public:
     
-    VROBone(int parentIndex, VROMatrix4f localTransform) :
+    VROBone(int parentIndex, std::string name, VROMatrix4f localTransform) :
         _parentIndex(parentIndex),
+        _name(name),
         _localTransform(localTransform),
         _transformType(VROBoneTransformType::Legacy) {
     }
@@ -105,6 +106,11 @@ private:
      VROSkeleton's _bones array.
      */
     int _parentIndex;
+    
+    /*
+     Name of the bone (optional).
+     */
+    std::string _name;
     
     /*
      The transform to move from this bone, in bone local space, to the parent bone in its

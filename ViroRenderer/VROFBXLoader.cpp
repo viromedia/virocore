@@ -658,6 +658,7 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
     std::vector<std::shared_ptr<VROBone>> bones;
     for (int i = 0; i < skeleton_pb.bone_size(); i++) {
         int parentIndex = skeleton_pb.bone(i).parent_index();
+        std::string name = skeleton_pb.bone(i).name();
         
         VROMatrix4f boneLocalTransform;
         if (skeleton_pb.bone(i).has_local_transform() > 0) {
@@ -666,7 +667,7 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
             }
         }
         
-        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentIndex, boneLocalTransform);
+        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentIndex, name, boneLocalTransform);
         bones.push_back(bone);
     }
     

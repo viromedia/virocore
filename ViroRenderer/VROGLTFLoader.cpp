@@ -346,7 +346,8 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
             int parentJointIndex = skinIndexToJointParentJoint[skinIndex][jointIndex];
             
             // TODO We need the bone local transform if we want layered animations to work with GLTF
-            std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentJointIndex, VROMatrix4f::identity());
+            std::string name = "BoneIndex_" + VROStringUtil::toString(parentJointIndex);
+            std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentJointIndex, name, VROMatrix4f::identity());
             bones.push_back(bone);
         }
 
