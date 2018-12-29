@@ -116,17 +116,22 @@ void VROIKTest::testSingleHorizontalChainRig() {
     // Create a single continous node line, but horizontally this time
     int numOfBlocks = 5;
     std::shared_ptr<VRONode> parentNode = _currentRoot;
+    std::shared_ptr<VRONode> midNode;
     for (int i = 0 ; i < numOfBlocks; i ++) {
         // Create the block.
         std::shared_ptr<VRONode> newBlockNode = createBlock(false, "Block_" + VROStringUtil::toString(i));
         newBlockNode->setPosition(VROVector3f(0.2, 0,0));
         parentNode->addChildNode(newBlockNode);
         parentNode = newBlockNode;
+        if (i == 2) {
+            midNode = newBlockNode;
+        }
     }
 
     // Assign the end affector node.
     std::map<std::string, std::shared_ptr<VRONode>> endEffectorNodes;
     endEffectorNodes["end"] = parentNode;
+    endEffectorNodes["mid"] = midNode;
 
     // Create target boxes.
     std::shared_ptr<VRONode> targetBox = createBlock(true, "Target");
@@ -134,6 +139,13 @@ void VROIKTest::testSingleHorizontalChainRig() {
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox);
     targetBox->setPosition(VROVector3f((0.2 * numOfBlocks)-0.6, 0, -1));
     _targetBoxes.push_back(targetBox);
+
+    // Create target boxes.
+    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target");
+    targetBox2->setTag("mid");
+    _sceneController->getScene()->getRootNode()->addChildNode(targetBox2);
+    targetBox2->setPosition(VROVector3f((0.2 * 3)-0.6, 0, -1));
+    _targetBoxes.push_back(targetBox2);
 
     // Initialize the rig here.
     _rig = std::make_shared<VROIKRig>(_currentRoot, endEffectorNodes);
@@ -419,6 +431,17 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
     _endEffectorBones["leftFeet"] = 16;
     _endEffectorBones["rightFeet"] = 15;
     _endEffectorBones["head"] = 4;
+
+    // Intermediary effectors
+    _endEffectorBones["LeftShoulder"] = 5;
+    _endEffectorBones["LeftElbow"] = 7;
+    _endEffectorBones["LeftHip"] = 11;
+    _endEffectorBones["LeftKnee"] = 13;
+
+    _endEffectorBones["RightShoulder"] = 6;
+    _endEffectorBones["RightElbow"] = 8;
+    _endEffectorBones["RightHip"] = 12;
+    _endEffectorBones["RightKnee"] = 14;
 
     if (!_initWithRig) {
         return;

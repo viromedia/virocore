@@ -25,14 +25,29 @@ VROIKRig::VROIKRig(std::shared_ptr<VRONode> root,
 
     // Given the desired endEffectorNodeMap, create our map of end effector IKJoints
     for (auto endAffectorNode : endEffectorNodeMap) {
-        std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
-        effectorJoint->id = _allKnownIKJoints.size() + 1;
-        effectorJoint->position = endAffectorNode.second->getWorldPosition();
-        effectorJoint->syncNode = endAffectorNode.second;
-        effectorJoint->syncBone = -1;
-        _allKnownIKJoints.push_back(effectorJoint);
-        _keyToEffectorMap[endAffectorNode.first] = effectorJoint;
-        createSkeletalRigFromNodeTree(endAffectorNode.second);
+        std::shared_ptr<VROIKJoint> endJoint = nullptr;
+        for (auto &joint : _allKnownIKJoints) {
+            if (endAffectorNode.second == joint->syncNode) {
+                endJoint = joint;
+                break;
+            }
+        }
+
+        if (endJoint == nullptr) {
+            std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
+            effectorJoint->id = _allKnownIKJoints.size() + 1;
+            effectorJoint->position = endAffectorNode.second->getWorldPosition();
+            effectorJoint->syncNode = endAffectorNode.second;
+            effectorJoint->syncBone = -1;
+            _allKnownIKJoints.push_back(effectorJoint);
+
+            _keyToEffectorMap[endAffectorNode.first] = effectorJoint;
+            _effectorTokeyMap[effectorJoint] = endAffectorNode.first;
+            createSkeletalRigFromNodeTree(endAffectorNode.second);
+        } else {
+            _keyToEffectorMap[endAffectorNode.first] = endJoint;
+            _effectorTokeyMap[endJoint] = endAffectorNode.first;
+        }
      }
 
     _initializeRig = true;
@@ -50,15 +65,30 @@ VROIKRig::VROIKRig(std::shared_ptr<VROSkinner> skinner,
 
     // Given the desired endEffectorBoneIndexMap, create our map of end effector IKJoints
     for (auto endAffectorBoneId : endEffectorBoneIndexMap) {
-        VROMatrix4f boneTransform = skinner->getCurrentBoneWorldTransform(endAffectorBoneId.second);
-        std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
-        effectorJoint->id = _allKnownIKJoints.size() + 1;
-        effectorJoint->position = boneTransform.extractTranslation();
-        effectorJoint->syncNode = nullptr;
-        effectorJoint->syncBone = endAffectorBoneId.second;
-        _allKnownIKJoints.push_back(effectorJoint);
-        _keyToEffectorMap[endAffectorBoneId.first] = effectorJoint;
-        createSkeletalRigFromSkinner(endAffectorBoneId.second);
+        std::shared_ptr<VROIKJoint> endJoint = nullptr;
+        for (auto &joint : _allKnownIKJoints) {
+            if (endAffectorBoneId.second == joint->syncBone) {
+                endJoint = joint;
+                break;
+            }
+        }
+
+        if (endJoint == nullptr) {
+            VROMatrix4f boneTransform = skinner->getCurrentBoneWorldTransform(endAffectorBoneId.second);
+            std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
+            effectorJoint->id = _allKnownIKJoints.size() + 1;
+            effectorJoint->position = boneTransform.extractTranslation();
+            effectorJoint->syncNode = nullptr;
+            effectorJoint->syncBone = endAffectorBoneId.second;
+            _allKnownIKJoints.push_back(effectorJoint);
+
+            _keyToEffectorMap[endAffectorBoneId.first] = effectorJoint;
+            _effectorTokeyMap[effectorJoint] = endAffectorBoneId.first;
+            createSkeletalRigFromSkinner(endAffectorBoneId.second);
+        } else {
+            _keyToEffectorMap[endAffectorBoneId.first] = endJoint;
+            _effectorTokeyMap[endJoint] = endAffectorBoneId.first;
+        }
     }
 
     _initializeRig = true;
@@ -185,7 +215,7 @@ void VROIKRig::setPositionForEffector(std::string affectorId, VROVector3f pos) {
         pwarn("Attempted to set unknown affector id %s", affectorId.c_str());
         return;
     }
-    _endAffectorDesiredPositionMap[affectorId] = pos;
+    _effectorDesiredPositionMap[affectorId] = pos;
     _processedNewEffectorPositions = false;
 }
 
@@ -243,13 +273,13 @@ void VROIKRig::initializeRig() {
     // Also refresh our joint effector's desired positions.
     for (auto endAffectorJoint : _keyToEffectorMap) {
         std::string key = endAffectorJoint.first;
-        if (_endAffectorDesiredPositionMap.find(key) != _endAffectorDesiredPositionMap.end()) {
+        if (_effectorDesiredPositionMap.find(key) != _effectorDesiredPositionMap.end()) {
             // only refresh rig pose for end effectors not in key.
             continue;
         }
 
         VROVector3f updatePos = _keyToEffectorMap[key]->position;
-        _endAffectorDesiredPositionMap[key] = updatePos;
+        _effectorDesiredPositionMap[key] = updatePos;
     }
 
     // Then start forming chains by combining into a vec of updated joints.
@@ -283,6 +313,12 @@ void VROIKRig::initializeRig() {
                 _endEffectorIdToChains[currentJoint->id] = chain;
                 break;
             }
+        }
+
+        // If the effector is not a leaf, it is an intermediate joint effector.
+        std::shared_ptr<VROIKJoint> joint = effectorJoint.second;
+        if (joint->children.size() > 0) {
+            joint->isIntermediaryEffector = true;
         }
     }
 
@@ -388,8 +424,13 @@ void VROIKRig::processInverseKinematics() {
         }
 
         // Step 1: Re-Align the end effector point at the desired end locations
-        for (auto affectorIdPos : _endAffectorDesiredPositionMap) {
+        for (auto affectorIdPos : _effectorDesiredPositionMap) {
             int jointId = _keyToEffectorMap[affectorIdPos.first]->id;
+
+            // Only align those that are end effectors
+            if (_keyToEffectorMap[affectorIdPos.first]->isIntermediaryEffector) {
+                continue;
+            }
 
             // Sanity check to ensure that all effectors are in this rig.
             if (_endEffectorIdToChains.find(jointId) == _endEffectorIdToChains.end()) {
@@ -428,14 +469,11 @@ void VROIKRig::processInverseKinematics() {
 }
 
 bool VROIKRig::hasEffectorsMetTarget() {
-    for (auto desiredPos : _endAffectorDesiredPositionMap) {
+    for (auto desiredPos : _effectorDesiredPositionMap) {
         std::string key = desiredPos.first;
         std::shared_ptr<VROIKJoint> effectorJoint = _keyToEffectorMap[key];
-        std::shared_ptr<VROIKChain> chain = _endEffectorIdToChains[effectorJoint->id];
-        std::shared_ptr<VROIKJoint> endJoint = chain->chainJoints.back();
-
         VROVector3f desiredPosition = desiredPos.second;
-        VROVector3f currentPosition = endJoint->position;
+        VROVector3f currentPosition = effectorJoint->position;
 
         if (desiredPosition.distanceAccurate(currentPosition) > kReachableEffectorThresholdMeters) {
             return false;
@@ -493,9 +531,20 @@ void VROIKRig::processFABRIKChainNode(std::shared_ptr<VROIKChain> &chain,
             std::shared_ptr<VROIKJoint> &currentNode = chain->chainJoints[i];
             std::shared_ptr<VROIKJoint> &nextNode = chain->chainJoints[i + 1];
 
-            VROVector3f dir = (nextNode->position - currentNode->position).normalize();
+            VROVector3f nextNodePosition = nextNode->position;
+            if (nextNode->isIntermediaryEffector) {
+                std::string effectorKey = _effectorTokeyMap[nextNode];
+                nextNodePosition = _effectorDesiredPositionMap[effectorKey];
+            }
+
+            VROVector3f dir = (nextNodePosition - currentNode->position).normalize();
             float distance = chain->boneLengths[i];
             VROVector3f newPos = currentNode->position.add(dir * distance);
+
+            // Guard against weird conditions
+            if (isnan(newPos.x) || isnan(newPos.y) || isnan(newPos.z)){
+                continue;
+            }
             nextNode->position = newPos;
         }
     } else {
@@ -503,9 +552,20 @@ void VROIKRig::processFABRIKChainNode(std::shared_ptr<VROIKChain> &chain,
             std::shared_ptr<VROIKJoint> &currentNode = chain->chainJoints[i];
             std::shared_ptr<VROIKJoint> &nextNode = chain->chainJoints[i - 1];
 
-            VROVector3f dir = (nextNode->position - currentNode->position).normalize();
+            VROVector3f nextNodePosition = nextNode->position;
+            if (nextNode->isIntermediaryEffector) {
+                std::string effectorKey = _effectorTokeyMap[nextNode];
+                nextNodePosition = _effectorDesiredPositionMap[effectorKey];
+            }
+
+            VROVector3f dir = (nextNodePosition - currentNode->position).normalize();
             float distance = chain->boneLengths[i-1];
             VROVector3f newPos = currentNode->position.add(dir * distance);
+
+            // Guard against weird conditions
+            if (isnan(newPos.x) || isnan(newPos.y) || isnan(newPos.z)){
+                newPos = nextNode->position;
+            }
 
             if (nextNode->isCentroidJoint) {
                 nextNode->centroidSubLocations.push_back(newPos);

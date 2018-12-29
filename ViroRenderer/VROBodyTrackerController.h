@@ -119,6 +119,13 @@ private:
     std::map<VROBodyJointType, VROMatrix4f> _cachedEffectorRootOffsets;
 
     /*
+     The root position and normal of the plane to project onto when using kProjectToPlaneTracking
+     depth tests.
+     */
+    VROVector3f _projectedPlanePosition;
+    VROVector3f _projectedPlaneNormal;
+
+    /*
      The rig, skinner and node associated with the currently bound model.
      */
     std::shared_ptr<VROIKRig> _rig;
@@ -195,10 +202,11 @@ private:
     bool isTargetReachableFromParentBone(VROBodyJoint mlJoint, VROMatrix4f targetTransform);
 
     /*
-     ARHittests for projecting a 2D ML screen coordinate into 3D space.
+     Depth tests for projecting a 2D ML screen coordinate into 3D space.
      */
-    bool performARHitTest(float x, float y, VROMatrix4f &matOut);
-    bool performARWindowHitTest(float x, float y, VROMatrix4f &matOut);
+    bool performDepthTest(float x, float y, VROMatrix4f &matOut);
+    bool performWindowDepthTest(float x, float y, VROMatrix4f &matOut);
+    bool performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut);
 
     /*
      Debug UI used by this controller.

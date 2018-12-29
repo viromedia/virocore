@@ -13,6 +13,7 @@
 #include "VROBone.h"
 #include "VROBox.h"
 #include "VROIKRig.h"
+#include "VROProjector.h"
 #if VRO_PLATFORM_IOS
 #include "VROBodyTrackeriOS.h"
 #include "VRODriverOpenGLiOS.h"
@@ -50,12 +51,12 @@ static UIColor *colors[14] = {
     [UIColor grayColor]
 };
 #endif
-static const int kTotalEffectors = 6;
-static const float kHighConfidence = 0.45;
+static const float kHighConfidence = 0.25;
 static const float kARHitTestWindowKernelPixel = 0.005;
-static const float kVolatilityThresholdMeters = 0.025;
-static const float kReachableBoneThresholdMeters = 0.05;
+static const float kVolatilityThresholdMeters = 0.1;
+static const float kReachableBoneThresholdMeters = 0.1;
 static const VROBodyJointType kBodyJointRoot = VROBodyJointType::Neck;
+static const bool kProjectToPlaneTracking = true;
 
 void VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> gltfRootNode) {
     _rig = nullptr;
@@ -91,21 +92,31 @@ void VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> gltfRootNode) 
     _mlJointToModelJointMap[VROBodyJointType::RightShoulder] =  6;
     _mlJointToModelJointMap[VROBodyJointType::RightElbow] =     8;
     _mlJointToModelJointMap[VROBodyJointType::RightWrist] =     10;
-    _mlJointToModelJointMap[VROBodyJointType::LeftHip] =        12;
-    _mlJointToModelJointMap[VROBodyJointType::LeftKnee] =       14;
-    _mlJointToModelJointMap[VROBodyJointType::LeftAnkle] =      16;
-    _mlJointToModelJointMap[VROBodyJointType::RightHip] =       11;
-    _mlJointToModelJointMap[VROBodyJointType::RightKnee] =      13;
-    _mlJointToModelJointMap[VROBodyJointType::RightAnkle] =     15;
+    _mlJointToModelJointMap[VROBodyJointType::LeftHip] =        11;
+    _mlJointToModelJointMap[VROBodyJointType::LeftKnee] =       13;
+    _mlJointToModelJointMap[VROBodyJointType::LeftAnkle] =      15;
+    _mlJointToModelJointMap[VROBodyJointType::RightHip] =       12;
+    _mlJointToModelJointMap[VROBodyJointType::RightKnee] =      14;
+    _mlJointToModelJointMap[VROBodyJointType::RightAnkle] =     16;
 
     // Map our bones on this model to the right effector
     // TODO VIRO-4674: Hook up the effectors and joints automatically
     _keyToEffectorMap.clear();
     _keyToEffectorMap["leftHand"] = 9;
     _keyToEffectorMap["rightHand"] = 10;
-    _keyToEffectorMap["leftFeet"] = 17;
-    _keyToEffectorMap["rightFeet"] = 18;
+    _keyToEffectorMap["leftAnkle"] = 15;
+    _keyToEffectorMap["rightAnkle"] = 16;
     _keyToEffectorMap["head"] = 4;
+
+    // Intermediary effectors
+    _keyToEffectorMap["LeftShoulder"] = 5;
+    _keyToEffectorMap["LeftElbow"] = 7;
+    _keyToEffectorMap["LeftHip"] = 11;
+    _keyToEffectorMap["LeftKnee"] = 13;
+    _keyToEffectorMap["RightShoulder"] = 6;
+    _keyToEffectorMap["RightElbow"] = 8;
+    _keyToEffectorMap["RightHip"] = 12;
+    _keyToEffectorMap["RightKnee"] = 14;
 
     // Set the timeout of joints in milliseconds.
     _mlJointTimeoutMap.clear();
@@ -237,11 +248,56 @@ void VROBodyTrackerController::finishCalibration() {
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
+    /*
+     If the controller is in kProjectToPlaneTracking mode, we will not be using arHitTest to
+     calculate depth for body joints. Instead, we'll be projecting all body joints onto a
+     plane facing the user at the time finishCalibration() is called. This plane is created
+     by using the model's current position that was calculated in the calibration phase with
+     a normal towards the user.
+     */
+    if (kProjectToPlaneTracking) {
+        VROMatrix4f mlRootTransform = _cachedTrackedJoints[kBodyJointRoot].getProjectedTransform();
+        _projectedPlanePosition = mlRootTransform.extractTranslation();
+
+        VROVector3f camPos = _renderer->getCamera().getPosition();
+        _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+    }
+
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+}
+
+bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut) {
+    const VROCamera &camera = _renderer->getCamera();
+    int viewport[4] = {0, 0, camera.getViewport().getWidth(), camera.getViewport().getHeight()};
+    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
+    x = viewport[2] * x;
+    y = viewport[3] * y;
+
+    // Compute the camera ray by unprojecting the point at the near clipping plane
+    // and the far clipping plane.
+    VROVector3f ncpScreen(x, y, 0.0);
+    VROVector3f ncpWorld;
+    if (!VROProjector::unproject(ncpScreen, mvp.getArray(), viewport, &ncpWorld)) {
+        return {};
+    }
+
+    VROVector3f fcpScreen(x, y, 1.0);
+    VROVector3f fcpWorld;
+    if (!VROProjector::unproject(fcpScreen, mvp.getArray(), viewport, &fcpWorld)) {
+        return {};
+    }
+    VROVector3f ray = fcpWorld.subtract(ncpWorld).normalize();
+
+    // Find the intersection between the plane and the controller forward
+    VROVector3f intersectionPoint;
+    bool success = ray.rayIntersectPlane(_projectedPlanePosition, _projectedPlaneNormal, ncpWorld, &intersectionPoint);
+    matOut.toIdentity();
+    matOut.translate(intersectionPoint);
+    return success;
 }
 
 void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
@@ -252,15 +308,6 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
     // Grab all the 2D joints of high confidence for the targets we want.
     std::map<VROBodyJointType, VROBodyJoint> latestJoints;
     for (auto &kv : joints) {
-        if (kv.first != VROBodyJointType::Neck &&
-            kv.first != VROBodyJointType::Top &&
-            kv.first != VROBodyJointType::RightAnkle &&
-            kv.first != VROBodyJointType::LeftAnkle &&
-            kv.first != VROBodyJointType::RightWrist &&
-            kv.first != VROBodyJointType::LeftWrist) {
-            continue;
-        }
-
         if (kv.second.getConfidence() > kHighConfidence) {
             latestJoints[kv.first] = kv.second;
         }
@@ -271,12 +318,12 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
         VROMatrix4f hitTransform;
         float pointX = joint.second.getScreenCoords().x;
         float pointY = joint.second.getScreenCoords().y;
-        bool success = performARHitTest(pointX, pointY, hitTransform);
+        bool success = performDepthTest(pointX, pointY, hitTransform);
 
         // If the ARHit test has failed for this joint, attempt to recover with
         // a more aggressive ARHitTest.
         VROMatrix4f updatedTransform = hitTransform;
-        if (!success && !performARWindowHitTest(pointX,
+        if (!success && !performWindowDepthTest(pointX,
                                                 pointY,
                                                 updatedTransform)) {
             joint.second.clearPojectedTransform();
@@ -311,7 +358,7 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
     // With the new found joints, update the current tracking state
     if (_cachedTrackedJoints.find(VROBodyJointType::Neck) == _cachedTrackedJoints.end()) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
-    } else if (_cachedTrackedJoints.size() == kTotalEffectors) {
+    } else if (_cachedTrackedJoints.size() == _mlJointToModelJointMap.size()) {
         setBodyTrackedState(VROBodyTrackedState::FullEffectors);
     } else if (_cachedTrackedJoints.size() >= 1) {
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
@@ -392,7 +439,7 @@ void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
     }
 }
 
-bool VROBodyTrackerController::performARWindowHitTest(float x, float y, VROMatrix4f &matOut) {
+bool VROBodyTrackerController::performWindowDepthTest(float x, float y, VROMatrix4f &matOut) {
     float d = kARHitTestWindowKernelPixel;
     std::vector<VROVector3f> trials;
     trials.push_back(VROVector3f(x,     y, 0));
@@ -405,7 +452,7 @@ bool VROBodyTrackerController::performARWindowHitTest(float x, float y, VROMatri
     float count = 0;
     for (auto t : trials) {
         VROMatrix4f estimate;
-        if (performARHitTest(t.x, t.y, estimate)) {
+        if (performDepthTest(t.x, t.y, estimate)) {
             count = count + 1;
             total = total.add(estimate.extractTranslation());
         }
@@ -421,7 +468,13 @@ bool VROBodyTrackerController::performARWindowHitTest(float x, float y, VROMatri
     return true;
 }
 
-bool VROBodyTrackerController::performARHitTest(float x, float y, VROMatrix4f &matOut) {
+bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &matOut) {
+    // Use plane projection if kProjectToPlaneTracking is enabled during tracking/non-calibration.
+    if (kProjectToPlaneTracking && !_calibrating) {
+        return performUnprojectionToPlane(x, y, matOut);
+    }
+
+    // Else use the usual ARHitTest to determine depth.
     float _currentProjection = 0.0037;
     int viewportWidth =_renderer->getCamera().getViewport().getWidth();
     int viewportHeight = _renderer->getCamera().getViewport().getHeight();
@@ -507,20 +560,71 @@ void VROBodyTrackerController::updateModel() {
 
     if (_cachedTrackedJoints.find(VROBodyJointType::LeftAnkle) != _cachedTrackedJoints.end()) {
         VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftAnkle].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["leftFeet"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("leftFeet", pos);
+        _debugBoxEffectors["leftAnkle"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("leftAnkle", pos);
     }
 
     if (_cachedTrackedJoints.find(VROBodyJointType::RightAnkle) != _cachedTrackedJoints.end()) {
         VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightAnkle].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["rightFeet"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("rightFeet", pos);
+        _debugBoxEffectors["rightAnkle"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("rightAnkle", pos);
     }
 
     if (_cachedTrackedJoints.find(VROBodyJointType::Top) != _cachedTrackedJoints.end()) {
         VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::Top].getProjectedTransform().extractTranslation();
         _debugBoxEffectors["head"]->setWorldTransform(pos, i);
         _rig->setPositionForEffector("head", pos);
+    }
+
+    // Additional intermediary joints
+    // TODO VIRO-4674: Hook up the effectors and joints automatically
+    if (_cachedTrackedJoints.find(VROBodyJointType::RightElbow) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightElbow].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["RightElbow"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("RightElbow", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::LeftElbow) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftElbow].getProjectedTransform().extractTranslation();
+        pwarn("Daniel positions -> %s", pos.toString().c_str());
+        _debugBoxEffectors["LeftElbow"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("LeftElbow", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::RightShoulder) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightShoulder].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["RightShoulder"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("RightShoulder", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::LeftShoulder) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftShoulder].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["LeftShoulder"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("LeftShoulder", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::RightHip) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightHip].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["RightHip"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("RightHip", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::RightKnee) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightKnee].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["RightKnee"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("RightKnee", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::LeftHip) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftHip].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["LeftHip"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("LeftHip", pos);
+    }
+
+    if (_cachedTrackedJoints.find(VROBodyJointType::LeftKnee) != _cachedTrackedJoints.end()) {
+        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftKnee].getProjectedTransform().extractTranslation();
+        _debugBoxEffectors["LeftKnee"]->setWorldTransform(pos, i);
+        _rig->setPositionForEffector("LeftKnee", pos);
     }
 }
 

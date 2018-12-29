@@ -39,6 +39,9 @@ struct VROIKJoint {
     bool isCentroidJoint;
     std::vector<VROVector3f> centroidSubLocations;
 
+    // True if this joint is an intermediary effector.
+    bool isIntermediaryEffector;
+
     // Pointers to parent and child IKJointNodes
     std::shared_ptr<VROIKJoint> parent;
     std::vector<std::shared_ptr<VROIKJoint>> children;
@@ -107,11 +110,12 @@ private:
      Map of keys to IK joint effectors in this rig
      */
     std::map<std::string, std::shared_ptr<VROIKJoint>> _keyToEffectorMap;
+    std::map<std::shared_ptr<VROIKJoint>, std::string> _effectorTokeyMap;
 
     /*
      Map representing the desired world positions of IK joint effectors by their keys
      */
-    std::map<std::string, VROVector3f> _endAffectorDesiredPositionMap;
+    std::map<std::string, VROVector3f> _effectorDesiredPositionMap;
 
     /*
      True if we need to initialize / re-invalidate the joint structure of this rig
