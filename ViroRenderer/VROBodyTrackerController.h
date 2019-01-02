@@ -15,7 +15,6 @@
 #include "VROEventDelegate.h"
 #include "VRORenderer.h"
 #if VRO_PLATFORM_IOS
-#include "VROARSessioniOS.h"
 #include "VROViewAR.h"
 #import <UIKit/UIKit.h>
 #endif

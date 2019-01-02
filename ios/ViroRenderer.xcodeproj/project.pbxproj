@@ -641,6 +641,8 @@
 		8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130DA01E4018250050D83B /* VROSoundData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130DA61E401B910050D83B /* VROSoundDataDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A1462D11F327D1500643EF4 /* dark_circle_shadow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1462D01F327D1500643EF4 /* dark_circle_shadow.png */; };
+		8A291A1C21DD533200BB3934 /* VROBodyTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3F138121654E0A00A3CEFB /* VROBodyTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A291A1D21DD533300BB3934 /* VROBodyTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3F138121654E0A00A3CEFB /* VROBodyTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A2DA3AF1F8B2D25001FC3BA /* VROInputControllerAR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A2DA3AD1F8B2C0F001FC3BA /* VROInputControllerAR.h */; };
 		8A2DA3B01F8B2D35001FC3BA /* VROInputPresenterAR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A2DA3AB1F8B2C0F001FC3BA /* VROInputPresenterAR.h */; };
 		8A2DA3B11F8B2D84001FC3BA /* VROInputControllerAR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DA3AC1F8B2C0F001FC3BA /* VROInputControllerAR.cpp */; };
@@ -1183,7 +1185,7 @@
 		8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0731EBBD35200C19BCA /* SvenArmor_Spec.png */; };
 		8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */; };
-		8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF396A1CB4242000A86CA3 /* VRORenderer.h */; };
+		8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF396A1CB4242000A86CA3 /* VRORenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD06F1E1E831E81003D3BC4 /* VROCameraTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD06F1C1E831E81003D3BC4 /* VROCameraTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD06F211E832760003D3BC4 /* VROCameraTextureiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD06F1F1E832760003D3BC4 /* VROCameraTextureiOS.cpp */; };
 		8FD06F221E832760003D3BC4 /* VROCameraTextureiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD06F201E832760003D3BC4 /* VROCameraTextureiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3991,6 +3993,7 @@
 				13B6731E212229B20040FB72 /* VROPostProcessEffectFactory.h in Headers */,
 				13B6731F212229B20040FB72 /* VRORenderTarget.h in Headers */,
 				13B67320212229B20040FB72 /* VROTextureReference.h in Headers */,
+				8A291A1D21DD533300BB3934 /* VROBodyTracker.h in Headers */,
 				13B67321212229B20040FB72 /* VROSceneRendererGVR.h in Headers */,
 				13B67322212229B20040FB72 /* VROARImperativeSession.h in Headers */,
 				13B67323212229B20040FB72 /* VROParticle.h in Headers */,
@@ -4380,6 +4383,7 @@
 				8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */,
 				A5A1074C212D518B008B2DFB /* gif_lib.h in Headers */,
 				A5A10742212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */,
+				8A291A1C21DD533200BB3934 /* VROBodyTracker.h in Headers */,
 				8F9278081C670FD900FF892A /* VROTriangle.h in Headers */,
 				8F65F78E1C90D83600415115 /* VROTransformConstraint.h in Headers */,
 				8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */,
