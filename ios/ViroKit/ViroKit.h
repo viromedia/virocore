@@ -190,6 +190,9 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VRORendererTest.h>
 #import <ViroKit/VRORendererTestHarness.h>
 
+// Body Tracking
+#import <ViroKit/VROBodyTrackeriOS.h>
+
 // OpenCV
 //#import <ViroKit/VROOpenCV.h>
 
