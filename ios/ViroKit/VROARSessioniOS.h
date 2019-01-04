@@ -16,14 +16,13 @@
 #include <map>
 #include <vector>
 
-// image tracking inports
-#include "VROTrackingHelper.h"
 #include "VRORenderer.h"
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
 class VROBodyTracker;
 class VROBodyTrackeriOS;
+class VROTrackingHelper;
 @class VROARKitSessionDelegate;
 
 class VROARSessioniOS : public VROARSession, public std::enable_shared_from_this<VROARSessioniOS> {

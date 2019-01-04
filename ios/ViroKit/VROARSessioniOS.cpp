@@ -31,6 +31,7 @@
 #include "VROARCameraiOS.h"
 #include "VROARImageTracker.h"
 #include "VROBodyTrackeriOS.h"
+#include "VROTrackingHelper.h"
 
 #pragma mark - Lifecycle and Initialization
 

@@ -386,7 +386,7 @@
 		13B67396212229B20040FB72 /* keen_io_sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631A72065C1EA00A74EFC /* keen_io_sqlite3ext.h */; };
 		13B67397212229B20040FB72 /* VROShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67398212229B20040FB72 /* VROContour.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F201C59210159E600637A75 /* VROContour.h */; };
-		13B67399212229B20040FB72 /* VROARSessioniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */; };
+		13B67399212229B20040FB72 /* VROARSessioniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B6739A212229B20040FB72 /* VROTimingFunctionPowerDeceleration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DE9B1C4826F80089C31A /* VROTimingFunctionPowerDeceleration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B6739B212229B20040FB72 /* VROImagePostProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */; };
 		13B6739C212229B20040FB72 /* VROGeometrySubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659191CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h */; };
@@ -1087,7 +1087,7 @@
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
 		8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */; };
-		8FAE18C41EE79D470021C7BB /* VROARSessioniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */; };
+		8FAE18C41EE79D470021C7BB /* VROARSessioniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C51EE79D6D0021C7BB /* VROARFrameiOS.cpp */; };
 		8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */; };
 		8FAE18CB1EE79D880021C7BB /* VROARCameraiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */; };
