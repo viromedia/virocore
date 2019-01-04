@@ -74,7 +74,8 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
             if (!shared) {
                 return;
             }
-            ((VROBone *)animatable)->setTransform(m);
+            VROBone *bone = ((VROBone *)animatable);
+            bone->setTransform(m, bone->getTransformType());
         }, keyTimes, keyValues);
         
         bone->animate(animation);
