@@ -78,13 +78,25 @@ VROMatrix4f VROSkinner::getModelTransform(int boneIndex) {
     }
 }
 
-VROMatrix4f VROSkinner::getCurrentBoneWorldTransform(int boneId) {
-    // TODO VIRO-4712: Account for Non-Legacy Bones when setting bone transforms
-    if (_skeleton->getBone(boneId)->getTransformType() != VROBoneTransformType::Legacy) {
-        pwarn("Unable to grab world transform of non-Legacy bone types");
+VROMatrix4f VROSkinner::getCurrentBoneWorldTransform(std::string boneName) {
+    std::shared_ptr<VROBone> bone = _skeleton->getBone(boneName);
+    if (bone == nullptr) {
+        pwarn("Unable to find bone of name %s", boneName.c_str());
         return VROMatrix4f::identity();
     }
+    return getCurrentBoneWorldTransform(bone);
+}
 
+VROMatrix4f VROSkinner::getCurrentBoneWorldTransform(int boneId) {
+    if (boneId >= _skeleton->getNumBones()) {
+        pwarn("Unable to find bone index %d", boneId);
+        return VROMatrix4f::identity();
+    }
+    std::shared_ptr<VROBone> bone = _skeleton->getBone(boneId);
+    return getCurrentBoneWorldTransform(bone);
+}
+
+VROMatrix4f VROSkinner::getCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone) {
     // Grab the skinner's node transform
     std::shared_ptr<VRONode> skinnerNode = _skinnerNodeWeak.lock();
     VROMatrix4f skinnerWorldTrans = VROMatrix4f::identity();
@@ -93,15 +105,48 @@ VROMatrix4f VROSkinner::getCurrentBoneWorldTransform(int boneId) {
     }
 
     // Grab the bone's transform, convert it into geometry and then finally world space.
-    const std::shared_ptr<VROBone> &bone = _skeleton->getBone(boneId);
-    VROMatrix4f transform = _inverseBindTransforms[boneId].multiply(bone->getTransform());
+    // TODO VIRO-4758: Account for Local Bones when setting bone transforms
+    VROMatrix4f transform = VROMatrix4f::identity();
+    int boneId = bone->getIndex();
+    switch(bone->getTransformType()) {
+        case VROBoneTransformType::Legacy:
+            transform = _inverseBindTransforms[boneId].multiply(bone->getTransform());
+            break;
+        case VROBoneTransformType::Concatenated:
+            transform = bone->getTransform();
+            break;
+        default:
+            return VROMatrix4f::identity();
+    }
+
     return skinnerWorldTrans.multiply(transform);
 }
 
 void VROSkinner::setCurrentBoneWorldTransform(int boneId, VROMatrix4f targetWorldTrans, bool recurse) {
-    // TODO VIRO-4712: Account for Non-Legacy Bones when setting bone transforms
-    if (_skeleton->getBone(boneId)->getTransformType() != VROBoneTransformType::Legacy) {
-        pwarn("Unable to set world transform of non-Legacy bone types");
+    if (boneId >= _skeleton->getNumBones()) {
+        pwarn("Unable to find bone index %d", boneId);
+        return;
+    }
+    std::shared_ptr<VROBone> bone = _skeleton->getBone(boneId);
+    return setCurrentBoneWorldTransform(bone, targetWorldTrans, recurse);
+}
+
+void VROSkinner::setCurrentBoneWorldTransform(std::string boneName, VROMatrix4f targetWorldTrans, bool recurse) {
+    std::shared_ptr<VROBone> bone = _skeleton->getBone(boneName);
+    if (bone == nullptr) {
+        pwarn("Unable to find bone of name %s", boneName.c_str());
+        return;
+    }
+    return setCurrentBoneWorldTransform(bone, targetWorldTrans, recurse);
+}
+
+void VROSkinner::setCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone,
+                                              VROMatrix4f targetWorldTrans,
+                                              bool recurse) {
+    // TODO VIRO-4758: Account for Local Bones when setting bone transforms
+    int boneId = bone->getIndex();
+    if (_skeleton->getBone(boneId)->getTransformType() == VROBoneTransformType::Local) {
+        pwarn("Unable to set world transform of Local bone types");
         return;
     }
 
@@ -117,14 +162,22 @@ void VROSkinner::setCurrentBoneWorldTransform(int boneId, VROMatrix4f targetWorl
 
     // Convert the desired targetWorldTransform into skinner node space
     VROMatrix4f targetSkinnerTrans = skinnerWorldTrans.invert().multiply(targetWorldTrans);
-
-    // Convert targetSkinnerTransform into boneSpace - say targetedBoneSpace (note this is
-    // done by inverseBind.invert). Since the bindTransform already considers the starting
-    // geometryBounded bone transform, this also produces the bone delta tha twe can set
-    // on the skeleton.
-    VROMatrix4f delta = _inverseBindTransforms[boneId].invert().multiply(targetSkinnerTrans);
-    const std::shared_ptr<VROBone> &joint = _skeleton->getBone(boneId);
-    joint->setTransform(delta, VROBoneTransformType::Legacy);
+    VROMatrix4f boneTarget;
+    switch(bone->getTransformType()) {
+        case VROBoneTransformType::Legacy:
+            // Convert targetSkinnerTransform into boneSpace - say targetedBoneSpace (note this is
+            // done by inverseBind.invert). Since the bindTransform already considers the starting
+            // geometryBounded bone transform, this also produces the bone delta tha twe can set
+            // on the skeleton.
+            boneTarget = _inverseBindTransforms[boneId].invert().multiply(targetSkinnerTrans);
+            break;
+        case VROBoneTransformType::Concatenated:
+            boneTarget = targetSkinnerTrans;
+            break;
+        default:
+            return;
+    }
+    bone->setTransform(boneTarget, bone->getTransformType());
 
     // If we are not recursing this calculation down to child bones, return.
     if (!recurse) {

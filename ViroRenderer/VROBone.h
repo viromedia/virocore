@@ -60,7 +60,8 @@ class VROBone : public VROAnimatable {
     
 public:
     
-    VROBone(int parentIndex, std::string name, VROMatrix4f localTransform) :
+    VROBone(int boneIndex, int parentIndex, std::string name, VROMatrix4f localTransform) :
+        _index(boneIndex),
         _parentIndex(parentIndex),
         _name(name),
         _localTransform(localTransform),
@@ -73,7 +74,14 @@ public:
      are injected by skeletal animations as they are run.
      */
     void setTransform(VROMatrix4f transform, VROBoneTransformType type = VROBoneTransformType::Legacy);
-    
+
+    /*
+     Returns the index of this bone within the skeleton.
+     */
+    int getIndex() const {
+        return _index;
+    }
+
     /*
      Get the index of the parent bone.
      */
@@ -98,9 +106,19 @@ public:
     VROMatrix4f getLocalTransform() const {
         return _localTransform;
     }
-    
+
+    /*
+     Returns the name associated with this bone, if any.
+     */
+    std::string getName() {
+        return _name;
+    }
 private:
-    
+    /*
+     The index of this node in the skeleton.
+     */
+    int _index;
+
     /*
      The index of this node's parent in the skeleton. This is an index into the parent
      VROSkeleton's _bones array.

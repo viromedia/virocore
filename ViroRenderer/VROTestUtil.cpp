@@ -237,7 +237,8 @@ std::shared_ptr<VROTexture> VROTestUtil::loadTexture(std::string texture, bool s
 }
 
 std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3f position, VROVector3f scale, VROVector3f rotation,
-                                                   int lightMask, std::string animation, std::shared_ptr<VRODriver> driver) {
+                                                   int lightMask, std::string animation, std::shared_ptr<VRODriver> driver,
+                                                   std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     std::string url;
     std::string base;
     VROResourceType resourceType = VROResourceType::URL;
@@ -262,7 +263,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
 
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     VROFBXLoader::loadFBXFromResource(url, resourceType, node, driver,
-                                        [scale, position, rotation, lightMask, animation](std::shared_ptr<VRONode> node, bool success) {
+                                        [scale, position, rotation, lightMask, animation, onFinish](std::shared_ptr<VRONode> node, bool success) {
                                             if (!success) {
                                                 return;
                                             }
@@ -285,8 +286,14 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
                                             for (std::string animation : animations) {
                                                 pinfo("Loaded animation [%s]", animation.c_str());
                                             }
-                                            animateTake(node, animation);
 
+                                            if (animations.size() != 0) {
+                                                animateTake(node, animation);
+                                            }
+
+                                            if (onFinish != nullptr) {
+                                                onFinish(node, success);
+                                            }
                                             pinfo("FBX HAS LOADED");
                                         });
     return node;

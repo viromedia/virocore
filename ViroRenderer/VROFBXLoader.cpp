@@ -343,6 +343,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
         if (geo_pb.has_skin() && skeleton) {
             std::shared_ptr<VROSkinner> skinner = loadFBXSkinner(geo_pb.skin(), skeleton);
             geo->setSkinner(skinner);
+            skinner->setSkinnerNode(node);
             
             bool hasScaling = false;
             for (int i = 0; i < node_pb.skeletal_animation_size(); i++) {
@@ -667,7 +668,10 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
             }
         }
         
-        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(parentIndex, name, boneLocalTransform);
+        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(i,
+                                                                  parentIndex,
+                                                                  name,
+                                                                  boneLocalTransform);
         bones.push_back(bone);
     }
     

@@ -399,6 +399,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     _context->setPBREnabled(_choreographer->isPBREnabled());
     _context->setFrame(frame);
     _context->setFPS(getFPS());
+    _context->getPencil()->clear();
     notifyFrameStart();
     
     /*
@@ -434,7 +435,6 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
      coordinate (e.g., Z=0).
      */
     _context->setOrthographicMatrix(viewport.getOrthographicProjection(0, kZFar));
-    _context->getPencil()->clear();
     _context->setShadowMap(nullptr);
     
     _renderMetadata = std::make_shared<VRORenderMetadata>();

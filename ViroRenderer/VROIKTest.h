@@ -11,6 +11,7 @@
 #include "VRORendererTest.h"
 #include "VROEventDelegate.h"
 
+class VROPencil;
 class VROIKEventDelegate;
 class VROIKTest : public VROFrameListener, public VRORendererTest, public std::enable_shared_from_this<VROFrameListener> {
 public:
@@ -56,13 +57,12 @@ private:
     std::shared_ptr<VROSkinner> _skinner;
     std::map<std::string, int> _endEffectorBones;
     void initSkinner(std::shared_ptr<VRONode> gltfNode);
-    bool _initWithRig = true;
 
     void refreshSkeletalRig();
     std::shared_ptr<VRONode> createGLTFEffectorBlock(bool isAffector, std::string tag);
-    void refreshBasicNonSkeletalRig();
     void calculateSkeletalLines(std::shared_ptr<VRONode> node,
                                 std::vector<std::vector<VROVector3f>> &paths);
+    void renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex);
 };
 
 class VROIKEventDelegate : public VROEventDelegate {

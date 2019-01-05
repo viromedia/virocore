@@ -70,7 +70,7 @@ void VROPerfTest::build(std::shared_ptr<VRORenderer> renderer,
         rootNode->addLight(light);
         
         std::shared_ptr<VRONode> fbx = VROTestUtil::loadFBXModel("pug", position, { 1, 1, 1 }, { 0, 0, 0 },
-                                                                 (0x1 << i), "Take 001", driver);
+                                                                 (0x1 << i), "Take 001", driver, nullptr);
         rootNode->addChildNode(fbx);
         
         std::shared_ptr<VROSurface> surface = VROSurface::createSurface(2, 2);

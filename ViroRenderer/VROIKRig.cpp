@@ -590,7 +590,7 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
         mat.scale(currentScale.x, currentScale.y, currentScale.z);
         mat.rotate(currentRot);
         mat.translate(jointPos);
-        _skinner->setCurrentBoneWorldTransform(currentBoneId, mat);
+        _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, false);
         return;
     }
 

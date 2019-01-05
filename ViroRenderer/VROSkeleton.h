@@ -13,6 +13,8 @@ class VROBone;
 
 #include <memory>
 #include <vector>
+#include <map>
+#include <string>
 
 /*
  The VROSkeleton is the bone-structure that defines the control points
@@ -25,8 +27,7 @@ class VROSkeleton {
     
 public:
     
-    VROSkeleton(std::vector<std::shared_ptr<VROBone>> bones) :
-        _bones(bones) {}
+    VROSkeleton(std::vector<std::shared_ptr<VROBone>> bones);
     virtual ~VROSkeleton() {}
     
     int getNumBones() const {
@@ -34,6 +35,13 @@ public:
     }
     const std::shared_ptr<VROBone> getBone(int index) const {
         return _bones[index];
+    }
+    const std::shared_ptr<VROBone> getBone(std::string name) const {
+        auto bone = _nameToBonesMap.find(name);
+        if (bone != _nameToBonesMap.end()) {
+            return bone->second;
+        }
+        return nullptr;
     }
     
 private:
@@ -44,7 +52,11 @@ private:
      geometry.
      */
     std::vector<std::shared_ptr<VROBone>> _bones;
-    
+
+    /*
+     A map of all known bone names to bones
+     */
+    std::map<std::string, std::shared_ptr<VROBone>> _nameToBonesMap;
 };
 
 #endif /* VROSkeleton_h */

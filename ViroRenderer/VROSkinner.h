@@ -17,7 +17,7 @@
 class VRONode;
 class VROGeometry;
 class VROSkeleton;
-
+class VROBone;
 /*
  VROSkinner is the base class for skeletal animation; it associates an animation
  skeleton with the geometry that will be deformed.
@@ -137,14 +137,18 @@ public:
     }
 
     /*
-     Returns the world transform of the bone matching the given boneId.
+     Returns the world transform of the given bone.
      */
     VROMatrix4f getCurrentBoneWorldTransform(int boneId);
+    VROMatrix4f getCurrentBoneWorldTransform(std::string boneName);
+    VROMatrix4f getCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone);
 
     /*
-     Sets the world transform of the bone matching the given boneId.
+     Sets the world transform of the given bone.
      */
-    void setCurrentBoneWorldTransform(int boneId, VROMatrix4f transform, bool recurse = false);
+    void setCurrentBoneWorldTransform(int boneId, VROMatrix4f transform, bool recurse);
+    void setCurrentBoneWorldTransform(std::string boneName, VROMatrix4f transform, bool recurse);
+    void setCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone, VROMatrix4f transform, bool recurse);
 
 private:
     /*

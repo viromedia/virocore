@@ -1485,6 +1485,7 @@
 		A5BE9E1220E14F3F00DB4E7A /* Monster.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1120E14F3F00DB4E7A /* Monster.glb */; };
 		A5BE9E1420E14F6800DB4E7A /* RiggedFigure.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1320E14F6800DB4E7A /* RiggedFigure.glb */; };
 		A5BE9E1620E14F7700DB4E7A /* RiggedSimple.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1520E14F7700DB4E7A /* RiggedSimple.glb */; };
+		A5C931EC21E028EE00564C2D /* ninja in Resources */ = {isa = PBXBuildFile; fileRef = A5C931EB21E028EE00564C2D /* ninja */; };
 		A5DA443021AF473600F86923 /* VROIKRig.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DA442E21AF473600F86923 /* VROIKRig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5DA443121AF473600F86923 /* VROIKRig.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DA442E21AF473600F86923 /* VROIKRig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5DA443221AF473600F86923 /* VROIKRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5DA442F21AF473600F86923 /* VROIKRig.cpp */; };
@@ -2493,6 +2494,7 @@
 		A5BE9E1120E14F3F00DB4E7A /* Monster.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = Monster.glb; path = ../android/nativetest/src/main/assets/Monster.glb; sourceTree = "<group>"; };
 		A5BE9E1320E14F6800DB4E7A /* RiggedFigure.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = RiggedFigure.glb; path = ../android/nativetest/src/main/assets/RiggedFigure.glb; sourceTree = "<group>"; };
 		A5BE9E1520E14F7700DB4E7A /* RiggedSimple.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = RiggedSimple.glb; path = ../android/nativetest/src/main/assets/RiggedSimple.glb; sourceTree = "<group>"; };
+		A5C931EB21E028EE00564C2D /* ninja */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ninja; path = ../android/nativetest/src/main/assets/ninja; sourceTree = "<group>"; };
 		A5DA442E21AF473600F86923 /* VROIKRig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROIKRig.h; sourceTree = "<group>"; };
 		A5DA442F21AF473600F86923 /* VROIKRig.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIKRig.cpp; sourceTree = "<group>"; };
 		A5DA443521B0BD1500F86923 /* VROIKTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROIKTest.cpp; sourceTree = "<group>"; };
@@ -3683,6 +3685,7 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A5C931EB21E028EE00564C2D /* ninja */,
 				8F68E3A2219B3050000A7C64 /* darkerSmoke.png */,
 				8F68E3A3219B3050000A7C64 /* darkSmoke.png */,
 				8F68E3A0219A35ED000A7C64 /* floor_transparent_03.png */,
@@ -5053,6 +5056,7 @@
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
 				8FA9A254207E83980022C55D /* Lamborginhi_glass_Roughness.png in Resources */,
 				8F5EEEA920329C9B0059C9E7 /* cupcake.obj in Resources */,
+				A5C931EC21E028EE00564C2D /* ninja in Resources */,
 				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
 				A5BE9E1420E14F6800DB4E7A /* RiggedFigure.glb in Resources */,
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,

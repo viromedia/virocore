@@ -13,6 +13,12 @@
 #include "VROPolyline.h"
 #include "VROEventDelegate.h"
 #include "VROIKRig.h"
+#include "VROPencil.h"
+#include "VROBone.h"
+#include "VROSkeleton.h"
+#include "VROSkinner.h"
+static const bool kUseGLTFModel = false;
+static const bool kinit3DModelWithRig = true;
 
 VROIKTest::VROIKTest():VRORendererTest(VRORendererTestType::InverseKinematics) {
 }
@@ -387,17 +393,32 @@ void VROIKTest::test3DSkinner(std::shared_ptr<VRODriver> driver) {
     _sceneController->getScene()->getRootNode()->addLight(light);
 
     _is3DModelTest = true;
-    VROVector3f pos = VROVector3f( 0, -0.5, -0.6);
-    VROVector3f scale = VROVector3f( 1,  1,  1 );
-    std::shared_ptr<VRONode> rootgLTFNode =  VROTestUtil::loadGLTFModel("CesiumMan","glb",
-                                                                        pos, scale, 1, "", driver,
-                                                                        [this](std::shared_ptr<VRONode> node, bool success){
-                                                                            node->setIgnoreEventHandling(true);
-                                                                            node->setScale(VROVector3f(0.5,0.5,0.5));
-                                                                            node->setRotationEuler(VROVector3f(0,toRadians(-90),0));
-                                                                            initSkinner(node);
-                                                                        });
-    _sceneController->getScene()->getRootNode()->addChildNode(rootgLTFNode);
+    std::shared_ptr<VRONode> rootModelNode;
+    if (kUseGLTFModel) {
+        VROVector3f pos = VROVector3f( 0, -5.5, -8.0);
+        VROVector3f scale = VROVector3f( 5,  5,  5 );
+        rootModelNode =  VROTestUtil::loadGLTFModel("CesiumMan","glb",
+                                                   pos, scale, 1, "", driver,
+                                                   [this](std::shared_ptr<VRONode> node, bool success){
+                                                       node->setIgnoreEventHandling(true);
+                                                       node->setRotationEuler(VROVector3f(0,toRadians(-90),0));
+                                                       initSkinner(node);
+                                                   });
+    } else {
+        VROVector3f pos = VROVector3f( 0, -1.5, -5);
+        VROVector3f scale = VROVector3f( 1,  1, 1 );
+        VROVector3f rot = VROVector3f(0,0,0);
+        rootModelNode = VROTestUtil::loadFBXModel("ninja/ninja",
+                                                                     pos,
+                                                                     scale, rot,
+                                                                     1, "", driver,
+                                                                     [this](std::shared_ptr<VRONode> node, bool success){
+                                                                         node->setIgnoreEventHandling(true);
+                                                                         initSkinner(node);
+                                                                     });
+    }
+
+    _sceneController->getScene()->getRootNode()->addChildNode(rootModelNode);
 
     // Reset Box.
     std::shared_ptr<VROBox> debugResetBox = VROBox::createBox(0.06, 0.06, 0.06);
@@ -426,28 +447,75 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
         return;
     }
     _skinner = skinners[0];
-    _endEffectorBones["leftHand"] = 9;
-    _endEffectorBones["rightHand"] = 10;
-    _endEffectorBones["leftFeet"] = 16;
-    _endEffectorBones["rightFeet"] = 15;
-    _endEffectorBones["head"] = 4;
+
+    // If using gLTF model for testing, we manually map the bone indexes.
+    _endEffectorBones["LeftWrist"]      = 9;
+    _endEffectorBones["RightWrist"]     = 10;
+    _endEffectorBones["LeftAnkle"]      = 16;
+    _endEffectorBones["RightAnkle"]     = 15;
+    _endEffectorBones["Head"]           = 4;
 
     // Intermediary effectors
-    _endEffectorBones["LeftShoulder"] = 5;
-    _endEffectorBones["LeftElbow"] = 7;
-    _endEffectorBones["LeftHip"] = 11;
-    _endEffectorBones["LeftKnee"] = 13;
+    //_endEffectorBones["LeftShoulder"]   = 5;
+    //_endEffectorBones["LeftElbow"]      = 7;
+    _endEffectorBones["LeftHip"]        = 11;
+    _endEffectorBones["LeftKnee"]       = 13;
 
-    _endEffectorBones["RightShoulder"] = 6;
-    _endEffectorBones["RightElbow"] = 8;
-    _endEffectorBones["RightHip"] = 12;
-    _endEffectorBones["RightKnee"] = 14;
+    _endEffectorBones["RightShoulder"]  = 6;
+    _endEffectorBones["RightElbow"]     = 8;
+    _endEffectorBones["RightHip"]       = 12;
+    _endEffectorBones["RightKnee"]      = 14;
 
-    if (!_initWithRig) {
+    // Else if using an FBX model with predefined joint names, refresh our effectors.
+    // Note our predefined joint names align with the keys within _endEffectorBones above,
+    // so we can simply iterate through it and grab the corresponding bond indexes.
+    if (!kUseGLTFModel) {
+        for (const auto &effectorPair : _endEffectorBones) {
+            std::string key = effectorPair.first;
+            int boneId = _skinner->getSkeleton()->getBone(key)->getIndex();
+            _endEffectorBones[key] = boneId;
+        }
+    }
+
+    if (!kinit3DModelWithRig) {
         return;
     }
     _rig = std::make_shared<VROIKRig>(skinners[0], _endEffectorBones);
     gltfNode->setIKRig(_rig);
+}
+
+void VROIKTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex) {
+    if (_skinner == nullptr) {
+        return;
+    }
+    
+    std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
+    // First get all the child joints for this jointIndex
+    std::vector<int> childBoneIndexes;
+    for (int i = 0; i < skeleton->getNumBones(); i ++) {
+        const std::shared_ptr<VROBone> &bone = skeleton->getBone(i);
+        if (bone->getParentIndex() == jointIndex && jointIndex != i){
+            childBoneIndexes.push_back(i);
+        }
+    }
+
+    if (childBoneIndexes.size() <=0) {
+        return;
+    }
+
+    // Now draw a line from the child joint to it's parent.
+    for (int childJointIndex : childBoneIndexes) {
+        // Grab the animated bone in world space.
+        VROMatrix4f animatedChild = _skinner->getCurrentBoneWorldTransform(childJointIndex);
+        VROMatrix4f animatedParent = _skinner->getCurrentBoneWorldTransform(jointIndex);
+
+        VROVector3f from = animatedChild.extractTranslation();
+        VROVector3f to = animatedParent.extractTranslation();
+        pencil->draw(from, to);
+
+        // Now move down and treat the child as a parent
+        renderDebugSkeletal(pencil, childJointIndex);
+    }
 }
 
 void VROIKTest::calculateSkeletalLines(std::shared_ptr<VRONode> node, std::vector<std::vector<VROVector3f>> &paths) {
@@ -470,24 +538,34 @@ void VROIKTest::calculateSkeletalLines(std::shared_ptr<VRONode> node, std::vecto
     }
 }
 
-void VROIKTest::refreshBasicNonSkeletalRig() {
-    std::vector<std::vector<VROVector3f>> paths;
-    calculateSkeletalLines(_currentRoot, paths);
-    _debugRigSkeletalLine->setPaths(paths);
-}
-
 void VROIKTest::refreshSkeletalRig() {
     for (auto ef : _endEffectorBones) {
-        VROVector3f pos = _skinner->getCurrentBoneWorldTransform(ef.second).extractTranslation();
+        std::string boneName = ef.first;
+        int boneIndex = ef.second;
+
+        VROMatrix4f transform;
+        if (kUseGLTFModel) {
+            transform = _skinner->getCurrentBoneWorldTransform(boneIndex);
+        } else {
+            transform = _skinner->getCurrentBoneWorldTransform(boneName);
+        }
+
+        VROVector3f bonePosition = transform.extractTranslation();
+        VROQuaternion boneRot = transform.extractRotation(transform.extractScale());
+
         std::shared_ptr<VRONode> block = createGLTFEffectorBlock(true, ef.first);
         if (_rig == nullptr) {
-            block->setTag("Bone:" + VROStringUtil::toString(ef.second));
+            if (kUseGLTFModel) {
+                block->setTag("Bone:" + VROStringUtil::toString(boneIndex));
+            } else {
+                block->setTag("Bone:" + boneName);
+            }
         }
 
         _sceneController->getScene()->getRootNode()->addChildNode(block);
         VROMatrix4f ident;
         ident.toIdentity();
-        block->setWorldTransform(pos, ident);
+        block->setWorldTransform(bonePosition, boneRot);
     }
 }
 
@@ -530,9 +608,9 @@ std::shared_ptr<VRONode> VROIKTest::createBlock(bool isAffector, std::string tag
 
 std::shared_ptr<VRONode> VROIKTest::createGLTFEffectorBlock(bool isAffector, std::string tag) {
     // Create our debug box node
-    float dimen = 0.03;
+    float dimen = 0.13;
     if (isAffector) {
-        dimen =  0.03;
+        dimen =  0.13;
     }
     std::shared_ptr<VROBox> box = VROBox::createBox(dimen, dimen, dimen);
     std::shared_ptr<VROMaterial> mat = std::make_shared<VROMaterial>();
@@ -565,8 +643,8 @@ std::shared_ptr<VRONode> VROIKTest::createGLTFEffectorBlock(bool isAffector, std
 
 
 void VROIKTest::onFrameWillRender(const VRORenderContext &context) {
-    if (!_is3DModelTest) {
-        refreshBasicNonSkeletalRig();
+    if (_is3DModelTest) {
+        renderDebugSkeletal(context.getPencil(), 0);
     }
 }
 
@@ -586,17 +664,19 @@ void VROIKTest::onClick(int source,
     }
 
     std::string tag = node->getTag();
-    if (VROStringUtil::strcmpinsensitive(node->getTag(), "RESET")) {pwarn("Daniel 1");
+    if (VROStringUtil::strcmpinsensitive(node->getTag(), "RESET")) {
         refreshSkeletalRig();
     }
 }
 
 void VROIKTest::onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition) {
+    // For cases where we are merely testing basic IK Rigs.
     if (!_is3DModelTest) {
         _rig->setPositionForEffector(node->getTag(), newPosition);
         return;
     }
 
+    // For cases where we are testing a full skeletal IK Rig.
     std::string tag = node->getTag();
     if (VROStringUtil::startsWith(tag, "Bone:")) {
         std::string boneTag = tag.substr(5, tag.size() - 5);
@@ -605,7 +685,12 @@ void VROIKTest::onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f ne
         VROMatrix4f f = VROMatrix4f::identity();
         f.rotate(s.extractRotation(s.extractScale()));
         f.translate(node->getWorldTransform().extractTranslation());
-        _skinner->setCurrentBoneWorldTransform(boneId, f);
+
+        if (kUseGLTFModel) {
+            _skinner->setCurrentBoneWorldTransform(boneId, f, false);
+        } else {
+            _skinner->setCurrentBoneWorldTransform(boneTag, f, false);
+        }
     } else if (_rig != nullptr) {
         _rig->setPositionForEffector(tag, node->getWorldPosition());
     }

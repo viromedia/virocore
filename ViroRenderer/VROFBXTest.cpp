@@ -121,7 +121,7 @@ void VROFBXTest::rotateFBX() {
     std::vector<VROFBXModel> models = _models[_fbxIndex];
     for (VROFBXModel &model : models) {
         std::shared_ptr<VRONode> fbxNode = VROTestUtil::loadFBXModel(model.name, model.position, model.scale, model.rotation,
-                                                                     model.lightMask, model.animation, _driver);
+                                                                     model.lightMask, model.animation, _driver, nullptr);
         _fbxContainerNode->addChildNode(fbxNode);
     }
     _fbxIndex = (_fbxIndex + 1) % _models.size();
