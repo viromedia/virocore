@@ -59,9 +59,9 @@ public:
     ~VROBodyTrackerController();
 
     /*
-     * Binds the root of the 3D model to be controlled by this controller.
+     True if the given 3D model has been successfully bounded to this controller.
      */
-    void bindModel(std::shared_ptr<VRONode> node);
+    bool bindModel(std::shared_ptr<VRONode> modelRootNode);
 
     /*
      Notifies the controller to start aligning the underlying 3D model's root with
@@ -134,20 +134,18 @@ private:
 
     /*
      Map of pre-set keys to bone IDs within the 3D model for this rig.
-     TODO VIRO-4674: Hook up the effectors and joints automatically to predefined joint keys in model.
      */
     std::map<std::string, int> _keyToEffectorMap;
 
     /*
      Map of ML joints to bone IDs within the 3D model for this rig.
-     TODO VIRO-4674: Hook up the effectors and joints automatically to predefined joint keys in model.
      */
-    std::map<int, int> _mlJointToModelJointMap;
+    std::map<VROBodyJointType, int> _mlJointForBoneIndex;
 
     /*
      Map of ML Joints and it's corresponding timeout periods when filtering joint data.
      */
-    std::map<int, double> _mlJointTimeoutMap;
+    std::map<VROBodyJointType, double> _mlJointTimeoutMap;
 
     /*
      Saved transform from the ML Neck position to the IKRoot of this model during calibration.
@@ -165,7 +163,7 @@ private:
      tracked ML body positions.
      */
     std::shared_ptr<VRONode> _bodyControllerRoot;
-    std::map<std::string, std::shared_ptr<VRONode>> _debugBoxEffectors;
+    std::map<VROBodyJointType, std::shared_ptr<VRONode>> _debugBoxEffectors;
     std::shared_ptr<VRONode> _debugBoxRoot;
 #if VRO_PLATFORM_IOS
     // iOS UI Components

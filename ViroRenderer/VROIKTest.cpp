@@ -475,6 +475,9 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
             int boneId = _skinner->getSkeleton()->getBone(key)->getIndex();
             _endEffectorBones[key] = boneId;
         }
+
+        int boneId = _skinner->getSkeleton()->getBone("Neck")->getIndex();
+        _endEffectorBones["Neck"] = boneId;
     }
 
     if (!kinit3DModelWithRig) {

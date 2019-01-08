@@ -78,17 +78,21 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene->getRootNode()->addLight(ambient);
 
     // Set up the 3D Model to be animated
-    VROVector3f pos = VROVector3f(0,0,0);
-    VROVector3f scale = VROVector3f(0.35, 0.35, 0.35);
-    std::shared_ptr<VRONode> rootgLTFNode =  VROTestUtil::loadGLTFModel("CesiumMan","glb",
-                                                                   pos, scale, 1, "", driver,
-                                                                   [this](std::shared_ptr<VRONode> node, bool success){
-                                                                       node->setRotation(VROVector3f(0,toRadians(-90),0));
-                                                                       onModelLoaded(node);
-                                                                   });
+    std::shared_ptr<VRONode> rootModelNode;
+    VROVector3f pos = VROVector3f( 0, -1.5, -50);
+    VROVector3f scale = VROVector3f(0.05, 0.05, 0.05);
+    VROVector3f rot = VROVector3f(0,0,0);
+    rootModelNode = VROTestUtil::loadFBXModel("ninja/ninja",
+                                                  pos,
+                                                  scale, rot,
+                                                  1, "", driver,
+                                                  [this](std::shared_ptr<VRONode> node, bool success){
+                                                      onModelLoaded(node);
+                                                  });
+
     _gltfNodeContainer = std::make_shared<VRONode>();
     _gltfNodeContainer->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
-    _gltfNodeContainer->addChildNode(rootgLTFNode);
+    _gltfNodeContainer->addChildNode(rootModelNode);
     _gltfNodeContainer->setScale(VROVector3f(1.05,1.05,1.05));
     _arScene->getRootNode()->addChildNode(_gltfNodeContainer);
 
@@ -143,7 +147,7 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
 }
 
 void VROBodyTrackerTest::onModelLoaded(std::shared_ptr<VRONode> node) {
-    _bodyMLController->bindModel(_gltfNodeContainer);
+    _bodyMLController->bindModel(node);
 }
 
 void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){

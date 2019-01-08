@@ -13,21 +13,24 @@
 #include <map>
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
-enum VROBodyJointType {
+
+// Known body joint types recognized by VROBodyTracker
+// Note: Enum values matter as they are being utilized in VROBodyTracker!
+enum class VROBodyJointType {
     Top                 = 0,
     Neck                = 1,
     RightShoulder       = 2,
     RightElbow          = 3,
     RightWrist          = 4,
-    LeftShoulder        = 5,
-    LeftElbow           = 6,
-    LeftWrist           = 7,
     RightHip            = 8,
     RightKnee           = 9,
     RightAnkle          = 10,
+    LeftShoulder        = 5,
+    LeftElbow           = 6,
+    LeftWrist           = 7,
     LeftHip             = 11,
     LeftKnee            = 12,
-    LeftAnkle           = 13,
+    LeftAnkle           = 13
 };
 
 class VROBodyJoint {

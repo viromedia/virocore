@@ -58,65 +58,99 @@ static const float kReachableBoneThresholdMeters = 0.1;
 static const VROBodyJointType kBodyJointRoot = VROBodyJointType::Neck;
 static const bool kProjectToPlaneTracking = true;
 
-void VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> gltfRootNode) {
+// Supported bone names within 3D models for ml joint tracking.
+static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
+  {VROBodyJointType::Top,             "Head"},
+  {VROBodyJointType::Neck,            "Neck"},
+  {VROBodyJointType::RightShoulder,   "RightShoulder"},
+  {VROBodyJointType::RightElbow,      "RightElbow"},
+  {VROBodyJointType::RightWrist,      "RightWrist"},
+  {VROBodyJointType::RightHip,        "RightHip"},
+  {VROBodyJointType::RightKnee,       "RightKnee"},
+  {VROBodyJointType::RightAnkle,      "RightAnkle"},
+  {VROBodyJointType::LeftShoulder,    "LeftShoulder"},
+  {VROBodyJointType::LeftElbow,       "LeftElbow"},
+  {VROBodyJointType::LeftWrist,       "LeftWrist"},
+  {VROBodyJointType::LeftHip,         "LeftHip"},
+  {VROBodyJointType::LeftKnee,        "LeftKnee"},
+  {VROBodyJointType::LeftAnkle,       "LeftAnkle"},
+};
+
+bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode) {
     _rig = nullptr;
-
-    // if unbinding, reset all our model references.
-    if (gltfRootNode == nullptr) {
-        _skinner = nullptr;
-        _modelRootNode = nullptr;
-        _mlJointToModelJointMap.clear();
-        _bodyControllerRoot->removeAllChildren();
-        return;
-    }
-
-    // Else, bind and initialize a model to this controller
-    std::vector<std::shared_ptr<VROSkinner>> skinners;
-    gltfRootNode->getSkinner(skinners, true);
-    if (skinners.size() != 1) {
-        perror("VROBodyTrackerController: Attempted to bind to a model without a properly configured skinner.");
-        return;
-    }
-    _skinner = skinners[0];
-    _modelRootNode = gltfRootNode;
-    _bodyControllerRoot->setScale(VROVector3f(1,1,1));
+    _keyToEffectorMap.clear();
+    _skinner = nullptr;
+    _modelRootNode = nullptr;
+    _mlJointForBoneIndex.clear();
     _bodyControllerRoot->removeAllChildren();
 
-    // Map the MLJoint to this model's bones.
-    // TODO VIRO-4674: Hook up the effectors and joints automatically
-    _mlJointToModelJointMap[VROBodyJointType::Top] =            4;
-    _mlJointToModelJointMap[VROBodyJointType::Neck] =           2;
-    _mlJointToModelJointMap[VROBodyJointType::LeftShoulder] =   5;
-    _mlJointToModelJointMap[VROBodyJointType::LeftElbow] =      7;
-    _mlJointToModelJointMap[VROBodyJointType::LeftWrist] =      9;
-    _mlJointToModelJointMap[VROBodyJointType::RightShoulder] =  6;
-    _mlJointToModelJointMap[VROBodyJointType::RightElbow] =     8;
-    _mlJointToModelJointMap[VROBodyJointType::RightWrist] =     10;
-    _mlJointToModelJointMap[VROBodyJointType::LeftHip] =        11;
-    _mlJointToModelJointMap[VROBodyJointType::LeftKnee] =       13;
-    _mlJointToModelJointMap[VROBodyJointType::LeftAnkle] =      15;
-    _mlJointToModelJointMap[VROBodyJointType::RightHip] =       12;
-    _mlJointToModelJointMap[VROBodyJointType::RightKnee] =      14;
-    _mlJointToModelJointMap[VROBodyJointType::RightAnkle] =     16;
+    // Bind and initialize a model to this controller
+    std::vector<std::shared_ptr<VROSkinner>> skinners;
+    modelRootNode->getSkinner(skinners, true);
+    if (skinners.size() == 0) {
+        perror("VROBodyTrackerController: Attempted to bind to a model without a properly configured skinner.");
+        return false;
+    }
 
-    // Map our bones on this model to the right effector
-    // TODO VIRO-4674: Hook up the effectors and joints automatically
-    _keyToEffectorMap.clear();
-    _keyToEffectorMap["leftHand"] = 9;
-    _keyToEffectorMap["rightHand"] = 10;
-    _keyToEffectorMap["leftAnkle"] = 15;
-    _keyToEffectorMap["rightAnkle"] = 16;
-    _keyToEffectorMap["head"] = 4;
+    /*
+     Iterate through all known VROBodyJointType and examine the skinner's
+     skeleton for bones required for body tracking. For each found bone,
+     create an effector in our IKRig, and as well as joint data caches
+     needed by this controller.
+     */
+    std::shared_ptr<VROSkeleton> skeleton = skinners[0]->getSkeleton();
+    std::map<VROBodyJointType, std::string>::const_iterator bonePair;
+    for (bonePair = kVROBodyBoneTags.begin(); bonePair != kVROBodyBoneTags.end(); bonePair++) {
+        VROBodyJointType boneType = bonePair->first;
+        std::string expectedBoneName = bonePair->second;
 
-    // Intermediary effectors
-    _keyToEffectorMap["LeftShoulder"] = 5;
-    _keyToEffectorMap["LeftElbow"] = 7;
-    _keyToEffectorMap["LeftHip"] = 11;
-    _keyToEffectorMap["LeftKnee"] = 13;
-    _keyToEffectorMap["RightShoulder"] = 6;
-    _keyToEffectorMap["RightElbow"] = 8;
-    _keyToEffectorMap["RightHip"] = 12;
-    _keyToEffectorMap["RightKnee"] = 14;
+        // Determine if the model has a bone name matching the desired ML joint.
+        std::shared_ptr<VROBone> bone = skeleton->getBone(expectedBoneName);
+        if (bone == nullptr) {
+            // Bone for ML joint does not exist in skeleton, continue.
+            pwarn("Unable to find bone %s for VROBodyTrackerController!", expectedBoneName.c_str());
+            continue;
+        }
+
+        int boneIndex = bone->getIndex();
+        _mlJointForBoneIndex[boneType] = boneIndex;
+        _keyToEffectorMap[expectedBoneName] = boneIndex;
+    }
+
+    // If we have not found at least the root bone, fail the binding of the model.
+    if (_mlJointForBoneIndex.find(kBodyJointRoot) == _mlJointForBoneIndex.end()) {
+        perr("Attempted to bind 3D model with improperly configured bones to VROBodyTracker!");
+        return false;
+    }
+
+    // Else update our skinner references if we have the proper ML bones in our 3D model.
+    _skinner = skinners[0];
+    _modelRootNode = modelRootNode;
+    _bodyControllerRoot->setScale(VROVector3f(1,1,1));
+
+    // Create debug effector nodes UI
+    _debugBoxEffectors.clear();
+    for (auto bonePair : _mlJointForBoneIndex) {
+        VROBodyJointType boneType = bonePair.first;
+        std::string boneName = kVROBodyBoneTags.at(bonePair.first);
+        VROVector3f pos = _skinner->getCurrentBoneWorldTransform(boneName).extractTranslation();
+        std::shared_ptr<VRONode> block = createDebugBoxUI(true, boneName);
+        _bodyControllerRoot->addChildNode(block);
+        block->setWorldTransform(pos, VROMatrix4f::identity());
+        _debugBoxEffectors[boneType] = block;
+    }
+
+    // Create a debug root node UI
+    _debugBoxRoot = createDebugBoxUI(false, "Root");
+    _bodyControllerRoot->addChildNode(_debugBoxRoot);
+
+    // Bind calibration event delegates
+    if (_calibrationEventDelegate == nullptr) {
+        _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+        _modelRootNode->setEventDelegate(_calibrationEventDelegate);
+    }
 
     // Set the timeout of joints in milliseconds.
     _mlJointTimeoutMap.clear();
@@ -134,28 +168,7 @@ void VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> gltfRootNode) 
     _mlJointTimeoutMap[VROBodyJointType::RightHip] =       500;
     _mlJointTimeoutMap[VROBodyJointType::RightKnee] =      500;
     _mlJointTimeoutMap[VROBodyJointType::RightAnkle] =     500;
-
-    // Create debug effector nodes UI
-    _debugBoxEffectors.clear();
-    for (auto ef : _keyToEffectorMap) {
-        VROVector3f pos = _skinner->getCurrentBoneWorldTransform(ef.second).extractTranslation();
-        std::shared_ptr<VRONode> block = createDebugBoxUI(true, ef.first);
-        _bodyControllerRoot->addChildNode(block);
-        block->setWorldTransform(pos, VROMatrix4f::identity());
-        _debugBoxEffectors[ef.first] = block;
-    }
-
-    // Create a debug root node UI
-    _debugBoxRoot = createDebugBoxUI(false, "Root");
-    _bodyControllerRoot->addChildNode(_debugBoxRoot);
-
-    // Bind calibration event delegates
-    if (_calibrationEventDelegate == nullptr) {
-        _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
-        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
-        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
-        _modelRootNode->setEventDelegate(_calibrationEventDelegate);
-    }
+    return true;
 }
 
 VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot) {
@@ -195,7 +208,7 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
         // Calculate a transform offset from a gLTF joint to the skinner's root node transform,
         // where the gLTF joint will represent the Body Tracked ML Root - kBodyJointRoot.
         // This transform offset will be needed for root motion re-alignment.
-        int bodyJointRootAsgLTFJoint = _mlJointToModelJointMap[kBodyJointRoot];
+        int bodyJointRootAsgLTFJoint = _mlJointForBoneIndex[kBodyJointRoot];
         VROMatrix4f mlRootWorldTrans;
         mlRootWorldTrans.translate(_skinner->getCurrentBoneWorldTransform(bodyJointRootAsgLTFJoint).extractTranslation());
         VROMatrix4f modelRootWorldTrans;
@@ -230,21 +243,29 @@ void VROBodyTrackerController::alignModelRootToMLRoot() {
 }
 
 void VROBodyTrackerController::startCalibration() {
+    if (_skinner == nullptr) {
+        pwarn("Unable to start calibration: Model has not yet been bounded to this controller!");
+        return;
+    }
+
     _calibrating = true;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
-    if (_skinner == nullptr) {
-        return;
-    }
 
     // reset the bones back to it's initial configuration
     std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
     for (int i = 0; i < skeleton->getNumBones(); i++) {
-        skeleton->getBone(i)->setTransform(VROMatrix4f::identity(), VROBoneTransformType::Legacy);
+        std::shared_ptr<VROBone> bone = skeleton->getBone(i);
+        bone->setTransform(VROMatrix4f::identity(), bone->getTransformType());
     }
 }
 
 void VROBodyTrackerController::finishCalibration() {
+    if (_skinner == nullptr) {
+        pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
+        return;
+    }
+
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
@@ -358,7 +379,7 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
     // With the new found joints, update the current tracking state
     if (_cachedTrackedJoints.find(VROBodyJointType::Neck) == _cachedTrackedJoints.end()) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
-    } else if (_cachedTrackedJoints.size() == _mlJointToModelJointMap.size()) {
+    } else if (_cachedTrackedJoints.size() == _mlJointForBoneIndex.size()) {
         setBodyTrackedState(VROBodyTrackedState::FullEffectors);
     } else if (_cachedTrackedJoints.size() >= 1) {
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
@@ -511,7 +532,6 @@ bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &m
     }
 
     if (finalResult == nullptr) {
-        pwarn("Warning, no Results found for body tracking ARHittests.");
         return false;
     } else {
         VROVector3f pos = finalResult->getWorldTransform().extractTranslation();
@@ -523,7 +543,7 @@ bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &m
 }
 
 bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint mlJoint, VROMatrix4f targetTransform) {
-    int boneID = _mlJointToModelJointMap[mlJoint.getType()];
+    int boneID = _mlJointForBoneIndex[mlJoint.getType()];
     int parentIndex = _skinner->getSkeleton()->getBone(boneID)->getParentIndex();
     VROMatrix4f childTransform = _skinner->getCurrentBoneWorldTransform(boneID);
     VROMatrix4f parentTransform = _skinner->getCurrentBoneWorldTransform(parentIndex);
@@ -541,90 +561,21 @@ void VROBodyTrackerController::updateModel() {
         return;
     }
 
-    // Update all joints
+    // Update the root motion of the rig.
     alignModelRootToMLRoot();
     _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
 
-    VROMatrix4f i = VROMatrix4f::identity();
-    if (_cachedTrackedJoints.find(VROBodyJointType::LeftWrist) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftWrist].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["leftHand"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("leftHand", pos);
-    }
+    // Now update all known rig joints.
+    VROMatrix4f identity = VROMatrix4f::identity();
+    std::map<VROBodyJointType, VROBodyJoint>::const_iterator cachedJoint;
+    for (cachedJoint = _cachedTrackedJoints.begin(); cachedJoint != _cachedTrackedJoints.end(); cachedJoint++) {
+        VROBodyJoint joint = cachedJoint->second;
+        VROVector3f pos = joint.getProjectedTransform().extractTranslation();
 
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightWrist) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightWrist].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["rightHand"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("rightHand", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::LeftAnkle) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftAnkle].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["leftAnkle"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("leftAnkle", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightAnkle) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightAnkle].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["rightAnkle"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("rightAnkle", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::Top) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::Top].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["head"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("head", pos);
-    }
-
-    // Additional intermediary joints
-    // TODO VIRO-4674: Hook up the effectors and joints automatically
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightElbow) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightElbow].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["RightElbow"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("RightElbow", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::LeftElbow) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftElbow].getProjectedTransform().extractTranslation();
-        pwarn("Daniel positions -> %s", pos.toString().c_str());
-        _debugBoxEffectors["LeftElbow"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("LeftElbow", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightShoulder) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightShoulder].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["RightShoulder"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("RightShoulder", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::LeftShoulder) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftShoulder].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["LeftShoulder"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("LeftShoulder", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightHip) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightHip].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["RightHip"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("RightHip", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightKnee) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::RightKnee].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["RightKnee"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("RightKnee", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::LeftHip) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftHip].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["LeftHip"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("LeftHip", pos);
-    }
-
-    if (_cachedTrackedJoints.find(VROBodyJointType::LeftKnee) != _cachedTrackedJoints.end()) {
-        VROVector3f pos = _cachedTrackedJoints[VROBodyJointType::LeftKnee].getProjectedTransform().extractTranslation();
-        _debugBoxEffectors["LeftKnee"]->setWorldTransform(pos, i);
-        _rig->setPositionForEffector("LeftKnee", pos);
+        VROBodyJointType boneMLJointType = cachedJoint->first;
+        std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
+        _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
+        _rig->setPositionForEffector(boneName, pos);
     }
 }
 
