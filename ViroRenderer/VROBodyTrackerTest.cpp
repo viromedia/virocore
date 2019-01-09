@@ -177,8 +177,8 @@ void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){
 }
 
 void VROBodyTrackerTest::onFrameWillRender(const VRORenderContext &context) {
-    context.getPencil()->setBrushThickness(0.001f);
-    renderDebugSkeletal(context.getPencil(), 0);
+    //context.getPencil()->setBrushThickness(0.001f);
+    //renderDebugSkeletal(context.getPencil(), 0);
 }
 
 void VROBodyTrackerTest::onFrameDidRender(const VRORenderContext &context) {

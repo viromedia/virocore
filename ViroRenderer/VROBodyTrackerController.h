@@ -88,7 +88,7 @@ public:
 
 #if VRO_PLATFORM_IOS
     void enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver);
-    void updateDebugMLViewIOS();
+    void updateDebugMLViewIOS(const std::map<VROBodyJointType, VROBodyJoint> &joints);
 #endif
 
 private:
@@ -153,6 +153,11 @@ private:
     VROMatrix4f _mlRootToModelRoot;
 
     /*
+     Saved Neck to Hip distance, used for calculating automatic torso resizing ratios.
+     */
+    float _originalNeckToHipDistance;
+
+    /*
      True if this controller is currently calibrating the latest set of ML joints to the IKRig.
      */
     bool _calibrating;
@@ -176,7 +181,10 @@ private:
      Process, filter and update this controller's latest known set of _cachedTrackedJoints
      with the latest found ML 2D points given by VROBodyTracker.
      */
-    void updateTrackingJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints);
+    void processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints);
+    void projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints);
+    void updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &joints);
+    void restoreMissingJoints(std::vector<VROBodyJoint> expiredJoints);
 
     /*
      Updates the current VROBodyTrackedState and notifies the attached VROBodyTrackerControllerDelegate.
@@ -197,7 +205,7 @@ private:
      Returns true if the given targetTransform is reachable form the given parent's joint
      considering it's bone's length.
      */
-    bool isTargetReachableFromParentBone(VROBodyJoint mlJoint, VROMatrix4f targetTransform);
+    bool isTargetReachableFromParentBone(VROBodyJoint targetJoint);
 
     /*
      Depth tests for projecting a 2D ML screen coordinate into 3D space.
@@ -205,6 +213,17 @@ private:
     bool performDepthTest(float x, float y, VROMatrix4f &matOut);
     bool performWindowDepthTest(float x, float y, VROMatrix4f &matOut);
     bool performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut);
+
+    /*
+     Initializes the model's uniform scale needed for automatic resizing.
+     */
+    void initializeModelUniformScale();
+
+    /*
+     Called during the calibration phase to scale the model's torso uniformly to
+     fit the 3D model to body joints found by VROBodytracker.
+     */
+    void alignModelTorsoScale();
 
     /*
      Debug UI used by this controller.

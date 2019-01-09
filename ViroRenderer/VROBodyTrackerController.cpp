@@ -51,12 +51,14 @@ static UIColor *colors[14] = {
     [UIColor grayColor]
 };
 #endif
-static const float kHighConfidence = 0.25;
-static const float kARHitTestWindowKernelPixel = 0.005;
-static const float kVolatilityThresholdMeters = 0.1;
-static const float kReachableBoneThresholdMeters = 0.1;
+static const float kHighConfidence = 0.45;
+static const float kARHitTestWindowKernelPixel = 0.01;
+static const float kVolatilityThresholdMeters = 0.15;
+static const float kReachableBoneThresholdMeters = 0.2;
+static const float kAutomaticSizingRatio = 0.85;
+static const bool kModelDebugCubes = true;
+static const bool kAutomaticResizing = true;
 static const VROBodyJointType kBodyJointRoot = VROBodyJointType::Neck;
-static const bool kProjectToPlaneTracking = true;
 
 // Supported bone names within 3D models for ml joint tracking.
 static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
@@ -117,16 +119,25 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
         _keyToEffectorMap[expectedBoneName] = boneIndex;
     }
 
-    // If we have not found at least the root bone, fail the binding of the model.
-    if (_mlJointForBoneIndex.find(kBodyJointRoot) == _mlJointForBoneIndex.end()) {
-        perr("Attempted to bind 3D model with improperly configured bones to VROBodyTracker!");
-        return false;
+    // If we have not found required bones, fail the binding of the model.
+    VROBodyJointType requiredBones[] = {kBodyJointRoot,
+                                        VROBodyJointType::Neck,
+                                        VROBodyJointType::LeftHip,
+                                        VROBodyJointType::RightHip};
+    for (auto requiredBone : requiredBones) {
+        if (_mlJointForBoneIndex.find(requiredBone) == _mlJointForBoneIndex.end()) {
+            perr("Attempted to bind 3D model with improperly configured bones to VROBodyTracker!");
+            return false;
+        }
     }
 
     // Else update our skinner references if we have the proper ML bones in our 3D model.
     _skinner = skinners[0];
     _modelRootNode = modelRootNode;
     _bodyControllerRoot->setScale(VROVector3f(1,1,1));
+
+    // Set the model in it's original scale needed for determining ratios for automatic resizing.
+    initializeModelUniformScale();
 
     // Create debug effector nodes UI
     _debugBoxEffectors.clear();
@@ -193,10 +204,10 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     }
 
     // Filter new joints found given by the VROBodyTracker and update _cachedTrackedJoints
-    updateTrackingJoints(joints);
+    processJoints(joints);
 
 #if VRO_PLATFORM_IOS
-    updateDebugMLViewIOS();
+    updateDebugMLViewIOS(joints);
 #endif
 
     if (_calibrating) {
@@ -217,9 +228,27 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
 
         // Align the 3D model to the latest calibrated position
         alignModelRootToMLRoot();
+
+        // Then scale the model to the right size.
+        alignModelTorsoScale();
     } else {
         // If we are not calibrating, update tracked joints as usual
         updateModel();
+    }
+
+    // Render debug UI
+    if (kModelDebugCubes) {
+        _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
+
+        // Render debug joint cubes.
+        VROMatrix4f identity = VROMatrix4f::identity();
+        std::map<VROBodyJointType, VROBodyJoint>::const_iterator cachedJoint;
+        for (cachedJoint = _cachedTrackedJoints.begin(); cachedJoint != _cachedTrackedJoints.end(); cachedJoint++) {
+           VROBodyJoint joint = cachedJoint->second;
+           VROVector3f pos = joint.getProjectedTransform().extractTranslation();
+           VROBodyJointType boneMLJointType = cachedJoint->first;
+           _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
+        }
     }
 }
 
@@ -269,21 +298,6 @@ void VROBodyTrackerController::finishCalibration() {
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
-    /*
-     If the controller is in kProjectToPlaneTracking mode, we will not be using arHitTest to
-     calculate depth for body joints. Instead, we'll be projecting all body joints onto a
-     plane facing the user at the time finishCalibration() is called. This plane is created
-     by using the model's current position that was calculated in the calibration phase with
-     a normal towards the user.
-     */
-    if (kProjectToPlaneTracking) {
-        VROMatrix4f mlRootTransform = _cachedTrackedJoints[kBodyJointRoot].getProjectedTransform();
-        _projectedPlanePosition = mlRootTransform.extractTranslation();
-
-        VROVector3f camPos = _renderer->getCamera().getPosition();
-        _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
-    }
-
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
@@ -303,13 +317,13 @@ bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROM
     VROVector3f ncpScreen(x, y, 0.0);
     VROVector3f ncpWorld;
     if (!VROProjector::unproject(ncpScreen, mvp.getArray(), viewport, &ncpWorld)) {
-        return {};
+        return false;
     }
 
     VROVector3f fcpScreen(x, y, 1.0);
     VROVector3f fcpWorld;
     if (!VROProjector::unproject(fcpScreen, mvp.getArray(), viewport, &fcpWorld)) {
-        return {};
+        return false;
     }
     VROVector3f ray = fcpWorld.subtract(ncpWorld).normalize();
 
@@ -321,11 +335,62 @@ bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROM
     return success;
 }
 
+void VROBodyTrackerController::initializeModelUniformScale() {
+    // Set the model in it's original scale needed for determining ratios.
+    VROVector3f currentScale = _modelRootNode->getScale();
+    _modelRootNode->setScale(VROVector3f(1, 1, 1));
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
+
+    // Now calculate the ratios for automatic resizing.
+    VROMatrix4f neckTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
+    VROMatrix4f leftHipTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
+    VROMatrix4f rightHipTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
+
+    // Now get the middle of the hip.
+    VROVector3f midVecFromLeft = (rightHipTrans.extractTranslation() - leftHipTrans.extractTranslation()).scale(0.5f);
+    VROVector3f midHipLoc = leftHipTrans.extractTranslation().add(midVecFromLeft);
+    VROVector3f neckLoc = neckTrans.extractTranslation();
+    _originalNeckToHipDistance = midHipLoc.distanceAccurate(neckLoc);
+}
+
+void VROBodyTrackerController::alignModelTorsoScale() {
+    // We'll need the current dimensions of the model for resizing calculations.
+    if (!kAutomaticResizing || _skinner == nullptr) {
+        return;
+    }
+
+    // Grab the current Neck to Hip distances from the ML Joint.
+    if (!_cachedTrackedJoints[VROBodyJointType::Neck].hasValidProjectedTransform() ||
+        !_cachedTrackedJoints[VROBodyJointType::LeftHip].hasValidProjectedTransform() ||
+        !_cachedTrackedJoints[VROBodyJointType::RightHip].hasValidProjectedTransform()) {
+        return;
+    }
+
+    VROVector3f neckPos = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform().extractTranslation();
+    VROVector3f leftHipPos = _cachedTrackedJoints[VROBodyJointType::LeftHip].getProjectedTransform().extractTranslation();
+    VROVector3f rightHipPos = _cachedTrackedJoints[VROBodyJointType::RightHip].getProjectedTransform().extractTranslation();
+
+    // Now get the middle of the hip.
+    VROVector3f midVecFromLeft = (rightHipPos - leftHipPos).scale(0.5f);
+    VROVector3f midHipLoc = leftHipPos.add(midVecFromLeft);
+    float mlNeckToHipDistnace = midHipLoc.distanceAccurate(neckPos);
+
+    // Calculate the different distances, grab the ratio.
+    float modelToMLRatio = mlNeckToHipDistnace / _originalNeckToHipDistance * kAutomaticSizingRatio;
+
+    // Apply that ratio to the scale of the model.
+    _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
+}
+
 void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
     _delegate = delegate;
 }
 
-void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
+void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
     // Grab all the 2D joints of high confidence for the targets we want.
     std::map<VROBodyJointType, VROBodyJoint> latestJoints;
     for (auto &kv : joints) {
@@ -334,33 +399,8 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
         }
     }
 
-    // Project the 2D joints into 3D coordinates via ARHitTests
-    for (auto &joint : latestJoints) {
-        VROMatrix4f hitTransform;
-        float pointX = joint.second.getScreenCoords().x;
-        float pointY = joint.second.getScreenCoords().y;
-        bool success = performDepthTest(pointX, pointY, hitTransform);
-
-        // If the ARHit test has failed for this joint, attempt to recover with
-        // a more aggressive ARHitTest.
-        VROMatrix4f updatedTransform = hitTransform;
-        if (!success && !performWindowDepthTest(pointX,
-                                                pointY,
-                                                updatedTransform)) {
-            joint.second.clearPojectedTransform();
-        }
-
-        joint.second.setProjectedTransform(updatedTransform);
-    }
-
-    // Remove points that have failed ar hit test from the map of latestJoints
-    // TODO: Attempt to reconstruct/recover low confidence joints from adjacent high confidence ones.
-    for (auto it = latestJoints.cbegin(), next_it = it; it != latestJoints.cend(); it = next_it) {
-        ++next_it;
-        if (!it->second.hasValidProjectedTransform()) {
-            latestJoints.erase(it);
-        }
-    }
+    // First, convert the joints into 3d space.
+    projectJointsInto3DSpace(latestJoints);
 
     // Flush out old tracked joints that have expired from _cachedTrackedJoints;
     std::vector<VROBodyJoint> expiredJoints;
@@ -376,6 +416,9 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
         }
     }
 
+    // Then, perform filtering and update our known set of cached joints.
+    updateCachedJoints(latestJoints);
+
     // With the new found joints, update the current tracking state
     if (_cachedTrackedJoints.find(VROBodyJointType::Neck) == _cachedTrackedJoints.end()) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
@@ -385,51 +428,114 @@ void VROBodyTrackerController::updateTrackingJoints(const std::map<VROBodyJointT
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
     }
 
+    // Finally, restore joints if possible using last known data (even if they are old).
+    restoreMissingJoints(expiredJoints);
+}
+
+void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
+    // If calibrating, we'll need to grab the Z depth at which to position our projected plane.
+    if (_calibrating) {
+        if (latestJoints.find(kBodyJointRoot) == latestJoints.end()) {
+            return;
+        }
+
+        // Perform a window depth test around the body joint root to get an average Z depth.
+        VROBodyJoint rootJoint = latestJoints[kBodyJointRoot];
+        VROVector3f screenCoord = rootJoint.getScreenCoords();
+        VROMatrix4f projectedTrans = VROMatrix4f::identity();
+        performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans);
+
+        // Update our projection plane
+        _projectedPlanePosition = projectedTrans.extractTranslation();
+        VROVector3f camPos = _renderer->getCamera().getPosition();
+        _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+    }
+
+    // Project the 2D joints into 3D coordinates as usual.
+    for (auto &joint : latestJoints) {
+        VROMatrix4f hitTransform;
+        float pointX = joint.second.getScreenCoords().x;
+        float pointY = joint.second.getScreenCoords().y;
+        bool success = performUnprojectionToPlane(pointX, pointY, hitTransform);
+        if (!success) {
+            joint.second.clearPojectedTransform();
+        } else {
+            joint.second.setProjectedTransform(hitTransform);
+        }
+    }
+
+    // Remove points that have failed projections from the map of latestJoints
+    for (auto it = latestJoints.cbegin(), next_it = it; it != latestJoints.cend(); it = next_it) {
+        ++next_it;
+        if (!it->second.hasValidProjectedTransform()) {
+            latestJoints.erase(it);
+        }
+    }
+}
+
+void VROBodyTrackerController::updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
+    // Ignore filters if we are in the calibration phase
+    if (_calibrating) {
+        for (auto &latestjointPair : latestJoints) {
+            _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
+        }
+        return;
+    }
+
+    // Else, apply stricter filters during the tracking phase.
+    for (auto &latestjointPair : latestJoints) {
+        VROBodyJoint currentJoint = latestjointPair.second;
+        VROBodyJointType currentType = latestjointPair.first;
+        bool hasTrackedJoint = _cachedTrackedJoints.find(currentType) != _cachedTrackedJoints.end();
+        bool shouldCacheNewJoint = false;
+
+        // Apply stricter filters for updating existing joints. Else simply cache the new joints.
+        if (hasTrackedJoint) {
+            // First, if we have seen this joint before, ignore new positions of high
+            // volatility; don't update if the delta of the updated transform exceeds a
+            // certain threshold.
+            VROVector3f currentPos = currentJoint.getProjectedTransform().extractTranslation();
+            VROVector3f oldPos = _cachedTrackedJoints[currentType].getProjectedTransform().extractTranslation();
+            if (oldPos.distanceAccurate(currentPos) < kVolatilityThresholdMeters) {
+                shouldCacheNewJoint = true;
+            }
+
+            // Else perform a parent check of this BodyJoint against the last skinner configuration
+            // with a slightly more relaxed threshold.
+            if (isTargetReachableFromParentBone(currentJoint)) {
+                shouldCacheNewJoint = true;
+            }
+        } else {
+            shouldCacheNewJoint = true;
+        }
+
+        // Finally cache the joint
+        if (shouldCacheNewJoint) {
+            _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
+        }
+    }
+}
+
+void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> expiredJoints) {
+    // Ignore if we are currently calibrating the rig.
+    if (_calibrating) {
+        return;
+    }
+    
     // Attempt to recover missing joints by using old cached joint transforms.
     for (auto &expiredJoint : expiredJoints) {
-        VROBodyJointType currentType = expiredJoint.getType();
-        bool hasIncomingData = latestJoints.find(currentType) != latestJoints.end();
-        if (hasIncomingData) {
-            // Ignore if the incoming latestJoints already has this information
+        if (_cachedTrackedJoints.find(expiredJoint.getType()) != _cachedTrackedJoints.end()){
             continue;
         }
 
+        VROBodyJointType currentType = expiredJoint.getType();
+
         // Restore by repositioning this joint from when we last saw it relative to the root.
         VROMatrix4f cacheJointTransFromRoot = _cachedEffectorRootOffsets[currentType];
-        VROMatrix4f rootTransJoint = _cachedTrackedJoints.find(
-                VROBodyJointType::Neck)->second.getProjectedTransform();
+        VROMatrix4f rootTransJoint = _cachedTrackedJoints.find(kBodyJointRoot)->second.getProjectedTransform();
         VROMatrix4f jointTrans = rootTransJoint.multiply(cacheJointTransFromRoot);
         expiredJoint.setProjectedTransform(jointTrans);
         _cachedTrackedJoints[currentType] = expiredJoint;
-    }
-
-    // At this stage, verify the validity of the new latestJoint transforms.
-    for (auto &jointPair : latestJoints) {
-        VROBodyJoint currentJoint = jointPair.second;
-        VROBodyJointType currentType = jointPair.first;
-
-        // First check and remove new joints of high volatility, mainly used for joints that we
-        // have seen before. Don't update if the delta of the updated transform exceeds a
-        // certain threshold.
-        VROMatrix4f updatedTransform = currentJoint.getProjectedTransform();
-        if (_cachedTrackedJoints.find(currentType) != _cachedTrackedJoints.end()) {
-            VROVector3f oldPos = _cachedTrackedJoints[currentType].getProjectedTransform().extractTranslation();
-            VROVector3f currentPos = updatedTransform.extractTranslation();
-            if (oldPos.distanceAccurate(currentPos) > kVolatilityThresholdMeters) {
-                continue;
-            }
-        }
-
-        // If we have not seen this joint before, determine if it is possible to reach the
-        // new location, consiering the joint's last position and it's bone length.
-        if (!_calibrating && !isTargetReachableFromParentBone(jointPair.second, updatedTransform)) {
-           continue;
-        }
-
-        // Finally, update _cachedTrackedJoints
-        VROBodyJoint joint = jointPair.second;
-        joint.setProjectedTransform(updatedTransform);
-        _cachedTrackedJoints[jointPair.first] = joint;
     }
 
     // With the updated transforms, cache a known set of _cachedEffectorRootOffsets
@@ -490,11 +596,6 @@ bool VROBodyTrackerController::performWindowDepthTest(float x, float y, VROMatri
 }
 
 bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &matOut) {
-    // Use plane projection if kProjectToPlaneTracking is enabled during tracking/non-calibration.
-    if (kProjectToPlaneTracking && !_calibrating) {
-        return performUnprojectionToPlane(x, y, matOut);
-    }
-
     // Else use the usual ARHitTest to determine depth.
     float _currentProjection = 0.0037;
     int viewportWidth =_renderer->getCamera().getViewport().getWidth();
@@ -542,14 +643,15 @@ bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &m
     }
 }
 
-bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint mlJoint, VROMatrix4f targetTransform) {
-    int boneID = _mlJointForBoneIndex[mlJoint.getType()];
-    int parentIndex = _skinner->getSkeleton()->getBone(boneID)->getParentIndex();
-    VROMatrix4f childTransform = _skinner->getCurrentBoneWorldTransform(boneID);
+bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint targetJoint) {
+    int currentIndex = _mlJointForBoneIndex[targetJoint.getType()];
+    int parentIndex = _skinner->getSkeleton()->getBone(currentIndex)->getParentIndex();
+    VROMatrix4f childTransform = _skinner->getCurrentBoneWorldTransform(currentIndex);
     VROMatrix4f parentTransform = _skinner->getCurrentBoneWorldTransform(parentIndex);
+    VROMatrix4f currentTransform = targetJoint.getProjectedTransform();
 
     float maxDistance = parentTransform.extractTranslation().distanceAccurate(childTransform.extractTranslation());
-    float estDistance = parentTransform.extractTranslation().distanceAccurate(targetTransform.extractTranslation());
+    float estDistance = parentTransform.extractTranslation().distanceAccurate(currentTransform.extractTranslation());
     if (estDistance < (maxDistance + kReachableBoneThresholdMeters)) {
         return true;
     }
@@ -563,7 +665,6 @@ void VROBodyTrackerController::updateModel() {
 
     // Update the root motion of the rig.
     alignModelRootToMLRoot();
-    _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
 
     // Now update all known rig joints.
     VROMatrix4f identity = VROMatrix4f::identity();
@@ -574,7 +675,6 @@ void VROBodyTrackerController::updateModel() {
 
         VROBodyJointType boneMLJointType = cachedJoint->first;
         std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
-        _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
         _rig->setPositionForEffector(boneName, pos);
     }
 }
@@ -632,7 +732,7 @@ void VROBodyTrackerController::enableDebugMLViewIOS(std::shared_ptr<VRODriver> d
     }
 }
 
-void VROBodyTrackerController::updateDebugMLViewIOS() {
+void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
     float minAlpha = 0.4;
     float maxAlpha = 1.0;
     float maxConfidence = 0.6;
@@ -646,11 +746,15 @@ void VROBodyTrackerController::updateDebugMLViewIOS() {
         _labelViews[i].text =  [NSString stringWithUTF8String:labelTag.c_str()];
     }
 
-    for (auto &kv : _cachedTrackedJoints) {
+    for (auto &kv : joints) {
         VROVector3f point = kv.second.getScreenCoords();
         VROVector3f transformed = { point.x * viewWidth, point.y * viewHight, 0 };
-        std::string labelTag = pointLabels[(int)kv.first] + " -> " + kv.second.getProjectedTransform().extractTranslation().toString();
-        _labelViews[(int)kv.first].text = [NSString stringWithUTF8String:labelTag.c_str()];
+        // Only update the text for points that match our level of confidence.
+        // Note that low confidence points are still rendered to ensure validity.
+        if (kv.second.getConfidence() > kHighConfidence) {
+            std::string labelTag = pointLabels[(int)kv.first] + " -> " + kv.second.getProjectedTransform().extractTranslation().toString();
+            _labelViews[(int)kv.first].text = [NSString stringWithUTF8String:labelTag.c_str()];
+        }
         _bodyViews[(int) kv.first].center = CGPointMake(transformed.x, transformed.y);
         _bodyViews[(int) kv.first].alpha = VROMathInterpolate(kv.second.getConfidence(), minConfidence, maxConfidence, minAlpha, maxAlpha);
     }
