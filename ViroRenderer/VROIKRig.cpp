@@ -13,9 +13,10 @@
 static const float kFABRIKRetry = 50;
 static const float kReachableEffectorThresholdMeters = 0.005;
 static const bool kSyncNodePosition = false;
+static const bool kLockIntermediaryBoneMode = true;
 
 VROIKRig::VROIKRig(std::shared_ptr<VRONode> root,
-                   std::map<std::string, std::shared_ptr<VRONode>> endEffectorNodeMap) {
+                   std::map<std::string, std::shared_ptr<VRONode>> effectorNodeMap) {
     _rootJoint = std::make_shared<VROIKJoint>();
     _rootJoint->id = 1;
     _rootJoint->syncNode = root;
@@ -24,10 +25,10 @@ VROIKRig::VROIKRig(std::shared_ptr<VRONode> root,
     _skinner = nullptr;
 
     // Given the desired endEffectorNodeMap, create our map of end effector IKJoints
-    for (auto endAffectorNode : endEffectorNodeMap) {
+    for (auto effectorNode : effectorNodeMap) {
         std::shared_ptr<VROIKJoint> endJoint = nullptr;
         for (auto &joint : _allKnownIKJoints) {
-            if (endAffectorNode.second == joint->syncNode) {
+            if (effectorNode.second == joint->syncNode) {
                 endJoint = joint;
                 break;
             }
@@ -36,19 +37,24 @@ VROIKRig::VROIKRig(std::shared_ptr<VRONode> root,
         if (endJoint == nullptr) {
             std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
             effectorJoint->id = _allKnownIKJoints.size() + 1;
-            effectorJoint->position = endAffectorNode.second->getWorldPosition();
-            effectorJoint->syncNode = endAffectorNode.second;
+            effectorJoint->position = effectorNode.second->getWorldPosition();
+            effectorJoint->syncNode = effectorNode.second;
             effectorJoint->syncBone = -1;
             _allKnownIKJoints.push_back(effectorJoint);
 
-            _keyToEffectorMap[endAffectorNode.first] = effectorJoint;
-            _effectorTokeyMap[effectorJoint] = endAffectorNode.first;
-            createSkeletalRigFromNodeTree(endAffectorNode.second);
+            _keyToEffectorMap[effectorNode.first] = effectorJoint;
+            _effectorTokeyMap[effectorJoint] = effectorNode.first;
+            createSkeletalRigFromNodeTree(effectorNode.second);
         } else {
-            _keyToEffectorMap[endAffectorNode.first] = endJoint;
-            _effectorTokeyMap[endJoint] = endAffectorNode.first;
+            _keyToEffectorMap[effectorNode.first] = endJoint;
+            _effectorTokeyMap[endJoint] = effectorNode.first;
         }
      }
+
+    // Lock all IKJoints that are in between effectors if needed.
+    if (kLockIntermediaryBoneMode) {
+        flagLockedJoints(_rootJoint, _rootJoint);
+    }
 
     _initializeRig = true;
     _processedNewEffectorPositions = false;
@@ -89,6 +95,11 @@ VROIKRig::VROIKRig(std::shared_ptr<VROSkinner> skinner,
             _keyToEffectorMap[endAffectorBoneId.first] = endJoint;
             _effectorTokeyMap[endJoint] = endAffectorBoneId.first;
         }
+    }
+
+    // Lock all IKJoints that are in between effectors if needed.
+    if (kLockIntermediaryBoneMode) {
+        flagLockedJoints(_rootJoint, _rootJoint);
     }
 
     _initializeRig = true;
@@ -144,6 +155,65 @@ void VROIKRig::createSkeletalRigFromNodeTree(std::shared_ptr<VRONode> currentNod
     } else {
         createSkeletalRigFromNodeTree(currentNode->getParentNode());
     }
+}
+
+void VROIKRig::flagLockedJoints(std::shared_ptr<VROIKJoint> referenceJoint,
+                                std::shared_ptr<VROIKJoint> currentJoint) {
+    if (currentJoint->children.size() == 0) {
+        return;
+    }
+
+    bool isEffectorPoint = false;
+    if (_effectorTokeyMap.find(currentJoint) != _effectorTokeyMap.end()) {
+         isEffectorPoint = true;
+    }
+
+    // Recurse if we are at an effector point or junction point.
+    if (isEffectorPoint || currentJoint == _rootJoint || currentJoint->children.size() > 1) {
+        for (auto childJoint : currentJoint->children) {
+            flagLockedJoints(currentJoint, childJoint);
+        }
+        return;
+    }
+
+    // Else, lock it and update child / parent references.
+    detachIKJoint(currentJoint);
+    if (referenceJoint->lockedJoints.size() > 0) {
+        std::shared_ptr<VROIKJoint> parentLockedJoint = referenceJoint->lockedJoints.back();
+        parentLockedJoint->children.clear();
+        parentLockedJoint->children.push_back(currentJoint);
+        currentJoint->parent = parentLockedJoint;
+    }
+    referenceJoint->lockedJoints.push_back(currentJoint);
+
+    // Continue recursing down the rig
+    for (auto &childJoint : currentJoint->children) {
+        flagLockedJoints(referenceJoint, childJoint);
+    }
+}
+
+void VROIKRig::detachIKJoint(std::shared_ptr<VROIKJoint> currentJoint) {
+    // Update the parent joint references, if any.
+    std::shared_ptr<VROIKJoint> parentJoint = currentJoint->parent;
+    if (parentJoint != nullptr) {
+        std::vector<std::shared_ptr<VROIKJoint>> &parentJointChildList = parentJoint->children;
+        parentJointChildList.erase(std::remove_if(parentJointChildList.begin(), parentJointChildList.end(),
+                       [currentJoint](const std::shared_ptr<VROIKJoint> & j) {
+                           return j == currentJoint;
+                       }), parentJointChildList.end());
+    }
+
+    // Update child joint references.
+    for (auto &childJoint : currentJoint->children) {
+        childJoint->parent = currentJoint->parent;
+        currentJoint->parent->children.push_back(childJoint);
+    }
+
+    // Finally remove references in _allKnownIKJoints
+    _allKnownIKJoints.erase(std::remove_if(_allKnownIKJoints.begin(), _allKnownIKJoints.end(),
+                   [currentJoint](const std::shared_ptr<VROIKJoint> & j) {
+                       return j == currentJoint;
+                   }), _allKnownIKJoints.end());
 }
 
 void VROIKRig::createSkeletalRigFromSkinner(int boneId) {
@@ -332,6 +402,29 @@ void VROIKRig::initializeRig() {
         VROMatrix4f skinnerJointToRootBone = skinnerTrans.invert().multiply(rootBoneTrans);
         _skinnerJointToRootBone = skinnerJointToRootBone;
     }
+
+    // Retain a reference to locked joint's local transforms, if any.
+    for (auto &joint : _allKnownIKJoints) {
+        for (auto &lockedJoint : joint->lockedJoints) {
+            VROMatrix4f jointTrans = VROMatrix4f::identity();
+            VROMatrix4f parentTrans = VROMatrix4f::identity();
+            if (joint->syncBone == -1) {
+                parentTrans = lockedJoint->parent->syncNode->getWorldTransform();
+                jointTrans = lockedJoint->syncNode->getWorldTransform();
+            } else {
+                int boneIndex = lockedJoint->syncBone;
+                int parentIndex = lockedJoint->parent->syncBone;
+                jointTrans = _skinner->getCurrentBoneWorldTransform(boneIndex);
+                parentTrans = _skinner->getCurrentBoneWorldTransform(parentIndex);
+            }
+
+            VROMatrix4f diffTrans = parentTrans.invert() * jointTrans;
+            joint->lockedJointLocalTransforms.push_back(diffTrans);
+        }
+
+        passert(joint->lockedJointLocalTransforms.size() == joint->lockedJoints.size());
+    }
+
     _initializeRig = false;
 }
 
@@ -609,6 +702,9 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
         mat = desiredRot.getMatrix() * mat;
         mat.translate(jointPos);
         _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, true);
+
+        // Process intermediary locked joints, if any.
+        syncLockedJoint(joint, mat);
     }
 
     if (joint->children.size() > 1) {
@@ -619,6 +715,9 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
         mat.rotate(currentRot);
         mat.translate(jointPos);
         _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, true);
+
+        // Process intermediary locked joints, if any.
+        syncLockedJoint(joint, mat);
     }
 
     // Iterate down the IK tree
@@ -636,17 +735,40 @@ void VROIKRig::syncResultRotationOnly(std::shared_ptr<VROIKJoint> joint) {
     }
 
     if (joint->children.size() == 1) {
-        VROVector3f jointPos = joint->position;
         VROVector3f jointChildPos = joint->children.front()->position;
+        VROVector3f jointPos = joint->position;
         VROVector3f dir = (jointChildPos - jointPos).normalize();
-        VROQuaternion desiredRot =  VROQuaternion::rotationFromTo({1,0,0}, dir);
-        joint->syncNode->setWorldTransform(jointPos, desiredRot);
+
+        VROMatrix4f currentWorldT = joint->syncNode->getWorldTransform();
+        VROQuaternion currentRot = currentWorldT.extractRotation(currentWorldT.extractScale());
+        VROVector3f currentScale = currentWorldT.extractScale();
+
+        VROVector3f forwardWorld = {0, 1, 0};
+        VROVector3f frm = currentRot * forwardWorld;
+        VROQuaternion desiredRot =  VROQuaternion::rotationFromTo(frm, dir);
+
+        // Create a matrix with the new position, and rotational joint transform
+        VROMatrix4f mat;
+        mat.toIdentity();
+        mat.scale(currentScale.x, currentScale.y, currentScale.z);
+        mat.rotate(currentRot);
+        mat = desiredRot.getMatrix() * mat;
+        mat.translate(jointPos);
+        joint->syncNode->setWorldTransform(mat.extractTranslation(), mat.extractRotation(mat.extractScale()));
+
+        // Process intermediary locked joints, if any.
+        VROMatrix4f parentTrans = joint->syncNode->getWorldTransform();
+        syncLockedJoint(joint, parentTrans);
     }
 
     if (joint->children.size() > 1) {
         VROVector3f jointPos = joint->position;
         VROQuaternion currentRot = joint->syncNode->getWorldRotation();
         joint->syncNode->setWorldTransform(jointPos, currentRot);
+
+        // Process intermediary locked joints, if any.
+        VROMatrix4f parentTrans = joint->syncNode->getWorldTransform();
+        syncLockedJoint(joint, parentTrans);
     }
 
     for (auto &child : joint->children) {
@@ -661,5 +783,24 @@ void VROIKRig::syncResultPositionOnly(std::shared_ptr<VROIKJoint> joint) {
     joint->syncNode->setWorldTransform(pos, q);
     for (auto &child : joint->children) {
         syncResultPositionOnly(child);
+    }
+}
+
+void VROIKRig::syncLockedJoint(std::shared_ptr<VROIKJoint> joint, VROMatrix4f parentTrans) {
+    for (int i = 0; i < joint->lockedJoints.size(); i ++) {
+        std::shared_ptr<VROIKJoint> lockedJoint = joint->lockedJoints[i];
+        VROMatrix4f localTrans = joint->lockedJointLocalTransforms[i];
+        VROMatrix4f finalTrans = parentTrans * localTrans;
+
+        if (lockedJoint->syncBone == -1) {
+            std::shared_ptr<VRONode> lockedNode = lockedJoint->syncNode;
+            lockedNode->setWorldTransform(finalTrans.extractTranslation(),
+                                          finalTrans.extractRotation(finalTrans.extractScale()));
+            parentTrans = lockedNode->getWorldTransform();
+        } else {
+            int lockedBone = lockedJoint->syncBone;
+            _skinner->setCurrentBoneWorldTransform(lockedBone, finalTrans, true);
+            parentTrans = finalTrans;
+        }
     }
 }

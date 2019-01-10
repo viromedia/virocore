@@ -45,6 +45,11 @@ struct VROIKJoint {
     // Pointers to parent and child IKJointNodes
     std::shared_ptr<VROIKJoint> parent;
     std::vector<std::shared_ptr<VROIKJoint>> children;
+
+    // Intermediary joints between this IKJoint and its child that should be
+    // 'locked' and left out of the IK calculation.
+    std::vector<std::shared_ptr<VROIKJoint>> lockedJoints;
+    std::vector<VROMatrix4f> lockedJointLocalTransforms;
 };
 
 /*
@@ -164,6 +169,18 @@ private:
     void createSkeletalRigFromSkinner(int boneId);
 
     /*
+     Iterates through the rig to bypass intermediary IKjoints in between joint effectors from
+     being computed, thereby effectively "locking" them in place.
+     */
+    void flagLockedJoints(std::shared_ptr<VROIKJoint> referenceJoint,
+                          std::shared_ptr<VROIKJoint> currentJoint);
+    /*
+     Removes the given IKJoint from _allKnownIKJoints and thus from being processed in the
+     IKRig as a part of the FABRIK computation.
+     */
+    void detachIKJoint(std::shared_ptr<VROIKJoint> joint);
+
+    /*
      Construct a tree of VROIKChains, each containing a sequence of IKJoints in this rig. This is
      is done by creating a new chain for every branching point in the IKJoint tree, starting
      from the root of the tree.
@@ -188,6 +205,7 @@ private:
     void syncResultPositionOnly(std::shared_ptr<VROIKJoint> jointNode);
     void syncResultRotationOnly(std::shared_ptr<VROIKJoint> jointNode);
     void syncResultSkinner(std::shared_ptr<VROIKJoint> jointNode);
+    void syncLockedJoint(std::shared_ptr<VROIKJoint> jointNode, VROMatrix4f parentTrans);
 };
 
 #endif /* VROIKRig_h */

@@ -40,7 +40,7 @@ void VROPencil::render(const VRORenderContext &context, std::shared_ptr<VRODrive
     pencilMaterial->bindShader(0, {}, context, driver);
     pencilMaterial->bindProperties(driver);
 
-    std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
+    std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, _brushThickness);
     line->setMaterials({ pencilMaterial });
 
     pencilMaterial->bindShader(0, {}, context, driver);

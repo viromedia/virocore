@@ -16,6 +16,9 @@
 #include "VROMatrix4f.h"
 #include "VROBodyTrackerController.h"
 #include "VROTypeface.h"
+#include "VROSkinner.h"
+#include "VROPencil.h"
+#include "VROSkeleton.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROBodyTrackeriOS.h"
@@ -144,10 +147,19 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     debugNode->setPosition(VROVector3f(-3,0,-2));
     setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _sceneController->getScene()->getRootNode()->addChildNode(debugNode);
+
+    frameSynchronizer->addFrameListener(shared_from_this());
 }
 
 void VROBodyTrackerTest::onModelLoaded(std::shared_ptr<VRONode> node) {
     _bodyMLController->bindModel(node);
+
+    std::vector<std::shared_ptr<VROSkinner>> skinners;
+    node->getSkinner(skinners, true);
+    if (skinners.size() < 0) {
+        return;
+    }
+    _skinner = skinners[0];
 }
 
 void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){
@@ -161,5 +173,47 @@ void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){
         case LimitedEffectors:
             _trackingStateText->setText(L"< State: Limited >");
             break;
+    }
+}
+
+void VROBodyTrackerTest::onFrameWillRender(const VRORenderContext &context) {
+    context.getPencil()->setBrushThickness(0.001f);
+    renderDebugSkeletal(context.getPencil(), 0);
+}
+
+void VROBodyTrackerTest::onFrameDidRender(const VRORenderContext &context) {
+}
+
+void VROBodyTrackerTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex) {
+    if (_skinner == nullptr) {
+        return;
+    }
+
+    std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
+    // First get all the child joints for this jointIndex
+    std::vector<int> childBoneIndexes;
+    for (int i = 0; i < skeleton->getNumBones(); i ++) {
+        const std::shared_ptr<VROBone> &bone = skeleton->getBone(i);
+        if (bone->getParentIndex() == jointIndex && jointIndex != i){
+            childBoneIndexes.push_back(i);
+        }
+    }
+
+    if (childBoneIndexes.size() <=0) {
+        return;
+    }
+
+    // Now draw a line from the child joint to it's parent.
+    for (int childJointIndex : childBoneIndexes) {
+        // Grab the animated bone in world space.
+        VROMatrix4f animatedChild = _skinner->getCurrentBoneWorldTransform(childJointIndex);
+        VROMatrix4f animatedParent = _skinner->getCurrentBoneWorldTransform(jointIndex);
+
+        VROVector3f from = animatedChild.extractTranslation();
+        VROVector3f to = animatedParent.extractTranslation();
+        pencil->draw(from, to);
+
+        // Now move down and treat the child as a parent
+        renderDebugSkeletal(pencil, childJointIndex);
     }
 }

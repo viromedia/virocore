@@ -30,6 +30,7 @@ class VROBodyTrackerTest : public VRORendererTest,
                            public VROEventDelegate,
                            public VROSceneController::VROSceneControllerDelegate,
                            public VROBodyTrackerControllerDelegate,
+                           public VROFrameListener,
                            public std::enable_shared_from_this<VROBodyTrackerTest> {
 public:
     
@@ -70,6 +71,9 @@ public:
 
     void onModelLoaded(std::shared_ptr<VRONode> node);
     void onBodyTrackStateUpdate(VROBodyTrackedState state);
+    void renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex);
+    void onFrameWillRender(const VRORenderContext &context);
+    void onFrameDidRender(const VRORenderContext &context);
 
 private:
     std::shared_ptr<VRONode> _pointOfView;
@@ -80,6 +84,7 @@ private:
     std::shared_ptr<VROBodyTracker> _bodyTracker;
     std::shared_ptr<VROBodyTrackerController> _bodyMLController;
     std::shared_ptr<VROText> _trackingStateText;
+    std::shared_ptr<VROSkinner> _skinner;
 };
 
 #endif /* VROBodyTrackerTest_h  */

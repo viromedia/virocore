@@ -76,7 +76,7 @@ void VROIKTest::build(std::shared_ptr<VRORenderer> renderer,
     // testSingleHorizontalChainRig();
     // testSingleTJointRig();
     // testSingleTJointRigComplex();
-    test3DSkinner(driver);
+     test3DSkinner(driver);
 
     frameSynchronizer->addFrameListener(shared_from_this());
 }
@@ -137,7 +137,7 @@ void VROIKTest::testSingleHorizontalChainRig() {
     // Assign the end affector node.
     std::map<std::string, std::shared_ptr<VRONode>> endEffectorNodes;
     endEffectorNodes["end"] = parentNode;
-    endEffectorNodes["mid"] = midNode;
+    //endEffectorNodes["mid"] = midNode;
 
     // Create target boxes.
     std::shared_ptr<VRONode> targetBox = createBlock(true, "Target");
@@ -648,6 +648,10 @@ std::shared_ptr<VRONode> VROIKTest::createGLTFEffectorBlock(bool isAffector, std
 void VROIKTest::onFrameWillRender(const VRORenderContext &context) {
     if (_is3DModelTest) {
         renderDebugSkeletal(context.getPencil(), 0);
+    } else {
+        std::vector<std::vector<VROVector3f>> paths;
+        calculateSkeletalLines(_currentRoot, paths);
+        _debugRigSkeletalLine->setPaths(paths);
     }
 }
 
