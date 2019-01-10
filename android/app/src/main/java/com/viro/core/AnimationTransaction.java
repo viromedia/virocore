@@ -101,16 +101,18 @@ public class AnimationTransaction {
      * Set the speed at which the animation runs. The default value is 1.0, which runs the animation at normal speed.
      * A value of 0.0 freezes the animation; a value of 2.0 will run the animation at double speed.
      *
-     * @param speed A multiplier which represents the speed at which to run the animation. For example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is half normal speed,
-     *              2.0 doubles the normal speed.
+     * @param speed A multiplier which represents the speed at which to run the animation. For
+     *              example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is
+     *              half speed, and 2.0 is double normal speed.
      */
     public static void setAnimationSpeed(float speed) {
         nativeSetAnimationSpeed(speed);
     }
 
     /**
-     * Set an time offset from the start of animation. When {@link #commit()} is invoked the animation
-     * will start from this time offset.
+     * Set a time offset that indicates from what frame the animation will start. This offset is
+     * given in milliseconds from the start of animation. When {@link #commit()} is invoked the
+     * animation will start from this time offset.
      *
      * @param timeOffset The time offset in milliseconds.
      */

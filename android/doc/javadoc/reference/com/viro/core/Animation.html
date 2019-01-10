@@ -1013,6 +1013,60 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/Animation.html#setSpeed(float)">setSpeed</a>(float speed)
+      </code>
+      
+        <p>Set the speed at which the animation runs.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Animation.html#setTimeOffset(long)">setTimeOffset</a>(long timeOffset)
+      </code>
+      
+        <p>Set an time offset from the start of animation.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/Animation.html#stop()">stop</a>()
       </code>
       
@@ -1345,6 +1399,69 @@ void setLoop (boolean loop)</pre>
         <td><code>loop</code></td>
         <td width="100%">
           <code>boolean</code>: True to loop.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setSpeed(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setSpeed</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setSpeed (float speed)</pre>
+    
+    
+
+    
+  <p>Set the speed at which the animation runs. The default value is 1.0, which runs the animation at normal speed.
+ A value of 0.0 freezes the animation; a value of 2.0 will run the animation at double speed.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>speed</code></td>
+        <td width="100%">
+          <code>float</code>: A multiplier which represents the speed at which to run the animation. For example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is half normal speed,
+              2.0 doubles the normal speed.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setTimeOffset(long)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setTimeOffset</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setTimeOffset (long timeOffset)</pre>
+    
+    
+
+    
+  <p>Set an time offset from the start of animation. When starting an animation with <code><a href="../../../../reference/com/viro/core/Animation.html#play()">play()</a></code> the animation
+ will start from this offset.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>timeOffset</code></td>
+        <td width="100%">
+          <code>long</code>: The time offset in milliseconds.
 </p></td>
       </tr>
     </table>

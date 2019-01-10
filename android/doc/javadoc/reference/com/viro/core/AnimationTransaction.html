@@ -980,6 +980,60 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/AnimationTransaction.html#setAnimationSpeed(float)">setAnimationSpeed</a>(float speed)
+      </code>
+      
+        <p>Set the speed at which the animation runs.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/AnimationTransaction.html#setAnimationTimeOffset(long)">setAnimationTimeOffset</a>(long timeOffset)
+      </code>
+      
+        <p>Set an time offset from the start of animation.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/AnimationTransaction.html#setListener(com.viro.core.AnimationTransaction.Listener)">setListener</a>(<a href="../../../../reference/com/viro/core/AnimationTransaction.Listener.html">AnimationTransaction.Listener</a> listener)
       </code>
       
@@ -1290,6 +1344,69 @@ void setAnimationLoop (boolean loop)</pre>
         <td><code>loop</code></td>
         <td width="100%">
           <code>boolean</code>: True to loop back to the beginning when finished.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setAnimationSpeed(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setAnimationSpeed</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setAnimationSpeed (float speed)</pre>
+    
+    
+
+    
+  <p>Set the speed at which the animation runs. The default value is 1.0, which runs the animation at normal speed.
+ A value of 0.0 freezes the animation; a value of 2.0 will run the animation at double speed.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>speed</code></td>
+        <td width="100%">
+          <code>float</code>: A multiplier which represents the speed at which to run the animation. For example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is half normal speed,
+              2.0 doubles the normal speed.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setAnimationTimeOffset(long)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setAnimationTimeOffset</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setAnimationTimeOffset (long timeOffset)</pre>
+    
+    
+
+    
+  <p>Set an time offset from the start of animation. When <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#commit()">commit()</a></code> is invoked the animation
+ will start from this time offset.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>timeOffset</code></td>
+        <td width="100%">
+          <code>long</code>: The time offset in milliseconds.
 </p></td>
       </tr>
     </table>
