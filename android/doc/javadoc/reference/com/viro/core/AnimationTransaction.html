@@ -1010,7 +1010,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
       <a href="../../../../reference/com/viro/core/AnimationTransaction.html#setAnimationTimeOffset(long)">setAnimationTimeOffset</a>(long timeOffset)
       </code>
       
-        <p>Set an time offset from the start of animation.
+        <p>Set a time offset that indicates from what frame the animation will start.
         
     
 </p>
@@ -1374,8 +1374,9 @@ void setAnimationSpeed (float speed)</pre>
       <tr>
         <td><code>speed</code></td>
         <td width="100%">
-          <code>float</code>: A multiplier which represents the speed at which to run the animation. For example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is half normal speed,
-              2.0 doubles the normal speed.
+          <code>float</code>: A multiplier which represents the speed at which to run the animation. For
+              example, a value of 1.0 is the default speed. 0.0 freezes the animation, 0.5 is
+              half speed, and 2.0 is double normal speed.
 </p></td>
       </tr>
     </table>
@@ -1399,8 +1400,9 @@ void setAnimationTimeOffset (long timeOffset)</pre>
     
 
     
-  <p>Set an time offset from the start of animation. When <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#commit()">commit()</a></code> is invoked the animation
- will start from this time offset.</p></p>
+  <p>Set a time offset that indicates from what frame the animation will start. This offset is
+ given in milliseconds from the start of animation. When <code><a href="../../../../reference/com/viro/core/AnimationTransaction.html#commit()">commit()</a></code> is invoked the
+ animation will start from this time offset.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
