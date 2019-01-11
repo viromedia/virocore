@@ -5,10 +5,6 @@
 //  Created by vik.advani on 9/7/18.
 //  Copyright © 2018 Viro Media. All rights reserved.
 //
-//
-//  VROBodyTrackerTest.h
-//  ViroSample
-//
 
 #ifndef VROBodyTrackerTest_h
 #define VROBodyTrackerTest_h
