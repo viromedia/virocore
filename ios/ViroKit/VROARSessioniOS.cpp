@@ -31,6 +31,7 @@
 #include "VROARCameraiOS.h"
 #include "VROARImageTracker.h"
 #include "VROBodyTrackeriOS.h"
+#include "VROObjectRecognizeriOS.h"
 #include "VROTrackingHelper.h"
 
 #pragma mark - Lifecycle and Initialization
@@ -343,6 +344,10 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
         _bodyTracker->trackWithVision(frameiOS->getImage(), frameiOS->getCameraImageToViewportTransform(),
                                       frameiOS->getCameraOrientation());
     }
+    if (_objectRecognizer) {
+        _objectRecognizer->trackWithVision(frameiOS->getImage(), frameiOS->getCameraImageToViewportTransform(),
+                                           frameiOS->getCameraOrientation());
+    }
     
 #if ENABLE_OPENCV
     if (isReady()) {
@@ -549,7 +554,11 @@ std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *ancho
 
 void VROARSessioniOS::setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker) {
     _bodyTracker = std::dynamic_pointer_cast<VROBodyTrackeriOS>(bodyTracker);
-} 
+}
+
+void VROARSessioniOS::setObjectRecognizer(std::shared_ptr<VROObjectRecognizer> objectRecognizer) {
+    _objectRecognizer = std::dynamic_pointer_cast<VROObjectRecognizeriOS>(objectRecognizer);
+}
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {
     _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameiOS(frame, _viewport, _orientation, shared_from_this()));

@@ -1355,6 +1355,19 @@
 		8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */; };
 		8FE39F80201FB2D70088A175 /* VROPhotometricLightTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */; };
 		8FE39F81201FB2DB0088A175 /* VROPhotometricLightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */; };
+		8FE52F3721E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */; };
+		8FE52F3821E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */; };
+		8FE52F3921E82A8400BA63D4 /* VRORecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */; };
+		8FE52F3A21E82A8400BA63D4 /* VRORecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */; };
+		8FE52F3C21E833FA00BA63D4 /* VROObjectRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */; };
+		8FE52F3D21E833FB00BA63D4 /* VROObjectRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */; };
+		8FE52F4021E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */; };
+		8FE52F4121E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */; };
+		8FE52F4221E835BA00BA63D4 /* VROObjectRecognizeriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */; };
+		8FE52F4321E835BA00BA63D4 /* VROObjectRecognizeriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */; };
+		8FE52F4521E8441A00BA63D4 /* model_pipelined.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F4421E8441A00BA63D4 /* model_pipelined.mlmodel */; };
+		8FE52F4A21E9402400BA63D4 /* VROObjectRecognizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */; };
+		8FE52F4B21E9402400BA63D4 /* VROObjectRecognizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */; };
 		8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */; };
 		8FEACED82012605F0082D18B /* pbr_sample_roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED32012605E0082D18B /* pbr_sample_roughness.png */; };
 		8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FEACED42012605F0082D18B /* pbr_sample_ao.png */; };
@@ -2372,6 +2385,13 @@
 		8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhotometricLightTest.cpp; sourceTree = "<group>"; };
 		8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhotometricLightTest.h; sourceTree = "<group>"; };
+		8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VRORecognitionTest.cpp; sourceTree = "<group>"; };
+		8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORecognitionTest.h; sourceTree = "<group>"; };
+		8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognizer.h; sourceTree = "<group>"; };
+		8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROObjectRecognizeriOS.cpp; sourceTree = "<group>"; };
+		8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognizeriOS.h; sourceTree = "<group>"; };
+		8FE52F4421E8441A00BA63D4 /* model_pipelined.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_pipelined.mlmodel; sourceTree = "<group>"; };
+		8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VROObjectRecognizer.cpp; sourceTree = "<group>"; };
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
 		8FEACED32012605E0082D18B /* pbr_sample_roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pbr_sample_roughness.png; path = ViroSample/pbr_sample_roughness.png; sourceTree = "<group>"; };
@@ -2896,6 +2916,8 @@
 				8B08B42E213F7B9A00196F05 /* VROBodyTrackeriOS.cpp */,
 				8AABB6FA1F1ECD4E00D48D5C /* VROWeakProxy.h */,
 				8AABB6FB1F1ECD4E00D48D5C /* VROWeakProxy.mm */,
+				8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */,
+				8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -2979,6 +3001,8 @@
 			isa = PBXGroup;
 			children = (
 				8F3F138121654E0A00A3CEFB /* VROBodyTracker.h */,
+				8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */,
+				8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */,
 			);
 			name = "Body Tracking";
 			sourceTree = "<group>";
@@ -3178,6 +3202,7 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				8FE52F4421E8441A00BA63D4 /* model_pipelined.mlmodel */,
 				8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */,
 				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
@@ -3636,6 +3661,8 @@
 				8AD76EAD211CD27B0045BD5F /* VROARObjectTrackingTest.cpp */,
 				8B9988FC21431BFF00EA9ED3 /* VROBodyTrackerTest.h */,
 				8B9988FD21431BFF00EA9ED3 /* VROBodyTrackerTest.cpp */,
+				8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */,
+				8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -3995,6 +4022,7 @@
 				13B6731D212229B20040FB72 /* VRORendererTest.h in Headers */,
 				13B6731E212229B20040FB72 /* VROPostProcessEffectFactory.h in Headers */,
 				13B6731F212229B20040FB72 /* VRORenderTarget.h in Headers */,
+				8FE52F3A21E82A8400BA63D4 /* VRORecognitionTest.h in Headers */,
 				13B67320212229B20040FB72 /* VROTextureReference.h in Headers */,
 				8A291A1D21DD533300BB3934 /* VROBodyTracker.h in Headers */,
 				13B67321212229B20040FB72 /* VROSceneRendererGVR.h in Headers */,
@@ -4091,6 +4119,7 @@
 				13B67377212229B20040FB72 /* VROVideoTextureCacheOpenGL.h in Headers */,
 				13B67378212229B20040FB72 /* VROARHitTestResult.h in Headers */,
 				13B67379212229B20040FB72 /* VROGeometry.h in Headers */,
+				8FE52F4321E835BA00BA63D4 /* VROObjectRecognizeriOS.h in Headers */,
 				13B6737A212229B20040FB72 /* VROARDeclarativePlane.h in Headers */,
 				13B6737B212229B20040FB72 /* VROGeometryElement.h in Headers */,
 				13B6737C212229B20040FB72 /* KIOQuery.h in Headers */,
@@ -4105,6 +4134,7 @@
 				13B67385212229B20040FB72 /* VROLazyMaterial.h in Headers */,
 				13B67386212229B20040FB72 /* VROMaterialAnimation.h in Headers */,
 				13B67387212229B20040FB72 /* VROPreprocess.h in Headers */,
+				8FE52F3D21E833FB00BA63D4 /* VROObjectRecognizer.h in Headers */,
 				13B67388212229B20040FB72 /* KIODBStore.h in Headers */,
 				13B67389212229B20040FB72 /* VROFrameSynchronizer.h in Headers */,
 				A5A10743212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */,
@@ -4330,6 +4360,7 @@
 				8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */,
 				A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */,
 				8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */,
+				8FE52F3921E82A8400BA63D4 /* VRORecognitionTest.h in Headers */,
 				8FEACF1520191F280082D18B /* VROTextureReference.h in Headers */,
 				8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */,
 				8A53ABF2212B824A0005D7F9 /* VROARImageDatabase.h in Headers */,
@@ -4426,6 +4457,7 @@
 				8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
 				8A11C8F51EF5AB9D0003E829 /* VROARDeclarativePlane.h in Headers */,
+				8FE52F4221E835BA00BA63D4 /* VROObjectRecognizeriOS.h in Headers */,
 				8F98F70F21260E4800917430 /* VROSkeletalAnimationLayer.h in Headers */,
 				A5DA443A21B0BDC400F86923 /* VROIKTest.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
@@ -4440,6 +4472,7 @@
 				8F53D39F1DCA883A001C91A8 /* VROConvert.h in Headers */,
 				8F83DEA01C4826F80089C31A /* VROTimingFunctionEaseInEaseOut.h in Headers */,
 				8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */,
+				8FE52F3C21E833FA00BA63D4 /* VROObjectRecognizer.h in Headers */,
 				8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */,
 				8FEACEF52018061B0082D18B /* VROPreprocess.h in Headers */,
 				13BC8FA821507E2300479BE0 /* VROARFrame.h in Headers */,
@@ -5498,6 +5531,7 @@
 				13B67274212229B20040FB72 /* VROAction.cpp in Sources */,
 				13B67275212229B20040FB72 /* VROImageShaderProgram.cpp in Sources */,
 				13B67276212229B20040FB72 /* VROWeakProxy.mm in Sources */,
+				8FE52F3821E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */,
 				13B67277212229B20040FB72 /* VROBox.cpp in Sources */,
 				13B67278212229B20040FB72 /* VROAllocationTracker.cpp in Sources */,
 				13B67279212229B20040FB72 /* VROQuaternion.cpp in Sources */,
@@ -5530,6 +5564,7 @@
 				13B67294212229B20040FB72 /* VROGlyphAtlasOpenGL.cpp in Sources */,
 				13B67295212229B20040FB72 /* VRODriverOpenGLiOS.cpp in Sources */,
 				13B67297212229B20040FB72 /* VROToneMappingTest.cpp in Sources */,
+				8FE52F4B21E9402400BA63D4 /* VROObjectRecognizer.cpp in Sources */,
 				13B67298212229B20040FB72 /* VROTriangle.cpp in Sources */,
 				13B67299212229B20040FB72 /* VROFrustum.cpp in Sources */,
 				13B6729A212229B20040FB72 /* VROUniform.cpp in Sources */,
@@ -5576,6 +5611,7 @@
 				13B672BF212229B20040FB72 /* VROInputControllerCardboardiOS.cpp in Sources */,
 				13B672C0212229B20040FB72 /* VROShaderCapabilities.cpp in Sources */,
 				13B672C1212229B20040FB72 /* VROImageiOS.cpp in Sources */,
+				8FE52F4121E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */,
 				13B672C2212229B20040FB72 /* VRODistortionRenderer.cpp in Sources */,
 				13B672C3212229B20040FB72 /* Shaders.metal in Sources */,
 				13B672C4212229B20040FB72 /* VROFBXTest.cpp in Sources */,
@@ -5681,6 +5717,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FE52F3721E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */,
 				A57CA8DC20ADFDB700DE85A1 /* VROGLTFTest.cpp in Sources */,
 				13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */,
 				13F631B42065C21B00A74EFC /* KeenConstants.m in Sources */,
@@ -5794,6 +5831,7 @@
 				8FD4DF0F1C18ED3C003DC425 /* VROMaterialVisual.cpp in Sources */,
 				8FD4DEF21C18ED19003DC425 /* VROPlane.cpp in Sources */,
 				8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */,
+				8FE52F4021E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */,
 				A5EC65B61EBFF57B00FE220E /* VROPhysicsBody.cpp in Sources */,
 				8F67B59F1DF1DC930096C26F /* VROKnuthPlassFormatter.cpp in Sources */,
 				8F56AEA41DE764A700DD65B6 /* VROGlyphOpenGL.cpp in Sources */,
@@ -5868,6 +5906,7 @@
 				8FD2A5551F813C4100E831A6 /* VROFBXTest.cpp in Sources */,
 				8FD2A5391F813C4100E831A6 /* VROARPlaneTest.cpp in Sources */,
 				8AD76EA5211B7BF10045BD5F /* VROARObjectTargetiOS.cpp in Sources */,
+				8FE52F4521E8441A00BA63D4 /* model_pipelined.mlmodel in Sources */,
 				8F8751902062C86E002D9BF8 /* VROJenkinsHash.cpp in Sources */,
 				8F201C4F21010E0B00637A75 /* VROPolygonTest.cpp in Sources */,
 				A5DA443321AF473600F86923 /* VROIKRig.cpp in Sources */,
@@ -5880,6 +5919,7 @@
 				8F53C9021E01A39E008314B4 /* VROOBJLoader.cpp in Sources */,
 				8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */,
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
+				8FE52F4A21E9402400BA63D4 /* VROObjectRecognizer.cpp in Sources */,
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
 				8FEACF1020191F000082D18B /* VROMaterialShaderBinding.cpp in Sources */,
 				8F8754BA20632DF7002D9BF8 /* VROTypefaceCollection.cpp in Sources */,

@@ -1,0 +1,77 @@
+//
+//  VRORecognitionTest.h
+//  ViroRenderer
+//
+//  Created by Raj Advani on 1/10/19.
+//  Copyright © 2019 Viro Media. All rights reserved.
+//
+
+#ifndef VRORecognitionTest_h
+#define VRORecognitionTest_h
+
+#include "VRORendererTest.h"
+#include "VROARDeclarativeNode.h"
+#include "VROSceneController.h"
+#include "VRODefines.h"
+#include "VROObjectRecognizer.h"
+
+#if VRO_PLATFORM_IOS
+#include "VROARSessioniOS.h"
+#import "VROViewAR.h"
+#import <UIKit/UIKit.h>
+#endif
+
+class VRORecognitionTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
+public VROObjectRecognizerDelegate,
+public std::enable_shared_from_this<VRORecognitionTest> {
+public:
+    
+    VRORecognitionTest();
+    virtual ~VRORecognitionTest();
+    
+    void build(std::shared_ptr<VRORenderer> renderer,
+               std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+               std::shared_ptr<VRODriver> driver);
+    
+    std::shared_ptr<VRONode> getPointOfView() {
+        return _pointOfView;
+    }
+    std::shared_ptr<VROSceneController> getSceneController() {
+        return _sceneController;
+    }
+    
+    virtual void onSceneWillAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+        
+    }
+    virtual void onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+#if VRO_PLATFORM_IOS
+        std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
+        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
+        arSessioniOS->setObjectRecognizer(_objectRecognizer);
+#endif
+    }
+    virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+        
+    }
+    virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+    }
+    
+    virtual void onObjectsFound(const std::map<std::string, VRORecognizedObject> &joints);
+    
+private:
+    
+    std::shared_ptr<VRONode> _pointOfView;
+    std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VROARScene> _arScene;
+    std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
+    std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VROObjectRecognizer> _objectRecognizer;
+    
+#if VRO_PLATFORM_IOS
+    UIView *_objectViews[80];
+    VROViewAR *_view;
+#endif
+    
+};
+
+#endif /* VRORecognitionTest_hpp */
