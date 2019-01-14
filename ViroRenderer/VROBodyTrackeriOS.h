@@ -43,10 +43,6 @@ private:
     dispatch_queue_t bodyMeshingQueue;
     
     VROMatrix4f _transform;
-    
-    static CVPixelBufferRef convertImage(CVImageBufferRef image);
-    static CVPixelBufferRef rotateImage(CVPixelBufferRef image, uint8_t rotation, size_t resultWidth, size_t resultHeight);
-    static CVPixelBufferRef transformImage(CVPixelBufferRef image, CGAffineTransform transform);
     static std::map<VROBodyJointType, VROBodyJoint> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
     
     // Debug method

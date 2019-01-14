@@ -49,6 +49,7 @@ enum class VRORendererTestType {
     Polygon,
     BodyTracker,
     Recognition,
+    BodyRecognition,
     NumTests,
 };
 
