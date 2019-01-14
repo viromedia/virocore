@@ -18,12 +18,19 @@ void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress)
     free((void *)baseAddress);
 }
 
-CVPixelBufferRef VROImagePreprocessor::rotateImage(CVPixelBufferRef image, uint8_t rotation,
-                                                   size_t resultWidth, size_t resultHeight) {
+CVPixelBufferRef VROImagePreprocessor::rotateImage(CVPixelBufferRef image, uint8_t rotation) {
     CVPixelBufferLockBaseAddress(image, 0);
     
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
+    
+    size_t resultWidth = width;
+    size_t resultHeight = height;
+    if (rotation == 1 || rotation == 3) {
+        resultWidth = height;
+        resultHeight = width;
+    }
+    
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(image);
     size_t bytesPerRowOut = 4 * resultWidth * sizeof(unsigned char);
     size_t currSize = bytesPerRow * height * sizeof(unsigned char);

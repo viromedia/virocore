@@ -142,9 +142,6 @@ void VROBodyTrackeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMatrix4
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             NSDictionary *visionOptions = [NSDictionary dictionary];
-
-            size_t imageWidth = CVPixelBufferGetWidth(convertedImage);
-            size_t imageHeight = CVPixelBufferGetHeight(convertedImage);
             
             // The logic below accomplishes two things: it rotates the image right-side-up so that
             // it can be used by the ML algorithm, and it derives the _transform matrix, which is used
@@ -163,7 +160,7 @@ void VROBodyTrackeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMatrix4
                 _transform[13] = translation.y;
                 
                 // The '3' here indicates 270 degree rotation
-                CVPixelBufferRef rotatedImage = VROImagePreprocessor::rotateImage(convertedImage, 3, imageHeight, imageWidth);
+                CVPixelBufferRef rotatedImage = VROImagePreprocessor::rotateImage(convertedImage, 3);
                 
                 VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedImage options:visionOptions];
                 [handler performRequests:@[_coreMLRequest] error:nil];
@@ -179,7 +176,7 @@ void VROBodyTrackeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMatrix4
                 _transform[13] = (1 - scale.y) / 2.0;
                 
                 // The '2' here indicates 180 degree rotation
-                CVPixelBufferRef rotatedImage = VROImagePreprocessor::rotateImage(convertedImage, 2, imageWidth, imageHeight);
+                CVPixelBufferRef rotatedImage = VROImagePreprocessor::rotateImage(convertedImage, 2);
                 
                 VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedImage options:visionOptions];
                 [handler performRequests:@[_coreMLRequest] error:nil];

@@ -27,11 +27,9 @@ public:
     
     /*
      Rotate the given image. For the rotation parameter, [0, 1, 2, 3] map to [0, 90, 180, 270]
-     degree rotation. The resultWidth and resultHeight should be the width and height of the
-     image after the rotation is complete (note these need to be passed in, these are not
-     output variables).
+     degree rotation.
      */
-    static CVPixelBufferRef rotateImage(CVPixelBufferRef image, uint8_t rotation, size_t resultWidth, size_t resultHeight);
+    static CVPixelBufferRef rotateImage(CVPixelBufferRef image, uint8_t rotation);
     
     /*
      Write the given image to the photos album. This is for debugging purposes.
