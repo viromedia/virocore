@@ -61,6 +61,9 @@ static VROVector3f const kZeroVector = VROVector3f();
 @property (readwrite, nonatomic) CGFloat trackerViewScale;
 @property (readwrite, nonatomic) CGFloat textHeight;
 
+// Debug view for drawing with CoreGraphics
+@property (readwrite, nonatomic) UIView *glassView;
+
 @end
 
 @implementation VROViewAR
@@ -491,6 +494,11 @@ static VROVector3f const kZeroVector = VROVector3f();
     return [NSString stringWithUTF8String:_inputController->getController().c_str()];
 }
 
+- (void)setDebugDrawDelegate:(NSObject<VRODebugDrawDelegate> *)debugDrawDelegate {
+    self.glassView = [[VROGlassView alloc] initWithFrame:self.bounds delegate:debugDrawDelegate];
+    [self addSubview:self.glassView];
+}
+
 #pragma mark - Key Validation
 
 - (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
@@ -569,10 +577,12 @@ static VROVector3f const kZeroVector = VROVector3f();
     @autoreleasepool {
         if (self.suspended) {
             [self renderSuspended];
-        }
-        else {
+        } else {
             [self renderFrame];
         }
+    }
+    if (_glassView) {
+        [_glassView setNeedsDisplay];
     }
     
     ++_frame;
@@ -728,6 +738,25 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)recenterTracking {
     // TODO Implement this, try to share code with VROSceneRendererCardboardOpenGL; maybe
     //      move the functionality into VRORenderer
+}
+
+@end
+
+@implementation VROGlassView
+
+- (id)initWithFrame:(CGRect)frame delegate:(NSObject<VRODebugDrawDelegate> *)delegate {
+    self = [super initWithFrame:frame];
+    if (self) {
+        _debugDrawDelegate = delegate;
+        self.backgroundColor = [UIColor clearColor];
+    }
+    return self;
+}
+
+- (void)drawRect:(CGRect)rect {
+    if (self.debugDrawDelegate) {
+        [self.debugDrawDelegate drawRect];
+    }
 }
 
 @end

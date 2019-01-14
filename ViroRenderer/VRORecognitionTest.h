@@ -21,9 +21,15 @@
 #import <UIKit/UIKit.h>
 #endif
 
+@interface VRORecognitionDrawDelegate : NSObject<VRODebugDrawDelegate>
+- (void)drawRect;
+- (void)setLabels:(std::vector<std::string>)labels positions:(std::vector<VROVector3f>)positions;
+- (void)setBoxes:(std::vector<VROBoundingBox>)boxes;
+@end
+
 class VRORecognitionTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
-public VROObjectRecognizerDelegate,
-public std::enable_shared_from_this<VRORecognitionTest> {
+                           public VROObjectRecognizerDelegate,
+                           public std::enable_shared_from_this<VRORecognitionTest> {
 public:
     
     VRORecognitionTest();
@@ -56,7 +62,7 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onObjectsFound(const std::map<std::string, VRORecognizedObject> &joints);
+    virtual void onObjectsFound(const std::map<std::string, std::vector<VRORecognizedObject>> &joints);
     
 private:
     
@@ -66,10 +72,10 @@ private:
     std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROObjectRecognizer> _objectRecognizer;
-    
+                               
 #if VRO_PLATFORM_IOS
-    UIView *_objectViews[80];
     VROViewAR *_view;
+    VRORecognitionDrawDelegate *_drawDelegate;
 #endif
     
 };

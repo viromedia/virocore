@@ -836,6 +836,7 @@
 		8F2C7B0621ECD3F100B8A154 /* VROBodyRecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B0321ECD3F100B8A154 /* VROBodyRecognitionTest.cpp */; };
 		8F2C7B0721ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0821ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
+		8F2C7B0C21ECEBAD00B8A154 /* axel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2C7B0921ECEAE300B8A154 /* axel.png */; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
 		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
@@ -1867,6 +1868,7 @@
 		8F2C7AFE21ECCE5300B8A154 /* VROImagePreprocessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImagePreprocessor.h; sourceTree = "<group>"; };
 		8F2C7B0321ECD3F100B8A154 /* VROBodyRecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyRecognitionTest.cpp; sourceTree = "<group>"; };
 		8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyRecognitionTest.h; sourceTree = "<group>"; };
+		8F2C7B0921ECEAE300B8A154 /* axel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = axel.png; path = ViroKit/axel.png; sourceTree = "<group>"; };
 		8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkinner.cpp; sourceTree = "<group>"; };
 		8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkinner.h; sourceTree = "<group>"; };
 		8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBone.cpp; sourceTree = "<group>"; };
@@ -3730,6 +3732,7 @@
 			children = (
 				A5C931EB21E028EE00564C2D /* ninja */,
 				8F68E3A2219B3050000A7C64 /* darkerSmoke.png */,
+				8F2C7B0921ECEAE300B8A154 /* axel.png */,
 				8F68E3A3219B3050000A7C64 /* darkSmoke.png */,
 				8F68E3A0219A35ED000A7C64 /* floor_transparent_03.png */,
 				8F0F13ED2193812E00E8810B /* san_giuseppe_bridge_1k.hdr */,
@@ -5051,6 +5054,7 @@
 				8F660AB41E931C6F006D063F /* 4096_normal.jpg in Resources */,
 				8F5EEEAB20329C9C0059C9E7 /* cupcake_vanilla_1001_AO.png in Resources */,
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
+				8F2C7B0C21ECEBAD00B8A154 /* axel.png in Resources */,
 				8F660AB21E931C6F006D063F /* 4096_earth.jpg in Resources */,
 				8F04372D201AA72900D98D26 /* blinn2_Mixed_AO.png in Resources */,
 				8AD76EB7211CD59C0045BD5F /* diet_coke.arobject in Resources */,

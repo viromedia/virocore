@@ -41,14 +41,7 @@ private:
     double _lastTimestamp;
     int32_t _fps;
     dispatch_queue_t bodyMeshingQueue;
-    
     VROMatrix4f _transform;
-    
-    
-    static std::map<std::string, VRORecognizedObject> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
-    
-    // Debug method
-    void writeImageToDisk(CVPixelBufferRef imageBuffer);
     
 };
 

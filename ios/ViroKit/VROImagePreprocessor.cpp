@@ -18,28 +18,30 @@ void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress)
     free((void *)baseAddress);
 }
 
-CVPixelBufferRef VROImagePreprocessor::rotateImage(CVPixelBufferRef image, uint8_t rotation) {
+CVPixelBufferRef VROImagePreprocessor::rotateImage(CVPixelBufferRef image, uint8_t rotation,
+                                                   size_t *outResultWidth, size_t *outResultHeight) {
     CVPixelBufferLockBaseAddress(image, 0);
     
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
     
-    size_t resultWidth = width;
-    size_t resultHeight = height;
     if (rotation == 1 || rotation == 3) {
-        resultWidth = height;
-        resultHeight = width;
+        *outResultWidth = height;
+        *outResultHeight = width;
+    } else {
+        *outResultWidth = width;
+        *outResultHeight = height;
     }
     
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(image);
-    size_t bytesPerRowOut = 4 * resultWidth * sizeof(unsigned char);
+    size_t bytesPerRowOut = 4 * *outResultWidth * sizeof(unsigned char);
     size_t currSize = bytesPerRow * height * sizeof(unsigned char);
     
     void *srcBuff = CVPixelBufferGetBaseAddress(image);
     unsigned char *outBuff = (unsigned char *) malloc(currSize);
     
     vImage_Buffer ibuff = { srcBuff, height, width, bytesPerRow};
-    vImage_Buffer ubuff = { outBuff, resultHeight, resultWidth, bytesPerRowOut};
+    vImage_Buffer ubuff = { outBuff, *outResultHeight, *outResultWidth, bytesPerRowOut};
     uint8_t bgColor[4]  = {0, 0, 0, 0};
     
     // For the rotation parameter [0, 1, 2, 3] map to [0, 90, 180, 270] degree rotation
@@ -51,8 +53,8 @@ CVPixelBufferRef VROImagePreprocessor::rotateImage(CVPixelBufferRef image, uint8
     
     CVPixelBufferRef rotatedBuffer = NULL;
     CVPixelBufferCreateWithBytes(NULL,
-                                 resultWidth,
-                                 resultHeight,
+                                 *outResultWidth,
+                                 *outResultHeight,
                                  kCVPixelFormatType_32BGRA,
                                  ubuff.data,
                                  bytesPerRowOut,

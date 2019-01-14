@@ -15,6 +15,16 @@
 class VROARSessionDelegate;
 class VRORendererConfiguration;
 
+@protocol VRODebugDrawDelegate
+@required
+- (void)drawRect;
+@end
+
+@interface VROGlassView : UIView
+@property (readwrite, nonatomic, assign) NSObject<VRODebugDrawDelegate> *debugDrawDelegate;
+- (id)initWithFrame:(CGRect)frame delegate:(NSObject<VRODebugDrawDelegate> *)delegate;
+@end
+
 @interface VROViewAR : GLKView <VROView, UIGestureRecognizerDelegate>
 
 @property (readwrite, nonatomic) BOOL suspended;
@@ -59,5 +69,10 @@ class VRORendererConfiguration;
  Returns true if AR is supported by this device.
  */
 + (BOOL)isARSupported;
+
+/*
+ Set a view for drawing debug information using CoreGraphics.
+ */
+- (void)setDebugDrawDelegate:(NSObject<VRODebugDrawDelegate> *)debugDrawDelegate;
 
 @end

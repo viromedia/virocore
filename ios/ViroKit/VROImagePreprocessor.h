@@ -29,7 +29,8 @@ public:
      Rotate the given image. For the rotation parameter, [0, 1, 2, 3] map to [0, 90, 180, 270]
      degree rotation.
      */
-    static CVPixelBufferRef rotateImage(CVPixelBufferRef image, uint8_t rotation);
+    static CVPixelBufferRef rotateImage(CVPixelBufferRef image, uint8_t rotation,
+                                        size_t *outResultWidth, size_t *outResultHeight);
     
     /*
      Write the given image to the photos album. This is for debugging purposes.

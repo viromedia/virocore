@@ -14,6 +14,8 @@
 #include "VROObjectRecognizeriOS.h"
 #include "VRODriverOpenGLiOS.h"
 
+static const int kRecognitionNumColors = 14;
+
 static UIColor *colors[14] = {
     [UIColor redColor],
     [UIColor greenColor],
@@ -54,6 +56,9 @@ void VRORecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     
 #if VRO_PLATFORM_IOS
     _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
+    _drawDelegate = [[VRORecognitionDrawDelegate alloc] init];
+
+    [_view setDebugDrawDelegate:_drawDelegate];
     
     std::shared_ptr<VROObjectRecognizeriOS> trackeriOS = std::make_shared<VROObjectRecognizeriOS>();
     trackeriOS->initObjectTracking(VROCameraPosition::Back, driver);
@@ -65,51 +70,89 @@ void VRORecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
     _arScene->getRootNode()->addLight(ambient);
-    
-    int numClasses = VROObjectRecognizer::getNumClasses();
-    
-    for (int i = 0; i < numClasses; i++) {
-        std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(0.05, 20, 20, 20);
-        std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>();
-        sphereNode->setGeometry(sphere);
-        sphereNode->setPosition(VROVector3f(0.0f, -2000.0f, -2000.0f));
-        
+}
+
+void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<VRORecognizedObject>> &objects) {
 #if VRO_PLATFORM_IOS
-        _objectViews[i] = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 4, 4)];
-        _objectViews[i].backgroundColor = colors[i % 14];
-        _objectViews[i].clipsToBounds = NO;
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(7, -3, 100, 8)];
-        label.text = [NSString stringWithUTF8String:VROObjectRecognizer::getClassName(i).c_str()];
-        label.textColor = colors[i % 14];
-        label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
-        [_objectViews[i] addSubview:label];
-        [_view addSubview:_objectViews[i]];
+    int viewWidth  = _view.frame.size.width;
+    int viewHeight = _view.frame.size.height;
+    
+    std::vector<VROVector3f> labelPositions;
+    std::vector<std::string> labels;
+    std::vector<VROBoundingBox> boxes;
+    
+    for (auto &kv : objects) {
+        for (VRORecognizedObject object : kv.second) {
+            VROBoundingBox bounds = object.getBounds();
+            
+            float x = bounds.getX() * viewWidth;
+            float y = bounds.getY() * viewHeight;
+            float width = bounds.getSpanX() * viewWidth;
+            float height = bounds.getSpanY() * viewHeight;
+
+            VROVector3f labelPosition = { (float) (x - width / 2.0), (float) (y + height / 2.0), 0 };
+            VROBoundingBox transformedBox(x - width / 2.0, x + width / 2.0, y - height / 2.0, y + height / 2.0, 0, 0);
+            
+            NSLog(@"Transformed box %f, %f, %f, %f", transformedBox.getMinX(), transformedBox.getMinY(), transformedBox.getMaxX(), transformedBox.getMaxY());
+            
+            boxes.push_back(transformedBox);
+            labels.push_back(kv.first);
+            labelPositions.push_back({ labelPosition.x, labelPosition.y, 0 });
+        }
+    }
+    
+    [_drawDelegate setBoxes:boxes];
+    [_drawDelegate setLabels:labels positions:labelPositions];
 #endif
+}
+
+@implementation VRORecognitionDrawDelegate {
+    std::vector<VROVector3f> _labelPositions;
+    std::vector<std::string> _labels;
+    std::vector<VROBoundingBox> _boxes;
+    UIImage *_bulwinders;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _bulwinders = [UIImage imageNamed:@"axel"];
+    }
+    return self;
+}
+
+- (void)drawRect {
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    //CGRect imageRect = CGRectMake(0, 0, 416, 416);
+    //[_bulwinders drawInRect:imageRect];
+    
+    UIFont *font = [UIFont boldSystemFontOfSize:18];
+    for (int i = 0; i < _labels.size(); i++) {
+        NSString *text = [NSString stringWithUTF8String:_labels[i].c_str()];
+        VROVector3f point = _labelPositions[i];
+        
+        [text drawAtPoint:CGPointMake( point.x, point.y ) withAttributes:@{ NSFontAttributeName:font,
+                                                                            NSForegroundColorAttributeName : colors[i % kRecognitionNumColors] } ];
+    }
+    
+    for (int i = 0; i < _boxes.size(); i++) {
+        VROBoundingBox box = _boxes[i];
+        
+        CGRect rect = CGRectMake(box.getX() - box.getSpanX() / 2.0, box.getY() - box.getSpanY() / 2.0, box.getSpanX(), box.getSpanY());
+        CGContextAddRect(context, rect);
+        CGContextSetStrokeColorWithColor(context, [colors[i % kRecognitionNumColors] CGColor]);
+        CGContextStrokePath(context);
     }
 }
 
-void VRORecognitionTest::onObjectsFound(const std::map<std::string, VRORecognizedObject> &joints) {
-#if VRO_PLATFORM_IOS
-    int width  = _view.frame.size.width;
-    int height = _view.frame.size.height;
-    
-    float minAlpha = 0.4;
-    float maxAlpha = 1.0;
-    float maxConfidence = 0.6;
-    float minConfidence = 0.1;
-    
-    for (int i = 0; i < VROObjectRecognizer::getNumClasses(); i++) {
-        _objectViews[i].alpha = 0;
-    }
-    
-    for (auto &kv : joints) {
-        int classIndex = VROObjectRecognizer::getIndexOfClass(kv.first);
-        VROVector3f point = kv.second.getScreenCoords();
-        VROVector3f transformed = { point.x * width, point.y * height, 0 };
-        
-        _objectViews[classIndex].center = CGPointMake(transformed.x, transformed.y);
-        _objectViews[classIndex].alpha = VROMathInterpolate(kv.second.getConfidence(), minConfidence, maxConfidence, minAlpha, maxAlpha);
-    }
-#endif
+- (void)setLabels:(std::vector<std::string>)labels positions:(std::vector<VROVector3f>)positions {
+    _labels = labels;
+    _labelPositions = positions;
 }
+
+- (void)setBoxes:(std::vector<VROBoundingBox>)boxes {
+    _boxes = boxes;
+}
+
+@end

@@ -44,9 +44,6 @@ private:
     
     VROMatrix4f _transform;
     static std::map<VROBodyJointType, VROBodyJoint> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
-    
-    // Debug method
-    void writeImageToDisk(CVPixelBufferRef imageBuffer);
 
 };
 

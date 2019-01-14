@@ -14,6 +14,7 @@
 #include <string>
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
+#include "VROBoundingBox.h"
 
 enum VRORecognizedObjectType {
     Person,
@@ -102,13 +103,13 @@ class VRORecognizedObject {
 public:
     
     VRORecognizedObject() : _confidence(0) {}
-    VRORecognizedObject(std::string type, VROVector3f screenCoords, double confidence) :
+    VRORecognizedObject(std::string type, VROBoundingBox bounds, double confidence) :
         _type(type),
-        _screenCoords(screenCoords),
+        _bounds(bounds),
         _confidence(confidence) {}
     
-    const VROVector3f &getScreenCoords() const {
-        return _screenCoords;
+    const VROBoundingBox &getBounds() const {
+        return _bounds;
     }
     std::string getType() const {
         return _type;
@@ -118,7 +119,7 @@ public:
     }
     
 private:
-    VROVector3f _screenCoords;
+    VROBoundingBox _bounds;
     std::string _type;
     double _confidence;
     double _spawnTimeMs;
@@ -126,7 +127,7 @@ private:
 
 class VROObjectRecognizerDelegate {
 public:
-    virtual void onObjectsFound(const std::map<std::string, VRORecognizedObject> &objects) = 0;
+    virtual void onObjectsFound(const std::map<std::string, std::vector<VRORecognizedObject>> &objects) = 0;
 };
 
 class VROObjectRecognizer {
