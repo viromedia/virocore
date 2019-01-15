@@ -78,7 +78,7 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
     int viewHeight = _view.frame.size.height;
     
     std::vector<VROVector3f> labelPositions;
-    std::vector<std::string> labels;
+    std::vector<NSString *> labels;
     std::vector<VROBoundingBox> boxes;
     
     for (auto &kv : objects) {
@@ -93,10 +93,11 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
             VROVector3f labelPosition = { (float) (x - width / 2.0), (float) (y + height / 2.0), 0 };
             VROBoundingBox transformedBox(x - width / 2.0, x + width / 2.0, y - height / 2.0, y + height / 2.0, 0, 0);
             
-            NSLog(@"Transformed box %f, %f, %f, %f", transformedBox.getMinX(), transformedBox.getMinY(), transformedBox.getMaxX(), transformedBox.getMaxY());
+            NSString *className = [NSString stringWithUTF8String:kv.first.c_str()];
+            NSString *classAndConf = [NSString stringWithFormat:@"%@ [%.03f]", className, object.getConfidence()];
             
             boxes.push_back(transformedBox);
-            labels.push_back(kv.first);
+            labels.push_back(classAndConf);
             labelPositions.push_back({ labelPosition.x, labelPosition.y, 0 });
         }
     }
@@ -108,15 +109,14 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
 
 @implementation VRORecognitionDrawDelegate {
     std::vector<VROVector3f> _labelPositions;
-    std::vector<std::string> _labels;
+    std::vector<NSString *> _labels;
     std::vector<VROBoundingBox> _boxes;
-    UIImage *_bulwinders;
 }
 
 - (id)init {
     self = [super init];
     if (self) {
-        _bulwinders = [UIImage imageNamed:@"axel"];
+        
     }
     return self;
 }
@@ -124,15 +124,10 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
 - (void)drawRect {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    //CGRect imageRect = CGRectMake(0, 0, 416, 416);
-    //[_bulwinders drawInRect:imageRect];
-    
-    UIFont *font = [UIFont boldSystemFontOfSize:18];
+    UIFont *font = [UIFont boldSystemFontOfSize:16];
     for (int i = 0; i < _labels.size(); i++) {
-        NSString *text = [NSString stringWithUTF8String:_labels[i].c_str()];
         VROVector3f point = _labelPositions[i];
-        
-        [text drawAtPoint:CGPointMake( point.x, point.y ) withAttributes:@{ NSFontAttributeName:font,
+        [_labels[i] drawAtPoint:CGPointMake( point.x, point.y ) withAttributes:@{ NSFontAttributeName:font,
                                                                             NSForegroundColorAttributeName : colors[i % kRecognitionNumColors] } ];
     }
     
@@ -146,7 +141,7 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
     }
 }
 
-- (void)setLabels:(std::vector<std::string>)labels positions:(std::vector<VROVector3f>)positions {
+- (void)setLabels:(std::vector<NSString *>)labels positions:(std::vector<VROVector3f>)positions {
     _labels = labels;
     _labelPositions = positions;
 }

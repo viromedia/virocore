@@ -23,7 +23,7 @@
 
 @interface VRORecognitionDrawDelegate : NSObject<VRODebugDrawDelegate>
 - (void)drawRect;
-- (void)setLabels:(std::vector<std::string>)labels positions:(std::vector<VROVector3f>)positions;
+- (void)setLabels:(std::vector<NSString *>)labels positions:(std::vector<VROVector3f>)positions;
 - (void)setBoxes:(std::vector<VROBoundingBox>)boxes;
 @end
 
