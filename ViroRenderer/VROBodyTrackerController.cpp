@@ -78,6 +78,22 @@ static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
   {VROBodyJointType::LeftAnkle,       "LeftAnkle"},
 };
 
+VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot) {
+    _currentTrackedState = VROBodyTrackedState::NotAvailable;
+    _rig = nullptr;
+    _skinner = nullptr;
+    _calibrating = false;
+    _renderer = renderer;
+    _mlRootToModelRoot = VROMatrix4f::identity();
+    _bodyControllerRoot = std::make_shared<VRONode>();
+    _calibrationEventDelegate = nullptr;
+
+    sceneRoot->addChildNode(_bodyControllerRoot);
+}
+
+VROBodyTrackerController::~VROBodyTrackerController() {
+}
+
 bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode) {
     _rig = nullptr;
     _keyToEffectorMap.clear();
@@ -182,20 +198,60 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     return true;
 }
 
-VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot) {
-    _currentTrackedState = VROBodyTrackedState::NotAvailable;
-    _rig = nullptr;
-    _skinner = nullptr;
-    _calibrating = false;
-    _renderer = renderer;
-    _mlRootToModelRoot = VROMatrix4f::identity();
-    _bodyControllerRoot = std::make_shared<VRONode>();
-    _calibrationEventDelegate = nullptr;
+void VROBodyTrackerController::initializeModelUniformScale() {
+    // Set the model in it's original scale needed for determining ratios.
+    VROVector3f currentScale = _modelRootNode->getScale();
+    _modelRootNode->setScale(VROVector3f(1, 1, 1));
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
 
-    sceneRoot->addChildNode(_bodyControllerRoot);
+    // Now calculate the ratios for automatic resizing.
+    VROMatrix4f neckTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
+    VROMatrix4f leftHipTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
+    VROMatrix4f rightHipTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
+
+    // Now get the middle of the hip.
+    VROVector3f midVecFromLeft = (rightHipTrans.extractTranslation() - leftHipTrans.extractTranslation()).scale(0.5f);
+    VROVector3f midHipLoc = leftHipTrans.extractTranslation().add(midVecFromLeft);
+    VROVector3f neckLoc = neckTrans.extractTranslation();
+    _originalNeckToHipDistance = midHipLoc.distanceAccurate(neckLoc);
 }
 
-VROBodyTrackerController::~VROBodyTrackerController() {
+void VROBodyTrackerController::startCalibration() {
+    if (_skinner == nullptr) {
+        pwarn("Unable to start calibration: Model has not yet been bounded to this controller!");
+        return;
+    }
+
+    _calibrating = true;
+    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
+
+    // reset the bones back to it's initial configuration
+    std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
+    for (int i = 0; i < skeleton->getNumBones(); i++) {
+        std::shared_ptr<VROBone> bone = skeleton->getBone(i);
+        bone->setTransform(VROMatrix4f::identity(), bone->getTransformType());
+    }
+}
+
+void VROBodyTrackerController::finishCalibration() {
+    if (_skinner == nullptr) {
+        pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
+        return;
+    }
+
+    _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
+    _modelRootNode->setIKRig(_rig);
+
+    // Start listening for new joint data.
+    setBodyTrackedState(VROBodyTrackedState::NotAvailable);
+    _calibrating = false;
+    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
+    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
 }
 
 void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
@@ -252,143 +308,6 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     }
 }
 
-void VROBodyTrackerController::alignModelRootToMLRoot() {
-    // Grab the world transform of what we consider to be the Body Joint's Root.
-    VROMatrix4f bodyJointRootTransform = _cachedTrackedJoints[kBodyJointRoot].getProjectedTransform();
-
-    // Note: we just want the translational part of the ML's root transform as scale
-    // and rotation doesn't matter at this point - they will be taken into account in the IKRig.
-    VROMatrix4f bodyJointRootTransformTranslation;
-    bodyJointRootTransformTranslation.translate(bodyJointRootTransform.extractTranslation());
-
-    // Calculate the model's desired root location by multiplying the precalculated
-    // _mlRootToModelRoot given the current bodyJointRootTransform.
-    VROMatrix4f modelRootTransform = bodyJointRootTransformTranslation.multiply(_mlRootToModelRoot);
-
-    // Update the model's node.
-    VROVector3f pos = modelRootTransform.extractTranslation();
-    VROQuaternion rot = modelRootTransform.extractRotation(modelRootTransform.extractScale());
-    _modelRootNode->setWorldTransform(pos, rot, false);
-}
-
-void VROBodyTrackerController::startCalibration() {
-    if (_skinner == nullptr) {
-        pwarn("Unable to start calibration: Model has not yet been bounded to this controller!");
-        return;
-    }
-
-    _calibrating = true;
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
-
-    // reset the bones back to it's initial configuration
-    std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
-    for (int i = 0; i < skeleton->getNumBones(); i++) {
-        std::shared_ptr<VROBone> bone = skeleton->getBone(i);
-        bone->setTransform(VROMatrix4f::identity(), bone->getTransformType());
-    }
-}
-
-void VROBodyTrackerController::finishCalibration() {
-    if (_skinner == nullptr) {
-        pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
-        return;
-    }
-
-    _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
-    _modelRootNode->setIKRig(_rig);
-
-    // Start listening for new joint data.
-    setBodyTrackedState(VROBodyTrackedState::NotAvailable);
-    _calibrating = false;
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
-}
-
-bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut) {
-    const VROCamera &camera = _renderer->getCamera();
-    int viewport[4] = {0, 0, camera.getViewport().getWidth(), camera.getViewport().getHeight()};
-    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
-    x = viewport[2] * x;
-    y = viewport[3] * y;
-
-    // Compute the camera ray by unprojecting the point at the near clipping plane
-    // and the far clipping plane.
-    VROVector3f ncpScreen(x, y, 0.0);
-    VROVector3f ncpWorld;
-    if (!VROProjector::unproject(ncpScreen, mvp.getArray(), viewport, &ncpWorld)) {
-        return false;
-    }
-
-    VROVector3f fcpScreen(x, y, 1.0);
-    VROVector3f fcpWorld;
-    if (!VROProjector::unproject(fcpScreen, mvp.getArray(), viewport, &fcpWorld)) {
-        return false;
-    }
-    VROVector3f ray = fcpWorld.subtract(ncpWorld).normalize();
-
-    // Find the intersection between the plane and the controller forward
-    VROVector3f intersectionPoint;
-    bool success = ray.rayIntersectPlane(_projectedPlanePosition, _projectedPlaneNormal, ncpWorld, &intersectionPoint);
-    matOut.toIdentity();
-    matOut.translate(intersectionPoint);
-    return success;
-}
-
-void VROBodyTrackerController::initializeModelUniformScale() {
-    // Set the model in it's original scale needed for determining ratios.
-    VROVector3f currentScale = _modelRootNode->getScale();
-    _modelRootNode->setScale(VROVector3f(1, 1, 1));
-    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
-    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
-
-    // Now calculate the ratios for automatic resizing.
-    VROMatrix4f neckTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
-    VROMatrix4f leftHipTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
-    VROMatrix4f rightHipTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
-
-    // Now get the middle of the hip.
-    VROVector3f midVecFromLeft = (rightHipTrans.extractTranslation() - leftHipTrans.extractTranslation()).scale(0.5f);
-    VROVector3f midHipLoc = leftHipTrans.extractTranslation().add(midVecFromLeft);
-    VROVector3f neckLoc = neckTrans.extractTranslation();
-    _originalNeckToHipDistance = midHipLoc.distanceAccurate(neckLoc);
-}
-
-void VROBodyTrackerController::alignModelTorsoScale() {
-    // We'll need the current dimensions of the model for resizing calculations.
-    if (!kAutomaticResizing || _skinner == nullptr) {
-        return;
-    }
-
-    // Grab the current Neck to Hip distances from the ML Joint.
-    if (!_cachedTrackedJoints[VROBodyJointType::Neck].hasValidProjectedTransform() ||
-        !_cachedTrackedJoints[VROBodyJointType::LeftHip].hasValidProjectedTransform() ||
-        !_cachedTrackedJoints[VROBodyJointType::RightHip].hasValidProjectedTransform()) {
-        return;
-    }
-
-    VROVector3f neckPos = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform().extractTranslation();
-    VROVector3f leftHipPos = _cachedTrackedJoints[VROBodyJointType::LeftHip].getProjectedTransform().extractTranslation();
-    VROVector3f rightHipPos = _cachedTrackedJoints[VROBodyJointType::RightHip].getProjectedTransform().extractTranslation();
-
-    // Now get the middle of the hip.
-    VROVector3f midVecFromLeft = (rightHipPos - leftHipPos).scale(0.5f);
-    VROVector3f midHipLoc = leftHipPos.add(midVecFromLeft);
-    float mlNeckToHipDistnace = midHipLoc.distanceAccurate(neckPos);
-
-    // Calculate the different distances, grab the ratio.
-    float modelToMLRatio = mlNeckToHipDistnace / _originalNeckToHipDistance * kAutomaticSizingRatio;
-
-    // Apply that ratio to the scale of the model.
-    _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
-}
-
-void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
-    _delegate = delegate;
-}
 
 void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
     // Grab all the 2D joints of high confidence for the targets we want.
@@ -521,7 +440,7 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
     if (_calibrating) {
         return;
     }
-    
+
     // Attempt to recover missing joints by using old cached joint transforms.
     for (auto &expiredJoint : expiredJoints) {
         if (_cachedTrackedJoints.find(expiredJoint.getType()) != _cachedTrackedJoints.end()){
@@ -554,15 +473,72 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
     }
 }
 
-void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
-    if (_currentTrackedState == state) {
+void VROBodyTrackerController::alignModelRootToMLRoot() {
+    // Grab the world transform of what we consider to be the Body Joint's Root.
+    VROMatrix4f bodyJointRootTransform = _cachedTrackedJoints[kBodyJointRoot].getProjectedTransform();
+
+    // Note: we just want the translational part of the ML's root transform as scale
+    // and rotation doesn't matter at this point - they will be taken into account in the IKRig.
+    VROMatrix4f bodyJointRootTransformTranslation;
+    bodyJointRootTransformTranslation.translate(bodyJointRootTransform.extractTranslation());
+
+    // Calculate the model's desired root location by multiplying the precalculated
+    // _mlRootToModelRoot given the current bodyJointRootTransform.
+    VROMatrix4f modelRootTransform = bodyJointRootTransformTranslation.multiply(_mlRootToModelRoot);
+
+    // Update the model's node.
+    VROVector3f pos = modelRootTransform.extractTranslation();
+    VROQuaternion rot = modelRootTransform.extractRotation(modelRootTransform.extractScale());
+    _modelRootNode->setWorldTransform(pos, rot, false);
+}
+
+void VROBodyTrackerController::alignModelTorsoScale() {
+    // We'll need the current dimensions of the model for resizing calculations.
+    if (!kAutomaticResizing || _skinner == nullptr) {
         return;
     }
 
-    _currentTrackedState = state;
-    std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
-    if (delegate != nullptr) {
-        delegate->onBodyTrackStateUpdate(_currentTrackedState);
+    // Grab the current Neck to Hip distances from the ML Joint.
+    if (!_cachedTrackedJoints[VROBodyJointType::Neck].hasValidProjectedTransform() ||
+        !_cachedTrackedJoints[VROBodyJointType::LeftHip].hasValidProjectedTransform() ||
+        !_cachedTrackedJoints[VROBodyJointType::RightHip].hasValidProjectedTransform()) {
+        return;
+    }
+
+    VROVector3f neckPos = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform().extractTranslation();
+    VROVector3f leftHipPos = _cachedTrackedJoints[VROBodyJointType::LeftHip].getProjectedTransform().extractTranslation();
+    VROVector3f rightHipPos = _cachedTrackedJoints[VROBodyJointType::RightHip].getProjectedTransform().extractTranslation();
+
+    // Now get the middle of the hip.
+    VROVector3f midVecFromLeft = (rightHipPos - leftHipPos).scale(0.5f);
+    VROVector3f midHipLoc = leftHipPos.add(midVecFromLeft);
+    float mlNeckToHipDistnace = midHipLoc.distanceAccurate(neckPos);
+
+    // Calculate the different distances, grab the ratio.
+    float modelToMLRatio = mlNeckToHipDistnace / _originalNeckToHipDistance * kAutomaticSizingRatio;
+
+    // Apply that ratio to the scale of the model.
+    _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
+}
+
+void VROBodyTrackerController::updateModel() {
+    if (_rig == nullptr || _currentTrackedState == VROBodyTrackedState::NotAvailable) {
+        return;
+    }
+
+    // Update the root motion of the rig.
+    alignModelRootToMLRoot();
+
+    // Now update all known rig joints.
+    VROMatrix4f identity = VROMatrix4f::identity();
+    std::map<VROBodyJointType, VROBodyJoint>::const_iterator cachedJoint;
+    for (cachedJoint = _cachedTrackedJoints.begin(); cachedJoint != _cachedTrackedJoints.end(); cachedJoint++) {
+        VROBodyJoint joint = cachedJoint->second;
+        VROVector3f pos = joint.getProjectedTransform().extractTranslation();
+
+        VROBodyJointType boneMLJointType = cachedJoint->first;
+        std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
+        _rig->setPositionForEffector(boneName, pos);
     }
 }
 
@@ -658,25 +634,50 @@ bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint targ
     return false;
 }
 
-void VROBodyTrackerController::updateModel() {
-    if (_rig == nullptr || _currentTrackedState == VROBodyTrackedState::NotAvailable) {
+bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut) {
+    const VROCamera &camera = _renderer->getCamera();
+    int viewport[4] = {0, 0, camera.getViewport().getWidth(), camera.getViewport().getHeight()};
+    VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
+    x = viewport[2] * x;
+    y = viewport[3] * y;
+
+    // Compute the camera ray by unprojecting the point at the near clipping plane
+    // and the far clipping plane.
+    VROVector3f ncpScreen(x, y, 0.0);
+    VROVector3f ncpWorld;
+    if (!VROProjector::unproject(ncpScreen, mvp.getArray(), viewport, &ncpWorld)) {
+        return false;
+    }
+
+    VROVector3f fcpScreen(x, y, 1.0);
+    VROVector3f fcpWorld;
+    if (!VROProjector::unproject(fcpScreen, mvp.getArray(), viewport, &fcpWorld)) {
+        return false;
+    }
+    VROVector3f ray = fcpWorld.subtract(ncpWorld).normalize();
+
+    // Find the intersection between the plane and the controller forward
+    VROVector3f intersectionPoint;
+    bool success = ray.rayIntersectPlane(_projectedPlanePosition, _projectedPlaneNormal, ncpWorld, &intersectionPoint);
+    matOut.toIdentity();
+    matOut.translate(intersectionPoint);
+    return success;
+}
+
+void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
+    if (_currentTrackedState == state) {
         return;
     }
 
-    // Update the root motion of the rig.
-    alignModelRootToMLRoot();
-
-    // Now update all known rig joints.
-    VROMatrix4f identity = VROMatrix4f::identity();
-    std::map<VROBodyJointType, VROBodyJoint>::const_iterator cachedJoint;
-    for (cachedJoint = _cachedTrackedJoints.begin(); cachedJoint != _cachedTrackedJoints.end(); cachedJoint++) {
-        VROBodyJoint joint = cachedJoint->second;
-        VROVector3f pos = joint.getProjectedTransform().extractTranslation();
-
-        VROBodyJointType boneMLJointType = cachedJoint->first;
-        std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
-        _rig->setPositionForEffector(boneName, pos);
+    _currentTrackedState = state;
+    std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
+    if (delegate != nullptr) {
+        delegate->onBodyTrackStateUpdate(_currentTrackedState);
     }
+}
+
+void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
+    _delegate = delegate;
 }
 
 std::shared_ptr<VRONode> VROBodyTrackerController::createDebugBoxUI(bool isAffector, std::string tag) {
