@@ -446,7 +446,7 @@
         // create a UIImage with size half the width/height because the CGImage that comes out has double the resolution of the UIImage!
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(width/2, height/2), NO, 0.0);
         // since I had to halve the width/height, we gotta half the frame too
-        [_watermarkImage drawInRect:CGRectMake(_watermarkFrame.origin.x/2, _watermarkFrame.origin.y/2 , _watermarkFrame.size.width/2, _watermarkFrame.size.height/2)];
+        [_watermarkImage drawInRect:CGRectMake(_watermarkFrame.origin.x, _watermarkFrame.origin.y , _watermarkFrame.size.width, _watermarkFrame.size.height)];
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
