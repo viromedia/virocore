@@ -494,6 +494,14 @@
     // no-op
 }
 
+- (void)startVideoRecording:(NSString *)fileName
+              withWatermark:(UIImage *)watermarkImage
+                  withFrame:(CGRect)watermarkFrame
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
+    // no-op
+}
+
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     // no-op
 }

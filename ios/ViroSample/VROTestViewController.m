@@ -105,7 +105,9 @@ static const bool kSceneCheckeredBackground = NO;
     
     NSString *filename = [NSString stringWithFormat:@"testvideo%d", rand];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [arView startVideoRecording:filename saveToCameraRoll:YES errorBlock:nil];
+        // test record with a watermark
+        UIImage *image = [UIImage imageNamed:@"app_logo_viro.png"];
+        [arView startVideoRecording:filename withWatermark:image withFrame:CGRectMake(200, 500, 150, 100) saveToCameraRoll:YES errorBlock:nil];
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         NSLog(@"[VROTestViewController] stopped video recording");

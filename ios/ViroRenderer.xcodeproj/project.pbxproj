@@ -657,6 +657,7 @@
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
 		8A53ABF2212B824A0005D7F9 /* VROARImageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A53ABF3212B824A0005D7F9 /* VROARImageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A53E89A21E96BB6006125D0 /* app_logo_viro.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A53E89921E96BB6006125D0 /* app_logo_viro.png */; };
 		8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A5C05581EF6416900F94CB9 /* VROARNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A5CDD741F636C300093F43B /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A99E6C41EF1B7B300712D79 /* ARKit.framework */; };
 		8A99E6C31EF1B76F00712D79 /* VROARSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1678,6 +1679,7 @@
 		8A39B1A820181A36007E41E2 /* wikipedia_qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wikipedia_qr.png; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROARImageDatabase.h; path = ../../ViroRenderer/VROARImageDatabase.h; sourceTree = "<group>"; };
+		8A53E89921E96BB6006125D0 /* app_logo_viro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = app_logo_viro.png; path = ViroSample/app_logo_viro.png; sourceTree = "<group>"; };
 		8A5C05581EF6416900F94CB9 /* VROARNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNode.h; sourceTree = "<group>"; };
 		8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSceneController.h; sourceTree = "<group>"; };
 		8A99E6C41EF1B7B300712D79 /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
@@ -3731,6 +3733,7 @@
 			isa = PBXGroup;
 			children = (
 				A5C931EB21E028EE00564C2D /* ninja */,
+				8A53E89921E96BB6006125D0 /* app_logo_viro.png */,
 				8F68E3A2219B3050000A7C64 /* darkerSmoke.png */,
 				8F2C7B0921ECEAE300B8A154 /* axel.png */,
 				8F68E3A3219B3050000A7C64 /* darkSmoke.png */,
@@ -5123,6 +5126,7 @@
 				8F129FBC1ED603BE00341D83 /* heart.vrx in Resources */,
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
 				8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */,
+				8A53E89A21E96BB6006125D0 /* app_logo_viro.png in Resources */,
 				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F129FBB1ED603BA00341D83 /* fox.vrx in Resources */,

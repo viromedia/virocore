@@ -23,6 +23,11 @@
     bool _isRecording;
     bool _isFirstRecordingFrame;
     bool _saveToCameraRoll;
+    bool _addWatermark;
+    UIImage *_watermarkImage;
+    CGRect _watermarkFrame;
+    CIImage *_resizedWatermarkImage;
+    CVPixelBufferRef _compositePixelBuffer; // used for watermarking
     NSString *_videoFileName;
     NSURL *_tempVideoFilePath;
     AVAssetWriter *_videoWriter;
@@ -52,6 +57,7 @@
         _view = view;
         _renderer = renderer;
         _driver = driver;
+        _addWatermark = false;
     }
     return self;
 }
@@ -63,7 +69,6 @@
 }
 
 #pragma mark - Recording and Screen Capture
-
 // TODO: not a huge fan of the current implementation because
 //   1) code will attempt to ask for permission before recording, "delaying" the actual recording
 //   2) developer doesn't get any status updates other than complete failures (no delay notification)
@@ -143,6 +148,18 @@
     [self startVideoRecordingInternal:_tempVideoFilePath];
 }
 
+- (void)startVideoRecording:(NSString *)fileName
+                  withWatermark:(UIImage *)watermarkImage
+                  withFrame:(CGRect)watermarkFrame
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
+    _addWatermark = true;
+    _watermarkImage = watermarkImage;
+    _watermarkFrame = watermarkFrame;
+
+    [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:errorBlock];
+}
+
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     if (!_isRecording) {
         completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
@@ -171,6 +188,8 @@
             }
             _saveToCameraRoll = NO;
             _isRecording = NO;
+            // we're done with watermarking!
+            _addWatermark = NO;
         }];
     };
     [self stopAudioRecordingInternal];
@@ -407,6 +426,33 @@
         _videoTextureCache = _driver->newVideoTextureCache();
     }
     
+    if (_addWatermark) {
+        
+        // create the _compositePixelBuffer if it hasn't already been created!
+        if (!_compositePixelBuffer) {
+            NSDictionary *attr = @{
+                                   (NSString*)kCVPixelBufferCGImageCompatibilityKey : @YES,
+                                   (NSString*)kCVPixelBufferCGBitmapContextCompatibilityKey : @YES,
+                                   };
+
+            CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, width,
+                                  height, kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef) attr,
+                                  &_compositePixelBuffer);
+            if (status != kCVReturnSuccess) {
+                NSLog(@"VROViewRecorder - failed to create compositePixelBuffer for watermarking");
+            }
+        }
+
+        // create a UIImage with size half the width/height because the CGImage that comes out has double the resolution of the UIImage!
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(width/2, height/2), NO, 0.0);
+        // since I had to halve the width/height, we gotta half the frame too
+        [_watermarkImage drawInRect:CGRectMake(_watermarkFrame.origin.x/2, _watermarkFrame.origin.y/2 , _watermarkFrame.size.width/2, _watermarkFrame.size.height/2)];
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        _resizedWatermarkImage = [CIImage imageWithCGImage:newImage.CGImage];
+    }
+    
     // We only need to use sRGB textures here if gamma correction is performed
     // on hardware. If gamma correction is performed in software, then the texture
     // we've received from the renderer is *already* gamma corrected. If gamma
@@ -440,9 +486,24 @@
                 currentTime = VROTimeCurrentMillis() - _startTimeMillis;
             }
             
-            BOOL success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_videoPixelBuffer
-                                                        withPresentationTime:CMTimeMake(currentTime, 1000)];
-            CVPixelBufferUnlockBaseAddress(_videoPixelBuffer, 0);
+            BOOL success = NO;
+            if (_addWatermark) {
+                
+                // grab the videoImage
+                CIImage *videoImage = [CIImage imageWithCVPixelBuffer:_videoPixelBuffer];
+                // write the resizedWatemarkImage onto the videoImage
+                CIImage *outputImage = [_resizedWatermarkImage imageByCompositingOverImage:videoImage];
+
+                // grab the CVPixelBuffer of the combined image
+                CIContext *temporaryContext = [CIContext contextWithOptions:nil];
+                [temporaryContext render:outputImage toCVPixelBuffer:_compositePixelBuffer];
+                
+                success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_compositePixelBuffer withPresentationTime:CMTimeMake(currentTime, 1000)];
+            } else {
+                success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_videoPixelBuffer
+                                                       withPresentationTime:CMTimeMake(currentTime, 1000)];
+                CVPixelBufferUnlockBaseAddress(_videoPixelBuffer, 0);
+            }
             
             if (!success) {
                 NSString *errorStr = _videoWriter.status == AVAssetWriterStatusFailed ? [_videoWriter.error localizedDescription] : @"unknown error";
@@ -490,6 +551,7 @@
     CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, frameSize.width,
                                           frameSize.height,  kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef) options,
                                           &pixelBuffer);
+
     if (status != kCVReturnSuccess) {
         return NULL;
     }
