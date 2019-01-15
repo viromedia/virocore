@@ -94,7 +94,6 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
                                                   });
 
     _gltfNodeContainer = std::make_shared<VRONode>();
-    _gltfNodeContainer->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
     _gltfNodeContainer->addChildNode(rootModelNode);
     _gltfNodeContainer->setScale(VROVector3f(1.05,1.05,1.05));
     _arScene->getRootNode()->addChildNode(_gltfNodeContainer);

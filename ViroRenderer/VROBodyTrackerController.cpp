@@ -55,9 +55,11 @@ static const float kHighConfidence = 0.45;
 static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kVolatilityThresholdMeters = 0.15;
 static const float kReachableBoneThresholdMeters = 0.2;
-static const float kAutomaticSizingRatio = 0.85;
+static const float kAutomaticSizingRatio = 0.775;
 static const bool kModelDebugCubes = true;
 static const bool kAutomaticResizing = true;
+static const bool kDampenWithEMA = true;
+static const double kInitialDampeningPeriodMs = 250;
 static const VROBodyJointType kBodyJointRoot = VROBodyJointType::Neck;
 
 // Supported bone names within 3D models for ml joint tracking.
@@ -84,6 +86,7 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _skinner = nullptr;
     _calibrating = false;
     _renderer = renderer;
+    _dampeningPeriodMs = kInitialDampeningPeriodMs;
     _mlRootToModelRoot = VROMatrix4f::identity();
     _bodyControllerRoot = std::make_shared<VRONode>();
     _calibrationEventDelegate = nullptr;
@@ -309,13 +312,12 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
         _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
 
         // Render debug joint cubes.
-        VROMatrix4f identity = VROMatrix4f::identity();
-        std::map<VROBodyJointType, VROBodyJoint>::const_iterator cachedJoint;
-        for (cachedJoint = _cachedTrackedJoints.begin(); cachedJoint != _cachedTrackedJoints.end(); cachedJoint++) {
-           VROBodyJoint joint = cachedJoint->second;
-           VROVector3f pos = joint.getProjectedTransform().extractTranslation();
-           VROBodyJointType boneMLJointType = cachedJoint->first;
-           _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
+        std::map<VROBodyJointType, VROVector3f>::const_iterator cachedJoint;
+        for (auto &cachedJoint : _cachedModelJoints) {
+            VROVector3f pos = cachedJoint.second;
+            VROBodyJointType boneMLJointType = cachedJoint.first;
+            std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
+            _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos,  VROMatrix4f::identity());
         }
     }
 }
@@ -358,8 +360,11 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
     }
 
-    // Finally, restore joints if possible using last known data (even if they are old).
+    // Next, restore joints if possible using last known data (even if they are old).
     restoreMissingJoints(expiredJoints);
+
+    // Finally dampen joints and update _cachedModelJoints to be set on the IKRig.
+    dampenCachedJoints();
 }
 
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
@@ -484,14 +489,90 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
     }
 }
 
+void VROBodyTrackerController::dampenCachedJoints() {
+    _cachedModelJoints.clear();
+
+    // If we are not dampening, simply set the _cachedModelJoints and return.
+    bool applyDampening = _dampeningPeriodMs != 0;
+    if (!applyDampening) {
+        for (auto &jointPair : _cachedTrackedJoints) {
+            VROVector3f pos = jointPair.second.getProjectedTransform().extractTranslation();
+            _cachedModelJoints[jointPair.first] = pos;
+        }
+        return;
+    }
+
+    // Else, update our joint window dataset required for dampening.
+    for (auto &jointPair : _cachedTrackedJoints) {
+        VROVector3f pos = jointPair.second.getProjectedTransform().extractTranslation();
+        std::pair<double, VROVector3f> p = std::make_pair(VROTimeCurrentMillis(), pos);
+        _cachedJointWindow[jointPair.first].push_back(p);
+    }
+
+    // Update our window reference.
+    double windowEnd = VROTimeCurrentMillis();
+    double windowStart = windowEnd - _dampeningPeriodMs;
+
+    // Iterate through each joint type and remove joints outside the window to
+    // ensure we have an accurate set of data upon which to peform an average analysis.
+    for (auto &jointWindow : _cachedJointWindow) {
+        std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
+        posArray.erase(std::remove_if(posArray.begin(), posArray.end(),
+                               [windowStart](std::pair<double, VROVector3f> p) {
+                                   return p.first < windowStart;
+                               }),
+                       posArray.end());
+
+    }
+
+    // Calculate a Simple Moving Average of point data.
+    if (!kDampenWithEMA) {
+        for (auto &jointWindow : _cachedJointWindow) {
+            std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
+            VROVector3f net = VROVector3f();
+
+            for (int i = 0; i < posArray.size(); i++) {
+                net = net + posArray[i].second;
+            }
+            _cachedModelJoints[jointWindow.first] = net / posArray.size();
+        }
+    }
+
+    /*
+     If using EMA, perform the necessary calculations.
+     EMA = (CurentValue x K) + (PreviousEMA x (1 – K))
+
+     Where:
+        K = 2 ÷(N + 1)
+        N = the length of the EMA
+     */
+    if (kDampenWithEMA) {
+        for (auto &jointWindow : _cachedJointWindow) {
+            std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
+            float k = 2 / ((float) posArray.size() + 1);
+            VROVector3f emaYesterday = posArray[0].second;
+
+            // Exponentially weight towards the earliest data at the end of the array
+            // (Items at the front of the array are older).
+            for (int i = 0 ; i < posArray.size(); i++) {
+                VROVector3f pos = posArray[i].second;
+                VROVector3f emaToday = (pos * k) + (emaYesterday * (1 - k));
+                emaYesterday = emaToday;
+            }
+
+            _cachedModelJoints[jointWindow.first] = emaYesterday;
+        }
+    }
+}
+
 void VROBodyTrackerController::alignModelRootToMLRoot() {
     // Grab the world transform of what we consider to be the Body Joint's Root.
-    VROMatrix4f bodyJointRootTransform = _cachedTrackedJoints[kBodyJointRoot].getProjectedTransform();
+    VROVector3f bodyJointRootposition = _cachedModelJoints[kBodyJointRoot];
 
     // Note: we just want the translational part of the ML's root transform as scale
     // and rotation doesn't matter at this point - they will be taken into account in the IKRig.
     VROMatrix4f bodyJointRootTransformTranslation;
-    bodyJointRootTransformTranslation.translate(bodyJointRootTransform.extractTranslation());
+    bodyJointRootTransformTranslation.translate(bodyJointRootposition);
 
     // Calculate the model's desired root location by multiplying the precalculated
     // _mlRootToModelRoot given the current bodyJointRootTransform.
@@ -542,17 +623,15 @@ void VROBodyTrackerController::updateModel() {
 
     // Now update all known rig joints.
     VROMatrix4f identity = VROMatrix4f::identity();
-    std::map<VROBodyJointType, VROBodyJoint>::const_iterator cachedJoint;
-    for (cachedJoint = _cachedTrackedJoints.begin(); cachedJoint != _cachedTrackedJoints.end(); cachedJoint++) {
-        VROBodyJoint joint = cachedJoint->second;
-        VROVector3f pos = joint.getProjectedTransform().extractTranslation();
+    std::map<VROBodyJointType, VROVector3f>::const_iterator cachedJoint;
+    for (auto &cachedJoint : _cachedModelJoints) {
+        VROVector3f pos = cachedJoint.second;
+        VROBodyJointType boneMLJointType = cachedJoint.first;
 
-        VROBodyJointType boneMLJointType = cachedJoint->first;
         std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
         _rig->setPositionForEffector(boneName, pos);
     }
 }
-
 bool VROBodyTrackerController::performWindowDepthTest(float x, float y, VROMatrix4f &matOut) {
     float d = kARHitTestWindowKernelPixel;
     std::vector<VROVector3f> trials;
@@ -689,6 +768,10 @@ void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
 
 void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
     _delegate = delegate;
+}
+
+void VROBodyTrackerController::setDampeningPeriodMs(double period) {
+    _dampeningPeriodMs = period;
 }
 
 std::shared_ptr<VRONode> VROBodyTrackerController::createDebugBoxUI(bool isAffector, std::string tag) {

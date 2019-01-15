@@ -144,6 +144,11 @@ public:
     // VROBodyTrackerDelegate
     void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints);
 
+    /*
+     Sets the window period at which we sample points for dampening. If period == 0,
+     no dampening will be applied.
+     */
+    void setDampeningPeriodMs(double period);
 #if VRO_PLATFORM_IOS
     void enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver);
     void updateDebugMLViewIOS(const std::map<VROBodyJointType, VROBodyJoint> &joints);
@@ -170,6 +175,21 @@ private:
      valid position in 3D space.
      */
     std::map<VROBodyJointType, VROBodyJoint> _cachedTrackedJoints;
+
+    /*
+     Final filtered and processed joint positional data on which to apply onto the IKRig.
+     */
+    std::map<VROBodyJointType, VROVector3f> _cachedModelJoints;
+
+    /*
+     Period at which to sample ML joint data upon for dampening.
+     */
+    double _dampeningPeriodMs;
+
+    /*
+     A window dampening data for which to perform SMA / EMA analysis.
+     */
+    std::map<VROBodyJointType, std::vector<std::pair<double, VROVector3f>>> _cachedJointWindow;
 
     /*
      A cache of all known effector's last known position in reference to the root in world space.
@@ -243,6 +263,7 @@ private:
     void projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints);
     void updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &joints);
     void restoreMissingJoints(std::vector<VROBodyJoint> expiredJoints);
+    void dampenCachedJoints();
 
     /*
      Updates the current VROBodyTrackedState and notifies the attached VROBodyTrackerControllerDelegate.
