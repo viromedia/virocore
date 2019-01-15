@@ -38,10 +38,13 @@ private:
     MLModel *_model;
     VNCoreMLModel *_coreMLModel;
     VNCoreMLRequest *_visionRequest;
-    double _lastTimestamp;
-    int32_t _fps;
-    dispatch_queue_t bodyMeshingQueue;
+    
+    dispatch_queue_t _visionQueue;
     VROMatrix4f _transform;
+    CVPixelBufferRef _currentImage;
+    
+    void trackCurrentImage(VROMatrix4f transform, VROCameraOrientation orientation);
+    void processVisionResults(VNRequest *request, NSError *error);
     
 };
 
