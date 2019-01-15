@@ -28,8 +28,6 @@ bool VROObjectRecognizeriOS::initObjectTracking(VROCameraPosition position,
                                           completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {
                                               processVisionResults(request, error);
                                           }];
-    
-    _visionRequest.preferBackgroundProcessing = YES;
     _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
     
     return true;
