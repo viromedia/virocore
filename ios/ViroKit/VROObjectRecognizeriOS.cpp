@@ -43,7 +43,7 @@ bool VROObjectRecognizeriOS::initObjectTracking(VROCameraPosition position,
     _model = [[[model_pipelined alloc] init] model];
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
-                                          completionHandler:(VNRequestCompletionHandler) ^(VNRequest *request, NSError *error) {
+                                          completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {
                                               NSArray *array = [request results];
                                               NSLog(@"Number of results %d", (int) array.count);
                                               
@@ -51,22 +51,21 @@ bool VROObjectRecognizeriOS::initObjectTracking(VROCameraPosition position,
                                               
                                               for (VNRecognizedObjectObservation *observation in array) {
                                                   CGRect bounds = observation.boundingBox;
-                                                  NSLog(@"   Bounds x %f, y %f, w %f, h %f", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
                                                   
                                                   VROBoundingBox box(bounds.origin.x,
-                                                                     bounds.origin.x + bounds.size.width,
-                                                                     1.0 - bounds.origin.y,
-                                                                     1.0 - bounds.origin.y - bounds.size.height,
+                                                                     (bounds.origin.x + bounds.size.width),
+                                                                     (1.0 - bounds.origin.y),
+                                                                     (1.0 - bounds.origin.y - bounds.size.height),
                                                                      0, 0);
+                                                  box = box.transform(_transform);
+                                                  
                                                   for (VNClassificationObservation *classification in observation.labels) {
                                                       if (classification.confidence > 0.8) {
                                                           std::string className = std::string([classification.identifier UTF8String]);
                                                           
                                                           NSLog(@"   Label %@ confidence %f", classification.identifier, classification.confidence);
                                                           VROVector3f imagePoint(bounds.origin.x, bounds.origin.y, 0);
-                                                          VROVector3f viewportPoint = _transform.multiply(imagePoint);
                                                           
-                                                          NSLog(@"   Viewport point %f, %f", viewportPoint.x, viewportPoint.y);
                                                           objects[className].push_back({ className, box, classification.confidence });
                                                       }
                                                   }
@@ -117,7 +116,7 @@ void VROObjectRecognizeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMa
             if (orientation == VROCameraOrientation::Portrait || orientation == VROCameraOrientation::PortraitUpsideDown) {
                 // Remove rotation from the transformation matrix. Since this was a 90 degree rotation, X and Y are
                 // reversed.
-                _transform[0] = (int) scale.y;
+                _transform[0] = scale.y;
                 _transform[1] = 0;
                 _transform[4] = 0;
                 _transform[5] = scale.x;
