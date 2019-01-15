@@ -105,14 +105,11 @@ void VROObjectRecognizeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMa
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             NSDictionary *visionOptions = [NSDictionary dictionary];
             
-            size_t imageWidth, imageHeight;
-            
-            // The logic below accomplishes two things: it rotates the image right-side-up so that
-            // it can be used by the ML algorithm, and it derives the _transform matrix, which is used
-            // to convert *rotated* image coordinates to viewport coordinates. This matrix is derived
-            // from the scale and translation components of ARKit's displayTransform metrix (we remove
-            // the rotation part from the ARKit matrix because we're physically rotating the image
-            // ourselves here).
+            // The logic below derives the _transform matrix, which is used to convert *rotated* image
+            // coordinates to viewport coordinates. This matrix is derived from the scale and translation
+            // components of ARKit's displayTransform metrix (we remove the rotation part from the ARKit
+            // matrix because iOS will automatically rotate the image before inputting it into the CoreML
+            // model).
             if (orientation == VROCameraOrientation::Portrait || orientation == VROCameraOrientation::PortraitUpsideDown) {
                 // Remove rotation from the transformation matrix. Since this was a 90 degree rotation, X and Y are
                 // reversed.
@@ -122,17 +119,15 @@ void VROObjectRecognizeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMa
                 _transform[5] = scale.x;
                 _transform[12] = (1 - scale.y) / 2.0;
                 _transform[13] = translation.y;
-                
-                // The '3' here indicates 270 degree rotation
-                CVPixelBufferRef rotatedImage = VROImagePreprocessor::rotateImage(convertedImage, 3, &imageWidth, &imageHeight);
-                
-                // Uncomment this to try the Boba/Axel static picture
-                // UIImage *boba = [UIImage imageNamed:@"axel"];
-                // VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCGImage:[boba CGImage] options:visionOptions];
 
-                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedImage options:visionOptions];
+                // iOS always rotates the image right-side up before inputting into a CoreML model for
+                // a vision request. We ensure it rotates correctly by specifying the orientation of the
+                // image with respect to the device.
+                CGImagePropertyOrientation orientation = kCGImagePropertyOrientationRight;
+                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:convertedImage
+                                                                                          orientation:orientation
+                                                                                              options:visionOptions];
                 [handler performRequests:@[_visionRequest] error:nil];
-                CVPixelBufferRelease(rotatedImage);
             }
             else if (orientation == VROCameraOrientation::LandscapeLeft) {
                 // Remove rotation from the transformation matrix
@@ -143,12 +138,11 @@ void VROObjectRecognizeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMa
                 _transform[12] = (1 - scale.x) / 2.0;
                 _transform[13] = (1 - scale.y) / 2.0;
                 
-                // The '2' here indicates 180 degree rotation
-                CVPixelBufferRef rotatedImage = VROImagePreprocessor::rotateImage(convertedImage, 2, &imageWidth, &imageHeight);
-                
-                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:rotatedImage options:visionOptions];
+                CGImagePropertyOrientation orientation = kCGImagePropertyOrientationDown;
+                VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:convertedImage
+                                                                                          orientation:orientation
+                                                                                              options:visionOptions];
                 [handler performRequests:@[_visionRequest] error:nil];
-                CVPixelBufferRelease(rotatedImage);
             }
             else if (orientation == VROCameraOrientation::LandscapeRight) {
                 // In landscape right, the camera image is already right-side up, and ready for the ML
