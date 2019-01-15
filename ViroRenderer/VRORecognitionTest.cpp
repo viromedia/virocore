@@ -16,7 +16,7 @@
 
 static const int kRecognitionNumColors = 14;
 
-static UIColor *colors[14] = {
+static UIColor *kColors[14] = {
     [UIColor redColor],
     [UIColor greenColor],
     [UIColor blueColor],
@@ -80,6 +80,7 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
     std::vector<VROVector3f> labelPositions;
     std::vector<NSString *> labels;
     std::vector<VROBoundingBox> boxes;
+    std::vector<UIColor *> colors;
     
     for (auto &kv : objects) {
         for (VRORecognizedObject object : kv.second) {
@@ -89,6 +90,11 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
             float y = bounds.getY() * viewHeight;
             float width = bounds.getSpanX() * viewWidth;
             float height = bounds.getSpanY() * viewHeight;
+            
+            // Base the color on the X position (keeps color for objects across frames fairly consistent)
+            int colorIndex = (int) floor((x / (float) viewWidth) * kRecognitionNumColors);
+            colorIndex = MAX(0, MIN(colorIndex, kRecognitionNumColors - 1));
+            UIColor *color = kColors[colorIndex];
 
             VROVector3f labelPosition = { (float) (x - width / 2.0), (float) (y + height / 2.0), 0 };
             VROBoundingBox transformedBox(x - width / 2.0, x + width / 2.0, y - height / 2.0, y + height / 2.0, 0, 0);
@@ -99,11 +105,13 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
             boxes.push_back(transformedBox);
             labels.push_back(classAndConf);
             labelPositions.push_back({ labelPosition.x, labelPosition.y, 0 });
+            colors.push_back(color);
         }
     }
     
     [_drawDelegate setBoxes:boxes];
     [_drawDelegate setLabels:labels positions:labelPositions];
+    [_drawDelegate setColors:colors];
 #endif
 }
 
@@ -111,6 +119,7 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
     std::vector<VROVector3f> _labelPositions;
     std::vector<NSString *> _labels;
     std::vector<VROBoundingBox> _boxes;
+    std::vector<UIColor *> _colors;
 }
 
 - (id)init {
@@ -128,7 +137,7 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
     for (int i = 0; i < _labels.size(); i++) {
         VROVector3f point = _labelPositions[i];
         [_labels[i] drawAtPoint:CGPointMake( point.x, point.y ) withAttributes:@{ NSFontAttributeName:font,
-                                                                            NSForegroundColorAttributeName : colors[i % kRecognitionNumColors] } ];
+                                                                            NSForegroundColorAttributeName : _colors[i] } ];
     }
     
     for (int i = 0; i < _boxes.size(); i++) {
@@ -136,7 +145,7 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
         
         CGRect rect = CGRectMake(box.getX() - box.getSpanX() / 2.0, box.getY() - box.getSpanY() / 2.0, box.getSpanX(), box.getSpanY());
         CGContextAddRect(context, rect);
-        CGContextSetStrokeColorWithColor(context, [colors[i % kRecognitionNumColors] CGColor]);
+        CGContextSetStrokeColorWithColor(context, [_colors[i] CGColor]);
         CGContextStrokePath(context);
     }
 }
@@ -148,6 +157,10 @@ void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<
 
 - (void)setBoxes:(std::vector<VROBoundingBox>)boxes {
     _boxes = boxes;
+}
+
+- (void)setColors:(std::vector<UIColor *>)colors {
+    _colors = colors;
 }
 
 @end

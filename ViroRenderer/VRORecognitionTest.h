@@ -25,6 +25,7 @@
 - (void)drawRect;
 - (void)setLabels:(std::vector<NSString *>)labels positions:(std::vector<VROVector3f>)positions;
 - (void)setBoxes:(std::vector<VROBoundingBox>)boxes;
+- (void)setColors:(std::vector<UIColor *>)colors;
 @end
 
 class VRORecognitionTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
