@@ -47,7 +47,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
             NSArray *array = [request results];
             VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
             MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
-            std::map<VROBodyJointType, VROBodyJoint> joints = convertHeatmap(heatmap, _transform);
+            std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> joints = convertHeatmap(heatmap, _transform);
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
@@ -63,7 +63,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
     return true;
 }
 
-std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
+std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
     if (heatmap.shape.count < 3) {
         return {};
     }
@@ -72,7 +72,7 @@ std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMul
     int heatmapWidth = (int) heatmap.shape[1].integerValue;
     int heatmapHeight = (int) heatmap.shape[2].integerValue;
     
-    std::map<VROBodyJointType, VROBodyJoint> bodyMap;
+    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> bodyMap;
     
     /*
      The ML model will return the heatmap tiles for each joint; choose the highest
@@ -94,9 +94,13 @@ std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMul
                      (i and j). We will convert this into a floating point value once
                      we find the highest confidence tile.
                      */
-                    if (kv == bodyMap.end() || confidence > kv->second.getConfidence()) {
+                    if (kv == bodyMap.end() || kv->second.empty() || confidence > kv->second[0].getConfidence()) {
                         VROVector3f point(CGFloat(j), CGFloat(i), 0);
-                        bodyMap[type] = { type, point, confidence };
+                        bodyMap[type].clear();
+                        
+                        VROBoundingBox bounds = VROBoundingBox(point.x, point.x, point.y, point.y, 0, 0);
+                        VROInferredBodyJoint inferredJoint = { type, bounds, confidence };
+                        bodyMap[type].push_back(inferredJoint);
                     }
                 }
             }
@@ -108,17 +112,19 @@ std::map<VROBodyJointType, VROBodyJoint> VROBodyTrackeriOS::convertHeatmap(MLMul
      heatmap tile indices into normalized coordinates [0, 1].
      */
     for (auto &kv : bodyMap) {
-        VROBodyJoint &joint = kv.second;
-        VROVector3f tilePoint = joint.getScreenCoords();
-        
-        // Convert tile indices to normalized camera image coordinates [0, 1]
-        VROVector3f imagePoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
-                                   (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
-        
-        // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
-        VROVector3f viewportPoint = transform.multiply(imagePoint);
-        joint.setScreenCoords(viewportPoint);
-        joint.setSpawnTimeMs(VROTimeCurrentMillis());
+        for (VROInferredBodyJoint &joint : kv.second) {
+            VROBoundingBox tileBounds = joint.getBounds();
+            VROVector3f tilePoint = { tileBounds.getX(), tileBounds.getY() };
+            
+            // Convert tile indices to normalized camera image coordinates [0, 1]
+            VROVector3f imagePoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
+                (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
+            
+            // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
+            VROVector3f viewportPoint = transform.multiply(imagePoint);
+            VROBoundingBox viewportBounds = VROBoundingBox(viewportPoint.x, viewportPoint.x, viewportPoint.y, viewportPoint.y, 0, 0);
+            joint.setBounds(viewportBounds);
+        }
     }
     return bodyMap;
 }

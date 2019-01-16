@@ -19,6 +19,14 @@
 #include "VROARSessioniOS.h"
 #include "VROViewAR.h"
 #import <UIKit/UIKit.h>
+
+@interface VROBodyRecognitionDrawDelegate : NSObject<VRODebugDrawDelegate>
+- (void)drawRect;
+- (void)setLabels:(std::vector<NSString *>)labels positions:(std::vector<VROVector3f>)positions;
+- (void)setBoxes:(std::vector<VROBoundingBox>)boxes;
+- (void)setColors:(std::vector<UIColor *>)colors;
+@end
+
 #endif
 
 class VROBodyRecognitionTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
@@ -55,7 +63,7 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints);
+    virtual void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints);
     
 private:
     
@@ -67,8 +75,8 @@ private:
     std::shared_ptr<VROBodyTracker> _bodyTracker;
     
 #if VRO_PLATFORM_IOS
-    UIView *_bodyViews[14];
     VROViewAR *_view;
+    VROBodyRecognitionDrawDelegate *_drawDelegate;
 #endif
     
 };

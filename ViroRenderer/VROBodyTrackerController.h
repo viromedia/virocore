@@ -34,6 +34,64 @@ enum VROBodyTrackedState {
 };
 
 /*
+ Joint that is tracked by this controller.
+ */
+class VROBodyJoint {
+public:
+    VROBodyJoint() : _type(VROBodyJointType::Top), _confidence(0) {}
+    VROBodyJoint(VROBodyJointType type, double confidence) :
+        _type(type),
+        _confidence(confidence),
+        _projectedTransform(VROMatrix4f::identity()),
+        _hasValidProjectedTransform(false){}
+    
+    const VROVector3f &getScreenCoords() const {
+        return _screenCoords;
+    }
+    void setScreenCoords(VROVector3f screenCoords) {
+        _screenCoords = screenCoords;
+    }
+    
+    const VROMatrix4f &getProjectedTransform() const {
+        return _projectedTransform;
+    }
+    void setProjectedTransform(VROMatrix4f transform) {
+        _projectedTransform = transform;
+        _hasValidProjectedTransform = true;
+    }
+    void clearPojectedTransform() {
+        _projectedTransform.toIdentity();
+        _hasValidProjectedTransform = false;
+    }
+    bool hasValidProjectedTransform() const {
+        return _hasValidProjectedTransform;
+    }
+    
+    void setSpawnTimeMs(double ts) {
+        _spawnTimeMs = ts;
+    }
+    double getSpawnTimeMs() const {
+        return _spawnTimeMs;
+    }
+    
+    VROBodyJointType getType() const {
+        return _type;
+    }
+    
+    double getConfidence() const {
+        return _confidence;
+    }
+    
+private:
+    VROVector3f _screenCoords;
+    VROMatrix4f _projectedTransform;
+    bool _hasValidProjectedTransform;
+    VROBodyJointType _type;
+    double _confidence;
+    double _spawnTimeMs;
+};
+
+/*
  Delegate set on a VROBodyTrackerController for notifying listeners about VROBodyTrackedState updates.
  */
 class VROBodyTrackerControllerDelegate {
@@ -84,7 +142,7 @@ public:
     void setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate);
 
     // VROBodyTrackerDelegate
-    void onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints);
+    void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints);
 
 #if VRO_PLATFORM_IOS
     void enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver);

@@ -254,9 +254,21 @@ void VROBodyTrackerController::finishCalibration() {
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
 }
 
-void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
+void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &inferredJoints) {
     if (_modelRootNode == nullptr) {
         return;
+    }
+    
+    // Convert to VROBodyJoint data structure, using only first joint of each type
+    std::map<VROBodyJointType, VROBodyJoint> joints;
+    for (auto &kv : inferredJoints) {
+        VROInferredBodyJoint inferred = kv.second[0];
+        
+        VROBodyJoint joint = { inferred.getType(), inferred.getConfidence() };
+        joint.setScreenCoords({ inferred.getBounds().getX(), inferred.getBounds().getY(), 0 });
+        joint.setSpawnTimeMs(VROTimeCurrentMillis());
+        
+        joints[kv.first] = joint;
     }
 
     // Filter new joints found given by the VROBodyTracker and update _cachedTrackedJoints
@@ -307,7 +319,6 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
         }
     }
 }
-
 
 void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
     // Grab all the 2D joints of high confidence for the targets we want.

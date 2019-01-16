@@ -43,7 +43,7 @@ private:
     dispatch_queue_t bodyMeshingQueue;
     
     VROMatrix4f _transform;
-    static std::map<VROBodyJointType, VROBodyJoint> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
+    static std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
 
 };
 

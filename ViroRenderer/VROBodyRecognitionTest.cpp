@@ -14,6 +14,7 @@
 #include "VROBodyTrackeriOS.h"
 #include "VRODriverOpenGLiOS.h"
 
+static const int kRecognitionNumColors = 14;
 static std::string pointLabels[14] = {
     "top\t\t\t", //0
     "neck\t\t", //1
@@ -31,7 +32,7 @@ static std::string pointLabels[14] = {
     "L ankle\t\t", //13
 };
 
-static UIColor *colors[14] = {
+static UIColor *kColors[14] = {
     [UIColor redColor],
     [UIColor greenColor],
     [UIColor blueColor],
@@ -71,6 +72,8 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     
 #if VRO_PLATFORM_IOS
     _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
+    _drawDelegate = [[VROBodyRecognitionDrawDelegate alloc] init];
+    [_view setDebugDrawDelegate:_drawDelegate];
     
     std::shared_ptr<VROBodyTrackeriOS> trackeriOS = std::make_shared<VROBodyTrackeriOS>();
     trackeriOS->initBodyTracking(VROCameraPosition::Back, driver);
@@ -82,51 +85,97 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
     _arScene->getRootNode()->addLight(ambient);
-    
-    _bodyPointsSpheres = std::vector<std::shared_ptr<VRONode>>(20);
-    _bodyPointsSpheres.reserve(20);
-    
-    int endLoop = static_cast<int>(VROBodyJointType::LeftAnkle) + 1;
-    for (int i = static_cast<int>(VROBodyJointType::Top); i < endLoop; i++) {
-        std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(0.05, 20, 20, 20);
-        std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>();
-        sphereNode->setGeometry(sphere);
-        sphereNode->setPosition(VROVector3f(0.0f, -2000.0f, -2000.0f));
-        
-        _bodyPointsSpheres[i] = sphereNode;
-        _arScene->getRootNode()->addChildNode(_bodyPointsSpheres[i]);
-        
+}
+
+void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints) {
 #if VRO_PLATFORM_IOS
-        _bodyViews[i] = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 4, 4)];
-        _bodyViews[i].backgroundColor = colors[i];
-        _bodyViews[i].clipsToBounds = NO;
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(7, -3, 100, 8)];
-        label.text = [NSString stringWithUTF8String:pointLabels[i].c_str()];
-        label.textColor = colors[i];
-        label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
-        [_bodyViews[i] addSubview:label];
-        [_view addSubview:_bodyViews[i]];
+    int viewWidth  = _view.frame.size.width;
+    int viewHeight = _view.frame.size.height;
+    
+    std::vector<VROVector3f> labelPositions;
+    std::vector<NSString *> labels;
+    std::vector<VROBoundingBox> boxes;
+    std::vector<UIColor *> colors;
+    
+    for (auto &kv : joints) {
+        for (VROInferredBodyJoint joint : kv.second) {
+            VROBoundingBox bounds = joint.getBounds();
+            
+            float x = bounds.getX() * viewWidth;
+            float y = bounds.getY() * viewHeight;
+            float width = bounds.getSpanX() * viewWidth;
+            float height = bounds.getSpanY() * viewHeight;
+            
+            // Base the color on the X position (keeps color for objects across frames fairly consistent)
+            int colorIndex = (int) floor((x / (float) viewWidth) * kRecognitionNumColors);
+            colorIndex = MAX(0, MIN(colorIndex, kRecognitionNumColors - 1));
+            UIColor *color = kColors[colorIndex];
+            
+            VROVector3f labelPosition = { (float) (x - width / 2.0), (float) (y + height / 2.0), 0 };
+            VROBoundingBox transformedBox(x - width / 2.0, x + width / 2.0, y - height / 2.0, y + height / 2.0, 0, 0);
+            
+            NSString *className = @"Test Name"; // TODO Fix this [NSString stringWithUTF8String:kv.first.c_str()];
+            NSString *classAndConf = [NSString stringWithFormat:@"%@ [%.03f]", className, joint.getConfidence()];
+            
+            boxes.push_back(transformedBox);
+            labels.push_back(classAndConf);
+            labelPositions.push_back({ labelPosition.x, labelPosition.y, 0 });
+            colors.push_back(color);
+        }
+    }
+    
+    [_drawDelegate setBoxes:boxes];
+    [_drawDelegate setLabels:labels positions:labelPositions];
+    [_drawDelegate setColors:colors];
 #endif
+}
+
+@implementation VROBodyRecognitionDrawDelegate {
+    std::vector<VROVector3f> _labelPositions;
+    std::vector<NSString *> _labels;
+    std::vector<VROBoundingBox> _boxes;
+    std::vector<UIColor *> _colors;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+- (void)drawRect {
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    UIFont *font = [UIFont boldSystemFontOfSize:16];
+    for (int i = 0; i < _labels.size(); i++) {
+        VROVector3f point = _labelPositions[i];
+        [_labels[i] drawAtPoint:CGPointMake( point.x, point.y ) withAttributes:@{ NSFontAttributeName:font,
+                                                                                  NSForegroundColorAttributeName : _colors[i] } ];
+    }
+    
+    for (int i = 0; i < _boxes.size(); i++) {
+        VROBoundingBox box = _boxes[i];
+        
+        CGRect rect = CGRectMake(box.getX() - box.getSpanX() / 2.0, box.getY() - box.getSpanY() / 2.0, box.getSpanX(), box.getSpanY());
+        CGContextAddRect(context, rect);
+        CGContextSetStrokeColorWithColor(context, [_colors[i] CGColor]);
+        CGContextStrokePath(context);
     }
 }
 
-void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
-#if VRO_PLATFORM_IOS
-    int width  = _view.frame.size.width;
-    int height = _view.frame.size.height;
-    
-    float minAlpha = 0.4;
-    float maxAlpha = 1.0;
-    float maxConfidence = 0.6;
-    float minConfidence = 0.1;
-    
-    for (auto &kv : joints) {
-        VROVector3f point = kv.second.getScreenCoords();
-        VROVector3f transformed = { point.x * width, point.y * height, 0 };
-        
-        _bodyViews[(int) kv.first].center = CGPointMake(transformed.x, transformed.y);
-        _bodyViews[(int) kv.first].alpha = VROMathInterpolate(kv.second.getConfidence(), minConfidence, maxConfidence, minAlpha, maxAlpha);
-    }
-#endif
+- (void)setLabels:(std::vector<NSString *>)labels positions:(std::vector<VROVector3f>)positions {
+    _labels = labels;
+    _labelPositions = positions;
 }
+
+- (void)setBoxes:(std::vector<VROBoundingBox>)boxes {
+    _boxes = boxes;
+}
+
+- (void)setColors:(std::vector<UIColor *>)colors {
+    _colors = colors;
+}
+
+@end

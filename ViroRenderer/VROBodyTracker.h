@@ -13,6 +13,7 @@
 #include <map>
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
+#include "VROBoundingBox.h"
 
 // Known body joint types recognized by VROBodyTracker
 // Note: Enum values matter as they are being utilized in VROBodyTracker!
@@ -33,62 +34,31 @@ enum class VROBodyJointType {
     LeftAnkle           = 13
 };
 
-class VROBodyJoint {
+class VROInferredBodyJoint {
 public:
-    VROBodyJoint() : _type(VROBodyJointType::Top), _confidence(0) {}
-    VROBodyJoint(VROBodyJointType type, VROVector3f screenCoords, double confidence) :
-    _type(type),
-    _screenCoords(screenCoords),
-    _confidence(confidence),
-    _projectedTransform(VROMatrix4f::identity()),
-    _hasValidProjectedTransform(false){}
-
-    const VROVector3f &getScreenCoords() const {
-        return _screenCoords;
+    
+    VROInferredBodyJoint() : _confidence(0) {}
+    VROInferredBodyJoint(VROBodyJointType type, VROBoundingBox bounds, double confidence) :
+        _type(type),
+        _bounds(bounds),
+        _confidence(confidence) {}
+    
+    const VROBoundingBox &getBounds() const {
+        return _bounds;
     }
-
-    void setScreenCoords(VROVector3f screenCoords) {
-        _screenCoords = screenCoords;
+    void setBounds(VROBoundingBox bounds) {
+        _bounds = bounds;
     }
-
-    const VROMatrix4f &getProjectedTransform() const {
-        return _projectedTransform;
-    }
-
-    void setProjectedTransform(VROMatrix4f transform) {
-        _projectedTransform = transform;
-        _hasValidProjectedTransform = true;
-    }
-
-    void clearPojectedTransform() {
-        _projectedTransform.toIdentity();
-        _hasValidProjectedTransform = false;
-    }
-
-    bool hasValidProjectedTransform() const {
-        return _hasValidProjectedTransform;
-    }
-
-    void setSpawnTimeMs(double ts) {
-        _spawnTimeMs = ts;
-    }
-
-    double getSpawnTimeMs() const {
-        return _spawnTimeMs;
-    }
-
+    
     VROBodyJointType getType() const {
         return _type;
     }
-
     double getConfidence() const {
         return _confidence;
     }
-
+    
 private:
-    VROVector3f _screenCoords;
-    VROMatrix4f _projectedTransform;
-    bool _hasValidProjectedTransform;
+    VROBoundingBox _bounds;
     VROBodyJointType _type;
     double _confidence;
     double _spawnTimeMs;
@@ -96,7 +66,7 @@ private:
 
 class VROBodyTrackerDelegate {
 public:
-    virtual void onBodyJointsFound(const std::map<VROBodyJointType, VROBodyJoint> &joints) = 0;
+    virtual void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints) = 0;
 };
 
 class VROBodyTracker {
