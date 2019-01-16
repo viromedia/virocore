@@ -355,6 +355,8 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROToneMappingTest.cpp
              ${VIRO_RENDERER_SRC}/VROPolygonTest.cpp
              ${VIRO_RENDERER_SRC}/VROBodyTrackerTest.cpp
+             ${VIRO_RENDERER_SRC}/VROBodyRecognitionTest.cpp
+             ${VIRO_RENDERER_SRC}/VROObjectRecognitionTest.cpp
              )
 
 # Add pre-built libraries

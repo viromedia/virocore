@@ -114,6 +114,7 @@ void VROObjectRecognitionTest::onObjectsFound(const std::map<std::string, std::v
 #endif
 }
 
+#if VRO_PLATFORM_IOS
 @implementation VRORecognitionDrawDelegate {
     std::vector<VROVector3f> _labelPositions;
     std::vector<NSString *> _labels;
@@ -163,3 +164,4 @@ void VROObjectRecognitionTest::onObjectsFound(const std::map<std::string, std::v
 }
 
 @end
+#endif

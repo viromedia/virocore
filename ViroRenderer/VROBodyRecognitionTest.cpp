@@ -130,6 +130,7 @@ void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, 
 #endif
 }
 
+#if VRO_PLATFORM_IOS
 @implementation VROBodyRecognitionDrawDelegate {
     std::vector<VROVector3f> _labelPositions;
     std::vector<NSString *> _labels;
@@ -179,3 +180,4 @@ void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, 
 }
 
 @end
+#endif
