@@ -31,7 +31,7 @@ public:
     void startBodyTracking();
     void stopBodyTracking();
     
-    void trackWithVision(CVPixelBufferRef image, VROMatrix4f transform, VROCameraOrientation orientation);
+    void update(const VROARFrame &frame);
     
 private:
     

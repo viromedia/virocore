@@ -12,6 +12,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include "VROVisionModel.h"
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
 #include "VROBoundingBox.h"
@@ -130,7 +131,7 @@ public:
     virtual void onObjectsFound(const std::map<std::string, std::vector<VRORecognizedObject>> &objects) = 0;
 };
 
-class VROObjectRecognizer {
+class VROObjectRecognizer : public VROVisionModel {
     
 public:
     

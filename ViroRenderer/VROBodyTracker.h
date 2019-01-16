@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <map>
+#include "VROVisionModel.h"
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
 #include "VROBoundingBox.h"
@@ -69,7 +70,7 @@ public:
     virtual void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints) = 0;
 };
 
-class VROBodyTracker {
+class VROBodyTracker : public VROVisionModel {
     
 public:
     VROBodyTracker() {};

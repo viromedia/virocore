@@ -37,8 +37,8 @@ public:
       return emptyResults;
     }
     
-    VROMatrix4f getCameraImageToViewportTransform();
-    VROMatrix4f getViewportToCameraImageTransform();
+    VROMatrix4f getCameraImageToViewportTransform() const;
+    VROMatrix4f getViewportToCameraImageTransform() const;
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;

@@ -13,6 +13,7 @@
 #include <Accelerate/Accelerate.h>
 #include "VROImagePreprocessor.h"
 #include "VRODriverOpenGLiOS.h"
+#include "VROARFrameiOS.h"
 
 @interface NSArray (Map)
 
@@ -137,7 +138,13 @@ void VROBodyTrackeriOS::stopBodyTracking() {
     
 }
 
-void VROBodyTrackeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMatrix4f transform, VROCameraOrientation orientation) {
+void VROBodyTrackeriOS::update(const VROARFrame &frame) {
+    const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
+    
+    CVPixelBufferRef cameraImage = frameiOS.getImage();
+    VROMatrix4f transform = frameiOS.getCameraImageToViewportTransform();
+    VROCameraOrientation orientation = frameiOS.getCameraOrientation();
+    
     double timestamp = VROTimeCurrentMillis();
     VROVector3f scale = transform.extractScale();
     VROVector3f translation = transform.extractTranslation();

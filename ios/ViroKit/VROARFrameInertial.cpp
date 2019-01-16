@@ -36,7 +36,7 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameInertial::hitTest(int
     return {};
 }
 
-VROMatrix4f VROARFrameInertial::getViewportToCameraImageTransform() {
+VROMatrix4f VROARFrameInertial::getViewportToCameraImageTransform() const {
     return {}; // Identity
 }
 

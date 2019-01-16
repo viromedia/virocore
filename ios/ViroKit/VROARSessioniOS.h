@@ -20,10 +20,7 @@
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
-class VROBodyTracker;
-class VROBodyTrackeriOS;
-class VROObjectRecognizer;
-class VROObjectRecognizeriOS;
+class VROVisionModel;
 class VROTrackingHelper;
 @class VROARKitSessionDelegate;
 
@@ -81,8 +78,7 @@ public:
       return false;
     }
     void setVideoQuality(VROVideoQuality quality);
-    void setBodyTracker(std::shared_ptr<VROBodyTracker> bodyTracker);
-    void setObjectRecognizer(std::shared_ptr<VROObjectRecognizer> objectRecognizer);
+    void setVisionModel(std::shared_ptr<VROVisionModel> visionModel);
     
     /*
      Internal methods.
@@ -214,8 +210,7 @@ private:
 
 #endif /* ENABLE_OPENCV */
     
-    std::shared_ptr<VROBodyTrackeriOS> _bodyTracker;
-    std::shared_ptr<VROObjectRecognizeriOS> _objectRecognizer;
+    std::shared_ptr<VROVisionModel> _visionModel;
     
 };
 

@@ -121,7 +121,7 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameiOS::hitTest(int x, i
     return vResults;
 }
 
-VROMatrix4f VROARFrameiOS::getCameraImageToViewportTransform() {
+VROMatrix4f VROARFrameiOS::getCameraImageToViewportTransform() const {
     CGSize viewportSize = CGSizeMake(_viewport.getWidth()  / _viewport.getContentScaleFactor(),
                                      _viewport.getHeight() / _viewport.getContentScaleFactor());
     UIInterfaceOrientation orientation = VROConvert::toDeviceOrientation(_orientation);
@@ -141,7 +141,7 @@ VROMatrix4f VROARFrameiOS::getCameraImageToViewportTransform() {
     return matrix;
 }
 
-VROMatrix4f VROARFrameiOS::getViewportToCameraImageTransform() {
+VROMatrix4f VROARFrameiOS::getViewportToCameraImageTransform() const {
     CGSize viewportSize = CGSizeMake(_viewport.getWidth()  / _viewport.getContentScaleFactor(),
                                      _viewport.getHeight() / _viewport.getContentScaleFactor());
     UIInterfaceOrientation orientation = VROConvert::toDeviceOrientation(_orientation);

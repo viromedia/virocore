@@ -70,7 +70,7 @@ public:
      This ensures the camera image maps correctly to the current viewport and
      orientation.
      */
-    virtual VROMatrix4f getViewportToCameraImageTransform() = 0;
+    virtual VROMatrix4f getViewportToCameraImageTransform() const = 0;
     
     /*
      Return the estimated intensity of ambient light in the physical scene.

@@ -28,7 +28,7 @@ public:
       std::vector<std::shared_ptr<VROARHitTestResult>> emptyResults;
       return emptyResults;
     }
-    VROMatrix4f getViewportToCameraImageTransform();
+    VROMatrix4f getViewportToCameraImageTransform() const;
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;

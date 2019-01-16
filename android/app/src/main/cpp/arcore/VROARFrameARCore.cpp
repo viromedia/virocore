@@ -171,7 +171,7 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameARCore::hitTestRay(VR
     delete (hitResultList);
     return toReturn;
 }
-VROMatrix4f VROARFrameARCore::getViewportToCameraImageTransform() {
+VROMatrix4f VROARFrameARCore::getViewportToCameraImageTransform() const {
     pabort("Not supported on ARCore");
 }
 

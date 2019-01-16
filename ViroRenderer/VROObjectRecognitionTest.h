@@ -55,7 +55,7 @@ public:
 #if VRO_PLATFORM_IOS
         std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
         std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
-        arSessioniOS->setObjectRecognizer(_objectRecognizer);
+        arSessioniOS->setVisionModel(_objectRecognizer);
 #endif
     }
     virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {

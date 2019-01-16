@@ -9,6 +9,7 @@
 #include "VROObjectRecognizeriOS.h"
 #include "VROLog.h"
 #include "VROTime.h"
+#include "VROARFrameiOS.h"
 #import "model_yolo_coco.h"
 #import "VRODriverOpenGLiOS.h"
 
@@ -40,7 +41,13 @@ void VROObjectRecognizeriOS::stopObjectTracking() {
     
 }
 
-void VROObjectRecognizeriOS::trackWithVision(CVPixelBufferRef cameraImage, VROMatrix4f transform, VROCameraOrientation orientation) {
+void VROObjectRecognizeriOS::update(const VROARFrame &frame) {
+    const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
+    
+    CVPixelBufferRef cameraImage = frameiOS.getImage();
+    VROMatrix4f transform = frameiOS.getCameraImageToViewportTransform();
+    VROCameraOrientation orientation = frameiOS.getCameraOrientation();
+
     // Only process one image at a time
     if (_currentImage != nil) {
         return;
