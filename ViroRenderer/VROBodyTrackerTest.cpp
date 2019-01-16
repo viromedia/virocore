@@ -22,6 +22,7 @@
 
 #if VRO_PLATFORM_IOS
 #include "VROBodyTrackeriOS.h"
+#include "VROBodyTrackerYolo.h"
 #include "VRODriverOpenGLiOS.h"
 static std::string pointLabels[14] = {
     "top\t\t\t", //0
@@ -103,11 +104,12 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     _bodyMLController->setDelegate(shared_from_this());
 
     #if VRO_PLATFORM_IOS
-    std::shared_ptr<VROBodyTrackeriOS> trackeriOS = std::make_shared<VROBodyTrackeriOS>();
-    trackeriOS->initBodyTracking(VROCameraPosition::Back, driver);
-    trackeriOS->startBodyTracking();
-    trackeriOS->setDelegate(_bodyMLController);
-    _bodyTracker = trackeriOS;
+    std::shared_ptr<VROBodyTracker> tracker = std::make_shared<VROBodyTrackeriOS>();
+    tracker->initBodyTracking(VROCameraPosition::Back, driver);
+    tracker->startBodyTracking();
+    tracker->setDelegate(_bodyMLController);
+    
+    _bodyTracker = tracker;
     _bodyMLController->enableDebugMLViewIOS(driver);
     #endif
 

@@ -16,6 +16,9 @@
 #include "VROMatrix4f.h"
 #include "VROBoundingBox.h"
 
+class VRODriver;
+enum class VROCameraPosition;
+
 // Known body joint types recognized by VROBodyTracker
 // Note: Enum values matter as they are being utilized in VROBodyTracker!
 enum class VROBodyJointType {
@@ -76,6 +79,7 @@ public:
     VROBodyTracker() {};
     virtual ~VROBodyTracker() {}
     
+    virtual bool initBodyTracking(VROCameraPosition position, std::shared_ptr<VRODriver> driver) = 0;
     virtual void startBodyTracking() = 0;
     virtual void stopBodyTracking() = 0;
     

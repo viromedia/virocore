@@ -15,8 +15,8 @@
 #include "VROIKRig.h"
 #include "VROProjector.h"
 #if VRO_PLATFORM_IOS
-#include "VROBodyTrackeriOS.h"
 #include "VRODriverOpenGLiOS.h"
+
 static std::string pointLabels[14] = {
     "top\t\t\t", //0
     "neck\t\t", //1
