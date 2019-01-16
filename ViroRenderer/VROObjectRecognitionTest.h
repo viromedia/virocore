@@ -1,13 +1,13 @@
 //
-//  VRORecognitionTest.h
+//  VROObjectRecognitionTest.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 1/10/19.
 //  Copyright © 2019 Viro Media. All rights reserved.
 //
 
-#ifndef VRORecognitionTest_h
-#define VRORecognitionTest_h
+#ifndef VROObjectRecognitionTest_h
+#define VROObjectRecognitionTest_h
 
 #include "VRORendererTest.h"
 #include "VROARDeclarativeNode.h"
@@ -19,7 +19,6 @@
 #include "VROARSessioniOS.h"
 #import "VROViewAR.h"
 #import <UIKit/UIKit.h>
-#endif
 
 @interface VRORecognitionDrawDelegate : NSObject<VRODebugDrawDelegate>
 - (void)drawRect;
@@ -28,13 +27,15 @@
 - (void)setColors:(std::vector<UIColor *>)colors;
 @end
 
-class VRORecognitionTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
+#endif
+
+class VROObjectRecognitionTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
                            public VROObjectRecognizerDelegate,
-                           public std::enable_shared_from_this<VRORecognitionTest> {
+                           public std::enable_shared_from_this<VROObjectRecognitionTest> {
 public:
     
-    VRORecognitionTest();
-    virtual ~VRORecognitionTest();
+    VROObjectRecognitionTest();
+    virtual ~VROObjectRecognitionTest();
     
     void build(std::shared_ptr<VRORenderer> renderer,
                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
@@ -81,4 +82,4 @@ private:
     
 };
 
-#endif /* VRORecognitionTest_hpp */
+#endif /* VROObjectRecognitionTest_hpp */

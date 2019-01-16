@@ -1366,10 +1366,10 @@
 		8FE39F7F201FB2C70088A175 /* VROPhotometricLightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */; };
 		8FE39F80201FB2D70088A175 /* VROPhotometricLightTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */; };
 		8FE39F81201FB2DB0088A175 /* VROPhotometricLightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */; };
-		8FE52F3721E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */; };
-		8FE52F3821E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */; };
-		8FE52F3921E82A8400BA63D4 /* VRORecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */; };
-		8FE52F3A21E82A8400BA63D4 /* VRORecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */; };
+		8FE52F3721E82A8400BA63D4 /* VROObjectRecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3521E82A8400BA63D4 /* VROObjectRecognitionTest.cpp */; };
+		8FE52F3821E82A8400BA63D4 /* VROObjectRecognitionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3521E82A8400BA63D4 /* VROObjectRecognitionTest.cpp */; };
+		8FE52F3921E82A8400BA63D4 /* VROObjectRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3621E82A8400BA63D4 /* VROObjectRecognitionTest.h */; };
+		8FE52F3A21E82A8400BA63D4 /* VROObjectRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3621E82A8400BA63D4 /* VROObjectRecognitionTest.h */; };
 		8FE52F3C21E833FA00BA63D4 /* VROObjectRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */; };
 		8FE52F3D21E833FB00BA63D4 /* VROObjectRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */; };
 		8FE52F4021E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */; };
@@ -2402,8 +2402,8 @@
 		8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhotometricLightTest.cpp; sourceTree = "<group>"; };
 		8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhotometricLightTest.h; sourceTree = "<group>"; };
-		8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VRORecognitionTest.cpp; sourceTree = "<group>"; };
-		8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORecognitionTest.h; sourceTree = "<group>"; };
+		8FE52F3521E82A8400BA63D4 /* VROObjectRecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROObjectRecognitionTest.cpp; sourceTree = "<group>"; };
+		8FE52F3621E82A8400BA63D4 /* VROObjectRecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognitionTest.h; sourceTree = "<group>"; };
 		8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognizer.h; sourceTree = "<group>"; };
 		8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROObjectRecognizeriOS.cpp; sourceTree = "<group>"; };
 		8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognizeriOS.h; sourceTree = "<group>"; };
@@ -3679,8 +3679,8 @@
 				8AD76EAD211CD27B0045BD5F /* VROARObjectTrackingTest.cpp */,
 				8B9988FC21431BFF00EA9ED3 /* VROBodyTrackerTest.h */,
 				8B9988FD21431BFF00EA9ED3 /* VROBodyTrackerTest.cpp */,
-				8FE52F3621E82A8400BA63D4 /* VRORecognitionTest.h */,
-				8FE52F3521E82A8400BA63D4 /* VRORecognitionTest.cpp */,
+				8FE52F3621E82A8400BA63D4 /* VROObjectRecognitionTest.h */,
+				8FE52F3521E82A8400BA63D4 /* VROObjectRecognitionTest.cpp */,
 				8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */,
 				8F2C7B0321ECD3F100B8A154 /* VROBodyRecognitionTest.cpp */,
 			);
@@ -4044,7 +4044,7 @@
 				13B6731D212229B20040FB72 /* VRORendererTest.h in Headers */,
 				13B6731E212229B20040FB72 /* VROPostProcessEffectFactory.h in Headers */,
 				13B6731F212229B20040FB72 /* VRORenderTarget.h in Headers */,
-				8FE52F3A21E82A8400BA63D4 /* VRORecognitionTest.h in Headers */,
+				8FE52F3A21E82A8400BA63D4 /* VROObjectRecognitionTest.h in Headers */,
 				13B67320212229B20040FB72 /* VROTextureReference.h in Headers */,
 				8A291A1D21DD533300BB3934 /* VROBodyTracker.h in Headers */,
 				13B67321212229B20040FB72 /* VROSceneRendererGVR.h in Headers */,
@@ -4384,7 +4384,7 @@
 				8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */,
 				A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */,
 				8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */,
-				8FE52F3921E82A8400BA63D4 /* VRORecognitionTest.h in Headers */,
+				8FE52F3921E82A8400BA63D4 /* VROObjectRecognitionTest.h in Headers */,
 				8FEACF1520191F280082D18B /* VROTextureReference.h in Headers */,
 				8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */,
 				8A53ABF2212B824A0005D7F9 /* VROARImageDatabase.h in Headers */,
@@ -5560,7 +5560,7 @@
 				13B67274212229B20040FB72 /* VROAction.cpp in Sources */,
 				13B67275212229B20040FB72 /* VROImageShaderProgram.cpp in Sources */,
 				13B67276212229B20040FB72 /* VROWeakProxy.mm in Sources */,
-				8FE52F3821E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */,
+				8FE52F3821E82A8400BA63D4 /* VROObjectRecognitionTest.cpp in Sources */,
 				13B67277212229B20040FB72 /* VROBox.cpp in Sources */,
 				13B67278212229B20040FB72 /* VROAllocationTracker.cpp in Sources */,
 				13B67279212229B20040FB72 /* VROQuaternion.cpp in Sources */,
@@ -5747,7 +5747,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FE52F3721E82A8400BA63D4 /* VRORecognitionTest.cpp in Sources */,
+				8FE52F3721E82A8400BA63D4 /* VROObjectRecognitionTest.cpp in Sources */,
 				A57CA8DC20ADFDB700DE85A1 /* VROGLTFTest.cpp in Sources */,
 				13F631AC2065C1EA00A74EFC /* keen_io_sqlite3.c in Sources */,
 				13F631B42065C21B00A74EFC /* KeenConstants.m in Sources */,

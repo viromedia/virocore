@@ -1,12 +1,12 @@
 //
-//  VRORecognitionTest.cpp
+//  VROObjectRecognitionTest.cpp
 //  ViroRenderer
 //
 //  Created by Raj Advani on 1/10/19.
 //  Copyright © 2019 Viro Media. All rights reserved.
 //
 
-#include "VRORecognitionTest.h"
+#include "VROObjectRecognitionTest.h"
 #include "VROTestUtil.h"
 #include "VROSphere.h"
 
@@ -35,16 +35,16 @@ static UIColor *kColors[14] = {
 
 #endif
 
-VRORecognitionTest::VRORecognitionTest() :
-VRORendererTest(VRORendererTestType::Recognition) {
+VROObjectRecognitionTest::VROObjectRecognitionTest() :
+VRORendererTest(VRORendererTestType::ObjectRecognition) {
     
 }
 
-VRORecognitionTest::~VRORecognitionTest() {
+VROObjectRecognitionTest::~VROObjectRecognitionTest() {
     
 }
 
-void VRORecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
+void VROObjectRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                std::shared_ptr<VRODriver> driver) {
     _renderer = renderer;
@@ -57,7 +57,6 @@ void VRORecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
 #if VRO_PLATFORM_IOS
     _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
     _drawDelegate = [[VRORecognitionDrawDelegate alloc] init];
-
     [_view setDebugDrawDelegate:_drawDelegate];
     
     std::shared_ptr<VROObjectRecognizeriOS> trackeriOS = std::make_shared<VROObjectRecognizeriOS>();
@@ -72,7 +71,7 @@ void VRORecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene->getRootNode()->addLight(ambient);
 }
 
-void VRORecognitionTest::onObjectsFound(const std::map<std::string, std::vector<VRORecognizedObject>> &objects) {
+void VROObjectRecognitionTest::onObjectsFound(const std::map<std::string, std::vector<VRORecognizedObject>> &objects) {
 #if VRO_PLATFORM_IOS
     int viewWidth  = _view.frame.size.width;
     int viewHeight = _view.frame.size.height;

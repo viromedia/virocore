@@ -1,13 +1,13 @@
 //
-//  VROObjectRecognizeriOS.hpp
+//  VROObjectRecognizeriOS.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 1/10/19.
 //  Copyright © 2019 Viro Media. All rights reserved.
 //
 
-#ifndef VROObjectRecognizeriOS_hpp
-#define VROObjectRecognizeriOS_hpp
+#ifndef VROObjectRecognizeriOS_h
+#define VROObjectRecognizeriOS_h
 
 #include "VROObjectRecognizer.h"
 #include <map>
@@ -48,4 +48,4 @@ private:
     
 };
 
-#endif /* VROObjectRecognizeriOS_hpp */
+#endif /* VROObjectRecognizeriOS_h */

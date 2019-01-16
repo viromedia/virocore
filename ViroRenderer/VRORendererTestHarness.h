@@ -48,7 +48,7 @@ enum class VRORendererTestType {
     ToneMapping,
     Polygon,
     BodyTracker,
-    Recognition,
+    ObjectRecognition,
     BodyRecognition,
     NumTests,
 };

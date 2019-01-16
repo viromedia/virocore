@@ -10,7 +10,6 @@
 #include "VROLog.h"
 #include "VROTime.h"
 #import "model_yolo_coco.h"
-#import "VROImagePreprocessor.h"
 #import "VRODriverOpenGLiOS.h"
 
 VROObjectRecognizeriOS::VROObjectRecognizeriOS() {
