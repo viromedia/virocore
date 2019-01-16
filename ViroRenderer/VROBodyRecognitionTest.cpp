@@ -11,11 +11,11 @@
 #include "VROSphere.h"
 
 #if VRO_PLATFORM_IOS
-#include "VROBodyTrackeriOS.h"
+#include "VROBodyTrackerYolo.h"
 #include "VRODriverOpenGLiOS.h"
 
 static const int kRecognitionNumColors = 14;
-static std::string pointLabels[14] = {
+static std::string kPointLabels[14] = {
     "top\t\t\t", //0
     "neck\t\t", //1
     "R shoulder\t", //2
@@ -75,11 +75,11 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     _drawDelegate = [[VROBodyRecognitionDrawDelegate alloc] init];
     [_view setDebugDrawDelegate:_drawDelegate];
     
-    std::shared_ptr<VROBodyTrackeriOS> trackeriOS = std::make_shared<VROBodyTrackeriOS>();
-    trackeriOS->initBodyTracking(VROCameraPosition::Back, driver);
-    trackeriOS->startBodyTracking();
-    trackeriOS->setDelegate(shared_from_this());
-    _bodyTracker = trackeriOS;
+    std::shared_ptr<VROBodyTrackerYolo> tracker = std::make_shared<VROBodyTrackerYolo>();
+    tracker->initBodyTracking(VROCameraPosition::Back, driver);
+    tracker->startBodyTracking();
+    tracker->setDelegate(shared_from_this());
+    _bodyTracker = tracker;
 #endif
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
@@ -114,7 +114,7 @@ void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, 
             VROVector3f labelPosition = { (float) (x - width / 2.0), (float) (y + height / 2.0), 0 };
             VROBoundingBox transformedBox(x - width / 2.0, x + width / 2.0, y - height / 2.0, y + height / 2.0, 0, 0);
             
-            NSString *className = @"Test Name"; // TODO Fix this [NSString stringWithUTF8String:kv.first.c_str()];
+            NSString *className = [NSString stringWithUTF8String:kPointLabels[(int) kv.first].c_str()];
             NSString *classAndConf = [NSString stringWithFormat:@"%@ [%.03f]", className, joint.getConfidence()];
             
             boxes.push_back(transformedBox);

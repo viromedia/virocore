@@ -1,47 +1,67 @@
 //
-//  VROObjectRecognizeriOS.cpp
+//  VROBodyTrackerYolo.cpp
 //  ViroRenderer
 //
-//  Created by Raj Advani on 1/10/19.
+//  Created by Raj Advani on 1/16/19.
 //  Copyright © 2019 Viro Media. All rights reserved.
 //
 
-#include "VROObjectRecognizeriOS.h"
+#include "VROBodyTrackerYolo.h"
 #include "VROLog.h"
 #include "VROTime.h"
 #include "VROARFrameiOS.h"
-#import "model_yolo_coco.h"
+#import "model_yolo_mpii.h"
 #import "VRODriverOpenGLiOS.h"
 
-VROObjectRecognizeriOS::VROObjectRecognizeriOS() {
+std::map<std::string, VROBodyJointType> VROBodyTrackerYolo::_labelsToJointTypes = {
+    { "r_ankle", VROBodyJointType::RightAnkle },
+    { "r_knee", VROBodyJointType::RightKnee },
+    { "r hip", VROBodyJointType::RightHip },
+    { "l hip", VROBodyJointType::LeftHip },
+    { "l knee", VROBodyJointType::LeftKnee },
+    { "l ankle", VROBodyJointType::LeftAnkle },
+    // {"pelvis", VROBodyJointType::Pelvis },  // TODO Need to add VROBodyJointType
+    { "thorax", VROBodyJointType::Neck },
+    { "upper neck", VROBodyJointType::Neck }, // Unused in MPII
+    { "head top", VROBodyJointType::Neck },   // Unused in MPII
+    { "r wrist", VROBodyJointType::RightWrist },
+    { "r elbow", VROBodyJointType::RightElbow },
+    { "r shoulder", VROBodyJointType::RightShoulder },
+    { "l shoulder", VROBodyJointType::LeftShoulder },
+    { "l elbow", VROBodyJointType::LeftElbow },
+    { "l wrist", VROBodyJointType::LeftWrist },
+    { "head", VROBodyJointType::Top },
+};
+
+VROBodyTrackerYolo::VROBodyTrackerYolo() {
     _currentImage = nil;
-    _visionQueue = dispatch_queue_create("com.viro.serialVisionQueue", DISPATCH_QUEUE_SERIAL);
+    _visionQueue = dispatch_queue_create("com.viro.bodyTrackerYoloVisionQueue", DISPATCH_QUEUE_SERIAL);
 }
 
-bool VROObjectRecognizeriOS::initObjectTracking(VROCameraPosition position,
-                                                std::shared_ptr<VRODriver> driver) {
+bool VROBodyTrackerYolo::initBodyTracking(VROCameraPosition position,
+                                          std::shared_ptr<VRODriver> driver) {
     
     
-    _model = [[[model_yolo_coco alloc] init] model];
+    _model = [[[model_yolo_mpii alloc] init] model];
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {
-                                              processVisionResults(request, error);
-                                          }];
+                      processVisionResults(request, error);
+                      }];
     _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
     
     return true;
 }
 
-void VROObjectRecognizeriOS::startObjectTracking() {
+void VROBodyTrackerYolo::startBodyTracking() {
     
 }
 
-void VROObjectRecognizeriOS::stopObjectTracking() {
+void VROBodyTrackerYolo::stopBodyTracking() {
     
 }
 
-void VROObjectRecognizeriOS::update(const VROARFrame &frame) {
+void VROBodyTrackerYolo::update(const VROARFrame &frame) {
     const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
     
     CVPixelBufferRef cameraImage = frameiOS.getImage();
@@ -60,7 +80,7 @@ void VROObjectRecognizeriOS::update(const VROARFrame &frame) {
 }
 
 // Invoked on the _visionQueue
-void VROObjectRecognizeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraOrientation orientation) {
+void VROBodyTrackerYolo::trackCurrentImage(VROMatrix4f transform, VROCameraOrientation orientation) {
     NSDictionary *visionOptions = [NSDictionary dictionary];
     
     // The logic below derives the _transform matrix, which is used to convert *rotated* image
@@ -122,11 +142,11 @@ void VROObjectRecognizeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraO
 }
 
 // Invoked on the _visionQueue
-void VROObjectRecognizeriOS::processVisionResults(VNRequest *request, NSError *error) {
+void VROBodyTrackerYolo::processVisionResults(VNRequest *request, NSError *error) {
     NSArray *array = [request results];
     NSLog(@"Number of results %d", (int) array.count);
     
-    std::map<std::string, std::vector<VRORecognizedObject>> objects;
+    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> joints;
     
     for (VNRecognizedObjectObservation *observation in array) {
         CGRect bounds = observation.boundingBox;
@@ -141,17 +161,18 @@ void VROObjectRecognizeriOS::processVisionResults(VNRequest *request, NSError *e
         for (VNClassificationObservation *classification in observation.labels) {
             if (classification.confidence > 0.8) {
                 std::string className = std::string([classification.identifier UTF8String]);
+                VROBodyJointType type = _labelsToJointTypes[className];
                 
-                NSLog(@"   Label %@ confidence %f", classification.identifier, classification.confidence);
-                objects[className].push_back({ className, box, classification.confidence });
+                NSLog(@"   Label %@, type %d, confidence %f", classification.identifier, type, classification.confidence);
+                joints[type].push_back({ type, box, classification.confidence });
             }
         }
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        std::shared_ptr<VROObjectRecognizerDelegate> delegate = _objectRecognizerDelegate_w.lock();
+        std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
         if (delegate) {
-            delegate->onObjectsFound(objects);
+            delegate->onBodyJointsFound(joints);
         }
     });
     _currentImage = nil;

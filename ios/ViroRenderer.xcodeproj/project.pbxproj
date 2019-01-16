@@ -839,6 +839,11 @@
 		8F2C7B0821ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0C21ECEBAD00B8A154 /* axel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2C7B0921ECEAE300B8A154 /* axel.png */; };
 		8F2C7B1121EF8C7100B8A154 /* model_yolo_coco.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */; };
+		8F2C7B1321EF919F00B8A154 /* model_yolo_mpii.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */; };
+		8F2C7B1621EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
+		8F2C7B1721EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
+		8F2C7B1821EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; };
+		8F2C7B1921EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; };
 		8F2C7B1B21EFCB3400B8A154 /* VROVisionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */; };
 		8F2C7B1C21EFCB3C00B8A154 /* VROVisionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
@@ -1874,6 +1879,9 @@
 		8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyRecognitionTest.h; sourceTree = "<group>"; };
 		8F2C7B0921ECEAE300B8A154 /* axel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = axel.png; path = ViroKit/axel.png; sourceTree = "<group>"; };
 		8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_yolo_coco.mlmodel; sourceTree = "<group>"; };
+		8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_yolo_mpii.mlmodel; sourceTree = "<group>"; };
+		8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyTrackerYolo.cpp; sourceTree = "<group>"; };
+		8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyTrackerYolo.h; sourceTree = "<group>"; };
 		8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROVisionModel.h; sourceTree = "<group>"; };
 		8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkinner.cpp; sourceTree = "<group>"; };
 		8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkinner.h; sourceTree = "<group>"; };
@@ -2933,10 +2941,12 @@
 				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
 				8B08B42D213F7B9A00196F05 /* VROBodyTrackeriOS.h */,
 				8B08B42E213F7B9A00196F05 /* VROBodyTrackeriOS.cpp */,
-				8AABB6FA1F1ECD4E00D48D5C /* VROWeakProxy.h */,
-				8AABB6FB1F1ECD4E00D48D5C /* VROWeakProxy.mm */,
+				8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */,
+				8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */,
 				8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */,
 				8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */,
+				8AABB6FA1F1ECD4E00D48D5C /* VROWeakProxy.h */,
+				8AABB6FB1F1ECD4E00D48D5C /* VROWeakProxy.mm */,
 				8F2C7AFE21ECCE5300B8A154 /* VROImagePreprocessor.h */,
 				8F2C7AFD21ECCE5300B8A154 /* VROImagePreprocessor.cpp */,
 			);
@@ -3224,6 +3234,7 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */,
 				8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */,
 				8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */,
 				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
@@ -4224,6 +4235,7 @@
 				13B673BD212229B20040FB72 /* Nodes.pb.h in Headers */,
 				13B673BE212229B20040FB72 /* VROBloomTest.h in Headers */,
 				13B673BF212229B20040FB72 /* VROImagePostProcessOpenGL.h in Headers */,
+				8F2C7B1921EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */,
 				13B673C0212229B20040FB72 /* VROARScene.h in Headers */,
 				13B673C1212229B20040FB72 /* VROFieldOfView.h in Headers */,
 				13B673C2212229B20040FB72 /* VROShadowMapRenderPass.h in Headers */,
@@ -4565,6 +4577,7 @@
 				8F92091D1F3CE241003305C8 /* VROImagePostProcessOpenGL.h in Headers */,
 				8A99E6D11EF1B95800712D79 /* VROARScene.h in Headers */,
 				8F50FC801E0AEC0A00A9B4B2 /* VROFieldOfView.h in Headers */,
+				8F2C7B1821EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */,
 				8F383B621F43546C006AB301 /* VROShadowMapRenderPass.h in Headers */,
 				8FCB101B1DD5449700FE425C /* VROVideoTextureiOS.h in Headers */,
 				8F40541A1F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h in Headers */,
@@ -5467,6 +5480,7 @@
 				13B6721B212229B20040FB72 /* KeenConstants.m in Sources */,
 				13B6721C212229B20040FB72 /* VROFixedParticleEmitter.cpp in Sources */,
 				13B6721D212229B20040FB72 /* VROBRDFRenderPass.cpp in Sources */,
+				8F2C7B1721EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */,
 				13B6721E212229B20040FB72 /* VROPrefilterRenderPass.cpp in Sources */,
 				13B6721F212229B20040FB72 /* VROInputControllerBase.cpp in Sources */,
 				13B67220212229B20040FB72 /* VROPortal.cpp in Sources */,
@@ -5826,6 +5840,7 @@
 				8F2C7AFF21ECCE5300B8A154 /* VROImagePreprocessor.cpp in Sources */,
 				8FA81D5B2023773700B04790 /* VRORendererSettingsTest.cpp in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
+				8F2C7B1321EF919F00B8A154 /* model_yolo_mpii.mlmodel in Sources */,
 				8F465025215E738900C1AEC5 /* advancing_front.cc in Sources */,
 				8F465029215E738900C1AEC5 /* shapes.cc in Sources */,
 				8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */,
@@ -5875,6 +5890,7 @@
 				8F67B59F1DF1DC930096C26F /* VROKnuthPlassFormatter.cpp in Sources */,
 				8F56AEA41DE764A700DD65B6 /* VROGlyphOpenGL.cpp in Sources */,
 				13F631B62065C21B00A74EFC /* KeenProperties.m in Sources */,
+				8F2C7B1621EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */,
 				8FD4DF151C18ED44003DC425 /* Vector3d.mm in Sources */,
 				8FD2A5111F81323500E831A6 /* VROBoxTest.cpp in Sources */,
 				8FD2A54F1F813C4100E831A6 /* VROHDRTest.cpp in Sources */,
