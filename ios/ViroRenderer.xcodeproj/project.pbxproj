@@ -838,6 +838,7 @@
 		8F2C7B0721ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0821ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0C21ECEBAD00B8A154 /* axel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2C7B0921ECEAE300B8A154 /* axel.png */; };
+		8F2C7B1121EF8C7100B8A154 /* model_yolo_coco.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
 		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
@@ -1375,7 +1376,6 @@
 		8FE52F4121E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */; };
 		8FE52F4221E835BA00BA63D4 /* VROObjectRecognizeriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */; };
 		8FE52F4321E835BA00BA63D4 /* VROObjectRecognizeriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */; };
-		8FE52F4521E8441A00BA63D4 /* model_pipelined.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F4421E8441A00BA63D4 /* model_pipelined.mlmodel */; };
 		8FE52F4A21E9402400BA63D4 /* VROObjectRecognizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */; };
 		8FE52F4B21E9402400BA63D4 /* VROObjectRecognizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */; };
 		8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F3CE7072010EFE900FF0214 /* pbr_fsh.glsl */; };
@@ -1871,6 +1871,7 @@
 		8F2C7B0321ECD3F100B8A154 /* VROBodyRecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyRecognitionTest.cpp; sourceTree = "<group>"; };
 		8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyRecognitionTest.h; sourceTree = "<group>"; };
 		8F2C7B0921ECEAE300B8A154 /* axel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = axel.png; path = ViroKit/axel.png; sourceTree = "<group>"; };
+		8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_yolo_coco.mlmodel; sourceTree = "<group>"; };
 		8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkinner.cpp; sourceTree = "<group>"; };
 		8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkinner.h; sourceTree = "<group>"; };
 		8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBone.cpp; sourceTree = "<group>"; };
@@ -2406,7 +2407,6 @@
 		8FE52F3B21E833F500BA63D4 /* VROObjectRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognizer.h; sourceTree = "<group>"; };
 		8FE52F3E21E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROObjectRecognizeriOS.cpp; sourceTree = "<group>"; };
 		8FE52F3F21E835BA00BA63D4 /* VROObjectRecognizeriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROObjectRecognizeriOS.h; sourceTree = "<group>"; };
-		8FE52F4421E8441A00BA63D4 /* model_pipelined.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_pipelined.mlmodel; sourceTree = "<group>"; };
 		8FE52F4821E9402400BA63D4 /* VROObjectRecognizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VROObjectRecognizer.cpp; sourceTree = "<group>"; };
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
@@ -3220,7 +3220,7 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
-				8FE52F4421E8441A00BA63D4 /* model_pipelined.mlmodel */,
+				8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */,
 				8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */,
 				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
@@ -5782,6 +5782,7 @@
 				13F631AF2065C21B00A74EFC /* HTTPCodes.m in Sources */,
 				8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */,
 				8F2F82F71F4E627C00D1CBFA /* VROARShadow.cpp in Sources */,
+				8F2C7B1121EF8C7100B8A154 /* model_yolo_coco.mlmodel in Sources */,
 				8FD4DF051C18ED3C003DC425 /* VROScene.cpp in Sources */,
 				13F631BB2065C21B00A74EFC /* KIOQuery.m in Sources */,
 				8FD4DEF01C18ED0B003DC425 /* VROData.cpp in Sources */,
@@ -5938,7 +5939,6 @@
 				8FD2A5551F813C4100E831A6 /* VROFBXTest.cpp in Sources */,
 				8FD2A5391F813C4100E831A6 /* VROARPlaneTest.cpp in Sources */,
 				8AD76EA5211B7BF10045BD5F /* VROARObjectTargetiOS.cpp in Sources */,
-				8FE52F4521E8441A00BA63D4 /* model_pipelined.mlmodel in Sources */,
 				8F8751902062C86E002D9BF8 /* VROJenkinsHash.cpp in Sources */,
 				8F201C4F21010E0B00637A75 /* VROPolygonTest.cpp in Sources */,
 				A5DA443321AF473600F86923 /* VROIKRig.cpp in Sources */,
