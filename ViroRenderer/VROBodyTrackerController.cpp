@@ -55,12 +55,17 @@ static const float kHighConfidence = 0.45;
 static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kVolatilityThresholdMeters = 0.15;
 static const float kReachableBoneThresholdMeters = 0.2;
-static const float kAutomaticSizingRatio = 0.775;
+static const float kAutomaticSizingRatio = 0.75;
 static const bool kModelDebugCubes = true;
 static const bool kAutomaticResizing = true;
 static const bool kDampenWithEMA = true;
 static const double kInitialDampeningPeriodMs = 250;
-static const VROBodyJointType kBodyJointRoot = VROBodyJointType::Neck;
+
+// Required joints needed for basic controller functionality (Scale / Root motion alignment)
+static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
+                                                    VROBodyJointType::RightHip,
+                                                    VROBodyJointType::LeftHip };
+static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
 
 // Supported bone names within 3D models for ml joint tracking.
 static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
@@ -139,11 +144,7 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     }
 
     // If we have not found required bones, fail the binding of the model.
-    VROBodyJointType requiredBones[] = {kBodyJointRoot,
-                                        VROBodyJointType::Neck,
-                                        VROBodyJointType::LeftHip,
-                                        VROBodyJointType::RightHip};
-    for (auto requiredBone : requiredBones) {
+    for (auto requiredBone : kRequiredJoints) {
         if (_mlJointForBoneIndex.find(requiredBone) == _mlJointForBoneIndex.end()) {
             perr("Attempted to bind 3D model with improperly configured bones to VROBodyTracker!");
             return false;
@@ -281,18 +282,31 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     updateDebugMLViewIOS(joints);
 #endif
 
-    if (_calibrating) {
-        // Calibration requires a tracked ML Root Joint, return if we haven't yet found it.
-        if (_currentTrackedState == NotAvailable) {
-            return;
-        }
+    // Basic tracking requires kRequiredJoints, return if we haven't yet found them.
+    if (_currentTrackedState == NotAvailable) {
+        return;
+    }
 
-        // Calculate a transform offset from a gLTF joint to the skinner's root node transform,
-        // where the gLTF joint will represent the Body Tracked ML Root - kBodyJointRoot.
-        // This transform offset will be needed for root motion re-alignment.
-        int bodyJointRootAsgLTFJoint = _mlJointForBoneIndex[kBodyJointRoot];
+    if (_calibrating) {
+        /*
+         Here, we chose an mlJoint as our "rootMotionJoint" from which to refer to when
+         moving the root position of the IK Rig in world space. We then from this joint,
+         calculate a transform offset from the rootMotionJoint to the 3d model's root node,
+         and save the result in _mlRootToModelRoot. During tracking, this transform offset
+         is then re-applied onto the rootMotionJoint to get the model's new root position,
+         of which is applied within alignModelRootToMLRoot().
+
+         Note that below, instead of a "rootMotionJoint", we will use the position between
+         the hips for calculating the transform offset.
+         */
+        int leftHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::LeftHip];
+        int rightHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::RightHip];
+        VROVector3f start = _skinner->getCurrentBoneWorldTransform(leftHipBoneIndex).extractTranslation();
+        VROVector3f end = _skinner->getCurrentBoneWorldTransform(rightHipBoneIndex).extractTranslation();
+        VROVector3f mid = (start - end).scale(0.5f) + end;
+
         VROMatrix4f mlRootWorldTrans;
-        mlRootWorldTrans.translate(_skinner->getCurrentBoneWorldTransform(bodyJointRootAsgLTFJoint).extractTranslation());
+        mlRootWorldTrans.translate(mid);
         VROMatrix4f modelRootWorldTrans;
         modelRootWorldTrans.translate(_modelRootNode->getWorldTransform().extractTranslation());
         _mlRootToModelRoot = mlRootWorldTrans.invert().multiply(modelRootWorldTrans);
@@ -352,7 +366,15 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     updateCachedJoints(latestJoints);
 
     // With the new found joints, update the current tracking state
-    if (_cachedTrackedJoints.find(VROBodyJointType::Neck) == _cachedTrackedJoints.end()) {
+    bool hasRequiredJoints = true;
+    for (auto requiredBone : kRequiredJoints) {
+        if (_cachedTrackedJoints.find(requiredBone) == _cachedTrackedJoints.end()) {
+            hasRequiredJoints = false;
+            break;
+        }
+    }
+
+    if (!hasRequiredJoints) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     } else if (_cachedTrackedJoints.size() == _mlJointForBoneIndex.size()) {
         setBodyTrackedState(VROBodyTrackedState::FullEffectors);
@@ -370,12 +392,12 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
     // If calibrating, we'll need to grab the Z depth at which to position our projected plane.
     if (_calibrating) {
-        if (latestJoints.find(kBodyJointRoot) == latestJoints.end()) {
+        if (latestJoints.find(kArHitTestJoint) == latestJoints.end()) {
             return;
         }
 
         // Perform a window depth test around the body joint root to get an average Z depth.
-        VROBodyJoint rootJoint = latestJoints[kBodyJointRoot];
+        VROBodyJoint rootJoint = latestJoints[kArHitTestJoint];
         VROVector3f screenCoord = rootJoint.getScreenCoords();
         VROMatrix4f projectedTrans = VROMatrix4f::identity();
         performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans);
@@ -457,9 +479,14 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
         return;
     }
 
+    // We can only attempt restoration if we have the required basic joints.
+    if (_currentTrackedState == VROBodyTrackedState::NotAvailable) {
+        return;
+    }
+
     // Attempt to recover missing joints by using old cached joint transforms.
     for (auto &expiredJoint : expiredJoints) {
-        if (_cachedTrackedJoints.find(expiredJoint.getType()) != _cachedTrackedJoints.end()){
+        if (_cachedTrackedJoints.find(expiredJoint.getType()) != _cachedTrackedJoints.end()) {
             continue;
         }
 
@@ -467,7 +494,7 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
 
         // Restore by repositioning this joint from when we last saw it relative to the root.
         VROMatrix4f cacheJointTransFromRoot = _cachedEffectorRootOffsets[currentType];
-        VROMatrix4f rootTransJoint = _cachedTrackedJoints.find(kBodyJointRoot)->second.getProjectedTransform();
+        VROMatrix4f rootTransJoint = _cachedTrackedJoints.find(kRequiredJoints[0])->second.getProjectedTransform();
         VROMatrix4f jointTrans = rootTransJoint.multiply(cacheJointTransFromRoot);
         expiredJoint.setProjectedTransform(jointTrans);
         _cachedTrackedJoints[currentType] = expiredJoint;
@@ -476,7 +503,7 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
     // With the updated transforms, cache a known set of _cachedEffectorRootOffsets
     if (_currentTrackedState != VROBodyTrackedState::NotAvailable) {
         _cachedEffectorRootOffsets.clear();
-        VROMatrix4f rootJointTrans = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform();
+        VROMatrix4f rootJointTrans = _cachedTrackedJoints[kRequiredJoints[0]].getProjectedTransform();
 
         for (auto joint : _cachedTrackedJoints) {
             if (joint.first == VROBodyJointType::Neck) {
@@ -567,7 +594,7 @@ void VROBodyTrackerController::dampenCachedJoints() {
 
 void VROBodyTrackerController::alignModelRootToMLRoot() {
     // Grab the world transform of what we consider to be the Body Joint's Root.
-    VROVector3f bodyJointRootposition = _cachedModelJoints[kBodyJointRoot];
+    VROVector3f bodyJointRootposition = getMLRootPosition();
 
     // Note: we just want the translational part of the ML's root transform as scale
     // and rotation doesn't matter at this point - they will be taken into account in the IKRig.
@@ -590,20 +617,9 @@ void VROBodyTrackerController::alignModelTorsoScale() {
         return;
     }
 
-    // Grab the current Neck to Hip distances from the ML Joint.
-    if (!_cachedTrackedJoints[VROBodyJointType::Neck].hasValidProjectedTransform() ||
-        !_cachedTrackedJoints[VROBodyJointType::LeftHip].hasValidProjectedTransform() ||
-        !_cachedTrackedJoints[VROBodyJointType::RightHip].hasValidProjectedTransform()) {
-        return;
-    }
-
+    // Calculate the neckToMLRoot distance
     VROVector3f neckPos = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform().extractTranslation();
-    VROVector3f leftHipPos = _cachedTrackedJoints[VROBodyJointType::LeftHip].getProjectedTransform().extractTranslation();
-    VROVector3f rightHipPos = _cachedTrackedJoints[VROBodyJointType::RightHip].getProjectedTransform().extractTranslation();
-
-    // Now get the middle of the hip.
-    VROVector3f midVecFromLeft = (rightHipPos - leftHipPos).scale(0.5f);
-    VROVector3f midHipLoc = leftHipPos.add(midVecFromLeft);
+    VROVector3f midHipLoc = getMLRootPosition();
     float mlNeckToHipDistnace = midHipLoc.distanceAccurate(neckPos);
 
     // Calculate the different distances, grab the ratio.
@@ -611,6 +627,17 @@ void VROBodyTrackerController::alignModelTorsoScale() {
 
     // Apply that ratio to the scale of the model.
     _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
+}
+
+VROVector3f VROBodyTrackerController::getMLRootPosition() {
+    if (_currentTrackedState == VROBodyTrackedState::NotAvailable) {
+        pwarn("Unable to determine ML Root position without proper body tracking data.");
+        return VROVector3f();
+    }
+
+    VROVector3f start = _cachedModelJoints[VROBodyJointType::LeftHip];
+    VROVector3f end = _cachedModelJoints[VROBodyJointType::RightHip];
+    return (start - end).scale(0.5f) + end;
 }
 
 void VROBodyTrackerController::updateModel() {

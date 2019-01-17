@@ -305,6 +305,11 @@ private:
     void alignModelTorsoScale();
 
     /*
+     The ML root position as referenced by the VROBodyTrackerController.
+     */
+    VROVector3f getMLRootPosition();
+
+    /*
      Debug UI used by this controller.
      */
     std::shared_ptr<VRONode> createDebugBoxUI(bool isAffector, std::string tag);
