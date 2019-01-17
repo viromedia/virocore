@@ -14,6 +14,8 @@
 #include "VROBox.h"
 #include "VROIKRig.h"
 #include "VROProjector.h"
+#include "VROBillboardConstraint.h"
+
 #if VRO_PLATFORM_IOS
 #include "VRODriverOpenGLiOS.h"
 
@@ -233,6 +235,7 @@ void VROBodyTrackerController::startCalibration() {
     _calibrating = true;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
+    _modelRootNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
 
     // reset the bones back to it's initial configuration
     std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
@@ -247,7 +250,7 @@ void VROBodyTrackerController::finishCalibration() {
         pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
         return;
     }
-
+    _modelRootNode->removeAllConstraints();
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
