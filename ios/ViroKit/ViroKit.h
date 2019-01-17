@@ -193,6 +193,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 
 // Body Tracking
 #import <ViroKit/VROBodyTrackeriOS.h>
+#import <ViroKit/VROBodyTrackerYolo.h>
 
 // OpenCV
 //#import <ViroKit/VROOpenCV.h>

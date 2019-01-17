@@ -842,10 +842,10 @@
 		8F2C7B1321EF919F00B8A154 /* model_yolo_mpii.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */; };
 		8F2C7B1621EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
 		8F2C7B1721EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
-		8F2C7B1821EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; };
-		8F2C7B1921EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; };
-		8F2C7B1B21EFCB3400B8A154 /* VROVisionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */; };
-		8F2C7B1C21EFCB3C00B8A154 /* VROVisionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */; };
+		8F2C7B1821EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F2C7B1921EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F2C7B1B21EFCB3400B8A154 /* VROVisionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F2C7B1C21EFCB3C00B8A154 /* VROVisionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
 		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
