@@ -618,7 +618,7 @@ void VROBodyTrackerController::alignModelTorsoScale() {
     }
 
     // Calculate the neckToMLRoot distance
-    VROVector3f neckPos = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform().extractTranslation();
+    VROVector3f neckPos = _cachedModelJoints[VROBodyJointType::Neck];
     VROVector3f midHipLoc = getMLRootPosition();
     float mlNeckToHipDistnace = midHipLoc.distanceAccurate(neckPos);
 
