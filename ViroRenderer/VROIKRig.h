@@ -144,6 +144,11 @@ private:
     std::map<int, std::shared_ptr<VROIKChain>> _endEffectorIdToChains;
 
     /*
+     A map of end effector VROIKJoint Ids and its local rotational transform.
+     */
+    std::map<int, VROMatrix4f> _endEffectorIdLocalRotation;
+
+    /*
      A vec of all known chains of this rig.
      */
     std::vector<std::shared_ptr<VROIKChain>> _allKnownChains;
@@ -174,6 +179,12 @@ private:
      */
     void flagLockedJoints(std::shared_ptr<VROIKJoint> referenceJoint,
                           std::shared_ptr<VROIKJoint> currentJoint);
+
+    /*
+     Returns the local transform of the given reference joint.
+     */
+    VROMatrix4f getJointLocalTransform(std::shared_ptr<VROIKJoint> referenceJoint);
+
     /*
      Removes the given IKJoint from _allKnownIKJoints and thus from being processed in the
      IKRig as a part of the FABRIK computation.

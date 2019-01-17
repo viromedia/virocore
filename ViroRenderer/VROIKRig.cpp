@@ -403,29 +403,49 @@ void VROIKRig::initializeRig() {
         _skinnerJointToRootBone = skinnerJointToRootBone;
     }
 
-    // Retain a reference to locked joint's local transforms, if any.
+    // Retain local joint references needed for rotation recalculations
     for (auto &joint : _allKnownIKJoints) {
+        // Retain a reference to locked joint's local transforms, if any.
         for (auto &lockedJoint : joint->lockedJoints) {
-            VROMatrix4f jointTrans = VROMatrix4f::identity();
-            VROMatrix4f parentTrans = VROMatrix4f::identity();
-            if (joint->syncBone == -1) {
-                parentTrans = lockedJoint->parent->syncNode->getWorldTransform();
-                jointTrans = lockedJoint->syncNode->getWorldTransform();
-            } else {
-                int boneIndex = lockedJoint->syncBone;
-                int parentIndex = lockedJoint->parent->syncBone;
-                jointTrans = _skinner->getCurrentBoneWorldTransform(boneIndex);
-                parentTrans = _skinner->getCurrentBoneWorldTransform(parentIndex);
-            }
-
-            VROMatrix4f diffTrans = parentTrans.invert() * jointTrans;
-            joint->lockedJointLocalTransforms.push_back(diffTrans);
+            VROMatrix4f localTrans = getJointLocalTransform(lockedJoint);
+            joint->lockedJointLocalTransforms.push_back(localTrans);
         }
-
         passert(joint->lockedJointLocalTransforms.size() == joint->lockedJoints.size());
+
+        // Else always retain transforms for leaf joints.
+        if (joint->children.size() == 0) {
+            VROMatrix4f localTrans = getJointLocalTransform(joint);
+            _endEffectorIdLocalRotation[joint->id] = localTrans.extractRotation(localTrans.extractScale()).getMatrix();
+        }
     }
 
     _initializeRig = false;
+}
+
+VROMatrix4f VROIKRig::getJointLocalTransform(std::shared_ptr<VROIKJoint> referenceJoint) {
+    VROMatrix4f jointTrans;
+    VROMatrix4f parentTrans;
+    if (referenceJoint->syncBone == -1) {
+        jointTrans = referenceJoint->syncNode->getWorldTransform();
+
+        if (referenceJoint->parent == nullptr) {
+            return jointTrans;
+        }
+
+        parentTrans = referenceJoint->parent->syncNode->getWorldTransform();
+    } else {
+        int boneIndex = referenceJoint->syncBone;
+        jointTrans = _skinner->getCurrentBoneWorldTransform(boneIndex);
+
+        if (referenceJoint->parent == nullptr) {
+            return jointTrans;
+        }
+
+        int parentIndex = referenceJoint->parent->syncBone;
+        parentTrans = _skinner->getCurrentBoneWorldTransform(parentIndex);
+    }
+
+    return parentTrans.invert() * jointTrans;
 }
 
 void VROIKRig::formChains(std::shared_ptr<VROIKJoint> jointStart,
@@ -677,11 +697,16 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
     VROVector3f jointPos = joint->position;
 
     if (joint->children.size() == 0) {
+        int parentJointBone = joint->parent->syncBone;
+        VROMatrix4f parentTransform = _skinner->getCurrentBoneWorldTransform(parentJointBone);
+        VROMatrix4f parentRot = parentTransform.extractRotation(parentTransform.extractScale()).getMatrix();
+
         // Create a matrix with the joint's positional transform
         VROMatrix4f mat;
         mat.toIdentity();
         mat.scale(currentScale.x, currentScale.y, currentScale.z);
-        mat.rotate(currentRot);
+        mat.rotate(parentRot);
+        mat = _endEffectorIdLocalRotation[joint->id] * mat;
         mat.translate(jointPos);
         _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, false);
         return;
