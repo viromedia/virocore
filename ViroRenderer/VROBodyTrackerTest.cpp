@@ -70,6 +70,7 @@ VROBodyTrackerTest::~VROBodyTrackerTest() {
 void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                std::shared_ptr<VRODriver> driver) {
+    _driver = driver;
     _renderer = renderer;
     _sceneController = std::make_shared<VROARSceneController>();
     _sceneController->setDelegate(shared_from_this());
@@ -82,36 +83,31 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene->getRootNode()->addLight(ambient);
 
     // Set up the 3D Model to be animated
-    std::shared_ptr<VRONode> rootModelNode;
     VROVector3f pos = VROVector3f( 0, -1.5, -50);
     VROVector3f scale = VROVector3f(0.05, 0.05, 0.05);
     VROVector3f rot = VROVector3f(0,0,0);
-    rootModelNode = VROTestUtil::loadFBXModel("ninja/ninja",
+    _modelNodeNinja1 = VROTestUtil::loadFBXModel("ninja/ninja",
                                                   pos,
                                                   scale, rot,
                                                   1, "", driver,
                                                   [this](std::shared_ptr<VRONode> node, bool success){
                                                       onModelLoaded(node);
                                                   });
+    _modelNodeNinja2 = VROTestUtil::loadFBXModel("cute_monster/cute_monster",
+                                                 pos,
+                                                 scale, rot,
+                                                 1, "", driver,
+                                                 [this](std::shared_ptr<VRONode> node, bool success){
+                                                     pwarn("Daniel cute_monster 2 loaded");
+                                                     onModelLoaded(node);
+                                                 });
 
     _gltfNodeContainer = std::make_shared<VRONode>();
-    _gltfNodeContainer->addChildNode(rootModelNode);
     _gltfNodeContainer->setScale(VROVector3f(1.05,1.05,1.05));
     _arScene->getRootNode()->addChildNode(_gltfNodeContainer);
 
     // Create our bodyMLController and set register it as a VROBodyTrackerDelegate to VROBodyTracker
-    _bodyMLController = std::make_shared<VROBodyTrackerController>(renderer, _arScene->getRootNode());
-    _bodyMLController->setDelegate(shared_from_this());
-
-    #if VRO_PLATFORM_IOS
-    std::shared_ptr<VROBodyTracker> tracker = std::make_shared<VROBodyTrackeriOS>();
-    tracker->initBodyTracking(VROCameraPosition::Back, driver);
-    tracker->startBodyTracking();
-    tracker->setDelegate(_bodyMLController);
-    
-    _bodyTracker = tracker;
-    _bodyMLController->enableDebugMLViewIOS(driver);
-    #endif
+    createNewBodyController();
 
     // Visually display the current tracked state fo the VROBodyController
     _trackingStateText = VROText::createText(L"< Body Tracking State >", "Helvetica", 21,
@@ -129,12 +125,61 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     _gltfNodeContainer->addChildNode(textNode);
 
     // Create a recalibration box that the user can click to re-calibrate the model.
+    std::shared_ptr<VRONode> debugNode
+            = createTriggerBox(VROVector3f(-3,0,-2), VROVector4f(0,1,0,1), "Recalibrate");
+    _sceneController->getScene()->getRootNode()->addChildNode(debugNode);
+
+
+    std::shared_ptr<VRONode> rebindNode
+            = createTriggerBox(VROVector3f(3,0,-2), VROVector4f(1,0,0,1), "Rebind");
+    _sceneController->getScene()->getRootNode()->addChildNode(rebindNode);
+
+    std::shared_ptr<VRONode> autoCalibrateNode
+            = createTriggerBox(VROVector3f(6,0,0), VROVector4f(0,0,1,1), "AutoCalibrate");
+    _sceneController->getScene()->getRootNode()->addChildNode(autoCalibrateNode);
+
+    frameSynchronizer->addFrameListener(shared_from_this());
+}
+
+void VROBodyTrackerTest::createNewBodyTracker() {
+#if VRO_PLATFORM_IOS
+    std::shared_ptr<VROBodyTracker> tracker = std::make_shared<VROBodyTrackeriOS>();
+    tracker->initBodyTracking(VROCameraPosition::Back, _driver);
+    tracker->startBodyTracking();
+    tracker->setDelegate(_bodyMLController);
+    _bodyTracker = tracker;
+
+    std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
+    std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
+    arSessioniOS->setVisionModel(_bodyTracker);
+    return;
+#endif
+
+    pabort("Unable to create Body Tracker in Android!");
+}
+
+void VROBodyTrackerTest::createNewBodyController() {
+    // Create our bodyMLController and set register it as a VROBodyTrackerDelegate to VROBodyTracker
+    _bodyMLController = std::make_shared<VROBodyTrackerController>(_renderer, _arScene->getRootNode());
+    _bodyMLController->setDelegate(shared_from_this());
+
+#if VRO_PLATFORM_IOS
+    if (_bodyTracker != nullptr) {
+        _bodyTracker->setDelegate(_bodyMLController);
+    }
+    _bodyMLController->enableDebugMLViewIOS(_driver);
+#endif
+}
+
+std::shared_ptr<VRONode> VROBodyTrackerTest::createTriggerBox(VROVector3f pos,
+                                                              VROVector4f color,
+                                                              std::string tag) {
     std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
     std::shared_ptr<VROMaterial> mat = std::make_shared<VROMaterial>();
     mat->setCullMode(VROCullMode::None);
     mat->setReadsFromDepthBuffer(false);
     mat->setWritesToDepthBuffer(false);
-    mat->getDiffuse().setColor(VROVector4f(0.0, 1.0, 0, 1.0));
+    mat->getDiffuse().setColor(color);
 
     std::vector<std::shared_ptr<VROMaterial>> mats;
     mats.push_back(mat);
@@ -143,18 +188,15 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     std::shared_ptr<VRONode> debugNode = std::make_shared<VRONode>();
     debugNode->setGeometry(box);
     debugNode->setRenderingOrder(10);
-    debugNode->setTag("Recalibrate");
+    debugNode->setTag(tag);
     debugNode->setEventDelegate(shared_from_this());
-    debugNode->setPosition(VROVector3f(-3,0,-2));
+    debugNode->setPosition(pos);
     setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
-    _sceneController->getScene()->getRootNode()->addChildNode(debugNode);
-
-    frameSynchronizer->addFrameListener(shared_from_this());
+    
+    return debugNode;
 }
 
 void VROBodyTrackerTest::onModelLoaded(std::shared_ptr<VRONode> node) {
-    _bodyMLController->bindModel(node);
-
     std::vector<std::shared_ptr<VROSkinner>> skinners;
     node->getSkinner(skinners, true);
     if (skinners.size() < 0) {
@@ -180,6 +222,14 @@ void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){
 void VROBodyTrackerTest::onFrameWillRender(const VRORenderContext &context) {
     //context.getPencil()->setBrushThickness(0.001f);
     //renderDebugSkeletal(context.getPencil(), 0);
+
+    if (_loadNewConfig) {
+        std::shared_ptr<VROBodyCalibratedConfig> data = _bodyMLController->getCalibratedConfiguration();
+        createNewBodyController();
+        _bodyMLController->bindModel(_modelNodeNinja1);
+        _bodyMLController->setCalibratedConfiguration(data);
+        _loadNewConfig = false;
+    }
 }
 
 void VROBodyTrackerTest::onFrameDidRender(const VRORenderContext &context) {
@@ -218,3 +268,4 @@ void VROBodyTrackerTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, 
         renderDebugSkeletal(pencil, childJointIndex);
     }
 }
+

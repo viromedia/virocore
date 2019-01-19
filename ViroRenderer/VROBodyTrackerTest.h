@@ -47,11 +47,7 @@ public:
     virtual void onSceneWillAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     virtual void onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
-#if VRO_PLATFORM_IOS
-        std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
-        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
-        arSessioniOS->setVisionModel(_bodyTracker);
-#endif
+        createNewBodyTracker();
     }
     virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
 
@@ -62,6 +58,18 @@ public:
     virtual void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position) {
         if (VROStringUtil::strcmpinsensitive(node->getTag(), "Recalibrate")) {
             _bodyMLController->startCalibration();
+        } else if (VROStringUtil::strcmpinsensitive(node->getTag(), "Rebind")) {
+            if (_modelNodeNinja1->getParentNode() == nullptr) {
+                _modelNodeNinja2->removeFromParentNode();
+                _gltfNodeContainer->addChildNode(_modelNodeNinja1);
+                _bodyMLController->bindModel(_modelNodeNinja1);
+            } else {
+                _modelNodeNinja1->removeFromParentNode();
+                _gltfNodeContainer->addChildNode(_modelNodeNinja2);
+                _bodyMLController->bindModel(_modelNodeNinja2);
+            }
+        } else if (VROStringUtil::strcmpinsensitive(node->getTag(), "AutoCalibrate")) {
+            _loadNewConfig = true;
         }
     }
 
@@ -70,17 +78,24 @@ public:
     void renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex);
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
-
+    void createNewBodyTracker();
+    void createNewBodyController();
 private:
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARScene> _arScene;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VRONode> _modelNodeNinja1;
+    std::shared_ptr<VRONode> _modelNodeNinja2;
     std::shared_ptr<VRONode> _gltfNodeContainer;
     std::shared_ptr<VROBodyTracker> _bodyTracker;
     std::shared_ptr<VROBodyTrackerController> _bodyMLController;
     std::shared_ptr<VROText> _trackingStateText;
     std::shared_ptr<VROSkinner> _skinner;
+    std::shared_ptr<VRODriver> _driver;
+    bool _loadNewConfig = false;
+
+    std::shared_ptr<VRONode> createTriggerBox(VROVector3f pos, VROVector4f color, std::string tag);
 };
 
 #endif /* VROBodyTrackerTest_h  */

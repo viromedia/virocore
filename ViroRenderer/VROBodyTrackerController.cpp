@@ -71,7 +71,7 @@ static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
 
 // Supported bone names within 3D models for ml joint tracking.
 static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
-  {VROBodyJointType::Top,             "Head"},
+  {VROBodyJointType::Top,             "Top"},
   {VROBodyJointType::Neck,            "Neck"},
   {VROBodyJointType::RightShoulder,   "RightShoulder"},
   {VROBodyJointType::RightElbow,      "RightElbow"},
@@ -97,6 +97,7 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _mlRootToModelRoot = VROMatrix4f::identity();
     _bodyControllerRoot = std::make_shared<VRONode>();
     _calibrationEventDelegate = nullptr;
+    _calibratedConfiguration = nullptr;
 
     sceneRoot->addChildNode(_bodyControllerRoot);
 }
@@ -108,9 +109,15 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _rig = nullptr;
     _keyToEffectorMap.clear();
     _skinner = nullptr;
-    _modelRootNode = nullptr;
     _mlJointForBoneIndex.clear();
     _bodyControllerRoot->removeAllChildren();
+    _calibrationEventDelegate = nullptr;
+
+    // Ensure we clear out any IKRigs for previously set models.
+    if (_modelRootNode != nullptr) {
+        _modelRootNode->setIKRig(nullptr);
+    }
+    _modelRootNode = nullptr;
 
     // Bind and initialize a model to this controller
     std::vector<std::shared_ptr<VROSkinner>> skinners;
@@ -159,10 +166,17 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _bodyControllerRoot->setScale(VROVector3f(1,1,1));
 
     // Set the model in it's original scale needed for determining ratios for automatic resizing.
-    initializeModelUniformScale();
+    calculateSkinnerTorsoDistance();
 
     // Create debug effector nodes UI
+    for (auto &debugBox : _debugBoxEffectors) {
+        debugBox.second->removeFromParentNode();
+    }
+    if (_debugBoxRoot != nullptr) {
+        _debugBoxRoot->removeFromParentNode();
+    }
     _debugBoxEffectors.clear();
+
     for (auto bonePair : _mlJointForBoneIndex) {
         VROBodyJointType boneType = bonePair.first;
         std::string boneName = kVROBodyBoneTags.at(bonePair.first);
@@ -178,12 +192,10 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _bodyControllerRoot->addChildNode(_debugBoxRoot);
 
     // Bind calibration event delegates
-    if (_calibrationEventDelegate == nullptr) {
-        _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
-        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
-        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
-        _modelRootNode->setEventDelegate(_calibrationEventDelegate);
-    }
+    _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
+    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
+    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+    _modelRootNode->setEventDelegate(_calibrationEventDelegate);
 
     // Set the timeout of joints in milliseconds.
     _mlJointTimeoutMap.clear();
@@ -201,29 +213,13 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _mlJointTimeoutMap[VROBodyJointType::RightHip] =       500;
     _mlJointTimeoutMap[VROBodyJointType::RightKnee] =      500;
     _mlJointTimeoutMap[VROBodyJointType::RightAnkle] =     500;
+
+    // if we have calibration configuration data, short circuit the calibration phase.
+    if (_calibratedConfiguration != nullptr) {
+        setCalibratedConfiguration(_calibratedConfiguration);
+    }
+
     return true;
-}
-
-void VROBodyTrackerController::initializeModelUniformScale() {
-    // Set the model in it's original scale needed for determining ratios.
-    VROVector3f currentScale = _modelRootNode->getScale();
-    _modelRootNode->setScale(VROVector3f(1, 1, 1));
-    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
-    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
-
-    // Now calculate the ratios for automatic resizing.
-    VROMatrix4f neckTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
-    VROMatrix4f leftHipTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
-    VROMatrix4f rightHipTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
-
-    // Now get the middle of the hip.
-    VROVector3f midVecFromLeft = (rightHipTrans.extractTranslation() - leftHipTrans.extractTranslation()).scale(0.5f);
-    VROVector3f midHipLoc = leftHipTrans.extractTranslation().add(midVecFromLeft);
-    VROVector3f neckLoc = neckTrans.extractTranslation();
-    _originalNeckToHipDistance = midHipLoc.distanceAccurate(neckLoc);
 }
 
 void VROBodyTrackerController::startCalibration() {
@@ -232,6 +228,7 @@ void VROBodyTrackerController::startCalibration() {
         return;
     }
 
+    _calibratedConfiguration = nullptr;
     _calibrating = true;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
@@ -254,11 +251,46 @@ void VROBodyTrackerController::finishCalibration() {
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
+    // Save known configurations for future use.
+    _calibratedConfiguration = std::make_shared<VROBodyCalibratedConfig>();
+    _calibratedConfiguration->projectedPlaneNormal = _projectedPlaneNormal;
+    _calibratedConfiguration->projectedPlanePosition = _projectedPlanePosition;
+    _calibratedConfiguration->torsoLength = _userTorsoHeight;
+
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+}
+
+void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config) {
+    passert(config != nullptr);
+    if (_modelRootNode == nullptr) {
+        perror("Unable to automatically calibrate VROBodyTrackerController without bounded model.");
+        return;
+    }
+
+    // Update current calibration presets with new configuration data.
+    _calibratedConfiguration = config;
+    _projectedPlaneNormal = config->projectedPlaneNormal;
+    _projectedPlanePosition = config->projectedPlanePosition;
+    calibrateModelTorsoScale();
+    calibrateMlToModelRootOffset();
+    alignModelRootToMLRoot();
+
+    // First remove any IKRigs on the model
+    if (_modelRootNode != nullptr) {
+        _modelRootNode->setIKRig(nullptr);
+    }
+
+    // Finally create and set the calibrated IKRig.
+    _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
+    _modelRootNode->setIKRig(_rig);
+}
+
+std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
+    return _calibratedConfiguration;
 }
 
 void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &inferredJoints) {
@@ -291,41 +323,23 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     }
 
     if (_calibrating) {
-        /*
-         Here, we chose an mlJoint as our "rootMotionJoint" from which to refer to when
-         moving the root position of the IK Rig in world space. We then from this joint,
-         calculate a transform offset from the rootMotionJoint to the 3d model's root node,
-         and save the result in _mlRootToModelRoot. During tracking, this transform offset
-         is then re-applied onto the rootMotionJoint to get the model's new root position,
-         of which is applied within alignModelRootToMLRoot().
+        // First scale the model to the right size.
+        calibrateModelTorsoScale();
 
-         Note that below, instead of a "rootMotionJoint", we will use the position between
-         the hips for calculating the transform offset.
-         */
-        int leftHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::LeftHip];
-        int rightHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::RightHip];
-        VROVector3f start = _skinner->getCurrentBoneWorldTransform(leftHipBoneIndex).extractTranslation();
-        VROVector3f end = _skinner->getCurrentBoneWorldTransform(rightHipBoneIndex).extractTranslation();
-        VROVector3f mid = (start - end).scale(0.5f) + end;
+        // Then determine the transform offset from an ML joint in the skinner to the model's root.
+        calibrateMlToModelRootOffset();
 
-        VROMatrix4f mlRootWorldTrans;
-        mlRootWorldTrans.translate(mid);
-        VROMatrix4f modelRootWorldTrans;
-        modelRootWorldTrans.translate(_modelRootNode->getWorldTransform().extractTranslation());
-        _mlRootToModelRoot = mlRootWorldTrans.invert().multiply(modelRootWorldTrans);
-
-        // Align the 3D model to the latest calibrated position
+        // Now apply that offset and align the 3D model to the latest ML body joint positions.
         alignModelRootToMLRoot();
+    }
 
-        // Then scale the model to the right size.
-        alignModelTorsoScale();
-    } else {
-        // If we are not calibrating, update tracked joints as usual
+    // Else if we are already calibrated, update tracked joints as usual
+    if (_calibratedConfiguration != nullptr) {
         updateModel();
     }
 
     // Render debug UI
-    if (kModelDebugCubes) {
+    if (kModelDebugCubes && _debugBoxEffectors.size() > 0) {
         _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
 
         // Render debug joint cubes.
@@ -412,15 +426,17 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
     }
 
     // Project the 2D joints into 3D coordinates as usual.
-    for (auto &joint : latestJoints) {
-        VROMatrix4f hitTransform;
-        float pointX = joint.second.getScreenCoords().x;
-        float pointY = joint.second.getScreenCoords().y;
-        bool success = performUnprojectionToPlane(pointX, pointY, hitTransform);
-        if (!success) {
-            joint.second.clearPojectedTransform();
-        } else {
-            joint.second.setProjectedTransform(hitTransform);
+    if (_calibrating || _calibratedConfiguration != nullptr) {
+        for (auto &joint : latestJoints) {
+            VROMatrix4f hitTransform;
+            float pointX = joint.second.getScreenCoords().x;
+            float pointY = joint.second.getScreenCoords().y;
+            bool success = performUnprojectionToPlane(pointX, pointY, hitTransform);
+            if (!success) {
+                joint.second.clearPojectedTransform();
+            } else {
+                joint.second.setProjectedTransform(hitTransform);
+            }
         }
     }
 
@@ -595,6 +611,42 @@ void VROBodyTrackerController::dampenCachedJoints() {
     }
 }
 
+void VROBodyTrackerController::calibrateMlToModelRootOffset() {
+    // Then ensure the whole model model is computed before getting world transforms.
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
+
+    /*
+     Here, we chose an mlJoint as our "rootMotionJoint" from which to refer to when
+     moving the root position of the IK Rig in world space. The idea is to calculate
+     a transform - _mlRootToModelRoot - of which to apply on the rootMotionJoint as
+     the user moves, to then find the new position of the 3D model's root node.
+
+     To calculate _mlRootToModelRoot, we firstly grab the rootMotionJoint's referenced
+     skinner bone - rootMotionBone - by looking up the bone's id for the given rootMotionJoint
+     from the _mlJointForBoneIndex map. We then calculate the transform offset from this
+     rootMotionBone to the 3D model's root node, and save the final result to _mlRootToModelRoot.
+
+     During tracking, this transform offset is then re-applied onto the rootMotionJoint
+     to get the model's new root node position within alignModelRootToMLRoot().
+
+     Note that below, instead of a "rootMotionJoint", we will use the position between
+     the hips for calculating the transform offset.
+    */
+    int leftHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::LeftHip];
+    int rightHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::RightHip];
+    VROVector3f start = _skinner->getCurrentBoneWorldTransform(leftHipBoneIndex).extractTranslation();
+    VROVector3f end = _skinner->getCurrentBoneWorldTransform(rightHipBoneIndex).extractTranslation();
+    VROVector3f mid = (start - end).scale(0.5f) + end;
+
+    VROMatrix4f mlRootWorldTrans;
+    mlRootWorldTrans.translate(mid);
+    VROMatrix4f modelRootWorldTrans;
+    modelRootWorldTrans.translate(_modelRootNode->getWorldTransform().extractTranslation());
+
+    _mlRootToModelRoot = mlRootWorldTrans.invert().multiply(modelRootWorldTrans);
+}
+
 void VROBodyTrackerController::alignModelRootToMLRoot() {
     // Grab the world transform of what we consider to be the Body Joint's Root.
     VROVector3f bodyJointRootposition = getMLRootPosition();
@@ -614,19 +666,44 @@ void VROBodyTrackerController::alignModelRootToMLRoot() {
     _modelRootNode->setWorldTransform(pos, rot, false);
 }
 
-void VROBodyTrackerController::alignModelTorsoScale() {
+void VROBodyTrackerController::calculateSkinnerTorsoDistance() {
+    // Set the model in it's original scale needed for determining ratios.
+    _modelRootNode->setScale(VROVector3f(1, 1, 1));
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
+
+    // Now calculate the ratios for automatic resizing.
+    VROMatrix4f neckTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
+    VROMatrix4f leftHipTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
+    VROMatrix4f rightHipTrans =
+            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
+
+    // Now get the middle of the hip.
+    VROVector3f midVecFromLeft = (rightHipTrans.extractTranslation() - leftHipTrans.extractTranslation()).scale(0.5f);
+    VROVector3f midHipLoc = leftHipTrans.extractTranslation().add(midVecFromLeft);
+    VROVector3f neckLoc = neckTrans.extractTranslation();
+    _skinnerTorsoHeight = midHipLoc.distanceAccurate(neckLoc);
+}
+
+void VROBodyTrackerController::calibrateModelTorsoScale() {
     // We'll need the current dimensions of the model for resizing calculations.
     if (!kAutomaticResizing || _skinner == nullptr) {
         return;
     }
 
     // Calculate the neckToMLRoot distance
-    VROVector3f neckPos = _cachedModelJoints[VROBodyJointType::Neck];
-    VROVector3f midHipLoc = getMLRootPosition();
-    float mlNeckToHipDistnace = midHipLoc.distanceAccurate(neckPos);
+    if (_calibratedConfiguration == nullptr) {
+        VROVector3f neckPos = _cachedModelJoints[VROBodyJointType::Neck];
+        VROVector3f midHipLoc = getMLRootPosition();
+        _userTorsoHeight = midHipLoc.distanceAccurate(neckPos);
+    } else {
+        _userTorsoHeight = _calibratedConfiguration->torsoLength;
+    }
 
     // Calculate the different distances, grab the ratio.
-    float modelToMLRatio = mlNeckToHipDistnace / _originalNeckToHipDistance * kAutomaticSizingRatio;
+    float modelToMLRatio = _userTorsoHeight / _skinnerTorsoHeight * kAutomaticSizingRatio;
 
     // Apply that ratio to the scale of the model.
     _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
@@ -741,6 +818,10 @@ bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &m
 
 bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint targetJoint) {
     int currentIndex = _mlJointForBoneIndex[targetJoint.getType()];
+    if (currentIndex == 0 || _calibratedConfiguration == nullptr) {
+        return false;
+    }
+    
     int parentIndex = _skinner->getSkeleton()->getBone(currentIndex)->getParentIndex();
     VROMatrix4f childTransform = _skinner->getCurrentBoneWorldTransform(currentIndex);
     VROMatrix4f parentTransform = _skinner->getCurrentBoneWorldTransform(parentIndex);

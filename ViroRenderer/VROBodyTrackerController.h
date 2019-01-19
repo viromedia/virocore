@@ -106,13 +106,22 @@ public:
 };
 
 /*
+ Body specific transforms and data attained from a successful VROBodyTrackerController calibration.
+ Used to bind new models without requiring recalibration.
+ */
+struct VROBodyCalibratedConfig {
+    float torsoLength;
+    VROVector3f projectedPlanePosition;
+    VROVector3f projectedPlaneNormal;
+};
+
+/*
  VROBodyTrackerController coordinates the filtering, projecting and feeding of body tracking data
  from the VROBodyTracker into the currently bounded 3D model's VROIKRig for driving body motion.
  */
 class VROBodyTrackerController : public VROBodyTrackerDelegate,
                                  public std::enable_shared_from_this<VROBodyTrackerController> {
 public:
-
     VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot);
     ~VROBodyTrackerController();
 
@@ -134,6 +143,16 @@ public:
      TODO VIRO-4674: Remove Manual Calibration
      */
     void finishCalibration();
+
+    /*
+     Returns the currently set or last calibrated VROBodyCalibratedConfig on this controller.
+     */
+    std::shared_ptr<VROBodyCalibratedConfig> getCalibratedConfiguration();
+
+    /*
+     Automatically calibrates the currently bounded 3D model with the given VROBodyCalibratedConfig.
+     */
+    void setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config);
 
     /*
      Sets a VROBodyTrackerControllerDelegate on this controller for
@@ -233,13 +252,15 @@ private:
     /*
      Saved Neck to Hip distance, used for calculating automatic torso resizing ratios.
      */
-    float _originalNeckToHipDistance;
+    float _skinnerTorsoHeight;
+    float _userTorsoHeight;
 
     /*
      True if this controller is currently calibrating the latest set of ML joints to the IKRig.
      */
     bool _calibrating;
     std::shared_ptr<VROEventDelegate> _calibrationEventDelegate;
+    std::shared_ptr<VROBodyCalibratedConfig> _calibratedConfiguration;
 
     /*
      Debugging UI components containing debug box nodes representing the locations of
@@ -296,13 +317,18 @@ private:
     /*
      Initializes the model's uniform scale needed for automatic resizing.
      */
-    void initializeModelUniformScale();
+    void calculateSkinnerTorsoDistance();
 
+    /*
+     Calculates an mlJointToModelRoot offset transform between 'root' mlJoint bones
+     in the skinner and _modelRootNode.
+     */
+    void calibrateMlToModelRootOffset();
     /*
      Called during the calibration phase to scale the model's torso uniformly to
      fit the 3D model to body joints found by VROBodytracker.
      */
-    void alignModelTorsoScale();
+    void calibrateModelTorsoScale();
 
     /*
      The ML root position as referenced by the VROBodyTrackerController.

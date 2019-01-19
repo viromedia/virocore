@@ -1458,6 +1458,7 @@
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A57ABAE821F2B73600C1033A /* cute_monster in Resources */ = {isa = PBXBuildFile; fileRef = A57ABAE721F2B73500C1033A /* cute_monster */; };
 		A57CA8DC20ADFDB700DE85A1 /* VROGLTFTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CA8D920ADFD2F00DE85A1 /* VROGLTFTest.cpp */; };
 		A57CA8E020AE027400DE85A1 /* DuckCM.png in Resources */ = {isa = PBXBuildFile; fileRef = A57CA8DD20AE027400DE85A1 /* DuckCM.png */; };
 		A57CA8E120AE027400DE85A1 /* Duck.gltf in Resources */ = {isa = PBXBuildFile; fileRef = A57CA8DE20AE027400DE85A1 /* Duck.gltf */; };
@@ -2497,6 +2498,7 @@
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
 		A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneDelegateiOS.h; sourceTree = "<group>"; };
 		A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegateiOS.h; sourceTree = "<group>"; };
+		A57ABAE721F2B73500C1033A /* cute_monster */ = {isa = PBXFileReference; lastKnownFileType = folder; name = cute_monster; path = ../android/nativetest/src/main/assets/cute_monster; sourceTree = "<group>"; };
 		A57CA8D920ADFD2F00DE85A1 /* VROGLTFTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGLTFTest.cpp; sourceTree = "<group>"; };
 		A57CA8DA20ADFD3000DE85A1 /* VROGLTFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGLTFTest.h; sourceTree = "<group>"; };
 		A57CA8DD20AE027400DE85A1 /* DuckCM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = DuckCM.png; path = ../android/nativetest/src/main/assets/DuckCM.png; sourceTree = "<group>"; };
@@ -3747,6 +3749,7 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A57ABAE721F2B73500C1033A /* cute_monster */,
 				A5C931EB21E028EE00564C2D /* ninja */,
 				8A53E89921E96BB6006125D0 /* app_logo_viro.png */,
 				8F68E3A2219B3050000A7C64 /* darkerSmoke.png */,
@@ -5142,6 +5145,7 @@
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
 				8F1B4AA01F69F4A900156809 /* pug_animated.vrx in Resources */,
+				A57ABAE821F2B73600C1033A /* cute_monster in Resources */,
 				8F129FBC1ED603BE00341D83 /* heart.vrx in Resources */,
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
 				8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */,
