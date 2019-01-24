@@ -23,6 +23,7 @@
 #if VRO_PLATFORM_IOS
 #include "VROBodyTrackeriOS.h"
 #include "VROBodyTrackerYolo.h"
+#include "VROBodyPlayeriOS.h"
 #include "VRODriverOpenGLiOS.h"
 static std::string pointLabels[14] = {
     "top\t\t\t", //0
@@ -109,6 +110,16 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     // Create our bodyMLController and set register it as a VROBodyTrackerDelegate to VROBodyTracker
     createNewBodyController();
 
+#if VRO_PLATFORM_IOS
+    // Create body playback controller for recording.
+    _bodyPlaybackController = std::make_shared<VROBodyTrackerController>(renderer, _arScene->getRootNode());
+    _bodyPlaybackController->setDelegate(shared_from_this());
+    std::shared_ptr<VROBodyPlayeriOS> bodyPlayeriOS = std::make_shared<VROBodyPlayeriOS>();
+    bodyPlayeriOS->setDelegate(_bodyPlaybackController);
+    bodyPlayeriOS->initPlayer(frameSynchronizer);
+    _bodyPlayer = bodyPlayeriOS;
+#endif
+
     // Visually display the current tracked state fo the VROBodyController
     _trackingStateText = VROText::createText(L"< Body Tracking State >", "Helvetica", 21,
                                                         VROFontStyle::Normal, VROFontWeight::Regular, {1.0, 1.0, 1.0, 1.0}, 0, 5.2, 0.2,
@@ -138,6 +149,9 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
             = createTriggerBox(VROVector3f(6,0,0), VROVector4f(0,0,1,1), "AutoCalibrate");
     _sceneController->getScene()->getRootNode()->addChildNode(autoCalibrateNode);
 
+    std::shared_ptr<VRONode> recordNode
+    = createTriggerBox(VROVector3f(0,-4,-2), VROVector4f(1,1,0,1), "Record");
+    _sceneController->getScene()->getRootNode()->addChildNode(recordNode);
     frameSynchronizer->addFrameListener(shared_from_this());
 }
 
@@ -180,11 +194,11 @@ std::shared_ptr<VRONode> VROBodyTrackerTest::createTriggerBox(VROVector3f pos,
     mat->setReadsFromDepthBuffer(false);
     mat->setWritesToDepthBuffer(false);
     mat->getDiffuse().setColor(color);
-
+    
     std::vector<std::shared_ptr<VROMaterial>> mats;
     mats.push_back(mat);
     box->setMaterials(mats);
-
+    
     std::shared_ptr<VRONode> debugNode = std::make_shared<VRONode>();
     debugNode->setGeometry(box);
     debugNode->setRenderingOrder(10);

@@ -38,6 +38,25 @@ enum class VROBodyJointType {
     LeftAnkle           = 13
 };
 
+// Supported bone names within 3D models for ml joint tracking.
+static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
+    {VROBodyJointType::Top,             "Top"},
+    {VROBodyJointType::Neck,            "Neck"},
+    {VROBodyJointType::RightShoulder,   "RightShoulder"},
+    {VROBodyJointType::RightElbow,      "RightElbow"},
+    {VROBodyJointType::RightWrist,      "RightWrist"},
+    {VROBodyJointType::RightHip,        "RightHip"},
+    {VROBodyJointType::RightKnee,       "RightKnee"},
+    {VROBodyJointType::RightAnkle,      "RightAnkle"},
+    {VROBodyJointType::LeftShoulder,    "LeftShoulder"},
+    {VROBodyJointType::LeftElbow,       "LeftElbow"},
+    {VROBodyJointType::LeftWrist,       "LeftWrist"},
+    {VROBodyJointType::LeftHip,         "LeftHip"},
+    {VROBodyJointType::LeftKnee,        "LeftKnee"},
+    {VROBodyJointType::LeftAnkle,       "LeftAnkle"},
+};
+
+
 class VROInferredBodyJoint {
 public:
     

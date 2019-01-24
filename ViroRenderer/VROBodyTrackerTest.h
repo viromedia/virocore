@@ -70,6 +70,28 @@ public:
             }
         } else if (VROStringUtil::strcmpinsensitive(node->getTag(), "AutoCalibrate")) {
             _loadNewConfig = true;
+        } else if(VROStringUtil::strcmpinsensitive(node->getTag(), "Record") && (clickState == ClickDown)) {
+            if(!_bodyMLController->isRecording()) {
+                NSLog(@"Starting recording");
+                _bodyMLController->startRecording();
+            }
+            else {
+                std::string jsonStringData = _bodyMLController->stopRecording();
+                NSLog(@"Stopping recording, test data:");
+                NSLog(@"%@", [NSString stringWithCString:jsonStringData.c_str()
+                                                encoding:[NSString defaultCStringEncoding]]);
+                // stop body tracking
+                _bodyTracker->stopBodyTracking();
+                // setDelagete to nil is currently only way to stop body tracking.
+                _bodyTracker->setDelegate(nil);
+                _bodyPlaybackController->bindModel(_modelNodeNinja1);
+                
+                //_modelNodeNinja1->setWorldTransform(VROVector3f(0.0f,0.0f, -.2f), rot, false);
+                _modelNodeNinja1->setScale(VROVector3f(0.05f, 0.05f, 0.05f));
+                _modelNodeNinja1->setPosition(VROVector3f(0.0f,0.0f, -.2f));;
+                _bodyPlayer->prepareAnimation(jsonStringData);
+                _bodyPlayer->start();
+            }
         }
     }
 
@@ -88,14 +110,17 @@ private:
     std::shared_ptr<VRONode> _modelNodeNinja1;
     std::shared_ptr<VRONode> _modelNodeNinja2;
     std::shared_ptr<VRONode> _gltfNodeContainer;
+    std::shared_ptr<VRONode> _modelNode;
     std::shared_ptr<VROBodyTracker> _bodyTracker;
+    std::shared_ptr<VROBodyPlayer> _bodyPlayer;
     std::shared_ptr<VROBodyTrackerController> _bodyMLController;
+    std::shared_ptr<VROBodyTrackerController> _bodyPlaybackController;
     std::shared_ptr<VROText> _trackingStateText;
     std::shared_ptr<VROSkinner> _skinner;
     std::shared_ptr<VRODriver> _driver;
     bool _loadNewConfig = false;
-
     std::shared_ptr<VRONode> createTriggerBox(VROVector3f pos, VROVector4f color, std::string tag);
+    std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
 };
 
 #endif /* VROBodyTrackerTest_h  */

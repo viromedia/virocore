@@ -12,6 +12,7 @@
 #include "VROSceneController.h"
 #include "VRODefines.h"
 #include "VROBodyTracker.h"
+#include "VROBodyPlayer.h"
 #include "VROEventDelegate.h"
 #include "VRORenderer.h"
 #if VRO_PLATFORM_IOS
@@ -119,7 +120,7 @@ struct VROBodyCalibratedConfig {
  VROBodyTrackerController coordinates the filtering, projecting and feeding of body tracking data
  from the VROBodyTracker into the currently bounded 3D model's VROIKRig for driving body motion.
  */
-class VROBodyTrackerController : public VROBodyTrackerDelegate,
+class VROBodyTrackerController : public VROBodyTrackerDelegate, public VROBodyPlayerDelegate,
                                  public std::enable_shared_from_this<VROBodyTrackerController> {
 public:
     VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot);
@@ -163,15 +164,32 @@ public:
     // VROBodyTrackerDelegate
     void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints);
 
+    // VROBodyPlaybackDelegate
+    void onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status);
+
+    void onBodyPlaybackStarting(VROMatrix4f worldStartMatrix);
     /*
      Sets the window period at which we sample points for dampening. If period == 0,
      no dampening will be applied.
      */
     void setDampeningPeriodMs(double period);
+
 #if VRO_PLATFORM_IOS
     void enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver);
     void updateDebugMLViewIOS(const std::map<VROBodyJointType, VROBodyJoint> &joints);
 #endif
+
+    /*
+     Start recording the body tracking session. Invoke stop recording to get a JSON String of recording
+     tracking values.
+     */
+    void startRecording();
+
+    /*
+      Stop recording the body tracking session. Must be invoked after startRecording.
+     */
+    std::string stopRecording();
+    bool isRecording() { return _isRecording;};
 
 private:
     /*
@@ -269,7 +287,32 @@ private:
     std::shared_ptr<VRONode> _bodyControllerRoot;
     std::map<VROBodyJointType, std::shared_ptr<VRONode>> _debugBoxEffectors;
     std::shared_ptr<VRONode> _debugBoxRoot;
+
+    
+    // Set to true to begin recording the body tracking. Default is false.
+    bool _isRecording;
+
+    // the time in milliseconds when recording of body tracking started.
+    double _startRecordingTime;
+
+    // the time in milliseconds when recording of body tracking stopped.
+    double _endRecordingTime;
+    VROMatrix4f _initRecordWorldTransformOfRootNode;
+
+    // Matrix representing the start root world transform of the model when playback occurs.
+    VROMatrix4f _playbackRootStartMatrix;
+
+    // Matrix represented the start root world transform of the model when recording occurred.
+    VROMatrix4f _playbackDataStartMatrix;
+
+    // Multiple all playback joints through below. Below is equal _playbackRootStartMatrix.inverse() * _playbackDataStartMatrix;
+    VROMatrix4f _playbackDataFinalTransformMatrix;
+
 #if VRO_PLATFORM_IOS
+    // Body tracking joint data is stored here when _isRecording = true. On recording completion these structures are serialized to JSON.
+    NSMutableDictionary *_recordedAnimationData;
+    NSMutableArray *_recordedAnimationRows;
+
     // iOS UI Components
     UILabel *_labelViews[14];
     UIView *_bodyViews[14];

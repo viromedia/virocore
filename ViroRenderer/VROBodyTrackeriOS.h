@@ -30,7 +30,6 @@ public:
     bool initBodyTracking(VROCameraPosition position, std::shared_ptr<VRODriver> driver);
     void startBodyTracking();
     void stopBodyTracking();
-    
     void update(const VROARFrame &frame);
     
 private:

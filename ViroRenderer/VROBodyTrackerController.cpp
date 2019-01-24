@@ -8,6 +8,7 @@
 #include "VROBodyTrackerController.h"
 #include "VROInputControllerAR.h"
 #include "VROBodyTracker.h"
+#include "VROBodyPlayer.h"
 #include "VROMatrix4f.h"
 #include "VROSkeleton.h"
 #include "VROBone.h"
@@ -15,6 +16,7 @@
 #include "VROIKRig.h"
 #include "VROProjector.h"
 #include "VROBillboardConstraint.h"
+#include "VROTime.h"
 
 #if VRO_PLATFORM_IOS
 #include "VRODriverOpenGLiOS.h"
@@ -69,24 +71,6 @@ static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
                                                     VROBodyJointType::LeftHip };
 static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
 
-// Supported bone names within 3D models for ml joint tracking.
-static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
-  {VROBodyJointType::Top,             "Top"},
-  {VROBodyJointType::Neck,            "Neck"},
-  {VROBodyJointType::RightShoulder,   "RightShoulder"},
-  {VROBodyJointType::RightElbow,      "RightElbow"},
-  {VROBodyJointType::RightWrist,      "RightWrist"},
-  {VROBodyJointType::RightHip,        "RightHip"},
-  {VROBodyJointType::RightKnee,       "RightKnee"},
-  {VROBodyJointType::RightAnkle,      "RightAnkle"},
-  {VROBodyJointType::LeftShoulder,    "LeftShoulder"},
-  {VROBodyJointType::LeftElbow,       "LeftElbow"},
-  {VROBodyJointType::LeftWrist,       "LeftWrist"},
-  {VROBodyJointType::LeftHip,         "LeftHip"},
-  {VROBodyJointType::LeftKnee,        "LeftKnee"},
-  {VROBodyJointType::LeftAnkle,       "LeftAnkle"},
-};
-
 VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot) {
     _currentTrackedState = VROBodyTrackedState::NotAvailable;
     _rig = nullptr;
@@ -98,7 +82,9 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _bodyControllerRoot = std::make_shared<VRONode>();
     _calibrationEventDelegate = nullptr;
     _calibratedConfiguration = nullptr;
-
+    _isRecording = false;
+    _recordedAnimationData = [[NSMutableDictionary alloc] init];
+    _recordedAnimationRows = [[NSMutableArray alloc] init];
     sceneRoot->addChildNode(_bodyControllerRoot);
 }
 
@@ -247,6 +233,7 @@ void VROBodyTrackerController::finishCalibration() {
         pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
         return;
     }
+
     _modelRootNode->removeAllConstraints();
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
@@ -270,7 +257,7 @@ void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBod
         perror("Unable to automatically calibrate VROBodyTrackerController without bounded model.");
         return;
     }
-
+    
     // Update current calibration presets with new configuration data.
     _calibratedConfiguration = config;
     _projectedPlaneNormal = config->projectedPlaneNormal;
@@ -278,15 +265,78 @@ void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBod
     calibrateModelTorsoScale();
     calibrateMlToModelRootOffset();
     alignModelRootToMLRoot();
-
+    
     // First remove any IKRigs on the model
     if (_modelRootNode != nullptr) {
         _modelRootNode->setIKRig(nullptr);
     }
-
+    
     // Finally create and set the calibrated IKRig.
     _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
+}
+
+void VROBodyTrackerController::onBodyPlaybackStarting(VROMatrix4f worldStartMatrix) {
+    _playbackDataStartMatrix = worldStartMatrix;
+}
+
+void VROBodyTrackerController::onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status) {
+    if (status == VROBodyPlayerStatus::Start) {
+        if (_rig == NULL) {
+            _rig = std::make_shared<VROIKRig>(_skinner, _keyToEffectorMap);
+        }
+
+        setBodyTrackedState(VROBodyTrackedState::FullEffectors);
+        _modelRootNode->setIKRig(_rig);
+        calibrateMlToModelRootOffset();
+         _playbackRootStartMatrix = _modelRootNode->getWorldTransform();
+
+        /*
+         Multiply the model world start matrix(_playbackRootStartMatrix) by the inverse of the recording
+         start world matrix(the recording world's local matrix). This gives us the transform needed to
+         convert world space coordinates in the recorded data to world space coordinates in the current
+         model. Because our matricies are column major ordered, the inverse of the recorded world matrix is
+         multiplied by the current model world matrix to give the proper result.
+         */
+        _playbackDataFinalTransformMatrix = _playbackRootStartMatrix * _playbackDataStartMatrix.invert();
+    }
+
+    for (auto &latestjointPair : joints) {
+        VROVector3f recordingWorldSpace = latestjointPair.second;
+
+        // multiple recorded vector by _playbackDataFinalTransformMatrix to get coordinate into current world space.
+        VROVector3f worldSpaceJoint = _playbackDataFinalTransformMatrix.multiply(recordingWorldSpace);
+        VROBodyJoint bodyJoint(latestjointPair.first, 1.0f);
+
+        std::string boneName = kVROBodyBoneTags.at(latestjointPair.first);
+        _cachedModelJoints[latestjointPair.first] = worldSpaceJoint;
+    }
+
+    // Update the root motion of the rig.
+    alignModelRootToMLRoot();
+    // update the joints again with proper positions.
+
+    std::map<VROBodyJointType, VROVector3f>::const_iterator cachedJoint;
+    for (cachedJoint = _cachedModelJoints.begin(); cachedJoint != _cachedModelJoints.end(); cachedJoint++)
+    {
+        VROVector3f pos =  cachedJoint->second;
+        VROBodyJointType boneMLJointType = cachedJoint->first;
+        std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
+        _rig->setPositionForEffector(boneName, pos);
+    }
+
+    // Render debug UI
+    if (kModelDebugCubes && _debugBoxEffectors.size() > 0) {
+        _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
+
+        std::map<VROBodyJointType, VROVector3f>::const_iterator debugJoint;
+        VROMatrix4f identity = VROMatrix4f::identity();
+        for (debugJoint = _cachedModelJoints.begin(); debugJoint != _cachedModelJoints.end(); debugJoint++) {
+            VROVector3f pos = debugJoint->second;
+            VROBodyJointType boneMLJointType = debugJoint->first;
+            _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
+        }
+    }
 }
 
 std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
@@ -297,16 +347,15 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     if (_modelRootNode == nullptr) {
         return;
     }
-    
+
     // Convert to VROBodyJoint data structure, using only first joint of each type
     std::map<VROBodyJointType, VROBodyJoint> joints;
     for (auto &kv : inferredJoints) {
         VROInferredBodyJoint inferred = kv.second[0];
-        
+
         VROBodyJoint joint = { inferred.getType(), inferred.getConfidence() };
         joint.setScreenCoords({ inferred.getBounds().getX(), inferred.getBounds().getY(), 0 });
         joint.setSpawnTimeMs(VROTimeCurrentMillis());
-        
         joints[kv.first] = joint;
     }
 
@@ -351,6 +400,46 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
             _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos,  VROMatrix4f::identity());
         }
     }
+}
+
+void VROBodyTrackerController::startRecording() {
+    _isRecording = true;
+    _startRecordingTime = VROTimeCurrentMillis();
+    _initRecordWorldTransformOfRootNode = _modelRootNode->getWorldTransform();
+#if VRO_PLATFORM_IOS
+    // TODO Move recording to abstract class so we can remove #if VRO_PLATFORM_IOS ifdefs.
+    _recordedAnimationData = [[NSMutableDictionary alloc] init];
+    _recordedAnimationRows = [[NSMutableArray alloc] init];
+#endif
+}
+
+std::string VROBodyTrackerController::stopRecording() {
+    _isRecording = false;
+    _endRecordingTime = VROTimeCurrentMillis();
+    std::string returnJson;
+#if VRO_PLATFORM_IOS
+    NSString *_nsBodyAnimTotalTime = [NSString stringWithUTF8String:kBodyAnimTotalTime.c_str()];
+    NSString *_nsBodyAnimAnimRows = [NSString stringWithUTF8String:kBodyAnimAnimRows.c_str()];
+    NSString *_nsBodyAnimInitModelTransform = [NSString stringWithUTF8String:kBodyAnimInitModelTransform.c_str()];
+    [_recordedAnimationData setObject:[NSNumber numberWithDouble:_endRecordingTime - _startRecordingTime] forKey:_nsBodyAnimTotalTime];
+    [_recordedAnimationData setObject:_recordedAnimationRows forKey:_nsBodyAnimAnimRows];
+    const float *matrixArray = _initRecordWorldTransformOfRootNode.getArray();
+    NSMutableArray* ma = [NSMutableArray arrayWithCapacity:16];
+    for (int i=0; i<16; i++) {
+        [ma addObject:[NSNumber numberWithFloat:matrixArray[i]]];
+    }
+
+    [_recordedAnimationData setObject:ma forKey:_nsBodyAnimInitModelTransform];
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_recordedAnimationData
+                                                       options:(NSJSONWritingOptions)     NSJSONWritingPrettyPrinted
+                                                         error:&error];
+
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    returnJson = std::string([jsonString UTF8String]);
+#endif
+    return returnJson;
 }
 
 void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
@@ -641,7 +730,7 @@ void VROBodyTrackerController::calibrateMlToModelRootOffset() {
 
     VROMatrix4f mlRootWorldTrans;
     mlRootWorldTrans.translate(mid);
-    VROMatrix4f modelRootWorldTrans;
+    VROMatrix4f modelRootWorldTrans; //450000
     modelRootWorldTrans.translate(_modelRootNode->getWorldTransform().extractTranslation());
 
     _mlRootToModelRoot = mlRootWorldTrans.invert().multiply(modelRootWorldTrans);
@@ -721,12 +810,26 @@ VROVector3f VROBodyTrackerController::getMLRootPosition() {
 }
 
 void VROBodyTrackerController::updateModel() {
+
     if (_rig == nullptr || _currentTrackedState == VROBodyTrackedState::NotAvailable) {
         return;
     }
 
     // Update the root motion of the rig.
     alignModelRootToMLRoot();
+    NSMutableDictionary *animRowDataValues = nil;
+    NSMutableDictionary *jointValues = nil;
+    if (_isRecording) {
+#if VRO_PLATFORM_IOS
+        animRowDataValues = [[NSMutableDictionary alloc] init];
+        double currentTime = VROTimeCurrentMillis() - _startRecordingTime;
+        NSNumber *number = [NSNumber numberWithDouble:currentTime];
+        NSString *timestampNS = [NSString stringWithCString:kBodyAnimTimestamp.c_str()
+                                               encoding:[NSString defaultCStringEncoding]];
+        [animRowDataValues setObject:number forKey:timestampNS];
+        jointValues = [[NSMutableDictionary alloc] init];
+#endif
+    }
 
     // Now update all known rig joints.
     VROMatrix4f identity = VROMatrix4f::identity();
@@ -737,8 +840,28 @@ void VROBodyTrackerController::updateModel() {
 
         std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
         _rig->setPositionForEffector(boneName, pos);
+
+        if (_isRecording) {
+#if VRO_PLATFORM_IOS
+            NSString *boneNameNS = [NSString stringWithCString:boneName.c_str()
+                                                      encoding:[NSString defaultCStringEncoding]];
+            NSArray *pointsArray = [NSArray arrayWithObjects: [NSNumber numberWithFloat:pos.x],[NSNumber numberWithFloat:pos.y],[NSNumber numberWithFloat:pos.z], nil];
+            // write out on the joint values.
+            [jointValues setObject:pointsArray forKey:boneNameNS];
+#endif
+        }
+    }
+
+    if (_isRecording) {
+#if VRO_PLATFORM_IOS
+        NSString *jointNS = [NSString stringWithCString:kBodyAnimJoints.c_str()
+                                                  encoding:[NSString defaultCStringEncoding]];
+        [animRowDataValues setObject:jointValues forKey:jointNS];
+        [_recordedAnimationRows addObject:animRowDataValues];
+#endif
     }
 }
+
 bool VROBodyTrackerController::performWindowDepthTest(float x, float y, VROMatrix4f &matOut) {
     float d = kARHitTestWindowKernelPixel;
     std::vector<VROVector3f> trials;
