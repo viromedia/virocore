@@ -195,6 +195,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROBodyPlayeriOS.h>
 #import <ViroKit/VROBodyTrackeriOS.h>
 #import <ViroKit/VROBodyTrackerYolo.h>
+#import <ViroKit/VROBodyAnimData.h>
 
 // OpenCV
 //#import <ViroKit/VROOpenCV.h>
