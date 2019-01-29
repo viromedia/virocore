@@ -15,54 +15,59 @@
 #include "VROBodyPlayer.h"
 #include "VROTime.h"
 #include "VROMatrix4f.h"
+#include "VROBodyAnimData.h"
 
 class VRORenderContext;
 class BodyPlaybackInfo {
 public:
-    BodyPlaybackInfo(NSDictionary *playbackData) {
-        _currentBodyAnimPlayback = playbackData;
-        _nsBodyAnimTotalTime = [NSString stringWithUTF8String:kBodyAnimTotalTime.c_str()];
-        _nsBodyAnimAnimRows = [NSString stringWithUTF8String:kBodyAnimAnimRows.c_str()];
-        _nsBodyAnimTimestamp = [NSString stringWithUTF8String:kBodyAnimTimestamp.c_str()];
-        _nsBodyAnimJoints = [NSString stringWithUTF8String:kBodyAnimJoints.c_str()];
-        _nsBodyAnimInitModelTransform = [NSString stringWithUTF8String:kBodyAnimInitModelTransform.c_str()];
-         _matrixArray = _currentBodyAnimPlayback[_nsBodyAnimInitModelTransform];
-         NSNumber *totalTime = (NSNumber *)_currentBodyAnimPlayback[_nsBodyAnimTotalTime];
-        _animRows = (NSArray *)_currentBodyAnimPlayback[_nsBodyAnimAnimRows];
-        _totalPlaybackTime = [totalTime doubleValue];
+    BodyPlaybackInfo(std::shared_ptr<VROBodyAnimData> data) {
+        _bodyAnimData = data;
         _currentPlaybackRow = 0;
         _playStatus = VROBodyPlayerStatus::Initialized;
     }
 
     std::map<VROBodyJointType, VROVector3f> getCurrentRowJointsAsMap()
     {
-        NSDictionary *joints = _animRows[_currentPlaybackRow][_nsBodyAnimJoints];
-        int endLoop = static_cast<int>(VROBodyJointType::LeftAnkle) + 1;
-        std::map<VROBodyJointType, VROVector3f> jointMap;
-        for (int i = static_cast<int>(VROBodyJointType::Top); i < endLoop; i++) {
-            VROBodyJointType bodyJointType = static_cast<VROBodyJointType>(i);
-            std::string boneName = kVROBodyBoneTags.at(bodyJointType);
-            NSString *boneNameNS = [NSString stringWithCString:boneName.c_str()
-                                                      encoding:[NSString defaultCStringEncoding]];
-            if (joints[boneNameNS] != nil) {
-                NSArray *jointArray = joints[boneNameNS];
-                NSNumber *num0 = (NSNumber *)jointArray[0];
-                NSNumber *num1 = (NSNumber *)jointArray[1];
-                NSNumber *num2 = (NSNumber *)jointArray[2];
-                VROVector3f jointLocalSpace([num0 floatValue], [num1 floatValue], [num2 floatValue]);
-                jointMap[bodyJointType] = jointLocalSpace;
-            }
+        return _bodyAnimData->getAnimRowJoints(_currentPlaybackRow);
+    }
+
+    void start() {
+        if (_playStatus == VROBodyPlayerStatus::Initialized || _playStatus == VROBodyPlayerStatus::Finished)
+        {
+            _currentPlaybackRow = 0;
+            _startPlaybackTime = VROTimeCurrentMillis();
+            _playStatus = VROBodyPlayerStatus::Start;
+        } else if(_playStatus == VROBodyPlayerStatus::Paused) {
+             double currentTime = VROTimeCurrentMillis();
+            _startPlaybackTime = currentTime -_processTimeWhenPaused;
+            _playStatus = VROBodyPlayerStatus::Playing;
         }
-        return jointMap;
     }
 
-    void startPlayback() {
-        _currentPlaybackRow = 0;
-        _startPlaybackTime = VROTimeCurrentMillis();
-        _playStatus = VROBodyPlayerStatus::Start;
+    void pause() {
+        double currentTime = VROTimeCurrentMillis();
+        _processTimeWhenPaused = currentTime - _startPlaybackTime;
+        _playStatus = VROBodyPlayerStatus::Paused;
     }
 
-    int getCurrentRow() {
+    void setTime(double time) {
+        long totalRows = _bodyAnimData->getTotalRows();
+        if (totalRows == 0) {
+            return;
+        }
+
+        if (time > _totalPlaybackTime) {
+            _currentPlaybackRow = totalRows -1;
+        }
+
+        long currentRow = returnRowClosestToTime(time, 0, totalRows);
+        if (currentRow <= totalRows-1) {
+            _currentPlaybackRow = currentRow;
+            _startPlaybackTime = VROTimeCurrentMillis() - getCurrentRowTimestamp();
+        }
+     }
+
+    long getCurrentRow() {
         return _currentPlaybackRow;
     }
 
@@ -70,22 +75,21 @@ public:
         return _startPlaybackTime;
     }
 
-    NSArray *getMatrixStartArray() {
-        return _matrixArray;
+    VROMatrix4f getInitWorldMatrix() {
+        return _bodyAnimData->getModelStartWorldMatrix();
     }
 
     double getCurrentRowTimestamp() {
-        NSNumber *timestamp = _animRows[_currentPlaybackRow][_nsBodyAnimTimestamp];
-        return [timestamp doubleValue];
+        return _bodyAnimData->getAnimRowTimestamp(_currentPlaybackRow);
     }
 
     void incrementAnimRow() {
         _currentPlaybackRow++;
-        long length = [_animRows count];
+        long length = _bodyAnimData->getTotalRows();
         if (_currentPlaybackRow > 0 && _currentPlaybackRow < length && _playStatus == VROBodyPlayerStatus::Start) {
             _playStatus = VROBodyPlayerStatus::Playing;
         } else if (_currentPlaybackRow >= length) {
-            if ( _playStatus == VROBodyPlayerStatus::Playing) {
+            if (_playStatus == VROBodyPlayerStatus::Playing) {
                 _playStatus = VROBodyPlayerStatus::Finished;
             }
         }
@@ -95,8 +99,12 @@ public:
         return  _playStatus;
     }
 
+    double getTotalTime() {
+        return _totalPlaybackTime;
+    }
+
     bool isFinished() {
-        long length = [_animRows count];
+        long length = _bodyAnimData->getTotalRows();
         if (_currentPlaybackRow >= length) {
             return true;
         }
@@ -104,20 +112,28 @@ public:
     }
 
 private:
-    NSDictionary *_currentBodyAnimPlayback;
-    VROMatrix4f _startRootMatrixWorld;
-    VROMatrix4f _initPlaybackWorldTransformOfRootNode;
-    NSArray *_animRows;
-    NSArray *_matrixArray;
-    int _currentPlaybackRow;
+    
+    long returnRowClosestToTime(double time, long lowerBoundIndex, long upperBoundIndex) {
+        if (lowerBoundIndex == upperBoundIndex) {
+            return lowerBoundIndex;
+        }
+        
+        long midRow = lowerBoundIndex + (upperBoundIndex-lowerBoundIndex)/2;
+        double timestamp = _bodyAnimData->getAnimRowTimestamp(midRow);
+       
+        if (time > timestamp) {
+            return (returnRowClosestToTime(time, midRow+1, upperBoundIndex));
+        } else {
+            return (returnRowClosestToTime(time, lowerBoundIndex, midRow));
+        }
+    }
+
+    long _currentPlaybackRow;
     VROBodyPlayerStatus _playStatus;
+    std::shared_ptr<VROBodyAnimData> _bodyAnimData;
     double _startPlaybackTime;
+    double _processTimeWhenPaused;
     double _totalPlaybackTime;
-    NSString *_nsBodyAnimTotalTime;
-    NSString *_nsBodyAnimAnimRows;
-    NSString *_nsBodyAnimTimestamp;
-    NSString *_nsBodyAnimJoints;
-    NSString *_nsBodyAnimInitModelTransform;
 };
 
 class VROBodyPlayeriOS : public VROBodyPlayer {
@@ -126,15 +142,15 @@ public:
     VROBodyPlayeriOS();
 
     virtual ~VROBodyPlayeriOS() {}
-    void prepareAnimation(std::string animData);
     void start();
-    void stop();
-    void setTime();
+    void pause();
+    void prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData);
+    void setTime(double time);
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
 
 private:
-    BodyPlaybackInfo *_playbackInfo;
+    std::shared_ptr<BodyPlaybackInfo> _playbackInfo;
 };
 
 #endif /* VROBodyPlayeriOS_h */

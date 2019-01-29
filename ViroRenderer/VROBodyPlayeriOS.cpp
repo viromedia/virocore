@@ -15,32 +15,28 @@ const std::string kBodyAnimAnimRows = "animRows";
 const std::string kBodyAnimJoints = "joints";
 const std::string kBodyAnimTimestamp = "timestamp";
 const std::string kBodyAnimInitModelTransform = "initModelTransform";
+const std::string kBodyAnimVersion = "version";
 
 VROBodyPlayeriOS::VROBodyPlayeriOS() {
     _playbackInfo = nil;
 }
 
-void VROBodyPlayeriOS::prepareAnimation(std::string animData) {
-    NSString *animJSString = [NSString stringWithCString:animData.c_str()
-                                              encoding:[NSString defaultCStringEncoding]];
-    NSError *error = nil;
-    NSData *data = [animJSString dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *animDictionary = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-    _playbackInfo = new BodyPlaybackInfo(animDictionary);
-}
-
 void VROBodyPlayeriOS::start() {
     if (_playbackInfo) {
-        _playbackInfo->startPlayback();
+        _playbackInfo->start();
     }
 }
 
-void VROBodyPlayeriOS::stop() {
-
+void VROBodyPlayeriOS::pause() {
+    if (_playbackInfo) {
+        _playbackInfo->pause();
+    }
 }
 
-void VROBodyPlayeriOS::setTime() {
-
+void VROBodyPlayeriOS::setTime(double time) {
+    if (_playbackInfo) {
+        _playbackInfo->setTime(time);
+    }
 }
 
 void VROBodyPlayeriOS::onFrameWillRender(const VRORenderContext &context) {
@@ -52,34 +48,33 @@ void VROBodyPlayeriOS::onFrameWillRender(const VRORenderContext &context) {
         return;
     }
 
-    double currentTime  = VROTimeCurrentMillis();
+    if (_playbackInfo->getPlayStatus() == VROBodyPlayerStatus::Paused) {
+        return;
+    }
+
+    double currentTime = VROTimeCurrentMillis();
     double frameTime = currentTime - _playbackInfo->getStartTime();
     double currentRowTime = _playbackInfo->getCurrentRowTimestamp();
      std::shared_ptr<VROBodyPlayerDelegate> bodyPlayerDelegate = _bodyMeshDelegate_w.lock();
     if (_playbackInfo->getPlayStatus() == VROBodyPlayerStatus::Start) {
          if (bodyPlayerDelegate != NULL) {
-             float array[16];
-             int i=0;
-
-             NSArray *nsArray = _playbackInfo->getMatrixStartArray();
-             for (NSNumber *number in nsArray) {
-                 array[i] = [number floatValue];
-                 i++;
-             }
-
-             VROMatrix4f matrix(array);
+             VROMatrix4f matrix = _playbackInfo->getInitWorldMatrix();
              bodyPlayerDelegate->onBodyPlaybackStarting(matrix);
          }
     }
+
     // If frameTime is >= time in current animation row, then send the body joint data to the delegate so it can be animated.
     if (frameTime >= currentRowTime) {
         std::map<VROBodyJointType, VROVector3f> jointMap = _playbackInfo->getCurrentRowJointsAsMap();
-        //std::shared_ptr<VROBodyPlayerDelegate> bodyPlayerDelegate = _bodyMeshDelegate_w.lock();
-        if(bodyPlayerDelegate != NULL) {
+        if (bodyPlayerDelegate != NULL) {
             bodyPlayerDelegate->onBodyJointsPlayback(jointMap, _playbackInfo->getPlayStatus());
         }
         _playbackInfo->incrementAnimRow();
     }
+}
+
+void VROBodyPlayeriOS::prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData) {
+    _playbackInfo = std::make_shared<BodyPlaybackInfo>(bodyAnimData);
 }
 
 void VROBodyPlayeriOS::onFrameDidRender(const VRORenderContext &context) {

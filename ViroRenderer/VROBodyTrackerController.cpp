@@ -20,6 +20,7 @@
 
 #if VRO_PLATFORM_IOS
 #include "VRODriverOpenGLiOS.h"
+#include "VROAnimBodyDataiOS.h"
 
 static std::string pointLabels[14] = {
     "top\t\t\t", //0
@@ -404,42 +405,19 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
 
 void VROBodyTrackerController::startRecording() {
     _isRecording = true;
-    _startRecordingTime = VROTimeCurrentMillis();
     _initRecordWorldTransformOfRootNode = _modelRootNode->getWorldTransform();
 #if VRO_PLATFORM_IOS
-    // TODO Move recording to abstract class so we can remove #if VRO_PLATFORM_IOS ifdefs.
-    _recordedAnimationData = [[NSMutableDictionary alloc] init];
-    _recordedAnimationRows = [[NSMutableArray alloc] init];
+    _animDataRecorder = std::make_shared<VROBodyAnimDataRecorderiOS>();
 #endif
+    if (_animDataRecorder) {
+        _animDataRecorder->startRecording(_initRecordWorldTransformOfRootNode);
+    }
 }
 
 std::string VROBodyTrackerController::stopRecording() {
     _isRecording = false;
-    _endRecordingTime = VROTimeCurrentMillis();
-    std::string returnJson;
-#if VRO_PLATFORM_IOS
-    NSString *_nsBodyAnimTotalTime = [NSString stringWithUTF8String:kBodyAnimTotalTime.c_str()];
-    NSString *_nsBodyAnimAnimRows = [NSString stringWithUTF8String:kBodyAnimAnimRows.c_str()];
-    NSString *_nsBodyAnimInitModelTransform = [NSString stringWithUTF8String:kBodyAnimInitModelTransform.c_str()];
-    [_recordedAnimationData setObject:[NSNumber numberWithDouble:_endRecordingTime - _startRecordingTime] forKey:_nsBodyAnimTotalTime];
-    [_recordedAnimationData setObject:_recordedAnimationRows forKey:_nsBodyAnimAnimRows];
-    const float *matrixArray = _initRecordWorldTransformOfRootNode.getArray();
-    NSMutableArray* ma = [NSMutableArray arrayWithCapacity:16];
-    for (int i=0; i<16; i++) {
-        [ma addObject:[NSNumber numberWithFloat:matrixArray[i]]];
-    }
-
-    [_recordedAnimationData setObject:ma forKey:_nsBodyAnimInitModelTransform];
-
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_recordedAnimationData
-                                                       options:(NSJSONWritingOptions)     NSJSONWritingPrettyPrinted
-                                                         error:&error];
-
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    returnJson = std::string([jsonString UTF8String]);
-#endif
-    return returnJson;
+    _animDataRecorder->stopRecording();
+    return (_animDataRecorder->toJSON());
 }
 
 void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
@@ -817,22 +795,12 @@ void VROBodyTrackerController::updateModel() {
 
     // Update the root motion of the rig.
     alignModelRootToMLRoot();
-    NSMutableDictionary *animRowDataValues = nil;
-    NSMutableDictionary *jointValues = nil;
-    if (_isRecording) {
-#if VRO_PLATFORM_IOS
-        animRowDataValues = [[NSMutableDictionary alloc] init];
-        double currentTime = VROTimeCurrentMillis() - _startRecordingTime;
-        NSNumber *number = [NSNumber numberWithDouble:currentTime];
-        NSString *timestampNS = [NSString stringWithCString:kBodyAnimTimestamp.c_str()
-                                               encoding:[NSString defaultCStringEncoding]];
-        [animRowDataValues setObject:number forKey:timestampNS];
-        jointValues = [[NSMutableDictionary alloc] init];
-#endif
+
+    if (_isRecording && _animDataRecorder) {
+        _animDataRecorder->beginRecordedRow();
     }
 
     // Now update all known rig joints.
-    VROMatrix4f identity = VROMatrix4f::identity();
     std::map<VROBodyJointType, VROVector3f>::const_iterator cachedJoint;
     for (auto &cachedJoint : _cachedModelJoints) {
         VROVector3f pos = cachedJoint.second;
@@ -841,24 +809,13 @@ void VROBodyTrackerController::updateModel() {
         std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
         _rig->setPositionForEffector(boneName, pos);
 
-        if (_isRecording) {
-#if VRO_PLATFORM_IOS
-            NSString *boneNameNS = [NSString stringWithCString:boneName.c_str()
-                                                      encoding:[NSString defaultCStringEncoding]];
-            NSArray *pointsArray = [NSArray arrayWithObjects: [NSNumber numberWithFloat:pos.x],[NSNumber numberWithFloat:pos.y],[NSNumber numberWithFloat:pos.z], nil];
-            // write out on the joint values.
-            [jointValues setObject:pointsArray forKey:boneNameNS];
-#endif
+        if (_isRecording && _animDataRecorder) {
+            _animDataRecorder->addJointToRow(boneName, pos);
         }
     }
 
-    if (_isRecording) {
-#if VRO_PLATFORM_IOS
-        NSString *jointNS = [NSString stringWithCString:kBodyAnimJoints.c_str()
-                                                  encoding:[NSString defaultCStringEncoding]];
-        [animRowDataValues setObject:jointValues forKey:jointNS];
-        [_recordedAnimationRows addObject:animRowDataValues];
-#endif
+    if (_isRecording && _animDataRecorder) {
+        _animDataRecorder->endRecordedRow();
     }
 }
 

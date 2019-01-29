@@ -15,6 +15,8 @@
 #include "VROBodyPlayer.h"
 #include "VROEventDelegate.h"
 #include "VRORenderer.h"
+#include "VROBodyAnimData.h"
+
 #if VRO_PLATFORM_IOS
 #include "VROViewAR.h"
 #import <UIKit/UIKit.h>
@@ -288,7 +290,8 @@ private:
     std::map<VROBodyJointType, std::shared_ptr<VRONode>> _debugBoxEffectors;
     std::shared_ptr<VRONode> _debugBoxRoot;
 
-    
+    std::shared_ptr<VROBodyAnimDataRecorder> _bodyAnimDataRecorder;
+                                     
     // Set to true to begin recording the body tracking. Default is false.
     bool _isRecording;
 
@@ -307,6 +310,9 @@ private:
 
     // Multiple all playback joints through below. Below is equal _playbackRootStartMatrix.inverse() * _playbackDataStartMatrix;
     VROMatrix4f _playbackDataFinalTransformMatrix;
+    
+    // Anim data recorder. 
+    std::shared_ptr<VROBodyAnimDataRecorder> _animDataRecorder;
 
 #if VRO_PLATFORM_IOS
     // Body tracking joint data is stored here when _isRecording = true. On recording completion these structures are serialized to JSON.

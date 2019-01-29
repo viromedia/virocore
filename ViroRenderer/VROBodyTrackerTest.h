@@ -16,6 +16,7 @@
 #include "VROBodyTracker.h"
 #include "VROEventDelegate.h"
 #include "VROBodyTrackerController.h"
+#include "VROAnimBodyDataiOS.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROARSessioniOS.h"
@@ -89,7 +90,10 @@ public:
                 //_modelNodeNinja1->setWorldTransform(VROVector3f(0.0f,0.0f, -.2f), rot, false);
                 _modelNodeNinja1->setScale(VROVector3f(0.05f, 0.05f, 0.05f));
                 _modelNodeNinja1->setPosition(VROVector3f(0.0f,0.0f, -.2f));;
-                _bodyPlayer->prepareAnimation(jsonStringData);
+                VROBodyAnimDataReaderiOS bodyAnimReader;
+                std::shared_ptr<VROBodyAnimData> bodyData = bodyAnimReader.fromJSON(jsonStringData);
+                
+                _bodyPlayer->prepareAnimation(bodyData);
                 _bodyPlayer->start();
             }
         }
