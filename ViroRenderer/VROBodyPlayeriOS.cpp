@@ -33,6 +33,12 @@ void VROBodyPlayeriOS::pause() {
     }
 }
 
+void VROBodyPlayeriOS::setLooping(bool isLooping) {
+    if (_playbackInfo) {
+        _playbackInfo->setLooping(isLooping);
+    }
+}
+
 void VROBodyPlayeriOS::setTime(double time) {
     if (_playbackInfo) {
         _playbackInfo->setTime(time);
@@ -45,7 +51,12 @@ void VROBodyPlayeriOS::onFrameWillRender(const VRORenderContext &context) {
     }
 
     if (_playbackInfo->isFinished()) {
-        return;
+        if (_playbackInfo->isLooping()) {
+            _playbackInfo->setTime(0.0);
+        } else {
+            // return if animation is finished but not looping.
+            return;
+        }
     }
 
     if (_playbackInfo->getPlayStatus() == VROBodyPlayerStatus::Paused) {

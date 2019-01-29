@@ -18,6 +18,7 @@
 #include "VROBodyAnimData.h"
 
 class VRORenderContext;
+
 class BodyPlaybackInfo {
 public:
     BodyPlaybackInfo(std::shared_ptr<VROBodyAnimData> data) {
@@ -48,6 +49,14 @@ public:
         double currentTime = VROTimeCurrentMillis();
         _processTimeWhenPaused = currentTime - _startPlaybackTime;
         _playStatus = VROBodyPlayerStatus::Paused;
+    }
+
+    void setLooping(bool isLooping) {
+        _isLooping = isLooping;
+    }
+
+    bool isLooping() {
+        return _isLooping;
     }
 
     void setTime(double time) {
@@ -129,6 +138,7 @@ private:
     }
 
     long _currentPlaybackRow;
+    bool _isLooping;
     VROBodyPlayerStatus _playStatus;
     std::shared_ptr<VROBodyAnimData> _bodyAnimData;
     double _startPlaybackTime;
@@ -144,6 +154,7 @@ public:
     virtual ~VROBodyPlayeriOS() {}
     void start();
     void pause();
+    void setLooping(bool isLooping);
     void prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData);
     void setTime(double time);
     void onFrameWillRender(const VRORenderContext &context);

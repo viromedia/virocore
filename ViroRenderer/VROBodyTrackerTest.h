@@ -87,13 +87,14 @@ public:
                 _bodyTracker->setDelegate(nil);
                 _bodyPlaybackController->bindModel(_modelNodeNinja1);
                 
-                //_modelNodeNinja1->setWorldTransform(VROVector3f(0.0f,0.0f, -.2f), rot, false);
+                // _modelNodeNinja1->setWorldTransform(VROVector3f(0.0f,0.0f, -.2f), rot, false);
                 _modelNodeNinja1->setScale(VROVector3f(0.05f, 0.05f, 0.05f));
-                _modelNodeNinja1->setPosition(VROVector3f(0.0f,0.0f, -.2f));;
+                _modelNodeNinja1->setPosition(VROVector3f(0.0f,0.0f, -.2f));
                 VROBodyAnimDataReaderiOS bodyAnimReader;
                 std::shared_ptr<VROBodyAnimData> bodyData = bodyAnimReader.fromJSON(jsonStringData);
                 
                 _bodyPlayer->prepareAnimation(bodyData);
+                _bodyPlayer->setLooping(true);
                 _bodyPlayer->start();
             }
         }

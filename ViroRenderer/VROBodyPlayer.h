@@ -62,6 +62,7 @@ public:
      */
     virtual void start() = 0;
     virtual void pause() = 0;
+    virtual void setLooping(bool loop) = 0;
     virtual void setTime(double time) = 0;
     virtual void prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData) = 0;
 
