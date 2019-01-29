@@ -155,7 +155,7 @@ public:
     void start();
     void pause();
     void setLooping(bool isLooping);
-    void prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData);
+    void loadAnimation(std::string jsonAnim);
     void setTime(double time);
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);

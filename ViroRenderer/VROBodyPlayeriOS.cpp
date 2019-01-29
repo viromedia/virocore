@@ -7,6 +7,7 @@
 //
 #import <Foundation/Foundation.h>
 #include "VROBodyPlayeriOS.h"
+#include "VROAnimBodyDataiOS.h"
 #include "VRORenderContext.h"
 
 // constants that represent JSON keys from JSON body animation.
@@ -84,7 +85,9 @@ void VROBodyPlayeriOS::onFrameWillRender(const VRORenderContext &context) {
     }
 }
 
-void VROBodyPlayeriOS::prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData) {
+void VROBodyPlayeriOS::loadAnimation(std::string jsonAnim) {
+    VROBodyAnimDataReaderiOS reader;
+    std::shared_ptr<VROBodyAnimData> bodyAnimData = reader.fromJSON(jsonAnim);
     _playbackInfo = std::make_shared<BodyPlaybackInfo>(bodyAnimData);
 }
 

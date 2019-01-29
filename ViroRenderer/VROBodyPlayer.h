@@ -64,7 +64,10 @@ public:
     virtual void pause() = 0;
     virtual void setLooping(bool loop) = 0;
     virtual void setTime(double time) = 0;
-    virtual void prepareAnimation(std::shared_ptr<VROBodyAnimData> bodyAnimData) = 0;
+    /*
+     Load an animation from a JSON string. This will reset all play properties for this player to defaults, including looping, time, etc.
+     */
+    virtual void loadAnimation(std::string jsonAnim) = 0;
 
 #pragma mark - VROFrameListener methods
     virtual void onFrameWillRender(const VRORenderContext &context) = 0;
