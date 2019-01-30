@@ -160,6 +160,7 @@ public class Scene {
     private Node mRootNode;
     private PhysicsWorld mPhysicsWorld;
     private Texture mLightingEnvironment;
+    private Texture mBackgroundTexture;
     private VisibilityListener mListener = null;
 
     /**
@@ -224,6 +225,11 @@ public class Scene {
             nativeDestroySceneControllerDelegate(mNativeDelegateRef);
             mNativeDelegateRef = 0;
         }
+
+        if (mBackgroundTexture != null) {
+            mBackgroundTexture.dispose();
+            mBackgroundTexture = null;
+        }
     }
 
     /**
@@ -253,6 +259,7 @@ public class Scene {
      *                     the video.
      */
     public void setBackgroundTexture(Texture texture) {
+        mBackgroundTexture = texture;
         nativeSetBackgroundTexture(mNativeRef, texture.mNativeRef);
     }
 

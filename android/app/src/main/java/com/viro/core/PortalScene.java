@@ -44,6 +44,7 @@ public class PortalScene extends Node {
     private boolean mPassable = false;
     private Portal mPortal;
     private Texture mLightingEnvironment;
+    private Texture mBackgroundTexture;
     private static final long INVALID_REF = 0;
 
     /**
@@ -95,6 +96,11 @@ public class PortalScene extends Node {
         if (mNativeDelegateRef != 0) {
             nativeDestroyPortalDelegate(mNativeDelegateRef);
             mNativeDelegateRef = 0;
+        }
+
+        if(mBackgroundTexture != null) {
+            mBackgroundTexture.dispose();
+            mBackgroundTexture = null;
         }
     }
 
@@ -172,6 +178,7 @@ public class PortalScene extends Node {
      *                     the video.
      */
     public void setBackgroundTexture(Texture texture) {
+        mBackgroundTexture = texture;
         nativeSetBackgroundTexture(mNativeRef, texture.mNativeRef);
     }
 
