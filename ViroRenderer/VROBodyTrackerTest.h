@@ -16,9 +16,10 @@
 #include "VROBodyTracker.h"
 #include "VROEventDelegate.h"
 #include "VROBodyTrackerController.h"
-#include "VROAnimBodyDataiOS.h"
+
 
 #if VRO_PLATFORM_IOS
+#include "VROAnimBodyDataiOS.h"
 #include "VROARSessioniOS.h"
 #import <UIKit/UIKit.h>
 #endif
@@ -73,27 +74,25 @@ public:
             _loadNewConfig = true;
         } else if(VROStringUtil::strcmpinsensitive(node->getTag(), "Record") && (clickState == ClickDown)) {
             if(!_bodyMLController->isRecording()) {
-                NSLog(@"Starting recording");
+                pinfo("Starting recording");
                 _bodyMLController->startRecording();
             }
             else {
                 std::string jsonStringData = _bodyMLController->stopRecording();
-                NSLog(@"Stopping recording, test data:");
-                NSLog(@"%@", [NSString stringWithCString:jsonStringData.c_str()
-                                                encoding:[NSString defaultCStringEncoding]]);
+                pinfo("Stopping recording.");
                 // stop body tracking
                 _bodyTracker->stopBodyTracking();
                 // setDelagete to nil is currently only way to stop body tracking.
-                _bodyTracker->setDelegate(nil);
+                _bodyTracker->setDelegate(NULL);
                 _bodyPlaybackController->bindModel(_modelNodeNinja1);
 
-                // _modelNodeNinja1->setWorldTransform(VROVector3f(0.0f,0.0f, -.2f), rot, false);
                 _modelNodeNinja1->setScale(VROVector3f(0.05f, 0.05f, 0.05f));
                 _modelNodeNinja1->setPosition(VROVector3f(0.0f,0.0f, -.2f));
-
-                _bodyPlayer->loadAnimation(jsonStringData);
-                _bodyPlayer->setLooping(true);
-                _bodyPlayer->start();
+                if (_bodyPlayer) {
+                    _bodyPlayer->loadAnimation(jsonStringData);
+                    _bodyPlayer->setLooping(true);
+                    _bodyPlayer->start();
+                }
             }
         }
     }

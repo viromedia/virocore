@@ -94,4 +94,3 @@ void VROBodyPlayeriOS::loadAnimation(std::string jsonAnim) {
 void VROBodyPlayeriOS::onFrameDidRender(const VRORenderContext &context) {
     // no-op
 }
-

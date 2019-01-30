@@ -315,10 +315,6 @@ private:
     std::shared_ptr<VROBodyAnimDataRecorder> _animDataRecorder;
 
 #if VRO_PLATFORM_IOS
-    // Body tracking joint data is stored here when _isRecording = true. On recording completion these structures are serialized to JSON.
-    NSMutableDictionary *_recordedAnimationData;
-    NSMutableArray *_recordedAnimationRows;
-
     // iOS UI Components
     UILabel *_labelViews[14];
     UIView *_bodyViews[14];

@@ -84,8 +84,6 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _calibrationEventDelegate = nullptr;
     _calibratedConfiguration = nullptr;
     _isRecording = false;
-    _recordedAnimationData = [[NSMutableDictionary alloc] init];
-    _recordedAnimationRows = [[NSMutableArray alloc] init];
     sceneRoot->addChildNode(_bodyControllerRoot);
 }
 
