@@ -180,7 +180,6 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
-    _modelRootNode->setEventDelegate(_calibrationEventDelegate);
 
     // Set the timeout of joints in milliseconds.
     _mlJointTimeoutMap.clear();
@@ -208,6 +207,10 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
 }
 
 void VROBodyTrackerController::startCalibration() {
+    if (_calibrating) {
+        return;
+    }
+
     if (_skinner == nullptr) {
         pwarn("Unable to start calibration: Model has not yet been bounded to this controller!");
         return;
@@ -218,6 +221,8 @@ void VROBodyTrackerController::startCalibration() {
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
     _modelRootNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
+    _preservedEventDelegate = _modelRootNode->getEventDelegate();
+    _modelRootNode->setEventDelegate(_calibrationEventDelegate);
 
     // reset the bones back to it's initial configuration
     std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
@@ -228,6 +233,10 @@ void VROBodyTrackerController::startCalibration() {
 }
 
 void VROBodyTrackerController::finishCalibration() {
+    if (!_calibrating) {
+        return;
+    }
+
     if (_skinner == nullptr) {
         pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
         return;
@@ -248,6 +257,7 @@ void VROBodyTrackerController::finishCalibration() {
     _calibrating = false;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+    _modelRootNode->setEventDelegate(_preservedEventDelegate);
 }
 
 void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config) {

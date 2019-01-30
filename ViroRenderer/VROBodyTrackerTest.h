@@ -94,6 +94,8 @@ public:
                     _bodyPlayer->start();
                 }
             }
+        } else if (VROStringUtil::strcmpinsensitive(node->getTag(), "Model") && (clickState == ClickDown)){
+            pwarn("VROBodyTrackerTest : you have clicked the model.");
         }
     }
 

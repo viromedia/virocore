@@ -283,6 +283,12 @@ private:
     std::shared_ptr<VROBodyCalibratedConfig> _calibratedConfiguration;
 
     /*
+     Used to restore any pre-set event delegate on the model's node after setting the
+     calibration event delegate.
+     */
+    std::shared_ptr<VROEventDelegate> _preservedEventDelegate;
+
+    /*
      Debugging UI components containing debug box nodes representing the locations of
      tracked ML body positions.
      */

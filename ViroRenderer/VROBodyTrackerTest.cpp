@@ -94,14 +94,19 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
                                                   [this](std::shared_ptr<VRONode> node, bool success){
                                                       onModelLoaded(node);
                                                   });
+    _modelNodeNinja1->setTag("Model");
+    _modelNodeNinja1->setEventDelegate(shared_from_this());
+
     _modelNodeNinja2 = VROTestUtil::loadFBXModel("cute_monster/cute_monster",
                                                  pos,
                                                  scale, rot,
                                                  1, "", driver,
                                                  [this](std::shared_ptr<VRONode> node, bool success){
-                                                     pwarn("Daniel cute_monster 2 loaded");
                                                      onModelLoaded(node);
                                                  });
+
+    _modelNodeNinja2->setTag("Model");
+    _modelNodeNinja2->setEventDelegate(shared_from_this());
 
     _gltfNodeContainer = std::make_shared<VRONode>();
     _gltfNodeContainer->setScale(VROVector3f(1.05,1.05,1.05));
