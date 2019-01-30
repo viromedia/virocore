@@ -101,6 +101,9 @@ public:
 
     void onModelLoaded(std::shared_ptr<VRONode> node);
     void onBodyTrackStateUpdate(VROBodyTrackedState state);
+    void onJointUpdate(const std::map<VROBodyJointType, VROJointPos>  &mlJointsFiltered,
+                       const std::map<VROBodyJointType, VROVector3f> &mlJointsDampened,
+                       const std::map<VROBodyJointType, VROMatrix4f> &modelJoints);
     void renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex);
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);

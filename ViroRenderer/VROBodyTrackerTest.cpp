@@ -238,6 +238,13 @@ void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){
     }
 }
 
+void VROBodyTrackerTest::onJointUpdate(const std::map<VROBodyJointType, VROJointPos> &mlJointsFiltered,
+                                       const std::map<VROBodyJointType, VROVector3f> &mlJointsDampened,
+                                       const std::map<VROBodyJointType, VROMatrix4f> &modelJoints) {
+    VROMatrix4f neckTransform = modelJoints.at(VROBodyJointType::Neck);
+    pwarn("On Joint Update: %s", neckTransform.extractTranslation().toString().c_str());
+}
+
 void VROBodyTrackerTest::onFrameWillRender(const VRORenderContext &context) {
     //context.getPencil()->setBrushThickness(0.001f);
     //renderDebugSkeletal(context.getPencil(), 0);

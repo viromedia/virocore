@@ -99,6 +99,16 @@ private:
  */
 class VROBodyTrackerControllerDelegate {
 public:
+    /*
+     Represents the positional ML joint data in world space and its corresponding
+     2D screen space position.
+     */
+    struct VROJointPos {
+        VROVector3f worldPosition;
+        float screenPosX;
+        float screenPosY;
+    };
+
     VROBodyTrackerControllerDelegate() {};
     virtual ~VROBodyTrackerControllerDelegate() {};
 
@@ -106,6 +116,15 @@ public:
      Triggered when the VROBodyTrackedState for the attached VROBodyTrackerController has changed.
      */
     virtual void onBodyTrackStateUpdate(VROBodyTrackedState state) = 0;
+
+    /*
+     Triggered when the controller has processed new joints after it has been calibrated.
+
+     TODO: Remove unnecessary joint maps after narrowing down which joint data to use and expose.
+     */
+    virtual void onJointUpdate(const std::map<VROBodyJointType, VROJointPos> &mlJointsFiltered,
+                               const std::map<VROBodyJointType, VROVector3f> &mlJointsDampened,
+                               const std::map<VROBodyJointType, VROMatrix4f> &modelJoints) = 0;
 };
 
 /*
@@ -346,6 +365,7 @@ private:
      Updates 3D model's rig with the latest set of known 3D positions
      */
     void updateModel();
+    void notifyOnJointUpdateDelegates();
 
     /*
      Align the 3D model's root position / root motion to the root ML joint.

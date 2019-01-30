@@ -394,6 +394,7 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     // Else if we are already calibrated, update tracked joints as usual
     if (_calibratedConfiguration != nullptr) {
         updateModel();
+        notifyOnJointUpdateDelegates();
     }
 
     // Render debug UI
@@ -409,6 +410,39 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
             _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos,  VROMatrix4f::identity());
         }
     }
+}
+
+void VROBodyTrackerController::notifyOnJointUpdateDelegates() {
+    std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
+    if (delegate == nullptr) {
+        return;
+    }
+
+    // Construct a map containing filtered cached ML joints before dampening.
+    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPos> mlJointsFitlered;
+    for (auto &mlJointPair : _cachedTrackedJoints) {
+        VROBodyTrackerControllerDelegate::VROJointPos filteredJoint;
+        VROBodyJoint bodyJoint = mlJointPair.second;
+        filteredJoint.screenPosX = bodyJoint.getScreenCoords().x;
+        filteredJoint.screenPosY = bodyJoint.getScreenCoords().y;
+        filteredJoint.worldPosition = bodyJoint.getProjectedTransform().extractTranslation();
+        mlJointsFitlered[mlJointPair.first] = filteredJoint;
+    }
+
+    // Construct a map containing dampened ML positional joint data.
+    std::map<VROBodyJointType, VROVector3f> mlJointsDampened;
+    for (auto &mlJoint : _cachedModelJoints) {
+        mlJointsDampened[mlJoint.first] = mlJoint.second;
+    }
+
+    // Construct a map containing the current locations of our model joints.
+    std::map<VROBodyJointType, VROMatrix4f> modelJoints;
+    for (auto &jointTag : kVROBodyBoneTags) {
+        VROMatrix4f worldTransform = _skinner->getCurrentBoneWorldTransform(jointTag.second);
+        modelJoints[jointTag.first] = worldTransform;
+    }
+
+    delegate->onJointUpdate(mlJointsFitlered, mlJointsDampened, modelJoints);
 }
 
 void VROBodyTrackerController::startRecording() {
