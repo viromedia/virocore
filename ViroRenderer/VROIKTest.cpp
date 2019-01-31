@@ -453,11 +453,11 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
     _endEffectorBones["RightWrist"]     = 10;
     _endEffectorBones["LeftAnkle"]      = 16;
     _endEffectorBones["RightAnkle"]     = 15;
-    _endEffectorBones["Head"]           = 4;
+    _endEffectorBones["Top"]           = 4;
 
     // Intermediary effectors
-    //_endEffectorBones["LeftShoulder"]   = 5;
-    //_endEffectorBones["LeftElbow"]      = 7;
+    _endEffectorBones["LeftShoulder"]   = 5;
+    _endEffectorBones["LeftElbow"]      = 7;
     _endEffectorBones["LeftHip"]        = 11;
     _endEffectorBones["LeftKnee"]       = 13;
 
@@ -509,9 +509,9 @@ void VROIKTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int joint
     // Now draw a line from the child joint to it's parent.
     for (int childJointIndex : childBoneIndexes) {
         // Grab the animated bone in world space.
-        VROMatrix4f animatedChild = _skinner->getCurrentBoneWorldTransform(childJointIndex);
-        VROMatrix4f animatedParent = _skinner->getCurrentBoneWorldTransform(jointIndex);
-
+        VROMatrix4f animatedChild = _skinner->getSkeleton()->getCurrentBoneWorldTransform(childJointIndex);
+        VROMatrix4f animatedParent = _skinner->getSkeleton()->getCurrentBoneWorldTransform(jointIndex);
+        
         VROVector3f from = animatedChild.extractTranslation();
         VROVector3f to = animatedParent.extractTranslation();
         pencil->draw(from, to);
@@ -548,9 +548,9 @@ void VROIKTest::refreshSkeletalRig() {
 
         VROMatrix4f transform;
         if (kUseGLTFModel) {
-            transform = _skinner->getCurrentBoneWorldTransform(boneIndex);
+            transform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(boneIndex);
         } else {
-            transform = _skinner->getCurrentBoneWorldTransform(boneName);
+            transform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(boneName);
         }
 
         VROVector3f bonePosition = transform.extractTranslation();
@@ -688,15 +688,15 @@ void VROIKTest::onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f ne
     if (VROStringUtil::startsWith(tag, "Bone:")) {
         std::string boneTag = tag.substr(5, tag.size() - 5);
         int boneId = VROStringUtil::toInt(boneTag);
-        VROMatrix4f s = _skinner->getCurrentBoneWorldTransform(boneId);
+        VROMatrix4f s = _skinner->getSkeleton()->getCurrentBoneWorldTransform(boneId);
         VROMatrix4f f = VROMatrix4f::identity();
         f.rotate(s.extractRotation(s.extractScale()));
         f.translate(node->getWorldTransform().extractTranslation());
 
         if (kUseGLTFModel) {
-            _skinner->setCurrentBoneWorldTransform(boneId, f, false);
+            _skinner->getSkeleton()->setCurrentBoneWorldTransform(boneId, f, false);
         } else {
-            _skinner->setCurrentBoneWorldTransform(boneTag, f, false);
+            _skinner->getSkeleton()->setCurrentBoneWorldTransform(boneTag, f, false);
         }
     } else if (_rig != nullptr) {
         _rig->setPositionForEffector(tag, node->getWorldPosition());

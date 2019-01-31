@@ -283,8 +283,8 @@ void VROBodyTrackerTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, 
     // Now draw a line from the child joint to it's parent.
     for (int childJointIndex : childBoneIndexes) {
         // Grab the animated bone in world space.
-        VROMatrix4f animatedChild = _skinner->getCurrentBoneWorldTransform(childJointIndex);
-        VROMatrix4f animatedParent = _skinner->getCurrentBoneWorldTransform(jointIndex);
+        VROMatrix4f animatedChild = _skinner->getSkeleton()->getCurrentBoneWorldTransform(childJointIndex);
+        VROMatrix4f animatedParent = _skinner->getSkeleton()->getCurrentBoneWorldTransform(jointIndex);
 
         VROVector3f from = animatedChild.extractTranslation();
         VROVector3f to = animatedParent.extractTranslation();

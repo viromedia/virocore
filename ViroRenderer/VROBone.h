@@ -60,11 +60,13 @@ class VROBone : public VROAnimatable {
     
 public:
     
-    VROBone(int boneIndex, int parentIndex, std::string name, VROMatrix4f localTransform) :
+    VROBone(int boneIndex, int parentIndex, std::string name,
+            VROMatrix4f localTransform, VROMatrix4f bindTransform) :
         _index(boneIndex),
         _parentIndex(parentIndex),
         _name(name),
         _localTransform(localTransform),
+        _bindTransform(bindTransform),
         _transformType(VROBoneTransformType::Legacy) {
     }
     virtual ~VROBone() {}
@@ -98,13 +100,21 @@ public:
     VROBoneTransformType getTransformType() const {
         return _transformType;
     }
-    
+
     /*
      Get the (non-animated) local transform for this bone, which moves from the
      bone's local space in bind position to the parent bone's space in bind position.
      */
     VROMatrix4f getLocalTransform() const {
         return _localTransform;
+    }
+
+    /*
+     Returns the binding transformation to use when moving from model space into
+     bone local space that is configured in the "T-pose" bind position.
+     */
+    VROMatrix4f getBindTransform() const {
+        return _bindTransform;
     }
 
     /*
@@ -149,7 +159,12 @@ private:
      details. Defaults to Legacy.
      */
     VROBoneTransformType _transformType;
-    
+
+    /*
+     The binding transformation to use when moving from model space into bone local
+     space that is configured in the "T-pose" bind position.
+     */
+    VROMatrix4f _bindTransform;
 };
 
 #endif /* VROBone_h */

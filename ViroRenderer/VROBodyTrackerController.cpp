@@ -165,7 +165,7 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     for (auto bonePair : _mlJointForBoneIndex) {
         VROBodyJointType boneType = bonePair.first;
         std::string boneName = kVROBodyBoneTags.at(bonePair.first);
-        VROVector3f pos = _skinner->getCurrentBoneWorldTransform(boneName).extractTranslation();
+        VROVector3f pos = _skinner->getSkeleton()->getCurrentBoneWorldTransform(boneName).extractTranslation();
         std::shared_ptr<VRONode> block = createDebugBoxUI(true, boneName);
         _bodyControllerRoot->addChildNode(block);
         block->setWorldTransform(pos, VROMatrix4f::identity());
@@ -438,7 +438,7 @@ void VROBodyTrackerController::notifyOnJointUpdateDelegates() {
     // Construct a map containing the current locations of our model joints.
     std::map<VROBodyJointType, VROMatrix4f> modelJoints;
     for (auto &jointTag : kVROBodyBoneTags) {
-        VROMatrix4f worldTransform = _skinner->getCurrentBoneWorldTransform(jointTag.second);
+        VROMatrix4f worldTransform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(jointTag.second);
         modelJoints[jointTag.first] = worldTransform;
     }
 
@@ -744,8 +744,8 @@ void VROBodyTrackerController::calibrateMlToModelRootOffset() {
     */
     int leftHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::LeftHip];
     int rightHipBoneIndex = _mlJointForBoneIndex[VROBodyJointType::RightHip];
-    VROVector3f start = _skinner->getCurrentBoneWorldTransform(leftHipBoneIndex).extractTranslation();
-    VROVector3f end = _skinner->getCurrentBoneWorldTransform(rightHipBoneIndex).extractTranslation();
+    VROVector3f start = _skinner->getSkeleton()->getCurrentBoneWorldTransform(leftHipBoneIndex).extractTranslation();
+    VROVector3f end = _skinner->getSkeleton()->getCurrentBoneWorldTransform(rightHipBoneIndex).extractTranslation();
     VROVector3f mid = (start - end).scale(0.5f) + end;
 
     VROMatrix4f mlRootWorldTrans;
@@ -783,11 +783,11 @@ void VROBodyTrackerController::calculateSkinnerTorsoDistance() {
 
     // Now calculate the ratios for automatic resizing.
     VROMatrix4f neckTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
+            _skinner->getSkeleton()->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
     VROMatrix4f leftHipTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
+            _skinner->getSkeleton()->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::LeftHip));
     VROMatrix4f rightHipTrans =
-            _skinner->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
+            _skinner->getSkeleton()->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::RightHip));
 
     // Now get the middle of the hip.
     VROVector3f midVecFromLeft = (rightHipTrans.extractTranslation() - leftHipTrans.extractTranslation()).scale(0.5f);
@@ -945,8 +945,8 @@ bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint targ
     }
     
     int parentIndex = _skinner->getSkeleton()->getBone(currentIndex)->getParentIndex();
-    VROMatrix4f childTransform = _skinner->getCurrentBoneWorldTransform(currentIndex);
-    VROMatrix4f parentTransform = _skinner->getCurrentBoneWorldTransform(parentIndex);
+    VROMatrix4f childTransform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(currentIndex);
+    VROMatrix4f parentTransform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(parentIndex);
     VROMatrix4f currentTransform = targetJoint.getProjectedTransform();
 
     float maxDistance = parentTransform.extractTranslation().distanceAccurate(childTransform.extractTranslation());

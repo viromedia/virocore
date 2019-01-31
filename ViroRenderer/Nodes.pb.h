@@ -1416,6 +1416,15 @@ class Node_Skeleton_Bone : public ::google::protobuf::MessageLite /* @@protoc_in
   ::viro::Node_Matrix* release_local_transform();
   void set_allocated_local_transform(::viro::Node_Matrix* local_transform);
 
+  // .viro.Node.Matrix bind_transform = 4;
+  bool has_bind_transform() const;
+  void clear_bind_transform();
+  static const int kBindTransformFieldNumber = 4;
+  const ::viro::Node_Matrix& bind_transform() const;
+  ::viro::Node_Matrix* mutable_bind_transform();
+  ::viro::Node_Matrix* release_bind_transform();
+  void set_allocated_bind_transform(::viro::Node_Matrix* bind_transform);
+
   // int32 parent_index = 2;
   void clear_parent_index();
   static const int kParentIndexFieldNumber = 2;
@@ -1428,6 +1437,7 @@ class Node_Skeleton_Bone : public ::google::protobuf::MessageLite /* @@protoc_in
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::viro::Node_Matrix* local_transform_;
+  ::viro::Node_Matrix* bind_transform_;
   ::google::protobuf::int32 parent_index_;
   mutable int _cached_size_;
   friend struct  protobuf_Nodes_2eproto::TableStruct;
@@ -4001,6 +4011,45 @@ inline void Node_Skeleton_Bone::set_allocated_local_transform(::viro::Node_Matri
     
   }
   // @@protoc_insertion_point(field_set_allocated:viro.Node.Skeleton.Bone.local_transform)
+}
+
+// .viro.Node.Matrix bind_transform = 4;
+inline bool Node_Skeleton_Bone::has_bind_transform() const {
+  return this != internal_default_instance() && bind_transform_ != NULL;
+}
+inline void Node_Skeleton_Bone::clear_bind_transform() {
+  if (GetArenaNoVirtual() == NULL && bind_transform_ != NULL) delete bind_transform_;
+  bind_transform_ = NULL;
+}
+inline const ::viro::Node_Matrix& Node_Skeleton_Bone::bind_transform() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Skeleton.Bone.bind_transform)
+  return bind_transform_ != NULL ? *bind_transform_
+                         : *::viro::Node_Matrix::internal_default_instance();
+}
+inline ::viro::Node_Matrix* Node_Skeleton_Bone::mutable_bind_transform() {
+  
+  if (bind_transform_ == NULL) {
+    bind_transform_ = new ::viro::Node_Matrix;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Skeleton.Bone.bind_transform)
+  return bind_transform_;
+}
+inline ::viro::Node_Matrix* Node_Skeleton_Bone::release_bind_transform() {
+  // @@protoc_insertion_point(field_release:viro.Node.Skeleton.Bone.bind_transform)
+  
+  ::viro::Node_Matrix* temp = bind_transform_;
+  bind_transform_ = NULL;
+  return temp;
+}
+inline void Node_Skeleton_Bone::set_allocated_bind_transform(::viro::Node_Matrix* bind_transform) {
+  delete bind_transform_;
+  bind_transform_ = bind_transform;
+  if (bind_transform) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Skeleton.Bone.bind_transform)
 }
 
 // -------------------------------------------------------------------

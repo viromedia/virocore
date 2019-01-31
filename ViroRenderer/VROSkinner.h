@@ -135,21 +135,6 @@ public:
     std::shared_ptr<VRONode> getSkinnerNode() {
         return _skinnerNodeWeak.lock();
     }
-
-    /*
-     Returns the world transform of the given bone.
-     */
-    VROMatrix4f getCurrentBoneWorldTransform(int boneId);
-    VROMatrix4f getCurrentBoneWorldTransform(std::string boneName);
-    VROMatrix4f getCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone);
-
-    /*
-     Sets the world transform of the given bone.
-     */
-    void setCurrentBoneWorldTransform(int boneId, VROMatrix4f transform, bool recurse);
-    void setCurrentBoneWorldTransform(std::string boneName, VROMatrix4f transform, bool recurse);
-    void setCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone, VROMatrix4f transform, bool recurse);
-
 private:
     /*
      The geometry being animated, with coordinates in model space.

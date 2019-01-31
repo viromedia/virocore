@@ -246,9 +246,10 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                             // Add the task queue to the node so it doesn't get deleted until the model
                             // is loaded
                             node->addTaskQueue(taskQueue);
-                            
+
+
                             std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache = std::make_shared<std::map<std::string, std::shared_ptr<VROTexture>>>();
-                            std::shared_ptr<VRONode> fbxNode = loadFBX(*node_pb, base,
+                            std::shared_ptr<VRONode> fbxNode = loadFBX(*node_pb, node, base,
                                                                        loadingTexturesFromResourceMap
                                                                        ? VROResourceType::LocalFile
                                                                        : type,
@@ -288,7 +289,8 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
     });
 }
 
-std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::string base, VROResourceType type,
+std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::shared_ptr<VRONode> finalRootNode,
+                                               std::string base, VROResourceType type,
                                                std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache,
                                                std::shared_ptr<VROTaskQueue> taskQueue) {
@@ -297,21 +299,22 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::string 
     std::shared_ptr<VROSkeleton> skeleton;
     if (node_pb.has_skeleton()) {
         skeleton = loadFBXSkeleton(node_pb.skeleton());
+        skeleton->setModelRootNode(finalRootNode);
     }
     
     // The outer node of the protobuf has no mesh data, it contains
     // metadata (like the skeleton) and holds the root nodes of the
     // FBX mesh. We use our outer VRONode for the same purpose, to
     // contain the root nodes of the FBX file
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VRONode> tempRootNode = std::make_shared<VRONode>();
     for (int i = 0; i < node_pb.subnode_size(); i++) {
         std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), skeleton, base, type,
                                                     resourceMap, textureCache, taskQueue);
-        rootNode->addChildNode(node);
+        tempRootNode->addChildNode(node);
     }
-    trimEmptyNodes(rootNode);
+    trimEmptyNodes(tempRootNode);
     
-    return rootNode;
+    return tempRootNode;
 }
 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
@@ -667,11 +670,19 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
                 boneLocalTransform[m] = skeleton_pb.bone(i).local_transform().value(m);
             }
         }
-        
+
+        VROMatrix4f boneSpaceBindTransform;
+        if (skeleton_pb.bone(i).has_bind_transform() > 0) {
+            for (int m = 0; m < 16; m++) {
+                boneSpaceBindTransform[m] = skeleton_pb.bone(i).bind_transform().value(m);
+            }
+        }
+
         std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(i,
                                                                   parentIndex,
                                                                   name,
-                                                                  boneLocalTransform);
+                                                                  boneLocalTransform,
+                                                                  boneSpaceBindTransform);
         bones.push_back(bone);
     }
     

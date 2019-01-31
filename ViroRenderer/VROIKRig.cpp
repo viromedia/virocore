@@ -80,7 +80,7 @@ VROIKRig::VROIKRig(std::shared_ptr<VROSkinner> skinner,
         }
 
         if (endJoint == nullptr) {
-            VROMatrix4f boneTransform = skinner->getCurrentBoneWorldTransform(endAffectorBoneId.second);
+            VROMatrix4f boneTransform = skinner->getSkeleton()->getCurrentBoneWorldTransform(endAffectorBoneId.second);
             std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
             effectorJoint->id = _allKnownIKJoints.size() + 1;
             effectorJoint->position = boneTransform.extractTranslation();
@@ -230,7 +230,7 @@ void VROIKRig::createSkeletalRigFromSkinner(int boneId) {
 
     // Create an IKJoint from the given current bone if we haven't yet done so.
     if (currentJoint == nullptr) {
-        VROMatrix4f boneTransform = _skinner->getCurrentBoneWorldTransform(boneId);
+        VROMatrix4f boneTransform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(boneId);
         VROVector3f worldPos = boneTransform.extractTranslation();
         currentJoint = std::make_shared<VROIKJoint>();
         currentJoint->id = _allKnownIKJoints.size() + 1;
@@ -333,7 +333,7 @@ void VROIKRig::initializeRig() {
     // transforms have been computed.
     for (auto &joint : _allKnownIKJoints) {
         if (_skinner) {
-            VROMatrix4f mat = _skinner->getCurrentBoneWorldTransform(joint->syncBone);
+            VROMatrix4f mat = _skinner->getSkeleton()->getCurrentBoneWorldTransform(joint->syncBone);
             joint->position = mat.extractTranslation();
         } else {
             joint->position = joint->syncNode->getWorldPosition();
@@ -395,7 +395,7 @@ void VROIKRig::initializeRig() {
     // If we have a root skinner bone, calculate any additional offsets the bone may have
     // from the skinner's node.
     if (_skinner != nullptr) {
-        VROMatrix4f rootBoneTrans = _skinner->getCurrentBoneWorldTransform(0);
+        VROMatrix4f rootBoneTrans = _skinner->getSkeleton()->getCurrentBoneWorldTransform(0);
         VROMatrix4f skinnerTrans = _rootJoint->syncNode->getWorldTransform();
 
         _skinnerJointToRootBone.toIdentity();
@@ -435,14 +435,14 @@ VROMatrix4f VROIKRig::getJointLocalTransform(std::shared_ptr<VROIKJoint> referen
         parentTrans = referenceJoint->parent->syncNode->getWorldTransform();
     } else {
         int boneIndex = referenceJoint->syncBone;
-        jointTrans = _skinner->getCurrentBoneWorldTransform(boneIndex);
+        jointTrans = _skinner->getSkeleton()->getCurrentBoneWorldTransform(boneIndex);
 
         if (referenceJoint->parent == nullptr) {
             return jointTrans;
         }
 
         int parentIndex = referenceJoint->parent->syncBone;
-        parentTrans = _skinner->getCurrentBoneWorldTransform(parentIndex);
+        parentTrans = _skinner->getSkeleton()->getCurrentBoneWorldTransform(parentIndex);
     }
 
     return parentTrans.invert() * jointTrans;
@@ -691,14 +691,14 @@ void VROIKRig::processFABRIKChainNode(std::shared_ptr<VROIKChain> &chain,
 
 void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
     int currentBoneId = joint->syncBone;
-    VROMatrix4f currentTransform = _skinner->getCurrentBoneWorldTransform(currentBoneId);
+    VROMatrix4f currentTransform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(currentBoneId);
     VROVector3f currentScale = currentTransform.extractScale();
     VROQuaternion currentRot = currentTransform.extractRotation(currentScale);
     VROVector3f jointPos = joint->position;
 
     if (joint->children.size() == 0) {
         int parentJointBone = joint->parent->syncBone;
-        VROMatrix4f parentTransform = _skinner->getCurrentBoneWorldTransform(parentJointBone);
+        VROMatrix4f parentTransform = _skinner->getSkeleton()->getCurrentBoneWorldTransform(parentJointBone);
         VROMatrix4f parentRot = parentTransform.extractRotation(parentTransform.extractScale()).getMatrix();
 
         // Create a matrix with the joint's positional transform
@@ -708,7 +708,7 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
         mat.rotate(parentRot);
         mat = _endEffectorIdLocalRotation[joint->id] * mat;
         mat.translate(jointPos);
-        _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, false);
+        _skinner->getSkeleton()->setCurrentBoneWorldTransform(currentBoneId, mat, false);
         return;
     }
 
@@ -726,7 +726,7 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
         mat.rotate(currentRot);
         mat = desiredRot.getMatrix() * mat;
         mat.translate(jointPos);
-        _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, true);
+        _skinner->getSkeleton()->setCurrentBoneWorldTransform(currentBoneId, mat, true);
 
         // Process intermediary locked joints, if any.
         syncLockedJoint(joint, mat);
@@ -739,7 +739,7 @@ void VROIKRig::syncResultSkinner(std::shared_ptr<VROIKJoint> joint) {
         mat.scale(currentScale.x, currentScale.y, currentScale.z);
         mat.rotate(currentRot);
         mat.translate(jointPos);
-        _skinner->setCurrentBoneWorldTransform(currentBoneId, mat, true);
+        _skinner->getSkeleton()->setCurrentBoneWorldTransform(currentBoneId, mat, true);
 
         // Process intermediary locked joints, if any.
         syncLockedJoint(joint, mat);
@@ -824,7 +824,7 @@ void VROIKRig::syncLockedJoint(std::shared_ptr<VROIKJoint> joint, VROMatrix4f pa
             parentTrans = lockedNode->getWorldTransform();
         } else {
             int lockedBone = lockedJoint->syncBone;
-            _skinner->setCurrentBoneWorldTransform(lockedBone, finalTrans, true);
+            _skinner->getSkeleton()->setCurrentBoneWorldTransform(lockedBone, finalTrans, true);
             parentTrans = finalTrans;
         }
     }

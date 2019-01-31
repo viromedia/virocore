@@ -138,8 +138,7 @@ private:
     static bool processSkinner(const tinygltf::Model &gModel);
     static bool processSkinnerInverseBindData(const tinygltf::Model &gModel,
                                               const tinygltf::Skin &skin,
-                                              std::shared_ptr<VROSkeleton> &skeleton,
-                                              std::shared_ptr<VROSkinner> &skinnerOut);
+                                              std::vector<VROMatrix4f> &invBindTransformsOut);
     static void clearCachedData();
 
     /*

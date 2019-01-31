@@ -263,6 +263,10 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                             }
                         }
 
+                        for (auto &skeletonPair : _skinIndexToSkeleton) {
+                            skeletonPair.second->setModelRootNode(rootNode);
+                        }
+
                         // Once we have processed the model, injected it into the scene.
                         injectGLTF(success ? gltfRootNode : nullptr, rootNode, driver, onFinish);
 
@@ -341,31 +345,35 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
     for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
         tinygltf::Skin skin = model.skins[skinIndex];
 
+        // Process and cache a copy of a VROSkinner.
+        std::vector<VROMatrix4f> invBindTransformsOut;
+        if (!processSkinnerInverseBindData(model, model.skins[skinIndex], invBindTransformsOut)) {
+            pwarn("Failed to process Skinner");
+            return false;
+        }
+
         std::vector<std::shared_ptr<VROBone>> bones;
         for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
             int parentJointIndex = skinIndexToJointParentJoint[skinIndex][jointIndex];
             
             // TODO We need the bone local transform if we want layered animations to work with GLTF
+            VROMatrix4f boneSpaceBindTransform = invBindTransformsOut[jointIndex];
             std::string name = "BoneIndex_" + VROStringUtil::toString(parentJointIndex);
             std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(jointIndex,
                                                                       parentJointIndex,
                                                                       name,
-                                                                      VROMatrix4f::identity());
+                                                                      VROMatrix4f::identity(),
+                                                                      boneSpaceBindTransform);
             bones.push_back(bone);
         }
 
         std::shared_ptr<VROSkeleton> skeleton = std::make_shared<VROSkeleton>(bones);
         _skinIndexToSkeleton[skinIndex] = skeleton;
-
-        // Process and cache a copy of a VROSkinner.
-        std::shared_ptr<VROSkinner> skinnerOut = nullptr;
-        if (!processSkinnerInverseBindData(model, model.skins[skinIndex],
-                                           _skinIndexToSkeleton[skinIndex], skinnerOut)) {
-            pwarn("Chris. Failed to process Skinner");
-            return false;
-        }
-
-        _skinMap[skinIndex] = skinnerOut;
+        _skinMap[skinIndex] = std::shared_ptr<VROSkinner>(new VROSkinner(skeleton,
+                                                   VROMatrix4f(),
+                                                   invBindTransformsOut,
+                                                   nullptr,
+                                                   nullptr));
     }
     return true;
 }
@@ -894,8 +902,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
 
 bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
                                                   const tinygltf::Skin &skin,
-                                                  std::shared_ptr<VROSkeleton> &skeleton,
-                                                  std::shared_ptr<VROSkinner> &skinnerOut) {
+                                                  std::vector<VROMatrix4f> &invBindTransformsOut) {
     // Process inverseBind Matrices from the gLTF Accessor
     const tinygltf::Accessor &gDataAcessor = gModel.accessors[skin.inverseBindMatrices];
     GLTFTypeComponent gTypeComponent;
@@ -942,12 +949,7 @@ bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
         VROMatrix4f mat(invBindMatrix);
         invBindTransforms.push_back(mat);
     }
-
-    skinnerOut = std::shared_ptr<VROSkinner>(new VROSkinner(skeleton,
-                                                      VROMatrix4f(),
-                                                      invBindTransforms,
-                                                      nullptr,
-                                                      nullptr));
+    invBindTransformsOut = invBindTransforms;
     return true;
 }
 
