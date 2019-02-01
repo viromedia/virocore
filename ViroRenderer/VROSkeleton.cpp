@@ -29,6 +29,10 @@ void VROSkeleton::setModelRootNode(std::shared_ptr<VRONode> modelRootNode) {
     _modelRootNode_w = modelRootNode;
 }
 
+std::shared_ptr<VRONode> VROSkeleton::getModelRootNode() {
+    return _modelRootNode_w.lock();
+}
+
 VROMatrix4f VROSkeleton::getCurrentBoneWorldTransform(std::string boneName) {
     std::shared_ptr<VROBone> bone = getBone(boneName);
     if (bone == nullptr) {

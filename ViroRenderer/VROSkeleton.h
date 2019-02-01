@@ -69,6 +69,10 @@ public:
      */
     void setModelRootNode(std::shared_ptr<VRONode> modelRootNode);
 
+    /*
+     Returns the model's root node referenced by this VROSkeleton.
+     */
+    std::shared_ptr<VRONode> getModelRootNode();
 private:
     
     /*

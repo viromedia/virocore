@@ -16,7 +16,7 @@
 #include "VROQuaternion.h"
 
 class VRONode;
-class VROSkinner;
+class VROSkeleton;
 
 /*
  A joint in the Inverse Kinematic Rig used for performing and storing inverse kinematic
@@ -84,8 +84,8 @@ public:
     VROIKRig(std::shared_ptr<VRONode> root,
              std::map<std::string, std::shared_ptr<VRONode>> endAffectors);
 
-    // Constructor used for creating IK Rigs out of 3D skeletal skinners.
-    VROIKRig(std::shared_ptr<VROSkinner> skinner,
+    // Constructor used for creating IK Rigs out of the 3D model's skeleton.
+    VROIKRig(std::shared_ptr<VROSkeleton> skeleton,
                        std::map<std::string, int> endEffectorBoneIndexMap);
     ~VROIKRig();
 
@@ -154,10 +154,10 @@ private:
     std::vector<std::shared_ptr<VROIKChain>> _allKnownChains;
 
     /*
-     A reference to the skinner used to construct this IKRig, if any.
+     A reference to the skeleton used to construct this IKRig, if any.
      */
-    std::shared_ptr<VROSkinner> _skinner;
-    VROMatrix4f _skinnerJointToRootBone;
+    std::shared_ptr<VROSkeleton> _skeleton;
+    VROMatrix4f _modelRootToRootJoint;
 
     /*
      Initializes / constructs the IKJoint and IKChain structure of this rig.
@@ -171,7 +171,7 @@ private:
      kinematic calculation.
      */
     void createSkeletalRigFromNodeTree(std::shared_ptr<VRONode> currentNode);
-    void createSkeletalRigFromSkinner(int boneId);
+    void createSkeletalRigFromSkeletalModel(int boneId);
 
     /*
      Iterates through the rig to bypass intermediary IKjoints in between joint effectors from
@@ -215,7 +215,7 @@ private:
      */
     void syncResultPositionOnly(std::shared_ptr<VROIKJoint> jointNode);
     void syncResultRotationOnly(std::shared_ptr<VROIKJoint> jointNode);
-    void syncResultSkinner(std::shared_ptr<VROIKJoint> jointNode);
+    void syncResultSkeleton(std::shared_ptr<VROIKJoint> jointNode);
     void syncLockedJoint(std::shared_ptr<VROIKJoint> jointNode, VROMatrix4f parentTrans);
 };
 

@@ -483,7 +483,7 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
     if (!kinit3DModelWithRig) {
         return;
     }
-    _rig = std::make_shared<VROIKRig>(skinners[0], _endEffectorBones);
+    _rig = std::make_shared<VROIKRig>(skinners[0]->getSkeleton(), _endEffectorBones);
     gltfNode->setIKRig(_rig);
 }
 

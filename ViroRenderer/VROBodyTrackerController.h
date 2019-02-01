@@ -262,10 +262,10 @@ private:
     VROVector3f _projectedPlaneNormal;
 
     /*
-     The rig, skinner and node associated with the currently bound model.
+     The rig, skeleton and node associated with the currently bound model.
      */
     std::shared_ptr<VROIKRig> _rig;
-    std::shared_ptr<VROSkinner> _skinner;
+    std::shared_ptr<VROSkeleton> _skeleton;
     std::shared_ptr<VRONode> _modelRootNode;
 
     /*
@@ -291,7 +291,7 @@ private:
     /*
      Saved Neck to Hip distance, used for calculating automatic torso resizing ratios.
      */
-    float _skinnerTorsoHeight;
+    float _skeletonTorsoHeight;
     float _userTorsoHeight;
 
     /*
@@ -388,11 +388,11 @@ private:
     /*
      Initializes the model's uniform scale needed for automatic resizing.
      */
-    void calculateSkinnerTorsoDistance();
+    void calculateSkeletonTorsoDistance();
 
     /*
      Calculates an mlJointToModelRoot offset transform between 'root' mlJoint bones
-     in the skinner and _modelRootNode.
+     in the skeleton and _modelRootNode.
      */
     void calibrateMlToModelRootOffset();
     /*
