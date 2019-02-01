@@ -9,6 +9,7 @@
 #ifndef VROBone_h
 #define VROBone_h
 
+#include <map>
 #include "VROMatrix4f.h"
 #include "VROAnimatable.h"
 
@@ -123,6 +124,20 @@ public:
     std::string getName() {
         return _name;
     }
+
+    /*
+     Sets a map of attachment transforms related to this bone.
+     */
+    void setAttachmentTransforms(std::map<std::string, VROMatrix4f> attachmentTransforms) {
+        _attachmentTransforms = attachmentTransforms;
+    }
+
+    /*
+     Returns a map of attachment transforms related to this bone.
+     */
+    std::map<std::string, VROMatrix4f> getAttachmentTransforms() {
+        return _attachmentTransforms;
+    }
 private:
     /*
      The index of this node in the skeleton.
@@ -165,6 +180,11 @@ private:
      space that is configured in the "T-pose" bind position.
      */
     VROMatrix4f _bindTransform;
+
+    /*
+     Attachment transforms relative to the bone in model space.
+     */
+    std::map<std::string, VROMatrix4f> _attachmentTransforms;
 };
 
 #endif /* VROBone_h */

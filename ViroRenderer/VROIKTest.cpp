@@ -92,7 +92,7 @@ void VROIKTest::testSingleVerticalChainRig() {
     for (int i = 0 ; i < numOfBlocks; i ++) {
         // Create the block.
         std::shared_ptr<VRONode> newBlockNode = createBlock(false,
-                                                            "Block_" + VROStringUtil::toString(i));
+                                                            "Block_" + VROStringUtil::toString(i), VROVector4f(1.0, 0, 0, 1.0));
         newBlockNode->setPosition(VROVector3f(0, 0.2,0));
         parentNode->addChildNode(newBlockNode);
         parentNode = newBlockNode;
@@ -103,7 +103,7 @@ void VROIKTest::testSingleVerticalChainRig() {
     endEffectorNodes["end"] = parentNode;
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target");
+    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox->setTag("end");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox);
     targetBox->setPosition(VROVector3f((0.2 * numOfBlocks)-0.6, 0, -1));
@@ -125,7 +125,7 @@ void VROIKTest::testSingleHorizontalChainRig() {
     std::shared_ptr<VRONode> midNode;
     for (int i = 0 ; i < numOfBlocks; i ++) {
         // Create the block.
-        std::shared_ptr<VRONode> newBlockNode = createBlock(false, "Block_" + VROStringUtil::toString(i));
+        std::shared_ptr<VRONode> newBlockNode = createBlock(false, "Block_" + VROStringUtil::toString(i), VROVector4f(1.0, 0, 0, 1.0));
         newBlockNode->setPosition(VROVector3f(0.2, 0,0));
         parentNode->addChildNode(newBlockNode);
         parentNode = newBlockNode;
@@ -140,14 +140,14 @@ void VROIKTest::testSingleHorizontalChainRig() {
     //endEffectorNodes["mid"] = midNode;
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target");
+    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox->setTag("end");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox);
     targetBox->setPosition(VROVector3f((0.2 * numOfBlocks)-0.6, 0, -1));
     _targetBoxes.push_back(targetBox);
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target");
+    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox2->setTag("mid");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox2);
     targetBox2->setPosition(VROVector3f((0.2 * 3)-0.6, 0, -1));
@@ -173,65 +173,65 @@ void VROIKTest::testSingleTJointRig() {
                                        |-> (n6) -> (n) -> (n) -> (End Effector)
      */
 
-    std::shared_ptr<VRONode> n1 = createBlock(false, "Block_1");
+    std::shared_ptr<VRONode> n1 = createBlock(false, "Block_1", VROVector4f(1.0, 0, 0, 1.0));
     n1->setPosition(VROVector3f(0, 0.2, 0));
     _currentRoot->addChildNode(n1);
 
-    std::shared_ptr<VRONode> n2 = createBlock(false, "Block_2");
+    std::shared_ptr<VRONode> n2 = createBlock(false, "Block_2", VROVector4f(1.0, 0, 0, 1.0));
     n2->setPosition(VROVector3f(0, 0.2, 0));
     n1->addChildNode(n2);
 
-    std::shared_ptr<VRONode> n3 = createBlock(false, "Block_3");
+    std::shared_ptr<VRONode> n3 = createBlock(false, "Block_3", VROVector4f(1.0, 0, 0, 1.0));
     n3->setPosition(VROVector3f(0, 0.2, 0));
     n2->addChildNode(n3);
 
     // Now branch out from n3
-    std::shared_ptr<VRONode> n4 = createBlock(false, "Block_4");
+    std::shared_ptr<VRONode> n4 = createBlock(false, "Block_4", VROVector4f(1.0, 0, 0, 1.0));
     n4->setPosition(VROVector3f(0.2, 0.2, 0));
     n3->addChildNode(n4);
 
-    std::shared_ptr<VRONode> n5 = createBlock(false, "Block_5");
+    std::shared_ptr<VRONode> n5 = createBlock(false, "Block_5", VROVector4f(1.0, 0, 0, 1.0));
     n5->setPosition(VROVector3f(0, 0.2, 0));
     n3->addChildNode(n5);
 
-    std::shared_ptr<VRONode> n6 = createBlock(false, "Block_6");
+    std::shared_ptr<VRONode> n6 = createBlock(false, "Block_6", VROVector4f(1.0, 0, 0, 1.0));
     n6->setPosition(VROVector3f(-0.2, 0.2, 0));
     n3->addChildNode(n6);
 
     // Add End Effector to n4
-    std::shared_ptr<VRONode> n4A = createBlock(false, "Block_7");
+    std::shared_ptr<VRONode> n4A = createBlock(false, "Block_7", VROVector4f(1.0, 0, 0, 1.0));
     n4A->setPosition(VROVector3f(0, 0.2, 0));
     n4->addChildNode(n4A);
 
     // Add End Effector branch to N6
-    std::shared_ptr<VRONode> n6A = createBlock(false, "Block_8");
+    std::shared_ptr<VRONode> n6A = createBlock(false, "Block_8", VROVector4f(1.0, 0, 0, 1.0));
     n6A->setPosition(VROVector3f(0, 0.2, 0));
     n6->addChildNode(n6A);
 
-    std::shared_ptr<VRONode> n6B = createBlock(false, "Block_9");
+    std::shared_ptr<VRONode> n6B = createBlock(false, "Block_9", VROVector4f(1.0, 0, 0, 1.0));
     n6B->setPosition(VROVector3f(0, 0.2, 0));
     n6A->addChildNode(n6B);
 
-    std::shared_ptr<VRONode> n6C = createBlock(false, "Block_10");
+    std::shared_ptr<VRONode> n6C = createBlock(false, "Block_10", VROVector4f(1.0, 0, 0, 1.0));
     n6C->setPosition(VROVector3f(0, 0.2, 0));
     n6B->addChildNode(n6C);
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox->setTag("endN4");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox);
     targetBox->setPosition(VROVector3f(0.2, 0, -1));
     _targetBoxes.push_back(targetBox);
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox2->setTag("endN5");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox2);
     targetBox2->setPosition(VROVector3f(0, -0.2 , -1));
     _targetBoxes.push_back(targetBox2);
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox3 = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBox3 = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox3->setTag("endN6");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox3);
     targetBox3->setPosition(VROVector3f(-0.2, 0.4, -1));
@@ -262,102 +262,102 @@ void VROIKTest::testSingleTJointRigComplex() {
     _currentRoot->setPosition(VROVector3f(0, -1, -1));
     _sceneController->getScene()->getRootNode()->addChildNode(_currentRoot);
 
-    std::shared_ptr<VRONode> n8 = createBlock(false, "Block_8");
+    std::shared_ptr<VRONode> n8 = createBlock(false, "Block_8", VROVector4f(1.0, 0, 0, 1.0));
     n8->setPosition(VROVector3f(0.2, -0.2, 0));
     _currentRoot->addChildNode(n8);
 
 
-    std::shared_ptr<VRONode> n7 = createBlock(false, "Block_7");
+    std::shared_ptr<VRONode> n7 = createBlock(false, "Block_7", VROVector4f(1.0, 0, 0, 1.0));
     n7->setPosition(VROVector3f(0, -0.2, 0));
     _currentRoot->addChildNode(n7);
 
 
-    std::shared_ptr<VRONode> n9 = createBlock(false, "Block_9");
+    std::shared_ptr<VRONode> n9 = createBlock(false, "Block_9", VROVector4f(1.0, 0, 0, 1.0));
     n9->setPosition(VROVector3f(-0.2, -0.2, 0));
     _currentRoot->addChildNode(n9);
 
-    std::shared_ptr<VRONode> n10 = createBlock(false, "Block_10");
+    std::shared_ptr<VRONode> n10 = createBlock(false, "Block_10", VROVector4f(1.0, 0, 0, 1.0));
     n10->setPosition(VROVector3f(0.0, -0.2, 0));
     n9->addChildNode(n10);
 
-    std::shared_ptr<VRONode> n1 = createBlock(false, "Block_1");
+    std::shared_ptr<VRONode> n1 = createBlock(false, "Block_1", VROVector4f(1.0, 0, 0, 1.0));
     n1->setPosition(VROVector3f(0, 0.2, 0));
     _currentRoot->addChildNode(n1);
 
-    std::shared_ptr<VRONode> n2 = createBlock(false, "Block_2");
+    std::shared_ptr<VRONode> n2 = createBlock(false, "Block_2", VROVector4f(1.0, 0, 0, 1.0));
     n2->setPosition(VROVector3f(0, 0.2, 0));
     n1->addChildNode(n2);
 
-    std::shared_ptr<VRONode> n3 = createBlock(false, "Block_3");
+    std::shared_ptr<VRONode> n3 = createBlock(false, "Block_3", VROVector4f(1.0, 0, 0, 1.0));
     n3->setPosition(VROVector3f(0, 0.2, 0));
     n2->addChildNode(n3);
 
     // Now branch out from n3
-    std::shared_ptr<VRONode> n4 = createBlock(false, "Block_4");
+    std::shared_ptr<VRONode> n4 = createBlock(false, "Block_4", VROVector4f(1.0, 0, 0, 1.0));
     n4->setPosition(VROVector3f(0.2, 0.2, 0));
     n3->addChildNode(n4);
 
-    std::shared_ptr<VRONode> n5 = createBlock(false, "Block_5");
+    std::shared_ptr<VRONode> n5 = createBlock(false, "Block_5", VROVector4f(1.0, 0, 0, 1.0));
     n5->setPosition(VROVector3f(0, 0.2, 0));
     n3->addChildNode(n5);
 
-    std::shared_ptr<VRONode> n6 = createBlock(false, "Block_6");
+    std::shared_ptr<VRONode> n6 = createBlock(false, "Block_6", VROVector4f(1.0, 0, 0, 1.0));
     n6->setPosition(VROVector3f(-0.2, 0.2, 0));
     n3->addChildNode(n6);
 
     // Add End Effector to n4
-    std::shared_ptr<VRONode> n4A = createBlock(false, "Block_7");
+    std::shared_ptr<VRONode> n4A = createBlock(false, "Block_7", VROVector4f(1.0, 0, 0, 1.0));
     n4A->setPosition(VROVector3f(0, 0.2, 0));
     n4->addChildNode(n4A);
 
     // Add End Effector branch to N6
-    std::shared_ptr<VRONode> n6A = createBlock(false, "Block_8");
+    std::shared_ptr<VRONode> n6A = createBlock(false, "Block_8", VROVector4f(1.0, 0, 0, 1.0));
     n6A->setPosition(VROVector3f(0, 0.2, 0));
     n6->addChildNode(n6A);
 
-    std::shared_ptr<VRONode> n6B = createBlock(false, "Block_9");
+    std::shared_ptr<VRONode> n6B = createBlock(false, "Block_9", VROVector4f(1.0, 0, 0, 1.0));
     n6B->setPosition(VROVector3f(0, 0.2, 0));
     n6A->addChildNode(n6B);
 
-    std::shared_ptr<VRONode> n6C = createBlock(false, "Block_10");
+    std::shared_ptr<VRONode> n6C = createBlock(false, "Block_10", VROVector4f(1.0, 0, 0, 1.0));
     n6C->setPosition(VROVector3f(0, 0.2, 0));
     n6B->addChildNode(n6C);
 
     // Create bottom boxes
-    std::shared_ptr<VRONode> targetBoxA = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBoxA = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBoxA->setTag("endN7");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBoxA);
     targetBoxA->setPosition(VROVector3f(0, -1.2, -1));
     _targetBoxes.push_back(targetBoxA);
     
-    std::shared_ptr<VRONode> targetBoxB = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBoxB = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBoxB->setTag("endN8");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBoxB);
     targetBoxB->setPosition(VROVector3f(0.2, -1.2, -1));
     _targetBoxes.push_back(targetBoxB);
 
-    std::shared_ptr<VRONode> targetBoxD = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBoxD = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBoxD->setTag("endN10");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBoxD);
     targetBoxD->setPosition(VROVector3f(-0.2, -1.4, -1));
     _targetBoxes.push_back(targetBoxD);
     
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBox = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox->setTag("endN4");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox);
     targetBox->setPosition(VROVector3f(0.2, 0, -1));
     _targetBoxes.push_back(targetBox);
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBox2 = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox2->setTag("endN5");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox2);
     targetBox2->setPosition(VROVector3f(0, -0.2 , -1));
     _targetBoxes.push_back(targetBox2);
 
     // Create target boxes.
-    std::shared_ptr<VRONode> targetBox3 = createBlock(true, "Target1");
+    std::shared_ptr<VRONode> targetBox3 = createBlock(true, "Target1", VROVector4f(0.0, 1.0, 0, 1.0));
     targetBox3->setTag("endN6");
     _sceneController->getScene()->getRootNode()->addChildNode(targetBox3);
     targetBox3->setPosition(VROVector3f(-0.2, 0.4, -1));
@@ -480,6 +480,16 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
         _endEffectorBones["Neck"] = boneId;
     }
 
+    // find attachment points, if any.
+    std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
+    for (auto &boneAttachPair : skeleton->getBoneAttachments()) {
+        for (auto &attachedNodes : boneAttachPair.second) {
+            std::string nodeTag = "bone_" + VROStringUtil::toString(boneAttachPair.first) + "_" + attachedNodes.first;
+            std::shared_ptr<VRONode> attachBlock = createGLTFEffectorBlock(false, attachedNodes.first, VROVector4f(0, 1, 1, 1));
+            attachedNodes.second->addChildNode(attachBlock);
+        }
+    }
+
     if (!kinit3DModelWithRig) {
         return;
     }
@@ -556,7 +566,7 @@ void VROIKTest::refreshSkeletalRig() {
         VROVector3f bonePosition = transform.extractTranslation();
         VROQuaternion boneRot = transform.extractRotation(transform.extractScale());
 
-        std::shared_ptr<VRONode> block = createGLTFEffectorBlock(true, ef.first);
+        std::shared_ptr<VRONode> block = createGLTFEffectorBlock(true, ef.first, VROVector4f(0.0, 1.0, 0, 1.0));
         if (_rig == nullptr) {
             if (kUseGLTFModel) {
                 block->setTag("Bone:" + VROStringUtil::toString(boneIndex));
@@ -572,7 +582,7 @@ void VROIKTest::refreshSkeletalRig() {
     }
 }
 
-std::shared_ptr<VRONode> VROIKTest::createBlock(bool isAffector, std::string tag) {
+std::shared_ptr<VRONode> VROIKTest::createBlock(bool isAffector, std::string tag, VROVector4f color) {
     // Create our debug box node
     float dimen = 0.03;
     if (isAffector) {
@@ -583,11 +593,7 @@ std::shared_ptr<VRONode> VROIKTest::createBlock(bool isAffector, std::string tag
     mat->setCullMode(VROCullMode::None);
     mat->setReadsFromDepthBuffer(false);
     mat->setWritesToDepthBuffer(false);
-    if (isAffector) {
-        mat->getDiffuse().setColor(VROVector4f(0.0, 1.0, 0, 1.0));
-    } else {
-        mat->getDiffuse().setColor(VROVector4f(1.0, 0, 0, 1.0));
-    }
+    mat->getDiffuse().setColor(color);
 
     std::vector<std::shared_ptr<VROMaterial>> mats;
     mats.push_back(mat);
@@ -609,7 +615,7 @@ std::shared_ptr<VRONode> VROIKTest::createBlock(bool isAffector, std::string tag
     return debugNode;
 }
 
-std::shared_ptr<VRONode> VROIKTest::createGLTFEffectorBlock(bool isAffector, std::string tag) {
+std::shared_ptr<VRONode> VROIKTest::createGLTFEffectorBlock(bool isAffector, std::string tag, VROVector4f color) {
     // Create our debug box node
     float dimen = 0.13;
     if (isAffector) {
@@ -620,11 +626,7 @@ std::shared_ptr<VRONode> VROIKTest::createGLTFEffectorBlock(bool isAffector, std
     mat->setCullMode(VROCullMode::None);
     mat->setReadsFromDepthBuffer(false);
     mat->setWritesToDepthBuffer(false);
-    if (isAffector) {
-        mat->getDiffuse().setColor(VROVector4f(0.0, 1.0, 0, 1.0));
-    } else {
-        mat->getDiffuse().setColor(VROVector4f(1.0, 0, 0, 1.0));
-    }
+    mat->getDiffuse().setColor(color);
 
     std::vector<std::shared_ptr<VROMaterial>> mats;
     mats.push_back(mat);

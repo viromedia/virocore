@@ -11,6 +11,7 @@
 #include "VROStringUtil.h"
 #include "VROLog.h"
 #include "VRONode.h"
+#include "VROBoneConstraint.h"
 
 VROSkeleton::VROSkeleton(std::vector<std::shared_ptr<VROBone>> bones) {
     _bones = bones;
@@ -23,10 +24,48 @@ VROSkeleton::VROSkeleton(std::vector<std::shared_ptr<VROBone>> bones) {
 
         _nameToBonesMap[boneName] = bone;
     }
+
+    /*
+     Construct attachment nodes from the model's skeleton, if any.
+     */
+    for (auto &bone : _bones) {
+        if (bone->getAttachmentTransforms().size() == 0) {
+            continue;
+        }
+
+        int boneIndex = bone->getIndex();
+        for (auto &attachmentTransformPair : bone->getAttachmentTransforms()) {
+            std::string attachmentKey = attachmentTransformPair.first;
+            std::shared_ptr<VRONode> attachmentNode = std::make_shared<VRONode>();
+            _boneNodeAttachments[boneIndex][attachmentKey] = attachmentNode;
+        }
+    }
 }
 
 void VROSkeleton::setModelRootNode(std::shared_ptr<VRONode> modelRootNode) {
     _modelRootNode_w = modelRootNode;
+
+    // Iterate through and create a VROBoneConstraint for each boneNodeAttachment
+    for (auto &bonePair : _boneNodeAttachments) {
+        int boneIndex = bonePair.first;
+        std::map<std::string, std::shared_ptr<VRONode>> keyToNodeAttachments = bonePair.second;
+        for (auto &keyNodePair : keyToNodeAttachments) {
+            std::shared_ptr<VRONode> node = keyNodePair.second;
+            std::string attachmentKey = keyNodePair.first;
+
+            // Add our attachement nodes to the root node of the model.
+            modelRootNode->addChildNode(node);
+
+            // Now grab the offset transform in model space.
+            std::map<std::string, VROMatrix4f> attachmentTransforms = _bones[boneIndex]->getAttachmentTransforms();
+            VROMatrix4f offsetTransformModelSpace = attachmentTransforms[attachmentKey];
+
+            // Apply VROBoneConstraint to constrain the position of the attachment node to the bone.
+            std::shared_ptr<VROBoneConstraint> skeletalConstraint =
+                    std::make_shared<VROBoneConstraint>(shared_from_this(), boneIndex, offsetTransformModelSpace);
+            node->addConstraint(skeletalConstraint);
+        }
+    }
 }
 
 std::shared_ptr<VRONode> VROSkeleton::getModelRootNode() {

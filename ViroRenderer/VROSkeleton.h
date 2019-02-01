@@ -25,7 +25,7 @@ class VRONode;
  
  To associate a skeleton with a geometry, use a VROSkinner.
  */
-class VROSkeleton {
+class VROSkeleton : public std::enable_shared_from_this<VROSkeleton>{
     
 public:
     
@@ -46,6 +46,13 @@ public:
             return bone->second;
         }
         return nullptr;
+    }
+
+    /*
+     Returns a map of bone attachment nodes associated with this skeleton.
+     */
+    const std::map<int, std::map<std::string, std::shared_ptr<VRONode>>> getBoneAttachments() const {
+        return _boneNodeAttachments;
     }
 
     /*
@@ -73,8 +80,8 @@ public:
      Returns the model's root node referenced by this VROSkeleton.
      */
     std::shared_ptr<VRONode> getModelRootNode();
+
 private:
-    
     /*
      The bones representing the skeleton. Each represents a control point of
      the animation. Moving a bone deforms the surface of this skinner's
@@ -91,6 +98,12 @@ private:
      Model root reference for boneToWorld calculations.
      */
     std::weak_ptr<VRONode> _modelRootNode_w;
+
+    /*
+     A map of all bone attachment nodes in this skeleton in the form:
+     <boneIndex, <attachmentTransformKey, attachmentNode>>
+     */
+    std::map<int, std::map<std::string, std::shared_ptr<VRONode>>> _boneNodeAttachments;
 };
 
 #endif /* VROSkeleton_h */

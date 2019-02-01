@@ -678,11 +678,24 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
             }
         }
 
+        // Create attachment transforms associated with this bone, if any.
+        std::map<std::string, VROMatrix4f> attachmentTransforms;
+        int attachmentTransformsSize = skeleton_pb.bone(i).attachment_transforms_size();
+        for (int b = 0; b < attachmentTransformsSize; b ++) {
+            std::string key = skeleton_pb.bone(i).attachment_transforms(b).key();
+            VROMatrix4f boneAttachmentTransform;
+            for (int m = 0; m < 16; m++) {
+                boneAttachmentTransform[m] = skeleton_pb.bone(i).attachment_transforms(b).value().value(m);
+            }
+            attachmentTransforms[key] = boneAttachmentTransform;
+        }
+
         std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(i,
                                                                   parentIndex,
                                                                   name,
                                                                   boneLocalTransform,
                                                                   boneSpaceBindTransform);
+        bone->setAttachmentTransforms(attachmentTransforms);
         bones.push_back(bone);
     }
     

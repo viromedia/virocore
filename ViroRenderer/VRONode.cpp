@@ -533,17 +533,21 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
     
     /*
-     Compute constraints for this node. Do not update _worldRotation as it isn't
-     necessary after the afterConstraints() phase.
+     Compute constraints for this node.
      */
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
-        VROMatrix4f billboardRotation = constraint->getTransform(context, _worldTransform);
-        
-        // To apply the billboard rotation, translate the object to the origin, apply
-        // the rotation, then translate back to its previously computed world position
-        _worldTransform.translate(_worldPosition.scale(-1));
-        _worldTransform = billboardRotation.multiply(_worldTransform);
-        _worldTransform.translate(_worldPosition);
+        if (constraint->getConstraintType() == VROConstraintType::Bone) {
+            _worldTransform = constraint->getTransform(context, _worldTransform);
+        } else {
+            VROMatrix4f billboardRotation = constraint->getTransform(context, _worldTransform);
+
+            // To apply the billboard rotation, translate the object to the origin, apply
+            // the rotation, then translate back to its previously computed world position.
+            // Do not update _worldRotation as it isn't necessary after the afterConstraints() phase
+            _worldTransform.translate(_worldPosition.scale(-1));
+            _worldTransform = billboardRotation.multiply(_worldTransform);
+            _worldTransform.translate(_worldPosition);
+        }
         
         updated = true;
     }

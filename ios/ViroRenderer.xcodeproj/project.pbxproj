@@ -1439,6 +1439,10 @@
 		8FFA8A1520504E7D00C4D99B /* VROTaskQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */; };
 		8FFA8A1620504E7D00C4D99B /* VROTaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FFA8A232057903800C4D99B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFA8A222057903700C4D99B /* libbz2.tbd */; };
+		A5092868220907DC00BAACE5 /* VROBoneConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5092866220907DC00BAACE5 /* VROBoneConstraint.cpp */; };
+		A5092869220907DC00BAACE5 /* VROBoneConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5092866220907DC00BAACE5 /* VROBoneConstraint.cpp */; };
+		A509286A220907DC00BAACE5 /* VROBoneConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = A5092867220907DC00BAACE5 /* VROBoneConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A509286B220907DC00BAACE5 /* VROBoneConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = A5092867220907DC00BAACE5 /* VROBoneConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */; };
@@ -2486,6 +2490,8 @@
 		8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTaskQueue.h; sourceTree = "<group>"; };
 		8FFA8A222057903700C4D99B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		A2662FF813AA989655ACE1B9 /* Pods-ViroKit_static_lib.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit_static_lib.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit_static_lib/Pods-ViroKit_static_lib.debug.xcconfig"; sourceTree = "<group>"; };
+		A5092866220907DC00BAACE5 /* VROBoneConstraint.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBoneConstraint.cpp; sourceTree = "<group>"; };
+		A5092867220907DC00BAACE5 /* VROBoneConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBoneConstraint.h; sourceTree = "<group>"; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
 		A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleEmitter.cpp; sourceTree = "<group>"; };
@@ -2841,6 +2847,8 @@
 				8FD2A5051F81273F00E831A6 /* VROPencil.cpp */,
 				A59E11391F53951700EB2CEB /* VROPostProcessEffectFactory.h */,
 				A59E11381F53951700EB2CEB /* VROPostProcessEffectFactory.cpp */,
+				A5092866220907DC00BAACE5 /* VROBoneConstraint.cpp */,
+				A5092867220907DC00BAACE5 /* VROBoneConstraint.h */,
 				A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */,
 				A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */,
 				A51347321F329B0B00FF3726 /* VROParticleEmitter.h */,
@@ -4309,6 +4317,7 @@
 				13B673ED212229B20040FB72 /* VROViewport.h in Headers */,
 				13B673EE212229B20040FB72 /* VROCameraTextureiOS.h in Headers */,
 				13B673EF212229B20040FB72 /* VROCompress.h in Headers */,
+				A509286B220907DC00BAACE5 /* VROBoneConstraint.h in Headers */,
 				13B673F0212229B20040FB72 /* VROPhysicsContactResultCallback.h in Headers */,
 				13B673F1212229B20040FB72 /* VROMath.h in Headers */,
 				13B673F2212229B20040FB72 /* VROARNodeDelegateiOS.h in Headers */,
@@ -4635,6 +4644,7 @@
 				8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8AF0E08E1FABA4C50083CBAE /* VROARPointCloud.h in Headers */,
+				A509286A220907DC00BAACE5 /* VROBoneConstraint.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
 				8F53D3A51DCB9B2A001C91A8 /* VROImage.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
@@ -5741,6 +5751,7 @@
 				13B672F1212229B20040FB72 /* VROARFrameInertial.cpp in Sources */,
 				13B672F2212229B20040FB72 /* VROOBJTest.cpp in Sources */,
 				13B672F3212229B20040FB72 /* VROARAnchorInertial.cpp in Sources */,
+				A5092869220907DC00BAACE5 /* VROBoneConstraint.cpp in Sources */,
 				13B672F4212229B20040FB72 /* VROImageUtil.cpp in Sources */,
 				13B672F5212229B20040FB72 /* VROApiKeyValidatorDynamo.m in Sources */,
 				13B672F6212229B20040FB72 /* VROVideoSphereTest.cpp in Sources */,
@@ -5956,6 +5967,7 @@
 				A5A10750212D51DC008B2DFB /* dgif_lib.c in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
 				8AE44CA62023AFC400CE8394 /* VROARImageTrackingTest.cpp in Sources */,
+				A5092868220907DC00BAACE5 /* VROBoneConstraint.cpp in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
 				8A130DA31E4018550050D83B /* VROSoundDataGVR.cpp in Sources */,
 				8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */,

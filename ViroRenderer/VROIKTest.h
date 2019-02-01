@@ -49,7 +49,7 @@ private:
     std::shared_ptr<VROEventDelegate> _eventDelegate;
     std::shared_ptr<VRONode> _pointOfView;
 
-    std::shared_ptr<VRONode> createBlock(bool draggable, std::string tag);
+    std::shared_ptr<VRONode> createBlock(bool draggable, std::string tag, VROVector4f color);
     std::shared_ptr<VRONode> _currentRoot;
     std::shared_ptr<VROPolyline> _debugRigSkeletalLine;
 
@@ -59,7 +59,7 @@ private:
     void initSkinner(std::shared_ptr<VRONode> gltfNode);
 
     void refreshSkeletalRig();
-    std::shared_ptr<VRONode> createGLTFEffectorBlock(bool isAffector, std::string tag);
+    std::shared_ptr<VRONode> createGLTFEffectorBlock(bool isAffector, std::string tag, VROVector4f color);
     void calculateSkeletalLines(std::shared_ptr<VRONode> node,
                                 std::vector<std::vector<VROVector3f>> &paths);
     void renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex);

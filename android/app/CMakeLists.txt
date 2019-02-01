@@ -171,6 +171,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROTexture.cpp
              ${VIRO_RENDERER_SRC}/VROLight.cpp
              ${VIRO_RENDERER_SRC}/VROBillboardConstraint.cpp
+             ${VIRO_RENDERER_SRC}/VROBoneConstraint.cpp
              ${VIRO_RENDERER_SRC}/VROTransformConstraint.cpp
              ${VIRO_RENDERER_SRC}/VRORenderer.cpp
              ${VIRO_RENDERER_SRC}/VROFrameSynchronizerInternal.cpp
