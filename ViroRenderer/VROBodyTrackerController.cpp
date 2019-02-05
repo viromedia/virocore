@@ -526,7 +526,10 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
         VROBodyJoint rootJoint = latestJoints[kArHitTestJoint];
         VROVector3f screenCoord = rootJoint.getScreenCoords();
         VROMatrix4f projectedTrans = VROMatrix4f::identity();
-        performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans);
+        if (!performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans)) {
+            latestJoints.clear();
+            return;
+        }
 
         // Update our projection plane
         _projectedPlanePosition = projectedTrans.extractTranslation();
