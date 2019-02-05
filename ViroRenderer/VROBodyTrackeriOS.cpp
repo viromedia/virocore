@@ -108,6 +108,9 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
 #else
         VROBodyJointType type = _mpiiTypesToJointTypes[k];
 #endif
+        if (type == VROBodyJointType::Unknown) {
+            continue;
+        }
         
         for (int i = 0; i < heatmapWidth; i++) {
             for (int j = 0; j < heatmapHeight; j++) {
