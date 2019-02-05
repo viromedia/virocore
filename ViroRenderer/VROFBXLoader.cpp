@@ -716,7 +716,7 @@ std::shared_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
         
         if (skin_pb.bind_transform(i).value_size() != 16) {
             // Push identity if we don't have a bind transform for this bone
-            bindTransforms.push_back({});
+            bindTransforms.push_back(VROMatrix4f::identity());
         }
         else {
             float mtx[16];

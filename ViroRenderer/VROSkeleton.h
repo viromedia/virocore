@@ -17,6 +17,7 @@ class VRONode;
 #include <map>
 #include <string>
 #include "VROMatrix4f.h"
+#include "VROVector3f.h"
 
 /*
  The VROSkeleton is the bone-structure that defines the control points
@@ -81,6 +82,12 @@ public:
      */
     std::shared_ptr<VRONode> getModelRootNode();
 
+    /*
+     Positions and scales all bones between and including the given parent and child bone
+     with the given scaleFactor and in the given scaleDirection.
+     */
+    void scaleBoneTransforms(int startParentBone, int endChildBone,
+                             float scaleFactor, VROVector3f scaleDirection);
 private:
     /*
      The bones representing the skeleton. Each represents a control point of
@@ -104,6 +111,15 @@ private:
      <boneIndex, <attachmentTransformKey, attachmentNode>>
      */
     std::map<int, std::map<std::string, std::shared_ptr<VRONode>>> _boneNodeAttachments;
+
+    /*
+     Positions and scales the currentBone index with the given scaleFactor in the given
+     scaleDirection. This is done recursively starting from the parent node moving outwards
+     towards the child nodes.
+     */
+    void scaleBoneTransform(int currentBoneIndex, std::vector<int> &bonesChildFirst,
+                            VROMatrix4f parentTransform, float scaleFactor,
+                            VROVector3f scaleDirection);
 };
 
 #endif /* VROSkeleton_h */

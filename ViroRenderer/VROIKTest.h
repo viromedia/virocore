@@ -57,6 +57,8 @@ private:
     std::shared_ptr<VROSkinner> _skinner;
     std::map<std::string, int> _endEffectorBones;
     void initSkinner(std::shared_ptr<VRONode> gltfNode);
+    void restoreTopBoneTransform();
+    void scaleBoneTransform(std::string from, std::string to, float ratio, VROVector3f scaleDirection);
 
     void refreshSkeletalRig();
     std::shared_ptr<VRONode> createGLTFEffectorBlock(bool isAffector, std::string tag, VROVector4f color);

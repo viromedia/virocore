@@ -193,3 +193,92 @@ void VROSkeleton::setCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone,
         setCurrentBoneWorldTransform(childBoneIndex, newChildTransform, recurse);
     }
 }
+
+void VROSkeleton::scaleBoneTransforms(int startParentBone,
+                                      int endChildBone, // Towards the edge (not root)
+                                      float scaleFactor,
+                                      VROVector3f scaleDirection) {
+    // Grab all the intermediary bones between startBoneId and endChildBone,
+    // stored in the order starting from the child towards the parent.
+    // Return if the end bone is not reachable.
+    bool hasChildBone = true;
+    std::vector<int> intermediaryBones;
+    std::shared_ptr<VROBone> currentBone = getBone(endChildBone);
+    while(hasChildBone) {
+        if (currentBone->getIndex() == 0) {
+            perr("Unable to reach startboneId from endChildBone");
+            return;
+        }
+
+        int parentId = currentBone->getParentIndex();
+        intermediaryBones.push_back(currentBone->getIndex());
+        if (parentId != startParentBone) {
+            currentBone = getBone(parentId);
+        } else {
+            intermediaryBones.push_back(parentId);
+            break;
+        }
+    }
+
+    VROMatrix4f parentTransform = getCurrentBoneWorldTransform(startParentBone);
+    scaleBoneTransform(intermediaryBones.size() - 2,
+                       intermediaryBones,
+                       parentTransform,
+                       scaleFactor,
+                       scaleDirection);
+}
+
+void VROSkeleton::scaleBoneTransform(int currentBoneIndex,
+                                     std::vector<int> &bonesChildFirst,
+                                     VROMatrix4f parentTransform,
+                                     float scaleFactor,
+                                     VROVector3f scaleDirection) {
+    // First, determine the additive weighted scale we wish to apply.
+    VROVector3f weightedScale = VROVector3f(1,1,1);
+    weightedScale.x = scaleDirection.x == 0 ? 1 : scaleFactor;
+    weightedScale.y = scaleDirection.y == 0 ? 1 : scaleFactor;
+    weightedScale.z = scaleDirection.z == 0 ? 1 : scaleFactor;
+
+    // Next, scale the parent with the weightedScale.
+    int parentIndex = bonesChildFirst[currentBoneIndex + 1];
+    VROMatrix4f parentTrans = getCurrentBoneWorldTransform(parentIndex);
+    parentTrans.scale(weightedScale.x, weightedScale.y, weightedScale.z);
+    setCurrentBoneWorldTransform(parentIndex, parentTrans, false);
+
+    // Then grab the current bone transform
+    int currentIndex = bonesChildFirst[currentBoneIndex];
+    VROMatrix4f currentTrans = getCurrentBoneWorldTransform(currentIndex);
+
+    // Translate the current bone's position to a scaled positional reference
+    // to the parent's transform. Note that we do not set its own scale property.
+    VROMatrix4f localTransform = parentTransform.invert() * currentTrans;
+    VROVector3f localTranslation = localTransform.extractTranslation();
+    VROVector3f localTranslationScaled = localTransform.extractTranslation().scale(scaleFactor);
+    localTransform.translate(localTranslationScaled - localTranslation);
+
+    // Shift the result from local space back into world space and save it back into the bone.
+    VROMatrix4f finalWorldTransform = parentTransform * localTransform;
+    setCurrentBoneWorldTransform(currentIndex, finalWorldTransform, true);
+
+    // Now determine if this child is a leaf in the skeleton
+    // Grab all the child bones from the current boneId.
+    std::vector<int> childBoneIndexes;
+    for (int i = 0; i < getNumBones(); i ++) {
+        if (getBone(i)->getParentIndex() == currentIndex && i != currentIndex) {
+            childBoneIndexes.push_back(i);
+        }
+    }
+
+    // If this bone is a leaf, we then set its scale property as well.
+    if (childBoneIndexes.size() <= 0) {
+        VROMatrix4f leafTrans = getCurrentBoneWorldTransform(currentIndex);
+        leafTrans.scale(weightedScale.x, weightedScale.y, weightedScale.z);
+        setCurrentBoneWorldTransform(currentIndex, leafTrans, false);
+    }
+
+    // Recurse towards the edge of the model
+    if (currentBoneIndex != 0) {
+        scaleBoneTransform(currentBoneIndex - 1,
+                           bonesChildFirst, finalWorldTransform, scaleFactor, scaleDirection);
+    }
+}

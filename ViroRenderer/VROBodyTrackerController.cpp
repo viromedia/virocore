@@ -60,7 +60,7 @@ static const float kHighConfidence = 0.45;
 static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kVolatilityThresholdMeters = 0.15;
 static const float kReachableBoneThresholdMeters = 0.2;
-static const float kAutomaticSizingRatio = 0.75;
+static const float kAutomaticSizingRatio = 1;
 static const bool kModelDebugCubes = true;
 static const bool kAutomaticResizing = true;
 static const bool kDampenWithEMA = true;
@@ -71,6 +71,29 @@ static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
                                                     VROBodyJointType::RightHip,
                                                     VROBodyJointType::LeftHip };
 static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
+
+// The hierarchy of ML joints as referred to by VROBodyTrackerController.
+// Note: This is a different hierarchy than the one in VROIKRig.
+static const std::map<VROBodyJointType, std::vector<VROBodyJointType>> kVROMLBodyTree = {
+        {VROBodyJointType::Top,             {}},
+        {VROBodyJointType::Neck,            {VROBodyJointType::Top,
+                                                    VROBodyJointType::RightShoulder,
+                                                    VROBodyJointType::LeftShoulder,
+                                                    VROBodyJointType::RightKnee,
+                                                    VROBodyJointType::LeftKnee}},
+        {VROBodyJointType::RightShoulder,   {VROBodyJointType::RightElbow}},
+        {VROBodyJointType::RightElbow,      {VROBodyJointType::RightWrist}},
+        {VROBodyJointType::RightWrist,      {}},
+        {VROBodyJointType::RightHip,        {VROBodyJointType::RightKnee}},
+        {VROBodyJointType::RightKnee,       {VROBodyJointType::RightAnkle}},
+        {VROBodyJointType::RightAnkle,      {}},
+        {VROBodyJointType::LeftShoulder,    {VROBodyJointType::LeftElbow}},
+        {VROBodyJointType::LeftElbow,       {VROBodyJointType::LeftWrist}},
+        {VROBodyJointType::LeftWrist,       {}},
+        {VROBodyJointType::LeftHip,         {VROBodyJointType::LeftKnee}},
+        {VROBodyJointType::LeftKnee,        {VROBodyJointType::LeftAnkle}},
+        {VROBodyJointType::LeftAnkle,       {}},
+};
 
 VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot) {
     _currentTrackedState = VROBodyTrackedState::NotAvailable;
@@ -206,6 +229,50 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     return true;
 }
 
+void VROBodyTrackerController::restoreTopBoneTransform() {
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
+
+    // Grab the first skinner to examine geometric transforms with.
+    std::vector<std::shared_ptr<VROSkinner>> skinners;
+    _modelRootNode->getSkinner(skinners, true);
+    if (skinners.size() < 0) {
+        return;
+    }
+
+    // Now determine if the geometry bind transforms for the top bone is the identity.
+    std::shared_ptr<VROSkinner> skinner = skinners[0];
+    const std::vector<VROMatrix4f> bindTrans = skinner->getBindTransforms();
+    std::shared_ptr<VROBone> bone = _skeleton->getBone(kVROBodyBoneTags.at(VROBodyJointType::Top));
+    int topIndex = bone->getIndex();
+    if (!bindTrans.at(topIndex).isIdentity()) {
+        return;
+    }
+
+    // If so, we'll need to restore the actual bone transform by 'unrolling' the skeleton.
+    int boneIndex = bone->getIndex();
+    int cIndex = boneIndex;
+    std::vector<std::shared_ptr<VROBone>> bones;
+    while (cIndex > 0) {
+        bone = _skeleton->getBone(cIndex);
+        bones.push_back(bone);
+        cIndex = bone->getParentIndex();
+    }
+
+    VROMatrix4f computedBoneTransform = VROMatrix4f::identity();
+    for (int i = bones.size() -1; i >=0; i --) {
+        computedBoneTransform = bones[i]->getLocalTransform() * computedBoneTransform;
+    }
+
+    // Move the resulting unrolled bone space transform into model space, and then world space.
+    VROMatrix4f boneTransformModelSpace =  skinner->getInverseBindTransforms().at(topIndex).multiply(computedBoneTransform);
+    VROMatrix4f skinnerNodeTrans = skinner->getSkinnerNode()->getWorldTransform();
+    VROMatrix4f output = skinnerNodeTrans.multiply(boneTransformModelSpace);
+
+    // Save the result back into the skeleton.
+    _skeleton->setCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Top), output, false);
+}
+
 void VROBodyTrackerController::startCalibration() {
     if (_calibrating) {
         return;
@@ -217,6 +284,8 @@ void VROBodyTrackerController::startCalibration() {
     }
 
     _calibratedConfiguration = nullptr;
+    _mlBoneLengths.clear();
+    _modelBoneLengths.clear();
     _calibrating = true;
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
@@ -243,6 +312,8 @@ void VROBodyTrackerController::finishCalibration() {
     }
 
     _modelRootNode->removeAllConstraints();
+    calibrateBoneProportionality();
+
     _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
@@ -251,6 +322,8 @@ void VROBodyTrackerController::finishCalibration() {
     _calibratedConfiguration->projectedPlaneNormal = _projectedPlaneNormal;
     _calibratedConfiguration->projectedPlanePosition = _projectedPlanePosition;
     _calibratedConfiguration->torsoLength = _userTorsoHeight;
+    _calibratedConfiguration->_modelBoneLengths = _modelBoneLengths;
+    _calibratedConfiguration->_mlBoneLengths = _mlBoneLengths;
 
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
@@ -258,6 +331,149 @@ void VROBodyTrackerController::finishCalibration() {
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
     _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
     _modelRootNode->setEventDelegate(_preservedEventDelegate);
+}
+
+void VROBodyTrackerController::calibrateBoneProportionality() {
+    restoreTopBoneTransform();
+
+    bool hasEffectorData = _currentTrackedState == FullEffectors ||
+        (_modelBoneLengths.size() != 0 && _modelBoneLengths.size() != 0);
+
+    if (!hasEffectorData) {
+        pwarn("Currently tracking with limited joints... skipping bone calibration!");
+        return;
+    }
+
+    // First calculate intermediate bone sizes with the latest MLJoint data
+    if (_modelBoneLengths.size() == 0) {
+        calculateKnownBoneSizes(VROBodyJointType::Neck);
+        calculateInferredBoneSizes();
+    }
+
+    // Then, modify the model's skeleton with the calibrated lengths.
+    scaleBoneTransform("mixamorig:Hips", "mixamorig:Spine2", {0.0f, 0.0f, 0.0f});
+    scaleBoneTransform("mixamorig:Spine2", "Neck", {0.0f, 1.0f, 0.0f});
+    scaleBoneTransform("mixamorig:Spine2", "RightShoulder", {0.0f, 0.0f, 0.0f});
+    scaleBoneTransform("mixamorig:Spine2", "LeftShoulder", {0.0f, 0.0f, 0.0f});
+    scaleBoneTransform("Neck", "Top", {0.0f, 0.0f, 0.0f});
+    scaleBoneTransform("RightShoulder", "RightElbow", {1.0f, 0, 0});
+    scaleBoneTransform("RightElbow", "RightWrist", {1.0f, 0, 0});
+    scaleBoneTransform("LeftShoulder", "LeftElbow", {1.0f, 0, 0});
+    scaleBoneTransform("LeftElbow", "LeftWrist", {1.0f, 0, 0});
+    scaleBoneTransform("RightHip", "RightKnee", {0, 1.0f, 0});
+    scaleBoneTransform("RightKnee", "RightAnkle", {0, 1.0f, 0});
+    scaleBoneTransform("LeftHip", "LeftKnee", {0, 1.0f, 0});
+    scaleBoneTransform("LeftKnee", "LeftAnkle", {0, 1.0f, 0});
+}
+
+void VROBodyTrackerController::scaleBoneTransform(std::string joint,
+                                                  std::string subJoint,
+                                                  VROVector3f scaleDir) {
+    // Now grab the difference and determine growth ratio
+    float mlShoulderLength = _mlBoneLengths[subJoint];
+    float modelShoudlerLength = _modelBoneLengths[subJoint];
+    float growthRatio = mlShoulderLength / modelShoudlerLength;
+
+    // Now grow all the bones in between and modify the skinner.
+    int jointIndex = _skeleton->getBone(joint)->getIndex();
+    int subJointIndex = _skeleton->getBone(subJoint)->getIndex();
+    _skeleton->scaleBoneTransforms(jointIndex, subJointIndex, growthRatio, scaleDir);
+}
+
+void VROBodyTrackerController::calculateInferredBoneSizes() {
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
+
+    // Calculate an inferred ml collarBone transform needed for bone length calculation
+    VROMatrix4f modelNeck  = _skeleton->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Neck));
+    VROVector3f modelNeckTranslation = modelNeck.extractTranslation();
+    VROMatrix4f modelCollarBone  = _skeleton->getCurrentBoneWorldTransform("mixamorig:Spine2");
+    VROVector3f modelCollerBoneTranslation = modelCollarBone.extractTranslation();
+    VROVector3f modelNeckToCollarBone = modelCollerBoneTranslation - modelNeckTranslation;
+    VROMatrix4f mlNeckTransform = _cachedTrackedJoints[VROBodyJointType::Neck].getProjectedTransform();
+    VROVector3f mlNeckTranslation = mlNeckTransform.extractTranslation();
+    VROVector3f inferredMlCollarBoneTranslation = mlNeckTranslation + modelNeckToCollarBone;
+
+    // Calculate an inferred ml hip root position needed for bone length calculation.
+    VROMatrix4f modelHip = _skeleton->getCurrentBoneWorldTransform("mixamorig:Hips");
+    VROVector3f modelHipTranslation = modelHip.extractTranslation();
+    VROVector3f modelCollarBoneToHip = modelHipTranslation - modelCollerBoneTranslation;
+    VROVector3f inferredMlRootHipTranslation = inferredMlCollarBoneTranslation + modelCollarBoneToHip;
+
+    // Now recalibrate the proportional sizes of the remainder of the bone lengths
+    // within the torso. Calculate collarbone to shoulder bone lengths.
+    updateBoneLengthReference(modelCollerBoneTranslation,
+                              inferredMlCollarBoneTranslation, VROBodyJointType::RightShoulder);
+    updateBoneLengthReference(modelCollerBoneTranslation,
+                              inferredMlCollarBoneTranslation, VROBodyJointType::LeftShoulder);
+
+    // Calculate collarbone to neck bone lengths
+    updateBoneLengthReference(modelCollerBoneTranslation,
+                              inferredMlCollarBoneTranslation, VROBodyJointType::Neck);
+
+    // Calculate collarbone to the hipRoot bone lengths
+    float modelBoneDistanceHip = modelCollerBoneTranslation.distanceAccurate(modelHipTranslation);
+    float mlBoneDistanceHip = inferredMlCollarBoneTranslation.distanceAccurate(inferredMlRootHipTranslation);
+    _modelBoneLengths["mixamorig:Spine2"] = modelBoneDistanceHip;
+    _mlBoneLengths["mixamorig:Spine2"] = mlBoneDistanceHip;
+
+    // Calculate hipRoot bone to the right hip bone lengths.
+    updateBoneLengthReference(inferredMlRootHipTranslation,
+                              inferredMlRootHipTranslation, VROBodyJointType::RightHip);
+
+    // Calculate hipRoot bone to the left hip bone lengths.
+    updateBoneLengthReference(inferredMlRootHipTranslation,
+                              inferredMlRootHipTranslation, VROBodyJointType::LeftHip);
+}
+
+void VROBodyTrackerController::updateBoneLengthReference(VROVector3f previousModelBoneTrans,
+                                                         VROVector3f previousMlBoneTrans,
+                                                         VROBodyJointType targetBone) {
+    VROMatrix4f targetBoneModelTransform = _skeleton->getCurrentBoneWorldTransform(kVROBodyBoneTags.at(targetBone));
+    VROMatrix4f targetBoneMlTransform = _cachedTrackedJoints[targetBone].getProjectedTransform();
+
+    VROVector3f targetBoneModelTranslation = targetBoneModelTransform.extractTranslation();
+    VROVector3f targetBoneMlTranslation = targetBoneMlTransform.extractTranslation();
+
+    float modelBoneDistance = targetBoneModelTranslation.distanceAccurate(previousModelBoneTrans);
+    float mlBoneDistance = targetBoneMlTranslation.distanceAccurate(previousMlBoneTrans);
+
+    _modelBoneLengths[kVROBodyBoneTags.at(targetBone)] = modelBoneDistance;
+    _mlBoneLengths[kVROBodyBoneTags.at(targetBone)] = mlBoneDistance;
+}
+
+void VROBodyTrackerController::calculateKnownBoneSizes(VROBodyJointType joint) {
+    std::vector<VROBodyJointType> childJointsVec = kVROMLBodyTree.at(joint);
+    if (childJointsVec.size() == 0) {
+        return;
+    }
+
+    // Grab the current joint's position in world space.
+    VROVector3f currentJointPosML
+            = _cachedTrackedJoints[joint].getProjectedTransform().extractTranslation();
+
+    // Grab the current joint's position in world space.
+    std::string currentId = kVROBodyBoneTags.at(joint);
+    VROVector3f currentJointPosModel
+            = _skeleton->getCurrentBoneWorldTransform(currentId).extractTranslation();
+
+    // And then calculate the bone length of each child joint.
+    for (auto childJoint : childJointsVec) {
+        // Calculate the ML Bone lengths
+        VROVector3f childJointPosML
+                = _cachedTrackedJoints[childJoint].getProjectedTransform().extractTranslation();
+        float boneLengthML = currentJointPosML.distanceAccurate(childJointPosML);
+        _mlBoneLengths[kVROBodyBoneTags.at(childJoint)] = boneLengthML;
+
+        // Calculate Model Bone lengths.
+        std::string childId = kVROBodyBoneTags.at(childJoint);
+        VROVector3f childJointPosModel
+                = _skeleton->getCurrentBoneWorldTransform(childId).extractTranslation();
+        float boneLengthModel = currentJointPosModel.distanceAccurate(childJointPosModel);
+        _modelBoneLengths[kVROBodyBoneTags.at(childJoint)] = boneLengthModel;
+
+        calculateKnownBoneSizes(childJoint);
+    }
 }
 
 void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config) {
@@ -271,9 +487,12 @@ void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBod
     _calibratedConfiguration = config;
     _projectedPlaneNormal = config->projectedPlaneNormal;
     _projectedPlanePosition = config->projectedPlanePosition;
+    _mlBoneLengths = _calibratedConfiguration->_mlBoneLengths;
+    _modelBoneLengths = _calibratedConfiguration->_modelBoneLengths;
     calibrateModelTorsoScale();
     calibrateMlToModelRootOffset();
     alignModelRootToMLRoot();
+    calibrateBoneProportionality();
     
     // First remove any IKRigs on the model
     if (_modelRootNode != nullptr) {
@@ -283,6 +502,10 @@ void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBod
     // Finally create and set the calibrated IKRig.
     _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
+}
+
+std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
+    return _calibratedConfiguration;
 }
 
 void VROBodyTrackerController::onBodyPlaybackStarting(VROMatrix4f worldStartMatrix) {
@@ -346,10 +569,6 @@ void VROBodyTrackerController::onBodyJointsPlayback(const std::map<VROBodyJointT
             _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
         }
     }
-}
-
-std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
-    return _calibratedConfiguration;
 }
 
 void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &inferredJoints) {

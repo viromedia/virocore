@@ -19,6 +19,7 @@
 #include "VROSkinner.h"
 static const bool kUseGLTFModel = false;
 static const bool kinit3DModelWithRig = true;
+static const bool kTestProportionality = true;
 
 VROIKTest::VROIKTest():VRORendererTest(VRORendererTestType::InverseKinematics) {
 }
@@ -446,7 +447,9 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
     if (skinners.size() < 0) {
         return;
     }
+
     _skinner = skinners[0];
+    restoreTopBoneTransform();
 
     // If using gLTF model for testing, we manually map the bone indexes.
     _endEffectorBones["LeftWrist"]      = 9;
@@ -490,11 +493,67 @@ void VROIKTest::initSkinner(std::shared_ptr<VRONode> gltfNode) {
         }
     }
 
+    // Test proportionality (Order matters)
+    if (kTestProportionality) {
+        scaleBoneTransform("mixamorig:Hips", "mixamorig:Spine2", 0.5f, {0.0, 0.0, 0.0});
+        scaleBoneTransform("mixamorig:Spine2", "RightShoulder", 0.5f, {0.0, 0.0, 0.0});
+        scaleBoneTransform("mixamorig:Spine2", "LeftShoulder", 0.5f, {0.0, 0.0, 0.0});
+        scaleBoneTransform("mixamorig:Spine2", "Neck", 0.5f, {0.0, 1.0, 0.0});
+        scaleBoneTransform("Neck", "Top", 0.5f, {0.0, 0.0, 0.0});
+        scaleBoneTransform("LeftShoulder", "LeftElbow", 0.5f, {1.0, 0.0, 0.0});
+        scaleBoneTransform("LeftElbow", "LeftWrist", 0.5f, {1.0, 0.0, 0.0});
+        scaleBoneTransform("RightShoulder", "RightElbow", 0.5f, {1.0, 0.0, 0.0});
+        scaleBoneTransform("RightElbow", "RightWrist", 0.5f, {1.0, 0.0, 0.0});
+    }
+
     if (!kinit3DModelWithRig) {
         return;
     }
     _rig = std::make_shared<VROIKRig>(skinners[0]->getSkeleton(), _endEffectorBones);
     gltfNode->setIKRig(_rig);
+}
+
+void VROIKTest::restoreTopBoneTransform() {
+    _sceneController->getScene()->getRootNode()->computeTransforms({},{});
+
+    // Now determine if the geometry bind transforms for the top bone is the identity.
+    const std::vector<VROMatrix4f> bindTrans = _skinner->getBindTransforms();
+    std::shared_ptr<VROBone> bone = _skinner->getSkeleton()->getBone("Top");
+    int topIndex = bone->getIndex();
+    if (!bindTrans.at(topIndex).isIdentity()){
+        return;
+    }
+
+    // If so, we'll need to restore the actual bone transform by 'unrolling' the skeleton.
+    int boneIndex = bone->getIndex();
+    int cIndex = boneIndex;
+    std::vector<std::shared_ptr<VROBone>> bones;
+    while (cIndex > 0) {
+        bone = _skinner->getSkeleton()->getBone(cIndex);
+        bones.push_back(bone);
+        cIndex = bone->getParentIndex();
+    }
+
+    VROMatrix4f computedBoneTransform = VROMatrix4f::identity();
+    for (int i = bones.size() -1; i >=0; i --) {
+        computedBoneTransform = bones[i]->getLocalTransform() * computedBoneTransform;
+    }
+
+    // Move the resulting unrolled bone space transform into model space, and then world space.
+    VROMatrix4f boneTransformModelSpace =  _skinner->getInverseBindTransforms().at(topIndex).multiply(computedBoneTransform);
+    VROMatrix4f skinnerNodeTrans = _skinner->getSkeleton()->getModelRootNode()->getWorldTransform();
+    VROMatrix4f output = skinnerNodeTrans.multiply(boneTransformModelSpace);
+
+    // Save the result back into the skeleton.
+    _skinner->getSkeleton()->setCurrentBoneWorldTransform("Top", output, false);
+}
+
+void VROIKTest::scaleBoneTransform(std::string from, std::string to, float ratio, VROVector3f scaleDir) {
+    // Only support axis aligned horizontal and vertical bone skewing
+    // for humanoid models.
+    int boneFrom = _skinner->getSkeleton()->getBone(from)->getIndex();
+    int boneTo = _skinner->getSkeleton()->getBone(to)->getIndex();
+    _skinner->getSkeleton()->scaleBoneTransforms(boneFrom, boneTo, ratio, scaleDir);
 }
 
 void VROIKTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int jointIndex) {

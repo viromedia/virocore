@@ -135,6 +135,8 @@ struct VROBodyCalibratedConfig {
     float torsoLength;
     VROVector3f projectedPlanePosition;
     VROVector3f projectedPlaneNormal;
+    std::map<std::string, float> _mlBoneLengths;
+    std::map<std::string, float> _modelBoneLengths;
 };
 
 /*
@@ -410,6 +412,51 @@ private:
      Debug UI used by this controller.
      */
     std::shared_ptr<VRONode> createDebugBoxUI(bool isAffector, std::string tag);
+
+    /*
+     Map of bone names and the length leading up to them.
+     */
+    std::map<std::string, float> _mlBoneLengths;
+    std::map<std::string, float> _modelBoneLengths;
+
+    /*
+     Restores the Top bone's geometry bind transform of the model.
+     */
+    void restoreTopBoneTransform();
+
+    /*
+     Examines the mlToModel bone scaling ratio and modifies the model's skeletal
+     rig to reflect that visually. This calibration can only be done with a
+     _currentTrackedState of FullEffectors.
+     */
+    void calibrateBoneProportionality();
+
+    /*
+     Iterates through every VROBodyJointType, calculates intermediary bone
+     distances between them and stores the results in _mlBoneLengths and
+     _modelBoneLengths.
+     */
+    void calculateKnownBoneSizes(VROBodyJointType joint);
+
+    /*
+     Manually infers the transformations and bone lengths of unknown joint types.
+     This is mainly done on torso bones that were not detected as a part of the
+     ML body tracker.
+     */
+    void calculateInferredBoneSizes();
+
+    /*
+     Calculates the length from the previous bone transform to the targetBone and
+     updates our bone length maps with the results.
+     */
+    void updateBoneLengthReference(VROVector3f previousModelBoneTrans,
+                                   VROVector3f previousMlBoneTrans, VROBodyJointType targetBone);
+
+    /*
+     Scales the model's skeletal bone transforms proportionally, knowing the ratio
+     between the ml bone lengths, and model bone lengths.
+     */
+    void scaleBoneTransform(std::string childBone, std::string parentBone, VROVector3f scaleDir);
 };
 
 /*
