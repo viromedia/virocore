@@ -12,6 +12,7 @@
 
 #if VRO_PLATFORM_IOS
 #include "VROBodyTrackerYolo.h"
+#include "VROBodyTrackeriOS.h"
 #include "VRODriverOpenGLiOS.h"
 
 static const int kRecognitionNumColors = 14;
@@ -75,7 +76,7 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     _drawDelegate = [[VROBodyRecognitionDrawDelegate alloc] init];
     [_view setDebugDrawDelegate:_drawDelegate];
     
-    std::shared_ptr<VROBodyTrackerYolo> tracker = std::make_shared<VROBodyTrackerYolo>();
+    std::shared_ptr<VROBodyTracker> tracker = std::make_shared<VROBodyTrackeriOS>();
     tracker->initBodyTracking(VROCameraPosition::Back, driver);
     tracker->startBodyTracking();
     tracker->setDelegate(shared_from_this());

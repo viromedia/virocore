@@ -35,7 +35,8 @@ enum class VROBodyJointType {
     LeftWrist           = 7,
     LeftHip             = 11,
     LeftKnee            = 12,
-    LeftAnkle           = 13
+    LeftAnkle           = 13,
+    Unknown             = 14
 };
 
 // Supported bone names within 3D models for ml joint tracking.

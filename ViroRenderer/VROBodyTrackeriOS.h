@@ -36,12 +36,14 @@ private:
     
     MLModel *_model;
     VNCoreMLModel *_coreMLModel;
-    VNCoreMLRequest *_coreMLRequest;
-    double _lastTimestamp;
-    int32_t _fps;
-    dispatch_queue_t bodyMeshingQueue;
+    VNCoreMLRequest *_visionRequest;
     
+    dispatch_queue_t _visionQueue;
     VROMatrix4f _transform;
+    CVPixelBufferRef _currentImage;
+    
+    void trackCurrentImage(VROMatrix4f transform, VROCameraOrientation orientation);
+    void processVisionResults(VNRequest *request, NSError *error);
     static std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
 
 };
