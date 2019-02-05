@@ -65,6 +65,7 @@ std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
 VROBodyTrackeriOS::VROBodyTrackeriOS() {
     _currentImage = nil;
     _visionQueue = dispatch_queue_create("com.viro.bodyTrackerYoloVisionQueue", DISPATCH_QUEUE_SERIAL);
+    _isTracking = false;
 }
 
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
@@ -161,11 +162,11 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
 }
 
 void VROBodyTrackeriOS::startBodyTracking() {
-    
+    _isTracking = true;
 }
 
 void VROBodyTrackeriOS::stopBodyTracking() {
-    
+    _isTracking = false;
 }
 
 void VROBodyTrackeriOS::update(const VROARFrame &frame) {
@@ -258,7 +259,7 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     
     dispatch_async(dispatch_get_main_queue(), ^{
         std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
-        if (delegate) {
+        if (delegate && _isTracking) {
             delegate->onBodyJointsFound(joints);
         }
     });

@@ -41,6 +41,7 @@ private:
     dispatch_queue_t _visionQueue;
     VROMatrix4f _transform;
     CVPixelBufferRef _currentImage;
+    bool _isTracking;
     
     void trackCurrentImage(VROMatrix4f transform, VROCameraOrientation orientation);
     void processVisionResults(VNRequest *request, NSError *error);
