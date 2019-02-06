@@ -64,6 +64,7 @@ static const double kInitialDampeningPeriodMs = 250;
 static const float kInitialMLConfidenceThreshold = 0.45;
 static const float kInitialVolatilityThresholdMeters = 0.15;
 static const float kInitialReachableBoneThresholdMeters = 0.2;
+static const VROVector3f kInitialModelPos = VROVector3f(-10, -10, 10);
 
 // Required joints needed for basic controller functionality (Scale / Root motion alignment)
 static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
@@ -102,7 +103,6 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _renderer = renderer;
     _mlRootToModelRoot = VROMatrix4f::identity();
     _bodyControllerRoot = std::make_shared<VRONode>();
-    _calibrationEventDelegate = nullptr;
     _calibratedConfiguration = nullptr;
     _isRecording = false;
     sceneRoot->addChildNode(_bodyControllerRoot);
@@ -120,11 +120,10 @@ VROBodyTrackerController::~VROBodyTrackerController() {
 
 bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode) {
     _rig = nullptr;
-    _keyToEffectorMap.clear();
     _skeleton = nullptr;
+    _keyToEffectorMap.clear();
     _mlJointForBoneIndex.clear();
     _bodyControllerRoot->removeAllChildren();
-    _calibrationEventDelegate = nullptr;
 
     // Ensure we clear out any IKRigs for previously set models.
     if (_modelRootNode != nullptr) {
@@ -166,8 +165,8 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     }
 
     // If we have not found required bones, fail the binding of the model.
-    for (auto requiredBone : kRequiredJoints) {
-        if (_mlJointForBoneIndex.find(requiredBone) == _mlJointForBoneIndex.end()) {
+    for (auto requiredBone : kVROBodyBoneTags) {
+        if (_mlJointForBoneIndex.find(requiredBone.first) == _mlJointForBoneIndex.end()) {
             perr("Attempted to bind 3D model with improperly configured bones to VROBodyTracker!");
             return false;
         }
@@ -177,6 +176,14 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _skeleton = skinners[0]->getSkeleton();
     _modelRootNode = modelRootNode;
     _bodyControllerRoot->setScale(VROVector3f(1,1,1));
+
+
+    // Initialize calibration event delegates
+    if (_calibrationEventDelegate == nullptr) {
+        _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+    }
 
     // Set the model in it's original scale needed for determining ratios for automatic resizing.
     calculateSkeletonTorsoDistance();
@@ -203,11 +210,6 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     // Create a debug root node UI
     _debugBoxRoot = createDebugBoxUI(false, "Root");
     _bodyControllerRoot->addChildNode(_debugBoxRoot);
-
-    // Bind calibration event delegates
-    _calibrationEventDelegate = std::make_shared<VROBodyTrackerControllerEventDelegate>(shared_from_this());
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
 
     // Set the timeout of joints in milliseconds.
     _mlJointTimeoutMap.clear();
@@ -278,7 +280,7 @@ void VROBodyTrackerController::restoreTopBoneTransform() {
     _skeleton->setCurrentBoneWorldTransform(kVROBodyBoneTags.at(VROBodyJointType::Top), output, false);
 }
 
-void VROBodyTrackerController::startCalibration() {
+void VROBodyTrackerController::startCalibration(bool manual) {
     if (_calibrating) {
         return;
     }
@@ -288,15 +290,30 @@ void VROBodyTrackerController::startCalibration() {
         return;
     }
 
+    // Hook in event delegates for enabling the user to click-to-calibrate.
+    if (manual) {
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
+        _modelRootNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
+        _preservedEventDelegate = _modelRootNode->getEventDelegate();
+        _modelRootNode->setEventDelegate(_calibrationEventDelegate);
+    }
+
+    // Clear previously calibrated data.
     _calibratedConfiguration = nullptr;
     _mlBoneLengths.clear();
     _modelBoneLengths.clear();
     _calibrating = true;
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
-    _modelRootNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
-    _preservedEventDelegate = _modelRootNode->getEventDelegate();
-    _modelRootNode->setEventDelegate(_calibrationEventDelegate);
+    _userTorsoHeight = 0;
+    _projectedPlanePosition = kInitialModelPos;
+    _projectedPlaneNormal = VROVector3f(0,0,0);
+
+    // Reset the model and bones back to it's initial configuration
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->setScale(VROVector3f(1, 1, 1));
+    _modelRootNode->setRotation(VROQuaternion());
+    _modelRootNode->setPosition(kInitialModelPos);
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
 
     // reset the bones back to it's initial configuration
     std::shared_ptr<VROSkeleton> skeleton = _skeleton;
@@ -306,7 +323,7 @@ void VROBodyTrackerController::startCalibration() {
     }
 }
 
-void VROBodyTrackerController::finishCalibration() {
+void VROBodyTrackerController::finishCalibration(bool manual) {
     if (!_calibrating) {
         return;
     }
@@ -316,9 +333,17 @@ void VROBodyTrackerController::finishCalibration() {
         return;
     }
 
-    _modelRootNode->removeAllConstraints();
+    // Disable any calibration event delegates when finishing calibration.
+    if (manual) {
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
+        _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
+        _modelRootNode->setEventDelegate(_preservedEventDelegate);
+    }
+
+    // Only calculate proportionality once calibration is done.
     calibrateBoneProportionality();
 
+    _modelRootNode->removeAllConstraints();
     _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
@@ -333,9 +358,6 @@ void VROBodyTrackerController::finishCalibration() {
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
-    _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
-    _modelRootNode->setEventDelegate(_preservedEventDelegate);
 }
 
 void VROBodyTrackerController::calibrateBoneProportionality() {
@@ -483,30 +505,28 @@ void VROBodyTrackerController::calculateKnownBoneSizes(VROBodyJointType joint) {
 
 void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config) {
     passert(config != nullptr);
-    if (_modelRootNode == nullptr) {
+    if (_modelRootNode == nullptr || _skeleton == nullptr) {
         perror("Unable to automatically calibrate VROBodyTrackerController without bounded model.");
         return;
     }
+
+    // Reset the model / configuration data before calibrating.
+    startCalibration(false);
     
-    // Update current calibration presets with new configuration data.
+    // Set calibration presets
     _calibratedConfiguration = config;
     _projectedPlaneNormal = config->projectedPlaneNormal;
     _projectedPlanePosition = config->projectedPlanePosition;
     _mlBoneLengths = _calibratedConfiguration->_mlBoneLengths;
     _modelBoneLengths = _calibratedConfiguration->_modelBoneLengths;
-    calibrateModelTorsoScale();
+
+    // Automatically calibrate with calibration presets.
+    calibrateModelToMLTorsoScale();
     calibrateMlToModelRootOffset();
     alignModelRootToMLRoot();
-    calibrateBoneProportionality();
-    
-    // First remove any IKRigs on the model
-    if (_modelRootNode != nullptr) {
-        _modelRootNode->setIKRig(nullptr);
-    }
-    
-    // Finally create and set the calibrated IKRig.
-    _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
-    _modelRootNode->setIKRig(_rig);
+
+    // Finish the calibration.
+    finishCalibration(false);
 }
 
 std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
@@ -606,7 +626,7 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
 
     if (_calibrating) {
         // First scale the model to the right size.
-        calibrateModelTorsoScale();
+        calibrateModelToMLTorsoScale();
 
         // Then determine the transform offset from an ML joint in the skeleton to the model's root.
         calibrateMlToModelRootOffset();
@@ -1023,7 +1043,7 @@ void VROBodyTrackerController::calculateSkeletonTorsoDistance() {
     _skeletonTorsoHeight = midHipLoc.distanceAccurate(neckLoc);
 }
 
-void VROBodyTrackerController::calibrateModelTorsoScale() {
+void VROBodyTrackerController::calibrateModelToMLTorsoScale() {
     // We'll need the current dimensions of the model for resizing calculations.
     if (!kAutomaticResizing || _skeleton == nullptr) {
         return;

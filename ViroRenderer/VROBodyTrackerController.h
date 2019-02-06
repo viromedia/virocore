@@ -159,14 +159,14 @@ public:
      the latest ML joint data.
      TODO VIRO-4674: Remove Manual Calibration
      */
-    void startCalibration();
+    void startCalibration(bool manual = true);
 
     /*
      Notifies the controller to finish calibration and initialize the VROIKRig
      and align it with the latest ML joint data.
      TODO VIRO-4674: Remove Manual Calibration
      */
-    void finishCalibration();
+    void finishCalibration(bool manual = true);
 
     /*
      Returns the currently set or last calibrated VROBodyCalibratedConfig on this controller.
@@ -443,7 +443,7 @@ private:
      Called during the calibration phase to scale the model's torso uniformly to
      fit the 3D model to body joints found by VROBodytracker.
      */
-    void calibrateModelTorsoScale();
+    void calibrateModelToMLTorsoScale();
 
     /*
      The ML root position as referenced by the VROBodyTrackerController.
