@@ -56,15 +56,14 @@ static UIColor *colors[14] = {
     [UIColor grayColor]
 };
 #endif
-static const float kHighConfidence = 0.45;
 static const float kARHitTestWindowKernelPixel = 0.01;
-static const float kVolatilityThresholdMeters = 0.15;
-static const float kReachableBoneThresholdMeters = 0.2;
 static const float kAutomaticSizingRatio = 1;
-static const bool kModelDebugCubes = true;
 static const bool kAutomaticResizing = true;
 static const bool kDampenWithEMA = true;
 static const double kInitialDampeningPeriodMs = 250;
+static const float kInitialMLConfidenceThreshold = 0.45;
+static const float kInitialVolatilityThresholdMeters = 0.15;
+static const float kInitialReachableBoneThresholdMeters = 0.2;
 
 // Required joints needed for basic controller functionality (Scale / Root motion alignment)
 static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
@@ -101,13 +100,19 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _skeleton = nullptr;
     _calibrating = false;
     _renderer = renderer;
-    _dampeningPeriodMs = kInitialDampeningPeriodMs;
     _mlRootToModelRoot = VROMatrix4f::identity();
     _bodyControllerRoot = std::make_shared<VRONode>();
     _calibrationEventDelegate = nullptr;
     _calibratedConfiguration = nullptr;
     _isRecording = false;
     sceneRoot->addChildNode(_bodyControllerRoot);
+
+    // Set initial filter and debug configurations
+    _dampeningPeriodMs = kInitialDampeningPeriodMs;
+    _mlConfidenceThreshold = kInitialMLConfidenceThreshold;
+    _volatilityFilterThresholdMeters = kInitialVolatilityThresholdMeters;
+    _reachableBoneFilterThresholdMeters = kInitialReachableBoneThresholdMeters;
+    _displayDebugCubes = true;
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
@@ -558,7 +563,7 @@ void VROBodyTrackerController::onBodyJointsPlayback(const std::map<VROBodyJointT
     }
 
     // Render debug UI
-    if (kModelDebugCubes && _debugBoxEffectors.size() > 0) {
+    if (_displayDebugCubes && _debugBoxEffectors.size() > 0) {
         _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
 
         std::map<VROBodyJointType, VROVector3f>::const_iterator debugJoint;
@@ -617,7 +622,7 @@ void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType
     }
 
     // Render debug UI
-    if (kModelDebugCubes && _debugBoxEffectors.size() > 0) {
+    if (_displayDebugCubes && _debugBoxEffectors.size() > 0) {
         _debugBoxRoot->setWorldTransform(_modelRootNode->getWorldPosition(), _modelRootNode->getWorldRotation());
 
         // Render debug joint cubes.
@@ -685,7 +690,7 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     // Grab all the 2D joints of high confidence for the targets we want.
     std::map<VROBodyJointType, VROBodyJoint> latestJoints;
     for (auto &kv : joints) {
-        if (kv.second.getConfidence() > kHighConfidence) {
+        if (kv.second.getConfidence() > _mlConfidenceThreshold) {
             latestJoints[kv.first] = kv.second;
         }
     }
@@ -803,7 +808,7 @@ void VROBodyTrackerController::updateCachedJoints(std::map<VROBodyJointType, VRO
             // certain threshold.
             VROVector3f currentPos = currentJoint.getProjectedTransform().extractTranslation();
             VROVector3f oldPos = _cachedTrackedJoints[currentType].getProjectedTransform().extractTranslation();
-            if (oldPos.distanceAccurate(currentPos) < kVolatilityThresholdMeters) {
+            if (oldPos.distanceAccurate(currentPos) < _volatilityFilterThresholdMeters) {
                 shouldCacheNewJoint = true;
             }
 
@@ -1173,7 +1178,7 @@ bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint targ
 
     float maxDistance = parentTransform.extractTranslation().distanceAccurate(childTransform.extractTranslation());
     float estDistance = parentTransform.extractTranslation().distanceAccurate(currentTransform.extractTranslation());
-    if (estDistance < (maxDistance + kReachableBoneThresholdMeters)) {
+    if (estDistance < (maxDistance + _reachableBoneFilterThresholdMeters)) {
         return true;
     }
     return false;
@@ -1223,10 +1228,6 @@ void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
 
 void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
     _delegate = delegate;
-}
-
-void VROBodyTrackerController::setDampeningPeriodMs(double period) {
-    _dampeningPeriodMs = period;
 }
 
 std::shared_ptr<VRONode> VROBodyTrackerController::createDebugBoxUI(bool isAffector, std::string tag) {
@@ -1301,7 +1302,7 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
         VROVector3f transformed = { point.x * viewWidth, point.y * viewHight, 0 };
         // Only update the text for points that match our level of confidence.
         // Note that low confidence points are still rendered to ensure validity.
-        if (kv.second.getConfidence() > kHighConfidence) {
+        if (kv.second.getConfidence() > _mlConfidenceThreshold) {
             std::string labelTag = pointLabels[(int)kv.first] + " -> " + kv.second.getProjectedTransform().extractTranslation().toString();
             _labelViews[(int)kv.first].text = [NSString stringWithUTF8String:labelTag.c_str()];
         }
@@ -1310,3 +1311,51 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
     }
 }
 #endif
+
+void VROBodyTrackerController::setDampeningPeriodMs(double period) {
+    _dampeningPeriodMs = period;
+}
+
+double VROBodyTrackerController::getDampeningPeriodMs() {
+    return _dampeningPeriodMs;
+}
+
+void VROBodyTrackerController::setDisplayDebugCubes(bool visible) {
+    _displayDebugCubes = visible;
+}
+
+bool VROBodyTrackerController::getDisplayDebugCubes() {
+    return _displayDebugCubes;
+}
+
+void VROBodyTrackerController::setMLConfidenceThreshold(float threshold) {
+    _mlConfidenceThreshold = threshold;
+}
+
+float VROBodyTrackerController::getMLConfidenceThreshold() {
+    return _mlConfidenceThreshold;
+}
+
+void VROBodyTrackerController::setVolatilityFilterThresholdMeters(float threshold) {
+    _volatilityFilterThresholdMeters = threshold;
+}
+
+float VROBodyTrackerController::getVolatilityFilterThresholdMeters(){
+    return _volatilityFilterThresholdMeters;
+}
+
+void VROBodyTrackerController::setReachableFilterThresholdMeters(float threshold) {
+    _reachableBoneFilterThresholdMeters = threshold;
+}
+
+float VROBodyTrackerController::getReachableFilterThresholdMeters() {
+    return _reachableBoneFilterThresholdMeters;
+}
+
+void VROBodyTrackerController::setStalenessThresholdForJoint(VROBodyJointType type, float timeoutMs) {
+    _mlJointTimeoutMap[type] = timeoutMs;
+}
+
+float VROBodyTrackerController::getStalenessThresholdForJoint(VROBodyJointType type) {
+    return _mlJointTimeoutMap[type];
+}

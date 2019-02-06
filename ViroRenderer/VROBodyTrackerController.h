@@ -196,6 +196,40 @@ public:
      no dampening will be applied.
      */
     void setDampeningPeriodMs(double period);
+    double getDampeningPeriodMs();
+
+    /*
+     Sets the ml confidence threshold for filtering out low confidence ml joint data.
+     */
+    void setMLConfidenceThreshold(float threshold);
+    float getMLConfidenceThreshold();
+
+    /*
+     Sets a distance threshold for filtering out volatile joints.
+     */
+    void setVolatilityFilterThresholdMeters(float threshold);
+    float getVolatilityFilterThresholdMeters();
+
+    /*
+     Sets a distance threshold used to calculate bone reachability when filtering new
+     ML joint data.
+     */
+    void setReachableFilterThresholdMeters(float threshold);
+    float getReachableFilterThresholdMeters();
+
+    /*
+     Debug flag to show / hide debug cubes demonstrating the joint locations within
+     this controller.
+     */
+    void setDisplayDebugCubes(bool visible);
+    bool getDisplayDebugCubes();
+
+    /*
+     Sets the staleness threshold for the given joint in milliseconds that joints
+     data are checked against before being evicted from the cache.
+     */
+    void setStalenessThresholdForJoint(VROBodyJointType type, float timeoutMs);
+    float getStalenessThresholdForJoint(VROBodyJointType type);
 
 #if VRO_PLATFORM_IOS
     void enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver);
@@ -240,11 +274,6 @@ private:
      Final filtered and processed joint positional data on which to apply onto the IKRig.
      */
     std::map<VROBodyJointType, VROVector3f> _cachedModelJoints;
-
-    /*
-     Period at which to sample ML joint data upon for dampening.
-     */
-    double _dampeningPeriodMs;
 
     /*
      A window dampening data for which to perform SMA / EMA analysis.
@@ -340,6 +369,19 @@ private:
     
     // Anim data recorder. 
     std::shared_ptr<VROBodyAnimDataRecorder> _animDataRecorder;
+
+    /*
+     Period at which to sample ML joint data upon for dampening.
+     */
+    double _dampeningPeriodMs;
+
+    /*
+     Configurable filter thresholds and debug switches.
+     */
+    bool _displayDebugCubes;
+    float _mlConfidenceThreshold;
+    float _volatilityFilterThresholdMeters;
+    float _reachableBoneFilterThresholdMeters;
 
 #if VRO_PLATFORM_IOS
     // iOS UI Components
