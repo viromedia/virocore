@@ -519,6 +519,7 @@ void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBod
     _projectedPlanePosition = config->projectedPlanePosition;
     _mlBoneLengths = _calibratedConfiguration->_mlBoneLengths;
     _modelBoneLengths = _calibratedConfiguration->_modelBoneLengths;
+    _userTorsoHeight = _calibratedConfiguration->torsoLength;
 
     // Automatically calibrate with calibration presets.
     calibrateModelToMLTorsoScale();
