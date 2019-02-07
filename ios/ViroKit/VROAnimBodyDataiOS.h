@@ -17,7 +17,7 @@
 class VROBodyAnimDataRecorderiOS: public VROBodyAnimDataRecorder {
 public:
     VROBodyAnimDataRecorderiOS();
-    void startRecording(VROMatrix4f startWorldTransform);
+    void startRecording(VROMatrix4f startWorldTransform, std::map<std::string, float> boneLengths);
     void stopRecording();
     void beginRecordedRow();
     void addJointToRow(std::string jointName, VROVector3f jointPos);
@@ -35,6 +35,7 @@ private:
     NSMutableDictionary *_animRowDataValues;
     NSMutableDictionary *_currentRow;
     NSMutableDictionary *_jointValues;
+    NSMutableDictionary *_mlBoneLengths;
 
     NSString *_nsBodyAnimTotalTime;
     NSString *_nsBodyAnimAnimRows;
@@ -42,6 +43,7 @@ private:
     NSString *_nsBodyAnimJoints;
     NSString *_nsBodyAnimInitModelTransform;
     NSString *_nsBodyVersion;
+    NSString *_nsBodyAnimBoneLengths;
 };
 
 class VROBodyAnimDataReaderiOS : public VROBodyAnimDataReader {
@@ -54,6 +56,7 @@ private:
     void loadTotalTime(NSDictionary *dictionary, std::shared_ptr<VROBodyAnimData> animBodyData);
     void loadVersion(NSDictionary *dictionary, std::shared_ptr<VROBodyAnimData> animBodyData);
     void loadWorldStartMatrix(NSDictionary *dictionary, std::shared_ptr<VROBodyAnimData> animBodyData);
+    void loadSkeletalBone(NSDictionary *dictionary, std::shared_ptr<VROBodyAnimData> animBodyData);
     std::map<VROBodyJointType, VROVector3f> loadAnimRow(NSDictionary *joints, std::shared_ptr<VROBodyAnimData> bodyANimData);
     
     NSDictionary *_animBody;
@@ -67,6 +70,7 @@ private:
     NSString *_nsBodyAnimJoints;
     NSString *_nsBodyAnimInitModelTransform;
     NSString *_nsBodyVersion;
+    NSString *_nsBodyAnimBoneLengths;
 };
 
 #endif /* VROAnimBodyDataiOS_h */

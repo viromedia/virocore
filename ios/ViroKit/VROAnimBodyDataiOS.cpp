@@ -18,14 +18,22 @@ VROBodyAnimDataRecorderiOS::VROBodyAnimDataRecorderiOS() {
     _nsBodyAnimJoints = [NSString stringWithUTF8String:kBodyAnimJoints.c_str()];
     _nsBodyVersion = [NSString stringWithUTF8String:kBodyAnimVersion.c_str()];
     _nsBodyAnimInitModelTransform = [NSString stringWithUTF8String:kBodyAnimInitModelTransform.c_str()];
+    _nsBodyAnimBoneLengths = [NSString stringWithUTF8String:kBodyAnimUserBoneLengths.c_str()];
 };
 
-void VROBodyAnimDataRecorderiOS::startRecording(VROMatrix4f startWorldTransform) {
+void VROBodyAnimDataRecorderiOS::startRecording(VROMatrix4f startWorldTransform, std::map<std::string, float> boneLengths) {
     _isRecording = true;
     _startRecordingTime = VROTimeCurrentMillis();
     _initRecordWorldTransformOfRootNode = startWorldTransform;
     _recordedAnimationData = [[NSMutableDictionary alloc] init];
     _recordedAnimationRows = [[NSMutableArray alloc] init];
+    _mlBoneLengths = [[NSMutableDictionary alloc] init];
+    
+    for (auto boneLengthPair : boneLengths) {
+        float boneLength = boneLengthPair.second;
+        NSString* result = [[NSString alloc] initWithUTF8String:boneLengthPair.first.c_str()];
+        [_mlBoneLengths setValue:[NSNumber numberWithFloat:boneLength] forKey:result];
+    }
 }
 
 void VROBodyAnimDataRecorderiOS::stopRecording()  {
@@ -48,8 +56,10 @@ void VROBodyAnimDataRecorderiOS::stopRecording()  {
         [ma addObject:[NSNumber numberWithFloat:matrixArray[i]]];
     }
     
-    [_recordedAnimationData setObject:ma forKey:_nsBodyAnimInitModelTransform];
+    //record skeletal information, if any.
+    [_recordedAnimationData setObject:_mlBoneLengths forKey:_nsBodyAnimBoneLengths];
     
+    [_recordedAnimationData setObject:ma forKey:_nsBodyAnimInitModelTransform];
 }
 
 void VROBodyAnimDataRecorderiOS::beginRecordedRow() {
@@ -96,6 +106,7 @@ VROBodyAnimDataReaderiOS::VROBodyAnimDataReaderiOS () {
     _nsBodyAnimJoints = [NSString stringWithUTF8String:kBodyAnimJoints.c_str()];
     _nsBodyVersion = [NSString stringWithUTF8String:kBodyAnimVersion.c_str()];
     _nsBodyAnimInitModelTransform = [NSString stringWithUTF8String:kBodyAnimInitModelTransform.c_str()];
+    _nsBodyAnimBoneLengths = [NSString stringWithUTF8String:kBodyAnimUserBoneLengths.c_str()];
 }
 
 std::shared_ptr<VROBodyAnimData> VROBodyAnimDataReaderiOS::fromJSON(std::string animJSON) {
@@ -118,6 +129,11 @@ std::shared_ptr<VROBodyAnimData> VROBodyAnimDataReaderiOS::fromJSON(std::string 
     
     // load in the world start matrix.
     loadWorldStartMatrix(animDictionary, animBodyData);
+    
+    // load bone lengths, if any.
+    if ([animDictionary objectForKey:_nsBodyAnimBoneLengths]) {
+        loadSkeletalBone(animDictionary, animBodyData);
+    }
     
     // load in the animation rows.
     loadAnimRows(animDictionary, animBodyData);
@@ -150,6 +166,17 @@ void VROBodyAnimDataReaderiOS::loadWorldStartMatrix(NSDictionary *dictionary, st
     VROMatrix4f modelStartWorldMatrix(array);
     // set the model start world matrix.
     animBodyData->setModelStartWorldMatrix(modelStartWorldMatrix);
+}
+
+void VROBodyAnimDataReaderiOS::loadSkeletalBone(NSDictionary *dictionary, std::shared_ptr<VROBodyAnimData> animBodyData) {
+    NSDictionary *boneLengthMap = dictionary[_nsBodyAnimBoneLengths];
+    std::map<std::string, float> finalBoneLength;
+    for(id key in boneLengthMap) {
+        float length = [[boneLengthMap objectForKey:key] floatValue];
+        std::string boneName = std::string([(NSString *)key UTF8String]);
+        finalBoneLength[boneName] = length;
+    }
+    animBodyData->setBoneLengths(finalBoneLength);
 }
 
 void VROBodyAnimDataReaderiOS::loadAnimRows(NSDictionary *dictionary, std::shared_ptr<VROBodyAnimData> animBodyData) {

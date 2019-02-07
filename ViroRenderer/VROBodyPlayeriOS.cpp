@@ -17,6 +17,7 @@ const std::string kBodyAnimJoints = "joints";
 const std::string kBodyAnimTimestamp = "timestamp";
 const std::string kBodyAnimInitModelTransform = "initModelTransform";
 const std::string kBodyAnimVersion = "version";
+const std::string kBodyAnimUserBoneLengths = "boneLengths";
 
 VROBodyPlayeriOS::VROBodyPlayeriOS() {
     _playbackInfo = nil;
@@ -70,8 +71,7 @@ void VROBodyPlayeriOS::onFrameWillRender(const VRORenderContext &context) {
      std::shared_ptr<VROBodyPlayerDelegate> bodyPlayerDelegate = _bodyMeshDelegate_w.lock();
     if (_playbackInfo->getPlayStatus() == VROBodyPlayerStatus::Start) {
          if (bodyPlayerDelegate != NULL) {
-             VROMatrix4f matrix = _playbackInfo->getInitWorldMatrix();
-             bodyPlayerDelegate->onBodyPlaybackStarting(matrix);
+             bodyPlayerDelegate->onBodyPlaybackStarting(_bodyAnimData);
          }
     }
 
@@ -88,6 +88,7 @@ void VROBodyPlayeriOS::onFrameWillRender(const VRORenderContext &context) {
 void VROBodyPlayeriOS::loadAnimation(std::string jsonAnim) {
     VROBodyAnimDataReaderiOS reader;
     std::shared_ptr<VROBodyAnimData> bodyAnimData = reader.fromJSON(jsonAnim);
+    _bodyAnimData = bodyAnimData;
     _playbackInfo = std::make_shared<BodyPlaybackInfo>(bodyAnimData);
 }
 

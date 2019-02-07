@@ -363,8 +363,7 @@ void VROBodyTrackerController::finishCalibration(bool manual) {
 void VROBodyTrackerController::calibrateBoneProportionality() {
     restoreTopBoneTransform();
 
-    bool hasEffectorData = _currentTrackedState == FullEffectors ||
-        (_modelBoneLengths.size() != 0 && _modelBoneLengths.size() != 0);
+    bool hasEffectorData = _currentTrackedState == FullEffectors || _modelBoneLengths.size() != 0;
 
     if (!hasEffectorData) {
         pwarn("Currently tracking with limited joints... skipping bone calibration!");
@@ -534,31 +533,32 @@ std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibrated
     return _calibratedConfiguration;
 }
 
-void VROBodyTrackerController::onBodyPlaybackStarting(VROMatrix4f worldStartMatrix) {
-    _playbackDataStartMatrix = worldStartMatrix;
+void VROBodyTrackerController::onBodyPlaybackStarting(std::shared_ptr<VROBodyAnimData> animData) {
+    // Matrix represented the start root world transform of the model when recording occurred.
+    VROMatrix4f playbackDataStartMatrix = animData->getModelStartWorldMatrix();
+
+    if (_rig == NULL) {
+        _mlBoneLengths = animData->getBoneLengths();
+        calibrateBoneProportionality();
+        _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
+    }
+
+    setBodyTrackedState(VROBodyTrackedState::FullEffectors);
+    _modelRootNode->setIKRig(_rig);
+    calibrateMlToModelRootOffset();
+    _playbackRootStartMatrix = _modelRootNode->getWorldTransform();
+
+    /*
+     Multiply the model world start matrix(_playbackRootStartMatrix) by the inverse of the recording
+     start world matrix(the recording world's local matrix). This gives us the transform needed to
+     convert world space coordinates in the recorded data to world space coordinates in the current
+     model. Because our matricies are column major ordered, the inverse of the recorded world matrix is
+     multiplied by the current model world matrix to give the proper result.
+     */
+    _playbackDataFinalTransformMatrix = _playbackRootStartMatrix * playbackDataStartMatrix.invert();
 }
 
 void VROBodyTrackerController::onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status) {
-    if (status == VROBodyPlayerStatus::Start) {
-        if (_rig == NULL) {
-            _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
-        }
-
-        setBodyTrackedState(VROBodyTrackedState::FullEffectors);
-        _modelRootNode->setIKRig(_rig);
-        calibrateMlToModelRootOffset();
-         _playbackRootStartMatrix = _modelRootNode->getWorldTransform();
-
-        /*
-         Multiply the model world start matrix(_playbackRootStartMatrix) by the inverse of the recording
-         start world matrix(the recording world's local matrix). This gives us the transform needed to
-         convert world space coordinates in the recorded data to world space coordinates in the current
-         model. Because our matricies are column major ordered, the inverse of the recorded world matrix is
-         multiplied by the current model world matrix to give the proper result.
-         */
-        _playbackDataFinalTransformMatrix = _playbackRootStartMatrix * _playbackDataStartMatrix.invert();
-    }
-
     for (auto &latestjointPair : joints) {
         VROVector3f recordingWorldSpace = latestjointPair.second;
 
@@ -697,7 +697,7 @@ void VROBodyTrackerController::startRecording() {
     _animDataRecorder = std::make_shared<VROBodyAnimDataRecorderiOS>();
 #endif
     if (_animDataRecorder) {
-        _animDataRecorder->startRecording(_initRecordWorldTransformOfRootNode);
+        _animDataRecorder->startRecording(_initRecordWorldTransformOfRootNode, _mlBoneLengths);
     }
 }
 

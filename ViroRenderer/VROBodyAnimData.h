@@ -54,6 +54,11 @@ public:
         return _animationRowTimestamps[index];
     }
 
+    // Returns a map of the user's bone lengths acquired from recording (Optional).
+    std::map<std::string, float> getBoneLengths() {
+        return _boneLengths;
+    };
+
 #pragma - VROBodyAnimData getters
     
     // set the version as a string.
@@ -77,6 +82,11 @@ public:
         _animationRows.push_back(jointMap);
     }
 
+    // Sets a map of the user's bone lengths that was acquired from recording (Optional).
+    void setBoneLengths(std::map<std::string, float> lengths) {
+        _boneLengths = lengths;
+    }
+
 private:
     double _totalTime;
     int _totalAnimRows;
@@ -84,6 +94,7 @@ private:
     VROMatrix4f _worldStartMatrix;
     std::vector<double> _animationRowTimestamps;
     std::vector<std::map<VROBodyJointType, VROVector3f>> _animationRows;
+    std::map<std::string, float> _boneLengths;
 };
 
 /*
@@ -102,7 +113,7 @@ class VROBodyAnimDataRecorder {
 public:
     VROBodyAnimDataRecorder() {};
     // begin recording body animation.
-    virtual void startRecording(VROMatrix4f startWorldTransform) = 0;
+    virtual void startRecording(VROMatrix4f startWorldTransform,  std::map<std::string, float> boneLengths) = 0;
     
     // stop recording the body animation.
     virtual void stopRecording() = 0;

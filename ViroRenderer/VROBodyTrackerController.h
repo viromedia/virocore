@@ -190,7 +190,7 @@ public:
     // VROBodyPlaybackDelegate
     void onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status);
 
-    void onBodyPlaybackStarting(VROMatrix4f worldStartMatrix);
+    void onBodyPlaybackStarting(std::shared_ptr<VROBodyAnimData> animData);
     /*
      Sets the window period at which we sample points for dampening. If period == 0,
      no dampening will be applied.
@@ -360,9 +360,6 @@ private:
 
     // Matrix representing the start root world transform of the model when playback occurs.
     VROMatrix4f _playbackRootStartMatrix;
-
-    // Matrix represented the start root world transform of the model when recording occurred.
-    VROMatrix4f _playbackDataStartMatrix;
 
     // Multiple all playback joints through below. Below is equal _playbackRootStartMatrix.inverse() * _playbackDataStartMatrix;
     VROMatrix4f _playbackDataFinalTransformMatrix;

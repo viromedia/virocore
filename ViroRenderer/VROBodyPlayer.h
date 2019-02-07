@@ -30,10 +30,11 @@ extern const std::string kBodyAnimJoints;
 extern const std::string kBodyAnimTimestamp;
 extern const std::string kBodyAnimInitModelTransform;
 extern const std::string kBodyAnimVersion;
+extern const std::string kBodyAnimUserBoneLengths;
 
 class VROBodyPlayerDelegate {
 public:
-    virtual void onBodyPlaybackStarting(VROMatrix4f worldStartMatrix) = 0;
+    virtual void onBodyPlaybackStarting(std::shared_ptr<VROBodyAnimData> animData) = 0;
     virtual void onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status) = 0;
 };
 

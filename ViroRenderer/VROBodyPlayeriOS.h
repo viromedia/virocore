@@ -162,6 +162,7 @@ public:
 
 private:
     std::shared_ptr<BodyPlaybackInfo> _playbackInfo;
+    std::shared_ptr<VROBodyAnimData> _bodyAnimData;
 };
 
 #endif /* VROBodyPlayeriOS_h */
