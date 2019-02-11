@@ -11,7 +11,7 @@
 
 #include "VRORendererTest.h"
 
-class VROBloomTest : public VRORendererTest {
+class VROBloomTest : public VRORendererTest, public VROEventDelegate, public std::enable_shared_from_this<VROBloomTest>{
 public:
     
     VROBloomTest();
@@ -26,12 +26,20 @@ public:
     std::shared_ptr<VROSceneController> getSceneController() {
         return _sceneController;
     }
-    
-private:
+    virtual void onClick(int source,
+                         std::shared_ptr<VRONode> node,
+                         ClickState clickState,
+                         std::vector<float> position);
 
+private:
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
-    
+    std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VROText> _bloomStateText;
+    int _kernelSize;
+    float _sigma;
+    bool _useBilinearTextureLookup;
+    int _blurPasses;
 };
 
 #endif /* VROBloomTest_h */

@@ -53,7 +53,6 @@ VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_
 }
 
 VROChoreographer::~VROChoreographer() {
-    
 }
 
 void VROChoreographer::createRenderTargets() {
@@ -125,10 +124,11 @@ void VROChoreographer::createRenderTargets() {
                 // The HDR input is not premultiplied, so multiply its RGB by its alpha
                 "highp vec4 base = texture(hdr_texture, v_texcoord);",
                 "base.rgb *= base.a;",
-                
+
                 // The bloom input is already premultiplied (see VROGaussianBlurRenderPass)
                 "highp vec4 bloom = texture(bloom_texture, v_texcoord);",
                 "frag_color = base + bloom;",
+                "frag_color.a = frag_color.a > 1.0 ? 1.0 : frag_color.a;"
             };
             _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
         }
@@ -207,7 +207,7 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
     }
     if (_blurTargetB) {
         _blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int) (rtViewport.getWidth()  * _blurScaling),
-                                                                          (int) (rtViewport.getHeight() * _blurScaling) });
+                                    (int) (rtViewport.getHeight() * _blurScaling) });
     }
 
     if (failed) {
@@ -246,7 +246,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
         if (_bloomEnabled && metadata->requiresBloomPass()) {
             _blurTargetA->hydrate();
             _blurTargetB->hydrate();
-            
+
             // Render the scene + bloom to the floating point HDR MRT target
             inputs.outputTarget = _hdrTarget;
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
@@ -354,6 +354,9 @@ void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODrive
     }
     if (_postProcessTargetB) {
         _postProcessTargetB->setClearColor(color);
+    }
+    if (_gaussianBlurPass) {
+        _gaussianBlurPass->setClearColor(color);
     }
 }
 

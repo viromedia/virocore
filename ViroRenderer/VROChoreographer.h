@@ -121,6 +121,12 @@ public:
      */
     void setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver);
 
+    /*
+     Returns the blur post process shader used for rendering bloom effects.
+     */
+    std::shared_ptr<VROGaussianBlurRenderPass> getGaussianBlurPass() {
+        return _gaussianBlurPass;
+    }
 private:
     
     std::weak_ptr<VRODriver> _driver;
@@ -237,7 +243,7 @@ private:
      */
     std::shared_ptr<VRORenderTarget> _blurTargetA;
     std::shared_ptr<VRORenderTarget> _blurTargetB;
-    
+
     /*
      The size of the blur targets relative to the display. Smaller scale leads to
      less accurate but faster blur.
