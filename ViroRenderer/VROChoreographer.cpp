@@ -33,7 +33,7 @@ VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_
     _driver(driver),
     _clearColor({ 0, 0, 0, 1 }),
     _renderTargetsChanged(false),
-    _blurScaling(0.25) {
+    _blurScaling(0.5) {
 
     // Derive supported features on this GPU
     _mrtSupported = driver->getGPUType() != VROGPUType::Adreno330OrOlder;

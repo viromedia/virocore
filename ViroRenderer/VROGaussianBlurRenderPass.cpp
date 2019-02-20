@@ -24,6 +24,7 @@ VROGaussianBlurRenderPass::VROGaussianBlurRenderPass() :
     _bilinearTextureLookup(true),
     _sigma(1),
     _kernelSize(5),
+    _reinforcedIntensity(1),
     _normalizedKernel(true),
     _considerTransparentPixels(false),
     _preBlurPass(nullptr),
@@ -167,7 +168,7 @@ void VROGaussianBlurRenderPass::initPreBlurPass(std::shared_ptr<VRODriver> drive
     std::vector<std::string> opaqueShader = {
             "uniform sampler2D sampled_texture;",
             "highp vec4 base = texture(sampled_texture, v_texcoord);",
-            "frag_color = vec4(base.rgb, 1.0);"
+            "frag_color = vec4(base.rgb * "+ VROStringUtil::toString(_reinforcedIntensity, 3) +", 1.0);"
     };
     _preBlurPass = driver->newImagePostProcess(
             VROImageShaderProgram::create(inputSampler, opaqueShader, driver));

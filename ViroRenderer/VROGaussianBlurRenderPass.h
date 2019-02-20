@@ -62,6 +62,13 @@ public:
      */
     void setClearColor(VROVector4f color);
 
+    /*
+     A scale factor to reinforce and intensify the rgb values of the input texture before
+     applying the blur.
+     */
+    void setReinforcedIntensity(float intensity) {
+        _reinforcedIntensity = intensity;
+    }
 private:
     /*
      Sigma controls gaussian "drop-off", and thus the blur intensity. The higher
@@ -102,6 +109,12 @@ private:
      True if we are compositing onto a renderer that has transparent pixels.
      */
     bool _considerTransparentPixels = true;
+
+    /*
+     A premultiplied intensity ratio applied to the input texture and it's rgb values
+     before bluring.
+     */
+    float _reinforcedIntensity;
 
     /*
      The main gaussian blur shader post process program used for blurring the image.
