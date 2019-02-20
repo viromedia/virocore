@@ -1356,6 +1356,9 @@
 		8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F152A7A1C10D4AE00A211F8 /* VROShapeUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6318691BD956AF000A75DF /* VROTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF981C1CD67B003DC425 /* specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4DF971C1CD67B003DC425 /* specular.png */; };
+		8FD7FCAE221DC7350040C0EE /* hourglass_4_1_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */; };
+		8FD7FCAF221DC7350040C0EE /* hourglass_4_2.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */; };
+		8FD7FCB0221DC7350040C0EE /* hourglass_2_1_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */; };
 		8FD89B6E2209F50D0015F2BF /* model_hourglass.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */; };
 		8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */; };
@@ -2399,6 +2402,9 @@
 		8FD4DF251C18EDC8003DC425 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = specular.png; path = ViroSample/specular.png; sourceTree = "<group>"; };
+		8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_4_1_t.mlmodel; sourceTree = "<group>"; };
+		8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_4_2.mlmodel; sourceTree = "<group>"; };
+		8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1_t.mlmodel; sourceTree = "<group>"; };
 		8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_hourglass.mlmodel; sourceTree = "<group>"; };
 		8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimationQuaternion.h; sourceTree = "<group>"; };
 		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
@@ -3266,6 +3272,9 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */,
+				8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */,
+				8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */,
 				8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */,
 				8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */,
 				8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */,
@@ -5940,6 +5949,7 @@
 				8FD2A5111F81323500E831A6 /* VROBoxTest.cpp in Sources */,
 				8FD2A54F1F813C4100E831A6 /* VROHDRTest.cpp in Sources */,
 				8ABD8F3E1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m in Sources */,
+				8FD7FCAE221DC7350040C0EE /* hourglass_4_1_t.mlmodel in Sources */,
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
 				8FD4DF041C18ED30003DC425 /* VROTextureSubstrate.cpp in Sources */,
@@ -5997,6 +6007,7 @@
 				8FD2A5401F813C4100E831A6 /* VROShadowTest.cpp in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8FEACEFC20180CB40082D18B /* VROShadowPreprocess.cpp in Sources */,
+				8FD7FCAF221DC7350040C0EE /* hourglass_4_2.mlmodel in Sources */,
 				8FEACF0C2018319C0082D18B /* VRORenderUtil.cpp in Sources */,
 				8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
@@ -6037,6 +6048,7 @@
 				8F465027215E738900C1AEC5 /* sweep_context.cc in Sources */,
 				8FD2A5501F813C4100E831A6 /* VROTextTest.cpp in Sources */,
 				8F129FAD1ED4A38600341D83 /* VRODualQuaternion.cpp in Sources */,
+				8FD7FCB0221DC7350040C0EE /* hourglass_2_1_t.mlmodel in Sources */,
 				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8F17D5411FCE165400141042 /* VROViewRecorder.mm in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,

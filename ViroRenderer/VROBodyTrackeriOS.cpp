@@ -14,15 +14,26 @@
 #include "VRODriverOpenGLiOS.h"
 #include "VROARFrameiOS.h"
 
-// Set to CPM or HOURGLASS
 #define CPM 0
-#define HOURGLASS 1
-#define VRO_BODY_TRACKER_MODEL HOURGLASS
+#define HOURGLASS_2_1_T 1
+#define HOURGLASS_4_1_T 2
+#define HOURGLASS_4_2 3
+#define HOURGLASS_8_1 4
+
+// Set to CPM, HOURGLASS_2_1_T, HOURGLASS_4_1_T, HOURGLASS_4_2, HOURGLASS_8_1
+#define VRO_BODY_TRACKER_MODEL HOURGLASS_2_1_T
 
 #if VRO_BODY_TRACKER_MODEL==CPM
 #import "model_cpm.h"
-#else
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
+#import "hourglass_2_1_t.h"
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_1_T
+#import "hourglass_4_1_t.h"
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_2
+#import "hourglass_4_2.h"
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
 #import "model_hourglass.h"
+#else
 #endif
 
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
@@ -32,8 +43,8 @@ std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 3, VROBodyJointType::LeftHip },
     { 4, VROBodyJointType::LeftKnee },
     { 5, VROBodyJointType::LeftAnkle },
-    { 6, VROBodyJointType::Unknown },    // TODO Need to add VROBodyJointType::Pelvis
-    { 7, VROBodyJointType::Unknown },    // TODO Need to add VROBodyJointType::Thorax
+    { 6, VROBodyJointType::Unknown },
+    { 7, VROBodyJointType::Unknown },
     { 8, VROBodyJointType::Neck },
     { 9, VROBodyJointType::Top },
     { 10, VROBodyJointType::RightWrist },
@@ -42,6 +53,25 @@ std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 13, VROBodyJointType::LeftShoulder },
     { 14, VROBodyJointType::LeftElbow },
     { 15, VROBodyJointType::LeftWrist },
+};
+
+std::map<int, VROBodyJointType> _pilTypesToJointTypes = {
+    { 0, VROBodyJointType::Top },
+    { 1, VROBodyJointType::Neck },
+    { 2, VROBodyJointType::RightShoulder },
+    { 3, VROBodyJointType::RightElbow },
+    { 4, VROBodyJointType::RightWrist },
+    { 5, VROBodyJointType::LeftShoulder },
+    { 6, VROBodyJointType::LeftElbow },
+    { 7, VROBodyJointType::LeftWrist },
+    { 8, VROBodyJointType::RightHip },
+    { 9, VROBodyJointType::RightKnee },
+    { 10, VROBodyJointType::RightAnkle },
+    { 11, VROBodyJointType::LeftHip },
+    { 12, VROBodyJointType::LeftKnee },
+    { 13, VROBodyJointType::LeftAnkle },
+    { 14, VROBodyJointType::Unknown },
+    { 15, VROBodyJointType::Unknown },
 };
 
 @interface NSArray (Map)
@@ -74,8 +104,17 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
 #if VRO_BODY_TRACKER_MODEL==CPM
     pinfo("Loading CPM body tracking model");
     _model = [[[model_cpm alloc] init] model];
-#else
-    pinfo("Loading Viro body tracking model");
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
+    pinfo("Loading HG_2-1-T body tracking model");
+    _model = [[[hourglass_2_1_t alloc] init] model];
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_1_T
+    pinfo("Loading HG_4-1-t body tracking model");
+    _model = [[[hourglass_4_1_t alloc] init] model];
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_2
+    pinfo("Loading HG-4-2 body tracking model");
+    _model = [[[hourglass_4_2 alloc] init] model];
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
+    pinfo("Loading HG-8-1 body tracking model");
     _model = [[[model_hourglass alloc] init] model];
 #endif
     
@@ -106,8 +145,10 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
     for (int k = 0; k < keypoint; k++) {
 #if VRO_BODY_TRACKER_MODEL==CPM
         VROBodyJointType type = (VROBodyJointType) k;
-#else
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
         VROBodyJointType type = _mpiiTypesToJointTypes[k];
+#else
+        VROBodyJointType type = _pilTypesToJointTypes[k];
 #endif
         if (type == VROBodyJointType::Unknown) {
             continue;
