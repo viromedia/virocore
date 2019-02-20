@@ -289,6 +289,7 @@ private:
      The root position and normal of the plane to project onto when using kProjectToPlaneTracking
      depth tests.
      */
+    std::vector<VROVector3f> _candidatePlanePositions;
     VROVector3f _projectedPlanePosition;
     VROVector3f _projectedPlaneNormal;
 
@@ -422,6 +423,8 @@ private:
     /*
      Depth tests for projecting a 2D ML screen coordinate into 3D space.
      */
+    bool findUserDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints, VROMatrix4f &matOut);
+    VROVector3f findClusterInPoints(std::vector<VROVector3f> points);
     bool performDepthTest(float x, float y, VROMatrix4f &matOut);
     bool performWindowDepthTest(float x, float y, VROMatrix4f &matOut);
     bool performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut);
@@ -516,7 +519,7 @@ public:
                 return;
             }
 
-            controller->finishCalibration();
+            //controller->finishCalibration();
         }
     }
 

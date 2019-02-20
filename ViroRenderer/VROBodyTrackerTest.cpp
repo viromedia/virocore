@@ -75,13 +75,14 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     _renderer = renderer;
     _sceneController = std::make_shared<VROARSceneController>();
     _sceneController->setDelegate(shared_from_this());
-
+    
     // Set up the scene.
     _arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
     _arScene->initDeclarativeSession();
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setIntensity(1000);
     _arScene->getRootNode()->addLight(ambient);
+    _arScene->displayPointCloud(true);
 
     // Set up the 3D Model to be animated
     VROVector3f pos = VROVector3f( 0, -1.5, -50);

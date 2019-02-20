@@ -17,6 +17,7 @@
 #include "VROProjector.h"
 #include "VROBillboardConstraint.h"
 #include "VROTime.h"
+#include "VROARFrame.h"
 
 #if VRO_PLATFORM_IOS
 #include "VRODriverOpenGLiOS.h"
@@ -763,6 +764,7 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
     // If calibrating, we'll need to grab the Z depth at which to position our projected plane.
     if (_calibrating) {
+
         if (latestJoints.find(kArHitTestJoint) == latestJoints.end()) {
             return;
         }
@@ -771,15 +773,62 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
         VROBodyJoint rootJoint = latestJoints[kArHitTestJoint];
         VROVector3f screenCoord = rootJoint.getScreenCoords();
         VROMatrix4f projectedTrans = VROMatrix4f::identity();
-        if (!performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans)) {
+
+        VROMatrix4f tempTrans = VROMatrix4f::identity();
+        //if (!performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans)) {
+        if (!findUserDepth(latestJoints, tempTrans)) {
             latestJoints.clear();
             return;
         }
-
-        // Update our projection plane
-        _projectedPlanePosition = projectedTrans.extractTranslation();
+        
+        /*
+         Okay consider calibration finished when... the last value set is equal to at least 75% of the previous 20 values (15).
+         Also, don't set a value... if at least 3 of the last 5 don't match it.
+         */
         VROVector3f camPos = _renderer->getCamera().getPosition();
-        _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+        std::vector<float> distances;
+        for (int i = 0; i < _candidatePlanePositions.size(); i++) {
+            distances.push_back(camPos.distance(_candidatePlanePositions[i]));
+        }
+        
+        float distanceToCandidate = camPos.distance(tempTrans.extractTranslation());
+        bool shouldSetCurrentValue = false;
+        if (_candidatePlanePositions.size() >= 5) {
+            int similarCount = 0;
+            for (int i = (int)_candidatePlanePositions.size() - 5; i < _candidatePlanePositions.size(); i++) {
+                if (abs(distances[i] - distanceToCandidate) < .2) {
+                    similarCount++;
+                }
+            }
+            if (similarCount >= 3) {
+                shouldSetCurrentValue = true;
+            }
+        } else {
+            shouldSetCurrentValue = true;
+        }
+        
+        if (shouldSetCurrentValue) {
+            // Update our projection plane
+            _projectedPlanePosition = tempTrans.extractTranslation();
+            _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+        }
+
+        if (_candidatePlanePositions.size() == 20) {
+            
+            int similarCount = 0;
+            for (int i = 0; i < distances.size(); i++) {
+                if (abs(distances[i] - distanceToCandidate) < .2) {
+                    similarCount++;
+                }
+            }
+            
+            if (similarCount >= 15) {
+                finishCalibration(true);
+            }
+            
+            _candidatePlanePositions.erase(_candidatePlanePositions.begin());
+        }
+        _candidatePlanePositions.push_back(tempTrans.extractTranslation());
     }
 
     // Project the 2D joints into 3D coordinates as usual.
@@ -1109,6 +1158,100 @@ void VROBodyTrackerController::updateModel() {
     }
 }
 
+bool VROBodyTrackerController::findUserDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints, VROMatrix4f &matOut) {
+    std::shared_ptr<VROARSession> arSession;
+    
+#if VRO_PLATFORM_IOS
+    arSession = [_view getARSession];
+#endif
+    if (!arSession) {
+        return false;
+    }
+    
+    std::unique_ptr<VROARFrame> &lastFrame = arSession->getLastFrame();
+    std::vector<VROVector4f> pointCloudPoints = lastFrame->getPointCloud()->getPoints();
+    
+    
+    // get the "box" around the user's torso based on a diagonal pair of hip & shoulders
+    float maxX;
+    float minX;
+    float maxY;
+    float minY;
+    
+    auto rightShoulderIt = latestJoints.find(VROBodyJointType::RightShoulder);
+    auto leftShoulderIt = latestJoints.find(VROBodyJointType::LeftShoulder);
+    auto rightHipIt = latestJoints.find(VROBodyJointType::RightHip);
+    auto leftHipIt = latestJoints.find(VROBodyJointType::LeftHip);
+
+    if (rightShoulderIt != latestJoints.end() && leftHipIt != latestJoints.end()) {
+        maxX = leftHipIt->second.getScreenCoords().x;
+        minX = rightShoulderIt->second.getScreenCoords().x;
+        maxY = leftHipIt->second.getScreenCoords().y;
+        minY = rightShoulderIt->second.getScreenCoords().y;
+    } else if (leftShoulderIt != latestJoints.end() && rightHipIt != latestJoints.end()) {
+        maxX = leftShoulderIt->second.getScreenCoords().x;
+        minX = rightHipIt->second.getScreenCoords().x;
+        maxY = rightHipIt->second.getScreenCoords().y;
+        minY = leftShoulderIt->second.getScreenCoords().y;
+        
+    } else {
+        return false;
+    }
+
+    float torsoWidth = maxX - minX;
+    float torsoHeight = maxY - minY;
+    
+    std::vector<VROVector3f> hitTestResults;
+    
+    for (int i = 0; i < 10; i++) {
+        VROMatrix4f estimate;
+        if (performDepthTest(minX + (torsoWidth * ((float) rand()) / RAND_MAX), minY + (torsoHeight * ((float) rand()) / RAND_MAX), estimate)) {
+            hitTestResults.push_back(estimate.extractTranslation());
+        }
+    }
+    
+    if (hitTestResults.size() <= 5) {
+        return false;
+    }
+    
+    matOut.translate(findClusterInPoints(hitTestResults));
+    return true;
+}
+
+VROVector3f VROBodyTrackerController::findClusterInPoints(std::vector<VROVector3f> points) {
+    /*
+     The algorithm we use here isn't difficult... we just grab the median value and ignore
+     all points that are more than .3 meters from it. This is because we're getting values like:
+     
+     2.2342, 2.452, 2.223, 2.3334, 12.2343, 2.341, 5.2342, etc.
+     
+     So by sorting all the values and grabbing the median value, we "throw" away all the artifacts at the edges
+     */
+    VROVector3f cameraPos = _renderer->getCamera().getPosition();
+
+    std::vector<float> distances;
+    for (int i = 0; i < points.size(); i++) {
+        distances.push_back(cameraPos.distance(points[i]));
+    }
+    
+    std::sort(distances.begin(), distances.end());
+    float midpoint = distances[distances.size() / 2];
+    
+    VROVector3f totalPosition = {0,0,0};
+    for (int i = 0; i < distances.size();) {
+        if (abs(midpoint - distances[i]) > .3) {
+            distances.erase(distances.begin() + i);
+            points.erase(points.begin() + i);
+        } else {
+            totalPosition += points[i];
+            i++;
+        }
+    }
+    
+    totalPosition /= distances.size();
+    return totalPosition;
+}
+
 bool VROBodyTrackerController::performWindowDepthTest(float x, float y, VROMatrix4f &matOut) {
     float d = kARHitTestWindowKernelPixel;
     std::vector<VROVector3f> trials;
@@ -1156,21 +1299,8 @@ bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &m
             continue;
         }
 
-        VROARHitTestResultType currentType = result->getType();
-        VROARHitTestResultType savedType = finalResult->getType();
-
-        // NOTE: Stack rank ARHittest quality by:
-        // ExistingPlaneUsingExtent > ExistingPlane > FeaturePoint
-        // Grab the result based on the ranked types. If the types are the same, get
-        // the close-est one.
-        if (savedType == VROARHitTestResultType::FeaturePoint
-            && (currentType == VROARHitTestResultType::ExistingPlane
-            || currentType != VROARHitTestResultType::ExistingPlaneUsingExtent)) {
-            finalResult = result;
-        } else if (savedType == VROARHitTestResultType::ExistingPlane
-                   && currentType == VROARHitTestResultType::ExistingPlaneUsingExtent) {
-            finalResult = result;
-        } else if (savedType == currentType && result->getDistance() < finalResult->getDistance()) {
+        // only consider feature points and choose the closest one.
+        if (result->getType() == VROARHitTestResultType::FeaturePoint && result->getDistance() < finalResult->getDistance()) {
             finalResult = result;
         }
     }
