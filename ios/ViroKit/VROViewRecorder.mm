@@ -402,7 +402,7 @@
                                    AVVideoWidthKey : @(width),
                                    AVVideoHeightKey : @(height),
                                    AVVideoCompressionPropertiesKey:
-                                     @{AVVideoAverageBitRateKey : @(7000000),
+                                     @{AVVideoAverageBitRateKey : @(3000000),
                                        }
                                    };
     
