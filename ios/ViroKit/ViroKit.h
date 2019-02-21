@@ -74,6 +74,11 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROParticle.h>
 #import <ViroKit/VROParticleModifier.h>
 
+// PostProcess
+#import <ViroKit/VROChoreographer.h>
+#import <ViroKit/VRORenderPass.h>
+#import <ViroKit/VROGaussianBlurRenderPass.h>
+
 // Animation
 #import <ViroKit/VROAnimation.h>
 #import <ViroKit/VROAnimatable.h>

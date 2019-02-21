@@ -68,6 +68,7 @@ public:
      */
     void setReinforcedIntensity(float intensity) {
         _reinforcedIntensity = intensity;
+        resetShaders();
     }
 private:
     /*

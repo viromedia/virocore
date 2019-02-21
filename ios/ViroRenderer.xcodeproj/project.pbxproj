@@ -301,7 +301,7 @@
 		13B67341212229B20040FB72 /* KeenConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631942065BF8100A74EFC /* KeenConstants.h */; };
 		13B67342212229B20040FB72 /* KIOReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F631BD2065C26D00A74EFC /* KIOReachability.h */; };
 		13B67343212229B20040FB72 /* VROInputPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697801E30843000191090 /* VROInputPresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B67344212229B20040FB72 /* VROChoreographer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9B1F3BA9120007AD03 /* VROChoreographer.h */; };
+		13B67344212229B20040FB72 /* VROChoreographer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9B1F3BA9120007AD03 /* VROChoreographer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67345212229B20040FB72 /* VROARDraggableNodeTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A51B1F813C3C00E831A6 /* VROARDraggableNodeTest.h */; };
 		13B67346212229B20040FB72 /* VROEventDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67347212229B20040FB72 /* VROTestUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5141F81335C00E831A6 /* VROTestUtil.h */; };
@@ -429,7 +429,7 @@
 		13B673C1212229B20040FB72 /* VROFieldOfView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6248391BDABD81000755E5 /* VROFieldOfView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673C2212229B20040FB72 /* VROShadowMapRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */; };
 		13B673C3212229B20040FB72 /* VROVideoTextureiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10191DD5449700FE425C /* VROVideoTextureiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B673C4212229B20040FB72 /* VROGaussianBlurRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */; };
+		13B673C4212229B20040FB72 /* VROGaussianBlurRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673C5212229B20040FB72 /* VROAudioPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F8291CA19A9A00415115 /* VROAudioPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B673C6212229B20040FB72 /* VROGlyphAtlasOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2F342820F54FAC001962D0 /* VROGlyphAtlasOpenGL.h */; };
 		13B673C7212229B20040FB72 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -491,7 +491,7 @@
 		13B67400212229B20040FB72 /* VROVideoDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10291DD5489E00FE425C /* VROVideoDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67401212229B20040FB72 /* VROTimingFunctionEaseIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA41C482F560089C31A /* VROTimingFunctionEaseIn.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67402212229B20040FB72 /* VRORendererConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA81D5E2023EE7100B04790 /* VRORendererConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B67403212229B20040FB72 /* VRORenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9F1F3BA9340007AD03 /* VRORenderPass.h */; };
+		13B67403212229B20040FB72 /* VRORenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9F1F3BA9340007AD03 /* VRORenderPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67404212229B20040FB72 /* VROBoxTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5101F81323500E831A6 /* VROBoxTest.h */; };
 		13B67405212229B20040FB72 /* VROHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B67406212229B20040FB72 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -742,8 +742,8 @@
 		8F0E5E981F3B52480007AD03 /* VRORenderTargetOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5E961F3B52480007AD03 /* VRORenderTargetOpenGL.cpp */; };
 		8F0E5E991F3B52480007AD03 /* VRORenderTargetOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E971F3B52480007AD03 /* VRORenderTargetOpenGL.h */; };
 		8F0E5E9C1F3BA9120007AD03 /* VROChoreographer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5E9A1F3BA9120007AD03 /* VROChoreographer.cpp */; };
-		8F0E5E9D1F3BA9120007AD03 /* VROChoreographer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9B1F3BA9120007AD03 /* VROChoreographer.h */; };
-		8F0E5EA11F3BA9340007AD03 /* VRORenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9F1F3BA9340007AD03 /* VRORenderPass.h */; };
+		8F0E5E9D1F3BA9120007AD03 /* VROChoreographer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9B1F3BA9120007AD03 /* VROChoreographer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F0E5EA11F3BA9340007AD03 /* VRORenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5E9F1F3BA9340007AD03 /* VRORenderPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0E5EA91F3BB81A0007AD03 /* VRODisplayOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5EA71F3BB81A0007AD03 /* VRODisplayOpenGL.h */; };
 		8F0E5EAC1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */; };
 		8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */; };
@@ -898,7 +898,7 @@
 		8F3CE70B201113B900FF0214 /* VROPBRDirectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3CE709201113B900FF0214 /* VROPBRDirectTest.cpp */; };
 		8F3CE70C201113B900FF0214 /* VROPBRDirectTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3CE70A201113B900FF0214 /* VROPBRDirectTest.h */; };
 		8F4054191F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4054171F4FAADC008DCBAD /* VROGaussianBlurRenderPass.cpp */; };
-		8F40541A1F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */; };
+		8F40541A1F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4054181F4FAADC008DCBAD /* VROGaussianBlurRenderPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */; };
 		8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8C1F2B994C00B1B2DC /* portal_ring.png */; };
 		8F46501A215E6E7000C1AEC5 /* VROBodyTrackeriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B08B42E213F7B9A00196F05 /* VROBodyTrackeriOS.cpp */; };
