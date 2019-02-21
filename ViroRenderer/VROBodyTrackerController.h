@@ -113,6 +113,11 @@ public:
     virtual ~VROBodyTrackerControllerDelegate() {};
 
     /*
+     Triggered when the calibration finishes
+     */
+    virtual void onCalibrationFinished() = 0;
+    
+    /*
      Triggered when the VROBodyTrackedState for the attached VROBodyTrackerController has changed.
      */
     virtual void onBodyTrackStateUpdate(VROBodyTrackedState state) = 0;

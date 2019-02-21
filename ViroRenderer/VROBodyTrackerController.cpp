@@ -359,6 +359,11 @@ void VROBodyTrackerController::finishCalibration(bool manual) {
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
+    
+    std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onCalibrationFinished();
+    }
 }
 
 void VROBodyTrackerController::calibrateBoneProportionality() {

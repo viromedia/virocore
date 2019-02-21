@@ -100,6 +100,9 @@ public:
     }
 
     void onModelLoaded(std::shared_ptr<VRONode> node);
+    void onCalibrationFinished() {
+        //no-op
+    }
     void onBodyTrackStateUpdate(VROBodyTrackedState state);
     void onJointUpdate(const std::map<VROBodyJointType, VROJointPos>  &mlJointsFiltered,
                        const std::map<VROBodyJointType, VROVector3f> &mlJointsDampened,
