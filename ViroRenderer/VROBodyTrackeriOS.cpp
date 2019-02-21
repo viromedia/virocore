@@ -19,12 +19,15 @@
 #define HOURGLASS_4_1_T 2
 #define HOURGLASS_4_2 3
 #define HOURGLASS_8_1 4
+#define HOURGLASS_2_1 5
 
 // Set to CPM, HOURGLASS_2_1_T, HOURGLASS_4_1_T, HOURGLASS_4_2, HOURGLASS_8_1
-#define VRO_BODY_TRACKER_MODEL HOURGLASS_8_1
+#define VRO_BODY_TRACKER_MODEL HOURGLASS_2_1
 
 #if VRO_BODY_TRACKER_MODEL==CPM
 #import "model_cpm.h"
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
+#import "hourglass_2_1.h"
 #elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
 #import "hourglass_2_1_t.h"
 #elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_1_T
@@ -104,6 +107,9 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
 #if VRO_BODY_TRACKER_MODEL==CPM
     pinfo("Loading CPM body tracking model");
     _model = [[[model_cpm alloc] init] model];
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
+    pinfo("Loading HG_2-1 body tracking model");
+    _model = [[[hourglass_2_1 alloc] init] model];
 #elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
     pinfo("Loading HG_2-1-T body tracking model");
     _model = [[[hourglass_2_1_t alloc] init] model];

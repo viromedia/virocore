@@ -153,6 +153,15 @@ void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, 
     UIFont *font = [UIFont boldSystemFontOfSize:16];
     for (int i = 0; i < _labels.size(); i++) {
         VROVector3f point = _labelPositions[i];
+        
+        CGContextSetRGBFillColor(context, 0, 1, 0, 1);
+        CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
+        CGContextSetLineWidth(context, 1);
+        
+        CGRect rect = CGRectMake(point.x, point.y, 9, 9);
+        CGContextAddEllipseInRect(context, rect);
+        CGContextDrawPath(context, kCGPathFillStroke);
+        
         [_labels[i] drawAtPoint:CGPointMake( point.x, point.y ) withAttributes:@{ NSFontAttributeName:font,
                                                                                   NSForegroundColorAttributeName : _colors[i] } ];
     }

@@ -1110,6 +1110,7 @@
 		8FA9A267207E96240022C55D /* object_bpanther_Mixed_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */; };
 		8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FA9D6C5221F20AA0003C9D2 /* hourglass_2_1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9D6C4221F20AA0003C9D2 /* hourglass_2_1.mlmodel */; };
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
 		8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */; };
@@ -2222,6 +2223,7 @@
 		8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Mixed_AO.png; path = ViroSample/object_bpanther_Mixed_AO.png; sourceTree = "<group>"; };
 		8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Roughness.png; path = ViroSample/object_bpanther_Roughness.png; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
+		8FA9D6C4221F20AA0003C9D2 /* hourglass_2_1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1.mlmodel; sourceTree = "<group>"; };
 		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
 		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
 		8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARSessioniOS.cpp; sourceTree = "<group>"; };
@@ -3272,6 +3274,7 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				8FA9D6C4221F20AA0003C9D2 /* hourglass_2_1.mlmodel */,
 				8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */,
 				8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */,
 				8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */,
@@ -6042,6 +6045,7 @@
 				8FD2A53C1F813C4100E831A6 /* VRONormalMapTest.cpp in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,
 				A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */,
+				8FA9D6C5221F20AA0003C9D2 /* hourglass_2_1.mlmodel in Sources */,
 				8FD2A5531F813C4100E831A6 /* VROBloomTest.cpp in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
 				8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */,
