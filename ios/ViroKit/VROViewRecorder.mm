@@ -28,6 +28,7 @@
     CGRect _watermarkFrame;
     CIImage *_resizedWatermarkImage;
     CVPixelBufferRef _compositePixelBuffer; // used for watermarking
+    CIContext *_watermarkCIContext;
     NSString *_videoFileName;
     NSURL *_tempVideoFilePath;
     AVAssetWriter *_videoWriter;
@@ -442,6 +443,12 @@
                 NSLog(@"VROViewRecorder - failed to create compositePixelBuffer for watermarking");
             }
         }
+        
+        if (!_watermarkCIContext) {
+            if (_view) {
+                _watermarkCIContext = [CIContext contextWithEAGLContext:_view.context];
+            }
+        }
 
         // create a UIImage with size divided by the contentScaleFactor!
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(width/view.contentScaleFactor, height/view.contentScaleFactor), NO, 0.0);
@@ -486,16 +493,14 @@
             }
             
             BOOL success = NO;
-            if (_addWatermark) {
-                
+            if (_addWatermark && _watermarkCIContext && _compositePixelBuffer) {
                 // grab the videoImage
                 CIImage *videoImage = [CIImage imageWithCVPixelBuffer:_videoPixelBuffer];
                 // write the resizedWatemarkImage onto the videoImage
                 CIImage *outputImage = [_resizedWatermarkImage imageByCompositingOverImage:videoImage];
 
                 // grab the CVPixelBuffer of the combined image
-                CIContext *temporaryContext = [CIContext contextWithOptions:nil];
-                [temporaryContext render:outputImage toCVPixelBuffer:_compositePixelBuffer];
+                [_watermarkCIContext render:outputImage toCVPixelBuffer:_compositePixelBuffer];
                 
                 success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_compositePixelBuffer withPresentationTime:CMTimeMake(currentTime, 1000)];
             } else {
