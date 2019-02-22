@@ -818,7 +818,7 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
             _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
         }
 
-        if (_candidatePlanePositions.size() == 20) {
+        if (_candidatePlanePositions.size() == 10) {
             
             int similarCount = 0;
             for (int i = 0; i < distances.size(); i++) {
@@ -827,7 +827,7 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
                 }
             }
             
-            if (similarCount >= 15) {
+            if (similarCount >= 7) {
                 finishCalibration(true);
             }
             
