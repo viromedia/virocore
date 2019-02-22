@@ -10,7 +10,6 @@
 #include "VROLog.h"
 #include "VROTime.h"
 #include "VROARFrameiOS.h"
-#import "model_yolo_mpii.h"
 #import "VRODriverOpenGLiOS.h"
 
 std::map<std::string, VROBodyJointType> VROBodyTrackerYolo::_labelsToJointTypes = {
@@ -42,8 +41,8 @@ bool VROBodyTrackerYolo::initBodyTracking(VROCameraPosition position,
                                           std::shared_ptr<VRODriver> driver) {
     
     
-    _model = [[[model_yolo_mpii alloc] init] model];
-    _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
+    _model = nullptr;//[[[model_yolo_mpii alloc] init] model];
+    _coreMLModel =  nullptr; //[VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {
                       processVisionResults(request, error);

@@ -847,7 +847,6 @@
 		8F2C7B0821ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0C21ECEBAD00B8A154 /* axel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2C7B0921ECEAE300B8A154 /* axel.png */; };
 		8F2C7B1121EF8C7100B8A154 /* model_yolo_coco.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */; };
-		8F2C7B1321EF919F00B8A154 /* model_yolo_mpii.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */; };
 		8F2C7B1621EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
 		8F2C7B1721EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
 		8F2C7B1821EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1903,7 +1902,6 @@
 		8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyRecognitionTest.h; sourceTree = "<group>"; };
 		8F2C7B0921ECEAE300B8A154 /* axel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = axel.png; path = ViroKit/axel.png; sourceTree = "<group>"; };
 		8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_yolo_coco.mlmodel; sourceTree = "<group>"; };
-		8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_yolo_mpii.mlmodel; sourceTree = "<group>"; };
 		8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyTrackerYolo.cpp; sourceTree = "<group>"; };
 		8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyTrackerYolo.h; sourceTree = "<group>"; };
 		8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROVisionModel.h; sourceTree = "<group>"; };
@@ -3279,7 +3277,6 @@
 				8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */,
 				8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */,
 				8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */,
-				8F2C7B1221EF919E00B8A154 /* model_yolo_mpii.mlmodel */,
 				8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */,
 				8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */,
 				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
@@ -5897,7 +5894,6 @@
 				8F2C7AFF21ECCE5300B8A154 /* VROImagePreprocessor.cpp in Sources */,
 				8FA81D5B2023773700B04790 /* VRORendererSettingsTest.cpp in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
-				8F2C7B1321EF919F00B8A154 /* model_yolo_mpii.mlmodel in Sources */,
 				8F465025215E738900C1AEC5 /* advancing_front.cc in Sources */,
 				8F465029215E738900C1AEC5 /* shapes.cc in Sources */,
 				8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */,
