@@ -147,13 +147,17 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
     
     [EAGLContext setCurrentContext:self.context];
-    
+
     /*
      Setup the animation loop for the GLKView.
      */
     VROWeakProxy *proxy = [VROWeakProxy weakProxyForObject:self];
     _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+
+#if VRO_30_FPS
+    _displayLink.preferredFramesPerSecond = 30;
+#endif
 
     /*
      Disable going to sleep, and setup notifications.
