@@ -19,6 +19,8 @@
 class VRODriver;
 enum class VROCameraPosition;
 
+static const int kNumBodyJoints = 15;
+
 // Known body joint types recognized by VROBodyTracker
 // Note: Enum values matter as they are being utilized in VROBodyTracker!
 enum class VROBodyJointType {
