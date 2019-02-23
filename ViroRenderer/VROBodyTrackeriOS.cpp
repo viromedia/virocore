@@ -146,9 +146,14 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
         return {};
     }
         
-    int keypoint = (int) heatmap.shape[0].integerValue;
-    int heatmapWidth = (int) heatmap.shape[1].integerValue;
-    int heatmapHeight = (int) heatmap.shape[2].integerValue;
+    int numJoints = (int) heatmap.shape[0].integerValue;
+    int heatmapHeight = (int) heatmap.shape[1].integerValue;
+    int heatmapWidth = (int) heatmap.shape[2].integerValue;
+    
+    passert (heatmap.dataType == MLMultiArrayDataTypeFloat32);
+    float *array = (float *) heatmap.dataPointer;
+    int stride_c = heatmap.strides[0].integerValue;
+    int stride_h = heatmap.strides[1].integerValue;
     
     VROInferredBodyJoint bodyMap[kNumBodyJoints];
     
@@ -156,7 +161,7 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
      The ML model will return the heatmap tiles for each joint; choose the highest
      confidence tile for each joint.
      */
-    for (int k = 0; k < keypoint; k++) {
+    for (int k = 0; k < numJoints; k++) {
 #if VRO_BODY_TRACKER_MODEL==CPM
         VROBodyJointType type = (VROBodyJointType) k;
 #elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
@@ -168,10 +173,10 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
             continue;
         }
         
-        for (int i = 0; i < heatmapWidth; i++) {
-            for (int j = 0; j < heatmapHeight; j++) {
-                long index = k * (heatmapWidth * heatmapHeight) + i * (heatmapHeight) + j;
-                double confidence = heatmap[index].doubleValue;
+        for (int i = 0; i < heatmapHeight; i++) {
+            for (int j = 0; j < heatmapWidth; j++) {
+                long index = k * stride_c + i * stride_h + j;
+                float confidence = array[index];
                 
                 if (confidence > 0) {
                     VROInferredBodyJoint &joint = bodyMap[(int) type];
