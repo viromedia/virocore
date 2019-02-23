@@ -13,6 +13,7 @@
 #include "VROImagePreprocessor.h"
 #include "VRODriverOpenGLiOS.h"
 #include "VROARFrameiOS.h"
+#include <mutex>
 
 #define CPM 0
 #define HOURGLASS_2_1_T 1
@@ -22,7 +23,7 @@
 #define HOURGLASS_2_1 5
 
 // Set to CPM, HOURGLASS_2_1_T, HOURGLASS_4_1_T, HOURGLASS_4_2, HOURGLASS_8_1
-#define VRO_BODY_TRACKER_MODEL HOURGLASS_8_1
+#define VRO_BODY_TRACKER_MODEL HOURGLASS_2_1
 
 #if VRO_BODY_TRACKER_MODEL==CPM
 #import "model_cpm.h"
@@ -38,6 +39,8 @@
 #import "model_hourglass.h"
 #else
 #endif
+
+#define VRO_PROFILE_NEURAL_ENGINE 0
 
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 0, VROBodyJointType::RightAnkle },
@@ -96,14 +99,19 @@ std::map<int, VROBodyJointType> _pilTypesToJointTypes = {
 @end
 
 VROBodyTrackeriOS::VROBodyTrackeriOS() {
-    _currentImage = nil;
     _visionQueue = dispatch_queue_create("com.viro.bodyTrackerYoloVisionQueue", DISPATCH_QUEUE_SERIAL);
     _isTracking = false;
+    _fpsTickIndex = 0;
+    _fpsTickSum = 0;
+    _neuralEngineInitialized = false;
+    _isProcessingImage = false;
+    _nextImage = nil;
+    memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                          std::shared_ptr<VRODriver> driver) {
-    
+
 #if VRO_BODY_TRACKER_MODEL==CPM
     pinfo("Loading CPM body tracking model");
     _model = [[[model_cpm alloc] init] model];
@@ -219,23 +227,66 @@ void VROBodyTrackeriOS::stopBodyTracking() {
 void VROBodyTrackeriOS::update(const VROARFrame &frame) {
     const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
     
-    CVPixelBufferRef cameraImage = frameiOS.getImage();
-    VROMatrix4f transform = frameiOS.getCameraImageToViewportTransform();
-    VROCameraOrientation orientation = frameiOS.getCameraOrientation();
+    // Store the given image, which we'll run when the neural engine
+    // is done processing its current image
     
-    // Only process one image at a time
-    if (_currentImage != nil) {
-        return;
+    {
+        std::lock_guard<std::mutex> lock(_imageMutex);
+        if (_nextImage) {
+            CVBufferRelease(_nextImage);
+        }
+        _nextImage = CVBufferRetain(frameiOS.getImage());
+        _nextTransform = frameiOS.getCameraImageToViewportTransform();
+        _nextOrientation = frameiOS.getCameraOrientation();
     }
-    _currentImage = cameraImage;
+
+    // Start tracking images if we haven't yet initialized
+    if (!_neuralEngineInitialized) {
+        _neuralEngineInitialized = true;
+        _nanosecondsLastFrame = VRONanoTime();
+    }
     
+    // Try to process the next image (this will no-op if the neural
+    // engine is already processing an image)
     dispatch_async(_visionQueue, ^{
-        trackCurrentImage(transform, orientation);
+        nextImage();
     });
 }
 
 // Invoked on the _visionQueue
-void VROBodyTrackeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraOrientation orientation) {
+void VROBodyTrackeriOS::nextImage() {
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"Starting neural engine frame");
+#endif
+    
+    CVPixelBufferRef image = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(_imageMutex);
+        // Only process one image at a time
+        if (_isProcessingImage || !_nextImage) {
+            return;
+        }
+        _isProcessingImage = true;
+        image = CVBufferRetain(_nextImage);
+    }
+    
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"   Idle time %f", VROTimeCurrentMillis() - _betweenImageTime);
+#endif
+
+    trackImage(image, _nextTransform, _nextOrientation);
+    CVBufferRelease(image);
+
+    {
+        std::lock_guard<std::mutex> lock(_imageMutex);
+        _isProcessingImage = false;
+    }
+    _betweenImageTime = VROTimeCurrentMillis();
+    nextImage();
+}
+
+// Invoked on the _visionQueue
+void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform, VROCameraOrientation orientation) {
     NSDictionary *visionOptions = [NSDictionary dictionary];
     
     // The logic below derives the _transform matrix, which is used to convert *rotated* image
@@ -263,7 +314,8 @@ void VROBodyTrackeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraOrient
         
         // By wrapping the CVPixelBuffer in a CIImage, iOS will automatically convert from
         // YCbCr to RGB (note: this is undocumented, but works).
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:_currentImage];
+        _startNeural = VROTimeCurrentMillis();
+        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
         VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage
                                                                             orientation:orientation
                                                                                 options:visionOptions];
@@ -279,7 +331,7 @@ void VROBodyTrackeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraOrient
         _transform[13] = (1 - scale.y) / 2.0;
         
         CGImagePropertyOrientation orientation = kCGImagePropertyOrientationDown;
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:_currentImage];
+        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
         VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage
                                                                             orientation:orientation
                                                                                 options:visionOptions];
@@ -290,7 +342,7 @@ void VROBodyTrackeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraOrient
         // algorithm.
         _transform = transform;
         
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:_currentImage];
+        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
         VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage options:visionOptions];
         [handler performRequests:@[_visionRequest] error:nil];
     }
@@ -298,12 +350,20 @@ void VROBodyTrackeriOS::trackCurrentImage(VROMatrix4f transform, VROCameraOrient
 
 // Invoked on the _visionQueue
 void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error) {
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"   Neural engine time %f", VROTimeCurrentMillis() - _startNeural);
+#endif
+    _startHeatmap = VROTimeCurrentMillis();
     NSArray *array = [request results];
     
     VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
     MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> joints = convertHeatmap(heatmap, _transform);
     
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);
+#endif
+
     dispatch_async(dispatch_get_main_queue(), ^{
         std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
         if (delegate && _isTracking) {
@@ -311,5 +371,30 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
         }
     });
     
-    _currentImage = nil;
+    // Compute FPS
+    uint64_t nanosecondsThisFrame = VRONanoTime();
+    uint64_t tick = nanosecondsThisFrame - _nanosecondsLastFrame;
+    _nanosecondsLastFrame = nanosecondsThisFrame;
+    updateFPS(tick);
+    
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"Neural Engine FPS %f\n", getFPS());
+#endif
+}
+
+void VROBodyTrackeriOS::updateFPS(uint64_t newTick) {
+    // Simple moving average: subtract value falling off, and add new value
+    
+    _fpsTickSum -= _fpsTickArray[_fpsTickIndex];
+    _fpsTickSum += newTick;
+    _fpsTickArray[_fpsTickIndex] = newTick;
+    
+    if (++_fpsTickIndex == kNeuralFPSMaxSamples) {
+        _fpsTickIndex = 0;
+    }
+}
+
+double VROBodyTrackeriOS::getFPS() const {
+    double averageNanos = ((double) _fpsTickSum) / kNeuralFPSMaxSamples;
+    return 1.0 / (averageNanos / (double) 1e9);
 }
