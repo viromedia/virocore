@@ -289,7 +289,11 @@ void VROBodyTrackeriOS::nextImage() {
         _isProcessingImage = false;
     }
     _betweenImageTime = VROTimeCurrentMillis();
-    nextImage();
+    
+    // Use dispatch_async to prevent recursion overflow
+    dispatch_async(_visionQueue, ^{
+        nextImage();
+    });
 }
 
 // Invoked on the _visionQueue
