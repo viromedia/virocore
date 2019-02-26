@@ -389,12 +389,22 @@ void VRONode::updateSortKeys(uint32_t depth,
     if (_geometry) {
         if (!isHierarchical || isTopOfHierarchy) {
             distanceFromCamera = _worldBoundingBox.getCenter().distance(context.getCamera().getPosition());
-            
+
             // TODO Using the bounding box may be preferred but currently leads to more
             //      artifacts
             // distanceFromCamera = _worldBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
-            
+
             furthestDistanceFromCamera = getBoundingBox().getFurthestDistanceToPoint(context.getCamera().getPosition());
+
+            // Sanity checks to ensure we are not placing objects at inf. If so, clamp it at
+            // the last known furthestDistanceFromCamera.
+            if (isinf(furthestDistanceFromCamera)) {
+                furthestDistanceFromCamera = params.furthestDistanceFromCamera;
+            }
+
+            if (isinf(distanceFromCamera)) {
+                distanceFromCamera = params.furthestDistanceFromCamera;
+            }
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedLights, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), metadata, context, driver);
