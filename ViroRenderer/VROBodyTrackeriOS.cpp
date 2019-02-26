@@ -42,6 +42,8 @@
 
 #define VRO_PROFILE_NEURAL_ENGINE 0
 
+static const bool kBodyTrackerDiscardPelvisAndThorax = true;
+
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 0, VROBodyJointType::RightAnkle },
     { 1, VROBodyJointType::RightKnee },
@@ -49,8 +51,8 @@ std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 3, VROBodyJointType::LeftHip },
     { 4, VROBodyJointType::LeftKnee },
     { 5, VROBodyJointType::LeftAnkle },
-    { 6, VROBodyJointType::Unknown },
-    { 7, VROBodyJointType::Unknown },
+    { 6, VROBodyJointType::Pelvis },
+    { 7, VROBodyJointType::Thorax },
     { 8, VROBodyJointType::Neck },
     { 9, VROBodyJointType::Top },
     { 10, VROBodyJointType::RightWrist },
@@ -76,8 +78,8 @@ std::map<int, VROBodyJointType> _pilTypesToJointTypes = {
     { 11, VROBodyJointType::LeftHip },
     { 12, VROBodyJointType::LeftKnee },
     { 13, VROBodyJointType::LeftAnkle },
-    { 14, VROBodyJointType::Unknown },
-    { 15, VROBodyJointType::Unknown },
+    { 14, VROBodyJointType::Thorax },
+    { 15, VROBodyJointType::Pelvis },
 };
 
 @interface NSArray (Map)
@@ -152,8 +154,8 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
     
     passert (heatmap.dataType == MLMultiArrayDataTypeFloat32);
     float *array = (float *) heatmap.dataPointer;
-    int stride_c = heatmap.strides[0].integerValue;
-    int stride_h = heatmap.strides[1].integerValue;
+    int stride_c = (int) heatmap.strides[0].integerValue;
+    int stride_h = (int) heatmap.strides[1].integerValue;
     
     VROInferredBodyJoint bodyMap[kNumBodyJoints];
     
@@ -169,6 +171,9 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
 #else
         VROBodyJointType type = _pilTypesToJointTypes[k];
 #endif
+        if (kBodyTrackerDiscardPelvisAndThorax && (type == VROBodyJointType::Thorax || type == VROBodyJointType::Pelvis)) {
+            continue;
+        }
         if (type == VROBodyJointType::Unknown) {
             continue;
         }

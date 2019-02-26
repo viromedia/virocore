@@ -19,7 +19,7 @@
 class VRODriver;
 enum class VROCameraPosition;
 
-static const int kNumBodyJoints = 15;
+static const int kNumBodyJoints = 17;
 
 // Known body joint types recognized by VROBodyTracker
 // Note: Enum values matter as they are being utilized in VROBodyTracker!
@@ -38,7 +38,9 @@ enum class VROBodyJointType {
     LeftHip             = 11,
     LeftKnee            = 12,
     LeftAnkle           = 13,
-    Unknown             = 14
+    Thorax              = 14,
+    Pelvis              = 15,
+    Unknown             = 16
 };
 
 // Supported bone names within 3D models for ml joint tracking.
