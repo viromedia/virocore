@@ -43,6 +43,7 @@ private:
     MLModel *_model;
     VNCoreMLModel *_coreMLModel;
     VNCoreMLRequest *_visionRequest;
+    VNImageCropAndScaleOption _cropAndScaleOption;
     
     dispatch_queue_t _visionQueue;
     VROMatrix4f _transform;

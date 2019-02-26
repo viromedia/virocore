@@ -134,12 +134,13 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
     _model = [[[model_hourglass alloc] init] model];
 #endif
     
+    _cropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {
                                               processVisionResults(request, error);
                                           }];
-    _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
+    _visionRequest.imageCropAndScaleOption = _cropAndScaleOption;
     return true;
 }
 
@@ -318,14 +319,32 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     VROVector3f translation = transform.extractTranslation();
     
     if (orientation == VROCameraOrientation::Portrait || orientation == VROCameraOrientation::PortraitUpsideDown) {
+        float width = (float) CVPixelBufferGetWidth(image);
+        float height = (float) CVPixelBufferGetHeight(image);
+        
         // Remove rotation from the transformation matrix. Since this was a 90 degree rotation, X and Y are
         // reversed.
-        _transform[0] = scale.y;
-        _transform[1] = 0;
-        _transform[4] = 0;
-        _transform[5] = scale.x;
-        _transform[12] = (1 - scale.y) / 2.0;
-        _transform[13] = translation.y;
+        //
+        // Note also that the transform used depends on the VNImageCropAndScale option used. CenterCrop
+        // is preferred because it highlights the body in the center of the image, and is documented to
+        // preserve aspect ratio (Apple documentation is unclear about aspect ratio preservation for the
+        // other modes).
+        if (_cropAndScaleOption == VNImageCropAndScaleOptionCenterCrop) {
+            _transform[0] = scale.y;
+            _transform[1] = 0;
+            _transform[4] = 0;
+            _transform[5] = scale.x * height / width;
+            _transform[12] = (1 - scale.y) / 2.0;
+            _transform[13] = ((width - height) / width) / 2.0;
+        }
+        else { // ScaleToFill: note, this appears to not preserve aspect ratio (not confirmed)
+            _transform[0] = scale.y;
+            _transform[1] = 0;
+            _transform[4] = 0;
+            _transform[5] = scale.x;
+            _transform[12] = (1 - scale.y) / 2.0;
+            _transform[13] = translation.y;
+        }
         
         // iOS always rotates the image right-side up before inputting into a CoreML model for
         // a vision request. We ensure it rotates correctly by specifying the orientation of the
@@ -336,6 +355,7 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         // YCbCr to RGB (note: this is undocumented, but works).
         _startNeural = VROTimeCurrentMillis();
         CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
+
         VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage
                                                                             orientation:orientation
                                                                                 options:visionOptions];
