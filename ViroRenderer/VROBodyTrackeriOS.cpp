@@ -171,7 +171,8 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
 #else
         VROBodyJointType type = _pilTypesToJointTypes[k];
 #endif
-        if (kBodyTrackerDiscardPelvisAndThorax && (type == VROBodyJointType::Thorax || type == VROBodyJointType::Pelvis)) {
+        if (kBodyTrackerDiscardPelvisAndThorax &&
+            (type == VROBodyJointType::Thorax || type == VROBodyJointType::Pelvis)) {
             continue;
         }
         if (type == VROBodyJointType::Unknown) {
@@ -192,10 +193,9 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
                      we find the highest confidence tile.
                      */
                     if (confidence > joint.getConfidence()) {
-                        VROVector3f point(CGFloat(j), CGFloat(i), 0);
-                        
-                        VROBoundingBox bounds = VROBoundingBox(point.x, point.x, point.y, point.y, 0, 0);
-                        VROInferredBodyJoint inferredJoint = { type, bounds, confidence };
+                        VROInferredBodyJoint inferredJoint(type);
+                        inferredJoint.setConfidence(confidence);
+                        inferredJoint.setTileIndices(j, i);
                         bodyMap[(int) type] = inferredJoint;
                     }
                 }
@@ -209,8 +209,7 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
      */
     for (VROInferredBodyJoint &joint : bodyMap) {
         if (joint.getConfidence() > 0) {
-            VROBoundingBox tileBounds = joint.getBounds();
-            VROVector3f    tilePoint  = { tileBounds.getX(), tileBounds.getY() };
+            VROVector3f    tilePoint  = { (float) joint.getTileX(), (float) joint.getTileY() };
             
             // Convert tile indices to normalized camera image coordinates [0, 1]
             VROVector3f imagePoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),

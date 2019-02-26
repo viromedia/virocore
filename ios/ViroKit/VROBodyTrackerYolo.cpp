@@ -163,7 +163,11 @@ void VROBodyTrackerYolo::processVisionResults(VNRequest *request, NSError *error
                 VROBodyJointType type = _labelsToJointTypes[className];
                 
                 NSLog(@"   Label %@, type %d, confidence %f", classification.identifier, type, classification.confidence);
-                joints[type].push_back({ type, box, classification.confidence });
+                
+                VROInferredBodyJoint joint(type);
+                joint.setConfidence(classification.confidence);
+                joint.setBounds(box);
+                joints[type].push_back(joint);
             }
         }
     }

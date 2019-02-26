@@ -66,10 +66,8 @@ class VROInferredBodyJoint {
 public:
     
     VROInferredBodyJoint() : _confidence(0) {}
-    VROInferredBodyJoint(VROBodyJointType type, VROBoundingBox bounds, double confidence) :
-        _type(type),
-        _bounds(bounds),
-        _confidence(confidence) {}
+    VROInferredBodyJoint(VROBodyJointType type) :
+        _type(type) {}
     
     const VROBoundingBox &getBounds() const {
         return _bounds;
@@ -77,19 +75,37 @@ public:
     void setBounds(VROBoundingBox bounds) {
         _bounds = bounds;
     }
+    VROVector3f getCenter() const {
+        return _bounds.getCenter();
+    }
+    void setCenter(VROVector3f center) {
+        _bounds = VROBoundingBox(center.x, center.x, center.y, center.y, 0, 0);
+    }
     
     VROBodyJointType getType() const {
         return _type;
     }
+    
     double getConfidence() const {
         return _confidence;
     }
+    void setConfidence(float confidence) {
+        _confidence = confidence;
+    }
+    
+    void setTileIndices(int x, int y) {
+        _tileX = x;
+        _tileY = y;
+    }
+    int getTileX() const { return _tileX; }
+    int getTileY() const { return _tileY; }
     
 private:
     VROBoundingBox _bounds;
     VROBodyJointType _type;
     double _confidence;
     double _spawnTimeMs;
+    int _tileX, _tileY;
 };
 
 class VROBodyTrackerDelegate {
