@@ -206,8 +206,8 @@ public:
     /*
      Sets the ml confidence threshold for filtering out low confidence ml joint data.
      */
-    void setMLConfidenceThreshold(float threshold);
-    float getMLConfidenceThreshold();
+    void setMLConfidenceThreshold(VROBodyJointType joint, float threshold);
+    float getMLConfidenceThreshold(VROBodyJointType joint);
 
     /*
      Sets a distance threshold for filtering out volatile joints.
@@ -382,9 +382,9 @@ private:
      Configurable filter thresholds and debug switches.
      */
     bool _displayDebugCubes;
-    float _mlConfidenceThreshold;
     float _volatilityFilterThresholdMeters;
     float _reachableBoneFilterThresholdMeters;
+    std::map<VROBodyJointType, float> _mlJointConfidenceThresholds;
 
 #if VRO_PLATFORM_IOS
     // iOS UI Components

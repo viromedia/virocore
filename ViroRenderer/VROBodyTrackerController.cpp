@@ -110,10 +110,25 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
 
     // Set initial filter and debug configurations
     _dampeningPeriodMs = kInitialDampeningPeriodMs;
-    _mlConfidenceThreshold = kInitialMLConfidenceThreshold;
     _volatilityFilterThresholdMeters = kInitialVolatilityThresholdMeters;
     _reachableBoneFilterThresholdMeters = kInitialReachableBoneThresholdMeters;
     _displayDebugCubes = true;
+
+    // Set confidence thresholds per joint.
+    _mlJointConfidenceThresholds[VROBodyJointType::Top] =            kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::Neck] =           kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::LeftShoulder] =   kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::LeftElbow] =      kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::LeftWrist] =      kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::RightShoulder] =  kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::RightElbow] =     kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::RightWrist] =     kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::LeftHip] =        kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::LeftKnee] =       kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::LeftAnkle] =      kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::RightHip] =       kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::RightKnee] =      kInitialMLConfidenceThreshold;
+    _mlJointConfidenceThresholds[VROBodyJointType::RightAnkle] =     kInitialMLConfidenceThreshold;
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
@@ -717,7 +732,7 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     // Grab all the 2D joints of high confidence for the targets we want.
     std::map<VROBodyJointType, VROBodyJoint> latestJoints;
     for (auto &kv : joints) {
-        if (kv.second.getConfidence() > _mlConfidenceThreshold) {
+        if (kv.second.getConfidence() > _mlJointConfidenceThresholds[kv.first]) {
             latestJoints[kv.first] = kv.second;
         }
     }
@@ -1458,7 +1473,7 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
         VROVector3f transformed = { point.x * viewWidth, point.y * viewHight, 0 };
         // Only update the text for points that match our level of confidence.
         // Note that low confidence points are still rendered to ensure validity.
-        if (kv.second.getConfidence() > _mlConfidenceThreshold) {
+        if (kv.second.getConfidence() > _mlJointConfidenceThresholds[kv.first]) {
             std::string labelTag = pointLabels[(int)kv.first] + " -> " + kv.second.getProjectedTransform().extractTranslation().toString();
             _labelViews[(int)kv.first].text = [NSString stringWithUTF8String:labelTag.c_str()];
         }
@@ -1484,12 +1499,12 @@ bool VROBodyTrackerController::getDisplayDebugCubes() {
     return _displayDebugCubes;
 }
 
-void VROBodyTrackerController::setMLConfidenceThreshold(float threshold) {
-    _mlConfidenceThreshold = threshold;
+void VROBodyTrackerController::setMLConfidenceThreshold(VROBodyJointType joint, float threshold) {
+    _mlJointConfidenceThresholds[joint] = threshold;
 }
 
-float VROBodyTrackerController::getMLConfidenceThreshold() {
-    return _mlConfidenceThreshold;
+float VROBodyTrackerController::getMLConfidenceThreshold(VROBodyJointType joint) {
+    return _mlJointConfidenceThresholds[joint];
 }
 
 void VROBodyTrackerController::setVolatilityFilterThresholdMeters(float threshold) {
@@ -1515,3 +1530,4 @@ void VROBodyTrackerController::setStalenessThresholdForJoint(VROBodyJointType ty
 float VROBodyTrackerController::getStalenessThresholdForJoint(VROBodyJointType type) {
     return _mlJointTimeoutMap[type];
 }
+
