@@ -13,8 +13,10 @@
 static const float kConfidenceThreshold = 0.15;
 
 JointMap VROPoseFilter::filterJoints(const JointMap &joints) {
+    JointMap jointsToAdd = processNewJoints(_jointWindow, joints);
+    
     // Update the joint window dataset required for dampening
-    for (auto kv : joints) {
+    for (auto kv : jointsToAdd) {
         if (!kv.second.empty()) {
             if (kv.second[0].getConfidence() > kConfidenceThreshold) {
                 _jointWindow[kv.first].push_back(kv.second[0]);

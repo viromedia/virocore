@@ -35,10 +35,20 @@ public:
 protected:
     
     /*
-     Implemented by subclasses, returns the filtered joints given the
-     currently accumulated joints.
+     Return the joints we should add to the joint samples. This gives filters
+     an opportunity to throw out joints entirely so they never enter the
+     tracking window.
+     
+     The default behavior is not add all joints to the tracking window.
      */
-    virtual JointMap doFilter(const JointMap &jointWindow) = 0;
+    virtual JointMap processNewJoints(const JointMap &trackingWindow, const JointMap &joints) {
+        return joints;
+    }
+    
+    /*
+     Returns the filtered joints given the currently accumulated joints.
+     */
+    virtual JointMap doFilter(const JointMap &trackingWindow) = 0;
     
 private:
     

@@ -21,7 +21,7 @@ public:
         VROPoseFilter(trackingPeriodMs, confidenceThreshold) {}
     virtual ~VROPoseFilterLowPass() {}
     
-    virtual JointMap doFilter(const JointMap &jointWindow);
+    virtual JointMap doFilter(const JointMap &trackingWindow);
 
 };
 
