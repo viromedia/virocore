@@ -10,6 +10,7 @@
 #include "VROTestUtil.h"
 #include "VROSphere.h"
 #include "VROPoseFilterMovingAverage.h"
+#include "VROPoseFilterLowPass.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROBodyTrackerYolo.h"
@@ -95,7 +96,7 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     _bodyTracker = tracker;
 #endif
     
-    _poseFilter = std::make_shared<VROPoseFilterMovingAverage>(kDampeningPeriodMs, kConfidenceThreshold);
+    _poseFilter = std::make_shared<VROPoseFilterLowPass>(kDampeningPeriodMs, kConfidenceThreshold);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
