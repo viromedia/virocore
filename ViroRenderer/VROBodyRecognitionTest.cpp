@@ -37,9 +37,8 @@ static std::string kPointLabels[16] = {
     "Pelvis\t\t", //15
 };
 
-static const bool kDrawLabels = false;
 static const float kConfidenceThreshold = 0.15;
-static const float kDampeningPeriodMs = 125;
+static const bool kDrawLabels = false;
 
 std::vector<std::pair<int, int>> kSkeleton = {{0, 1}, {1, 14}, {14, 15}, {5, 1}, {2, 1}, {5, 6}, {6, 7},
     {2, 3}, {3, 4}, {11, 15}, {11, 12}, {12, 13}, {8, 15}, {8, 9}, {9, 10}};
@@ -95,9 +94,7 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     tracker->setDelegate(shared_from_this());
     _bodyTracker = tracker;
 #endif
-    
-    _poseFilter = std::make_shared<VROPoseFilterLowPass>(kDampeningPeriodMs, kConfidenceThreshold);
-    
+
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
     _arScene->getRootNode()->addLight(ambient);
@@ -105,13 +102,6 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
 
 void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints) {
 #if VRO_PLATFORM_IOS
-    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
-    if (!_poseFilter) {
-        dampenedJoints = joints;
-    } else {
-        dampenedJoints = _poseFilter->filterJoints(joints);
-    }
-    
     int viewWidth  = _view.frame.size.width;
     int viewHeight = _view.frame.size.height;
     
@@ -122,8 +112,8 @@ void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, 
     std::vector<float> confidences;
     
     for (int i = 0; i < kNumBodyJoints; i++) {
-        auto kv = dampenedJoints.find((VROBodyJointType) i);
-        if (kv != dampenedJoints.end() && kv->second.size() > 0) {
+        auto kv = joints.find((VROBodyJointType) i);
+        if (kv != joints.end() && kv->second.size() > 0) {
             VROInferredBodyJoint joint = kv->second[0];
             VROBoundingBox bounds = joint.getBounds();
             

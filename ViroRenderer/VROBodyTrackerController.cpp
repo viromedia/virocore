@@ -61,7 +61,6 @@ static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kAutomaticSizingRatio = 1;
 static const bool kAutomaticResizing = true;
 static const bool kDampenWithEMA = true;
-static const double kInitialDampeningPeriodMs = 250;
 static const float kInitialMLConfidenceThreshold = 0.45;
 static const float kInitialVolatilityThresholdMeters = 0.15;
 static const float kInitialReachableBoneThresholdMeters = 0.2;
@@ -109,7 +108,6 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     sceneRoot->addChildNode(_bodyControllerRoot);
 
     // Set initial filter and debug configurations
-    _dampeningPeriodMs = kInitialDampeningPeriodMs;
     _volatilityFilterThresholdMeters = kInitialVolatilityThresholdMeters;
     _reachableBoneFilterThresholdMeters = kInitialReachableBoneThresholdMeters;
     _displayDebugCubes = true;
@@ -777,8 +775,14 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     // Next, restore joints if possible using last known data (even if they are old).
     restoreMissingJoints(expiredJoints);
 
-    // Finally dampen joints and update _cachedModelJoints to be set on the IKRig.
-    dampenCachedJoints();
+    // Finally update _cachedModelJoints to be set on the IKRig.
+    _cachedModelJoints.clear();
+    
+    // If we are not dampening, simply set the _cachedModelJoints and return.
+    for (auto &jointPair : _cachedTrackedJoints) {
+        VROVector3f pos = jointPair.second.getProjectedTransform().extractTranslation();
+        _cachedModelJoints[jointPair.first] = pos;
+    }
 }
 
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
@@ -957,82 +961,6 @@ void VROBodyTrackerController::restoreMissingJoints(std::vector<VROBodyJoint> ex
             VROMatrix4f jointTrans = joint.second.getProjectedTransform();
             VROMatrix4f rootToJointTrans = rootJointTrans.invert().multiply(jointTrans);
             _cachedEffectorRootOffsets[joint.first] = rootToJointTrans;
-        }
-    }
-}
-
-void VROBodyTrackerController::dampenCachedJoints() {
-    _cachedModelJoints.clear();
-
-    // If we are not dampening, simply set the _cachedModelJoints and return.
-    bool applyDampening = _dampeningPeriodMs != 0;
-    if (!applyDampening) {
-        for (auto &jointPair : _cachedTrackedJoints) {
-            VROVector3f pos = jointPair.second.getProjectedTransform().extractTranslation();
-            _cachedModelJoints[jointPair.first] = pos;
-        }
-        return;
-    }
-
-    // Else, update our joint window dataset required for dampening.
-    for (auto &jointPair : _cachedTrackedJoints) {
-        VROVector3f pos = jointPair.second.getProjectedTransform().extractTranslation();
-        std::pair<double, VROVector3f> p = std::make_pair(VROTimeCurrentMillis(), pos);
-        _cachedJointWindow[jointPair.first].push_back(p);
-    }
-
-    // Update our window reference.
-    double windowEnd = VROTimeCurrentMillis();
-    double windowStart = windowEnd - _dampeningPeriodMs;
-
-    // Iterate through each joint type and remove joints outside the window to
-    // ensure we have an accurate set of data upon which to peform an average analysis.
-    for (auto &jointWindow : _cachedJointWindow) {
-        std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
-        posArray.erase(std::remove_if(posArray.begin(), posArray.end(),
-                               [windowStart](std::pair<double, VROVector3f> p) {
-                                   return p.first < windowStart;
-                               }),
-                       posArray.end());
-
-    }
-
-    // Calculate a Simple Moving Average of point data.
-    if (!kDampenWithEMA) {
-        for (auto &jointWindow : _cachedJointWindow) {
-            std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
-            VROVector3f net = VROVector3f();
-
-            for (int i = 0; i < posArray.size(); i++) {
-                net = net + posArray[i].second;
-            }
-            _cachedModelJoints[jointWindow.first] = net / posArray.size();
-        }
-    }
-
-    /*
-     If using EMA, perform the necessary calculations.
-     EMA = (CurentValue x K) + (PreviousEMA x (1 – K))
-
-     Where:
-        K = 2 ÷(N + 1)
-        N = the length of the EMA
-     */
-    if (kDampenWithEMA) {
-        for (auto &jointWindow : _cachedJointWindow) {
-            std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
-            float k = 2 / ((float) posArray.size() + 1);
-            VROVector3f emaYesterday = posArray[0].second;
-
-            // Exponentially weight towards the earliest data at the end of the array
-            // (Items at the front of the array are older).
-            for (int i = 0 ; i < posArray.size(); i++) {
-                VROVector3f pos = posArray[i].second;
-                VROVector3f emaToday = (pos * k) + (emaYesterday * (1 - k));
-                emaYesterday = emaToday;
-            }
-
-            _cachedModelJoints[jointWindow.first] = emaYesterday;
         }
     }
 }
@@ -1482,14 +1410,6 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
     }
 }
 #endif
-
-void VROBodyTrackerController::setDampeningPeriodMs(double period) {
-    _dampeningPeriodMs = period;
-}
-
-double VROBodyTrackerController::getDampeningPeriodMs() {
-    return _dampeningPeriodMs;
-}
 
 void VROBodyTrackerController::setDisplayDebugCubes(bool visible) {
     _displayDebugCubes = visible;

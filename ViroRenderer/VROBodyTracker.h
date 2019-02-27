@@ -134,6 +134,13 @@ public:
         _bodyMeshDelegate_w = delegate;
     }
     
+    /*
+     Sets the window period at which we sample points for dampening. If period == 0,
+     no dampening will be applied.
+     */
+    virtual void setDampeningPeriodMs(double period) {}
+    virtual double getDampeningPeriodMs() const { return 0; }
+    
 protected:
     std::weak_ptr<VROBodyTrackerDelegate> _bodyMeshDelegate_w;
     

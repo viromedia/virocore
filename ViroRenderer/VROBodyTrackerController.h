@@ -196,12 +196,6 @@ public:
     void onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status);
 
     void onBodyPlaybackStarting(std::shared_ptr<VROBodyAnimData> animData);
-    /*
-     Sets the window period at which we sample points for dampening. If period == 0,
-     no dampening will be applied.
-     */
-    void setDampeningPeriodMs(double period);
-    double getDampeningPeriodMs();
 
     /*
      Sets the ml confidence threshold for filtering out low confidence ml joint data.
@@ -279,11 +273,6 @@ private:
      Final filtered and processed joint positional data on which to apply onto the IKRig.
      */
     std::map<VROBodyJointType, VROVector3f> _cachedModelJoints;
-
-    /*
-     A window dampening data for which to perform SMA / EMA analysis.
-     */
-    std::map<VROBodyJointType, std::vector<std::pair<double, VROVector3f>>> _cachedJointWindow;
 
     /*
      A cache of all known effector's last known position in reference to the root in world space.
@@ -374,11 +363,6 @@ private:
     std::shared_ptr<VROBodyAnimDataRecorder> _animDataRecorder;
 
     /*
-     Period at which to sample ML joint data upon for dampening.
-     */
-    double _dampeningPeriodMs;
-
-    /*
      Configurable filter thresholds and debug switches.
      */
     bool _displayDebugCubes;
@@ -401,7 +385,6 @@ private:
     void projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints);
     void updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &joints);
     void restoreMissingJoints(std::vector<VROBodyJoint> expiredJoints);
-    void dampenCachedJoints();
 
     /*
      Updates the current VROBodyTrackedState and notifies the attached VROBodyTrackerControllerDelegate.

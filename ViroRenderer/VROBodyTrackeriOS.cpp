@@ -15,6 +15,9 @@
 #include "VROARFrameiOS.h"
 #include <mutex>
 
+#include "VROPoseFilterMovingAverage.h"
+#include "VROPoseFilterLowPass.h"
+
 #define CPM 0
 #define HOURGLASS_2_1_T 1
 #define HOURGLASS_4_1_T 2
@@ -41,6 +44,9 @@
 #endif
 
 #define VRO_PROFILE_NEURAL_ENGINE 0
+
+static const float kConfidenceThreshold = 0.15;
+static const float kInitialDampeningPeriodMs = 125;
 
 static const bool kBodyTrackerDiscardPelvisAndThorax = true;
 
@@ -141,7 +147,22 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                               processVisionResults(request, error);
                                           }];
     _visionRequest.imageCropAndScaleOption = _cropAndScaleOption;
+    _poseFilter = std::make_shared<VROPoseFilterLowPass>(kInitialDampeningPeriodMs, kConfidenceThreshold);
+
     return true;
+}
+
+void VROBodyTrackeriOS::setDampeningPeriodMs(double period) {
+    _dampeningPeriodMs = period;
+    if (period <= 0) {
+        _poseFilter = nullptr;
+    } else {
+        _poseFilter = std::make_shared<VROPoseFilterLowPass>(_dampeningPeriodMs, kConfidenceThreshold);
+    }
+}
+
+double VROBodyTrackeriOS::getDampeningPeriodMs() const {
+    return _dampeningPeriodMs;
 }
 
 std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
@@ -409,7 +430,13 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     dispatch_async(dispatch_get_main_queue(), ^{
         std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
         if (delegate && _isTracking) {
-            delegate->onBodyJointsFound(joints);
+            std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
+            if (!_poseFilter) {
+                dampenedJoints = joints;
+            } else {
+                dampenedJoints = _poseFilter->filterJoints(joints);
+            }
+            delegate->onBodyJointsFound(dampenedJoints);
         }
     });
     

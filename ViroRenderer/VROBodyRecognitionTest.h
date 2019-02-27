@@ -76,7 +76,6 @@ private:
     std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROBodyTracker> _bodyTracker;
-    std::shared_ptr<VROPoseFilter> _poseFilter;
     
 #if VRO_PLATFORM_IOS
     VROViewAR *_view;

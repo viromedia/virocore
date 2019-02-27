@@ -23,7 +23,8 @@ public:
      acccess to all joint positions received over the past trackingPeriodMs.
      */
     VROPoseFilter(float trackingPeriodMs, float confidenceThreshold) :
-        _trackingPeriodMs(trackingPeriodMs) {}
+        _trackingPeriodMs(trackingPeriodMs),
+        _confidenceThreshold(confidenceThreshold) {}
     virtual ~VROPoseFilter() {}
     
     /*
