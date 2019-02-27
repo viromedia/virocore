@@ -11,30 +11,30 @@
 JointMap VROPoseFilterLowPass::doFilter(const JointMap &jointWindow) {
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
     
-    for (auto &type_joint : jointWindow) {
-        const std::vector<VROInferredBodyJoint> &joints = type_joint.second;
+    for (auto &type_samples : jointWindow) {
+        const std::vector<VROInferredBodyJoint> &samples = type_samples.second;
         
-        float k = 2 / ((float) joints.size() + 1);
-        VROVector3f emaYesterday = joints[0].getCenter();
-        float sumConfidence = joints[0].getConfidence();
+        float k = 2 / ((float) samples.size() + 1);
+        VROVector3f emaYesterday = samples[0].getCenter();
+        float sumConfidence = samples[0].getConfidence();
         
         // Exponentially weight towards the earliest data at the end of the array
         // (Items at the front of the array are older).
-        for (int i = 1; i < joints.size(); i++) {
-            const VROInferredBodyJoint &joint = joints[i];
+        for (int i = 1; i < samples.size(); i++) {
+            const VROInferredBodyJoint &sample = samples[i];
             
-            VROVector3f position = joint.getCenter();
+            VROVector3f position = sample.getCenter();
             VROVector3f emaToday = (position * k) + (emaYesterday * (1 - k));
             emaYesterday = emaToday;
             
-            sumConfidence += joint.getConfidence();
+            sumConfidence += sample.getConfidence();
         }
         
-        VROBodyJointType type = type_joint.first;
+        VROBodyJointType type = type_samples.first;
         
         VROInferredBodyJoint dampenedJoint(type);
         dampenedJoint.setCenter(emaYesterday);
-        dampenedJoint.setConfidence(sumConfidence / (float) joints.size());
+        dampenedJoint.setConfidence(sumConfidence / (float) samples.size());
         dampenedJoints[type] = { dampenedJoint };
     }
     

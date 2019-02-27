@@ -11,6 +11,9 @@
 
 #include "VROPoseFilter.h"
 
+/*
+ Simple moving average filter for joint data.
+ */
 class VROPoseFilterMovingAverage : public VROPoseFilter {
 public:
     

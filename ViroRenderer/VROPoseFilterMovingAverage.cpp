@@ -11,19 +11,19 @@
 JointMap VROPoseFilterMovingAverage::doFilter(const JointMap &jointWindow) {
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
     
-    for (auto &type_joint : jointWindow) {
-        const std::vector<VROInferredBodyJoint> &joints = type_joint.second;
+    for (auto &type_samples : jointWindow) {
+        const std::vector<VROInferredBodyJoint> &samples = type_samples.second;
         
         VROVector3f sumPosition;
         float sumConfidence = 0;
-        for (const VROInferredBodyJoint &joint : joints) {
-            sumPosition += joint.getCenter();
-            sumConfidence += joint.getConfidence();
+        for (const VROInferredBodyJoint &sample : samples) {
+            sumPosition += sample.getCenter();
+            sumConfidence += sample.getConfidence();
         }
-        VROVector3f averagePosition = sumPosition / (float) joints.size();
-        float averageConfidence = sumConfidence / (float) joints.size();
+        VROVector3f averagePosition = sumPosition / (float) samples.size();
+        float averageConfidence = sumConfidence / (float) samples.size();
         
-        VROBodyJointType type = type_joint.first;
+        VROBodyJointType type = type_samples.first;
         
         VROInferredBodyJoint dampenedJoint(type);
         dampenedJoint.setCenter(averagePosition);

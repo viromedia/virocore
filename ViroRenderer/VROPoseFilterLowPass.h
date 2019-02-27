@@ -11,6 +11,9 @@
 
 #include "VROPoseFilter.h"
 
+/*
+ Exponential (low-pass) filter for pose data.
+ */
 class VROPoseFilterLowPass : public VROPoseFilter {
 public:
     
