@@ -18,7 +18,7 @@ public:
         VROPoseFilter(trackingPeriodMs, confidenceThreshold) {}
     virtual ~VROPoseFilterMovingAverage() {}
     
-    virtual JointMap filterJoints(const JointWindow &jointWindow);
+    virtual JointMap doFilter(const JointMap &jointWindow);
     
 };
 

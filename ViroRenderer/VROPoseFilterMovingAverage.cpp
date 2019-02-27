@@ -8,23 +8,26 @@
 
 #include "VROPoseFilterMovingAverage.h"
 
-JointMap VROPoseFilterMovingAverage::filterJoints(const JointWindow &jointWindow) {
+JointMap VROPoseFilterMovingAverage::doFilter(const JointMap &jointWindow) {
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
     
-    for (auto &jointWindow : jointWindow) {
-        const std::vector<std::pair<double, VROVector3f>> &posArray = jointWindow.second;
+    for (auto &type_joint : jointWindow) {
+        const std::vector<VROInferredBodyJoint> &joints = type_joint.second;
         
-        VROVector3f net = VROVector3f();
-        for (int i = 0; i < posArray.size(); i++) {
-            net = net + posArray[i].second;
+        VROVector3f sumPosition;
+        float sumConfidence = 0;
+        for (const VROInferredBodyJoint &joint : joints) {
+            sumPosition += joint.getCenter();
+            sumConfidence += joint.getConfidence();
         }
-        VROVector3f dampenedPoint = net / posArray.size();
+        VROVector3f averagePosition = sumPosition / (float) joints.size();
+        float averageConfidence = sumConfidence / (float) joints.size();
         
-        VROBodyJointType type = jointWindow.first;
+        VROBodyJointType type = type_joint.first;
         
         VROInferredBodyJoint dampenedJoint(type);
-        dampenedJoint.setCenter(dampenedPoint);
-        dampenedJoint.setConfidence(0.3);
+        dampenedJoint.setCenter(averagePosition);
+        dampenedJoint.setConfidence(averageConfidence);
         dampenedJoints[type] = { dampenedJoint };
     }
     

@@ -8,6 +8,7 @@
 
 #include "VROPoseFilter.h"
 #include "VROTime.h"
+#include "VROLog.h"
 
 static const float kConfidenceThreshold = 0.15;
 
@@ -16,9 +17,7 @@ JointMap VROPoseFilter::filterJoints(const JointMap &joints) {
     for (auto kv : joints) {
         if (!kv.second.empty()) {
             if (kv.second[0].getConfidence() > kConfidenceThreshold) {
-                VROVector3f position = kv.second[0].getBounds().getCenter();
-                std::pair<double, VROVector3f> p = std::make_pair(VROTimeCurrentMillis(), position);
-                _jointWindow[kv.first].push_back(p);
+                _jointWindow[kv.first].push_back(kv.second[0]);
             }
         }
     }
@@ -30,14 +29,13 @@ JointMap VROPoseFilter::filterJoints(const JointMap &joints) {
     // Iterate through each joint type and remove joints outside the tracking
     // period
     for (auto &kv : _jointWindow) {
-        std::vector<std::pair<double, VROVector3f>> &positions = kv.second;
-        positions.erase(std::remove_if(positions.begin(), positions.end(),
-                                      [windowStart](std::pair<double, VROVector3f> p) {
-                                          return p.first < windowStart;
+        auto &joints = kv.second;
+        joints.erase(std::remove_if(joints.begin(), joints.end(),
+                                      [windowStart](VROInferredBodyJoint &j) {
+                                          return j.getCreationTime() < windowStart;
                                       }),
-                       positions.end());
-        
+                     joints.end());
     }
     
-    return filterJoints(_jointWindow);
+    return doFilter(_jointWindow);
 }

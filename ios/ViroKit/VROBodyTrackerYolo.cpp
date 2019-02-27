@@ -167,6 +167,8 @@ void VROBodyTrackerYolo::processVisionResults(VNRequest *request, NSError *error
                 VROInferredBodyJoint joint(type);
                 joint.setConfidence(classification.confidence);
                 joint.setBounds(box);
+                joint.setCreationTime(VROTimeCurrentMillis());
+
                 joints[type].push_back(joint);
             }
         }

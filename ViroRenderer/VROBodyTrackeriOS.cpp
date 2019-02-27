@@ -197,6 +197,8 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
                         VROInferredBodyJoint inferredJoint(type);
                         inferredJoint.setConfidence(confidence);
                         inferredJoint.setTileIndices(j, i);
+                        inferredJoint.setCreationTime(VROTimeCurrentMillis());
+                        
                         bodyMap[(int) type] = inferredJoint;
                     }
                 }

@@ -100,11 +100,18 @@ public:
     int getTileX() const { return _tileX; }
     int getTileY() const { return _tileY; }
     
+    void setCreationTime(float creationTimeMs) {
+        _creationTimeMs = creationTimeMs;
+    }
+    float getCreationTime() const {
+        return _creationTimeMs;
+    }
+    
 private:
     VROBoundingBox _bounds;
     VROBodyJointType _type;
     double _confidence;
-    double _spawnTimeMs;
+    double _creationTimeMs;
     int _tileX, _tileY;
 };
 

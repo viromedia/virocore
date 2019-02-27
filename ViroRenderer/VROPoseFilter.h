@@ -13,7 +13,6 @@
 #include "VROBodyTracker.h"
 
 typedef std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> JointMap;
-typedef std::map<VROBodyJointType, std::vector<std::pair<double, VROVector3f>>> JointWindow;
 
 class VROPoseFilter {
 public:
@@ -39,13 +38,13 @@ protected:
      Implemented by subclasses, returns the filtered joints given the
      currently accumulated joints.
      */
-    virtual JointMap filterJoints(const JointWindow &jointWindow) = 0;
+    virtual JointMap doFilter(const JointMap &jointWindow) = 0;
     
 private:
     
     float _trackingPeriodMs;
     float _confidenceThreshold;
-    std::map<VROBodyJointType, std::vector<std::pair<double, VROVector3f>>> _jointWindow;
+    JointMap _jointWindow;
     
 };
 
