@@ -49,7 +49,7 @@
 static const float kConfidenceThreshold = 0.15;
 static const float kInitialDampeningPeriodMs = 125;
 
-static const bool kBodyTrackerDiscardPelvisAndThorax = true;
+static const bool kBodyTrackerDiscardPelvisAndThorax = false;
 
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 0, VROBodyJointType::RightAnkle },

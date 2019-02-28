@@ -487,6 +487,11 @@ private:
      between the ml bone lengths, and model bone lengths.
      */
     void scaleBoneTransform(std::string childBone, std::string parentBone, VROVector3f scaleDir);
+
+    /*
+     Return true if this BodyController is ignoring the given joint.
+     */
+    bool isIgnoredJoint(VROBodyJointType joint);
 };
 
 /*

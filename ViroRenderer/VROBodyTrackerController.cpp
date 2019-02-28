@@ -71,6 +71,8 @@ static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
                                                     VROBodyJointType::RightHip,
                                                     VROBodyJointType::LeftHip };
 static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
+static const VROBodyJointType kIgnoredJoints[] = {  VROBodyJointType::Thorax,
+                                                    VROBodyJointType::Pelvis};
 
 // The hierarchy of ML joints as referred to by VROBodyTrackerController.
 // Note: This is a different hierarchy than the one in VROIKRig.
@@ -730,6 +732,10 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     // Grab all the 2D joints of high confidence for the targets we want.
     std::map<VROBodyJointType, VROBodyJoint> latestJoints;
     for (auto &kv : joints) {
+        if (isIgnoredJoint(kv.first)) {
+            continue;
+        }
+
         if (kv.second.getConfidence() > _mlJointConfidenceThresholds[kv.first]) {
             latestJoints[kv.first] = kv.second;
         }
@@ -1397,6 +1403,10 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
     }
 
     for (auto &kv : joints) {
+        if ((int) kv.first > endJointCount) {
+            continue;
+        }
+        
         VROVector3f point = kv.second.getScreenCoords();
         VROVector3f transformed = { point.x * viewWidth, point.y * viewHight, 0 };
         // Only update the text for points that match our level of confidence.
@@ -1451,3 +1461,11 @@ float VROBodyTrackerController::getStalenessThresholdForJoint(VROBodyJointType t
     return _mlJointTimeoutMap[type];
 }
 
+bool VROBodyTrackerController::isIgnoredJoint(VROBodyJointType joint) {
+    for (auto ignoredJoint : kIgnoredJoints) {
+        if (joint == ignoredJoint) {
+            return true;
+        }
+    }
+    return false;
+}
