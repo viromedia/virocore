@@ -618,20 +618,23 @@ void VROBodyTrackerController::onBodyJointsPlayback(const std::map<VROBodyJointT
     }
 }
 
-void VROBodyTrackerController::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &inferredJoints) {
+void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoints) {
     if (_modelRootNode == nullptr) {
         return;
     }
 
     // Convert to VROBodyJoint data structure, using only first joint of each type
     std::map<VROBodyJointType, VROBodyJoint> joints;
-    for (auto &kv : inferredJoints) {
-        VROInferredBodyJoint inferred = kv.second[0];
-
-        VROBodyJoint joint = { inferred.getType(), inferred.getConfidence() };
-        joint.setScreenCoords({ inferred.getBounds().getX(), inferred.getBounds().getY(), 0 });
-        joint.setSpawnTimeMs(VROTimeCurrentMillis());
-        joints[kv.first] = joint;
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        auto &kv = inferredJoints[i];
+        if (!kv.empty()) {
+            VROInferredBodyJoint inferred = kv[0];
+            
+            VROBodyJoint joint = { inferred.getType(), inferred.getConfidence() };
+            joint.setScreenCoords({ inferred.getBounds().getX(), inferred.getBounds().getY(), 0 });
+            joint.setSpawnTimeMs(VROTimeCurrentMillis());
+            joints[(VROBodyJointType) i] = joint;
+        }
     }
 
     // Filter new joints found given by the VROBodyTracker and update _cachedTrackedJoints

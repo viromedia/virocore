@@ -167,7 +167,7 @@ double VROBodyTrackeriOS::getDampeningPeriodMs() const {
     return _dampeningPeriodMs;
 }
 
-std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
+VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
     if (heatmap.shape.count < 3) {
         return {};
     }
@@ -248,14 +248,14 @@ std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROBodyTrackeriOS:
         }
     }
     
-    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> resultsMap;
+    VROPoseFrame poseFrame = newPoseFrame();
     for (int i = 0; i < kNumBodyJoints; i++) {
         VROInferredBodyJoint &inferredJoint = bodyMap[i];
         if (inferredJoint.getConfidence() > 0) {
-            resultsMap[(VROBodyJointType) i].push_back(inferredJoint);
+            poseFrame[i].push_back(inferredJoint);
         }
     }
-    return resultsMap;
+    return poseFrame;
 }
 
 void VROBodyTrackeriOS::startBodyTracking() {
@@ -423,7 +423,7 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     
     VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
     MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
-    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> joints = convertHeatmap(heatmap, _transform);
+    VROPoseFrame joints = convertHeatmap(heatmap, _transform);
     
 #if VRO_PROFILE_NEURAL_ENGINE
     NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);
@@ -432,7 +432,7 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     dispatch_async(dispatch_get_main_queue(), ^{
         std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
         if (delegate && _isTracking) {
-            std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
+            VROPoseFrame dampenedJoints = newPoseFrame();
             if (!_poseFilterA) {
                 dampenedJoints = joints;
             } else {

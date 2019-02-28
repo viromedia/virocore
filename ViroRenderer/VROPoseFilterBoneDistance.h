@@ -33,19 +33,11 @@ public:
 
 private:
     
-    void addJoints(const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB,
-                   VROPoseFrame *result);
-    void addNonAnomalousJoints(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB,
-                               VROPoseFrame *result);
-    VROBodyJointType getAnomalousJoint(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB);
-    float getDistanceFromPriors(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType joint);
-    VROVector3f getPosition(const VROPoseFrame &frame, VROBodyJointType joint);
-    
+    VROVector3f getJointPosition(const VROPoseFrame &frame, VROBodyJointType joint);
     float getAverageLimbLength(const std::vector<VROPoseFrame> &frames, VROBodyJointType jointA, VROBodyJointType jointB);
     float getLimbLength(const VROPoseFrame &frame, VROBodyJointType jointA, VROBodyJointType jointB);
     VROVector3f getLimbDirection(const VROPoseFrame &frame, VROBodyJointType jointA, VROBodyJointType jointB);
     VROVector3f getAverageLimbDirection(const std::vector<VROPoseFrame> &frames, VROBodyJointType jointA, VROBodyJointType jointB);
-    
     
 };
 

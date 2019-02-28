@@ -13,9 +13,9 @@
 static const float kConfidenceThreshold = 0.15;
 
 float getCreationTime(const VROPoseFrame &frame) {
-    for (auto kv : frame) {
-        if (!kv.second.empty()) {
-            return kv.second[0].getCreationTime();
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        if (!frame[i].empty()) {
+            return frame[i][0].getCreationTime();
         }
     }
     return 0;
@@ -30,10 +30,11 @@ VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
     
     // Update the combined frame, which contains all joints over time, organized
     // by joint type
-    for (auto kv : newFrame) {
-        if (!kv.second.empty()) {
-            if (kv.second[0].getConfidence() > kConfidenceThreshold) {
-                _combinedFrame[kv.first].push_back(kv.second[0]);
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        auto &kv = frame[i];
+        if (!kv.empty()) {
+            if (kv[0].getConfidence() > kConfidenceThreshold) {
+                _combinedFrame[i].push_back(kv[0]);
             }
         }
     }
@@ -42,8 +43,8 @@ VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
     double windowStart = windowEnd - _trackingPeriodMs;
     
     // Remove old samples from the combined frame
-    for (auto &kv : _combinedFrame) {
-        auto &joints = kv.second;
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        auto &joints = _combinedFrame[i];
         joints.erase(std::remove_if(joints.begin(), joints.end(),
                                     [windowStart](VROInferredBodyJoint &j) {
                                         return j.getCreationTime() < windowStart;

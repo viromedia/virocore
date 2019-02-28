@@ -100,7 +100,7 @@ void VROBodyRecognitionTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene->getRootNode()->addLight(ambient);
 }
 
-void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints) {
+void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
 #if VRO_PLATFORM_IOS
     int viewWidth  = _view.frame.size.width;
     int viewHeight = _view.frame.size.height;
@@ -112,9 +112,9 @@ void VROBodyRecognitionTest::onBodyJointsFound(const std::map<VROBodyJointType, 
     std::vector<float> confidences;
     
     for (int i = 0; i < kNumBodyJoints; i++) {
-        auto kv = joints.find((VROBodyJointType) i);
-        if (kv != joints.end() && kv->second.size() > 0) {
-            VROInferredBodyJoint joint = kv->second[0];
+        const std::vector<VROInferredBodyJoint> &kv = joints[i];
+        if (kv.size() > 0) {
+            VROInferredBodyJoint joint = kv[0];
             VROBoundingBox bounds = joint.getBounds();
             
             float x = bounds.getX() * viewWidth;

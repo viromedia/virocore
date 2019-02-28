@@ -115,9 +115,15 @@ private:
     int _tileX, _tileY;
 };
 
+typedef std::vector<std::vector<VROInferredBodyJoint>> VROPoseFrame;
+
+static VROPoseFrame newPoseFrame() {
+    return VROPoseFrame(kNumBodyJoints);
+}
+
 class VROBodyTrackerDelegate {
 public:
-    virtual void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints) = 0;
+    virtual void onBodyJointsFound(const VROPoseFrame &joints) = 0;
 };
 
 class VROBodyTracker : public VROVisionModel {

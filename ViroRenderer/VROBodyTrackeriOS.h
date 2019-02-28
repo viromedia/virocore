@@ -130,7 +130,7 @@ private:
     
     void trackImage(CVPixelBufferRef image, VROMatrix4f transform, VROCameraOrientation orientation);
     void processVisionResults(VNRequest *request, NSError *error);
-    static std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
+    static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
 
     /*
      Update and get FPS.

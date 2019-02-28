@@ -12,8 +12,6 @@
 #include <map>
 #include "VROBodyTracker.h"
 
-typedef std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROPoseFrame;
-
 /*
  Superclass for enabling spatial and temporal filtering of body pose data as
  received from an ML model. All data that passes the spatial filter is included
@@ -33,7 +31,9 @@ public:
      */
     VROPoseFilter(float trackingPeriodMs, float confidenceThreshold) :
         _trackingPeriodMs(trackingPeriodMs),
-        _confidenceThreshold(confidenceThreshold) {}
+        _confidenceThreshold(confidenceThreshold) {
+            _combinedFrame = newPoseFrame();
+        }
     virtual ~VROPoseFilter() {}
     
     /*

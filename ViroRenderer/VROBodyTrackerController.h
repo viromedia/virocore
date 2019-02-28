@@ -190,7 +190,7 @@ public:
     void setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate);
 
     // VROBodyTrackerDelegate
-    void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints);
+    void onBodyJointsFound(const VROPoseFrame &joints);
 
     // VROBodyPlaybackDelegate
     void onBodyJointsPlayback(const std::map<VROBodyJointType, VROVector3f> &joints, VROBodyPlayerStatus status);

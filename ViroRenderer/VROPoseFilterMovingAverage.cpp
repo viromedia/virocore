@@ -10,10 +10,12 @@
 
 VROPoseFrame VROPoseFilterMovingAverage::temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
                                                         const VROPoseFrame &newFrame) {
-    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
+    VROPoseFrame dampenedJoints = newPoseFrame();
     
-    for (auto &type_samples : combinedFrame) {
-        const std::vector<VROInferredBodyJoint> &samples = type_samples.second;
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        VROBodyJointType type = (VROBodyJointType) i;
+        
+        const std::vector<VROInferredBodyJoint> &samples = combinedFrame[i];
         if (samples.empty()) {
             continue;
         }
@@ -27,12 +29,10 @@ VROPoseFrame VROPoseFilterMovingAverage::temporalFilter(const std::vector<VROPos
         VROVector3f averagePosition = sumPosition / (float) samples.size();
         float averageConfidence = sumConfidence / (float) samples.size();
         
-        VROBodyJointType type = type_samples.first;
-        
         VROInferredBodyJoint dampenedJoint(type);
         dampenedJoint.setCenter(averagePosition);
         dampenedJoint.setConfidence(averageConfidence);
-        dampenedJoints[type] = { dampenedJoint };
+        dampenedJoints[i] = { dampenedJoint };
     }
     
     return dampenedJoints;

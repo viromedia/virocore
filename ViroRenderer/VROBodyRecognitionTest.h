@@ -66,7 +66,7 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onBodyJointsFound(const std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> &joints);
+    virtual void onBodyJointsFound(const VROPoseFrame &joints);
     
 private:
     

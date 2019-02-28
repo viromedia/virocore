@@ -145,7 +145,7 @@ void VROBodyTrackerYolo::processVisionResults(VNRequest *request, NSError *error
     NSArray *array = [request results];
     NSLog(@"Number of results %d", (int) array.count);
     
-    std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> joints;
+    VROPoseFrame joints = newPoseFrame();
     
     for (VNRecognizedObjectObservation *observation in array) {
         CGRect bounds = observation.boundingBox;
@@ -169,7 +169,7 @@ void VROBodyTrackerYolo::processVisionResults(VNRequest *request, NSError *error
                 joint.setBounds(box);
                 joint.setCreationTime(VROTimeCurrentMillis());
 
-                joints[type].push_back(joint);
+                joints[(int) type].push_back(joint);
             }
         }
     }
