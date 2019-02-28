@@ -67,6 +67,9 @@ void VROParticleEmitter::setDefaultValues() {
     // Default Emitter settings
     _emitterDelayDuration = -1;
     _emitterDelayStartTime = -1;
+    _emitterPauseStartTime = -1;
+    _emitterTotalPausedTime = 0;
+  
     _duration = 2000;
     _maxParticles = 500;
     _particlesEmittedPerMeter = std::pair<int, int>(0, 0);
@@ -74,6 +77,7 @@ void VROParticleEmitter::setDefaultValues() {
     _particleLifeTime = std::pair<int, int>(2000, 2000);
     _loop = true;
     _run = false;
+    _paused = false;
     _requestRun = false;
     _fixToEmitter = true;
 
@@ -132,15 +136,34 @@ bool VROParticleEmitter::processDelay(double currentTime) {
 
     return false;
 }
+
+void VROParticleEmitter::setPause(bool pause) {
+    _paused = pause;
+  if (pause) {
+    _emitterPauseStartTime = VROTimeCurrentMillis();
+  } else {
+    // Total time spent paused is cumulative since so _emitterTotalPausedTime += currentTime - _emitterPauseStartTime
+    double currentTime = VROTimeCurrentMillis();
+    _emitterTotalPausedTime = _emitterTotalPausedTime + (currentTime - _emitterPauseStartTime);
+    _emitterStartTimeMs = _emitterStartTimeMs + _emitterTotalPausedTime;
+    // Reset _emitterPauseStartTime for next time we pause
+    _emitterPauseStartTime = -1;
+  }
+}
+
 void VROParticleEmitter::update(const VRORenderContext &context, const VROMatrix4f &computedTransform) {
     _lastComputedTransform = computedTransform;
     double currentTime = VROTimeCurrentMillis();
 
     bool isCurrentlyDelayed = processDelay(currentTime);
-    if (!isCurrentlyDelayed) {
-        updateEmitter(currentTime, computedTransform);
-    }
-    updateParticles(currentTime, context, computedTransform, isCurrentlyDelayed);
+  
+      if (!_paused) {
+        if (!isCurrentlyDelayed) {
+          updateEmitter(currentTime - _emitterTotalPausedTime, computedTransform);
+        }
+  
+        updateParticles(currentTime - _emitterTotalPausedTime, context, computedTransform, isCurrentlyDelayed);
+      }
 }
 
 void VROParticleEmitter::updateEmitter(double currentTime, const VROMatrix4f &computedTransform) {
@@ -165,9 +188,9 @@ void VROParticleEmitter::updateEmitter(double currentTime, const VROMatrix4f &co
     VROVector3f currentLoc = computedTransform.extractTranslation();
     _emitterTotalPassedTime = currentTime - _emitterStartTimeMs + _emitterPassedTimeSoFar;
     _emitterTotalPassedDistance = currentLoc.distance(_emitterStartLocation) + _emitterPassedDistanceSoFar;
-
+    
     if ((_emitterTotalPassedTime > _duration && _loop && _run) || _emitterStartTimeMs == -1) {
-        resetEmissionCycle(false);
+      resetEmissionCycle(false);
     }
 }
 
@@ -184,7 +207,8 @@ void VROParticleEmitter::resetEmissionCycle(bool resetParticles) {
     // Restart delay times
     _emitterStartTimeMs = -1;
     _emitterDelayStartTime = -1;
-
+  
+    _emitterPauseStartTime = -1;
     // Restart emitter times
     _emitterTotalPassedTime = 0;
     _emitterPassedTimeSoFar = 0;

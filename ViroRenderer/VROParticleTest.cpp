@@ -41,19 +41,19 @@ void VROParticleTest::build(std::shared_ptr<VRORenderer> renderer,
     surface->setMaterials({ material });
     
     // Core emitter settings
-    std::shared_ptr<VROParticleEmitter> emitter = std::make_shared<VROParticleEmitter>(driver, surface);
-    emitter->setParticleLifeTime({ 6000, 7000 });
-    emitter->setEmissionRatePerSecond({ 12, 18 });
-    emitter->setMaxParticles(100);
-    emitter->setDuration(1000);
-    emitter->setLoop(true);
-    emitter->setBlendMode(VROBlendMode::Add);
+    _emitter = std::make_shared<VROParticleEmitter>(driver, surface);
+    _emitter->setParticleLifeTime({ 6000, 7000 });
+    _emitter->setEmissionRatePerSecond({ 12, 18 });
+    _emitter->setMaxParticles(100);
+    _emitter->setDuration(1000);
+    _emitter->setLoop(true);
+    _emitter->setBlendMode(VROBlendMode::Add);
     
     // Spawn volume
     VROParticleSpawnVolume volume;
     volume.shape = VROParticleSpawnVolume::Shape::Sphere;
     volume.shapeParams = { 0.1 };
-    emitter->setParticleSpawnVolume(volume);
+    _emitter->setParticleSpawnVolume(volume);
     
     // Scale modifier
     std::vector<VROParticleModifier::VROModifierInterval> scaleIntervals;
@@ -69,7 +69,7 @@ void VROParticleTest::build(std::shared_ptr<VRORenderer> renderer,
                                                                                        scaleStartMax,
                                                                                        VROParticleModifier::VROModifierFactor::Time,
                                                                                        scaleIntervals);
-    emitter->setScaleModifier(scale);
+    _emitter->setScaleModifier(scale);
     
     // Opacity modifier
     std::vector<VROParticleModifier::VROModifierInterval> opacityIntervals;
@@ -91,7 +91,7 @@ void VROParticleTest::build(std::shared_ptr<VRORenderer> renderer,
                                                                                          opacityStartMax,
                                                                                          VROParticleModifier::VROModifierFactor::Time,
                                                                                          opacityIntervals);
-    emitter->setAlphaModifier(opacity);
+    _emitter->setAlphaModifier(opacity);
     
     // Velocity modifier
     std::vector<VROParticleModifier::VROModifierInterval> velocityIntervals;
@@ -101,9 +101,33 @@ void VROParticleTest::build(std::shared_ptr<VRORenderer> renderer,
                                                                                           velocityStartMax,
                                                                                           VROParticleModifier::VROModifierFactor::Time,
                                                                                           velocityIntervals);
-    emitter->setVelocityModifier(velocity);
+    _emitter->setVelocityModifier(velocity);
     
-    particleNode->setParticleEmitter(emitter);
+    particleNode->setParticleEmitter(_emitter);
     rootNode->addChildNode(particleNode);
-    emitter->setRun(true);
+    _emitter->setRun(true);
+  
+    _eventDelegate = std::make_shared<VROParticleEventDelegate>(this);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, true);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnRotate, true);
+    rootNode->setEventDelegate(_eventDelegate);
+}
+
+void VROParticleTest::toggleParticleEmitterPause() {
+  _emitter->setPause(!_emitter->isPaused());
+}
+void VROParticleEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
+                                   std::vector<float> position) {
+  if (clickState == ClickState::Clicked) {
+    _test->toggleParticleEmitterPause();
+  }
+}
+
+void VROParticleEventDelegate::onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState) {
+  // No-op
+}
+
+void VROParticleEventDelegate::onRotate(int source, std::shared_ptr<VRONode> node, float rotationRadians, RotateState rotateState) {
+  // No-op
 }

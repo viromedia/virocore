@@ -11,6 +11,21 @@
 
 #include "VRORendererTest.h"
 
+class VROParticleTest;
+
+class VROParticleEventDelegate : public VROEventDelegate {
+public:
+  VROParticleEventDelegate(VROParticleTest *test) : _test(test) {};
+  virtual ~VROParticleEventDelegate() {};
+  void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
+  void onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState);
+  
+  void onRotate(int source, std::shared_ptr<VRONode> node, float rotationRadians, RotateState rotateState);
+  
+private:
+  VROParticleTest *_test;
+};
+
 class VROParticleTest : public VRORendererTest {
 public:
     
@@ -26,11 +41,14 @@ public:
     std::shared_ptr<VROSceneController> getSceneController() {
         return _sceneController;
     }
-    
+  
+    void toggleParticleEmitterPause();
 private:
 
+    std::shared_ptr<VROParticleEmitter> _emitter;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VROParticleEventDelegate> _eventDelegate;
     
 };
 
