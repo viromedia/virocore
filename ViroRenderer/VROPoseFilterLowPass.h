@@ -21,7 +21,8 @@ public:
         VROPoseFilter(trackingPeriodMs, confidenceThreshold) {}
     virtual ~VROPoseFilterLowPass() {}
     
-    virtual JointMap doFilter(const JointMap &trackingWindow);
+    VROPoseFrame doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                          const VROPoseFrame &newFrame);
 
 };
 

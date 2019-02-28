@@ -21,8 +21,9 @@ public:
         VROPoseFilter(trackingPeriodMs, confidenceThreshold) {}
     virtual ~VROPoseFilterMovingAverage() {}
     
-    virtual JointMap doFilter(const JointMap &trackingWindow);
-    
+    virtual VROPoseFrame doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                  const VROPoseFrame &newFrame);
+
 };
 
 #endif /* VROPoseFilterMovingAverage_h */

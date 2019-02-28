@@ -8,11 +8,15 @@
 
 #include "VROPoseFilterMovingAverage.h"
 
-JointMap VROPoseFilterMovingAverage::doFilter(const JointMap &trackingWindow) {
+VROPoseFrame VROPoseFilterMovingAverage::doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                                  const VROPoseFrame &newFrame) {
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
     
-    for (auto &type_samples : trackingWindow) {
+    for (auto &type_samples : combinedFrame) {
         const std::vector<VROInferredBodyJoint> &samples = type_samples.second;
+        if (samples.empty()) {
+            continue;
+        }
         
         VROVector3f sumPosition;
         float sumConfidence = 0;

@@ -8,10 +8,11 @@
 
 #include "VROPoseFilterLowPass.h"
 
-JointMap VROPoseFilterLowPass::doFilter(const JointMap &trackingWindow) {
+VROPoseFrame VROPoseFilterLowPass::doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                            const VROPoseFrame &newFrame) {
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
     
-    for (auto &type_samples : trackingWindow) {
+    for (auto &type_samples : combinedFrame) {
         const std::vector<VROInferredBodyJoint> &samples = type_samples.second;
         
         float k = 2 / ((float) samples.size() + 1);

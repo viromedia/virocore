@@ -1116,6 +1116,8 @@
 		8FA9D6CD222621DE0003C9D2 /* VROPoseFilterMovingAverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D6CB222621DE0003C9D2 /* VROPoseFilterMovingAverage.h */; };
 		8FA9D6D02226DC920003C9D2 /* VROPoseFilterLowPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9D6CE2226DC920003C9D2 /* VROPoseFilterLowPass.cpp */; };
 		8FA9D6D12226DC920003C9D2 /* VROPoseFilterLowPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D6CF2226DC920003C9D2 /* VROPoseFilterLowPass.h */; };
+		8FA9D6D42226EED70003C9D2 /* VROPoseFilterBoneDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9D6D22226EED70003C9D2 /* VROPoseFilterBoneDistance.cpp */; };
+		8FA9D6D52226EED70003C9D2 /* VROPoseFilterBoneDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D6D32226EED70003C9D2 /* VROPoseFilterBoneDistance.h */; };
 		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
 		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
 		8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */; };
@@ -2234,6 +2236,8 @@
 		8FA9D6CB222621DE0003C9D2 /* VROPoseFilterMovingAverage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPoseFilterMovingAverage.h; sourceTree = "<group>"; };
 		8FA9D6CE2226DC920003C9D2 /* VROPoseFilterLowPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPoseFilterLowPass.cpp; sourceTree = "<group>"; };
 		8FA9D6CF2226DC920003C9D2 /* VROPoseFilterLowPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPoseFilterLowPass.h; sourceTree = "<group>"; };
+		8FA9D6D22226EED70003C9D2 /* VROPoseFilterBoneDistance.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPoseFilterBoneDistance.cpp; sourceTree = "<group>"; };
+		8FA9D6D32226EED70003C9D2 /* VROPoseFilterBoneDistance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPoseFilterBoneDistance.h; sourceTree = "<group>"; };
 		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
 		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
 		8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARSessioniOS.cpp; sourceTree = "<group>"; };
@@ -3091,6 +3095,8 @@
 				8FA9D6CA222621DE0003C9D2 /* VROPoseFilterMovingAverage.cpp */,
 				8FA9D6CF2226DC920003C9D2 /* VROPoseFilterLowPass.h */,
 				8FA9D6CE2226DC920003C9D2 /* VROPoseFilterLowPass.cpp */,
+				8FA9D6D32226EED70003C9D2 /* VROPoseFilterBoneDistance.h */,
+				8FA9D6D22226EED70003C9D2 /* VROPoseFilterBoneDistance.cpp */,
 			);
 			name = "Body Tracking";
 			sourceTree = "<group>";
@@ -4543,6 +4549,7 @@
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
 				8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */,
 				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
+				8FA9D6D52226EED70003C9D2 /* VROPoseFilterBoneDistance.h in Headers */,
 				8F201C582101597200637A75 /* VROVectorizer.h in Headers */,
 				13F631B52065C21B00A74EFC /* KeenProperties.h in Headers */,
 				8F0FE6761CD2D47900A4C297 /* VROViewGVR.h in Headers */,
@@ -5974,6 +5981,7 @@
 				8FD7FCAE221DC7350040C0EE /* hourglass_4_1_t.mlmodel in Sources */,
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
+				8FA9D6D42226EED70003C9D2 /* VROPoseFilterBoneDistance.cpp in Sources */,
 				8FD4DF041C18ED30003DC425 /* VROTextureSubstrate.cpp in Sources */,
 				8FD2A53A1F813C4100E831A6 /* VROPortalTest.cpp in Sources */,
 				8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */,

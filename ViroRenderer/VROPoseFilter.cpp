@@ -12,32 +12,50 @@
 
 static const float kConfidenceThreshold = 0.15;
 
-JointMap VROPoseFilter::filterJoints(const JointMap &joints) {
-    JointMap jointsToAdd = processNewJoints(_jointWindow, joints);
+float getCreationTime(const VROPoseFrame &frame) {
+    for (auto kv : frame) {
+        if (!kv.second.empty()) {
+            return kv.second[0].getCreationTime();
+        }
+    }
+    return 0;
+}
+
+VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
+    VROPoseFrame newFrame = processNewJoints(_frames, _combinedFrame, frame);
     
-    // Update the joint window dataset required for dampening
-    for (auto kv : jointsToAdd) {
+    // Update the frames vector, which contains all joints over time, organized
+    // by frame
+    _frames.push_back(newFrame);
+    
+    // Update the combined frame, which contains all joints over time, organized
+    // by joint type
+    for (auto kv : newFrame) {
         if (!kv.second.empty()) {
             if (kv.second[0].getConfidence() > kConfidenceThreshold) {
-                _jointWindow[kv.first].push_back(kv.second[0]);
+                _combinedFrame[kv.first].push_back(kv.second[0]);
             }
         }
     }
     
-    // Update our window reference.
     double windowEnd = VROTimeCurrentMillis();
     double windowStart = windowEnd - _trackingPeriodMs;
     
-    // Iterate through each joint type and remove joints outside the tracking
-    // period
-    for (auto &kv : _jointWindow) {
+    // Remove old samples from the combined frame
+    for (auto &kv : _combinedFrame) {
         auto &joints = kv.second;
         joints.erase(std::remove_if(joints.begin(), joints.end(),
-                                      [windowStart](VROInferredBodyJoint &j) {
-                                          return j.getCreationTime() < windowStart;
-                                      }),
+                                    [windowStart](VROInferredBodyJoint &j) {
+                                        return j.getCreationTime() < windowStart;
+                                    }),
                      joints.end());
     }
     
-    return doFilter(_jointWindow);
+    // Remove old frames
+    _frames.erase(std::remove_if(_frames.begin(), _frames.end(),
+                                [windowStart](VROPoseFrame &f) {
+                                    return getCreationTime(f) < windowStart;
+                                }),
+                 _frames.end());
+    return doFilter(_frames, _combinedFrame, newFrame);
 }

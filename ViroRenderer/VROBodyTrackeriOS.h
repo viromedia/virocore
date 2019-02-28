@@ -93,7 +93,8 @@ private:
     /*
      Filter used on pose data before sending to the delegate.
      */
-    std::shared_ptr<VROPoseFilter> _poseFilter;
+    std::shared_ptr<VROPoseFilter> _poseFilterA;
+    std::shared_ptr<VROPoseFilter> _poseFilterB;
     
     /*
      Variables for neural engine FPS computation. Array of samples taken, index of

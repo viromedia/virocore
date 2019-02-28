@@ -17,6 +17,7 @@
 
 #include "VROPoseFilterMovingAverage.h"
 #include "VROPoseFilterLowPass.h"
+#include "VROPoseFilterBoneDistance.h"
 
 #define CPM 0
 #define HOURGLASS_2_1_T 1
@@ -107,7 +108,7 @@ std::map<int, VROBodyJointType> _pilTypesToJointTypes = {
 @end
 
 VROBodyTrackeriOS::VROBodyTrackeriOS() {
-    _visionQueue = dispatch_queue_create("com.viro.bodyTrackerYoloVisionQueue", DISPATCH_QUEUE_SERIAL);
+    _visionQueue = dispatch_queue_create("com.viro.bodyTrackerVisionQueue", DISPATCH_QUEUE_SERIAL);
     _isTracking = false;
     _fpsTickIndex = 0;
     _fpsTickSum = 0;
@@ -147,7 +148,8 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                               processVisionResults(request, error);
                                           }];
     _visionRequest.imageCropAndScaleOption = _cropAndScaleOption;
-    _poseFilter = std::make_shared<VROPoseFilterLowPass>(kInitialDampeningPeriodMs, kConfidenceThreshold);
+    _poseFilterA = std::make_shared<VROPoseFilterBoneDistance>(kInitialDampeningPeriodMs, kConfidenceThreshold);
+    _poseFilterB = std::make_shared<VROPoseFilterLowPass>(kInitialDampeningPeriodMs, kConfidenceThreshold);
 
     return true;
 }
@@ -155,9 +157,9 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
 void VROBodyTrackeriOS::setDampeningPeriodMs(double period) {
     _dampeningPeriodMs = period;
     if (period <= 0) {
-        _poseFilter = nullptr;
+        _poseFilterA = nullptr;
     } else {
-        _poseFilter = std::make_shared<VROPoseFilterLowPass>(_dampeningPeriodMs, kConfidenceThreshold);
+        _poseFilterA = std::make_shared<VROPoseFilterLowPass>(_dampeningPeriodMs, kConfidenceThreshold);
     }
 }
 
@@ -431,10 +433,10 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
         std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
         if (delegate && _isTracking) {
             std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
-            if (!_poseFilter) {
+            if (!_poseFilterA) {
                 dampenedJoints = joints;
             } else {
-                dampenedJoints = _poseFilter->filterJoints(joints);
+                dampenedJoints = _poseFilterB->filterJoints(_poseFilterA->filterJoints(joints));
             }
             delegate->onBodyJointsFound(dampenedJoints);
         }

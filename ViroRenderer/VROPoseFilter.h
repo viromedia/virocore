@@ -12,7 +12,7 @@
 #include <map>
 #include "VROBodyTracker.h"
 
-typedef std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> JointMap;
+typedef std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> VROPoseFrame;
 
 class VROPoseFilter {
 public:
@@ -31,7 +31,7 @@ public:
      Invoked internally to filter a new set of joints. Returns the filtered
      set of joints.
      */
-    JointMap filterJoints(const JointMap &joints);
+    VROPoseFrame filterJoints(const VROPoseFrame &frame);
     
 protected:
     
@@ -42,20 +42,23 @@ protected:
      
      The default behavior is not add all joints to the tracking window.
      */
-    virtual JointMap processNewJoints(const JointMap &trackingWindow, const JointMap &joints) {
-        return joints;
+    virtual VROPoseFrame processNewJoints(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                          const VROPoseFrame &newFrame) {
+        return newFrame;
     }
     
     /*
      Returns the filtered joints given the currently accumulated joints.
      */
-    virtual JointMap doFilter(const JointMap &trackingWindow) = 0;
+    virtual VROPoseFrame doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                  const VROPoseFrame &newFrame) = 0;
     
 private:
     
     float _trackingPeriodMs;
     float _confidenceThreshold;
-    JointMap _jointWindow;
+    std::vector<VROPoseFrame> _frames;
+    VROPoseFrame _combinedFrame;
     
 };
 
