@@ -26,22 +26,20 @@ public:
         VROPoseFilter(trackingPeriodMs, confidenceThreshold) {}
     virtual ~VROPoseFilterBoneDistance() {}
     
-    VROPoseFrame processNewJoints(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
-                                  const VROPoseFrame &newFrame);
-    VROPoseFrame processNewJoints2(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
-                                  const VROPoseFrame &newFrame);
-    VROPoseFrame doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
-                          const VROPoseFrame &newFrame);
+    VROPoseFrame spatialFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                               const VROPoseFrame &newFrame);
+    VROPoseFrame temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                const VROPoseFrame &newFrame);
 
 private:
     
     void addJoints(const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB,
                    VROPoseFrame *result);
-    void addNonAnomalousJoints(const VROPoseFrame &trackingWindow, const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB,
+    void addNonAnomalousJoints(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB,
                                VROPoseFrame *result);
-    VROBodyJointType getAnomalousJoint(const VROPoseFrame &trackingWindow, const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB);
-    float getDistanceFromPriors(const VROPoseFrame &trackingWindow, const VROPoseFrame &joints, VROBodyJointType joint);
-    VROVector3f getAveragePosition(const VROPoseFrame &trackingWindow, VROBodyJointType joint);
+    VROBodyJointType getAnomalousJoint(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType jointA, VROBodyJointType jointB);
+    float getDistanceFromPriors(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType joint);
+    VROVector3f getPosition(const VROPoseFrame &frame, VROBodyJointType joint);
     
     float getAverageLimbLength(const std::vector<VROPoseFrame> &frames, VROBodyJointType jointA, VROBodyJointType jointB);
     float getLimbLength(const VROPoseFrame &frame, VROBodyJointType jointA, VROBodyJointType jointB);

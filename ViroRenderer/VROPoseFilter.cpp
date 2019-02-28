@@ -22,7 +22,7 @@ float getCreationTime(const VROPoseFrame &frame) {
 }
 
 VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
-    VROPoseFrame newFrame = processNewJoints(_frames, _combinedFrame, frame);
+    VROPoseFrame newFrame = spatialFilter(_frames, _combinedFrame, frame);
     
     // Update the frames vector, which contains all joints over time, organized
     // by frame
@@ -57,5 +57,5 @@ VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
                                     return getCreationTime(f) < windowStart;
                                 }),
                  _frames.end());
-    return doFilter(_frames, _combinedFrame, newFrame);
+    return temporalFilter(_frames, _combinedFrame, newFrame);
 }

@@ -21,8 +21,8 @@ public:
         VROPoseFilter(trackingPeriodMs, confidenceThreshold) {}
     virtual ~VROPoseFilterLowPass() {}
     
-    VROPoseFrame doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
-                          const VROPoseFrame &newFrame);
+    VROPoseFrame temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                const VROPoseFrame &newFrame);
 
 };
 

@@ -12,19 +12,63 @@
 #include <set>
 #include <algorithm>
 
+static const float kKneeAnomalyThreshold = 0.75;
 static const float kAnomalyThreshold = 0.5f;
 static const float kAnomalyDegrees = 45;
 
 std::vector<std::pair<int, int>> kPoseFilterSkeleton = {{0, 1}, {1, 5}, {5, 6}, {6, 7}, {1, 2},
     {2, 3}, {3, 4}, {1, 14}, {14, 15}, {15, 11}, {11, 12}, {12, 13}, {15, 8}, {8, 9}, {9, 10}};
 
-VROPoseFrame VROPoseFilterBoneDistance::processNewJoints(const std::vector<VROPoseFrame> &pastFrames, const VROPoseFrame &combinedFrame,
-                                                         const VROPoseFrame &newFrame) {
-    return newFrame;
+VROPoseFrame VROPoseFilterBoneDistance::spatialFilter(const std::vector<VROPoseFrame> &pastFrames, const VROPoseFrame &combinedFrame,
+                                                      const VROPoseFrame &newFrame) {
+    
+    VROPoseFrame filteredFrame;
+    for (auto kv : newFrame) {
+        VROBodyJointType type = kv.first;
+        
+        // For knee joints, spatial filter by ensuring the X distance from hip to knee is
+        // less than some multiple of the Y distance from hip to ankle. This eliminates
+        // knee noise (and knees are generally harder for the ML model to identify). Note
+        // this may also eliminate some peculiar Yoga poses where the knee is brought
+        // very near to the hip.
+        if (type == VROBodyJointType::LeftKnee) {
+            VROVector3f hipPosition   = getPosition(newFrame, VROBodyJointType::LeftHip);
+            VROVector3f kneePosition  = getPosition(newFrame, VROBodyJointType::LeftKnee);
+            VROVector3f anklePosition = getPosition(newFrame, VROBodyJointType::LeftAnkle);
+            
+            if (!hipPosition.isZero() && !kneePosition.isZero() && !anklePosition.isZero()) {
+                float distanceHipKneeX = fabs(hipPosition.x - kneePosition.x);
+                float distanceHipAnkleY = fabs(hipPosition.y - anklePosition.y);
+                
+                if (distanceHipKneeX < distanceHipAnkleY * kKneeAnomalyThreshold) {
+                    filteredFrame[type] = kv.second;
+                }
+            }
+        }
+        else if (type == VROBodyJointType::RightKnee) {
+            VROVector3f hipPosition   = getPosition(newFrame, VROBodyJointType::RightHip);
+            VROVector3f kneePosition  = getPosition(newFrame, VROBodyJointType::RightKnee);
+            VROVector3f anklePosition = getPosition(newFrame, VROBodyJointType::RightAnkle);
+            
+            if (!hipPosition.isZero() && !kneePosition.isZero() && !anklePosition.isZero()) {
+                float distanceHipKneeX = fabs(hipPosition.x - kneePosition.x);
+                float distanceHipAnkleY = fabs(hipPosition.y - anklePosition.y);
+                
+                if (distanceHipKneeX < distanceHipAnkleY * kKneeAnomalyThreshold) {
+                    filteredFrame[type] = kv.second;
+                }
+            }
+        }
+        else {
+            filteredFrame[type] = kv.second;
+        }
+    }
+
+    return filteredFrame;
 }
 
-VROPoseFrame VROPoseFilterBoneDistance::doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
-                                                 const VROPoseFrame &newFrame) {
+VROPoseFrame VROPoseFilterBoneDistance::temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                                       const VROPoseFrame &newFrame) {
     VROPoseFrame filteredFrame;
     std::vector<bool> discarded(kNumBodyJoints, false);
     
@@ -81,9 +125,9 @@ void VROPoseFilterBoneDistance::addJoints(const VROPoseFrame &joints, VROBodyJoi
     (*result)[jointB] = joints.find(jointB)->second;
 }
 
-void VROPoseFilterBoneDistance::addNonAnomalousJoints(const VROPoseFrame &trackingWindow, const VROPoseFrame &joints,
+void VROPoseFilterBoneDistance::addNonAnomalousJoints(const VROPoseFrame &frame, const VROPoseFrame &joints,
                                                       VROBodyJointType jointA, VROBodyJointType jointB, VROPoseFrame *result) {
-    VROBodyJointType anomalous = getAnomalousJoint(trackingWindow, joints, jointA, jointB);
+    VROBodyJointType anomalous = getAnomalousJoint(frame, joints, jointA, jointB);
     if (anomalous == jointA) {
         (*result)[jointB] = joints.find(jointB)->second;
     } else if (anomalous == jointB) {
@@ -94,11 +138,11 @@ void VROPoseFilterBoneDistance::addNonAnomalousJoints(const VROPoseFrame &tracki
     }
 }
 
-VROBodyJointType VROPoseFilterBoneDistance::getAnomalousJoint(const VROPoseFrame &trackingWindow, const VROPoseFrame &joints,
+VROBodyJointType VROPoseFilterBoneDistance::getAnomalousJoint(const VROPoseFrame &frame, const VROPoseFrame &joints,
                                                               VROBodyJointType jointA, VROBodyJointType jointB) {
 
-    float distanceA = getDistanceFromPriors(trackingWindow, joints, jointA);
-    float distanceB = getDistanceFromPriors(trackingWindow, joints, jointB);
+    float distanceA = getDistanceFromPriors(frame, joints, jointA);
+    float distanceB = getDistanceFromPriors(frame, joints, jointB);
     
     if (distanceA > 0 && distanceA > distanceB) {
         return jointA;
@@ -109,12 +153,12 @@ VROBodyJointType VROPoseFilterBoneDistance::getAnomalousJoint(const VROPoseFrame
     }
 }
 
-float VROPoseFilterBoneDistance::getDistanceFromPriors(const VROPoseFrame &trackingWindow, const VROPoseFrame &joints, VROBodyJointType type) {
-    auto previousIt = trackingWindow.find(type);
+float VROPoseFilterBoneDistance::getDistanceFromPriors(const VROPoseFrame &frame, const VROPoseFrame &joints, VROBodyJointType type) {
+    auto previousIt = frame.find(type);
     auto currentIt = joints.find(type);
     
-    if (previousIt != trackingWindow.end() && currentIt != joints.end() && !currentIt->second.empty()) {
-        VROVector3f averagePosition = getAveragePosition(trackingWindow, type);
+    if (previousIt != frame.end() && currentIt != joints.end() && !currentIt->second.empty()) {
+        VROVector3f averagePosition = getPosition(frame, type);
         if (!averagePosition.isZero()) {
             return averagePosition.distance(currentIt->second[0].getCenter());
         } else {
@@ -170,7 +214,7 @@ float VROPoseFilterBoneDistance::getLimbLength(const VROPoseFrame &frame,
     return sumDistance / (float) numSamples;
 }
 
-VROVector3f VROPoseFilterBoneDistance::getAveragePosition(const VROPoseFrame &frame, VROBodyJointType joint) {
+VROVector3f VROPoseFilterBoneDistance::getPosition(const VROPoseFrame &frame, VROBodyJointType joint) {
     auto kv = frame.find(joint);
     if (kv == frame.end()) {
         return {};

@@ -8,8 +8,8 @@
 
 #include "VROPoseFilterLowPass.h"
 
-VROPoseFrame VROPoseFilterLowPass::doFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
-                                            const VROPoseFrame &newFrame) {
+VROPoseFrame VROPoseFilterLowPass::temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                                  const VROPoseFrame &newFrame) {
     std::map<VROBodyJointType, std::vector<VROInferredBodyJoint>> dampenedJoints;
     
     for (auto &type_samples : combinedFrame) {
