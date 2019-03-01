@@ -1,0 +1,88 @@
+//
+//  VROPoseFilterEuro.h
+//  ViroKit
+//
+//  Created by Raj Advani on 3/1/19.
+//  Copyright © 2019 Viro Media. All rights reserved.
+//
+
+#ifndef VROPoseFilterEuro_h
+#define VROPoseFilterEuro_h
+
+#include "VROPoseFilter.h"
+
+/*
+ Adaptive low-pass filter based on:
+ 
+ Géry Casiez, Nicolas Roussel, Daniel Vogel. 1€ Filter: A Simple Speed-based Low-pass
+ Filter for Noisy Input in Interactive Systems. HI’12, the 30th Conference on Human
+ Factors in Computing Systems, May 2012, Austin, United States. ACM, pp.2527-2530, 2012,
+ <10.1145/2207676.2208639>. <hal-00670496>
+ 
+ Description from the paper:
+ 
+ Low-pass filter, where the cutoff frequency changes according to speed: at low speeds,
+ a low cutoff re- duces jitter at the expense of lag, but at high speeds, the cut- off is
+ increased to reduce lag rather than jitter. The intuition is that people are very
+ sensitive to jitter and not latency when moving slowly, but as movement speed increases,
+ people become very sensitive to latency and not jitter.
+ */
+
+// -----------------------------------------------------------------
+
+class LowPassFilter {
+public:
+    LowPassFilter(double alpha, VROVector3f initval = {0, 0, 0});
+    
+    VROVector3f filter(VROVector3f value, double alpha);
+    bool hasLastRawValue(void) const { return _initialized; }
+    VROVector3f getLastRawValue(void) const { return _lastRaw; }
+    
+private:
+    VROVector3f _lastRaw, _lastFiltered;
+    double _alpha;
+    bool _initialized;
+    
+};
+
+// -----------------------------------------------------------------
+
+class OneEuroFilter {
+public:
+    
+    OneEuroFilter(double freq, double mincutoff = 1.0, double beta_ = 0.0, double dcutoff = 1.0);
+    ~OneEuroFilter();
+
+    VROVector3f filter(VROVector3f value, double timestamp, bool debug = false);
+    
+private:
+    double _frequency;
+    double _minFrequencyCutoff;
+    double _beta;
+    double _derivativeCutoff;
+    LowPassFilter *_x;
+    LowPassFilter *_dx;
+    double _lastTimestamp;
+    
+    double computeAlpha(double cutoff);
+    
+} ;
+
+// -----------------------------------------------------------------
+
+class VROPoseFilterEuro : public VROPoseFilter {
+public:
+    
+    VROPoseFilterEuro(float trackingPeriodMs, float confidenceThreshold);
+    virtual ~VROPoseFilterEuro();
+    
+    VROPoseFrame temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
+                                const VROPoseFrame &newFrame);
+    
+private:
+    
+    std::vector<std::shared_ptr<OneEuroFilter>> _filters;
+    
+};
+
+#endif /* VROPoseFilterEuro_h */

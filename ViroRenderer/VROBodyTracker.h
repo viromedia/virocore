@@ -100,10 +100,10 @@ public:
     int getTileX() const { return _tileX; }
     int getTileY() const { return _tileY; }
     
-    void setCreationTime(float creationTimeMs) {
+    void setCreationTime(double creationTimeMs) {
         _creationTimeMs = creationTimeMs;
     }
-    float getCreationTime() const {
+    double getCreationTime() const {
         return _creationTimeMs;
     }
     

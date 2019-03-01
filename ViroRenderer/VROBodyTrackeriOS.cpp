@@ -18,6 +18,7 @@
 #include "VROPoseFilterMovingAverage.h"
 #include "VROPoseFilterLowPass.h"
 #include "VROPoseFilterBoneDistance.h"
+#include "VROPoseFilterEuro.h"
 
 #define HOURGLASS_2_1 1
 #define HOURGLASS_2_1_T_DS 1
@@ -131,7 +132,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                               processVisionResults(request, error);
                                           }];
     _visionRequest.imageCropAndScaleOption = _cropAndScaleOption;
-    _poseFilter = std::make_shared<VROPoseFilterLowPass>(kInitialDampeningPeriodMs, kConfidenceThreshold);
+    _poseFilter = std::make_shared<VROPoseFilterEuro>(kInitialDampeningPeriodMs, kConfidenceThreshold);
 
     return true;
 }
@@ -141,7 +142,7 @@ void VROBodyTrackeriOS::setDampeningPeriodMs(double period) {
     if (period <= 0) {
         _poseFilter = nullptr;
     } else {
-        _poseFilter = std::make_shared<VROPoseFilterLowPass>(_dampeningPeriodMs, kConfidenceThreshold);
+        _poseFilter = std::make_shared<VROPoseFilterEuro>(_dampeningPeriodMs, kConfidenceThreshold);
     }
 }
 
@@ -164,6 +165,7 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4
     int stride_h = (int) heatmap.strides[1].integerValue;
     
     VROInferredBodyJoint bodyMap[kNumBodyJoints];
+    double creationTime = VROTimeCurrentMillis();
     
     /*
      The ML model will return the heatmap tiles for each joint; choose the highest
@@ -202,7 +204,7 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4
                         VROInferredBodyJoint inferredJoint(type);
                         inferredJoint.setConfidence(confidence);
                         inferredJoint.setTileIndices(j, i);
-                        inferredJoint.setCreationTime(VROTimeCurrentMillis());
+                        inferredJoint.setCreationTime(creationTime);
                         
                         bodyMap[(int) type] = inferredJoint;
                     }

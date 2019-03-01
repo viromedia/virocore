@@ -29,8 +29,7 @@ VROPoseFrame VROPoseFilterLowPass::temporalFilter(const std::vector<VROPoseFrame
         for (int i = 1; i < samples.size(); i++) {
             const VROInferredBodyJoint &sample = samples[i];
             
-            VROVector3f position = sample.getCenter();
-            VROVector3f emaToday = (position * k) + (emaYesterday * (1 - k));
+            VROVector3f emaToday = (sample.getCenter() * k) + (emaYesterday * (1 - k));
             emaYesterday = emaToday;
             
             sumConfidence += sample.getConfidence();
