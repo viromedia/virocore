@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 #include "VROStringUtil.h"
+#include "VROVector3f.h"
 
 class VROShaderProgram;
 class VROImagePostProcess;
@@ -41,7 +42,7 @@ enum class VROPostProcessEffect{
  The PostProcessEffectFactory handles the enabling, disabling and caching of PostProcessEffectPrograms
  that are applied as part of VROChoreographer.renderBasePass().
  */
-class VROPostProcessEffectFactory {
+class VROPostProcessEffectFactory : public std::enable_shared_from_this<VROPostProcessEffectFactory>{
 public:
     VROPostProcessEffectFactory();
     virtual ~VROPostProcessEffectFactory();
@@ -102,6 +103,10 @@ public:
         }
         return VROPostProcessEffect::None;
     }
+
+    void enableWindowMask(std::shared_ptr<VRODriver> driver);
+    void disableWindowMask(std::shared_ptr<VRODriver> driver);
+    void updateWindowMask(VROVector3f tl, VROVector3f tr, VROVector3f bl, VROVector3f br);
 private:
 
     std::shared_ptr<VRORenderTarget> renderEffects(std::shared_ptr<VRORenderTarget> input,
@@ -133,6 +138,15 @@ private:
     std::shared_ptr<VROImagePostProcess> createCrossHatch(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createEmptyEffect(std::shared_ptr<VRODriver> driver);
     std::vector<std::string> getHBCSModification(float hue, float brightness, float contrast, float saturation);
+
+    /*
+     Properties for applying the post process effects within a window mask.
+     */
+    bool _enabledWindowMask;
+    VROVector3f _maskTl;
+    VROVector3f _maskTr;
+    VROVector3f _maskBl;
+    VROVector3f _maskBr;
 };
 
 #endif /* VROPostProcessEffectFactory_h */

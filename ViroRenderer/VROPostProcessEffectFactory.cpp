@@ -10,6 +10,7 @@
 #include "VRORenderTarget.h"
 #include "VROImageShaderProgram.h"
 #include "VRODriver.h"
+#include "VROShaderModifier.h"
 
 static thread_local std::shared_ptr<VROImagePostProcess> sGrayScale;
 static thread_local std::shared_ptr<VROImagePostProcess> sSepia;
@@ -22,8 +23,12 @@ static thread_local std::shared_ptr<VROImagePostProcess> sThermalVision;
 static thread_local std::shared_ptr<VROImagePostProcess> sPixellated;
 static thread_local std::shared_ptr<VROImagePostProcess> sCrossHatch;
 static thread_local std::shared_ptr<VROImagePostProcess> sEmptyEffect;
+static thread_local std::shared_ptr<VROImagePostProcess> sWindowMask;
 
-VROPostProcessEffectFactory::VROPostProcessEffectFactory() {}
+VROPostProcessEffectFactory::VROPostProcessEffectFactory() {
+    _enabledWindowMask = false;
+}
+
 VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {
     sGrayScale = nullptr;
     sSepia = nullptr;
@@ -96,17 +101,110 @@ void VROPostProcessEffectFactory::clearAllEffects(){
     _cachedPrograms.clear();
 };
 
+void VROPostProcessEffectFactory::enableWindowMask(std::shared_ptr<VRODriver> driver) {
+    if (!sWindowMask) {
+        std::vector<std::string> samplers = { "source_texture", "post_processed_texture" };
+        std::vector<std::string> code = {
+                "uniform sampler2D source_texture;",
+                "uniform sampler2D post_processed_texture;",
+                "uniform highp vec3 tl;",
+                "uniform highp vec3 tr;",
+                "uniform highp vec3 bl;",
+                "uniform highp vec3 br;",
+
+                // For the given quad that we are drawing, determine if pixel is within window mask or not.
+                "highp vec2 p = v_texcoord.xy;",
+                "bool isInsideBox = (",
+                "        (((tr.x - tl.x) * (p.y - tl.y)) - ((p.x - tl.x) * (tr.y - tl.y)) ) < 0.0",
+                "        && ( ((br.x - tr.x) * (p.y - tr.y)) - ((p.x - tr.x) * (br.y - tr.y)) ) < 0.0",
+                "        && ( ((bl.x - br.x) * (p.y - br.y)) - ((p.x - br.x) * (bl.y - br.y)) ) < 0.0",
+                "        && ( ((tl.x - bl.x) * (p.y - bl.y)) - ((p.x - bl.x) * (tl.y - bl.y)) ) < 0.0",
+                ");",
+                "frag_color = (isInsideBox) ? texture(post_processed_texture, v_texcoord) : texture(source_texture, v_texcoord);",
+        };
+
+        // Add modifiers for blurring the image horizontally and vertically.
+        std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
+        std::weak_ptr<VROPostProcessEffectFactory> weakSelf = std::dynamic_pointer_cast<VROPostProcessEffectFactory>(shared_from_this());
+        modifier->setUniformBinder("tl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           // Modify the equation settings for the inclusive rectangle.
+                                           uniform->setVec3({strongSelf->_maskTl.x, strongSelf->_maskTl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("tr", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           // Modify the equation settings for the inclusive rectangle.
+                                           uniform->setVec3({strongSelf->_maskTr.x, strongSelf->_maskTr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("bl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           // Modify the equation settings for the inclusive rectangle.
+                                           uniform->setVec3({strongSelf->_maskBl.x, strongSelf->_maskBl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("br", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           // Modify the equation settings for the inclusive rectangle.
+                                           uniform->setVec3({strongSelf->_maskBr.x, strongSelf->_maskBr.y, 0});
+                                       }
+                                   });
+
+
+        // Finally create our ImagePostProcess program and cache it.
+        std::vector<std::shared_ptr<VROShaderModifier>> modifiers = { modifier };
+        std::shared_ptr<VROImageShaderProgram> shader = std::make_shared<VROImageShaderProgram>(samplers, modifiers, driver);
+        sWindowMask = driver->newImagePostProcess(shader);
+    }
+
+    _enabledWindowMask = true;
+}
+
+void VROPostProcessEffectFactory::disableWindowMask(std::shared_ptr<VRODriver> driver) {
+    _enabledWindowMask = false;
+}
+
+void VROPostProcessEffectFactory::updateWindowMask(VROVector3f tl, VROVector3f tr, VROVector3f bl, VROVector3f br) {
+    _maskTl = tl;
+    _maskTr = tr;
+    _maskBl = bl;
+    _maskBr = br;
+}
+
 std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
                                                                                    std::shared_ptr<VRORenderTarget> targetA,
                                                                                    std::shared_ptr<VRORenderTarget> targetB,
                                                                                    std::shared_ptr<VRODriver> driver) {
-    if (_cachedPrograms.size() > 0) {
-        targetA->hydrate();
-        targetB->hydrate();
-        return renderEffects(source, targetA, targetB, driver);
-    } else {
+    if (_cachedPrograms.size() == 0) {
         return source;
     }
+
+    // Blit effects as usual and return the post process result.
+    targetA->hydrate();
+    targetB->hydrate();
+    std::shared_ptr<VRORenderTarget> outputTarget = renderEffects(source, targetA, targetB, driver);
+    if (!_enabledWindowMask) {
+        return outputTarget;
+    }
+
+    // If the post process mask is enabled, blend the source and post processed result
+    std::shared_ptr<VRORenderTarget> finalOutput = outputTarget == targetA ? targetB : targetA;
+    driver->bindRenderTarget(finalOutput, VRORenderTargetUnbindOp::Invalidate);
+    sWindowMask->blit({source->getTexture(0), outputTarget->getTexture(0)}, driver);
+    return finalOutput;
 }
 
 std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::renderEffects(std::shared_ptr<VRORenderTarget> input,
