@@ -19,29 +19,20 @@
 #include "VROPoseFilterLowPass.h"
 #include "VROPoseFilterBoneDistance.h"
 
-#define CPM 0
+#define HOURGLASS_2_1 1
+#define HOURGLASS_2_1_T_DS 1
 #define HOURGLASS_2_1_T 1
 #define HOURGLASS_4_1_T 2
-#define HOURGLASS_4_2 3
-#define HOURGLASS_8_1 4
-#define HOURGLASS_2_1 5
 
-// Set to CPM, HOURGLASS_2_1_T, HOURGLASS_4_1_T, HOURGLASS_4_2, HOURGLASS_8_1
+// Set to one of the above
 #define VRO_BODY_TRACKER_MODEL HOURGLASS_2_1
 
-#if VRO_BODY_TRACKER_MODEL==CPM
-#import "model_cpm.h"
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
+#if VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
 #import "hourglass_2_1.h"
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T_DS
 #import "hourglass_2_1_t.h"
 #elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_1_T
 #import "hourglass_4_1_t.h"
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_2
-#import "hourglass_4_2.h"
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
-#import "model_hourglass.h"
-#else
 #endif
 
 #define VRO_PROFILE_NEURAL_ENGINE 0
@@ -121,24 +112,12 @@ VROBodyTrackeriOS::VROBodyTrackeriOS() {
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                          std::shared_ptr<VRODriver> driver) {
 
-#if VRO_BODY_TRACKER_MODEL==CPM
-    pinfo("Loading CPM body tracking model");
-    _model = [[[model_cpm alloc] init] model];
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
+#if VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
     pinfo("Loading HG_2-1 body tracking model");
     _model = [[[hourglass_2_1 alloc] init] model];
 #elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
     pinfo("Loading HG_2-1-T body tracking model");
     _model = [[[hourglass_2_1_t alloc] init] model];
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_1_T
-    pinfo("Loading HG_4-1-t body tracking model");
-    _model = [[[hourglass_4_1_t alloc] init] model];
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_2
-    pinfo("Loading HG-4-2 body tracking model");
-    _model = [[[hourglass_4_2 alloc] init] model];
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
-    pinfo("Loading HG-8-1 body tracking model");
-    _model = [[[model_hourglass alloc] init] model];
 #endif
     
     _cropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
@@ -148,8 +127,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                               processVisionResults(request, error);
                                           }];
     _visionRequest.imageCropAndScaleOption = _cropAndScaleOption;
-    _poseFilterA = std::make_shared<VROPoseFilterBoneDistance>(kInitialDampeningPeriodMs, kConfidenceThreshold);
-    _poseFilterB = std::make_shared<VROPoseFilterLowPass>(kInitialDampeningPeriodMs, kConfidenceThreshold);
+    _poseFilter = std::make_shared<VROPoseFilterLowPass>(kInitialDampeningPeriodMs, kConfidenceThreshold);
 
     return true;
 }
@@ -157,9 +135,9 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
 void VROBodyTrackeriOS::setDampeningPeriodMs(double period) {
     _dampeningPeriodMs = period;
     if (period <= 0) {
-        _poseFilterA = nullptr;
+        _poseFilter = nullptr;
     } else {
-        _poseFilterA = std::make_shared<VROPoseFilterLowPass>(_dampeningPeriodMs, kConfidenceThreshold);
+        _poseFilter = std::make_shared<VROPoseFilterLowPass>(_dampeningPeriodMs, kConfidenceThreshold);
     }
 }
 
@@ -190,10 +168,10 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4
     for (int k = 0; k < numJoints; k++) {
 #if VRO_BODY_TRACKER_MODEL==CPM
         VROBodyJointType type = (VROBodyJointType) k;
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_8_1
-        VROBodyJointType type = _mpiiTypesToJointTypes[k];
-#else
+#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_PIL
         VROBodyJointType type = _pilTypesToJointTypes[k];
+#else
+        VROBodyJointType type = _mpiiTypesToJointTypes[k];
 #endif
         if (kBodyTrackerDiscardPelvisAndThorax &&
             (type == VROBodyJointType::Thorax || type == VROBodyJointType::Pelvis)) {
@@ -433,10 +411,10 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
         std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
         if (delegate && _isTracking) {
             VROPoseFrame dampenedJoints = newPoseFrame();
-            if (!_poseFilterA) {
+            if (!_poseFilter) {
                 dampenedJoints = joints;
             } else {
-                dampenedJoints = _poseFilterB->filterJoints(_poseFilterA->filterJoints(joints));
+                dampenedJoints = _poseFilter->filterJoints(joints);
             }
             delegate->onBodyJointsFound(dampenedJoints);
         }

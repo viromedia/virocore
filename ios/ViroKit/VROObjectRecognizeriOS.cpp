@@ -10,7 +10,6 @@
 #include "VROLog.h"
 #include "VROTime.h"
 #include "VROARFrameiOS.h"
-#import "model_yolo_coco.h"
 #import "VRODriverOpenGLiOS.h"
 
 VROObjectRecognizeriOS::VROObjectRecognizeriOS() {
@@ -22,7 +21,7 @@ bool VROObjectRecognizeriOS::initObjectTracking(VROCameraPosition position,
                                                 std::shared_ptr<VRODriver> driver) {
     
     
-    _model = [[[model_yolo_coco alloc] init] model];
+    _model = nullptr; // Disabled, model removed [[[model_yolo_coco alloc] init] model];
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {

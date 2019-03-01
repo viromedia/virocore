@@ -711,7 +711,6 @@
 		8B358A6F21FB0D92001B76DA /* VROAnimBodyDataiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B358A6D21FB0D92001B76DA /* VROAnimBodyDataiOS.cpp */; };
 		8B358A7021FB0D92001B76DA /* VROAnimBodyDataiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B358A6D21FB0D92001B76DA /* VROAnimBodyDataiOS.cpp */; };
 		8B358A7121FB0D92001B76DA /* VROAnimBodyDataiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B358A6E21FB0D92001B76DA /* VROAnimBodyDataiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8B7B9F5F2150AFEC00ED6EC6 /* model_cpm.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */; };
 		8B835CB821F6643A0043F172 /* VROBodyPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B835CB721F6643A0043F172 /* VROBodyPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B835CBA21F667430043F172 /* VROBodyPlayeriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B835CB921F667430043F172 /* VROBodyPlayeriOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B835CBC21F6679F0043F172 /* VROBodyPlayeriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B835CBB21F6679F0043F172 /* VROBodyPlayeriOS.cpp */; };
@@ -846,7 +845,6 @@
 		8F2C7B0721ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0821ECD3F100B8A154 /* VROBodyRecognitionTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */; };
 		8F2C7B0C21ECEBAD00B8A154 /* axel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2C7B0921ECEAE300B8A154 /* axel.png */; };
-		8F2C7B1121EF8C7100B8A154 /* model_yolo_coco.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */; };
 		8F2C7B1621EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
 		8F2C7B1721EF91F300B8A154 /* VROBodyTrackerYolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */; };
 		8F2C7B1821EF91F300B8A154 /* VROBodyTrackerYolo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1109,7 +1107,6 @@
 		8FA9A267207E96240022C55D /* object_bpanther_Mixed_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */; };
 		8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FA9D6C5221F20AA0003C9D2 /* hourglass_2_1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9D6C4221F20AA0003C9D2 /* hourglass_2_1.mlmodel */; };
 		8FA9D6C72225FD4E0003C9D2 /* VROPoseFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D6C62225FD4C0003C9D2 /* VROPoseFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA9D6C92225FEF60003C9D2 /* VROPoseFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9D6C82225FEF60003C9D2 /* VROPoseFilter.cpp */; };
 		8FA9D6CC222621DE0003C9D2 /* VROPoseFilterMovingAverage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9D6CA222621DE0003C9D2 /* VROPoseFilterMovingAverage.cpp */; };
@@ -1128,6 +1125,7 @@
 		8FAE18CC1EE79D880021C7BB /* VROARCameraiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */; };
 		8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
 		8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
+		8FAE50442228D46D0043220B /* hourglass_2_1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */; };
 		8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58B1E143F7900EDB629 /* optional.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */; };
 		8FB2B5911E1442EC00EDB629 /* VROPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1364,10 +1362,6 @@
 		8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F152A7A1C10D4AE00A211F8 /* VROShapeUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6318691BD956AF000A75DF /* VROTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF981C1CD67B003DC425 /* specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4DF971C1CD67B003DC425 /* specular.png */; };
-		8FD7FCAE221DC7350040C0EE /* hourglass_4_1_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */; };
-		8FD7FCAF221DC7350040C0EE /* hourglass_4_2.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */; };
-		8FD7FCB0221DC7350040C0EE /* hourglass_2_1_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */; };
-		8FD89B6E2209F50D0015F2BF /* model_hourglass.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */; };
 		8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */; };
 		8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1761,7 +1755,6 @@
 		8B358A6921FAA114001B76DA /* VROBodyAnimData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyAnimData.h; sourceTree = "<group>"; };
 		8B358A6D21FB0D92001B76DA /* VROAnimBodyDataiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROAnimBodyDataiOS.cpp; sourceTree = "<group>"; };
 		8B358A6E21FB0D92001B76DA /* VROAnimBodyDataiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimBodyDataiOS.h; sourceTree = "<group>"; };
-		8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_cpm.mlmodel; sourceTree = "<group>"; };
 		8B835CB721F6643A0043F172 /* VROBodyPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyPlayer.h; sourceTree = "<group>"; };
 		8B835CB921F667430043F172 /* VROBodyPlayeriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROBodyPlayeriOS.h; path = ../../ViroRenderer/VROBodyPlayeriOS.h; sourceTree = "<group>"; };
 		8B835CBB21F6679F0043F172 /* VROBodyPlayeriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROBodyPlayeriOS.cpp; path = ../../ViroRenderer/VROBodyPlayeriOS.cpp; sourceTree = "<group>"; };
@@ -1909,7 +1902,6 @@
 		8F2C7B0321ECD3F100B8A154 /* VROBodyRecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyRecognitionTest.cpp; sourceTree = "<group>"; };
 		8F2C7B0421ECD3F100B8A154 /* VROBodyRecognitionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyRecognitionTest.h; sourceTree = "<group>"; };
 		8F2C7B0921ECEAE300B8A154 /* axel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = axel.png; path = ViroKit/axel.png; sourceTree = "<group>"; };
-		8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_yolo_coco.mlmodel; sourceTree = "<group>"; };
 		8F2C7B1421EF91F300B8A154 /* VROBodyTrackerYolo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyTrackerYolo.cpp; sourceTree = "<group>"; };
 		8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyTrackerYolo.h; sourceTree = "<group>"; };
 		8F2C7B1A21EFCB3400B8A154 /* VROVisionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROVisionModel.h; sourceTree = "<group>"; };
@@ -2229,7 +2221,6 @@
 		8FA9A261207E96240022C55D /* object_bpanther_Mixed_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Mixed_AO.png; path = ViroSample/object_bpanther_Mixed_AO.png; sourceTree = "<group>"; };
 		8FA9A262207E96240022C55D /* object_bpanther_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_bpanther_Roughness.png; path = ViroSample/object_bpanther_Roughness.png; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
-		8FA9D6C4221F20AA0003C9D2 /* hourglass_2_1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1.mlmodel; sourceTree = "<group>"; };
 		8FA9D6C62225FD4C0003C9D2 /* VROPoseFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPoseFilter.h; sourceTree = "<group>"; };
 		8FA9D6C82225FEF60003C9D2 /* VROPoseFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPoseFilter.cpp; sourceTree = "<group>"; };
 		8FA9D6CA222621DE0003C9D2 /* VROPoseFilterMovingAverage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPoseFilterMovingAverage.cpp; sourceTree = "<group>"; };
@@ -2246,6 +2237,7 @@
 		8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARFrameiOS.h; sourceTree = "<group>"; };
 		8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARCameraiOS.cpp; sourceTree = "<group>"; };
 		8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARCameraiOS.h; sourceTree = "<group>"; };
+		8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1.mlmodel; sourceTree = "<group>"; };
 		8FB2B58B1E143F7900EDB629 /* optional.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optional.hpp; sourceTree = "<group>"; };
 		8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPropertyAnimation.cpp; sourceTree = "<group>"; };
 		8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPropertyAnimation.h; sourceTree = "<group>"; };
@@ -2418,10 +2410,6 @@
 		8FD4DF251C18EDC8003DC425 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = specular.png; path = ViroSample/specular.png; sourceTree = "<group>"; };
-		8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_4_1_t.mlmodel; sourceTree = "<group>"; };
-		8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_4_2.mlmodel; sourceTree = "<group>"; };
-		8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1_t.mlmodel; sourceTree = "<group>"; };
-		8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_hourglass.mlmodel; sourceTree = "<group>"; };
 		8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimationQuaternion.h; sourceTree = "<group>"; };
 		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
 		8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrate.h; sourceTree = "<group>"; };
@@ -3296,13 +3284,7 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
-				8FA9D6C4221F20AA0003C9D2 /* hourglass_2_1.mlmodel */,
-				8FD7FCAD221DC7350040C0EE /* hourglass_2_1_t.mlmodel */,
-				8FD7FCAB221DC7340040C0EE /* hourglass_4_1_t.mlmodel */,
-				8FD7FCAC221DC7350040C0EE /* hourglass_4_2.mlmodel */,
-				8FD89B6D2209F50D0015F2BF /* model_hourglass.mlmodel */,
-				8F2C7B1021EF8C7100B8A154 /* model_yolo_coco.mlmodel */,
-				8B7B9F5E2150AFEC00ED6EC6 /* model_cpm.mlmodel */,
+				8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */,
 				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
 				A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */,
@@ -5502,7 +5484,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VIRO_FRAMEWORK_PATH=$PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to react-viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit.framework/ViroKit ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit.framework/ViroKit ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit.framework/ViroKit $VIRO_DEVICE_FRAMEWORK/ViroKit.framework/ViroKit -create -output $VIRO_FRAMEWORK_PATH/ViroKit.framework/ViroKit\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n";
+			shellScript = "VIRO_FRAMEWORK_PATH=$PROJECT_DIR/../../Posemoji/ios/renderer\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to react-viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit.framework/ViroKit ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit.framework/ViroKit ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit.framework/ViroKit $VIRO_DEVICE_FRAMEWORK/ViroKit.framework/ViroKit -create -output $VIRO_FRAMEWORK_PATH/ViroKit.framework/ViroKit\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit.podspec $PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer\n";
 			showEnvVarsInLog = 0;
 		};
 		C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */ = {
@@ -5885,7 +5867,6 @@
 				13F631AF2065C21B00A74EFC /* HTTPCodes.m in Sources */,
 				8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */,
 				8F2F82F71F4E627C00D1CBFA /* VROARShadow.cpp in Sources */,
-				8F2C7B1121EF8C7100B8A154 /* model_yolo_coco.mlmodel in Sources */,
 				8FD4DF051C18ED3C003DC425 /* VROScene.cpp in Sources */,
 				13F631BB2065C21B00A74EFC /* KIOQuery.m in Sources */,
 				8FD4DEF01C18ED0B003DC425 /* VROData.cpp in Sources */,
@@ -5978,7 +5959,6 @@
 				8FD2A5111F81323500E831A6 /* VROBoxTest.cpp in Sources */,
 				8FD2A54F1F813C4100E831A6 /* VROHDRTest.cpp in Sources */,
 				8ABD8F3E1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m in Sources */,
-				8FD7FCAE221DC7350040C0EE /* hourglass_4_1_t.mlmodel in Sources */,
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
 				8FA9D6D42226EED70003C9D2 /* VROPoseFilterBoneDistance.cpp in Sources */,
@@ -5993,14 +5973,12 @@
 				8B99890621463D6F00EA9ED3 /* VROBodyTrackerTest.cpp in Sources */,
 				8FCD02B51FD6F8E0001813D8 /* VRODriverOpenGLiOS.cpp in Sources */,
 				8F292BC820A38F2F00635C0D /* VROToneMappingTest.cpp in Sources */,
-				8FD89B6E2209F50D0015F2BF /* model_hourglass.mlmodel in Sources */,
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */,
 				8B358A7021FB0D92001B76DA /* VROAnimBodyDataiOS.cpp in Sources */,
 				8FE39F81201FB2DB0088A175 /* VROPhotometricLightTest.cpp in Sources */,
 				8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */,
-				8B7B9F5F2150AFEC00ED6EC6 /* model_cpm.mlmodel in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8F17D53D1FCE128600141042 /* VROSceneRendererGVR.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
@@ -6033,12 +6011,12 @@
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
 				8B08B430213F7B9A00196F05 /* VROBodyTrackeriOS.cpp in Sources */,
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
+				8FAE50442228D46D0043220B /* hourglass_2_1.mlmodel in Sources */,
 				8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */,
 				8FD4DEFD1C18ED22003DC425 /* VROSurface.cpp in Sources */,
 				8FD2A5401F813C4100E831A6 /* VROShadowTest.cpp in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8FEACEFC20180CB40082D18B /* VROShadowPreprocess.cpp in Sources */,
-				8FD7FCAF221DC7350040C0EE /* hourglass_4_2.mlmodel in Sources */,
 				8FEACF0C2018319C0082D18B /* VRORenderUtil.cpp in Sources */,
 				8FEACF0520182CC80082D18B /* VROIrradianceRenderPass.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
@@ -6073,14 +6051,12 @@
 				8FD2A53C1F813C4100E831A6 /* VRONormalMapTest.cpp in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,
 				A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */,
-				8FA9D6C5221F20AA0003C9D2 /* hourglass_2_1.mlmodel in Sources */,
 				8FD2A5531F813C4100E831A6 /* VROBloomTest.cpp in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
 				8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */,
 				8F465027215E738900C1AEC5 /* sweep_context.cc in Sources */,
 				8FD2A5501F813C4100E831A6 /* VROTextTest.cpp in Sources */,
 				8F129FAD1ED4A38600341D83 /* VRODualQuaternion.cpp in Sources */,
-				8FD7FCB0221DC7350040C0EE /* hourglass_2_1_t.mlmodel in Sources */,
 				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8F17D5411FCE165400141042 /* VROViewRecorder.mm in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
