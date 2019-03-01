@@ -109,26 +109,7 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _isRecording = false;
     sceneRoot->addChildNode(_bodyControllerRoot);
 
-    // Set initial filter and debug configurations
-    _volatilityFilterThresholdMeters = kInitialVolatilityThresholdMeters;
-    _reachableBoneFilterThresholdMeters = kInitialReachableBoneThresholdMeters;
     _displayDebugCubes = true;
-
-    // Set confidence thresholds per joint.
-    _mlJointConfidenceThresholds[VROBodyJointType::Top] =            kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::Neck] =           kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::LeftShoulder] =   kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::LeftElbow] =      kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::LeftWrist] =      kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::RightShoulder] =  kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::RightElbow] =     kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::RightWrist] =     kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::LeftHip] =        kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::LeftKnee] =       kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::LeftAnkle] =      kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::RightHip] =       kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::RightKnee] =      kInitialMLConfidenceThreshold;
-    _mlJointConfidenceThresholds[VROBodyJointType::RightAnkle] =     kInitialMLConfidenceThreshold;
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
@@ -739,27 +720,11 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
             continue;
         }
 
-        if (kv.second.getConfidence() > _mlJointConfidenceThresholds[kv.first]) {
-            latestJoints[kv.first] = kv.second;
-        }
+        latestJoints[kv.first] = kv.second;
     }
 
     // First, convert the joints into 3d space.
     projectJointsInto3DSpace(latestJoints);
-
-    // Flush out old tracked joints that have expired from _cachedTrackedJoints;
-    std::vector<VROBodyJoint> expiredJoints;
-    double currentTime = VROTimeCurrentMillis();
-    for (auto it = _cachedTrackedJoints.cbegin(), next_it = it; it != _cachedTrackedJoints.cend(); it = next_it) {
-        ++next_it;
-
-        double dataTimeStamp = it->second.getSpawnTimeMs();
-        double staleTime = _mlJointTimeoutMap[it->first];
-        if (currentTime > dataTimeStamp + staleTime) {
-            _cachedTrackedJoints.erase(it);
-            expiredJoints.push_back(it->second);
-        }
-    }
 
     // Then, perform filtering and update our known set of cached joints.
     updateCachedJoints(latestJoints);
@@ -780,9 +745,6 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     } else if (_cachedTrackedJoints.size() >= 1) {
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
     }
-
-    // Next, restore joints if possible using last known data (even if they are old).
-    restoreMissingJoints(expiredJoints);
 
     // Finally update _cachedModelJoints to be set on the IKRig.
     _cachedModelJoints.clear();
@@ -889,45 +851,8 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
 }
 
 void VROBodyTrackerController::updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
-    // Ignore filters if we are in the calibration phase
-    if (_calibrating) {
-        for (auto &latestjointPair : latestJoints) {
-            _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
-        }
-        return;
-    }
-
-    // Else, apply stricter filters during the tracking phase.
     for (auto &latestjointPair : latestJoints) {
-        VROBodyJoint currentJoint = latestjointPair.second;
-        VROBodyJointType currentType = latestjointPair.first;
-        bool hasTrackedJoint = _cachedTrackedJoints.find(currentType) != _cachedTrackedJoints.end();
-        bool shouldCacheNewJoint = false;
-
-        // Apply stricter filters for updating existing joints. Else simply cache the new joints.
-        if (hasTrackedJoint) {
-            // First, if we have seen this joint before, ignore new positions of high
-            // volatility; don't update if the delta of the updated transform exceeds a
-            // certain threshold.
-            VROVector3f currentPos = currentJoint.getProjectedTransform().extractTranslation();
-            VROVector3f oldPos = _cachedTrackedJoints[currentType].getProjectedTransform().extractTranslation();
-            if (oldPos.distanceAccurate(currentPos) < _volatilityFilterThresholdMeters) {
-                shouldCacheNewJoint = true;
-            }
-
-            // Else perform a parent check of this BodyJoint against the last skeleton configuration
-            // with a slightly more relaxed threshold.
-            if (isTargetReachableFromParentBone(currentJoint)) {
-                shouldCacheNewJoint = true;
-            }
-        } else {
-            shouldCacheNewJoint = true;
-        }
-
-        // Finally cache the joint
-        if (shouldCacheNewJoint) {
-            _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
-        }
+        _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
     }
 }
 
@@ -1273,24 +1198,6 @@ bool VROBodyTrackerController::performDepthTest(float x, float y, VROMatrix4f &m
     }
 }
 
-bool VROBodyTrackerController::isTargetReachableFromParentBone(VROBodyJoint targetJoint) {
-    int currentIndex = _mlJointForBoneIndex[targetJoint.getType()];
-    if (currentIndex == 0 || _calibratedConfiguration == nullptr) {
-        return false;
-    }
-    
-    int parentIndex = _skeleton->getBone(currentIndex)->getParentIndex();
-    VROMatrix4f childTransform = _skeleton->getCurrentBoneWorldTransform(currentIndex);
-    VROMatrix4f parentTransform = _skeleton->getCurrentBoneWorldTransform(parentIndex);
-    VROMatrix4f currentTransform = targetJoint.getProjectedTransform();
-
-    float maxDistance = parentTransform.extractTranslation().distanceAccurate(childTransform.extractTranslation());
-    float estDistance = parentTransform.extractTranslation().distanceAccurate(currentTransform.extractTranslation());
-    if (estDistance < (maxDistance + _reachableBoneFilterThresholdMeters)) {
-        return true;
-    }
-    return false;
-}
 
 bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut) {
     const VROCamera &camera = _renderer->getCamera();
@@ -1414,10 +1321,10 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
         VROVector3f transformed = { point.x * viewWidth, point.y * viewHight, 0 };
         // Only update the text for points that match our level of confidence.
         // Note that low confidence points are still rendered to ensure validity.
-        if (kv.second.getConfidence() > _mlJointConfidenceThresholds[kv.first]) {
+        //if (kv.second.getConfidence() > _mlJointConfidenceThresholds[kv.first]) {
             std::string labelTag = pointLabels[(int)kv.first] + " -> " + kv.second.getProjectedTransform().extractTranslation().toString();
             _labelViews[(int)kv.first].text = [NSString stringWithUTF8String:labelTag.c_str()];
-        }
+        //}
         _bodyViews[(int) kv.first].center = CGPointMake(transformed.x, transformed.y);
         _bodyViews[(int) kv.first].alpha = VROMathInterpolate(kv.second.getConfidence(), minConfidence, maxConfidence, minAlpha, maxAlpha);
     }
@@ -1430,30 +1337,6 @@ void VROBodyTrackerController::setDisplayDebugCubes(bool visible) {
 
 bool VROBodyTrackerController::getDisplayDebugCubes() {
     return _displayDebugCubes;
-}
-
-void VROBodyTrackerController::setMLConfidenceThreshold(VROBodyJointType joint, float threshold) {
-    _mlJointConfidenceThresholds[joint] = threshold;
-}
-
-float VROBodyTrackerController::getMLConfidenceThreshold(VROBodyJointType joint) {
-    return _mlJointConfidenceThresholds[joint];
-}
-
-void VROBodyTrackerController::setVolatilityFilterThresholdMeters(float threshold) {
-    _volatilityFilterThresholdMeters = threshold;
-}
-
-float VROBodyTrackerController::getVolatilityFilterThresholdMeters(){
-    return _volatilityFilterThresholdMeters;
-}
-
-void VROBodyTrackerController::setReachableFilterThresholdMeters(float threshold) {
-    _reachableBoneFilterThresholdMeters = threshold;
-}
-
-float VROBodyTrackerController::getReachableFilterThresholdMeters() {
-    return _reachableBoneFilterThresholdMeters;
 }
 
 void VROBodyTrackerController::setStalenessThresholdForJoint(VROBodyJointType type, float timeoutMs) {

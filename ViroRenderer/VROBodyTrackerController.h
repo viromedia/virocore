@@ -198,25 +198,6 @@ public:
     void onBodyPlaybackStarting(std::shared_ptr<VROBodyAnimData> animData);
 
     /*
-     Sets the ml confidence threshold for filtering out low confidence ml joint data.
-     */
-    void setMLConfidenceThreshold(VROBodyJointType joint, float threshold);
-    float getMLConfidenceThreshold(VROBodyJointType joint);
-
-    /*
-     Sets a distance threshold for filtering out volatile joints.
-     */
-    void setVolatilityFilterThresholdMeters(float threshold);
-    float getVolatilityFilterThresholdMeters();
-
-    /*
-     Sets a distance threshold used to calculate bone reachability when filtering new
-     ML joint data.
-     */
-    void setReachableFilterThresholdMeters(float threshold);
-    float getReachableFilterThresholdMeters();
-
-    /*
      Debug flag to show / hide debug cubes demonstrating the joint locations within
      this controller.
      */
@@ -366,9 +347,6 @@ private:
      Configurable filter thresholds and debug switches.
      */
     bool _displayDebugCubes;
-    float _volatilityFilterThresholdMeters;
-    float _reachableBoneFilterThresholdMeters;
-    std::map<VROBodyJointType, float> _mlJointConfidenceThresholds;
 
 #if VRO_PLATFORM_IOS
     // iOS UI Components
@@ -401,12 +379,6 @@ private:
      Align the 3D model's root position / root motion to the root ML joint.
      */
     void alignModelRootToMLRoot();
-
-    /*
-     Returns true if the given targetTransform is reachable form the given parent's joint
-     considering it's bone's length.
-     */
-    bool isTargetReachableFromParentBone(VROBodyJoint targetJoint);
 
     /*
      Depth tests for projecting a 2D ML screen coordinate into 3D space.
