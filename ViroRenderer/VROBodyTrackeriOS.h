@@ -31,7 +31,7 @@ class VROBodyTrackeriOS : public VROBodyTracker {
 public:
     
     VROBodyTrackeriOS();
-    virtual ~VROBodyTrackeriOS() {}
+    virtual ~VROBodyTrackeriOS();
     
     bool initBodyTracking(VROCameraPosition position, std::shared_ptr<VRODriver> driver);
     void startBodyTracking();

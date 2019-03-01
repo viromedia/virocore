@@ -9,13 +9,17 @@
 #ifndef VROVisionModel_h
 #define VROVisionModel_h
 
+#include <memory>
+
 class VROARFrame;
 
 /*
  Runs an ML model on each AR frame received.
  */
-class VROVisionModel {
+class VROVisionModel : public std::enable_shared_from_this<VROVisionModel> {
 public:
+    
+    virtual ~VROVisionModel() {}
     
     /*
      Update the model. This is invoked on each AR frame update.

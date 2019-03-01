@@ -109,6 +109,10 @@ VROBodyTrackeriOS::VROBodyTrackeriOS() {
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
+VROBodyTrackeriOS::~VROBodyTrackeriOS() {
+    
+}
+
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                          std::shared_ptr<VRODriver> driver) {
 
@@ -245,6 +249,10 @@ void VROBodyTrackeriOS::stopBodyTracking() {
 }
 
 void VROBodyTrackeriOS::update(const VROARFrame &frame) {
+    if (!_isTracking) {
+        return;
+    }
+    
     const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
     
     // Store the given image, which we'll run when the neural engine
@@ -268,8 +276,12 @@ void VROBodyTrackeriOS::update(const VROARFrame &frame) {
     
     // Try to process the next image (this will no-op if the neural
     // engine is already processing an image)
+    std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
     dispatch_async(_visionQueue, ^{
-        nextImage();
+        std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
+        if (tracker) {
+            tracker->nextImage();
+        }
     });
 }
 
@@ -304,8 +316,12 @@ void VROBodyTrackeriOS::nextImage() {
     _betweenImageTime = VROTimeCurrentMillis();
     
     // Use dispatch_async to prevent recursion overflow
+    std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
     dispatch_async(_visionQueue, ^{
-        nextImage();
+        std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
+        if (tracker) {
+            tracker->nextImage();
+        }
     });
 }
 
@@ -407,16 +423,23 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);
 #endif
 
+    std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
+
     dispatch_async(dispatch_get_main_queue(), ^{
-        std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
-        if (delegate && _isTracking) {
-            VROPoseFrame dampenedJoints = newPoseFrame();
-            if (!_poseFilter) {
-                dampenedJoints = joints;
-            } else {
-                dampenedJoints = _poseFilter->filterJoints(joints);
+        std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
+        
+        if (tracker && tracker->_isTracking) {
+            std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
+            
+            if (delegate) {
+                VROPoseFrame dampenedJoints = newPoseFrame();
+                if (!_poseFilter) {
+                    dampenedJoints = joints;
+                } else {
+                    dampenedJoints = tracker->_poseFilter->filterJoints(joints);
+                }
+                delegate->onBodyJointsFound(dampenedJoints);
             }
-            delegate->onBodyJointsFound(dampenedJoints);
         }
     });
     
