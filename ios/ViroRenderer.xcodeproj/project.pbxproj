@@ -1128,6 +1128,16 @@
 		8FAE50442228D46D0043220B /* hourglass_2_1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */; };
 		8FAE504722298DCD0043220B /* VROPoseFilterEuro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE504522298DCD0043220B /* VROPoseFilterEuro.cpp */; };
 		8FAE504822298DCD0043220B /* VROPoseFilterEuro.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504622298DCD0043220B /* VROPoseFilterEuro.h */; };
+		8FAE504C222C3CD40043220B /* DeviceList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE5049222C3CD40043220B /* DeviceList.plist */; };
+		8FAE504D222C3CD40043220B /* DeviceList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE5049222C3CD40043220B /* DeviceList.plist */; };
+		8FAE504E222C3CD40043220B /* VRODeviceUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504A222C3CD40043220B /* VRODeviceUtil.h */; };
+		8FAE504F222C3CD40043220B /* VRODeviceUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504A222C3CD40043220B /* VRODeviceUtil.h */; };
+		8FAE5050222C3CD40043220B /* VRODeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE504B222C3CD40043220B /* VRODeviceUtil.m */; };
+		8FAE5051222C3CD40043220B /* VRODeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE504B222C3CD40043220B /* VRODeviceUtil.m */; };
+		8FAE5054222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE5052222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel */; };
+		8FAE5055222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE5052222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel */; };
+		8FAE5056222C6BF10043220B /* hourglass_2_1_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE5053222C6BF10043220B /* hourglass_2_1_t.mlmodel */; };
+		8FAE5057222C6BF10043220B /* hourglass_2_1_t.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE5053222C6BF10043220B /* hourglass_2_1_t.mlmodel */; };
 		8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58B1E143F7900EDB629 /* optional.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */; };
 		8FB2B5911E1442EC00EDB629 /* VROPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2242,6 +2252,11 @@
 		8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1.mlmodel; sourceTree = "<group>"; };
 		8FAE504522298DCD0043220B /* VROPoseFilterEuro.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPoseFilterEuro.cpp; sourceTree = "<group>"; };
 		8FAE504622298DCD0043220B /* VROPoseFilterEuro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPoseFilterEuro.h; sourceTree = "<group>"; };
+		8FAE5049222C3CD40043220B /* DeviceList.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DeviceList.plist; sourceTree = "<group>"; };
+		8FAE504A222C3CD40043220B /* VRODeviceUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODeviceUtil.h; sourceTree = "<group>"; };
+		8FAE504B222C3CD40043220B /* VRODeviceUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VRODeviceUtil.m; sourceTree = "<group>"; };
+		8FAE5052222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1_ds_t.mlmodel; sourceTree = "<group>"; };
+		8FAE5053222C6BF10043220B /* hourglass_2_1_t.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = hourglass_2_1_t.mlmodel; sourceTree = "<group>"; };
 		8FB2B58B1E143F7900EDB629 /* optional.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optional.hpp; sourceTree = "<group>"; };
 		8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPropertyAnimation.cpp; sourceTree = "<group>"; };
 		8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPropertyAnimation.h; sourceTree = "<group>"; };
@@ -3290,6 +3305,8 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				8FAE5052222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel */,
+				8FAE5053222C6BF10043220B /* hourglass_2_1_t.mlmodel */,
 				8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */,
 				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
@@ -3767,6 +3784,9 @@
 				8A3517271EDE035300B6E786 /* VROOpenCV.cpp */,
 				8F11B7C01C20B0530026D150 /* VROView.h */,
 				8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */,
+				8FAE504A222C3CD40043220B /* VRODeviceUtil.h */,
+				8FAE504B222C3CD40043220B /* VRODeviceUtil.m */,
+				8FAE5049222C3CD40043220B /* DeviceList.plist */,
 				8FD4DED11C18ECD4003DC425 /* Info.plist */,
 			);
 			path = ViroKit;
@@ -4320,6 +4340,7 @@
 				13B673DA212229B20040FB72 /* VROFrustumPlane.h in Headers */,
 				8F2C7B1C21EFCB3C00B8A154 /* VROVisionModel.h in Headers */,
 				13B673DB212229B20040FB72 /* VROFBXLoader.h in Headers */,
+				8FAE504F222C3CD40043220B /* VRODeviceUtil.h in Headers */,
 				13B673DC212229B20040FB72 /* VROBoundingBox.h in Headers */,
 				13B673DD212229B20040FB72 /* VROVector3f.h in Headers */,
 				13B673DE212229B20040FB72 /* VROExecutableAnimation.h in Headers */,
@@ -4713,6 +4734,7 @@
 				8FA81D602023EE7100B04790 /* VRORendererConfiguration.h in Headers */,
 				8F0E5EA11F3BA9340007AD03 /* VRORenderPass.h in Headers */,
 				8FD2A5121F81323500E831A6 /* VROBoxTest.h in Headers */,
+				8FAE504E222C3CD40043220B /* VRODeviceUtil.h in Headers */,
 				8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */,
 				8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */,
 				8FCB10231DD544E800FE425C /* VROVideoTextureCacheMetal.h in Headers */,
@@ -5013,6 +5035,7 @@
 				13B6746C212229B20040FB72 /* surface_functions_fsh_adreno.glsl in Resources */,
 				13B6746D212229B20040FB72 /* blank.png in Resources */,
 				13B6746E212229B20040FB72 /* image_vsh.glsl in Resources */,
+				8FAE504D222C3CD40043220B /* DeviceList.plist in Resources */,
 				13B6746F212229B20040FB72 /* image_fsh.glsl in Resources */,
 				13B67470212229B20040FB72 /* constant_q_fsh_adreno.glsl in Resources */,
 				13B67471212229B20040FB72 /* constant_q_fsh.glsl in Resources */,
@@ -5303,6 +5326,7 @@
 				8FB32874203369D60026375A /* surface_functions_fsh_adreno.glsl in Resources */,
 				8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */,
 				8F0FE67B1CD3DFF800A4C297 /* image_vsh.glsl in Resources */,
+				8FAE504C222C3CD40043220B /* DeviceList.plist in Resources */,
 				8F0FE67A1CD3DFF800A4C297 /* image_fsh.glsl in Resources */,
 				8FB3286D203369740026375A /* constant_q_fsh_adreno.glsl in Resources */,
 				8FC6E1DB1CECB376008EFD5F /* constant_q_fsh.glsl in Resources */,
@@ -5594,6 +5618,7 @@
 				13B67247212229B20040FB72 /* VROHeadTracker.cpp in Sources */,
 				8F7569DD21962AAC00730FB3 /* gzip_stream.cpp in Sources */,
 				13B67248212229B20040FB72 /* VROToneMappingRenderPass.cpp in Sources */,
+				8FAE5055222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel in Sources */,
 				13B67249212229B20040FB72 /* VROTestUtil.cpp in Sources */,
 				13B6724A212229B20040FB72 /* VROTrackingHelper.mm in Sources */,
 				13B6724B212229B20040FB72 /* VROGaussianBlurRenderPass.cpp in Sources */,
@@ -5698,6 +5723,7 @@
 				13B672A4212229B20040FB72 /* VROVector3f.cpp in Sources */,
 				13B672A5212229B20040FB72 /* VROARImageTrackingTest.cpp in Sources */,
 				13B672A6212229B20040FB72 /* VROGeometryElement.cpp in Sources */,
+				8FAE5051222C3CD40043220B /* VRODeviceUtil.m in Sources */,
 				13B672A7212229B20040FB72 /* VROSoundDataGVR.cpp in Sources */,
 				13B672A8212229B20040FB72 /* VROFrameSynchronizerInternal.cpp in Sources */,
 				13B672A9212229B20040FB72 /* VROBone.cpp in Sources */,
@@ -5722,6 +5748,7 @@
 				13B672B9212229B20040FB72 /* VROAnimatable.cpp in Sources */,
 				13B672BA212229B20040FB72 /* VROShadowPreprocess.cpp in Sources */,
 				13B672BB212229B20040FB72 /* VRORenderUtil.cpp in Sources */,
+				8FAE5057222C6BF10043220B /* hourglass_2_1_t.mlmodel in Sources */,
 				13B672BC212229B20040FB72 /* VROIrradianceRenderPass.cpp in Sources */,
 				13B672BD212229B20040FB72 /* VROProjector.cpp in Sources */,
 				13B672BE212229B20040FB72 /* VROVectorizer.cpp in Sources */,
@@ -5906,6 +5933,7 @@
 				8FD06F211E832760003D3BC4 /* VROCameraTextureiOS.cpp in Sources */,
 				A5A10756212D51EB008B2DFB /* openbsd-reallocarray.c in Sources */,
 				A5DA443821B0BDC000F86923 /* VROIKTest.cpp in Sources */,
+				8FAE5056222C6BF10043220B /* hourglass_2_1_t.mlmodel in Sources */,
 				8F828EFA1FAF83840068159E /* VROARImperativeSession.cpp in Sources */,
 				8F17D5421FCF1E7500141042 /* VROGVRUtil.cpp in Sources */,
 				8F705DF01E8D5337008BE8F8 /* VROThreadRestricted.cpp in Sources */,
@@ -5921,6 +5949,7 @@
 				8FD4DF021C18ED2C003DC425 /* VROTextureSubstrateMetal.cpp in Sources */,
 				8FCE921F1F44E99900C699D5 /* VROShaderFactory.cpp in Sources */,
 				8A99E6D01EF1B95800712D79 /* VROARScene.cpp in Sources */,
+				8FAE5054222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel in Sources */,
 				8F3C75161FB608B60054639C /* VROSceneController.cpp in Sources */,
 				8FCB10241DD544E800FE425C /* VROVideoTextureCacheOpenGL.cpp in Sources */,
 				8FD2A50D1F81283800E831A6 /* VRORendererTestHarness.cpp in Sources */,
@@ -6089,6 +6118,7 @@
 				8FD2A5511F813C4100E831A6 /* VROVideoSphereTest.cpp in Sources */,
 				8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */,
 				8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */,
+				8FAE5050222C3CD40043220B /* VRODeviceUtil.m in Sources */,
 				8F53C8F81E00F03E008314B4 /* tiny_obj_loader.cc in Sources */,
 				A5A10754212D51E8008B2DFB /* gifalloc.c in Sources */,
 				8F129F951ECB41EE00341D83 /* VROSkeletalAnimation.cpp in Sources */,

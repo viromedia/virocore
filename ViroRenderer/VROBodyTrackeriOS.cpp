@@ -14,6 +14,7 @@
 #include "VRODriverOpenGLiOS.h"
 #include "VROARFrameiOS.h"
 #include <mutex>
+#include "VRODeviceUtil.h"
 
 #include "VROPoseFilterMovingAverage.h"
 #include "VROPoseFilterLowPass.h"
@@ -21,20 +22,16 @@
 #include "VROPoseFilterEuro.h"
 
 #define HOURGLASS_2_1 1
-#define HOURGLASS_2_1_T_DS 1
-#define HOURGLASS_2_1_T 1
-#define HOURGLASS_4_1_T 2
+#define HOURGLASS_2_1_T_DS 2
+#define HOURGLASS_2_1_T 3
 
 // Set to one of the above
-#define VRO_BODY_TRACKER_MODEL HOURGLASS_2_1
+#define VRO_BODY_TRACKER_MODEL_A12 HOURGLASS_2_1_T
+#define VRO_BODY_TRACKER_MODEL_A11 HOURGLASS_2_1_DS_T
 
-#if VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
 #import "hourglass_2_1.h"
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T_DS
 #import "hourglass_2_1_t.h"
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_4_1_T
-#import "hourglass_4_1_t.h"
-#endif
+#import "hourglass_2_1_ds_t.h"
 
 #define VRO_PROFILE_NEURAL_ENGINE 0
 
@@ -117,14 +114,40 @@ VROBodyTrackeriOS::~VROBodyTrackeriOS() {
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                          std::shared_ptr<VRODriver> driver) {
 
-#if VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1
-    pinfo("Loading HG_2-1 body tracking model");
-    _model = [[[hourglass_2_1 alloc] init] model];
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_2_1_T
-    pinfo("Loading HG_2-1-T body tracking model");
-    _model = [[[hourglass_2_1_t alloc] init] model];
-#endif
+    VRODeviceUtil *device = [[VRODeviceUtil alloc] init];
+    bool A12 = false;
     
+    if ([device hardware] == IPHONE_XS ||
+        [device hardware] == IPHONE_XR ||
+        [device hardware] == IPHONE_XS_MAX ||
+        [device hardware] == IPHONE_XS_MAX_CN) {
+        NSLog(@"A12 detected");
+        A12 = true;
+    } else {
+        NSLog(@"A11 or previous detected");
+    }
+    
+    if (A12) {
+#if VRO_BODY_TRACKER_MODEL_A12==HOURGLASS_2_1
+        pinfo("   Loading HG_2-1 body tracking model");
+        _model = [[[hourglass_2_1 alloc] init] model];
+    #elif VRO_BODY_TRACKER_MODEL_A12==HOURGLASS_2_1_T
+        pinfo("   Loading HG_2-1-T body tracking model");
+        _model = [[[hourglass_2_1_t alloc] init] model];
+#endif
+    } else {
+#if VRO_BODY_TRACKER_MODEL_A11==HOURGLASS_2_1
+        pinfo("Loading HG_2-1 body tracking model");
+        _model = [[[hourglass_2_1 alloc] init] model];
+#elif VRO_BODY_TRACKER_MODEL_A11==HOURGLASS_2_1_T
+        pinfo("Loading HG_2-1-T body tracking model");
+        _model = [[[hourglass_2_1_t alloc] init] model];
+#elif VRO_BODY_TRACKER_MODEL_A11==HOURGLASS_2_1_DS_T
+        pinfo("Loading HG_2-1-T-ds body tracking model");
+        _model = [[[hourglass_2_1_ds_t alloc] init] model];
+#endif
+    }
+
     _cropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
@@ -172,13 +195,7 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4
      confidence tile for each joint.
      */
     for (int k = 0; k < numJoints; k++) {
-#if VRO_BODY_TRACKER_MODEL==CPM
-        VROBodyJointType type = (VROBodyJointType) k;
-#elif VRO_BODY_TRACKER_MODEL==HOURGLASS_PIL
-        VROBodyJointType type = _pilTypesToJointTypes[k];
-#else
         VROBodyJointType type = _mpiiTypesToJointTypes[k];
-#endif
         if (kBodyTrackerDiscardPelvisAndThorax &&
             (type == VROBodyJointType::Thorax || type == VROBodyJointType::Pelvis)) {
             continue;
