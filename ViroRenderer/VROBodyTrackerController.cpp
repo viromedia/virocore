@@ -71,6 +71,8 @@ static const float kInitialMLConfidenceThreshold = 0.45;
 static const float kInitialVolatilityThresholdMeters = 0.15;
 static const float kInitialReachableBoneThresholdMeters = 0.2;
 static const VROVector3f kInitialModelPos = VROVector3f(-10, -10, 10);
+static const bool kUseTorsoClusteredDepth = false;
+static const float kUsePresetDepthDistanceMeter = 1;
 
 // Required joints needed for basic controller functionality (Scale / Root motion alignment)
 static const VROBodyJointType kRequiredJoints[] = { VROBodyJointType::Neck,
@@ -796,71 +798,22 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
     // If calibrating, we'll need to grab the Z depth at which to position our projected plane.
     if (_calibrating) {
-
         if (latestJoints.find(kArHitTestJoint) == latestJoints.end()) {
             return;
         }
 
-        // Perform a window depth test around the body joint root to get an average Z depth.
-        VROBodyJoint rootJoint = latestJoints[kArHitTestJoint];
-        VROVector3f screenCoord = rootJoint.getScreenCoords();
-        VROMatrix4f projectedTrans = VROMatrix4f::identity();
-
-        VROMatrix4f tempTrans = VROMatrix4f::identity();
-        //if (!performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans)) {
-        if (!findUserDepth(latestJoints, tempTrans)) {
-            latestJoints.clear();
-            return;
-        }
-        
-        /*
-         Okay consider calibration finished when... the last value set is equal to at least 75% of the previous 20 values (15).
-         Also, don't set a value... if at least 3 of the last 5 don't match it.
-         */
-        VROVector3f camPos = _renderer->getCamera().getPosition();
-        std::vector<float> distances;
-        for (int i = 0; i < _candidatePlanePositions.size(); i++) {
-            distances.push_back(camPos.distance(_candidatePlanePositions[i]));
-        }
-        
-        float distanceToCandidate = camPos.distance(tempTrans.extractTranslation());
-        bool shouldSetCurrentValue = false;
-        if (_candidatePlanePositions.size() >= 5) {
-            int similarCount = 0;
-            for (int i = (int)_candidatePlanePositions.size() - 5; i < _candidatePlanePositions.size(); i++) {
-                if (abs(distances[i] - distanceToCandidate) < .2) {
-                    similarCount++;
-                }
-            }
-            if (similarCount >= 3) {
-                shouldSetCurrentValue = true;
-            }
+        if (kUseTorsoClusteredDepth) {
+            findDampenedTorsoClusteredDepth(latestJoints);
         } else {
-            shouldSetCurrentValue = true;
-        }
-        
-        if (shouldSetCurrentValue) {
-            // Update our projection plane
-            _projectedPlanePosition = tempTrans.extractTranslation();
-            _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
-        }
+            // Project the depth to a known position in space.
+            VROVector3f camPos = _renderer->getCamera().getPosition();
+            VROVector3f camForward = _renderer->getCamera().getForward();
+            VROVector3f finalPos = camPos + (camForward * kUsePresetDepthDistanceMeter);
 
-        if (_candidatePlanePositions.size() == 10) {
-            
-            int similarCount = 0;
-            for (int i = 0; i < distances.size(); i++) {
-                if (abs(distances[i] - distanceToCandidate) < .2) {
-                    similarCount++;
-                }
-            }
-            
-            if (similarCount >= 7) {
-                finishCalibration(true);
-            }
-            
-            _candidatePlanePositions.erase(_candidatePlanePositions.begin());
+            _projectedPlanePosition = finalPos;
+            _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+            finishCalibration(true);
         }
-        _candidatePlanePositions.push_back(tempTrans.extractTranslation());
     }
 
     // Project the 2D joints into 3D coordinates as usual.
@@ -885,6 +838,69 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
             latestJoints.erase(it);
         }
     }
+}
+
+void VROBodyTrackerController::findDampenedTorsoClusteredDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints){
+    // Perform a window depth test around the body joint root to get an average Z depth.
+    VROBodyJoint rootJoint = latestJoints[kArHitTestJoint];
+    VROVector3f screenCoord = rootJoint.getScreenCoords();
+    VROMatrix4f projectedTrans = VROMatrix4f::identity();
+
+    VROMatrix4f tempTrans = VROMatrix4f::identity();
+    //if (!performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans)) {
+    if (!findTorsoClusteredDepth(latestJoints, tempTrans)) {
+        latestJoints.clear();
+        return;
+    }
+
+    /*
+     Okay consider calibration finished when... the last value set is equal to at least 75% of the previous 20 values (15).
+     Also, don't set a value... if at least 3 of the last 5 don't match it.
+     */
+    VROVector3f camPos = _renderer->getCamera().getPosition();
+    std::vector<float> distances;
+    for (int i = 0; i < _candidatePlanePositions.size(); i++) {
+        distances.push_back(camPos.distance(_candidatePlanePositions[i]));
+    }
+
+    float distanceToCandidate = camPos.distance(tempTrans.extractTranslation());
+    bool shouldSetCurrentValue = false;
+    if (_candidatePlanePositions.size() >= 5) {
+        int similarCount = 0;
+        for (int i = (int)_candidatePlanePositions.size() - 5; i < _candidatePlanePositions.size(); i++) {
+            if (abs(distances[i] - distanceToCandidate) < .2) {
+                similarCount++;
+            }
+        }
+        if (similarCount >= 3) {
+            shouldSetCurrentValue = true;
+        }
+    } else {
+        shouldSetCurrentValue = true;
+    }
+
+    if (shouldSetCurrentValue) {
+        // Update our projection plane
+        _projectedPlanePosition = tempTrans.extractTranslation();
+        _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+    }
+
+    if (_candidatePlanePositions.size() == 10) {
+
+        int similarCount = 0;
+        for (int i = 0; i < distances.size(); i++) {
+            if (abs(distances[i] - distanceToCandidate) < .2) {
+                similarCount++;
+            }
+        }
+
+        if (similarCount >= 7) {
+            finishCalibration(true);
+        }
+
+        _candidatePlanePositions.erase(_candidatePlanePositions.begin());
+    }
+    _candidatePlanePositions.push_back(tempTrans.extractTranslation());
 }
 
 void VROBodyTrackerController::updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
@@ -1080,7 +1096,7 @@ void VROBodyTrackerController::updateModel() {
     }
 }
 
-bool VROBodyTrackerController::findUserDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints, VROMatrix4f &matOut) {
+bool VROBodyTrackerController::findTorsoClusteredDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints, VROMatrix4f &matOut) {
     std::shared_ptr<VROARSession> arSession;
     
 #if VRO_PLATFORM_IOS

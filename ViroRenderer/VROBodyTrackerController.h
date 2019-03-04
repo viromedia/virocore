@@ -385,11 +385,13 @@ private:
     /*
      Depth tests for projecting a 2D ML screen coordinate into 3D space.
      */
-    bool findUserDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints, VROMatrix4f &matOut);
+    bool findTorsoClusteredDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints,
+                                 VROMatrix4f &matOut);
     VROVector3f findClusterInPoints(std::vector<VROVector3f> points);
     bool performDepthTest(float x, float y, VROMatrix4f &matOut);
     bool performWindowDepthTest(float x, float y, VROMatrix4f &matOut);
     bool performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut);
+    void findDampenedTorsoClusteredDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints);
 
     /*
      Initializes the model's uniform scale needed for automatic resizing.
