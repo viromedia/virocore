@@ -560,6 +560,7 @@ void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBod
 
     // Finish the calibration.
     finishCalibration(false);
+    calibrateRigWithResults();
 }
 
 std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
