@@ -23,7 +23,7 @@
 #include "VRODriverOpenGLiOS.h"
 #include "VROAnimBodyDataiOS.h"
 
-static std::string pointLabels[14] = {
+static std::string pointLabels[16] = {
     "top\t\t\t", //0
     "neck\t\t", //1
     "R shoulder\t", //2
@@ -38,9 +38,11 @@ static std::string pointLabels[14] = {
     "L hip\t\t", //11
     "L knee\t\t", //12
     "L ankle\t\t", //13
+    "L Thorax\t\t", //14
+    "L Pelvis\t\t", //15
 };
 
-static UIColor *colors[14] = {
+static UIColor *colors[16] = {
     [UIColor redColor],
     [UIColor greenColor],
     [UIColor blueColor],
@@ -54,7 +56,9 @@ static UIColor *colors[14] = {
     [UIColor darkGrayColor],
     [UIColor lightGrayColor],
     [UIColor whiteColor],
-    [UIColor grayColor]
+    [UIColor grayColor],
+    [UIColor redColor],
+    [UIColor greenColor]
 };
 #endif
 static const float kARHitTestWindowKernelPixel = 0.01;
@@ -594,6 +598,9 @@ void VROBodyTrackerController::onBodyJointsPlayback(const std::map<VROBodyJointT
         for (debugJoint = _cachedModelJoints.begin(); debugJoint != _cachedModelJoints.end(); debugJoint++) {
             VROVector3f pos = debugJoint->second;
             VROBodyJointType boneMLJointType = debugJoint->first;
+            if (isIgnoredJoint(boneMLJointType)){
+                continue;
+            }
             _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos, identity);
         }
     }
@@ -656,7 +663,9 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
         for (auto &cachedJoint : _cachedModelJoints) {
             VROVector3f pos = cachedJoint.second;
             VROBodyJointType boneMLJointType = cachedJoint.first;
-            std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
+            if (isIgnoredJoint(boneMLJointType)){
+                continue;
+            }
             _debugBoxEffectors[boneMLJointType]->setWorldTransform(pos,  VROMatrix4f::identity());
         }
     }
@@ -716,10 +725,6 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     // Grab all the 2D joints of high confidence for the targets we want.
     std::map<VROBodyJointType, VROBodyJoint> latestJoints;
     for (auto &kv : joints) {
-        if (isIgnoredJoint(kv.first)) {
-            continue;
-        }
-
         latestJoints[kv.first] = kv.second;
     }
 
@@ -1026,6 +1031,9 @@ void VROBodyTrackerController::updateModel() {
     for (auto &cachedJoint : _cachedModelJoints) {
         VROVector3f pos = cachedJoint.second;
         VROBodyJointType boneMLJointType = cachedJoint.first;
+        if (isIgnoredJoint(boneMLJointType)) {
+            continue;
+        }
 
         std::string boneName = kVROBodyBoneTags.at(boneMLJointType);
         _rig->setPositionForEffector(boneName, pos);
@@ -1282,7 +1290,7 @@ void VROBodyTrackerController::enableDebugMLViewIOS(std::shared_ptr<VRODriver> d
     }
 
     _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
-    int endJointCount = static_cast<int>(VROBodyJointType::LeftAnkle);
+    int endJointCount = static_cast<int>(VROBodyJointType::Pelvis);
     for (int i = static_cast<int>(VROBodyJointType::Top); i <= endJointCount; i++) {
         _bodyViews[i] = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 4, 4)];
         _bodyViews[i].backgroundColor = colors[i];

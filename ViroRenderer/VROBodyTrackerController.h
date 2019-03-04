@@ -350,8 +350,8 @@ private:
 
 #if VRO_PLATFORM_IOS
     // iOS UI Components
-    UILabel *_labelViews[14];
-    UIView *_bodyViews[14];
+    UILabel *_labelViews[16];
+    UIView *_bodyViews[16];
     VROViewAR *_view;
 #endif
 
