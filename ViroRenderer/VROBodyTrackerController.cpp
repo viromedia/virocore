@@ -61,6 +61,8 @@ static UIColor *colors[16] = {
     [UIColor greenColor]
 };
 #endif
+
+static const bool kCalculateBoneProportionality = true;
 static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kAutomaticSizingRatio = 1;
 static const bool kAutomaticResizing = true;
@@ -85,8 +87,8 @@ static const std::map<VROBodyJointType, std::vector<VROBodyJointType>> kVROMLBod
         {VROBodyJointType::Neck,            {VROBodyJointType::Top,
                                                     VROBodyJointType::RightShoulder,
                                                     VROBodyJointType::LeftShoulder,
-                                                    VROBodyJointType::RightKnee,
-                                                    VROBodyJointType::LeftKnee}},
+                                                    VROBodyJointType::RightHip,
+                                                    VROBodyJointType::LeftHip}},
         {VROBodyJointType::RightShoulder,   {VROBodyJointType::RightElbow}},
         {VROBodyJointType::RightElbow,      {VROBodyJointType::RightWrist}},
         {VROBodyJointType::RightWrist,      {}},
@@ -114,6 +116,7 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     sceneRoot->addChildNode(_bodyControllerRoot);
 
     _displayDebugCubes = true;
+    _shouldCalibrateRigWithResults = false;
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
@@ -329,16 +332,20 @@ void VROBodyTrackerController::finishCalibration(bool manual) {
         return;
     }
 
-    if (_skeleton == nullptr) {
-        pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
-        return;
-    }
-
     // Disable any calibration event delegates when finishing calibration.
     if (manual) {
         _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, false);
         _calibrationEventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnPinch, false);
         _modelRootNode->setEventDelegate(_preservedEventDelegate);
+    }
+
+    _shouldCalibrateRigWithResults = true;
+}
+
+void VROBodyTrackerController::calibrateRigWithResults() {
+    if (_skeleton == nullptr) {
+        pwarn("Unable to finish calibration: Model has not yet been bounded to this controller!");
+        return;
     }
 
     // Only calculate proportionality once calibration is done.
@@ -359,18 +366,38 @@ void VROBodyTrackerController::finishCalibration(bool manual) {
     // Start listening for new joint data.
     setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
-    
+
     std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
     if (delegate) {
         delegate->onCalibrationFinished();
     }
+    _shouldCalibrateRigWithResults = false;
 }
 
 void VROBodyTrackerController::calibrateBoneProportionality() {
     restoreTopBoneTransform();
+    if (!kCalculateBoneProportionality) {
+        return;
+    }
 
-    bool hasEffectorData = _currentTrackedState == FullEffectors || _modelBoneLengths.size() != 0;
-
+    bool hasAllRequiredBones = true;
+    for (auto bone : kVROMLBodyTree) {
+        bool hasJoint = false;
+        for (auto currentBone : _cachedTrackedJoints) {
+            if (currentBone.first == bone.first) {
+                hasJoint = true;
+                break;
+            }
+        }
+        
+        // If we are missing a required joint, update flag and break out.
+        if (!hasJoint) {
+            hasAllRequiredBones = false;
+            break;
+        }
+    }
+    
+    bool hasEffectorData = hasAllRequiredBones || _modelBoneLengths.size() != 0;
     if (!hasEffectorData) {
         pwarn("Currently tracking with limited joints... skipping bone calibration!");
         return;
@@ -646,6 +673,10 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
 
         // Now apply that offset and align the 3D model to the latest ML body joint positions.
         alignModelRootToMLRoot();
+
+        if (_shouldCalibrateRigWithResults) {
+            calibrateRigWithResults();
+        }
     }
 
     // Else if we are already calibrated, update tracked joints as usual

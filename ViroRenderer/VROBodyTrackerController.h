@@ -164,14 +164,15 @@ public:
      the latest ML joint data.
      TODO VIRO-4674: Remove Manual Calibration
      */
-    void startCalibration(bool manual = true);
+    void startCalibration(bool manual = false);
 
     /*
      Notifies the controller to finish calibration and initialize the VROIKRig
      and align it with the latest ML joint data.
      TODO VIRO-4674: Remove Manual Calibration
      */
-    void finishCalibration(bool manual = true);
+    void finishCalibration(bool manual = false);
+    void calibrateRigWithResults();
 
     /*
      Returns the currently set or last calibrated VROBodyCalibratedConfig on this controller.
@@ -305,6 +306,7 @@ private:
      True if this controller is currently calibrating the latest set of ML joints to the IKRig.
      */
     bool _calibrating;
+    bool _shouldCalibrateRigWithResults;
     std::shared_ptr<VROEventDelegate> _calibrationEventDelegate;
     std::shared_ptr<VROBodyCalibratedConfig> _calibratedConfiguration;
 
