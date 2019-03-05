@@ -175,16 +175,6 @@ public:
     void calibrateRigWithResults();
 
     /*
-     Returns the currently set or last calibrated VROBodyCalibratedConfig on this controller.
-     */
-    std::shared_ptr<VROBodyCalibratedConfig> getCalibratedConfiguration();
-
-    /*
-     Automatically calibrates the currently bounded 3D model with the given VROBodyCalibratedConfig.
-     */
-    void setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config);
-
-    /*
      Sets a VROBodyTrackerControllerDelegate on this controller for
      onBodyTrackStateUpdate() notifications.
      */
@@ -268,6 +258,7 @@ private:
     std::vector<VROVector3f> _candidatePlanePositions;
     VROVector3f _projectedPlanePosition;
     VROVector3f _projectedPlaneNormal;
+    bool _hasValidProjectedPlane;
 
     /*
      The rig, skeleton and node associated with the currently bound model.
@@ -308,7 +299,6 @@ private:
     bool _calibrating;
     bool _shouldCalibrateRigWithResults;
     std::shared_ptr<VROEventDelegate> _calibrationEventDelegate;
-    std::shared_ptr<VROBodyCalibratedConfig> _calibratedConfiguration;
 
     /*
      Used to restore any pre-set event delegate on the model's node after setting the

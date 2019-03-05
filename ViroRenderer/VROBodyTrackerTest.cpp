@@ -249,14 +249,6 @@ void VROBodyTrackerTest::onJointUpdate(const std::map<VROBodyJointType, VROJoint
 void VROBodyTrackerTest::onFrameWillRender(const VRORenderContext &context) {
     //context.getPencil()->setBrushThickness(0.001f);
     //renderDebugSkeletal(context.getPencil(), 0);
-
-    if (_loadNewConfig) {
-        std::shared_ptr<VROBodyCalibratedConfig> data = _bodyMLController->getCalibratedConfiguration();
-        createNewBodyController();
-        _bodyMLController->bindModel(_modelNodeNinja1);
-        _bodyMLController->setCalibratedConfiguration(data);
-        _loadNewConfig = false;
-    }
 }
 
 void VROBodyTrackerTest::onFrameDidRender(const VRORenderContext &context) {

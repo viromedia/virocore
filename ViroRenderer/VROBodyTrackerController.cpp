@@ -62,7 +62,7 @@ static UIColor *colors[16] = {
 };
 #endif
 
-static const bool kCalculateBoneProportionality = true;
+static const bool kCalculateBoneProportionality = false;
 static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kAutomaticSizingRatio = 1;
 static const bool kAutomaticResizing = true;
@@ -113,12 +113,12 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _renderer = renderer;
     _mlRootToModelRoot = VROMatrix4f::identity();
     _bodyControllerRoot = std::make_shared<VRONode>();
-    _calibratedConfiguration = nullptr;
     _isRecording = false;
     sceneRoot->addChildNode(_bodyControllerRoot);
 
     _displayDebugCubes = true;
     _shouldCalibrateRigWithResults = false;
+    _hasValidProjectedPlane = false;
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
@@ -233,12 +233,6 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _mlJointTimeoutMap[VROBodyJointType::RightHip] =       500;
     _mlJointTimeoutMap[VROBodyJointType::RightKnee] =      500;
     _mlJointTimeoutMap[VROBodyJointType::RightAnkle] =     500;
-
-    // if we have calibration configuration data, short circuit the calibration phase.
-    if (_calibratedConfiguration != nullptr) {
-        setCalibratedConfiguration(_calibratedConfiguration);
-    }
-
     return true;
 }
 
@@ -306,10 +300,10 @@ void VROBodyTrackerController::startCalibration(bool manual) {
     }
 
     // Clear previously calibrated data.
-    _calibratedConfiguration = nullptr;
     _mlBoneLengths.clear();
     _modelBoneLengths.clear();
     _calibrating = true;
+    _hasValidProjectedPlane = false;
     _userTorsoHeight = 0;
     _projectedPlanePosition = kInitialModelPos;
     _projectedPlaneNormal = VROVector3f(0,0,0);
@@ -341,6 +335,7 @@ void VROBodyTrackerController::finishCalibration(bool manual) {
         _modelRootNode->setEventDelegate(_preservedEventDelegate);
     }
 
+    _hasValidProjectedPlane = true;
     _shouldCalibrateRigWithResults = true;
 }
 
@@ -357,16 +352,7 @@ void VROBodyTrackerController::calibrateRigWithResults() {
     _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
     _modelRootNode->setIKRig(_rig);
 
-    // Save known configurations for future use.
-    _calibratedConfiguration = std::make_shared<VROBodyCalibratedConfig>();
-    _calibratedConfiguration->projectedPlaneNormal = _projectedPlaneNormal;
-    _calibratedConfiguration->projectedPlanePosition = _projectedPlanePosition;
-    _calibratedConfiguration->torsoLength = _userTorsoHeight;
-    _calibratedConfiguration->_modelBoneLengths = _modelBoneLengths;
-    _calibratedConfiguration->_mlBoneLengths = _mlBoneLengths;
-
     // Start listening for new joint data.
-    setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     _calibrating = false;
 
     std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
@@ -537,38 +523,6 @@ void VROBodyTrackerController::calculateKnownBoneSizes(VROBodyJointType joint) {
     }
 }
 
-void VROBodyTrackerController::setCalibratedConfiguration(std::shared_ptr<VROBodyCalibratedConfig> config) {
-    passert(config != nullptr);
-    if (_modelRootNode == nullptr || _skeleton == nullptr) {
-        perror("Unable to automatically calibrate VROBodyTrackerController without bounded model.");
-        return;
-    }
-
-    // Reset the model / configuration data before calibrating.
-    startCalibration(false);
-    
-    // Set calibration presets
-    _calibratedConfiguration = config;
-    _projectedPlaneNormal = config->projectedPlaneNormal;
-    _projectedPlanePosition = config->projectedPlanePosition;
-    _mlBoneLengths = _calibratedConfiguration->_mlBoneLengths;
-    _modelBoneLengths = _calibratedConfiguration->_modelBoneLengths;
-    _userTorsoHeight = _calibratedConfiguration->torsoLength;
-
-    // Automatically calibrate with calibration presets.
-    calibrateModelToMLTorsoScale();
-    calibrateMlToModelRootOffset();
-    alignModelRootToMLRoot();
-
-    // Finish the calibration.
-    finishCalibration(false);
-    calibrateRigWithResults();
-}
-
-std::shared_ptr<VROBodyCalibratedConfig> VROBodyTrackerController::getCalibratedConfiguration() {
-    return _calibratedConfiguration;
-}
-
 void VROBodyTrackerController::onBodyPlaybackStarting(std::shared_ptr<VROBodyAnimData> animData) {
     // Matrix represented the start root world transform of the model when recording occurred.
     VROMatrix4f playbackDataStartMatrix = animData->getModelStartWorldMatrix();
@@ -667,26 +621,30 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
         return;
     }
 
-    if (_calibrating) {
-        // First scale the model to the right size.
-        calibrateModelToMLTorsoScale();
+    // Reset the model and bones back to it's initial configuration
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->setScale(VROVector3f(1, 1, 1));
+    _modelRootNode->setRotation(VROQuaternion());
+    _modelRootNode->setPosition(kInitialModelPos);
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
 
-        // Then determine the transform offset from an ML joint in the skeleton to the model's root.
-        calibrateMlToModelRootOffset();
+    // Dynamically scale the model to the right size.
+    calibrateModelToMLTorsoScale();
 
-        // Now apply that offset and align the 3D model to the latest ML body joint positions.
-        alignModelRootToMLRoot();
+    // Then determine the transform offset from an ML joint in the skeleton to the model's root.
+    calibrateMlToModelRootOffset();
 
-        if (_shouldCalibrateRigWithResults) {
-            calibrateRigWithResults();
-        }
+    // Now apply that offset and align the 3D model to the latest ML body joint positions.
+    alignModelRootToMLRoot();
+
+    // Only initialize the rig in the calibration phase. 
+    if (_calibrating && _shouldCalibrateRigWithResults) {
+        calibrateRigWithResults();
     }
 
-    // Else if we are already calibrated, update tracked joints as usual
-    if (_calibratedConfiguration != nullptr) {
-        updateModel();
-        notifyOnJointUpdateDelegates();
-    }
+    // Update tracked joints as usual
+    updateModel();
+    notifyOnJointUpdateDelegates();
 
     // Render debug UI
     if (_displayDebugCubes && _debugBoxEffectors.size() > 0) {
@@ -821,7 +779,7 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
     }
 
     // Project the 2D joints into 3D coordinates as usual.
-    if (_calibrating || _calibratedConfiguration != nullptr) {
+    if (_calibrating || _hasValidProjectedPlane) {
         for (auto &joint : latestJoints) {
             VROMatrix4f hitTransform;
             float pointX = joint.second.getScreenCoords().x;
@@ -1040,13 +998,9 @@ void VROBodyTrackerController::calibrateModelToMLTorsoScale() {
     }
 
     // Calculate the neckToMLRoot distance
-    if (_calibratedConfiguration == nullptr) {
-        VROVector3f neckPos = _cachedModelJoints[VROBodyJointType::Neck];
-        VROVector3f midHipLoc = getMLRootPosition();
-        _userTorsoHeight = midHipLoc.distanceAccurate(neckPos);
-    } else {
-        _userTorsoHeight = _calibratedConfiguration->torsoLength;
-    }
+    VROVector3f neckPos = _cachedModelJoints[VROBodyJointType::Neck];
+    VROVector3f midHipLoc = getMLRootPosition();
+    _userTorsoHeight = midHipLoc.distanceAccurate(neckPos);
 
     // Calculate the different distances, grab the ratio.
     float modelToMLRatio = _userTorsoHeight / _skeletonTorsoHeight * kAutomaticSizingRatio;
