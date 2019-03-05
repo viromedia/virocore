@@ -662,7 +662,7 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
     updateDebugMLViewIOS(joints);
 #endif
 
-    // Basic tracking requires kRequiredJoints, return if we haven't yet found them.
+    // Basic tracking requires required, return if we haven't yet found them.
     if (_currentTrackedState == NotAvailable) {
         return;
     }
@@ -770,13 +770,17 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
 
     // With the new found joints, update the current tracking state
     bool hasRequiredJoints = true;
-    for (auto requiredBone : kRequiredJoints) {
-        if (_cachedTrackedJoints.find(requiredBone) == _cachedTrackedJoints.end()) {
-            hasRequiredJoints = false;
-            break;
-        }
+
+    // First examine if we have the joints needed for positioning and scaling.
+    if (_cachedTrackedJoints.find(VROBodyJointType::Neck) == _cachedTrackedJoints.end()) {
+        hasRequiredJoints = false;
     }
 
+    // Then, examine if we have the joints needed for scaling (right + left) or (Top) joints.
+    if (_cachedTrackedJoints.find(VROBodyJointType::RightHip) == _cachedTrackedJoints.end() ||
+        _cachedTrackedJoints.find(VROBodyJointType::LeftHip) == _cachedTrackedJoints.end())  {
+        hasRequiredJoints = false;
+    }
     if (!hasRequiredJoints) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     } else if (_cachedTrackedJoints.size() == _mlJointForBoneIndex.size()) {
@@ -904,6 +908,7 @@ void VROBodyTrackerController::findDampenedTorsoClusteredDepth(std::map<VROBodyJ
 }
 
 void VROBodyTrackerController::updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
+    _cachedTrackedJoints.clear();
     for (auto &latestjointPair : latestJoints) {
         _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
     }
