@@ -451,7 +451,7 @@
         }
 
         // create a UIImage with size divided by the contentScaleFactor!
-        UIGraphicsBeginImageContextWithOptions(CGSizeMake(width/view.contentScaleFactor, height/view.contentScaleFactor), NO, 0.0);
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(width/view.contentScaleFactor, height/view.contentScaleFactor), NO, view.contentScaleFactor);
         [_watermarkImage drawInRect:CGRectMake(_watermarkFrame.origin.x, _watermarkFrame.origin.y , _watermarkFrame.size.width, _watermarkFrame.size.height)];
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
