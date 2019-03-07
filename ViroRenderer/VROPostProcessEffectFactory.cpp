@@ -173,7 +173,7 @@ void VROPostProcessEffectFactory::enableWindowMask(std::shared_ptr<VRODriver> dr
     _enabledWindowMask = true;
 }
 
-void VROPostProcessEffectFactory::disableWindowMask() {
+void VROPostProcessEffectFactory::disableWindowMask(std::shared_ptr<VRODriver> driver) {
     _enabledWindowMask = false;
 }
 
@@ -296,66 +296,28 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createSinCity(
     return sSinCity;
 }
 
-// https://stackoverflow.com/questions/6030814/add-fisheye-effect-to-images-at-runtime-using-opengl-es
-// http://adrianboeing.blogspot.com/2011/01/webgl-tunnel-effect-explained.html
-// https://www.geeks3d.com/20140213/glsl-shader-library-fish-eye-and-dome-and-barrel-distortion-post-processing-filters/5/
 std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createBarallelDistortion(std::shared_ptr<VRODriver> driver) {
     if (!sBarallel) {
         std::vector<std::string> samplers = { "source_texture" };
         std::vector<std::string> code = {
                 "uniform sampler2D source_texture;",
-                "uniform highp vec3 lensPos;"
-                "uniform highp float lensSize;"
-                "highp vec2 p = v_texcoord.xy;",
-                "highp vec2 m = vec2(lensPos.x, lensPos.y);",
-                "highp vec2 d = p - m;",
-                "highp float r = sqrt(dot(d, d));",
+                "highp vec2 xy = 2.0 * v_texcoord.xy - 1.0;",
                 "highp vec2 uv;",
-                "if (r >= lensSize) { uv = p;}",
-                "else { uv = m + d * r;}"
-                "frag_color = texture(source_texture, uv);",
+                "highp float d = length(xy);",
+                "if (d < 1.0) {",
+                "    highp float BarrelPower = 1.5;",
+                "    highp float theta  = atan(xy.y, xy.x);",
+                "    highp float radius = length(xy);",
+                "    radius = pow(radius, BarrelPower);",
+                "    xy.x = radius * cos(theta);",
+                "    xy.y = radius * sin(theta);",
+                "    uv = 0.5 * (xy + 1.0);",
+                " } else {",
+                "    uv = v_texcoord.xy;",
+                " }",
+                " frag_color = texture(source_texture, uv);",
         };
-
-        std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
-        std::weak_ptr<VROPostProcessEffectFactory> weakSelf = std::dynamic_pointer_cast<VROPostProcessEffectFactory>(shared_from_this());
-        modifier->setUniformBinder("lensSize", VROShaderProperty::Float,
-                                   [weakSelf] (VROUniform *uniform,
-                                               const VROGeometry *geometry, const VROMaterial *material) {
-                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
-                                       if (strongSelf) {
-                                           if (!strongSelf->_enabledWindowMask) {
-                                               uniform->setFloat(1.0);
-                                               return;
-                                           }
-
-                                           VROVector3f tr = strongSelf->_maskTr;
-                                           VROVector3f bl = strongSelf->_maskBl;
-                                           float d = tr.distanceAccurate(bl);
-                                           uniform->setFloat(d);
-                                       }
-
-                                   });
-        modifier->setUniformBinder("lensPos", VROShaderProperty::Vec3,
-                                   [weakSelf] (VROUniform *uniform,
-                                               const VROGeometry *geometry, const VROMaterial *material) {
-                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
-                                       if (strongSelf) {
-                                           if (!strongSelf->_enabledWindowMask) {
-                                               uniform->setVec3({0.5,0.5,0});
-                                               return;
-                                           }
-
-                                           VROVector3f tr = strongSelf->_maskTr;
-                                           VROVector3f bl = strongSelf->_maskBl;
-                                           VROVector3f midPos = bl + ( (tr - bl) / 2.0);
-                                           uniform->setVec3({midPos.x, midPos.y, 0});
-                                       }
-                                   });
-
-
-        // Finally create our ImagePostProcess program and cache it.
-        std::vector<std::shared_ptr<VROShaderModifier>> modifiers = { modifier };
-        std::shared_ptr<VROImageShaderProgram> shader = std::make_shared<VROImageShaderProgram>(samplers, modifiers, driver);
+        std::shared_ptr<VROShaderProgram> shader = VROImageShaderProgram::create(samplers, code, driver);
         sBarallel = driver->newImagePostProcess(shader);
     }
     return sBarallel;

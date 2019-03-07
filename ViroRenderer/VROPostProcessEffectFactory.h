@@ -105,7 +105,7 @@ public:
     }
 
     void enableWindowMask(std::shared_ptr<VRODriver> driver);
-    void disableWindowMask();
+    void disableWindowMask(std::shared_ptr<VRODriver> driver);
     void updateWindowMask(VROVector3f tl, VROVector3f tr, VROVector3f bl, VROVector3f br);
 private:
 
