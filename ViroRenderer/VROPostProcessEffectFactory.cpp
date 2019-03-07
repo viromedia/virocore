@@ -63,9 +63,9 @@ void VROPostProcessEffectFactory::enableEffect(VROPostProcessEffect effect, std:
     } else if (effect == VROPostProcessEffect::SinCity){
         appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createSinCity(driver));
     } else if (effect == VROPostProcessEffect::BarallelDistortion){
-        appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createBarallelDistortion(driver));
+        appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createCircularDistortion(driver, 1.75));
     } else if (effect == VROPostProcessEffect::PincushionDistortion){
-        appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createPinCusionDistortion(driver));
+        appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createCircularDistortion(driver, 0.5));
     } else if (effect == VROPostProcessEffect::Toonify){
         appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createToonify(driver));
     } else if (effect == VROPostProcessEffect::Inverted){
@@ -296,58 +296,130 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createSinCity(
     return sSinCity;
 }
 
-std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createBarallelDistortion(std::shared_ptr<VRODriver> driver) {
+std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createCircularDistortion(std::shared_ptr<VRODriver> driver,
+                                                                                           float distortion) {
     if (!sBarallel) {
         std::vector<std::string> samplers = { "source_texture" };
         std::vector<std::string> code = {
                 "uniform sampler2D source_texture;",
-                "highp vec2 xy = 2.0 * v_texcoord.xy - 1.0;",
+                "uniform highp vec3 tl;",
+                "uniform highp vec3 tr;",
+                "uniform highp vec3 bl;",
+                "uniform highp vec3 br;",
+                "uniform highp float distortion;",
+
+                "if (v_texcoord.x < bl.x ||",
+                "v_texcoord.x > br.x ||",
+                "v_texcoord.y < bl.y ||",
+                "v_texcoord.y > tl.y) {",
+                "    frag_color = texture(source_texture, v_texcoord);"
+                "    return;",
+                "}",
+
+                // Now determine the window of the area we wish to blur.
+                // Normalize this to [-1, 1] to be procesed.
+                "highp float width = tr.x - tl.x;",
+                "highp float height = tl.y - bl.y;",
+                "highp float shift_x = bl.x;",
+                "highp float normalizedX = (( 2.0 * (v_texcoord.x - shift_x) ) - width) / width;",
+                "highp float shift_y = bl.y;",
+                "highp float normalizedY = (( 2.0 * (v_texcoord.y - shift_y) ) - height) / height;",
+                "highp vec2 targetxy = vec2(normalizedX, normalizedY);",
+                "highp float d = length(targetxy);",
+
+                // If we are ouside the distortion area, render as normal
+                "if (d > 1.0) {",
+                "    frag_color = texture(source_texture, v_texcoord);"
+                "    return;",
+                "}",
+
+                // Else, we are in the fishEye zone
                 "highp vec2 uv;",
-                "highp float d = length(xy);",
-                "if (d < 1.0) {",
-                "    highp float BarrelPower = 1.5;",
-                "    highp float theta  = atan(xy.y, xy.x);",
-                "    highp float radius = length(xy);",
-                "    radius = pow(radius, BarrelPower);",
-                "    xy.x = radius * cos(theta);",
-                "    xy.y = radius * sin(theta);",
-                "    uv = 0.5 * (xy + 1.0);",
-                " } else {",
-                "    uv = v_texcoord.xy;",
-                " }",
-                " frag_color = texture(source_texture, uv);",
+                "highp float theta  = atan(targetxy.y , targetxy.x);",
+                "highp float radius = length(targetxy);",
+                "radius = pow(radius, distortion);",
+                "uv.x = (radius * cos(theta));",
+                "uv.y = (radius * sin(theta));",
+
+                // Undo move back into screen space.
+                "uv.x = (((uv.x * width)  + width ) * 0.5) + shift_x;",
+                "uv.y = (((uv.y * height) + height ) * 0.5) + shift_y;",
+
+                // Apply the colors.,
+                "frag_color = texture(source_texture, uv);"
         };
-        std::shared_ptr<VROShaderProgram> shader = VROImageShaderProgram::create(samplers, code, driver);
+
+        // Add modifiers for blurring the image horizontally and vertically.
+        std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
+        std::weak_ptr<VROPostProcessEffectFactory> weakSelf = std::dynamic_pointer_cast<VROPostProcessEffectFactory>(shared_from_this());
+        modifier->setUniformBinder("tl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({0, 1, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskTl.x, strongSelf->_maskTl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("tr", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({1, 1, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskTr.x, strongSelf->_maskTr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("bl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({0, 0, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskBl.x, strongSelf->_maskBl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("br", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({1, 0, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskBr.x, strongSelf->_maskBr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("distortion", VROShaderProperty::Float,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setFloat(strongSelf->_circularDistortion);
+                                       }
+                                   });
+
+        // Finally create our ImagePostProcess program and cache it.
+        std::vector<std::shared_ptr<VROShaderModifier>> modifiers = { modifier };
+        std::shared_ptr<VROImageShaderProgram> shader = std::make_shared<VROImageShaderProgram>(samplers, modifiers, driver);
         sBarallel = driver->newImagePostProcess(shader);
     }
+    _circularDistortion = distortion;
     return sBarallel;
-}
-
-std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createPinCusionDistortion(std::shared_ptr<VRODriver> driver) {
-    if (!sPincushion) {
-        std::vector<std::string> samplers = { "source_texture" };
-        std::vector<std::string> code = {
-                "uniform sampler2D source_texture;",
-                "highp vec2 xy = 2.0 * v_texcoord.xy - 1.0;",
-                "highp vec2 uv;",
-                "highp float d = length(xy);",
-                "if (d < 1.0) {",
-                "    highp float BarrelPower = .5;",
-                "    highp float theta  = atan(xy.y, xy.x);",
-                "    highp float radius = length(xy);",
-                "    radius = pow(radius, BarrelPower);",
-                "    xy.x = radius * cos(theta);",
-                "    xy.y = radius * sin(theta);",
-                "    uv = 0.5 * (xy + 1.0);",
-                "} else {",
-                "    uv = v_texcoord.xy;",
-                "}",
-                "frag_color = texture(source_texture, uv);",
-        };
-        std::shared_ptr<VROShaderProgram> shader = VROImageShaderProgram::create(samplers, code, driver);
-        sPincushion = driver->newImagePostProcess(shader);
-    }
-    return sPincushion;
 }
 
 std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createToonify(std::shared_ptr<VRODriver> driver) {

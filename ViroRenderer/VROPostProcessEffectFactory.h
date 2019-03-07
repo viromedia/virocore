@@ -107,6 +107,9 @@ public:
     void enableWindowMask(std::shared_ptr<VRODriver> driver);
     void disableWindowMask(std::shared_ptr<VRODriver> driver);
     void updateWindowMask(VROVector3f tl, VROVector3f tr, VROVector3f bl, VROVector3f br);
+    void setDistortion(float distortion) {
+        _circularDistortion = distortion;
+    }
 private:
 
     std::shared_ptr<VRORenderTarget> renderEffects(std::shared_ptr<VRORenderTarget> input,
@@ -129,8 +132,7 @@ private:
     std::shared_ptr<VROImagePostProcess> createGreyScale(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createSepia(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createSinCity(std::shared_ptr<VRODriver> driver);
-    std::shared_ptr<VROImagePostProcess> createBarallelDistortion(std::shared_ptr<VRODriver> driver);
-    std::shared_ptr<VROImagePostProcess> createPinCusionDistortion(std::shared_ptr<VRODriver> driver);
+    std::shared_ptr<VROImagePostProcess> createCircularDistortion(std::shared_ptr<VRODriver> driver, float distortion);
     std::shared_ptr<VROImagePostProcess> createToonify(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createInverted(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createThermalVision(std::shared_ptr<VRODriver> driver);
@@ -147,6 +149,8 @@ private:
     VROVector3f _maskTr;
     VROVector3f _maskBl;
     VROVector3f _maskBr;
+
+    float _circularDistortion;
 };
 
 #endif /* VROPostProcessEffectFactory_h */
