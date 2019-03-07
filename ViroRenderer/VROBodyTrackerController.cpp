@@ -105,7 +105,9 @@ static const std::map<VROBodyJointType, std::vector<VROBodyJointType>> kVROMLBod
         {VROBodyJointType::LeftAnkle,       {}},
 };
 
-VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot) {
+VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer,
+                                                   std::shared_ptr<VRODriver> driver,
+                                                   std::shared_ptr<VRONode> sceneRoot) {
     _currentTrackedState = VROBodyTrackedState::NotAvailable;
     _rig = nullptr;
     _skeleton = nullptr;
@@ -119,6 +121,7 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _displayDebugCubes = true;
     _shouldCalibrateRigWithResults = false;
     _hasValidProjectedPlane = false;
+    _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
@@ -1291,12 +1294,12 @@ std::shared_ptr<VRONode> VROBodyTrackerController::createDebugBoxUI(bool isAffec
 }
 
 #if VRO_PLATFORM_IOS
-void VROBodyTrackerController::enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver) {
-    if (_view != NULL) {
+void VROBodyTrackerController::enableDebugMLViewIOS() {
+    if (_view == NULL) {
+        pwarn("View is not yet setup properly, unable to enableDebugMLView!");
         return;
     }
-
-    _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
+    
     int endJointCount = static_cast<int>(VROBodyJointType::Pelvis);
     for (int i = static_cast<int>(VROBodyJointType::Top); i <= endJointCount; i++) {
         _bodyViews[i] = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 4, 4)];

@@ -151,7 +151,9 @@ struct VROBodyCalibratedConfig {
 class VROBodyTrackerController : public VROBodyTrackerDelegate, public VROBodyPlayerDelegate,
                                  public std::enable_shared_from_this<VROBodyTrackerController> {
 public:
-    VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRONode> sceneRoot);
+    VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer,
+                             std::shared_ptr<VRODriver> driver,
+                             std::shared_ptr<VRONode> sceneRoot);
     ~VROBodyTrackerController();
 
     /*
@@ -203,7 +205,7 @@ public:
     float getStalenessThresholdForJoint(VROBodyJointType type);
 
 #if VRO_PLATFORM_IOS
-    void enableDebugMLViewIOS(std::shared_ptr<VRODriver> driver);
+    void enableDebugMLViewIOS();
     void updateDebugMLViewIOS(const std::map<VROBodyJointType, VROBodyJoint> &joints);
 #endif
 
