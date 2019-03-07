@@ -218,6 +218,7 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
 
     // Create a debug root node UI
     _debugBoxRoot = createDebugBoxUI(false, "Root");
+    _debugBoxRoot->setOpacity(_displayDebugCubes ? 1.0 : 0.0);
     _bodyControllerRoot->addChildNode(_debugBoxRoot);
 
     // Set the timeout of joints in milliseconds.
