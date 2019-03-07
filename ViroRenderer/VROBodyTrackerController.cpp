@@ -211,6 +211,7 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
         std::string boneName = kVROBodyBoneTags.at(bonePair.first);
         VROVector3f pos = _skeleton->getCurrentBoneWorldTransform(boneName).extractTranslation();
         std::shared_ptr<VRONode> block = createDebugBoxUI(true, boneName);
+        block->setOpacity(_displayDebugCubes ? 1.0 : 0.0);
         _bodyControllerRoot->addChildNode(block);
         block->setWorldTransform(pos, VROMatrix4f::identity());
         _debugBoxEffectors[boneType] = block;
