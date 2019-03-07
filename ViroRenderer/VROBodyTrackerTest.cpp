@@ -187,7 +187,7 @@ void VROBodyTrackerTest::createNewBodyController() {
     if (_bodyTracker != nullptr) {
         _bodyTracker->setDelegate(_bodyMLController);
     }
-    _//bodyMLController->setDisplayDebugCubes(false);
+    //bodyMLController->setDisplayDebugCubes(false);
     _bodyMLController->enableDebugMLViewIOS();
 #endif
 }

@@ -49,6 +49,14 @@ public:
      */
     void setBlurKernel(int kernelSize, float sigma, bool normalized = false);
 
+    int getKernelSize() {
+        return _kernelSize;
+    }
+
+    float getSigma() {
+        return _sigma;
+    }
+
     /*
      Set to True to optimize the blur by reducing the number of texture lookups,
      done by performing bilinear texture lookups in our kernel offsets. This is
@@ -69,6 +77,10 @@ public:
     void setReinforcedIntensity(float intensity) {
         _reinforcedIntensity = intensity;
         resetShaders();
+    }
+
+    float getReinforcedIntensity() {
+        return _reinforcedIntensity;
     }
 private:
     /*
