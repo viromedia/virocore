@@ -763,24 +763,24 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
 }
 
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
-    // If calibrating, we'll need to grab the Z depth at which to position our projected plane.
+    if (latestJoints.find(kArHitTestJoint) == latestJoints.end()) {
+        return;
+    }
+
+    if (kUseTorsoClusteredDepth) {
+        findDampenedTorsoClusteredDepth(latestJoints);
+    } else {
+        // Always project the depth to a known position in space.
+        VROVector3f camPos = _renderer->getCamera().getPosition();
+        VROVector3f camForward = _renderer->getCamera().getForward();
+        VROVector3f finalPos = camPos + (camForward * kUsePresetDepthDistanceMeter);
+
+        _projectedPlanePosition = finalPos;
+        _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
+    }
+
     if (_calibrating) {
-        if (latestJoints.find(kArHitTestJoint) == latestJoints.end()) {
-            return;
-        }
-
-        if (kUseTorsoClusteredDepth) {
-            findDampenedTorsoClusteredDepth(latestJoints);
-        } else {
-            // Project the depth to a known position in space.
-            VROVector3f camPos = _renderer->getCamera().getPosition();
-            VROVector3f camForward = _renderer->getCamera().getForward();
-            VROVector3f finalPos = camPos + (camForward * kUsePresetDepthDistanceMeter);
-
-            _projectedPlanePosition = finalPos;
-            _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
-            finishCalibration(true);
-        }
+        finishCalibration(true);
     }
 
     // Project the 2D joints into 3D coordinates as usual.
