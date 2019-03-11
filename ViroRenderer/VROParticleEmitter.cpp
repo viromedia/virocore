@@ -56,7 +56,7 @@ void VROParticleEmitter::initParticleUBO(std::shared_ptr<VROSurface> particleGeo
 }
 
 void VROParticleEmitter::setDefaultValues() {
-    _colorModifier = std::make_shared<VROParticleModifier>(VROVector3f(1,1,1));
+    _colorModifier = std::make_shared<VROParticleModifier>(VROVector3f(-1,1,1));
     _scaleModifier = std::make_shared<VROParticleModifier>(VROVector3f(1,1,1));
     _rotationModifier = std::make_shared<VROParticleModifier>(VROVector3f(0,0,0));
     _alphaModifier = std::make_shared<VROParticleModifier>(VROVector3f(1,0,0));

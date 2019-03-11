@@ -56,11 +56,17 @@ std::vector<std::shared_ptr<VROShaderModifier>> VROParticleUBO::createInstanceSh
     // undesired effects. To get around that, we apply a surface modifier instead.
     std::vector<std::string> surfaceModifierCode = {
             "#include particles_fsh",
-            "highp vec4 particleColorAll = particles_fragment_color[v_instance_id];",
-            "highp vec3 particleJustColor = vec3(particleColorAll.x, particleColorAll.y, particleColorAll.z);",
-            "highp float particleAlpha = particleColorAll.w;",
-            "_surface.alpha = _surface.alpha * particleAlpha;",
-            "_surface.diffuse_color.xyz = _surface.diffuse_color.xyz * particleJustColor;"
+            "highp vec4 particleColor = particles_fragment_color[v_instance_id];"
+            "highp vec4 dest =_surface.diffuse_color.xyzw;",
+            "highp vec4 src = particleColor;",
+
+            // Always take 50% of the particle color for now until VIRO-5125 is completed.
+            "highp float srcAlpha = 0.5;",
+            "if (particleColor.x != -1.0 && _surface.diffuse_color.a != 0.0) {"
+            "   highp vec4 final = (src * srcAlpha) + (dest * (1.0 - srcAlpha));",
+            "   _surface.diffuse_color.xyz = final.xyz;",
+            "}",
+            "_surface.alpha = _surface.alpha * particleColor.w;",
     };
 
     modifiers.push_back(
