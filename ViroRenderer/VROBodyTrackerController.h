@@ -29,6 +29,9 @@ enum VROBodyTrackedState {
     // Root body part effector required for body tracking is not found.
     NotAvailable,
 
+    // Joints for determining scale is not found.
+    NoScalableJointsAvailable,
+
     // Limited tracking where root and some body effectors are found, but not all.
     LimitedEffectors,
 

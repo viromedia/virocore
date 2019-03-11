@@ -351,11 +351,11 @@ void VROBodyTrackerController::calibrateRigWithResults() {
     }
 
     // Only calculate proportionality once calibration is done.
-    calibrateBoneProportionality();
+    //calibrateBoneProportionality();
 
     _modelRootNode->removeAllConstraints();
-    _rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
-    _modelRootNode->setIKRig(_rig);
+    //_rig = std::make_shared<VROIKRig>(_skeleton, _keyToEffectorMap);
+    //_modelRootNode->setIKRig(_rig);
 
     // Start listening for new joint data.
     _calibrating = false;
@@ -621,34 +621,43 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
     updateDebugMLViewIOS(joints);
 #endif
 
-    // Basic tracking requires required, return if we haven't yet found them.
-    if (_currentTrackedState == NotAvailable) {
-        return;
+    // Ensure we at least have the root ml joint before updating our model (neck)
+    if (_currentTrackedState != NotAvailable) {
+        // Only update the model if we have the required scalable joints (hips)
+        if (_currentTrackedState != NoScalableJointsAvailable) {
+            // Reset the model and bones back to it's initial configuration
+            std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+            _modelRootNode->setScale(VROVector3f(1, 1, 1));
+            _modelRootNode->setRotation(VROQuaternion());
+            _modelRootNode->setPosition(kInitialModelPos);
+            _modelRootNode->computeTransforms(parentNode->getWorldTransform(),
+                                              parentNode->getWorldRotation());
+
+            // Dynamically scale the model to the right size.
+            calibrateModelToMLTorsoScale();
+
+            // Then determine the transform offset from an ML joint in the skeleton to the model's root.
+            calibrateMlToModelRootOffset();
+
+            // Now apply that offset and align the 3D model to the latest ML body joint positions.
+            alignModelRootToMLRoot();
+        }
+
+        // Only calibrate the rig with the results if we haven't yet done so.
+        if (_calibrating && _shouldCalibrateRigWithResults) {
+            calibrateRigWithResults();
+
+            // If we are calibrating without scale joints, we may not have found
+            // the hips yet. Set a reasonable scale for now.
+            if (_currentTrackedState == NoScalableJointsAvailable) {
+                float fixedUserTorsoHeight = 0.45; // Average torso height.
+                float modelToMLRatio = fixedUserTorsoHeight / _skeletonTorsoHeight * kAutomaticSizingRatio;
+                _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
+            }
+        }
     }
 
-    // Reset the model and bones back to it's initial configuration
-    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
-    _modelRootNode->setScale(VROVector3f(1, 1, 1));
-    _modelRootNode->setRotation(VROQuaternion());
-    _modelRootNode->setPosition(kInitialModelPos);
-    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
-
-    // Dynamically scale the model to the right size.
-    calibrateModelToMLTorsoScale();
-
-    // Then determine the transform offset from an ML joint in the skeleton to the model's root.
-    calibrateMlToModelRootOffset();
-
-    // Now apply that offset and align the 3D model to the latest ML body joint positions.
-    alignModelRootToMLRoot();
-
-    // Only initialize the rig in the calibration phase. 
-    if (_calibrating && _shouldCalibrateRigWithResults) {
-        calibrateRigWithResults();
-    }
-
-    // Update tracked joints as usual
-    updateModel();
+    // Always notify our delegates with the latest set of joint data.
     notifyOnJointUpdateDelegates();
 
     // Render debug UI
@@ -740,15 +749,18 @@ void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VR
     }
 
     // Then, examine if we have the joints needed for scaling (right + left) or (Top) joints.
+    bool hasHipJoints = true;
     if (_cachedTrackedJoints.find(VROBodyJointType::RightHip) == _cachedTrackedJoints.end() ||
         _cachedTrackedJoints.find(VROBodyJointType::LeftHip) == _cachedTrackedJoints.end())  {
-        hasRequiredJoints = false;
+        hasHipJoints = false;
     }
     if (!hasRequiredJoints) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
+    } else if (!hasHipJoints) {
+        setBodyTrackedState(VROBodyTrackedState::NoScalableJointsAvailable);
     } else if (_cachedTrackedJoints.size() == _mlJointForBoneIndex.size()) {
         setBodyTrackedState(VROBodyTrackedState::FullEffectors);
-    } else if (_cachedTrackedJoints.size() >= 1) {
+    } else if (_cachedTrackedJoints.size() >= 4) {
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
     }
 
