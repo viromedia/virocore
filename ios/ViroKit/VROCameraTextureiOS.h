@@ -37,8 +37,16 @@ public:
     float getHorizontalFOV() const;
     VROVector3f getImageSize() const;
     
-    void displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate);
+    void displayPixelBuffer(CMSampleBufferRef sampleBuffer, std::unique_ptr<VROTextureSubstrate> substrate);
     void updateOrientation(VROCameraOrientation orientation);
+    
+    /*
+     Get the CMSampleBufferRef that corresponds to the current image displayed on
+     this texture.
+     */
+    CMSampleBufferRef getSampleBuffer() const {
+        return _lastSampleBuffer;
+    }
     
 private:
     
@@ -58,6 +66,12 @@ private:
      Video texture cache used for transferring camera content to OpenGL.
      */
     std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
+    
+    /*
+     The last received CMSampleBufferRef, which represents the current contents of the
+     camera texture.
+     */
+    CMSampleBufferRef _lastSampleBuffer;
 
 };
 

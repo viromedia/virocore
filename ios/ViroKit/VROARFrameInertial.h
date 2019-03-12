@@ -19,6 +19,7 @@ public:
     VROARFrameInertial(const std::shared_ptr<VROARCamera> &camera);
     virtual ~VROARFrameInertial();
     
+    CMSampleBufferRef getImage() const;
     double getTimestamp() const;
     VROCameraOrientation getOrientation() const { return VROCameraOrientation::Portrait; }
     

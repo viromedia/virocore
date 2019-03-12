@@ -17,11 +17,15 @@
 
 VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :
     VROCameraTexture(type),
-    _paused(true) {
+    _paused(true),
+    _lastSampleBuffer(nil) {
     
 }
 
 VROCameraTextureiOS::~VROCameraTextureiOS() {
+    if (_lastSampleBuffer) {
+        CFRelease(_lastSampleBuffer);
+    }
     [[NSNotificationCenter defaultCenter] removeObserver:_orientationListener];
 }
 
@@ -150,7 +154,13 @@ bool VROCameraTextureiOS::isPaused() {
     return _paused;
 }
 
-void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
+void VROCameraTextureiOS::displayPixelBuffer(CMSampleBufferRef sampleBuffer, std::unique_ptr<VROTextureSubstrate> substrate) {
+    if (_lastSampleBuffer) {
+        CFRelease(_lastSampleBuffer);
+    }
+    CFRetain(sampleBuffer);
+    _lastSampleBuffer = sampleBuffer;
+    
     setSubstrate(0, std::move(substrate));
 }
 
@@ -186,7 +196,8 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
     std::shared_ptr<VROVideoTextureCache> cache = self.cache.lock();
     std::shared_ptr<VRODriver> driver = self.driver.lock();
     if (texture && cache && driver) {
-        texture->displayPixelBuffer(cache->createTextureSubstrate(sampleBuffer,
+        texture->displayPixelBuffer(sampleBuffer,
+                                    cache->createTextureSubstrate(sampleBuffer,
                                                                   driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
 }

@@ -25,6 +25,7 @@ class VRONode;
 class VROARSessionDelegate;
 class VROARImageTarget;
 class VROARObjectTarget;
+class VROVisionModel;
 enum class VROCameraOrientation; //defined in VROCameraTexture.h
 
 /*

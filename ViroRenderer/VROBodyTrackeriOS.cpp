@@ -13,6 +13,7 @@
 #include "VROImagePreprocessor.h"
 #include "VRODriverOpenGLiOS.h"
 #include "VROARFrameiOS.h"
+#include "VROARFrameInertial.h"
 #include <mutex>
 #include "VRODeviceUtil.h"
 
@@ -288,6 +289,10 @@ void VROBodyTrackeriOS::update(const VROARFrame *frame) {
             }
             _nextImage = CVBufferRetain(frameiOS->getImage());            
         } else {
+            const VROARFrameInertial *frameInertial = dynamic_cast<const VROARFrameInertial *>(frame);
+            CMSampleBufferRef sampleBuffer = frameInertial->getImage();
+            
+            NSLog(@"Sample buffer %@", sampleBuffer);
         }
     }
 

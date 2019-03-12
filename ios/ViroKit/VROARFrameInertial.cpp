@@ -13,6 +13,7 @@
 #include "VROARHitTestResult.h"
 #include "VROTime.h"
 #include "VROViewport.h"
+#include "VROCameraTextureiOS.h"
 
 VROARFrameInertial::VROARFrameInertial(const std::shared_ptr<VROARCamera> &camera) :
     _camera(camera) {
@@ -57,3 +58,10 @@ VROVector3f VROARFrameInertial::getAmbientLightColor() const {
 std::shared_ptr<VROARPointCloud> VROARFrameInertial::getPointCloud() {
     return std::make_shared<VROARPointCloud>();
 }
+
+CMSampleBufferRef VROARFrameInertial::getImage() const {
+    std::shared_ptr<VROARCameraInertial> camera = std::dynamic_pointer_cast<VROARCameraInertial>(_camera);
+    std::shared_ptr<VROCameraTextureiOS> texture = std::dynamic_pointer_cast<VROCameraTextureiOS>(camera->getBackgroundTexture());
+    return texture->getSampleBuffer();
+}
+
