@@ -36,7 +36,7 @@ public:
     bool initBodyTracking(VROCameraPosition position, std::shared_ptr<VRODriver> driver);
     void startBodyTracking();
     void stopBodyTracking();
-    void update(const VROARFrame &frame);
+    void update(const VROARFrame *frame);
     
     /*
      Sets the window period at which we sample points for dampening. If period == 0,

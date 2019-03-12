@@ -60,12 +60,12 @@ void VROBodyTrackerYolo::stopBodyTracking() {
     
 }
 
-void VROBodyTrackerYolo::update(const VROARFrame &frame) {
-    const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
+void VROBodyTrackerYolo::update(const VROARFrame *frame) {
+    const VROARFrameiOS *frameiOS = dynamic_cast<const VROARFrameiOS *>(frame);
     
-    CVPixelBufferRef cameraImage = frameiOS.getImage();
-    VROMatrix4f transform = frameiOS.getCameraImageToViewportTransform();
-    VROCameraOrientation orientation = frameiOS.getCameraOrientation();
+    CVPixelBufferRef cameraImage = frameiOS->getImage();
+    VROMatrix4f transform = frameiOS->getCameraImageToViewportTransform();
+    VROCameraOrientation orientation = frameiOS->getCameraOrientation();
 
     // Only process one image at a time
     if (_currentImage != nil) {

@@ -282,6 +282,12 @@ public:
      */
     virtual void setVideoQuality(VROVideoQuality quality) = 0;
     
+    /*
+     Set an underlying computer vision model to receive the camera image
+     each frame.
+     */
+    virtual void setVisionModel(std::shared_ptr<VROVisionModel> visionModel) = 0;
+    
 private:
     
     VROTrackingType _trackingType;

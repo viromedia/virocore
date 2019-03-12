@@ -24,7 +24,7 @@ public:
     /*
      Update the model. This is invoked on each AR frame update.
      */
-    virtual void update(const VROARFrame &frame) = 0;
+    virtual void update(const VROARFrame *frame) = 0;
     
 };
 

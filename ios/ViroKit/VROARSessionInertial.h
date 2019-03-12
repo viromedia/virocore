@@ -85,11 +85,14 @@ public:
     void setVideoQuality(VROVideoQuality quality) {
         // no-op
     };
+    
+    void setVisionModel(std::shared_ptr<VROVisionModel> visionModel);
   
 private:
     
     std::unique_ptr<VROARFrame> _currentFrame;
     std::shared_ptr<VROARCameraInertial> _camera;
+    std::shared_ptr<VROVisionModel> _visionModel;
     
 };
 

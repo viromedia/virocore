@@ -31,7 +31,7 @@ public:
     void startObjectTracking();
     void stopObjectTracking();
 
-    void update(const VROARFrame &frame);
+    void update(const VROARFrame *frame);
     
 private:
     

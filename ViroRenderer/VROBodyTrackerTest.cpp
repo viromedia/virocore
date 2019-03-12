@@ -170,8 +170,7 @@ void VROBodyTrackerTest::createNewBodyTracker() {
     _bodyTracker = tracker;
 
     std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
-    std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
-    arSessioniOS->setVisionModel(_bodyTracker);
+    arSession->setVisionModel(_bodyTracker);
     return;
 #endif
 

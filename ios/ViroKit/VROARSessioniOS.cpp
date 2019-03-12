@@ -340,7 +340,7 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     _background->setSubstrate(1, std::move(substrates[1]));
 
     if (_visionModel) {
-        _visionModel->update(*frameiOS);
+        _visionModel->update(frameiOS);
     }
     
 #if ENABLE_OPENCV

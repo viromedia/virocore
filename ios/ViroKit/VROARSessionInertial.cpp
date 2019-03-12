@@ -13,6 +13,7 @@
 #include "VRODriver.h"
 #include "VROViewport.h"
 #include "VROLog.h"
+#include "VROVisionModel.h"
 
 VROARSessionInertial::VROARSessionInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, VROWorldAlignment::Gravity) {
@@ -91,6 +92,10 @@ std::shared_ptr<VROTexture> VROARSessionInertial::getCameraBackgroundTexture() {
 
 std::unique_ptr<VROARFrame> &VROARSessionInertial::updateFrame() {
     _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameInertial(_camera));
+    
+    if (_visionModel) {
+        _visionModel->update(_currentFrame.get());
+    }
     return _currentFrame;
 }
 
@@ -110,4 +115,7 @@ void VROARSessionInertial::addAnchorNode(std::shared_ptr<VRONode> node) {
     // Unsupported
 }
 
+void VROARSessionInertial::setVisionModel(std::shared_ptr<VROVisionModel> visionModel) {
+    _visionModel = visionModel;
+}
 

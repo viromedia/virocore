@@ -14,9 +14,9 @@
 #include "VROSceneController.h"
 #include "VRODefines.h"
 #include "VROBodyTracker.h"
+#include "VROARSession.h"
 
 #if VRO_PLATFORM_IOS
-#include "VROARSessioniOS.h"
 #include "VROViewAR.h"
 #import <UIKit/UIKit.h>
 
@@ -53,13 +53,12 @@ public:
     virtual void onSceneWillAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
         
     }
+                                   
     virtual void onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
-#if VRO_PLATFORM_IOS
         std::shared_ptr<VROARSession> arSession = _arScene->getARSession();
-        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(arSession);
-        arSessioniOS->setVisionModel(_bodyTracker);
-#endif
+        arSession->setVisionModel(_bodyTracker);
     }
+                                   
     virtual void onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
         
     }

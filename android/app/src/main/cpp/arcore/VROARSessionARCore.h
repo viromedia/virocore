@@ -100,7 +100,11 @@ public:
 
     void setVideoQuality(VROVideoQuality quality) {
         // no-op on Android
-    };
+    }
+
+    void setVisionModel(std::shared_ptr<VROVisionModel> visionModel) {
+        // no-op on Android
+    }
 
 #pragma mark - [Internal] Configuration
 

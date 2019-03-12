@@ -267,24 +267,27 @@ void VROBodyTrackeriOS::stopBodyTracking() {
     _isTracking = false;
 }
 
-void VROBodyTrackeriOS::update(const VROARFrame &frame) {
+void VROBodyTrackeriOS::update(const VROARFrame *frame) {
     if (!_isTracking) {
         return;
     }
     
-    const VROARFrameiOS &frameiOS = (VROARFrameiOS &)frame;
+    const VROARFrameiOS *frameiOS = dynamic_cast<const VROARFrameiOS *>(frame);
     
     // Store the given image, which we'll run when the neural engine
     // is done processing its current image
     
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
-        if (_nextImage) {
-            CVBufferRelease(_nextImage);
+        
+        if (frameiOS) {
+            if (_nextImage) {
+                CVBufferRelease(_nextImage);
+            }
+            _nextImage = CVBufferRetain(frameiOS->getImage());
+            _nextTransform = frameiOS->getCameraImageToViewportTransform();
+            _nextOrientation = frameiOS->getCameraOrientation();
         }
-        _nextImage = CVBufferRetain(frameiOS.getImage());
-        _nextTransform = frameiOS.getCameraImageToViewportTransform();
-        _nextOrientation = frameiOS.getCameraOrientation();
     }
 
     // Start tracking images if we haven't yet initialized

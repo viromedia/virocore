@@ -16,11 +16,10 @@
 #include "VROBodyTracker.h"
 #include "VROEventDelegate.h"
 #include "VROBodyTrackerController.h"
-
+#include "VROARSession.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROAnimBodyDataiOS.h"
-#include "VROARSessioniOS.h"
 #import <UIKit/UIKit.h>
 #endif
 

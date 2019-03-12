@@ -20,7 +20,6 @@
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
-class VROVisionModel;
 class VROTrackingHelper;
 @class VROARKitSessionDelegate;
 
