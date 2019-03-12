@@ -121,7 +121,9 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
     _displayDebugCubes = true;
     _shouldCalibrateRigWithResults = false;
     _hasValidProjectedPlane = false;
+#if VRO_PLATFORM_IOS
     _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
+#endif
 }
 
 VROBodyTrackerController::~VROBodyTrackerController() {
