@@ -279,14 +279,15 @@ void VROBodyTrackeriOS::update(const VROARFrame *frame) {
     
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
-        
+        _nextTransform = frame->getViewportToCameraImageTransform().invert();
+        _nextOrientation = frame->getOrientation();
+
         if (frameiOS) {
             if (_nextImage) {
                 CVBufferRelease(_nextImage);
             }
-            _nextImage = CVBufferRetain(frameiOS->getImage());
-            _nextTransform = frameiOS->getCameraImageToViewportTransform();
-            _nextOrientation = frameiOS->getCameraOrientation();
+            _nextImage = CVBufferRetain(frameiOS->getImage());            
+        } else {
         }
     }
 

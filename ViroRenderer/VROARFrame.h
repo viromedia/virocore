@@ -45,6 +45,11 @@ public:
     virtual const std::shared_ptr<VROARCamera> &getCamera() const = 0;
     
     /*
+     Get the orientation of this frame.
+     */
+    virtual VROCameraOrientation getOrientation() const = 0;
+    
+    /*
      Perform a hit test on the given point in the viewport. The coordinate 
      system is viewport pixels (e.g. the coordinate system in which
      VROViewport is defined).

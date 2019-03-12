@@ -10,6 +10,8 @@
 #define VROARFrameInertial_h
 
 #include "VROARFrame.h"
+#include "VROCameraTexture.h"
+#import <AVFoundation/AVFoundation.h>
 
 class VROARFrameInertial : public VROARFrame {
 public:
@@ -18,6 +20,7 @@ public:
     virtual ~VROARFrameInertial();
     
     double getTimestamp() const;
+    VROCameraOrientation getOrientation() const { return VROCameraOrientation::Portrait; }
     
     const std::shared_ptr<VROARCamera> &getCamera() const;
     std::vector<std::shared_ptr<VROARHitTestResult>> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
@@ -29,6 +32,7 @@ public:
       return emptyResults;
     }
     VROMatrix4f getViewportToCameraImageTransform() const;
+
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;
