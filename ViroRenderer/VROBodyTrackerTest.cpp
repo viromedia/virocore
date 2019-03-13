@@ -25,40 +25,6 @@
 #include "VROBodyTrackerYolo.h"
 #include "VROBodyPlayeriOS.h"
 #include "VRODriverOpenGLiOS.h"
-static std::string pointLabels[14] = {
-    "top\t\t\t", //0
-    "neck\t\t", //1
-    "R shoulder\t", //2
-    "R elbow\t\t", //3
-    "R wrist\t\t", //4
-    "L shoulder\t", //5
-    "L elbow\t\t", //6
-    "L wrist\t\t", //7
-    "R hip\t\t", //8
-    "R knee\t\t", //9
-    "R ankle\t\t", //10
-    "L hip\t\t", //11
-    "L knee\t\t", //12
-    "L ankle\t\t", //13
-};
-
-static UIColor *colors[14] = {
-    [UIColor redColor],
-    [UIColor greenColor],
-    [UIColor blueColor],
-    [UIColor cyanColor],
-    [UIColor yellowColor],
-    [UIColor magentaColor],
-    [UIColor orangeColor],
-    [UIColor purpleColor],
-    [UIColor brownColor],
-    [UIColor blackColor],
-    [UIColor darkGrayColor],
-    [UIColor lightGrayColor],
-    [UIColor whiteColor],
-    [UIColor grayColor]
-};
-
 #endif
 
 VROBodyTrackerTest::VROBodyTrackerTest() :

@@ -66,10 +66,7 @@ static const bool kCalculateBoneProportionality = false;
 static const float kARHitTestWindowKernelPixel = 0.01;
 static const float kAutomaticSizingRatio = 1;
 static const bool kAutomaticResizing = true;
-static const bool kDampenWithEMA = true;
-static const float kInitialMLConfidenceThreshold = 0.45;
-static const float kInitialVolatilityThresholdMeters = 0.15;
-static const float kInitialReachableBoneThresholdMeters = 0.2;
+
 static const VROVector3f kInitialModelPos = VROVector3f(-10, -10, 10);
 static const bool kUseTorsoClusteredDepth = false;
 static const float kUsePresetDepthDistanceMeter = 1;
@@ -274,7 +271,7 @@ void VROBodyTrackerController::restoreTopBoneTransform() {
     }
 
     VROMatrix4f computedBoneTransform = VROMatrix4f::identity();
-    for (int i = bones.size() -1; i >=0; i --) {
+    for (int i = (int) bones.size() - 1; i >= 0; i--) {
         computedBoneTransform = bones[i]->getLocalTransform() * computedBoneTransform;
     }
 
