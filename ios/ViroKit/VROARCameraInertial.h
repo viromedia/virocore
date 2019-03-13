@@ -11,16 +11,19 @@
 
 #include "VROARCamera.h"
 #include <memory>
+#import <AVFoundation/AVFoundation.h>
 
 class VROHeadTracker;
 class VROCameraTexture;
+class VROAVCaptureController;
 class VRODriver;
+enum class VROTrackingType;
 enum class VROCameraOrientation;
 
 class VROARCameraInertial : public VROARCamera {
 public:
     
-    VROARCameraInertial(std::shared_ptr<VRODriver> driver);
+    VROARCameraInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver);
     virtual ~VROARCameraInertial();
     
     VROARTrackingState getTrackingState() const;
@@ -43,6 +46,8 @@ public:
         return _cameraTexture;
     }
     
+    CMSampleBufferRef getSampleBuffer() const;
+    
 private:
     
     /*
@@ -51,8 +56,12 @@ private:
     std::unique_ptr<VROHeadTracker> _headTracker;
     
     /*
-     Background camera texture.
+     Background capture controller or camera texture. We use the camera
+     texture to render the background with Viro, and the capture controller
+     directly if we want to render using an iOS video preview layer. We
+     never use both.
      */
+    std::shared_ptr<VROAVCaptureController> _captureController;
     std::shared_ptr<VROCameraTexture> _cameraTexture;
     
 };

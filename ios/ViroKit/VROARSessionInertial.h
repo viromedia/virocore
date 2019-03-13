@@ -10,6 +10,7 @@
 #define VROARSessionInertial_h
 
 #include "VROARSession.h"
+#include "VROViewport.h"
 
 class VRODriver;
 class VROARCameraInertial;
@@ -93,6 +94,7 @@ private:
     std::unique_ptr<VROARFrame> _currentFrame;
     std::shared_ptr<VROARCameraInertial> _camera;
     std::shared_ptr<VROVisionModel> _visionModel;
+    VROViewport _viewport;
     
 };
 

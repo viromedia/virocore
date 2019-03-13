@@ -11,14 +11,26 @@
 #include "VROViewport.h"
 #include "VROHeadTracker.h"
 #include "VRORenderer.h"
+#include "VROAVCaptureController.h"
 #include "VROCameraTextureiOS.h"
+#include "VROARSession.h"
 
-VROARCameraInertial::VROARCameraInertial(std::shared_ptr<VRODriver> driver) {
+static bool kRenderUsingPreviewLayer = true;
+
+VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) {
     _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
     
-    VROCameraOrientation orientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
-    _cameraTexture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
-    _cameraTexture->initCamera(VROCameraPosition::Back, orientation, driver);
+    VROCameraOrientation cameraOrientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
+    VROCameraPosition cameraPosition = (trackingType == VROTrackingType::Front) ? VROCameraPosition::Front : VROCameraPosition::Back;
+    
+    if (kRenderUsingPreviewLayer) {
+        _captureController = std::make_shared<VROAVCaptureController>();
+        _captureController->initCapture(cameraPosition, cameraOrientation, true, driver);
+    } else {
+        // Otherwise we use a camera texture that's rendered as a VROScene background
+        _cameraTexture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
+        _cameraTexture->initCamera(cameraPosition, cameraOrientation, driver);
+    }
 }
 
 VROARCameraInertial::~VROARCameraInertial() {
@@ -27,12 +39,20 @@ VROARCameraInertial::~VROARCameraInertial() {
 
 void VROARCameraInertial::run() {
     _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
-    _cameraTexture->play();
+    if (_cameraTexture) {
+        _cameraTexture->play();
+    } else {
+        _captureController->play();
+    }
 }
 
 void VROARCameraInertial::pause() {
     _headTracker->stopTracking();
-    _cameraTexture->pause();
+    if (_cameraTexture) {
+        _cameraTexture->pause();
+    } else {
+        _captureController->pause();
+    }
 }
 
 VROARTrackingState VROARCameraInertial::getTrackingState() const {
@@ -53,7 +73,11 @@ VROVector3f VROARCameraInertial::getPosition() const {
 }
 
 VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) {
-    *outFOV = VRORenderer::computeFOVFromMinorAxis(_cameraTexture->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+    if (_cameraTexture) {
+        *outFOV = VRORenderer::computeFOVFromMinorAxis(_cameraTexture->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+    } else {
+        *outFOV = VRORenderer::computeFOVFromMinorAxis(_captureController->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+    }
     
     VROVector3f cameraImageSize = getImageSize();
     float fx = fabs((float)cameraImageSize.x / (2 * tan(toRadians(outFOV->getLeft() + outFOV->getRight()) / 2.0)));
@@ -74,7 +98,20 @@ VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near,
 }
 
 VROVector3f VROARCameraInertial::getImageSize() {
-    return _cameraTexture->getImageSize();
+    if (_cameraTexture) {
+        return _cameraTexture->getImageSize();
+    } else {
+        return _captureController->getImageSize();
+    }
+}
+
+CMSampleBufferRef VROARCameraInertial::getSampleBuffer() const {
+    if (_cameraTexture) {
+        std::shared_ptr<VROCameraTextureiOS> texture = std::dynamic_pointer_cast<VROCameraTextureiOS>(_cameraTexture);
+        return texture->getSampleBuffer();
+    } else {
+        return _captureController->getSampleBuffer();
+    }
 }
 
 void VROARCameraInertial::updateCameraOrientation(VROCameraOrientation orientation) {

@@ -53,6 +53,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
+@property (readwrite, nonatomic) VROTrackingType trackingType;
 
 // Image Tracking Output
 @property (readwrite, nonatomic) UITextView *trackerStatusText;
@@ -89,10 +90,19 @@ static VROVector3f const kZeroVector = VROVector3f();
                        config:(VRORendererConfiguration)config
                       context:(EAGLContext *)context
                worldAlignment:(VROWorldAlignment)worldAlignment {
+    return [self initWithFrame:frame config:config context:context worldAlignment:worldAlignment trackingType:VROTrackingType::DOF6];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+                       config:(VRORendererConfiguration)config
+                      context:(EAGLContext *)context
+               worldAlignment:(VROWorldAlignment)worldAlignment
+                 trackingType:(VROTrackingType)trackingType {
     self = [super initWithFrame:frame context:context];
     if (self) {
         _suspended = YES;
         _worldAlignment = worldAlignment;
+        _trackingType = trackingType;
         [self initRenderer:config];
     }
     return self;
@@ -205,8 +215,11 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     if (NSClassFromString(@"ARSession") == nil) {
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
+    } else if (_trackingType == VROTrackingType::Front) {
+        _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::Front, _driver);
+        _mirrored = YES;
     } else {
-        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _worldAlignment, _driver);
+        _arSession = std::make_shared<VROARSessioniOS>(_trackingType, _worldAlignment, _driver);
     }
 
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
@@ -645,7 +658,12 @@ static VROVector3f const kZeroVector = VROVector3f();
      ARSession is ready (meaning at least one frame has been produced).
      */
     _arSession->setViewport(viewport);
-    if (!_sceneController->getScene()->getRootNode()->getBackground()) {
+    
+    /*
+     When using the front-facing camera, we don't use our own background; instead the camera
+     is rendered via an AVCaptureVideoPreviewLayer.
+     */
+    if (!_sceneController->getScene()->getRootNode()->getBackground() && _trackingType != VROTrackingType::Front) {
         _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
     }
 

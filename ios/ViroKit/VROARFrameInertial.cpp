@@ -15,8 +15,9 @@
 #include "VROViewport.h"
 #include "VROCameraTextureiOS.h"
 
-VROARFrameInertial::VROARFrameInertial(const std::shared_ptr<VROARCamera> &camera) :
-    _camera(camera) {
+VROARFrameInertial::VROARFrameInertial(const std::shared_ptr<VROARCamera> &camera, VROViewport viewport) :
+    _camera(camera),
+    _viewport(viewport) {
     _timestamp = VROTimeCurrentSeconds();
 }
 
@@ -38,7 +39,20 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameInertial::hitTest(int
 }
 
 VROMatrix4f VROARFrameInertial::getViewportToCameraImageTransform() const {
-    return {}; // Identity
+    VROVector3f imageSize = _camera->getImageSize();
+    
+    // When the image is rendered, it's expanded to the viewport's size, which
+    // may end up stretching the image as the scale is anisotropic. Here we return
+    // texture coordinates to apply in order to undo this elongation.
+    float scaleX = (float) _viewport.getWidth()  / imageSize.x;
+    float scaleY = (float) _viewport.getHeight() / imageSize.y;
+    
+    VROMatrix4f matrix;
+    matrix[0] = 1.0 / scaleY;
+    matrix[5] = 1.0 / scaleX;
+    matrix[12] = (1 - matrix[0]) / 2.0;
+    matrix[13] = (1 - matrix[5]) / 2.0;
+    return matrix;
 }
 
 const std::vector<std::shared_ptr<VROARAnchor>> &VROARFrameInertial::getAnchors() const {
@@ -61,7 +75,6 @@ std::shared_ptr<VROARPointCloud> VROARFrameInertial::getPointCloud() {
 
 CMSampleBufferRef VROARFrameInertial::getImage() const {
     std::shared_ptr<VROARCameraInertial> camera = std::dynamic_pointer_cast<VROARCameraInertial>(_camera);
-    std::shared_ptr<VROCameraTextureiOS> texture = std::dynamic_pointer_cast<VROCameraTextureiOS>(camera->getBackgroundTexture());
-    return texture->getSampleBuffer();
+    return camera->getSampleBuffer();
 }
 

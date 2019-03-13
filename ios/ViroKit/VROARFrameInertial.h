@@ -11,12 +11,13 @@
 
 #include "VROARFrame.h"
 #include "VROCameraTexture.h"
+#include "VROViewport.h"
 #import <AVFoundation/AVFoundation.h>
 
 class VROARFrameInertial : public VROARFrame {
 public:
     
-    VROARFrameInertial(const std::shared_ptr<VROARCamera> &camera);
+    VROARFrameInertial(const std::shared_ptr<VROARCamera> &camera, VROViewport viewport);
     virtual ~VROARFrameInertial();
     
     CMSampleBufferRef getImage() const;
@@ -45,6 +46,7 @@ private:
     
     const std::shared_ptr<VROARCamera> _camera;
     double _timestamp;
+    VROViewport _viewport;
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
     
 };

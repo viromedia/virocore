@@ -29,12 +29,13 @@ class VROVisionModel;
 enum class VROCameraOrientation; //defined in VROCameraTexture.h
 
 /*
- Determines if the AR session tracks orientation only, or
- tracks position and orientation.
+ Determines if the AR session tracks nothinng, tracks orientation only, or
+ tracks both orientation and position.
  */
 enum class VROTrackingType {
-    DOF3,
-    DOF6
+    Front,  // Tracks nothing, using front-facing camera
+    DOF3,   // Tracks orientation, using back-facing camera
+    DOF6    // Tracks orientation and position, using back-facing camera
 };
 
 /*

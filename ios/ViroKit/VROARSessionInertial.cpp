@@ -17,7 +17,7 @@
 
 VROARSessionInertial::VROARSessionInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, VROWorldAlignment::Gravity) {
-    _camera = std::make_shared<VROARCameraInertial>(driver);
+    _camera = std::make_shared<VROARCameraInertial>(trackingType, driver);
 }
 
 VROARSessionInertial::~VROARSessionInertial() {
@@ -26,10 +26,7 @@ VROARSessionInertial::~VROARSessionInertial() {
 
 void VROARSessionInertial::run() {
     _camera->run();
-    if (getTrackingType() == VROTrackingType::DOF3) {
-        
-    }
-    else { // DOF6
+    if (getTrackingType() == VROTrackingType::DOF6) {
         pabort("Inertial AR does not yet support DOF6");
     }
 }
@@ -91,7 +88,7 @@ std::shared_ptr<VROTexture> VROARSessionInertial::getCameraBackgroundTexture() {
 }
 
 std::unique_ptr<VROARFrame> &VROARSessionInertial::updateFrame() {
-    _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameInertial(_camera));
+    _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameInertial(_camera, _viewport));
     
     if (_visionModel) {
         _visionModel->update(_currentFrame.get());
@@ -104,7 +101,7 @@ std::unique_ptr<VROARFrame> &VROARSessionInertial::getLastFrame() {
 }
 
 void VROARSessionInertial::setViewport(VROViewport viewport) {
-    
+    _viewport = viewport;
 }
 
 void VROARSessionInertial::setOrientation(VROCameraOrientation orientation) {

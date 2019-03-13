@@ -29,10 +29,22 @@ class VRORendererConfiguration;
 
 @property (readwrite, nonatomic) BOOL suspended;
 
+/*
+ True if the X dimension is mirrored on the device. This is typically true when
+ running a front-facing camera.
+ */
+@property (readonly, nonatomic) BOOL mirrored;
+
 - (instancetype)initWithFrame:(CGRect)frame
                        config:(VRORendererConfiguration)config
                       context:(EAGLContext *)context
                worldAlignment:(VROWorldAlignment)worldAlignment;
+
+- (instancetype)initWithFrame:(CGRect)frame
+                       config:(VRORendererConfiguration)config
+                      context:(EAGLContext *)context
+               worldAlignment:(VROWorldAlignment)worldAlignment
+                 trackingType:(VROTrackingType)trackingType;
 
 - (void)setARSessionDelegate:(std::shared_ptr<VROARSessionDelegate>)delegate;
 
