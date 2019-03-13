@@ -9,6 +9,7 @@
 #ifndef VROARFrameARCore_h
 #define VROARFrameARCore_h
 
+#include "VROCameraTexture.h"
 #include "VROARFrame.h"
 #include "VROViewport.h"
 #include "ARCore_API.h"
@@ -24,6 +25,9 @@ public:
     double getTimestamp() const;
     
     const std::shared_ptr<VROARCamera> &getCamera() const;
+    VROCameraOrientation getOrientation() const {
+        return VROCameraOrientation::Portrait;
+    }
     std::vector<std::shared_ptr<VROARHitTestResult>> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
     std::vector<std::shared_ptr<VROARHitTestResult>> hitTestRay(VROVector3f *origin, VROVector3f *destination , std::set<VROARHitTestResultType> types);
     VROMatrix4f getViewportToCameraImageTransform() const;
