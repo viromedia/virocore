@@ -33,6 +33,7 @@
 #import "VROMetricsRecorder.h"
 #import "VROARCameraInertial.h"
 #import "VRODeviceUtil.h"
+#import "VROCameraTexture.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 
@@ -105,6 +106,11 @@ static VROVector3f const kZeroVector = VROVector3f();
         _suspended = YES;
         _worldAlignment = worldAlignment;
         _trackingType = trackingType;
+        if (_trackingType == VROTrackingType::Front) {
+            _cameraPosition = VROCameraPosition::Front;
+        } else {
+            _cameraPosition = VROCameraPosition::Back;
+        }
         [self initRenderer:config];
     }
     return self;
@@ -225,7 +231,6 @@ static VROVector3f const kZeroVector = VROVector3f();
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
     } else if (_trackingType == VROTrackingType::Front) {
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::Front, _driver);
-        _mirrored = YES;
     } else {
         _arSession = std::make_shared<VROARSessioniOS>(_trackingType, _worldAlignment, _driver);
     }
@@ -635,9 +640,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
-    if (_trackingType == VROTrackingType::Front) {
-        viewport.setMirrored(true);
-    }
     
     /*
      Attempt to initialize the ARSession if we have not yet done so.
@@ -687,8 +689,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     /*
      Update the AR camera background transform (maps the camera background to our scene).
+     If we're in front-facing mode, we also have to mirror the camera background.
      */
     VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();
+    if (_trackingType == VROTrackingType::Front) {
+        VROMatrix4f mirrorX;
+        mirrorX.scale(-1, 1, 1);
+        backgroundTransform = mirrorX * backgroundTransform;
+    }
     _cameraBackground->setTexcoordTransform(backgroundTransform);
 
     /*

@@ -61,6 +61,11 @@ private:
     bool _isTracking;
     
     /*
+     The camera we are using for tracking (front or back).
+     */
+    VROCameraPosition _cameraPosition;
+    
+    /*
      Queue on which CoreML is run.
      */
     dispatch_queue_t _visionQueue;
@@ -129,7 +134,7 @@ private:
     
     void trackImage(CVPixelBufferRef image, VROMatrix4f transform, CGImagePropertyOrientation orientation);
     void processVisionResults(VNRequest *request, NSError *error);
-    static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
+    static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition, VROMatrix4f transform);
 
     /*
      Update and get FPS.

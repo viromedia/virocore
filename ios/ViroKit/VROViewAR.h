@@ -14,6 +14,7 @@
 
 class VROARSessionDelegate;
 class VRORendererConfiguration;
+enum class VROCameraPosition;
 
 @protocol VRODebugDrawDelegate
 @required
@@ -30,10 +31,9 @@ class VRORendererConfiguration;
 @property (readwrite, nonatomic) BOOL suspended;
 
 /*
- True if the X dimension is mirrored on the device. This is typically true when
- running a front-facing camera.
+ The camera used for AR (front or back).
  */
-@property (readonly, nonatomic) BOOL mirrored;
+@property (readonly, nonatomic) VROCameraPosition cameraPosition;
 
 - (instancetype)initWithFrame:(CGRect)frame
                        config:(VRORendererConfiguration)config

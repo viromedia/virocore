@@ -139,6 +139,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
 #endif
     }
 
+    _cameraPosition = position;
     _cropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
@@ -164,7 +165,8 @@ double VROBodyTrackeriOS::getDampeningPeriodMs() const {
     return _dampeningPeriodMs;
 }
 
-VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform) {
+VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition,
+                                               VROMatrix4f transform) {
     if (heatmap.shape.count < 3) {
         return {};
     }
@@ -235,6 +237,11 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROMatrix4
             
             // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
             VROVector3f viewportPoint = transform.multiply(imagePoint);
+            
+            // Mirror the X dimension if we're using the front-facing camera
+            if (cameraPosition == VROCameraPosition::Front) {
+                viewportPoint.x = 1.0 - viewportPoint.x;
+            }
             VROBoundingBox viewportBounds = VROBoundingBox(viewportPoint.x, viewportPoint.x, viewportPoint.y, viewportPoint.y, 0, 0);
             joint.setBounds(viewportBounds);
         }
@@ -425,7 +432,7 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     
     VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
     MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
-    VROPoseFrame joints = convertHeatmap(heatmap, _transform);
+    VROPoseFrame joints = convertHeatmap(heatmap, _cameraPosition, _transform);
     
 #if VRO_PROFILE_NEURAL_ENGINE
     NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);

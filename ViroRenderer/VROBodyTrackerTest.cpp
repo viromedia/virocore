@@ -46,14 +46,20 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
     _arScene->initDeclarativeSession();
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setIntensity(1000);
+    ambient->setIntensity(300);
     _arScene->getRootNode()->addLight(ambient);
+    
+    std::shared_ptr<VROLight> directional = std::make_shared<VROLight>(VROLightType::Directional);
+    directional->setIntensity(600);
+    directional->setDirection({ 0, 0, 1 });
+    _arScene->getRootNode()->addLight(directional);
+    
     //_arScene->displayPointCloud(true);
 
     // Set up the 3D Model to be animated
     VROVector3f pos = VROVector3f( 0, -1.5, -50);
     VROVector3f scale = VROVector3f(0.05, 0.05, 0.05);
-    VROVector3f rot = VROVector3f(0,0,0);
+    VROVector3f rot = VROVector3f(0, 0, 0);
     _modelNodeNinja1 = VROTestUtil::loadFBXModel("ninja/ninja",
                                                   pos,
                                                   scale, rot,
@@ -109,28 +115,30 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
 
     // Create a recalibration box that the user can click to re-calibrate the model.
     std::shared_ptr<VRONode> debugNode
-            = createTriggerBox(VROVector3f(-3,0,-2), VROVector4f(0,1,0,1), "Recalibrate");
+            = createTriggerBox(VROVector3f(0, 0, 3), VROVector4f(0, 1, 0, 1), "Recalibrate");
     _sceneController->getScene()->getRootNode()->addChildNode(debugNode);
 
 
     std::shared_ptr<VRONode> rebindNode
-            = createTriggerBox(VROVector3f(3,0,-2), VROVector4f(1,0,0,1), "Rebind");
+            = createTriggerBox(VROVector3f(-2, 0, 3), VROVector4f(1, 0, 0, 1), "Rebind");
     _sceneController->getScene()->getRootNode()->addChildNode(rebindNode);
 
     std::shared_ptr<VRONode> autoCalibrateNode
-            = createTriggerBox(VROVector3f(6,0,0), VROVector4f(0,0,1,1), "AutoCalibrate");
+            = createTriggerBox(VROVector3f(2, 0, 3), VROVector4f(0, 0, 1, 1), "AutoCalibrate");
     _sceneController->getScene()->getRootNode()->addChildNode(autoCalibrateNode);
 
     std::shared_ptr<VRONode> recordNode
-    = createTriggerBox(VROVector3f(0,-4,-2), VROVector4f(1,1,0,1), "Record");
+    = createTriggerBox(VROVector3f(0, -4, 3), VROVector4f(1, 1, 0, 1), "Record");
     _sceneController->getScene()->getRootNode()->addChildNode(recordNode);
     frameSynchronizer->addFrameListener(shared_from_this());
 }
 
 void VROBodyTrackerTest::createNewBodyTracker() {
 #if VRO_PLATFORM_IOS
+    VROViewAR *view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(_driver)->getView();
+
     std::shared_ptr<VROBodyTracker> tracker = std::make_shared<VROBodyTrackeriOS>();
-    tracker->initBodyTracking(VROCameraPosition::Back, _driver);
+    tracker->initBodyTracking(view.cameraPosition, _driver);
     tracker->startBodyTracking();
     tracker->setDelegate(_bodyMLController);
     _bodyTracker = tracker;
@@ -147,6 +155,7 @@ void VROBodyTrackerTest::createNewBodyController() {
     // Create our bodyMLController and set register it as a VROBodyTrackerDelegate to VROBodyTracker
     _bodyMLController = std::make_shared<VROBodyTrackerController>(_renderer, _driver, _arScene->getRootNode());
     _bodyMLController->setDelegate(shared_from_this());
+    _bodyMLController->setDisplayDebugCubes(true);
 
 #if VRO_PLATFORM_IOS
     if (_bodyTracker != nullptr) {
@@ -162,10 +171,10 @@ std::shared_ptr<VRONode> VROBodyTrackerTest::createTriggerBox(VROVector3f pos,
                                                               std::string tag) {
     std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
     std::shared_ptr<VROMaterial> mat = std::make_shared<VROMaterial>();
-    mat->setCullMode(VROCullMode::None);
     mat->setReadsFromDepthBuffer(false);
     mat->setWritesToDepthBuffer(false);
     mat->getDiffuse().setColor(color);
+    mat->setLightingModel(VROLightingModel::Lambert);
     
     std::vector<std::shared_ptr<VROMaterial>> mats;
     mats.push_back(mat);

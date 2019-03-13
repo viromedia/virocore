@@ -63,7 +63,29 @@ VROARTrackingStateReason VROARCameraInertial::getLimitedTrackingStateReason() co
 }
 
 VROMatrix4f VROARCameraInertial::getRotation() const {
-    return _headTracker->getHeadRotation().invert(); 
+    if (_trackingType == VROTrackingType::Front) {
+        /*
+         For the front-facing camera we take the head tracker rotation and
+         tweak it to fit the mirrored projection. There are two tweaks:
+         
+         1. The head rotation Y axis is reversed from what we're receiving from the
+            head tracker.
+         */
+        VROMatrix4f rotation = _headTracker->getHeadRotation();
+        VROVector3f scale = rotation.extractScale();
+        VROVector3f eulerAngles = rotation.extractRotation(scale).toEuler();
+        VROQuaternion invertedX(-eulerAngles.x, eulerAngles.y, eulerAngles.z);
+        
+        /*
+         2. Before applying the rotation we first have to move our base forward
+            vector from (0, 0, -1) to (0, 0, 1), so rotate about the Y axis by
+            180 degrees, *then* apply the head rotation.
+         */
+        VROQuaternion flipForward(0, M_PI, 0);
+        return invertedX.getMatrix() * flipForward.getMatrix();
+    } else {
+        return _headTracker->getHeadRotation().invert();
+    }
 }
 
 VROVector3f VROARCameraInertial::getPosition() const {
@@ -94,9 +116,6 @@ VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near,
                             0,   0,   Y,  0 };
     VROMatrix4f intrinsicMatrix(intrinsic);
     
-    if (_trackingType == VROTrackingType::Front) {
-        viewport.setMirrored(true);
-    }
     return viewport.getOrthographicProjection(near, far) * intrinsicMatrix;
 }
 

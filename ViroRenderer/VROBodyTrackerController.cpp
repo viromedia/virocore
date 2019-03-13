@@ -1336,7 +1336,6 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
     float minConfidence = 0.1;
     int viewWidth  = _view.frame.size.width;
     int viewHight = _view.frame.size.height;
-    bool mirrored = _view.mirrored;
 
     int endJointCount = static_cast<int>(VROBodyJointType::LeftAnkle);
     for (int i = static_cast<int>(VROBodyJointType::Top); i <= endJointCount; i++) {
@@ -1358,9 +1357,6 @@ void VROBodyTrackerController::updateDebugMLViewIOS(const std::map<VROBodyJointT
             _labelViews[(int)kv.first].text = [NSString stringWithUTF8String:labelTag.c_str()];
         //}
         
-        if (mirrored) {
-            transformed.x = viewWidth - transformed.x;
-        }
         _bodyViews[(int) kv.first].center = CGPointMake(transformed.x, transformed.y);
         _bodyViews[(int) kv.first].alpha = VROMathInterpolate(kv.second.getConfidence(), minConfidence, maxConfidence, minAlpha, maxAlpha);
     }
