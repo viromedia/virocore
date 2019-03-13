@@ -87,7 +87,7 @@ private:
      */
     CVPixelBufferRef _nextImage;
     VROMatrix4f _nextTransform;
-    VROCameraOrientation _nextOrientation;
+    CGImagePropertyOrientation _nextOrientation;
     std::mutex _imageMutex;
 
     /*
@@ -127,7 +127,7 @@ private:
      */
     void nextImage();
     
-    void trackImage(CVPixelBufferRef image, VROMatrix4f transform, VROCameraOrientation orientation);
+    void trackImage(CVPixelBufferRef image, VROMatrix4f transform, CGImagePropertyOrientation orientation);
     void processVisionResults(VNRequest *request, NSError *error);
     static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROMatrix4f transform);
 

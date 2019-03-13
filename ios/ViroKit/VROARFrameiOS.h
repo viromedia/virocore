@@ -24,6 +24,8 @@ public:
     virtual ~VROARFrameiOS();
     
     CVPixelBufferRef getImage() const;
+    CGImagePropertyOrientation getImageOrientation() const;
+
     double getTimestamp() const;
     VROCameraOrientation getOrientation() const { return _orientation; }
     

@@ -18,6 +18,7 @@
 #include "VROVector4f.h"
 #include "VROARHitTestResult.h"
 #include "VROLight.h"
+#include "VROCameraTexture.h"
 
 VROARFrameiOS::VROARFrameiOS(ARFrame *frame, VROViewport viewport, VROCameraOrientation orientation,
                              std::shared_ptr<VROARSessioniOS> session) :
@@ -38,6 +39,18 @@ VROARFrameiOS::~VROARFrameiOS() {
 
 CVPixelBufferRef VROARFrameiOS::getImage() const {
     return _frame.capturedImage;
+}
+
+CGImagePropertyOrientation VROARFrameiOS::getImageOrientation() const {
+    // Image orientation is determined by ARKit and is based on the camera orientation.
+    // When in portrait mode, for example, ARKit returns its image rotated to the right.
+    if (_orientation == VROCameraOrientation::Portrait) {
+        return kCGImagePropertyOrientationRight;
+    }
+    else {
+        // TODO Fill in proper image orientation types
+        return kCGImagePropertyOrientationRight;
+    }
 }
 
 double VROARFrameiOS::getTimestamp() const {

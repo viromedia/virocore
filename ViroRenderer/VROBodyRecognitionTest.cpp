@@ -104,6 +104,7 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
 #if VRO_PLATFORM_IOS
     int viewWidth  = _view.frame.size.width;
     int viewHeight = _view.frame.size.height;
+    BOOL mirrored = _view.mirrored;
     
     std::vector<VROVector3f> labelPositions;
     std::vector<NSString *> labels;
@@ -118,6 +119,9 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
             VROBoundingBox bounds = joint.getBounds();
             
             float x = bounds.getX() * viewWidth;
+            if (mirrored) {
+                x = viewWidth - x;
+            }
             float y = bounds.getY() * viewHeight;
             float width = bounds.getSpanX() * viewWidth;
             float height = bounds.getSpanY() * viewHeight;

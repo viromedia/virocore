@@ -21,6 +21,8 @@ public:
     virtual ~VROARFrameInertial();
     
     CMSampleBufferRef getImage() const;
+    CGImagePropertyOrientation getImageOrientation() const;
+    
     double getTimestamp() const;
     VROCameraOrientation getOrientation() const { return VROCameraOrientation::Portrait; }
     

@@ -39,8 +39,25 @@ void VROAVCaptureController::initCapture(VROCameraPosition position, VROCameraOr
     }
     
     [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:AVCaptureSessionPresetHigh];
     
+    AVCaptureSessionPreset preset;
+    NSNumber *pixelFormat;
+    
+    // If we're rendering a preview, then we don't need a high quality output since we won't be
+    // displaying the texture; we'll just be using it for computer vision. Additionally, we'll be
+    // able to use YCbCr, which integrates better with CoreML.
+    //
+    // Note: we're still using high quality output since our ML algorithm isn't correctly
+    // transforming coordinate systems when we start with a low quality image.
+    if (renderPreview) {
+        preset = AVCaptureSessionPresetHigh;
+        pixelFormat = [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange];
+    } else {
+        preset = AVCaptureSessionPresetHigh;
+        pixelFormat = [NSNumber numberWithInt:kCVPixelFormatType_32BGRA];
+    }
+    [_captureSession setSessionPreset:preset];
+
     // Get the a video device with the requested camera
     AVCaptureDevicePosition avPosition = (position == VROCameraPosition::Front) ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
     AVCaptureDevice *videoDevice = [[[AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
@@ -61,8 +78,7 @@ void VROAVCaptureController::initCapture(VROCameraPosition position, VROCameraOr
     // Create the output for the capture session.
     AVCaptureVideoDataOutput *dataOutput = [[AVCaptureVideoDataOutput alloc] init];
     [dataOutput setAlwaysDiscardsLateVideoFrames:YES];
-    [dataOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
-                                                             forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
+    [dataOutput setVideoSettings:[NSDictionary dictionaryWithObject:pixelFormat forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
     
     // Set dispatch to be on the main thread to create the texture in memory
     // and allow OpenGL to use it for rendering

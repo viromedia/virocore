@@ -78,3 +78,7 @@ CMSampleBufferRef VROARFrameInertial::getImage() const {
     return camera->getSampleBuffer();
 }
 
+CGImagePropertyOrientation VROARFrameInertial::getImageOrientation() const {
+    return kCGImagePropertyOrientationUp;
+}
+

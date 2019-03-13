@@ -281,18 +281,18 @@ void VROBodyTrackeriOS::update(const VROARFrame *frame) {
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
         _nextTransform = frame->getViewportToCameraImageTransform().invert();
-        _nextOrientation = frame->getOrientation();
 
+        if (_nextImage) {
+            CVBufferRelease(_nextImage);
+        }
         if (frameiOS) {
-            if (_nextImage) {
-                CVBufferRelease(_nextImage);
-            }
-            _nextImage = CVBufferRetain(frameiOS->getImage());            
+            _nextImage = CVBufferRetain(frameiOS->getImage());
+            _nextOrientation = frameiOS->getImageOrientation();
         } else {
             const VROARFrameInertial *frameInertial = dynamic_cast<const VROARFrameInertial *>(frame);
             CMSampleBufferRef sampleBuffer = frameInertial->getImage();
-            
-            NSLog(@"Sample buffer %@", sampleBuffer);
+            _nextImage = CVBufferRetain(CMSampleBufferGetImageBuffer(sampleBuffer));
+            _nextOrientation = frameInertial->getImageOrientation();
         }
     }
 
@@ -354,7 +354,7 @@ void VROBodyTrackeriOS::nextImage() {
 }
 
 // Invoked on the _visionQueue
-void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform, VROCameraOrientation orientation) {
+void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform, CGImagePropertyOrientation orientation) {
     NSDictionary *visionOptions = [NSDictionary dictionary];
     
     // The logic below derives the _transform matrix, which is used to convert *rotated* image
@@ -365,12 +365,14 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     VROVector3f scale = transform.extractScale();
     VROVector3f translation = transform.extractTranslation();
     
-    if (orientation == VROCameraOrientation::Portrait || orientation == VROCameraOrientation::PortraitUpsideDown) {
-        float width = (float) CVPixelBufferGetWidth(image);
-        float height = (float) CVPixelBufferGetHeight(image);
-        
+    float width = (float) CVPixelBufferGetWidth(image);
+    float height = (float) CVPixelBufferGetHeight(image);
+    
+    if (orientation == kCGImagePropertyOrientationRight) {
         // Remove rotation from the transformation matrix. Since this was a 90 degree rotation, X and Y are
         // reversed.
+        //
+        // kCGImagePropertyOrientationRight is the default (Portrait) orientation for ARKit.
         //
         // Note also that the transform used depends on the VNImageCropAndScale option used. CenterCrop
         // is preferred because it highlights the body in the center of the image, and is documented to
@@ -392,47 +394,35 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
             _transform[12] = (1 - scale.y) / 2.0;
             _transform[13] = translation.y;
         }
-        
-        // iOS always rotates the image right-side up before inputting into a CoreML model for
-        // a vision request. We ensure it rotates correctly by specifying the orientation of the
-        // image with respect to the device.
-        CGImagePropertyOrientation orientation = kCGImagePropertyOrientationRight;
-        
-        // By wrapping the CVPixelBuffer in a CIImage, iOS will automatically convert from
-        // YCbCr to RGB (note: this is undocumented, but works).
-        _startNeural = VROTimeCurrentMillis();
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
-
-        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage
-                                                                            orientation:orientation
-                                                                                options:visionOptions];
-        [handler performRequests:@[_visionRequest] error:nil];
     }
-    else if (orientation == VROCameraOrientation::LandscapeLeft) {
-        // Remove rotation from the transformation matrix
-        _transform[0] = scale.x;
-        _transform[1] = 0;
-        _transform[4] = 0;
-        _transform[5] = scale.y;
-        _transform[12] = (1 - scale.x) / 2.0;
-        _transform[13] = (1 - scale.y) / 2.0;
-        
-        CGImagePropertyOrientation orientation = kCGImagePropertyOrientationDown;
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
-        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage
-                                                                            orientation:orientation
-                                                                                options:visionOptions];
-        [handler performRequests:@[_visionRequest] error:nil];
+    else if (orientation == kCGImagePropertyOrientationUp) {
+        if (_cropAndScaleOption == VNImageCropAndScaleOptionCenterCrop) {
+            _transform[0] = scale.x;
+            _transform[1] = 0;
+            _transform[4] = 0;
+            _transform[5] = scale.y * width / height;
+            _transform[12] = (1 - scale.x) / 2.0;
+            _transform[13] = ((height - width) / height) / 2.0;
+        }
+        else {
+            _transform[0] = scale.x;
+            _transform[1] = 0;
+            _transform[4] = 0;
+            _transform[5] = scale.y;
+            _transform[12] = (1 - scale.x) / 2.0;
+            _transform[13] = (1 - scale.y) / 2.0;
+        }
     }
-    else if (orientation == VROCameraOrientation::LandscapeRight) {
-        // In landscape right, the camera image is already right-side up, and ready for the ML
-        // algorithm.
-        _transform = transform;
-        
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
-        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage options:visionOptions];
-        [handler performRequests:@[_visionRequest] error:nil];
-    }
+    
+    _startNeural = VROTimeCurrentMillis();
+    
+    // By wrapping the CVPixelBuffer in a CIImage, iOS will automatically convert from
+    // YCbCr to RGB (note: this is undocumented, but works).
+    CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:image];
+    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:ciImage
+                                                                        orientation:orientation
+                                                                            options:visionOptions];
+    [handler performRequests:@[_visionRequest] error:nil];
 }
 
 // Invoked on the _visionQueue
