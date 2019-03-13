@@ -32,6 +32,7 @@
 #import "VROViewRecorder.h"
 #import "VROMetricsRecorder.h"
 #import "VROARCameraInertial.h"
+#import "VRODeviceUtil.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 
@@ -166,8 +167,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 
-#if VRO_30_FPS
-    _displayLink.preferredFramesPerSecond = 30;
+#if VRO_POSEMOJI
+    VRODeviceUtil *device = [[VRODeviceUtil alloc] init];
+    if (![device isBionicA12]) {
+        _displayLink.preferredFramesPerSecond = 30;
+        pinfo("Preferred FPS 30");
+    } else {
+        pinfo("Preferred FPS 60");
+    }
 #endif
 
     /*

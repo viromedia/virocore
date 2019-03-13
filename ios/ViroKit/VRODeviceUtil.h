@@ -293,4 +293,9 @@ extern NSString* const x86_64_Sim;
  from back camera of the current device. Resolution returned for image oriented landscape right. **/
 - (CGSize)backCameraStillImageResolutionInPixels;
 
+/*
+ Returns true if this device uses an A12 Bionic chipset.
+ */
+- (BOOL)isBionicA12;
+
 @end

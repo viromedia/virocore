@@ -44,6 +44,7 @@
 
 #define VRO_METAL 0
 
-#define VRO_30_FPS 1
+// True if building for Posemoji
+#define VRO_POSEMOJI 1
 
 #endif /* VRODefines_h */

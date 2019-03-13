@@ -116,17 +116,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
                                          std::shared_ptr<VRODriver> driver) {
 
     VRODeviceUtil *device = [[VRODeviceUtil alloc] init];
-    bool A12 = false;
-    
-    if ([device hardware] == IPHONE_XS ||
-        [device hardware] == IPHONE_XR ||
-        [device hardware] == IPHONE_XS_MAX ||
-        [device hardware] == IPHONE_XS_MAX_CN) {
-        NSLog(@"A12 detected");
-        A12 = true;
-    } else {
-        NSLog(@"A11 or previous detected");
-    }
+    bool A12 = [device isBionicA12];
     
     if (A12) {
 #if VRO_BODY_TRACKER_MODEL_A12==HOURGLASS_2_1

@@ -469,4 +469,12 @@ NSString* const x86_64_Sim  = @"x86_64";
   NSLog(@"Your device hardware string is: %@", hardware);
 }
 
+- (BOOL)isBionicA12 {
+    Hardware hardware = [self hardware];
+    return (hardware == IPHONE_XS ||
+            hardware == IPHONE_XR ||
+            hardware == IPHONE_XS_MAX ||
+            hardware == IPHONE_XS_MAX_CN);
+}
+
 @end
