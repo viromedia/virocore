@@ -31,6 +31,7 @@
 #import "VROWeakProxy.h"
 #import "VROViewRecorder.h"
 #import "VROMetricsRecorder.h"
+#import "VROARCameraInertial.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 
@@ -663,10 +664,11 @@ static VROVector3f const kZeroVector = VROVector3f();
     _arSession->setViewport(viewport);
     
     /*
-     When using the front-facing camera, we don't use our own background; instead the camera
-     is rendered via an AVCaptureVideoPreviewLayer.
+     When using the front-facing camera with preview layer, we don't use our own background;
+     instead the camera is rendered via an AVCaptureVideoPreviewLayer.
      */
-    if (!_sceneController->getScene()->getRootNode()->getBackground() && _trackingType != VROTrackingType::Front) {
+    if (!_sceneController->getScene()->getRootNode()->getBackground() &&
+        (_trackingType != VROTrackingType::Front || !kInertialRenderCameraUsingPreviewLayer)) {
         _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
     }
 

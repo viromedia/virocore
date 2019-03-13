@@ -13,6 +13,8 @@
 #include <memory>
 #import <AVFoundation/AVFoundation.h>
 
+static bool kInertialRenderCameraUsingPreviewLayer = false;
+
 class VROHeadTracker;
 class VROCameraTexture;
 class VROAVCaptureController;

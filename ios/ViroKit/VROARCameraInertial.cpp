@@ -15,8 +15,6 @@
 #include "VROCameraTextureiOS.h"
 #include "VROARSession.h"
 
-static bool kRenderUsingPreviewLayer = true;
-
 VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) {
     _trackingType = trackingType;
     _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
@@ -24,7 +22,7 @@ VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shar
     VROCameraOrientation cameraOrientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
     VROCameraPosition cameraPosition = (trackingType == VROTrackingType::Front) ? VROCameraPosition::Front : VROCameraPosition::Back;
     
-    if (kRenderUsingPreviewLayer) {
+    if (kInertialRenderCameraUsingPreviewLayer) {
         _captureController = std::make_shared<VROAVCaptureController>();
         _captureController->initCapture(cameraPosition, cameraOrientation, true, driver);
     } else {
