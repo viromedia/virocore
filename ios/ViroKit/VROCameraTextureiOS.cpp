@@ -14,225 +14,62 @@
 #include "VROVideoTextureCache.h"
 #include "VRODriver.h"
 #include "VROConvert.h"
+#include "VRODriverOpenGLiOS.h"
+#include "VROAVCaptureController.h"
 
 VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :
-    VROCameraTexture(type),
-    _paused(true),
-    _lastSampleBuffer(nil) {
+    VROCameraTexture(type) {
     
 }
 
 VROCameraTextureiOS::~VROCameraTextureiOS() {
-    if (_lastSampleBuffer) {
-        CFRelease(_lastSampleBuffer);
-    }
-    [[NSNotificationCenter defaultCenter] removeObserver:_orientationListener];
+    
 }
 
 bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrientation orientation,
                                      std::shared_ptr<VRODriver> driver) {
-    pause();
-    std::shared_ptr<VROCameraTextureiOS> shared = std::dynamic_pointer_cast<VROCameraTextureiOS>(shared_from_this());
-    
     _videoTextureCache = driver->newVideoTextureCache();
-    _delegate = [[VROCameraCaptureDelegate alloc] initWithCameraTexture:shared cache:_videoTextureCache driver:driver];
+    _controller = std::make_shared<VROAVCaptureController>();
+    _controller->initCapture(position, orientation, false, driver);
+    pause();
+
+    std::weak_ptr<VROCameraTextureiOS> shared_w = std::dynamic_pointer_cast<VROCameraTextureiOS>(shared_from_this());
+    std::weak_ptr<VRODriver> driver_w = driver;
     
-    // Create a capture session
-    _captureSession = [[AVCaptureSession alloc] init];
-    if (!_captureSession) {
-        pinfo("Error: Could not create a capture session");
-        return false;
-    }
-    
-    [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:AVCaptureSessionPresetHigh];
-    
-    // Get the a video device with the requested camera
-    AVCaptureDevice *videoDevice = nil;
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for (AVCaptureDevice *device in devices) {
-        if (position == VROCameraPosition::Front && [device position] == AVCaptureDevicePositionFront) {
-            videoDevice = device;
+    _controller->setUpdateListener([shared_w, driver_w] (CMSampleBufferRef sampleBuffer) {
+        std::shared_ptr<VROCameraTextureiOS> texture = shared_w.lock();
+        std::shared_ptr<VROVideoTextureCache> cache = texture->_videoTextureCache;
+        std::shared_ptr<VRODriver> driver = driver_w.lock();
+        if (cache && driver) {
+            texture->setSubstrate(0, cache->createTextureSubstrate(sampleBuffer,
+                                                                    driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
         }
-        else if (position == VROCameraPosition::Back && [device position] == AVCaptureDevicePositionBack) {
-            videoDevice = device;
-        }
-    }
+    });
     
-    if (videoDevice == nil) {
-        videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    }
-    if (videoDevice == nil) {
-        pinfo("Error: could not create AVCaptureDevice");
-        return false;
-    }
-    
-    NSLog(@"Camera FOV [%f]", videoDevice.activeFormat.videoFieldOfView);
-    
-    NSError *error;
-    
-    // Device input
-    AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-    if (error) {
-        pinfo("Error: could not create AVCaptureDeviceInput");
-        return false;
-    }
-    
-    [_captureSession addInput:deviceInput];
-    
-    // Create the output for the capture session.
-    AVCaptureVideoDataOutput *dataOutput = [[AVCaptureVideoDataOutput alloc] init];
-    [dataOutput setAlwaysDiscardsLateVideoFrames:YES];
-    [dataOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
-                                                             forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
-    
-    // Set dispatch to be on the main thread to create the texture in memory
-    // and allow OpenGL to use it for rendering
-    [dataOutput setSampleBufferDelegate:_delegate queue:dispatch_get_main_queue()];
-    
-    [_captureSession addOutput:dataOutput];
-    updateOrientation(orientation);
-    [_captureSession commitConfiguration];
-    
-    _orientationListener = [[VROCameraOrientationListener alloc] initWithCameraTexture:shared];
-    [[NSNotificationCenter defaultCenter] addObserver:_orientationListener
-                                             selector:@selector(orientationDidChange:)
-                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
-                                               object:nil];
     return true;
 }
 
 float VROCameraTextureiOS::getHorizontalFOV() const {
-    AVCaptureDeviceInput *input = [_captureSession.inputs firstObject];
-    return input.device.activeFormat.videoFieldOfView;
+    return _controller->getHorizontalFOV();
 }
 
 VROVector3f VROCameraTextureiOS::getImageSize() const {
-    AVCaptureDeviceInput *input = [_captureSession.inputs firstObject];
-    
-    CMFormatDescriptionRef desc = input.device.activeFormat.formatDescription;
-    CGSize dim = CMVideoFormatDescriptionGetPresentationDimensions(desc, true, true);
-
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    if (UIInterfaceOrientationIsPortrait(orientation)) {
-        return { (float)dim.height, (float)dim.width,  0 };
-    }
-    else {
-        return { (float)dim.width,  (float)dim.height, 0 };
-    }
-}
-
-void VROCameraTextureiOS::updateOrientation(VROCameraOrientation orientation) {
-    AVCaptureVideoDataOutput *output = [[_captureSession outputs] objectAtIndex:0];
-    
-    AVCaptureConnection *connection = [output connectionWithMediaType:AVMediaTypeVideo];
-    if (orientation == VROCameraOrientation::Portrait) {
-        [connection setVideoOrientation:AVCaptureVideoOrientationPortrait];
-    }
-    else if (orientation == VROCameraOrientation::LandscapeLeft) {
-        [connection setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
-    }
-    else if (orientation == VROCameraOrientation::LandscapeRight) {
-        [connection setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
-    }
-    else {
-        [connection setVideoOrientation:AVCaptureVideoOrientationPortraitUpsideDown];
-    }
+    return _controller->getImageSize();
 }
 
 void VROCameraTextureiOS::pause() {
-    _paused = true;
-    [_captureSession stopRunning];
+    _controller->pause();
 }
 
 void VROCameraTextureiOS::play() {
-    _paused = false;
-    [_captureSession startRunning];
+    _controller->play();
 }
 
 bool VROCameraTextureiOS::isPaused() {
-    return _paused;
+    return _controller->isPaused();
 }
 
-void VROCameraTextureiOS::displayPixelBuffer(CMSampleBufferRef sampleBuffer, std::unique_ptr<VROTextureSubstrate> substrate) {
-    if (_lastSampleBuffer) {
-        CFRelease(_lastSampleBuffer);
-    }
-    CFRetain(sampleBuffer);
-    _lastSampleBuffer = sampleBuffer;
-    
-    setSubstrate(0, std::move(substrate));
+CMSampleBufferRef VROCameraTextureiOS::getSampleBuffer() const {
+    return _controller->getSampleBuffer();
 }
 
-#pragma mark - VROCameraCaptureDelegate
-
-@interface VROCameraCaptureDelegate ()
-
-@property (readwrite, nonatomic) std::weak_ptr<VROCameraTextureiOS> texture;
-@property (readwrite, nonatomic) std::weak_ptr<VROVideoTextureCache> cache;
-@property (readwrite, nonatomic) std::weak_ptr<VRODriver> driver;
-
-@end
-
-@implementation VROCameraCaptureDelegate
-
-- (id)initWithCameraTexture:(std::shared_ptr<VROCameraTextureiOS>)texture
-                      cache:(std::shared_ptr<VROVideoTextureCache>)cache
-                     driver:(std::shared_ptr<VRODriver>)driver {
-    self = [super init];
-    if (self) {
-        self.texture = texture;
-        self.cache = cache;
-        self.driver = driver;
-    }
-    
-    return self;
-}
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-       fromConnection:(AVCaptureConnection *)connection {
-    
-    std::shared_ptr<VROCameraTextureiOS> texture = self.texture.lock();
-    std::shared_ptr<VROVideoTextureCache> cache = self.cache.lock();
-    std::shared_ptr<VRODriver> driver = self.driver.lock();
-    if (texture && cache && driver) {
-        texture->displayPixelBuffer(sampleBuffer,
-                                    cache->createTextureSubstrate(sampleBuffer,
-                                                                  driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
-    }
-}
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer
-       fromConnection:(AVCaptureConnection *)connection {
-    
-}
-
-@end
-
-@interface VROCameraOrientationListener ()
-
-@property (readwrite, nonatomic) std::weak_ptr<VROCameraTextureiOS> texture;
-
-@end
-
-@implementation VROCameraOrientationListener
-
-- (id)initWithCameraTexture:(std::shared_ptr<VROCameraTextureiOS>)texture {
-    self = [super init];;
-    if (self) {
-        self.texture = texture;
-    }
-    return self;
-}
-
-- (void)orientationDidChange:(NSNotification *)notification {
-    std::shared_ptr<VROCameraTextureiOS> texture = self.texture.lock();
-    if (!texture) {
-        return;
-    }
-    
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    texture->updateOrientation(VROConvert::toCameraOrientation(orientation));
-}
-
-@end
