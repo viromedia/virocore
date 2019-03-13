@@ -365,23 +365,51 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     float width = (float) CVPixelBufferGetWidth(image);
     float height = (float) CVPixelBufferGetHeight(image);
     
+    // OrientationRight is the default for the ARKit back camera in portrait
     if (orientation == kCGImagePropertyOrientationRight) {
-        // Remove rotation from the transformation matrix. Since this was a 90 degree rotation, X and Y are
-        // reversed.
+        // Rebuild the transformation matrix but with rotation remoevd. Since this was a 90 degree
+        // rotation, X and Y are reversed.
         //
-        // kCGImagePropertyOrientationRight is the default (Portrait) orientation for ARKit.
-        //
-        // Note also that the transform used depends on the VNImageCropAndScale option used. CenterCrop
-        // is preferred because it highlights the body in the center of the image, and is documented to
-        // preserve aspect ratio (Apple documentation is unclear about aspect ratio preservation for the
-        // other modes).
+        // Note also that the transform used depends on the VNImageCropAndScale option used.
         if (_cropAndScaleOption == VNImageCropAndScaleOptionCenterCrop) {
+            // Center crop works by fitting the short side, then cropping the long side about
+            // the center, preserving aspect ratio.
+            
+            // In OrientationRight with ARKit back camera, width > height, so (before the image
+            // is rotated) the short side is Y and the long size is X. This means CoreML ends up
+            // cropping X. After rotation, the long/cropped side is Y. Therefore to convert a
+            // point from the CropAndScaled image to the original:
+            //
+            // 1. transform[5]:
+            //    Multiply the long side by the inverse of its *additional scaling*. This is the
+            //    scaling of the long side that was necessary to preserve aspect ratio when the
+            //    short side was scaled down. This is just the aspect ratio itself: width / height,
+            //    so its inverse is height / width. The scale.x in this entry is for inverting
+            //    the ARKit scale factor used on the image.
+            //
+            // 2. transform[13]:
+            //    Add the cropped-out bottom-half of the long-side to the long-side coordinate.
+            //    The amount that we cropped out is 1 - height / width. Translate by 1/2 this
+            //    amount.
+            //
+            // Again, note we operate on the Y coordinate (transform[5] and transform[13]) using
+            // X values because Y is the long side *after* rotation.
             _transform[0] = scale.y;
             _transform[1] = 0;
             _transform[4] = 0;
             _transform[5] = scale.x * height / width;
             _transform[12] = (1 - scale.y) / 2.0;
-            _transform[13] = ((width - height) / width) / 2.0;
+            _transform[13] = (1 - height / width) / 2.0;
+        }
+        else if (_cropAndScaleOption == VNImageCropAndScaleOptionScaleFit) {
+            // Similar to CropAndScale except the *long* side is fitted, and we must scale
+            // and translate the short side to maintain aspect ratio.
+            _transform[0] = scale.y * width / height;
+            _transform[1] = 0;
+            _transform[4] = 0;
+            _transform[5] = scale.x;
+            _transform[12] = (1 - scale.y) / 2.0 * width / height + (1 - width / height) / 2.0;
+            _transform[13] = 0;
         }
         else { // ScaleToFill: note, this appears to not preserve aspect ratio (not confirmed)
             _transform[0] = scale.y;
@@ -394,12 +422,24 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     }
     else if (orientation == kCGImagePropertyOrientationUp) {
         if (_cropAndScaleOption == VNImageCropAndScaleOptionCenterCrop) {
+            // See above for explanation of transform[5] and transform[13]. This is simpler
+            // because the short side is X and the long side is Y, and there's no rotation.
             _transform[0] = scale.x;
             _transform[1] = 0;
             _transform[4] = 0;
             _transform[5] = scale.y * width / height;
             _transform[12] = (1 - scale.x) / 2.0;
-            _transform[13] = ((height - width) / height) / 2.0;
+            _transform[13] = (1 - width / height) / 2.0;
+        }
+        else if (_cropAndScaleOption == VNImageCropAndScaleOptionScaleFit) {
+            // Similar to CropAndScale except the *long* side is fitted, and we must scale
+            // and translate the short side to maintain aspect ratio.
+            _transform[0] = scale.x * height / width;
+            _transform[1] = 0;
+            _transform[4] = 0;
+            _transform[5] = scale.y;
+            _transform[12] = (1 - scale.x) / 2.0 * height / width + (1 - height / width) / 2.0;
+            _transform[13] = 0;
         }
         else {
             _transform[0] = scale.x;
