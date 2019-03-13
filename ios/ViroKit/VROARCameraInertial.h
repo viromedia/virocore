@@ -50,6 +50,8 @@ public:
     
 private:
     
+    VROTrackingType _trackingType;
+    
     /*
      Inertial sensor.
      */

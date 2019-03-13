@@ -22,11 +22,11 @@ class VROViewport {
 public:
     
     VROViewport() :
-        _x(0), _y(0), _width(0), _height(0), _contentScaleFactor(2)
+        _x(0), _y(0), _width(0), _height(0), _contentScaleFactor(2), _mirrored(false)
     {}
 
     VROViewport(int x, int y, int width, int height) :
-        _x(x), _y(y), _width(width), _height(height), _contentScaleFactor(2)
+        _x(x), _y(y), _width(width), _height(height), _contentScaleFactor(2), _mirrored(false)
     {}
  
     int getX() const { return _x; }
@@ -47,7 +47,11 @@ public:
         float bottom = _y;
         float top    = _y + _height;
         
-        return VROMathComputeOrthographicProjection(left, right, bottom, top, near, far);
+        if (_mirrored) {
+            return VROMathComputeOrthographicProjection(right, left, bottom, top, near, far);
+        } else {
+            return VROMathComputeOrthographicProjection(left, right, bottom, top, near, far);
+        }
     }
     
     void setViewport(int x, int y, int width, int height) {
@@ -59,6 +63,14 @@ public:
     
     void setContentScaleFactor(float factor) {
         _contentScaleFactor = factor;
+    }
+    
+    /*
+     If the viewport is mirrored, then our orthographic projection will flip the
+     image around the X axis. This is often used for front-facing camera projections.
+     */
+    void setMirrored(bool mirrored) {
+        _mirrored = mirrored;
     }
     
 #if VRO_METAL
@@ -96,6 +108,7 @@ private:
     
     int _x, _y, _width, _height;
     float _contentScaleFactor;
+    bool _mirrored;
     
 };
 

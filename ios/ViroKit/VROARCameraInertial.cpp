@@ -18,6 +18,7 @@
 static bool kRenderUsingPreviewLayer = true;
 
 VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) {
+    _trackingType = trackingType;
     _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
     
     VROCameraOrientation cameraOrientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
@@ -94,6 +95,10 @@ VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near,
                           -x0, -y0,   X, -1,
                             0,   0,   Y,  0 };
     VROMatrix4f intrinsicMatrix(intrinsic);
+    
+    if (_trackingType == VROTrackingType::Front) {
+        viewport.setMirrored(true);
+    }
     return viewport.getOrthographicProjection(near, far) * intrinsicMatrix;
 }
 

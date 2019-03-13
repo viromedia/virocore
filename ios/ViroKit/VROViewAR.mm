@@ -627,6 +627,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
+    if (_trackingType == VROTrackingType::Front) {
+        viewport.setMirrored(true);
+    }
     
     /*
      Attempt to initialize the ARSession if we have not yet done so.
@@ -718,7 +721,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 /*
  Render black while waiting for the AR session to initialize.
  */
-- (void)renderWithoutTracking:(VROViewport) viewport {
+- (void)renderWithoutTracking:(VROViewport)viewport {
     VROFieldOfView fov = _renderer->computeUserFieldOfView(viewport.getWidth(), viewport.getHeight());
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     
@@ -753,6 +756,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
     material->setNeedsToneMapping(false);
+    material->setCullMode(VROCullMode::None); // Required for mirrored mode when using front-facing camera
     
     _arSession->setViewport(viewport);
     _arSession->run();
