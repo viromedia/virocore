@@ -478,6 +478,8 @@
     } else {
         completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
     }
+
+    CVPixelBufferRelease(_videoPixelBuffer);
 }
 
 + (CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image {
