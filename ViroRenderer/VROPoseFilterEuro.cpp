@@ -31,84 +31,13 @@ static const double kEuroFCMin = 1.7;
 
 // -----------------------------------------------------------------
 
-static const double kFilterUndefinedTime = -1.0;
-
-LowPassFilter::LowPassFilter(double alpha, VROVector3f initialValue) {
-    _lastRaw = _lastFiltered = initialValue;
-    _alpha = alpha;
-    _initialized = false;
-}
-
-VROVector3f LowPassFilter::filter(VROVector3f value, double alpha) {
-    VROVector3f result ;
-    if (_initialized)
-        result = alpha * value + (1.0 - alpha) * _lastFiltered;
-    else {
-        result = value;
-        _initialized = true;
-    }
-    _lastRaw = value;
-    _lastFiltered = result;
-    return result;
-}
-
-// -----------------------------------------------------------------
-
-OneEuroFilter::OneEuroFilter(double initialFrequency, double minCutoff, double beta, double derivativeCutoff) {
-    _frequency = initialFrequency;
-    _minFrequencyCutoff = minCutoff;
-    _beta = beta;
-    _derivativeCutoff = derivativeCutoff;
-    
-    _x = new LowPassFilter(computeAlpha(minCutoff));
-    _dx = new LowPassFilter(computeAlpha(derivativeCutoff));
-    _lastTimestamp = kFilterUndefinedTime;
-}
-
-OneEuroFilter::~OneEuroFilter() {
-    delete(_x);
-    delete(_dx);
-}
-
-VROVector3f OneEuroFilter::filter(VROVector3f value, double timestamp, bool debug) {
-    // Update the sampling frequency based on timestamps
-    if (_lastTimestamp != kFilterUndefinedTime && timestamp != kFilterUndefinedTime) {
-        _frequency = 1.0 / (timestamp - _lastTimestamp);
-    }
-    _lastTimestamp = timestamp;
-    if (isinf(_frequency)) {
-        return value;
-    }
-    
-    // Estimate the current variation per second
-    VROVector3f dvalue = _x->hasLastRawValue() ? (value - _x->getLastRawValue()) * _frequency : VROVector3f(0, 0, 0);
-    VROVector3f edvalue = _dx->filter(dvalue, computeAlpha(_derivativeCutoff));
-    
-    // Update the cutoff frequency: this should increase as edvalue increases
-    double cutoff = _minFrequencyCutoff + _beta * edvalue.magnitude();
-    if (debug) {
-        pinfo("Cutoff is now %f derived from magnitude %f", cutoff, edvalue.magnitude());
-    }
-    
-    // Filter with the new alpha derived from the cutoff
-    return _x->filter(value, computeAlpha(cutoff));
-}
-
-double OneEuroFilter::computeAlpha(double cutoff) {
-    double te = 1.0 / _frequency ;
-    double tau = 1.0 / (2 * M_PI * cutoff);
-    return 1.0 / (1.0 + tau / te);
-}
-
-// -----------------------------------------------------------------
-
 VROPoseFilterEuro::VROPoseFilterEuro(float trackingPeriodMs, float confidenceThreshold) :
     VROPoseFilter(trackingPeriodMs, confidenceThreshold) {
     
     double frequency = 60;
     double dcutoff = 1.0;
     for (int i = 0; i < kNumBodyJoints; i++) {
-        _filters.push_back(std::make_shared<OneEuroFilter>(frequency, kEuroFCMin, kEuroBeta, dcutoff));
+        _filters.push_back(std::make_shared<VROOneEuroFilter>(frequency, kEuroFCMin, kEuroBeta, dcutoff));
     }
 }
 
