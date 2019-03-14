@@ -141,3 +141,101 @@ void VROImagePreprocessor::writeImageToPhotos(CVPixelBufferRef image) {
     UIImage *finalImage = [[UIImage alloc] initWithCGImage:newImage];
     UIImageWriteToSavedPhotosAlbum(finalImage, nil, nil, nil);
 }
+
+CVPixelBufferRef VROImagePreprocessor::cropAndResize(CVPixelBufferRef pixelBuffer, float cropX, float cropY,
+                                                     float cropWidth, float cropHeight, float size, uint8_t *scratchBuffer) {
+    
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    
+    uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+    size_t offset = cropY * bytesPerRow + cropX * 4;
+    
+    /*
+     Create a buffer wrapping the original CVPixelBuffer, representing the cropped image.
+     */
+    vImage_Buffer cropped;
+    cropped.data = baseAddress + offset;
+    cropped.height = vImagePixelCount(cropHeight);
+    cropped.width = vImagePixelCount(cropWidth);
+    cropped.rowBytes = bytesPerRow;
+    
+    /*
+     Allocate new space for the resized image.
+     */
+    size_t resizedBytesPerRow = size * 4;
+    uint8_t *resizedData = (uint8_t *)malloc(size * resizedBytesPerRow);
+    
+    /*
+     Create a buffer representing the resized image.
+     */
+    vImage_Buffer resized;
+    resized.data = resizedData;
+    resized.height = vImagePixelCount(size);
+    resized.width = vImagePixelCount(size);
+    resized.rowBytes = resizedBytesPerRow;
+    
+    /*
+     Derive the scale transform required to maintain aspect ratio (fit the long
+     side, and pad the short side into the center).
+     */
+    float scale = size / fmax(cropWidth, cropHeight);
+    vImage_AffineTransform transform;
+    transform.a = scale;
+    transform.b = 0;
+    transform.c = 0;
+    transform.d = scale;
+    if (cropWidth > cropHeight) {
+        // Add top and bottom bars
+        transform.tx = 0;
+        transform.ty = scale * (cropWidth - cropHeight) / 2.0;
+    } else {
+        // Add left and right bars
+        transform.tx = scale * (cropHeight - cropWidth) / 2.0;
+        transform.ty = 0;
+    }
+    
+    /*
+     Perform the warp operation using the transform, filling the background with grey.
+     */
+    Pixel_8888 backgroundColor = { 128, 128, 128, 255 };
+    vImageAffineWarp_ARGB8888(&cropped, &resized, scratchBuffer, &transform, backgroundColor, kvImageBackgroundColorFill);
+    
+    /*
+     Create a new CVPixelBuffer out of the resized vImage.
+     */
+    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    CVPixelBufferRef resizedPixelBuffer;
+    int status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, size, size, pixelFormat, resized.data,
+                                              resized.rowBytes, stillImageDataReleaseCallback,
+                                              nil, nil, &resizedPixelBuffer);
+    
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+    if (status != kCVReturnSuccess) {
+        pinfo("Error: could not create new pixel buffer");
+        return nil;
+    }
+    return resizedPixelBuffer;
+}
+
+CVPixelBufferRef VROImagePreprocessor::cropAndResizeCI(CVPixelBufferRef pixelBuffer, float cropX, float cropY,
+                                                       float cropWidth, float cropHeight, float size) {
+    CIImage *image = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer];
+    image = [image imageByCroppingToRect:CGRectMake(cropX, cropY, cropWidth, cropHeight)];
+    
+    //float longSide = fmax(cropWidth, cropHeight);
+    //float scale = size / longSide;
+    
+    //CGAffineTransform transform = CGAffineTransformMakeScale(size / CVPixelBufferGetWidth(pixelBuffer), size / CVPixelBufferGetHeight(pixelBuffer));
+    //image = [image imageByApplyingTransform:transform];
+    
+    //CIImage *paddingColor = [[CIImage alloc] initWithColor:[CIColor grayColor]];
+    
+    CIContext *context = [[CIContext alloc] init];
+    CVPixelBufferRef resizedPixelBuffer;
+    CVPixelBufferCreate(kCFAllocatorDefault, cropWidth, cropHeight, CVPixelBufferGetPixelFormatType(pixelBuffer), nil, &resizedPixelBuffer);
+    [context render:image toCVPixelBuffer:resizedPixelBuffer];
+    
+    return resizedPixelBuffer;
+}

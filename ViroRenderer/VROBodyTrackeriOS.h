@@ -34,7 +34,7 @@ enum class VROCropAndScaleOption {
     Viro_FitCropPad,
 };
 
-class VROBodyTrackeriOS : public VROBodyTracker {
+class API_AVAILABLE(ios(11.0)) VROBodyTrackeriOS : public VROBodyTracker {
 public:
     
     VROBodyTrackeriOS();
@@ -60,7 +60,10 @@ private:
     MLModel *_model;
     VNCoreMLModel *_coreMLModel;
     VNCoreMLRequest *_visionRequest;
+    
     VROCropAndScaleOption _cropAndScaleOption;
+    uint8_t *_cropScratchBuffer;
+    int _cropScratchBufferLength;
     
     /*
      True when tracking is running; e.g. images are being fed into CoreML.
@@ -143,10 +146,35 @@ private:
      */
     void nextImage();
     
+    /*
+     Initiate a VNImageRequest on the provided image, using the given inverse display transform.
+     This method also derives the transform that will be needed to go back from vision space [0, 1] to
+     viewport space [0, 1].
+     
+     Invoked on the visionQueue.
+     */
     void trackImage(CVPixelBufferRef image, VROMatrix4f transform, CGImagePropertyOrientation orientation);
+    
+    /*
+     Process the result of the last call to trackImage. This will convert the raw output from
+     CoreML into the body joints, and then pass the joints through a filter and finally invoke the delegate
+     on the rendering thread.
+     
+     Invoked on the visionQueue.
+     */
     void processVisionResults(VNRequest *request, NSError *error);
+    
+    /*
+     Converts the heatmap output from the given CoreML MLMultiArray into body joints in screen
+     coordinates. The given transform goes from vision space [0, 1] to normalized viewport space [0, 1].
+     */
     static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition, VROMatrix4f transform);
-
+    
+    /*
+     Perform a crop and pad of the given image and return the result.
+     */
+    CVPixelBufferRef performCropAndPad(CVPixelBufferRef image, int cropX, int cropY, int cropWidth, int cropHeight);
+    
     /*
      Update and get FPS.
      */

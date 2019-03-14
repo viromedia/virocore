@@ -33,6 +33,28 @@ public:
                                         size_t *outResultWidth, size_t *outResultHeight);
     
     /*
+     Crops an image to the given rectangle, then resizes it to the given square size. The
+     resize operation will fit the long side, the maintain aspect ratio while scaling down
+     the short side. This will result in empty bars on either side of the image, which will
+     be filled grey.
+     
+     The scratch buffer is used for temp operations and must be large enough to fit the
+     original image: image_width * image_height * bytes_per_pixel. If NULL, a scratch buffer
+     will be allocated and deallocated (slow).
+     */
+    static CVPixelBufferRef cropAndResize(CVPixelBufferRef image, float cropX, float cropY,
+                                          float cropWidth, float cropHeight, float size,
+                                          uint8_t *scratchBuffer);
+    
+    /*
+     Perform the crop and resize using CoreImage insead of vImage.
+     
+     TODO: not working.
+     */
+    static CVPixelBufferRef cropAndResizeCI(CVPixelBufferRef image, float cropX, float cropY,
+                                          float cropWidth, float cropHeight, float size);
+    
+    /*
      Write the given image to the photos album. This is for debugging purposes.
      */
     static void writeImageToPhotos(CVPixelBufferRef image);

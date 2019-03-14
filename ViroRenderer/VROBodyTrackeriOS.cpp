@@ -39,6 +39,14 @@
 static const float kConfidenceThreshold = 0.15;
 static const float kInitialDampeningPeriodMs = 125;
 
+// The size of the image input into the CoreML model
+static const int kVisionImageSize = 256;
+
+// Set to true to save the crop and padding result of one of the early
+// frames to the Photo Library, for debubbing.
+static bool kDebugCropAndPadResult = false;
+static const int kDebugCropAndPadResultFrame = 30;
+
 static const bool kBodyTrackerDiscardPelvisAndThorax = false;
 
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
@@ -105,11 +113,15 @@ VROBodyTrackeriOS::VROBodyTrackeriOS() {
     _neuralEngineInitialized = false;
     _isProcessingImage = false;
     _nextImage = nil;
+    _cropScratchBuffer = nil;
+    _cropScratchBufferLength = 0;
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
 VROBodyTrackeriOS::~VROBodyTrackeriOS() {
-    
+    if (_cropScratchBuffer != nullptr) {
+        free(_cropScratchBuffer);
+    }
 }
 
 bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
@@ -120,10 +132,10 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
     
     if (A12) {
 #if VRO_BODY_TRACKER_MODEL_A12==HOURGLASS_2_1
-        pinfo("   Loading HG_2-1 body tracking model");
+        pinfo("Loading HG_2-1 body tracking model");
         _model = [[[hourglass_2_1 alloc] init] model];
-    #elif VRO_BODY_TRACKER_MODEL_A12==HOURGLASS_2_1_T
-        pinfo("   Loading HG_2-1-T body tracking model");
+#elif VRO_BODY_TRACKER_MODEL_A12==HOURGLASS_2_1_T
+        pinfo("Loading HG_2-1-T body tracking model");
         _model = [[[hourglass_2_1_t alloc] init] model];
 #endif
     } else {
@@ -159,6 +171,8 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
             _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
             break;
         default:
+            // For Viro cropping, disable CoreML's cropping and scaling by setting it to ScaleFill
+            _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
             break;
     }
     _poseFilter = std::make_shared<VROPoseFilterEuro>(kInitialDampeningPeriodMs, kConfidenceThreshold);
@@ -382,7 +396,6 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     // Derive the toViewport matrix, which moves coordinates from image space
     // to viewport space.
     VROMatrix4f toViewport;
-
     if (orientation == kCGImagePropertyOrientationRight) {
         // For right orientation, our inverse viewport transformation is derived
         // from the ARKit transform. Because of the rotation, scale X and Y are
@@ -417,20 +430,20 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         // about the center, preserving aspect ratio. This means the long side (Y)
         // is scaled and translated. To undo this we invert both the scale and
         // translation.
-        
-        // More specifically:
-        // 1. transform[5]:
-        //    Multiply the long side by the inverse of its *additional scaling*. We only worry
-        //    about additional scaling because the scale applied to both width and height is
-        //    automatically factored out, since we're dealing in normalized coordinates.
-        //    In this case the additional scaling is the scaling of the long side that was
-        //    necessary to preserve aspect ratio when the short side was scaled down. This
-        //    is just the aspect ratio itself: height / width, so its inverse is width / height.
         //
-        // 2. transform[13]:
-        //    Add the cropped-out bottom-half of the long-side to the long-side coordinate.
-        //    The amount that we cropped out is 1 - width / height. Translate by 1/2 this
-        //    amount.
+        // Note that we're working on normalized coordinates, so when computing this
+        // transform we only consider the scale needed __in addition to__ the normal
+        // scale that would come with scale to fill.
+        //
+        // For example, we have an image that's 1024x1920. To fit the short side, we shrink
+        // that image to a square until the short side fits. This results in a long side
+        // that extrudes outside of the square. Had we used scale to fill, the long side
+        // would have fit as well. The difference between the scale to fill amount and
+        // the amount we actually scaled the long side -- to preserve aspect ratio -- is the
+        // additional scale. In this case, it's equal to the aspect ratio.
+        //
+        // Finally, the translation piece is here because we have to account for the parts
+        // of the long side that were cut away due to the centered crop operation.
         toImage[5] = width / height;
         toImage[13] = (1 - width / height) / 2.0;
     }
@@ -439,6 +452,22 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         // and translate the short side (X) to maintain aspect ratio.
         toImage[0] = height / width;
         toImage[12] = (1 - height / width) / 2.0;
+    }
+    else if (_cropAndScaleOption == VROCropAndScaleOption::Viro_FitCropPad) {
+        int cropWidth = width;
+        int cropHeight = height;
+        image = performCropAndPad(image, 0, 0, cropWidth, cropHeight);
+        
+        // Derive the inverse transform for the crop
+        if (cropWidth > cropHeight) {
+            // Add top and bottom bars
+            toImage[5] = width / height;
+            toImage[13] = (1 - width / height) / 2.0;
+        } else {
+            // Add left and right bars
+            toImage[0] = height / width;
+            toImage[12] = (1 - height / width) / 2.0;
+        }
     }
     
     // The final transform goes from Vision space --> Image space --> Viewport space
@@ -499,6 +528,31 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
 #if VRO_PROFILE_NEURAL_ENGINE
     NSLog(@"Neural Engine FPS %f\n", getFPS());
 #endif
+}
+
+static int debugCropAndPadCurrentFrame = 0;
+CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
+                                                      int cropX, int cropY, int cropWidth, int cropHeight) {
+    int bufferSize = (int) CVPixelBufferGetWidth(image) * (int) CVPixelBufferGetHeight(image) * 4;
+    if (_cropScratchBuffer == nullptr || _cropScratchBufferLength < bufferSize) {
+        pinfo("Creating new crop scratch buffer of size %d", bufferSize);
+        if (_cropScratchBuffer != nullptr) {
+            free(_cropScratchBuffer);
+        }
+        _cropScratchBuffer = (uint8_t *) malloc(bufferSize);
+        _cropScratchBufferLength = bufferSize;
+    }
+    
+    CVPixelBufferRef cropped = VROImagePreprocessor::cropAndResize(image, cropX, cropY, cropWidth, cropHeight,
+                                                                   kVisionImageSize, _cropScratchBuffer);
+    if (kDebugCropAndPadResult) {
+        if (debugCropAndPadCurrentFrame == kDebugCropAndPadResultFrame) {
+            VROImagePreprocessor::writeImageToPhotos(image);
+            VROImagePreprocessor::writeImageToPhotos(cropped);
+        }
+        ++debugCropAndPadCurrentFrame;
+    }
+    return cropped;
 }
 
 void VROBodyTrackeriOS::updateFPS(uint64_t newTick) {
