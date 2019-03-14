@@ -140,13 +140,27 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
     }
 
     _cameraPosition = position;
-    _cropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
+    _cropAndScaleOption = VROCropAndScaleOption::CoreML_FitCrop;
+    
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
                                           completionHandler:(VNRequestCompletionHandler)^(VNRequest *request, NSError *error) {
                                               processVisionResults(request, error);
                                           }];
-    _visionRequest.imageCropAndScaleOption = _cropAndScaleOption;
+    
+    switch (_cropAndScaleOption) {
+        case VROCropAndScaleOption::CoreML_Fill:
+            _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
+            break;
+        case VROCropAndScaleOption::CoreML_Fit:
+            _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFit;
+            break;
+        case VROCropAndScaleOption::CoreML_FitCrop:
+            _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
+            break;
+        default:
+            break;
+    }
     _poseFilter = std::make_shared<VROPoseFilterEuro>(kInitialDampeningPeriodMs, kConfidenceThreshold);
 
     return true;
@@ -356,7 +370,7 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     
     // The logic below derives the _transform matrix, which is used to convert *rotated* image
     // coordinates to viewport coordinates. This matrix is derived from the scale and translation
-    // components of ARKit's displayTransform metrix (we remove the rotation part from the ARKit
+    // components of ARKit's displayTransform matrix (we remove the rotation part from the ARKit
     // matrix because iOS will automatically rotate the image before inputting it into the CoreML
     // model).
     VROVector3f scale = transform.extractScale();
@@ -365,92 +379,70 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     float width = (float) CVPixelBufferGetWidth(image);
     float height = (float) CVPixelBufferGetHeight(image);
     
-    // OrientationRight is the default for the ARKit back camera in portrait
+    // Derive the toViewport matrix, which moves coordinates from image space
+    // to viewport space.
+    VROMatrix4f toViewport;
+
     if (orientation == kCGImagePropertyOrientationRight) {
-        // Rebuild the transformation matrix but with rotation remoevd. Since this was a 90 degree
-        // rotation, X and Y are reversed.
-        //
-        // Note also that the transform used depends on the VNImageCropAndScale option used.
-        if (_cropAndScaleOption == VNImageCropAndScaleOptionCenterCrop) {
-            // Center crop works by fitting the short side, then cropping the long side about
-            // the center, preserving aspect ratio.
-            
-            // In OrientationRight with ARKit back camera, width > height, so (before the image
-            // is rotated) the short side is Y and the long size is X. This means CoreML ends up
-            // cropping X. After rotation, the long/cropped side is Y. Therefore to convert a
-            // point from the CropAndScaled image to the original:
-            //
-            // 1. transform[5]:
-            //    Multiply the long side by the inverse of its *additional scaling*. This is the
-            //    scaling of the long side that was necessary to preserve aspect ratio when the
-            //    short side was scaled down. This is just the aspect ratio itself: width / height,
-            //    so its inverse is height / width. The scale.x in this entry is for inverting
-            //    the ARKit scale factor used on the image.
-            //
-            // 2. transform[13]:
-            //    Add the cropped-out bottom-half of the long-side to the long-side coordinate.
-            //    The amount that we cropped out is 1 - height / width. Translate by 1/2 this
-            //    amount.
-            //
-            // Again, note we operate on the Y coordinate (transform[5] and transform[13]) using
-            // X values because Y is the long side *after* rotation.
-            _transform[0] = scale.y;
-            _transform[1] = 0;
-            _transform[4] = 0;
-            _transform[5] = scale.x * height / width;
-            _transform[12] = (1 - scale.y) / 2.0;
-            _transform[13] = (1 - height / width) / 2.0;
-        }
-        else if (_cropAndScaleOption == VNImageCropAndScaleOptionScaleFit) {
-            // Similar to CropAndScale except the *long* side is fitted, and we must scale
-            // and translate the short side to maintain aspect ratio.
-            _transform[0] = scale.y * width / height;
-            _transform[1] = 0;
-            _transform[4] = 0;
-            _transform[5] = scale.x;
-            _transform[12] = (1 - scale.y) / 2.0 * width / height + (1 - width / height) / 2.0;
-            _transform[13] = 0;
-        }
-        else { // ScaleToFill: note, this appears to not preserve aspect ratio (not confirmed)
-            _transform[0] = scale.y;
-            _transform[1] = 0;
-            _transform[4] = 0;
-            _transform[5] = scale.x;
-            _transform[12] = (1 - scale.y) / 2.0;
-            _transform[13] = translation.y;
-        }
+        // For right orientation, our inverse viewport transformation is derived
+        // from the ARKit transform. Because of the rotation, scale X and Y are
+        // reversed. The translation in the X direction is (1 - scale.y) / 2.0,
+        // but why is unclear.
+        toViewport[0] = scale.y;
+        toViewport[5] = scale.x;
+        toViewport[12] = (1 - scale.y) / 2.0;
+        toViewport[13] = 0;
+        
+        // Invert width and height for the invertViewport computations, because of
+        // the rotation.
+        float temp = width;
+        width = height;
+        height = temp;
     }
     else if (orientation == kCGImagePropertyOrientationUp) {
-        if (_cropAndScaleOption == VNImageCropAndScaleOptionCenterCrop) {
-            // See above for explanation of transform[5] and transform[13]. This is simpler
-            // because the short side is X and the long side is Y, and there's no rotation.
-            _transform[0] = scale.x;
-            _transform[1] = 0;
-            _transform[4] = 0;
-            _transform[5] = scale.y * width / height;
-            _transform[12] = (1 - scale.x) / 2.0;
-            _transform[13] = (1 - width / height) / 2.0;
-        }
-        else if (_cropAndScaleOption == VNImageCropAndScaleOptionScaleFit) {
-            // Similar to CropAndScale except the *long* side is fitted, and we must scale
-            // and translate the short side to maintain aspect ratio.
-            _transform[0] = scale.x * height / width;
-            _transform[1] = 0;
-            _transform[4] = 0;
-            _transform[5] = scale.y;
-            _transform[12] = (1 - scale.x) / 2.0 * height / width + (1 - height / width) / 2.0;
-            _transform[13] = 0;
-        }
-        else {
-            _transform[0] = scale.x;
-            _transform[1] = 0;
-            _transform[4] = 0;
-            _transform[5] = scale.y;
-            _transform[12] = (1 - scale.x) / 2.0;
-            _transform[13] = (1 - scale.y) / 2.0;
-        }
+        // For up orientation, our invert viewport transformation is simply the inverse
+        // of the display transformation, which we were given. There is no rotation
+        // element to consider.
+        toViewport[0] = scale.x;
+        toViewport[5] = scale.y;
+        toViewport[12] = translation.x;
+        toViewport[13] = translation.y;
     }
     
+    // Derive the toImage transformation, which moves from vision space (CoreML input
+    // space) to image space.
+    VROMatrix4f toImage;
+    if (_cropAndScaleOption == VROCropAndScaleOption::CoreML_FitCrop) {
+        // FitCrop works by fitting the short side (X), then cropping the long side (Y)
+        // about the center, preserving aspect ratio. This means the long side (Y)
+        // is scaled and translated. To undo this we invert both the scale and
+        // translation.
+        
+        // More specifically:
+        // 1. transform[5]:
+        //    Multiply the long side by the inverse of its *additional scaling*. We only worry
+        //    about additional scaling because the scale applied to both width and height is
+        //    automatically factored out, since we're dealing in normalized coordinates.
+        //    In this case the additional scaling is the scaling of the long side that was
+        //    necessary to preserve aspect ratio when the short side was scaled down. This
+        //    is just the aspect ratio itself: height / width, so its inverse is width / height.
+        //
+        // 2. transform[13]:
+        //    Add the cropped-out bottom-half of the long-side to the long-side coordinate.
+        //    The amount that we cropped out is 1 - width / height. Translate by 1/2 this
+        //    amount.
+        toImage[5] = width / height;
+        toImage[13] = (1 - width / height) / 2.0;
+    }
+    else if (_cropAndScaleOption == VROCropAndScaleOption::CoreML_Fit) {
+        // Similar to FitCrop except the long side (Y) is fitted, and we must scale
+        // and translate the short side (X) to maintain aspect ratio.
+        toImage[0] = height / width;
+        toImage[12] = (1 - height / width) / 2.0;
+    }
+    
+    // The final transform goes from Vision space --> Image space --> Viewport space
+    _transform = toViewport.multiply(toImage);
     _startNeural = VROTimeCurrentMillis();
     
     // By wrapping the CVPixelBuffer in a CIImage, iOS will automatically convert from

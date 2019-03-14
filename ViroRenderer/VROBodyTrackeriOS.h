@@ -27,6 +27,13 @@ static const int kNeuralFPSMaxSamples = 100;
 class VRODriver;
 class VROPoseFilter;
 
+enum class VROCropAndScaleOption {
+    CoreML_Fill,
+    CoreML_Fit,
+    CoreML_FitCrop,
+    Viro_FitCropPad,
+};
+
 class VROBodyTrackeriOS : public VROBodyTracker {
 public:
     
@@ -53,7 +60,7 @@ private:
     MLModel *_model;
     VNCoreMLModel *_coreMLModel;
     VNCoreMLRequest *_visionRequest;
-    VNImageCropAndScaleOption _cropAndScaleOption;
+    VROCropAndScaleOption _cropAndScaleOption;
     
     /*
      True when tracking is running; e.g. images are being fed into CoreML.
@@ -71,9 +78,13 @@ private:
     dispatch_queue_t _visionQueue;
     
     /*
-     Transform used to convert points on the image input into CoreML
-     (currently) into viewport points. This moves from CoreML image space into
-     viewport space.
+     Transforms used to convert points from vision space (the CoreML input image
+     space) into viewport points.
+     
+     This is a two-step operation: we have to move from vision space into image space
+     (e.g. the space of the image before the cropping, scaling, and padding operations
+     used for CoreML). Then we need to move from image space space into viewport space
+     (inverting ARKit or similar display transforms).
      */
     VROMatrix4f _transform;
     
