@@ -218,11 +218,12 @@ static VROVector3f const kZeroVector = VROVector3f();
      to do this *AFTER* we init _gvrAudio (in driver construction), because it resets
      some setting, else audio recording won't work.
      */
+#if !VRO_POSEMOJI
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setCategory:AVAudioSessionCategoryPlayAndRecord
              withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
                    error:nil];
-    
+#endif
     /*
      Create AR session checking if an ARKit class and one of our classes have been defined. If not, then load VROARSessionInertial,
      otherwise create a VROARSessioniOS w/ 6DOF tracking.
