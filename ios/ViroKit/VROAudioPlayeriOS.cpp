@@ -18,6 +18,7 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _muted(false),
     _paused(false),
     _loop(false),
+    _numberOfLoops(0),
     _isLocal(isLocalUrl),
     _url(url) {
 }
@@ -26,6 +27,7 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
     _playVolume(1.0),
     _muted(false),
     _paused(false),
+    _numberOfLoops(0),
     _loop(false) {
     
     _player = [[AVAudioPlayer alloc] initWithData:[NSData dataWithBytes:data->getData() length:data->getDataLength()]
@@ -37,6 +39,7 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
     _playVolume(1.0),
     _muted(false),
     _paused(false),
+    _numberOfLoops(0),
     _loop(false) {
     _data = data;
 }
@@ -113,12 +116,19 @@ void VROAudioPlayeriOS::updatePlayerProperties() {
 }
 
 void VROAudioPlayeriOS::setLoop(bool loop) {
+    setLoop(loop, -1);
+}
+
+void VROAudioPlayeriOS::setLoop(bool loop, int numberOfLoops) {
     if (_loop == loop) {
         return;
     }
-    
+
     _loop = loop;
+    _numberOfLoops = numberOfLoops;
     if (_player) {
+        [_player setNumberOfLoops:_numberOfLoops];
+        
         // If we were not explicitly paused and loop was activated,
         // play the sound (so it turns back on)
         if (!_paused && _loop) {
@@ -151,9 +161,35 @@ void VROAudioPlayeriOS::setVolume(float volume) {
 void VROAudioPlayeriOS::play() {
     _paused = false;
     if (_player) {
-        _player.volume = _playVolume;
+        _player.volume = _muted ? 0 : _playVolume;
+        [_player setNumberOfLoops:_numberOfLoops];
         [_player play];
     }
+}
+
+void VROAudioPlayeriOS::play(double atTime) {
+    _paused = false;
+    if (_player) {
+        _player.volume = _muted ? 0 : _playVolume;
+        [_player setNumberOfLoops:_numberOfLoops];
+        [_player playAtTime:atTime];
+    }
+}
+
+double VROAudioPlayeriOS::getAudioDuration() {
+    if (!_player) {
+        return -1;
+    }
+    
+    return [_player duration];
+}
+
+double VROAudioPlayeriOS::getDeviceCurrentTime() {
+    if (!_player) {
+        return -1;
+    }
+    
+    return [_player deviceCurrentTime];
 }
 
 void VROAudioPlayeriOS::pause() {
