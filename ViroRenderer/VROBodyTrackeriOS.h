@@ -26,6 +26,7 @@ static const int kNeuralFPSMaxSamples = 100;
 
 class VRODriver;
 class VROPoseFilter;
+class VROOneEuroFilterF;
 
 enum class VROCropAndScaleOption {
     CoreML_Fill,
@@ -51,6 +52,13 @@ public:
      */
     void setDampeningPeriodMs(double period);
     double getDampeningPeriodMs() const;
+    
+    /*
+     Get the dynamic crop box used for the last render.
+     */
+    CGRect getDynamicCropBox() const {
+        return _dynamicCropBoxViewport;
+    }
     
 private:
     
@@ -89,7 +97,7 @@ private:
      used for CoreML). Then we need to move from image space space into viewport space
      (inverting ARKit or similar display transforms).
      */
-    VROMatrix4f _transform;
+    VROMatrix4f _visionToImageSpace, _imageToViewportSpace;
     
     /*
      True when an image is being processed now.
@@ -142,6 +150,13 @@ private:
     double _dampeningPeriodMs;
     
     /*
+     The dynamic cropping window, which is updated each frame to form a bounding
+     box around the detected body.
+     */
+    CGRect _dynamicCropBox, _dynamicCropBoxViewport;
+    std::shared_ptr<VROOneEuroFilterF> _dynamicCropXFilter, _dynamicCropYFilter, _dynamicCropWidthFilter, _dynamicCropHeightFilter;
+    
+    /*
      Move to track the next image, if one is available.
      */
     void nextImage();
@@ -166,14 +181,24 @@ private:
     
     /*
      Converts the heatmap output from the given CoreML MLMultiArray into body joints in screen
-     coordinates. The given transform goes from vision space [0, 1] to normalized viewport space [0, 1].
+     coordinates. The given transforms go from vision space [0, 1] to image space [0, 1], to
+     normalized viewport space [0, 1].
      */
-    static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition, VROMatrix4f transform);
+    static VROPoseFrame convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition,
+                                       VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                       std::pair<VROVector3f, float> *outImageSpaceJoints);
     
     /*
-     Perform a crop and pad of the given image and return the result.
+     Perform a crop and pad of the given image using the dynamic crop box,
+     and return the result.
      */
-    CVPixelBufferRef performCropAndPad(CVPixelBufferRef image, int cropX, int cropY, int cropWidth, int cropHeight);
+    CVPixelBufferRef performCropAndPad(CVPixelBufferRef image, float *outCropX, float *outCropY,
+                                       float *outCropWidth, float *outCropHeight);
+    
+    /*
+     Derive the full body bounds from the given pose.
+     */
+    CGRect deriveBounds(const std::pair<VROVector3f, float> *imageSpaceJoints);
     
     /*
      Update and get FPS.

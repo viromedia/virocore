@@ -147,10 +147,14 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
         }
     }
     
+    std::shared_ptr<VROBodyTrackeriOS> tracker = std::dynamic_pointer_cast<VROBodyTrackeriOS>(_bodyTracker);
+
+    [_drawDelegate setDynamicCropBox:tracker->getDynamicCropBox()];
     [_drawDelegate setBoxes:boxes];
     [_drawDelegate setLabels:labels positions:labelPositions];
     [_drawDelegate setColors:colors];
     [_drawDelegate setConfidences:confidences];
+    [_drawDelegate setViewWidth:viewWidth height:viewHeight];
 #endif
 }
 
@@ -161,12 +165,14 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
     std::vector<VROBoundingBox> _boxes;
     std::vector<UIColor *> _colors;
     std::vector<float> _confidences;
+    CGRect _dynamicCropBox;
+    int _viewWidth, _viewHeight;
 }
 
 - (id)init {
     self = [super init];
     if (self) {
-        
+        _dynamicCropBox = CGRectNull;
     }
     return self;
 }
@@ -179,6 +185,14 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
     CGContextSetRGBStrokeColor(context, 0, 1, 0, 1);
     CGContextSetLineWidth(context, 3);
     
+    if (!CGRectIsNull(_dynamicCropBox)) {
+        CGFloat red = 0.0, green = 1.0, blue = 0.0, alpha = 1.0;
+        CGContextSetRGBStrokeColor(context, red, green, blue, alpha);
+        
+        CGContextAddRect(context, CGRectApplyAffineTransform(_dynamicCropBox, CGAffineTransformMakeScale(_viewWidth, _viewHeight)));
+        CGContextStrokePath(context);
+    }
+    
     if (_confidences.size() > 0) {
         for (std::pair<int, int> boneIndices : kSkeleton) {
             if (_confidences[boneIndices.first] < kConfidenceThreshold ||
@@ -186,7 +200,7 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
                 continue;
             }
             
-            CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha =0.0;
+            CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
             [_colors[boneIndices.first] getRed:&red green:&green blue:&blue alpha:&alpha];
             CGContextSetRGBStrokeColor(context, red, green, blue, 1);
             
@@ -233,6 +247,13 @@ void VROBodyRecognitionTest::onBodyJointsFound(const VROPoseFrame &joints) {
 }
 - (void)setConfidences:(std::vector<float>)confidences {
     _confidences = confidences;
+}
+- (void)setDynamicCropBox:(CGRect)box {
+    _dynamicCropBox = box;
+}
+- (void)setViewWidth:(int)width height:(int)height {
+    _viewWidth = width;
+    _viewHeight = height;
 }
 
 @end

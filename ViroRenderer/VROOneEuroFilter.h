@@ -66,4 +66,42 @@ private:
     double computeAlpha(double cutoff);
 };
 
+// -----------------------------------------------------------------
+
+class LowPassFilterF {
+public:
+    LowPassFilterF(double alpha, float initval = 0);
+    
+    float filter(float value, double alpha);
+    bool hasLastRawValue(void) const { return _initialized; }
+    float getLastRawValue(void) const { return _lastRaw; }
+    
+private:
+    float _lastRaw, _lastFiltered;
+    double _alpha;
+    bool _initialized;
+};
+
+// -----------------------------------------------------------------
+
+class VROOneEuroFilterF {
+public:
+    
+    VROOneEuroFilterF(double freq, double mincutoff = 1.0, double beta_ = 0.0, double dcutoff = 1.0);
+    ~VROOneEuroFilterF();
+    
+    float filter(float value, double timestamp, bool debug = false);
+    
+private:
+    double _frequency;
+    double _minFrequencyCutoff;
+    double _beta;
+    double _derivativeCutoff;
+    LowPassFilterF *_x;
+    LowPassFilterF *_dx;
+    double _lastTimestamp;
+    
+    double computeAlpha(double cutoff);
+};
+
 #endif /* VROOneEuroFilter_h */

@@ -21,6 +21,7 @@
 #include "VROPoseFilterLowPass.h"
 #include "VROPoseFilterBoneDistance.h"
 #include "VROPoseFilterEuro.h"
+#include "VROOneEuroFilter.h"
 
 #define HOURGLASS_2_1 1
 #define HOURGLASS_2_1_T_DS 2
@@ -46,6 +47,13 @@ static const int kVisionImageSize = 256;
 // frames to the Photo Library, for debubbing.
 static bool kDebugCropAndPadResult = false;
 static const int kDebugCropAndPadResultFrame = 30;
+
+// Parameterization for the One Euro filter used when dynamic cropping.
+static const double kCropEuroFilterFrequency = 60;
+static const double kCropEuroFilterDCutoff = 1;
+static const double kCropEuroFilterBeta = 1.0;
+static const double kCropEuroFilterFCMin = 1.7;
+static const double kCropPaddingMultiplier = 0.1;
 
 static const bool kBodyTrackerDiscardPelvisAndThorax = false;
 
@@ -115,6 +123,16 @@ VROBodyTrackeriOS::VROBodyTrackeriOS() {
     _nextImage = nil;
     _cropScratchBuffer = nil;
     _cropScratchBufferLength = 0;
+    
+    _dynamicCropBox = CGRectNull;
+    _dynamicCropXFilter = std::make_shared<VROOneEuroFilterF>(kCropEuroFilterFrequency, kCropEuroFilterFCMin,
+                                                              kCropEuroFilterBeta, kCropEuroFilterDCutoff);
+    _dynamicCropYFilter = std::make_shared<VROOneEuroFilterF>(kCropEuroFilterFrequency, kCropEuroFilterFCMin,
+                                                              kCropEuroFilterBeta, kCropEuroFilterDCutoff);
+    _dynamicCropWidthFilter = std::make_shared<VROOneEuroFilterF>(kCropEuroFilterFrequency, kCropEuroFilterFCMin,
+                                                                  kCropEuroFilterBeta, kCropEuroFilterDCutoff);
+    _dynamicCropHeightFilter = std::make_shared<VROOneEuroFilterF>(kCropEuroFilterFrequency, kCropEuroFilterFCMin,
+                                                                   kCropEuroFilterBeta, kCropEuroFilterDCutoff);
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
@@ -194,7 +212,8 @@ double VROBodyTrackeriOS::getDampeningPeriodMs() const {
 }
 
 VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition,
-                                               VROMatrix4f transform) {
+                                               VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                               std::pair<VROVector3f, float> *outImageSpaceJoints) {
     if (heatmap.shape.count < 3) {
         return {};
     }
@@ -259,12 +278,17 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROCameraP
         if (joint.getConfidence() > 0) {
             VROVector3f    tilePoint  = { (float) joint.getTileX(), (float) joint.getTileY() };
             
-            // Convert tile indices to normalized camera image coordinates [0, 1]
-            VROVector3f imagePoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
-                                       (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
+            // Convert tile indices to vision coordinates [0, 1]
+            VROVector3f visionPoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
+                                        (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
             
             // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
-            VROVector3f viewportPoint = transform.multiply(imagePoint);
+            VROVector3f imagePoint = visionToImageSpace.multiply(visionPoint);
+            VROVector3f viewportPoint = imageToViewportSpace.multiply(imagePoint);
+            
+            // Store the image points for bounding box computation
+            outImageSpaceJoints[(int) joint.getType()].first = imagePoint;
+            outImageSpaceJoints[(int) joint.getType()].second = joint.getConfidence();
             
             // Mirror the X dimension if we're using the front-facing camera
             if (cameraPosition == VROCameraPosition::Front) {
@@ -392,6 +416,7 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     
     float width = (float) CVPixelBufferGetWidth(image);
     float height = (float) CVPixelBufferGetHeight(image);
+    bool needsRelease = false;
     
     // Derive the toViewport matrix, which moves coordinates from image space
     // to viewport space.
@@ -454,24 +479,37 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         toImage[12] = (1 - height / width) / 2.0;
     }
     else if (_cropAndScaleOption == VROCropAndScaleOption::Viro_FitCropPad) {
-        int cropWidth = width;
-        int cropHeight = height;
-        image = performCropAndPad(image, 0, 0, cropWidth, cropHeight);
+        float cropX, cropY, cropWidth, cropHeight;
+        image = performCropAndPad(image, &cropX, &cropY, &cropWidth, &cropHeight);
+        needsRelease = true;
         
-        // Derive the inverse transform for the crop
+        // Derive the transform from vision space to *cropped* image space.
+        // This is similar logic to CoreML_Fit.
+        VROMatrix4f visionToCroppedImage;
         if (cropWidth > cropHeight) {
             // Add top and bottom bars
-            toImage[5] = width / height;
-            toImage[13] = (1 - width / height) / 2.0;
+            visionToCroppedImage[5] = cropWidth / cropHeight;
+            visionToCroppedImage[13] = (1 - cropWidth / cropHeight) / 2.0;
         } else {
             // Add left and right bars
-            toImage[0] = height / width;
-            toImage[12] = (1 - height / width) / 2.0;
+            visionToCroppedImage[0] = cropHeight / cropWidth;
+            visionToCroppedImage[12] = (1 - cropHeight / cropWidth) / 2.0;
         }
+        
+        // Then derive the transform from cropped image space to original
+        // image space.
+        VROMatrix4f croppedImageToImage;
+        croppedImageToImage[0] = cropWidth / width;
+        croppedImageToImage[5] = cropHeight / height;
+        croppedImageToImage[12] = cropX / width;
+        croppedImageToImage[13] = cropY / height;
+        
+        // Finally concatenate to get the vision to image transform.
+        toImage = croppedImageToImage.multiply(visionToCroppedImage);
     }
     
-    // The final transform goes from Vision space --> Image space --> Viewport space
-    _transform = toViewport.multiply(toImage);
+    _visionToImageSpace = toImage;
+    _imageToViewportSpace = toViewport;
     _startNeural = VROTimeCurrentMillis();
     
     // By wrapping the CVPixelBuffer in a CIImage, iOS will automatically convert from
@@ -481,6 +519,10 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
                                                                         orientation:orientation
                                                                             options:visionOptions];
     [handler performRequests:@[_visionRequest] error:nil];
+    
+    if (needsRelease) {
+        CVBufferRelease(image);
+    }
 }
 
 // Invoked on the _visionQueue
@@ -493,7 +535,17 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     
     VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
     MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
-    VROPoseFrame joints = convertHeatmap(heatmap, _cameraPosition, _transform);
+    
+    std::pair<VROVector3f, float> imageSpaceJoints[kNumBodyJoints];
+    VROPoseFrame joints = convertHeatmap(heatmap, _cameraPosition, _visionToImageSpace, _imageToViewportSpace, imageSpaceJoints);
+    _dynamicCropBox = deriveBounds(imageSpaceJoints);
+    
+    CGAffineTransform imageToViewport = CGAffineTransformMake(_imageToViewportSpace[0], _imageToViewportSpace[1], _imageToViewportSpace[4],
+                                                              _imageToViewportSpace[5], _imageToViewportSpace[12], _imageToViewportSpace[13]);
+    _dynamicCropBoxViewport = CGRectApplyAffineTransform(_dynamicCropBox, imageToViewport);
+    if (_cameraPosition == VROCameraPosition::Front) {
+        _dynamicCropBoxViewport.origin.x = 1.0 - _dynamicCropBoxViewport.size.width - _dynamicCropBoxViewport.origin.x;
+    }
     
 #if VRO_PROFILE_NEURAL_ENGINE
     NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);
@@ -532,8 +584,23 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
 
 static int debugCropAndPadCurrentFrame = 0;
 CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
-                                                      int cropX, int cropY, int cropWidth, int cropHeight) {
-    int bufferSize = (int) CVPixelBufferGetWidth(image) * (int) CVPixelBufferGetHeight(image) * 4;
+                                                      float *outCropX, float *outCropY,
+                                                      float *outCropWidth, float *outCropHeight) {
+    
+    size_t width = CVPixelBufferGetWidth(image);
+    size_t height = CVPixelBufferGetHeight(image);
+    
+    if (CGRectIsNull(_dynamicCropBox)) {
+        *outCropWidth = (float) width;
+        *outCropHeight = (float) height;
+        
+        // This method either returns a +1 retained pixelbuffer, or a new
+        // pixelbuffer entirely
+        CVBufferRetain(image);
+        return image;
+    }
+    
+    int bufferSize = (int) width * (int) height * 4;
     if (_cropScratchBuffer == nullptr || _cropScratchBufferLength < bufferSize) {
         pinfo("Creating new crop scratch buffer of size %d", bufferSize);
         if (_cropScratchBuffer != nullptr) {
@@ -543,7 +610,12 @@ CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
         _cropScratchBufferLength = bufferSize;
     }
     
-    CVPixelBufferRef cropped = VROImagePreprocessor::cropAndResize(image, cropX, cropY, cropWidth, cropHeight,
+    *outCropX = _dynamicCropBox.origin.x * (float) width;
+    *outCropY = _dynamicCropBox.origin.y * (float) height;
+    *outCropWidth = _dynamicCropBox.size.width * (float) width;
+    *outCropHeight = _dynamicCropBox.size.height * (float) height;
+    
+    CVPixelBufferRef cropped = VROImagePreprocessor::cropAndResize(image, *outCropX, *outCropY, *outCropWidth, *outCropHeight,
                                                                    kVisionImageSize, _cropScratchBuffer);
     if (kDebugCropAndPadResult) {
         if (debugCropAndPadCurrentFrame == kDebugCropAndPadResultFrame) {
@@ -553,6 +625,45 @@ CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
         ++debugCropAndPadCurrentFrame;
     }
     return cropped;
+}
+
+CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imageSpaceJoints) {
+    std::vector<std::vector<VROInferredBodyJoint>> VROPoseFrame;
+    
+    float minX = FLT_MAX, maxX = -FLT_MAX, minY = FLT_MAX, maxY = -FLT_MAX;
+    int numJointsFound = 0;
+    
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        if (imageSpaceJoints[i].second > kConfidenceThreshold) {
+            numJointsFound++;
+        
+            VROVector3f position = imageSpaceJoints[i].first;
+            minX = std::min(minX, position.x);
+            minY = std::min(minY, position.y);
+            maxX = std::max(maxX, position.x);
+            maxY = std::max(maxY, position.y);
+        }
+    }
+    
+    if (numJointsFound < 6) {
+        pinfo("Not enough joints found for bounding box computation");
+        return CGRectNull;
+    }
+    
+    double timestamp = VROTimeCurrentMillis() / 1000.0;
+
+    float x = _dynamicCropXFilter->filter(minX, timestamp);
+    float y = _dynamicCropYFilter->filter(minY, timestamp);
+    float width = _dynamicCropWidthFilter->filter(maxX - minX, timestamp);
+    float height = _dynamicCropHeightFilter->filter(maxY - minY, timestamp);
+    
+    x -= width * kCropPaddingMultiplier;
+    y -= height * kCropPaddingMultiplier;
+    width *= (1 + 2 * kCropPaddingMultiplier);
+    height *= (1 + 2 * kCropPaddingMultiplier);
+
+    pinfo("Filtered X %f, Y %f, width %f, height %f", minX, minY, maxX - minX, maxY - minY);
+    return CGRectMake(x, y, width, height);
 }
 
 void VROBodyTrackeriOS::updateFPS(uint64_t newTick) {

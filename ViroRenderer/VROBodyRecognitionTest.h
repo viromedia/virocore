@@ -26,6 +26,8 @@
 - (void)setBoxes:(std::vector<VROBoundingBox>)boxes;
 - (void)setColors:(std::vector<UIColor *>)colors;
 - (void)setConfidences:(std::vector<float>)confidences;
+- (void)setDynamicCropBox:(CGRect)box;
+- (void)setViewWidth:(int)width height:(int)height;
 @end
 
 #endif
