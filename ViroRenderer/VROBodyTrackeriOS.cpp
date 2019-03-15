@@ -646,7 +646,7 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
     }
     
     if (numJointsFound < 6) {
-        pinfo("Not enough joints found for bounding box computation");
+        //pinfo("Not enough joints found for bounding box computation");
         return CGRectNull;
     }
     
@@ -662,7 +662,7 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
     width *= (1 + 2 * kCropPaddingMultiplier);
     height *= (1 + 2 * kCropPaddingMultiplier);
 
-    pinfo("Filtered X %f, Y %f, width %f, height %f", minX, minY, maxX - minX, maxY - minY);
+    //pinfo("Filtered X %f, Y %f, width %f, height %f", minX, minY, maxX - minX, maxY - minY);
     return CGRectMake(x, y, width, height);
 }
 
