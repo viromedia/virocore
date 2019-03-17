@@ -42,8 +42,8 @@ public:
      original image: image_width * image_height * bytes_per_pixel. If NULL, a scratch buffer
      will be allocated and deallocated (slow).
      */
-    static CVPixelBufferRef cropAndResize(CVPixelBufferRef image, float cropX, float cropY,
-                                          float cropWidth, float cropHeight, float size,
+    static CVPixelBufferRef cropAndResize(CVPixelBufferRef image, int cropX, int cropY,
+                                          int cropWidth, int cropHeight, int size,
                                           uint8_t *scratchBuffer);
     
     /*
@@ -51,8 +51,8 @@ public:
      
      TODO: not working.
      */
-    static CVPixelBufferRef cropAndResizeCI(CVPixelBufferRef image, float cropX, float cropY,
-                                          float cropWidth, float cropHeight, float size);
+    static CVPixelBufferRef cropAndResizeCI(CVPixelBufferRef image, int cropX, int cropY,
+                                            int cropWidth, int cropHeight, int size);
     
     /*
      Write the given image to the photos album. This is for debugging purposes.

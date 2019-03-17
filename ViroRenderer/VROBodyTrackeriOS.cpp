@@ -9,6 +9,7 @@
 #include "VROBodyTrackeriOS.h"
 #include "VROLog.h"
 #include "VROTime.h"
+#include "VROMath.h"
 #include <Accelerate/Accelerate.h>
 #include "VROImagePreprocessor.h"
 #include "VRODriverOpenGLiOS.h"
@@ -53,7 +54,7 @@ static const double kCropEuroFilterFrequency = 60;
 static const double kCropEuroFilterDCutoff = 1;
 static const double kCropEuroFilterBeta = 1.0;
 static const double kCropEuroFilterFCMin = 1.7;
-static const double kCropPaddingMultiplier = 0.1;
+static const double kCropPaddingMultiplier = 0.15;
 
 static const bool kBodyTrackerDiscardPelvisAndThorax = false;
 
@@ -479,7 +480,7 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         toImage[12] = (1 - height / width) / 2.0;
     }
     else if (_cropAndScaleOption == VROCropAndScaleOption::Viro_FitCropPad) {
-        float cropX, cropY, cropWidth, cropHeight;
+        int cropX, cropY, cropWidth, cropHeight;
         image = performCropAndPad(image, &cropX, &cropY, &cropWidth, &cropHeight);
         needsRelease = true;
         
@@ -487,22 +488,26 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         // This is similar logic to CoreML_Fit.
         VROMatrix4f visionToCroppedImage;
         if (cropWidth > cropHeight) {
+            float scale = (float) cropWidth / (float) cropHeight;
+            
             // Add top and bottom bars
-            visionToCroppedImage[5] = cropWidth / cropHeight;
-            visionToCroppedImage[13] = (1 - cropWidth / cropHeight) / 2.0;
+            visionToCroppedImage[5] = scale;
+            visionToCroppedImage[13] = (1 - scale) / 2.0;
         } else {
+            float scale = (float) cropHeight / (float) cropWidth;
+
             // Add left and right bars
-            visionToCroppedImage[0] = cropHeight / cropWidth;
-            visionToCroppedImage[12] = (1 - cropHeight / cropWidth) / 2.0;
+            visionToCroppedImage[0] = scale;
+            visionToCroppedImage[12] = (1 - scale) / 2.0;
         }
         
         // Then derive the transform from cropped image space to original
         // image space.
         VROMatrix4f croppedImageToImage;
-        croppedImageToImage[0] = cropWidth / width;
-        croppedImageToImage[5] = cropHeight / height;
-        croppedImageToImage[12] = cropX / width;
-        croppedImageToImage[13] = cropY / height;
+        croppedImageToImage[0] = (float) cropWidth / width;
+        croppedImageToImage[5] = (float) cropHeight / height;
+        croppedImageToImage[12] = (float) cropX / width;
+        croppedImageToImage[13] = (float) cropY / height;
         
         // Finally concatenate to get the vision to image transform.
         toImage = croppedImageToImage.multiply(visionToCroppedImage);
@@ -584,8 +589,8 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
 
 static int debugCropAndPadCurrentFrame = 0;
 CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
-                                                      float *outCropX, float *outCropY,
-                                                      float *outCropWidth, float *outCropHeight) {
+                                                      int *outCropX, int *outCropY,
+                                                      int *outCropWidth, int *outCropHeight) {
     
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
@@ -610,17 +615,24 @@ CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
         _cropScratchBufferLength = bufferSize;
     }
     
-    *outCropX = _dynamicCropBox.origin.x * (float) width;
-    *outCropY = _dynamicCropBox.origin.y * (float) height;
-    *outCropWidth = _dynamicCropBox.size.width * (float) width;
-    *outCropHeight = _dynamicCropBox.size.height * (float) height;
+    *outCropX = _dynamicCropBox.origin.x * width;
+    *outCropY = _dynamicCropBox.origin.y * height;
+    *outCropWidth = _dynamicCropBox.size.width * width;
+    *outCropHeight = _dynamicCropBox.size.height * height;
+    
+    *outCropX = clamp(*outCropX, 0, width);
+    *outCropY = clamp(*outCropY, 0, height);
+    *outCropWidth  = clamp(*outCropWidth, 0, (int) CVPixelBufferGetWidth(image)  - *outCropX);
+    *outCropHeight = clamp(*outCropHeight, 0, (int) CVPixelBufferGetHeight(image) - *outCropY);
     
     CVPixelBufferRef cropped = VROImagePreprocessor::cropAndResize(image, *outCropX, *outCropY, *outCropWidth, *outCropHeight,
                                                                    kVisionImageSize, _cropScratchBuffer);
     if (kDebugCropAndPadResult) {
-        if (debugCropAndPadCurrentFrame == kDebugCropAndPadResultFrame) {
-            VROImagePreprocessor::writeImageToPhotos(image);
-            VROImagePreprocessor::writeImageToPhotos(cropped);
+        if (debugCropAndPadCurrentFrame >= kDebugCropAndPadResultFrame &&
+            debugCropAndPadCurrentFrame < kDebugCropAndPadResultFrame + 1) {
+
+            VROImagePreprocessor::writeImageToPhotos(VROImagePreprocessor::convertYCbCrToRGB(image));
+            VROImagePreprocessor::writeImageToPhotos(VROImagePreprocessor::convertYCbCrToRGB(cropped));
         }
         ++debugCropAndPadCurrentFrame;
     }
@@ -631,22 +643,24 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
     std::vector<std::vector<VROInferredBodyJoint>> VROPoseFrame;
     
     float minX = FLT_MAX, maxX = -FLT_MAX, minY = FLT_MAX, maxY = -FLT_MAX;
+    std::vector<bool> jointsFound(kNumBodyJoints, false);
     int numJointsFound = 0;
     
     for (int i = 0; i < kNumBodyJoints; i++) {
         if (imageSpaceJoints[i].second > kConfidenceThreshold) {
-            numJointsFound++;
+            ++numJointsFound;
         
             VROVector3f position = imageSpaceJoints[i].first;
             minX = std::min(minX, position.x);
             minY = std::min(minY, position.y);
             maxX = std::max(maxX, position.x);
             maxY = std::max(maxY, position.y);
+            
+            jointsFound[i] = true;
         }
     }
     
     if (numJointsFound < 6) {
-        //pinfo("Not enough joints found for bounding box computation");
         return CGRectNull;
     }
     
@@ -661,8 +675,12 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
     y -= height * kCropPaddingMultiplier;
     width *= (1 + 2 * kCropPaddingMultiplier);
     height *= (1 + 2 * kCropPaddingMultiplier);
-
-    //pinfo("Filtered X %f, Y %f, width %f, height %f", minX, minY, maxX - minX, maxY - minY);
+    
+    // Expand the crop box in the direction of unfound joints, to increase the chance of them
+    // being found in the next frame
+    if (!jointsFound[(int) VROBodyJointType::LeftAnkle] && !jointsFound[(int) VROBodyJointType::RightAnkle]) {
+        height = 1.0 - y;
+    }
     return CGRectMake(x, y, width, height);
 }
 

@@ -192,8 +192,8 @@ private:
      Perform a crop and pad of the given image using the dynamic crop box,
      and return the result.
      */
-    CVPixelBufferRef performCropAndPad(CVPixelBufferRef image, float *outCropX, float *outCropY,
-                                       float *outCropWidth, float *outCropHeight);
+    CVPixelBufferRef performCropAndPad(CVPixelBufferRef image, int *outCropX, int *outCropY,
+                                       int *outCropWidth, int *outCropHeight);
     
     /*
      Derive the full body bounds from the given pose.

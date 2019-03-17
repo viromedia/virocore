@@ -142,9 +142,8 @@ void VROImagePreprocessor::writeImageToPhotos(CVPixelBufferRef image) {
     UIImageWriteToSavedPhotosAlbum(finalImage, nil, nil, nil);
 }
 
-CVPixelBufferRef VROImagePreprocessor::cropAndResize(CVPixelBufferRef pixelBuffer, float cropX, float cropY,
-                                                     float cropWidth, float cropHeight, float size, uint8_t *scratchBuffer) {
-    
+CVPixelBufferRef VROImagePreprocessor::cropAndResize(CVPixelBufferRef pixelBuffer, int cropX, int cropY,
+                                                     int cropWidth, int cropHeight, int size, uint8_t *scratchBuffer) {
     CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     
     uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
@@ -156,8 +155,8 @@ CVPixelBufferRef VROImagePreprocessor::cropAndResize(CVPixelBufferRef pixelBuffe
      */
     vImage_Buffer cropped;
     cropped.data = baseAddress + offset;
-    cropped.height = vImagePixelCount(cropHeight);
-    cropped.width = vImagePixelCount(cropWidth);
+    cropped.height = (vImagePixelCount) cropHeight;
+    cropped.width = (vImagePixelCount) cropWidth;
     cropped.rowBytes = bytesPerRow;
     
     /*
@@ -171,15 +170,15 @@ CVPixelBufferRef VROImagePreprocessor::cropAndResize(CVPixelBufferRef pixelBuffe
      */
     vImage_Buffer resized;
     resized.data = resizedData;
-    resized.height = vImagePixelCount(size);
-    resized.width = vImagePixelCount(size);
+    resized.height = (vImagePixelCount) size;
+    resized.width = (vImagePixelCount) size;
     resized.rowBytes = resizedBytesPerRow;
     
     /*
      Derive the scale transform required to maintain aspect ratio (fit the long
      side, and pad the short side into the center).
      */
-    float scale = size / fmax(cropWidth, cropHeight);
+    float scale = (float) size / (float) fmax(cropWidth, cropHeight);
     vImage_AffineTransform transform;
     transform.a = scale;
     transform.b = 0;
@@ -219,8 +218,8 @@ CVPixelBufferRef VROImagePreprocessor::cropAndResize(CVPixelBufferRef pixelBuffe
     return resizedPixelBuffer;
 }
 
-CVPixelBufferRef VROImagePreprocessor::cropAndResizeCI(CVPixelBufferRef pixelBuffer, float cropX, float cropY,
-                                                       float cropWidth, float cropHeight, float size) {
+CVPixelBufferRef VROImagePreprocessor::cropAndResizeCI(CVPixelBufferRef pixelBuffer, int cropX, int cropY,
+                                                       int cropWidth, int cropHeight, int size) {
     CIImage *image = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer];
     image = [image imageByCroppingToRect:CGRectMake(cropX, cropY, cropWidth, cropHeight)];
     
