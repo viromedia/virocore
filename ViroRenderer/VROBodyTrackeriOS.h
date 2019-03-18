@@ -29,10 +29,11 @@ class VROPoseFilter;
 class VROOneEuroFilterF;
 
 enum class VROCropAndScaleOption {
-    CoreML_Fill,
-    CoreML_Fit,
-    CoreML_FitCrop,
-    Viro_FitCropPad,
+    CoreML_Fill,               // Use CoreML's non-aspect-preserving fill scaling
+    CoreML_Fit,                // CoreML's aspect-fit (fit long edge of image)
+    CoreML_FitCrop,            // CoreML's aspect-fit-crop (fit short edge of image, center-crop long edge)
+    Viro_FitCropPad,           // Use dynamic cropping through manual image cropping, and aspect-fit (fit long edge)
+    Viro_RegionOfInterest,     // Use dynamic cropping through CoreML's region of interest, and aspect-fit (fit long edge)
 };
 
 class API_AVAILABLE(ios(11.0)) VROBodyTrackeriOS : public VROBodyTracker {
@@ -196,7 +197,9 @@ private:
                                        int *outCropWidth, int *outCropHeight);
     
     /*
-     Derive the full body bounds from the given pose.
+     Derive the full body bounds from the given pose. This will be used as the dynamic crop
+     box for the next frame. The bounds are expanded in directions where joints were not found,
+     to leave room for finding them in successive frames.
      */
     CGRect deriveBounds(const std::pair<VROVector3f, float> *imageSpaceJoints);
     

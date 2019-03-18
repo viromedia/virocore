@@ -54,7 +54,9 @@ static const double kCropEuroFilterFrequency = 60;
 static const double kCropEuroFilterDCutoff = 1;
 static const double kCropEuroFilterBeta = 1.0;
 static const double kCropEuroFilterFCMin = 1.7;
-static const double kCropPaddingMultiplier = 0.15;
+
+static const double kCropPaddingMultiplierX = 0.25;
+static const double kCropPaddingMultiplierY = 0.10;
 
 static const bool kBodyTrackerDiscardPelvisAndThorax = false;
 
@@ -171,7 +173,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
     }
 
     _cameraPosition = position;
-    _cropAndScaleOption = VROCropAndScaleOption::CoreML_FitCrop;
+    _cropAndScaleOption = VROCropAndScaleOption::Viro_RegionOfInterest;
     
     _coreMLModel =  [VNCoreMLModel modelForMLModel:_model error:nil];
     _visionRequest = [[VNCoreMLRequest alloc] initWithModel:_coreMLModel
@@ -189,10 +191,16 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
         case VROCropAndScaleOption::CoreML_FitCrop:
             _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
             break;
-        default:
+        case VROCropAndScaleOption::Viro_FitCropPad:
             // For Viro cropping, disable CoreML's cropping and scaling by setting it to ScaleFill
+            // Note: this cropping does not yet work with the back-facing camera
             _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFill;
             break;
+        case VROCropAndScaleOption::Viro_RegionOfInterest:
+            _visionRequest.imageCropAndScaleOption = VNImageCropAndScaleOptionScaleFit;
+            break;
+        default:
+            pabort();
     }
     _poseFilter = std::make_shared<VROPoseFilterEuro>(kInitialDampeningPeriodMs, kConfidenceThreshold);
 
@@ -512,6 +520,58 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         // Finally concatenate to get the vision to image transform.
         toImage = croppedImageToImage.multiply(visionToCroppedImage);
     }
+    else if (_cropAndScaleOption == VROCropAndScaleOption::Viro_RegionOfInterest) {
+        float cropX, cropY, cropWidth, cropHeight;
+        
+        if (CGRectIsNull(_dynamicCropBox)) {
+            cropX = 0;
+            cropY = 0;
+            cropWidth = 1;
+            cropHeight = 1;
+        } else {
+            cropX = _dynamicCropBox.origin.x;
+            cropY = _dynamicCropBox.origin.y;
+            cropWidth  = _dynamicCropBox.size.width;
+            cropHeight = _dynamicCropBox.size.height;
+            
+            cropX = clamp(cropX, 0.001, .999);
+            cropY = clamp(cropY, 0.001, .999);
+            cropWidth  = clamp(cropWidth,  0, 0.999 - cropX);
+            cropHeight = clamp(cropHeight, 0, 0.999 - cropY);
+        }
+        
+        // Derive the transform from vision space to *cropped* image space.
+        // This is similar logic to CoreML_Fit.
+        VROMatrix4f visionToCroppedImage;
+        if (cropWidth > cropHeight) {
+            float scale = (float) (cropWidth * width) / (float) (cropHeight * height);
+            
+            // Add top and bottom bars
+            visionToCroppedImage[5] = scale;
+            visionToCroppedImage[13] = (1 - scale) / 2.0;
+        } else {
+            float scale = (float) (cropHeight * height) / (float) (cropWidth * width);
+            
+            // Add left and right bars
+            visionToCroppedImage[0] = scale;
+            visionToCroppedImage[12] = (1 - scale) / 2.0;
+        }
+        
+        // Then derive the transform from cropped image space to original
+        // image space.
+        VROMatrix4f croppedImageToImage;
+        croppedImageToImage[0] = cropWidth;
+        croppedImageToImage[5] = cropHeight;
+        croppedImageToImage[12] = cropX;
+        croppedImageToImage[13] = cropY;
+        
+        // Finally concatenate to get the vision to image transform.
+        toImage = croppedImageToImage.multiply(visionToCroppedImage);
+        
+        // Set the region of interest to teh crop region. The fabs is to prevent the value
+        // -0.000, which breaks CoreML.
+        _visionRequest.regionOfInterest = CGRectMake(cropX, fabs(1 - cropY - cropHeight), cropWidth, cropHeight);
+    }
     
     _visionToImageSpace = toImage;
     _imageToViewportSpace = toViewport;
@@ -596,8 +656,10 @@ CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
     size_t height = CVPixelBufferGetHeight(image);
     
     if (CGRectIsNull(_dynamicCropBox)) {
-        *outCropWidth = (float) width;
-        *outCropHeight = (float) height;
+        *outCropX = 0;
+        *outCropY = 0;
+        *outCropWidth  = (int) width;
+        *outCropHeight = (int) height;
         
         // This method either returns a +1 retained pixelbuffer, or a new
         // pixelbuffer entirely
@@ -622,15 +684,15 @@ CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
     
     *outCropX = clamp(*outCropX, 0, width);
     *outCropY = clamp(*outCropY, 0, height);
-    *outCropWidth  = clamp(*outCropWidth, 0, (int) CVPixelBufferGetWidth(image)  - *outCropX);
-    *outCropHeight = clamp(*outCropHeight, 0, (int) CVPixelBufferGetHeight(image) - *outCropY);
+    *outCropWidth  = clamp(*outCropWidth,  0, (int) width  - *outCropX);
+    *outCropHeight = clamp(*outCropHeight, 0, (int) height - *outCropY);
     
     CVPixelBufferRef cropped = VROImagePreprocessor::cropAndResize(image, *outCropX, *outCropY, *outCropWidth, *outCropHeight,
                                                                    kVisionImageSize, _cropScratchBuffer);
     if (kDebugCropAndPadResult) {
         if (debugCropAndPadCurrentFrame >= kDebugCropAndPadResultFrame &&
             debugCropAndPadCurrentFrame < kDebugCropAndPadResultFrame + 1) {
-
+            
             VROImagePreprocessor::writeImageToPhotos(VROImagePreprocessor::convertYCbCrToRGB(image));
             VROImagePreprocessor::writeImageToPhotos(VROImagePreprocessor::convertYCbCrToRGB(cropped));
         }
@@ -671,16 +733,32 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
     float width = _dynamicCropWidthFilter->filter(maxX - minX, timestamp);
     float height = _dynamicCropHeightFilter->filter(maxY - minY, timestamp);
     
-    x -= width * kCropPaddingMultiplier;
-    y -= height * kCropPaddingMultiplier;
-    width *= (1 + 2 * kCropPaddingMultiplier);
-    height *= (1 + 2 * kCropPaddingMultiplier);
+    x -= width * kCropPaddingMultiplierX;
+    y -= height * kCropPaddingMultiplierY;
+    width *= (1 + 2 * kCropPaddingMultiplierX);
+    height *= (1 + 2 * kCropPaddingMultiplierY);
     
     // Expand the crop box in the direction of unfound joints, to increase the chance of them
     // being found in the next frame
-    if (!jointsFound[(int) VROBodyJointType::LeftAnkle] && !jointsFound[(int) VROBodyJointType::RightAnkle]) {
-        height = 1.0 - y;
+    if (!jointsFound[(int) VROBodyJointType::LeftWrist] || !jointsFound[(int) VROBodyJointType::LeftAnkle]) {
+        float expansion = width * kCropPaddingMultiplierX;
+        width += expansion;
     }
+    if (!jointsFound[(int) VROBodyJointType::Top]) {
+        float expansion = height * kCropPaddingMultiplierY;
+        y -= expansion;
+        height += expansion;
+    }
+    if (!jointsFound[(int) VROBodyJointType::RightWrist] || !jointsFound[(int) VROBodyJointType::RightAnkle]) {
+        float expansion = width * kCropPaddingMultiplierX;
+        x -= expansion;
+        width += expansion;
+    }
+    if (!jointsFound[(int) VROBodyJointType::LeftAnkle] && !jointsFound[(int) VROBodyJointType::RightAnkle]) {
+        float expansion = height * 4 * kCropPaddingMultiplierY;
+        height += expansion;
+    }
+
     return CGRectMake(x, y, width, height);
 }
 
