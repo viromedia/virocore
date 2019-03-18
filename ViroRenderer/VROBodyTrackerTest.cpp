@@ -14,7 +14,7 @@
 #include "VROInputControllerAR.h"
 #include "VROBillboardConstraint.h"
 #include "VROMatrix4f.h"
-#include "VROBodyTrackerController.h"
+#include "VROBodyIKController.h"
 #include "VROTypeface.h"
 #include "VROSkinner.h"
 #include "VROPencil.h"
@@ -90,7 +90,7 @@ void VROBodyTrackerTest::build(std::shared_ptr<VRORenderer> renderer,
 
 #if VRO_PLATFORM_IOS
     // Create body playback controller for recording.
-    _bodyPlaybackController = std::make_shared<VROBodyTrackerController>(renderer, driver, _arScene->getRootNode());
+    _bodyPlaybackController = std::make_shared<VROBodyIKController>(renderer, driver, _arScene->getRootNode());
     _bodyPlaybackController->setDelegate(shared_from_this());
     std::shared_ptr<VROBodyPlayeriOS> bodyPlayeriOS = std::make_shared<VROBodyPlayeriOS>();
     bodyPlayeriOS->setDelegate(_bodyPlaybackController);
@@ -153,7 +153,7 @@ void VROBodyTrackerTest::createNewBodyTracker() {
 
 void VROBodyTrackerTest::createNewBodyController() {
     // Create our bodyMLController and set register it as a VROBodyTrackerDelegate to VROBodyTracker
-    _bodyMLController = std::make_shared<VROBodyTrackerController>(_renderer, _driver, _arScene->getRootNode());
+    _bodyMLController = std::make_shared<VROBodyIKController>(_renderer, _driver, _arScene->getRootNode());
     _bodyMLController->setDelegate(shared_from_this());
     _bodyMLController->setDisplayDebugCubes(true);
 

@@ -15,8 +15,9 @@
 #include "VRODefines.h"
 #include "VROBodyTracker.h"
 #include "VROEventDelegate.h"
-#include "VROBodyTrackerController.h"
+#include "VROBodyIKController.h"
 #include "VROARSession.h"
+#include "VROBodyPlayer.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROAnimBodyDataiOS.h"
@@ -26,7 +27,7 @@
 class VROBodyTrackerTest : public VRORendererTest,
                            public VROEventDelegate,
                            public VROSceneController::VROSceneControllerDelegate,
-                           public VROBodyTrackerControllerDelegate,
+                           public VROBodyIKControllerDelegate,
                            public VROFrameListener,
                            public std::enable_shared_from_this<VROBodyTrackerTest> {
 public:
@@ -72,27 +73,7 @@ public:
         } else if (VROStringUtil::strcmpinsensitive(node->getTag(), "AutoCalibrate")) {
             _loadNewConfig = true;
         } else if(VROStringUtil::strcmpinsensitive(node->getTag(), "Record") && (clickState == ClickDown)) {
-            if(!_bodyMLController->isRecording()) {
-                pinfo("Starting recording");
-                _bodyMLController->startRecording();
-            }
-            else {
-                std::string jsonStringData = _bodyMLController->stopRecording();
-                pinfo("Stopping recording.");
-                // stop body tracking
-                _bodyTracker->stopBodyTracking();
-                // setDelagete to nil is currently only way to stop body tracking.
-                _bodyTracker->setDelegate(NULL);
-                _bodyPlaybackController->bindModel(_modelNodeNinja1);
-
-                _modelNodeNinja1->setScale(VROVector3f(0.05f, 0.05f, 0.05f));
-                _modelNodeNinja1->setPosition(VROVector3f(0.0f,0.0f, -.2f));
-                if (_bodyPlayer) {
-                    _bodyPlayer->loadAnimation(jsonStringData);
-                    _bodyPlayer->setLooping(true);
-                    _bodyPlayer->start();
-                }
-            }
+            
         } else if (VROStringUtil::strcmpinsensitive(node->getTag(), "Model") && (clickState == ClickDown)){
             pwarn("VROBodyTrackerTest : you have clicked the model.");
         }
@@ -122,8 +103,8 @@ private:
     std::shared_ptr<VRONode> _modelNode;
     std::shared_ptr<VROBodyTracker> _bodyTracker;
     std::shared_ptr<VROBodyPlayer> _bodyPlayer;
-    std::shared_ptr<VROBodyTrackerController> _bodyMLController;
-    std::shared_ptr<VROBodyTrackerController> _bodyPlaybackController;
+    std::shared_ptr<VROBodyIKController> _bodyMLController;
+    std::shared_ptr<VROBodyIKController> _bodyPlaybackController;
     std::shared_ptr<VROText> _trackingStateText;
     std::shared_ptr<VROSkinner> _skinner;
     std::shared_ptr<VRODriver> _driver;
