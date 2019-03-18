@@ -25,18 +25,16 @@ static const int kNumJointSegments = 16;
 static std::shared_ptr<VROShaderModifier> sPolylineShaderGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sPolylineShaderVertexModifier;
 
-std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float thickness) {
+std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float thickness,
+                                                         VROPolylineJoinStyle joinStyle) {
     std::vector<std::vector<VROVector3f>> paths;
     paths.push_back(path);
-    return createPolyline(paths, thickness);
+    return createPolyline(paths, thickness, joinStyle);
 }
 
-std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<std::vector<VROVector3f>> &paths, float thickness) {
-    std::vector<std::shared_ptr<VROGeometrySource>> sources;
-    std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    buildGeometry(paths, sources, elements);
-
-    std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements, thickness));
+std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<std::vector<VROVector3f>> &paths, float thickness,
+                                                          VROPolylineJoinStyle joinStyle) {
+    std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(paths, thickness, joinStyle));
 
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
@@ -54,11 +52,29 @@ VROPolyline::VROPolyline() {
     setMaterials({ material });
 }
 
+VROPolyline::VROPolyline(std::vector<std::vector<VROVector3f>> paths, float thickness, VROPolylineJoinStyle joinStyle) :
+    _thickness(thickness),
+    _paths(paths),
+    _joinStyle(joinStyle) {
+        
+    update();
+}
+
+void VROPolyline::setJoinStyle(VROPolylineJoinStyle joinStyle) {
+    _joinStyle = joinStyle;
+    update();
+}
+
 void VROPolyline::setPaths(std::vector<std::vector<VROVector3f>> &paths) {
+    _paths = paths;
+    update();
+}
+
+void VROPolyline::update() {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    buildGeometry(paths, sources, elements);
-
+    buildGeometry(_paths, _joinStyle, sources, elements);
+    
     setSources(sources);
     setElements(elements);
     updateBoundingBox();
@@ -155,6 +171,7 @@ VROVector3f VROPolyline::getLastPoint() const {
 }
 
 void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,
+                                VROPolylineJoinStyle joinStyle,
                                 std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                 std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
 
@@ -162,7 +179,7 @@ void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,
     size_t numVertices = 0;
     for (std::vector<VROVector3f> &path : paths) {
         if (!path.empty()) {
-            numVertices = numVertices + encodeLine(path, buffer);
+            numVertices = numVertices + encodeLine(path, joinStyle, buffer);
         }
     }
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) buffer.getData(), buffer.getPosition());
@@ -190,6 +207,7 @@ std::shared_ptr<VROGeometryElement> VROPolyline::buildElement(size_t numCorners)
 }
 
 size_t VROPolyline::encodeLine(const std::vector<VROVector3f> &path,
+                               VROPolylineJoinStyle joinStyle,
                                VROByteBuffer &outBuffer) {
     
     size_t numCorners = 0;
@@ -201,13 +219,20 @@ size_t VROPolyline::encodeLine(const std::vector<VROVector3f> &path,
         const VROVector3f &previousCoord = path[i - 1];
         const VROVector3f &currentCoord = path[i];
         
+        // Encode the start cap. The start of the path always features a round endcap.
+        // All other connections between segments depend on the join style.
+        if (i == 1 || joinStyle == VROPolylineJoinStyle::Round) {
+            numCorners += encodeCircularEndcap(previousCoord, lastSegment.ray(), true, true, outBuffer);
+        }
+        
+        // Encode the segment (quad) itself
         VROLineSegment nextSegment = VROLineSegment(previousCoord, currentCoord);
-        numCorners += encodeCircularEndcap(previousCoord, lastSegment.ray(), true, true, outBuffer);
         numCorners += encodeQuad(nextSegment, true, true, outBuffer);
         
         lastSegment = nextSegment;
     }
     
+    // The end of the segment always features a round endcap
     const VROVector3f &lastCoord = path.back();
     numCorners += encodeCircularEndcap(lastCoord, lastSegment.ray(), true, true, outBuffer);
     
