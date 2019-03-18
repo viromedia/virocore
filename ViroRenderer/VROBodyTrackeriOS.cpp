@@ -625,13 +625,11 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
             if (tracker && tracker->_isTracking) {
                 std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
                 if (delegate) {
-                    VROPoseFrame dampenedJoints = newPoseFrame();
-                    if (!_poseFilter) {
-                        dampenedJoints = joints;
+                    if (!tracker->_poseFilter) {
+                        delegate->onBodyJointsFound(joints);
                     } else {
-                        dampenedJoints = tracker->_poseFilter->filterJoints(joints);
+                        delegate->onBodyJointsFound(tracker->_poseFilter->filterJoints(joints));
                     }
-                    delegate->onBodyJointsFound(dampenedJoints);
                 }
             }
         });

@@ -802,7 +802,7 @@ void VROBodyIKController::projectJointsInto3DSpace(std::map<VROBodyJointType, VR
             float pointY = joint.second.getScreenCoords().y;
             bool success = performUnprojectionToPlane(pointX, pointY, hitTransform);
             if (!success) {
-                joint.second.clearPojectedTransform();
+                joint.second.clearProjectedTransform();
             } else {
                 joint.second.setProjectedTransform(hitTransform);
             }

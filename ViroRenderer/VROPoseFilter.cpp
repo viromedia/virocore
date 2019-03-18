@@ -24,21 +24,6 @@ float getCreationTime(const VROPoseFrame &frame) {
 VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
     VROPoseFrame newFrame = spatialFilter(_frames, _combinedFrame, frame);
     
-    // Update the frames vector, which contains all joints over time, organized
-    // by frame
-    _frames.push_back(newFrame);
-    
-    // Update the combined frame, which contains all joints over time, organized
-    // by joint type
-    for (int i = 0; i < kNumBodyJoints; i++) {
-        auto &kv = frame[i];
-        if (!kv.empty()) {
-            if (kv[0].getConfidence() > kConfidenceThreshold) {
-                _combinedFrame[i].push_back(kv[0]);
-            }
-        }
-    }
-    
     double windowEnd = VROTimeCurrentMillis();
     double windowStart = windowEnd - _trackingPeriodMs;
     
@@ -54,9 +39,25 @@ VROPoseFrame VROPoseFilter::filterJoints(const VROPoseFrame &frame) {
     
     // Remove old frames
     _frames.erase(std::remove_if(_frames.begin(), _frames.end(),
-                                [windowStart](VROPoseFrame &f) {
-                                    return getCreationTime(f) < windowStart;
-                                }),
-                 _frames.end());
+                                 [windowStart](VROPoseFrame &f) {
+                                     return getCreationTime(f) < windowStart;
+                                 }),
+                  _frames.end());
+    
+    // Update the frames vector, which contains all joints over time, organized
+    // by frame
+    _frames.push_back(newFrame);
+    
+    // Update the combined frame, which contains all joints over time, organized
+    // by joint type
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        auto &kv = frame[i];
+        if (!kv.empty()) {
+            if (kv[0].getConfidence() > kConfidenceThreshold) {
+                _combinedFrame[i].push_back(kv[0]);
+            }
+        }
+    }
+    
     return temporalFilter(_frames, _combinedFrame, newFrame);
 }

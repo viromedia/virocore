@@ -62,7 +62,7 @@ public:
         _projectedTransform = transform;
         _hasValidProjectedTransform = true;
     }
-    void clearPojectedTransform() {
+    void clearProjectedTransform() {
         _projectedTransform.toIdentity();
         _hasValidProjectedTransform = false;
     }

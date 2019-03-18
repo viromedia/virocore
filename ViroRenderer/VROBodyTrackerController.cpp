@@ -150,14 +150,7 @@ void VROBodyTrackerController::notifyOnJointUpdateDelegates() {
         
         jointsFiltered[jointPair.first] = filteredJoint;
     }
-
-    // Construct a map containing dampened ML positional joint data.
-    std::map<VROBodyJointType, VROVector3f> jointsDampened;
-    for (auto &mlJoint : _cachedModelJoints) {
-        jointsDampened[mlJoint.first] = mlJoint.second;
-    }
-
-    delegate->onJointUpdate(jointsFiltered, jointsDampened, {});
+    delegate->onJointUpdate(jointsFiltered, _cachedModelJoints, {});
 }
 
 void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
@@ -225,7 +218,7 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
         float pointY = joint.second.getScreenCoords().y;
         bool success = performUnprojectionToPlane(pointX, pointY, hitTransform);
         if (!success) {
-            joint.second.clearPojectedTransform();
+            joint.second.clearProjectedTransform();
         } else {
             joint.second.setProjectedTransform(hitTransform);
         }
