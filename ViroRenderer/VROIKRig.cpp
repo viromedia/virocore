@@ -35,7 +35,7 @@ VROIKRig::VROIKRig(std::shared_ptr<VRONode> root,
 
         if (endJoint == nullptr) {
             std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
-            effectorJoint->id = _allKnownIKJoints.size() + 1;
+            effectorJoint->id = (int) _allKnownIKJoints.size() + 1;
             effectorJoint->position = effectorNode.second->getWorldPosition();
             effectorJoint->syncNode = effectorNode.second;
             effectorJoint->syncBone = -1;
@@ -81,7 +81,7 @@ VROIKRig::VROIKRig(std::shared_ptr<VROSkeleton> skeleton,
         if (endJoint == nullptr) {
             VROMatrix4f boneTransform = skeleton->getCurrentBoneWorldTransform(endAffectorBoneId.second);
             std::shared_ptr<VROIKJoint> effectorJoint = std::make_shared<VROIKJoint>();
-            effectorJoint->id = _allKnownIKJoints.size() + 1;
+            effectorJoint->id = (int) _allKnownIKJoints.size() + 1;
             effectorJoint->position = boneTransform.extractTranslation();
             effectorJoint->syncNode = nullptr;
             effectorJoint->syncBone = endAffectorBoneId.second;
@@ -124,7 +124,7 @@ void VROIKRig::createSkeletalRigFromNodeTree(std::shared_ptr<VRONode> currentNod
     // Create an IKJoint from the given currentNode if we haven't yet done so.
     if (currentJoint == nullptr) {
         currentJoint = std::make_shared<VROIKJoint>();
-        currentJoint->id = _allKnownIKJoints.size() + 1;
+        currentJoint->id = (int) _allKnownIKJoints.size() + 1;
         currentJoint->position = currentNode->getWorldPosition();
         currentJoint->syncNode = currentNode;
         currentJoint->syncBone = -1;
@@ -232,7 +232,7 @@ void VROIKRig::createSkeletalRigFromSkeletalModel(int boneId) {
         VROMatrix4f boneTransform = _skeleton->getCurrentBoneWorldTransform(boneId);
         VROVector3f worldPos = boneTransform.extractTranslation();
         currentJoint = std::make_shared<VROIKJoint>();
-        currentJoint->id = _allKnownIKJoints.size() + 1;
+        currentJoint->id = (int) _allKnownIKJoints.size() + 1;
         currentJoint->position = worldPos;
         currentJoint->syncNode = nullptr;
         currentJoint->syncBone = boneId;
@@ -246,7 +246,7 @@ void VROIKRig::createSkeletalRigFromSkeletalModel(int boneId) {
 
         // Get all the child node for this current bone.
         std::vector<int> childBoneIds;
-        for(int i = 0; i < skeleton->getNumBones(); i ++) {
+        for(int i = 0; i < skeleton->getNumBones(); i++) {
             std::shared_ptr<VROBone> bone = skeleton->getBone(i);
             if (bone->getParentIndex() == boneId) {
                 childBoneIds.push_back(i);
@@ -461,7 +461,7 @@ void VROIKRig::formChains(std::shared_ptr<VROIKJoint> jointStart,
     currentChain->totalLength += d;
 
     // Move on to child nodes, if any.
-    int childCount = currentJoint->children.size();
+    int childCount = (int) currentJoint->children.size();
 
     // If we have no child, we have encountered a leaf in the graph.
     // Thus, finalize and add the chain with the last known branchNodeStart point.
@@ -622,7 +622,7 @@ void VROIKRig::processChainTreeTowardsRoot(std::shared_ptr<VROIKChain> &chain) {
         }
 
         centroidPosition = centroidPosition / chain->childChains.size();
-        int end = chain->chainJoints.size() -1;
+        int end = (int) chain->chainJoints.size() -1;
         chain->chainJoints[end]->position = centroidPosition;
     }
 
@@ -639,7 +639,7 @@ void VROIKRig::processChainTreeTowardsRoot(std::shared_ptr<VROIKChain> &chain) {
 void VROIKRig::processFABRIKChainNode(std::shared_ptr<VROIKChain> &chain,
                                       bool towardsRoot) {
     if (!towardsRoot) {
-        for (int i = 0; i <= chain->chainJoints.size() - 2; i ++) {
+        for (int i = 0; i <= chain->chainJoints.size() - 2; i++) {
             std::shared_ptr<VROIKJoint> &currentNode = chain->chainJoints[i];
             std::shared_ptr<VROIKJoint> &nextNode = chain->chainJoints[i + 1];
 
@@ -660,7 +660,7 @@ void VROIKRig::processFABRIKChainNode(std::shared_ptr<VROIKChain> &chain,
             nextNode->position = newPos;
         }
     } else {
-        for (int i = chain->chainJoints.size() - 1; i >= 1; i --) {
+        for (int i = (int) chain->chainJoints.size() - 1; i >= 1; i--) {
             std::shared_ptr<VROIKJoint> &currentNode = chain->chainJoints[i];
             std::shared_ptr<VROIKJoint> &nextNode = chain->chainJoints[i - 1];
 
@@ -811,7 +811,7 @@ void VROIKRig::syncResultPositionOnly(std::shared_ptr<VROIKJoint> joint) {
 }
 
 void VROIKRig::syncLockedJoint(std::shared_ptr<VROIKJoint> joint, VROMatrix4f parentTrans) {
-    for (int i = 0; i < joint->lockedJoints.size(); i ++) {
+    for (int i = 0; i < joint->lockedJoints.size(); i++) {
         std::shared_ptr<VROIKJoint> lockedJoint = joint->lockedJoints[i];
         VROMatrix4f localTrans = joint->lockedJointLocalTransforms[i];
         VROMatrix4f finalTrans = parentTrans * localTrans;

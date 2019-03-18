@@ -324,7 +324,7 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
     const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
     if (instancedUBO != nullptr) {
         int numberOfDraws = instancedUBO->getNumberOfDrawCalls();
-        for (int i = 0; i < numberOfDraws; i ++) {
+        for (int i = 0; i < numberOfDraws; i++) {
             int instances = instancedUBO->bindDrawData(i);
             GL( glDrawElementsInstanced(element.primitiveType, element.indexCount, element.indexType, 0, instances) );
         }

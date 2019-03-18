@@ -221,7 +221,7 @@ void VROInputControllerBase::processDragging(int source) {
     }
 
     // Only calculate drag-to node positions for nodes in dragging states.
-    if (!_lastDraggedNode->_dragState == VROEventDelegate::DragState::Dragging) {
+    if (_lastDraggedNode->_dragState != VROEventDelegate::DragState::Dragging) {
         return;
     }
 
@@ -537,7 +537,7 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
     });
 
     // Return the closest hit element, if any.
-    for (int i = 0; i < results.size(); i ++) {
+    for (int i = 0; i < results.size(); i++) {
         if (!results[i].getNode()->getIgnoreEventHandling()) {
             return results[i];
         }

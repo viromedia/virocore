@@ -90,7 +90,7 @@ void VROIKTest::testSingleVerticalChainRig() {
     // Create a single continous node line.
     int numOfBlocks = 5;
     std::shared_ptr<VRONode> parentNode = _currentRoot;
-    for (int i = 0 ; i < numOfBlocks; i ++) {
+    for (int i = 0; i < numOfBlocks; i++) {
         // Create the block.
         std::shared_ptr<VRONode> newBlockNode = createBlock(false,
                                                             "Block_" + VROStringUtil::toString(i), VROVector4f(1.0, 0, 0, 1.0));
@@ -124,7 +124,7 @@ void VROIKTest::testSingleHorizontalChainRig() {
     int numOfBlocks = 5;
     std::shared_ptr<VRONode> parentNode = _currentRoot;
     std::shared_ptr<VRONode> midNode;
-    for (int i = 0 ; i < numOfBlocks; i ++) {
+    for (int i = 0; i < numOfBlocks; i++) {
         // Create the block.
         std::shared_ptr<VRONode> newBlockNode = createBlock(false, "Block_" + VROStringUtil::toString(i), VROVector4f(1.0, 0, 0, 1.0));
         newBlockNode->setPosition(VROVector3f(0.2, 0,0));
@@ -535,7 +535,7 @@ void VROIKTest::restoreTopBoneTransform() {
     }
 
     VROMatrix4f computedBoneTransform = VROMatrix4f::identity();
-    for (int i = bones.size() -1; i >=0; i --) {
+    for (int i = (int) bones.size() - 1; i >= 0; i--) {
         computedBoneTransform = bones[i]->getLocalTransform() * computedBoneTransform;
     }
 
@@ -564,7 +564,7 @@ void VROIKTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, int joint
     std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
     // First get all the child joints for this jointIndex
     std::vector<int> childBoneIndexes;
-    for (int i = 0; i < skeleton->getNumBones(); i ++) {
+    for (int i = 0; i < skeleton->getNumBones(); i++) {
         const std::shared_ptr<VROBone> &bone = skeleton->getBone(i);
         if (bone->getParentIndex() == jointIndex && jointIndex != i){
             childBoneIndexes.push_back(i);

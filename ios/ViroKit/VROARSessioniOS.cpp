@@ -177,7 +177,7 @@ void VROARSessioniOS::setVideoQuality(VROVideoQuality quality) {
     if (@available(iOS 11.3, *)) {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
             NSArray<ARVideoFormat *> *videoFormats = ARWorldTrackingConfiguration.supportedVideoFormats;
-            int numberOfSupportedVideoFormats = [videoFormats count];
+            int numberOfSupportedVideoFormats = (int) [videoFormats count];
             // Since iOS 12, ARWorldTrackingConfiguration.supportedVideoFormats started returning 0 ////
             // supportedVideoFormats here, for simulator targets. In that case, we'll skip the following and
             // run session with default videoformat value
@@ -573,7 +573,7 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
 
         if (@available(iOS 11.3, *) && planeAnchor.geometry && planeAnchor.geometry.boundaryVertices && planeAnchor.geometry.boundaryVertexCount > 0) {
             std::vector<VROVector3f> points;
-            for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i ++) {
+            for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i++) {
                 vector_float3 vertex = planeAnchor.geometry.boundaryVertices[i];
                 SCNVector3 vector3 = SCNVector3FromFloat3(vertex);
 

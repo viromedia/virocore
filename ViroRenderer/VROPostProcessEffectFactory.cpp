@@ -45,7 +45,7 @@ VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {
 
 void VROPostProcessEffectFactory::enableEffect(VROPostProcessEffect effect, std::shared_ptr<VRODriver> driver){
     // Check and return if effect has already been applied.
-    for (int i = 0; i < _cachedPrograms.size(); i ++) {
+    for (int i = 0; i < _cachedPrograms.size(); i++) {
         if (_cachedPrograms[i].first == effect) {
             pwarn("Effect has already been applied!");
             return;
@@ -214,7 +214,7 @@ std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::renderEffects(std:
     // Compound post process effects by blitting ping-pong style between input and output targets.
     std::shared_ptr<VRORenderTarget> outputTarget = input;
     
-    for (int i = 0; i < _cachedPrograms.size(); i ++) {
+    for (int i = 0; i < _cachedPrograms.size(); i++) {
         std::shared_ptr<VROImagePostProcess> &postProcess = _cachedPrograms[i].second;
         
         if (i == 0) {

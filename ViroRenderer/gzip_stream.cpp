@@ -76,7 +76,7 @@ GzipInputStream::GzipInputStream(
   output_buffer_ = operator new(output_buffer_length_);
   GOOGLE_CHECK(output_buffer_ != NULL);
   zcontext_.next_out = static_cast<Bytef*>(output_buffer_);
-  zcontext_.avail_out = output_buffer_length_;
+  zcontext_.avail_out = (uInt) output_buffer_length_;
   output_position_ = output_buffer_;
 }
 GzipInputStream::~GzipInputStream() {
@@ -118,7 +118,7 @@ int GzipInputStream::Inflate(int flush) {
     }
   }
   zcontext_.next_out = static_cast<Bytef*>(output_buffer_);
-  zcontext_.avail_out = output_buffer_length_;
+  zcontext_.avail_out = (uInt) output_buffer_length_;
   output_position_ = output_buffer_;
   int error = inflate(&zcontext_, flush);
   return error;
@@ -126,7 +126,7 @@ int GzipInputStream::Inflate(int flush) {
 
 void GzipInputStream::DoNextOutput(const void** data, int* size) {
   *data = output_position_;
-  *size = ((uintptr_t)zcontext_.next_out) - ((uintptr_t)output_position_);
+  *size = (int) (((uintptr_t)zcontext_.next_out) - ((uintptr_t)output_position_));
   output_position_ = zcontext_.next_out;
 }
 
@@ -295,9 +295,9 @@ bool GzipOutputStream::Next(void** data, int* size) {
   if (zcontext_.avail_in == 0) {
     // all input was consumed. reset the buffer.
     zcontext_.next_in = static_cast<Bytef*>(input_buffer_);
-    zcontext_.avail_in = input_buffer_length_;
+    zcontext_.avail_in = (uInt) input_buffer_length_;
     *data = input_buffer_;
-    *size = input_buffer_length_;
+    *size = (int) input_buffer_length_;
   } else {
     // The loop in Deflate should consume all avail_in
     GOOGLE_LOG(DFATAL) << "Deflate left bytes unconsumed";

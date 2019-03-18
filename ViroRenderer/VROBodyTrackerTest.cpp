@@ -211,14 +211,15 @@ void VROBodyTrackerTest::onBodyTrackStateUpdate(VROBodyTrackedState state){
         case LimitedEffectors:
             _trackingStateText->setText(L"< State: Limited >");
             break;
+        default:
+            break;
     }
 }
 
 void VROBodyTrackerTest::onJointUpdate(const std::map<VROBodyJointType, VROJointPos> &mlJointsFiltered,
                                        const std::map<VROBodyJointType, VROVector3f> &mlJointsDampened,
                                        const std::map<VROBodyJointType, VROMatrix4f> &modelJoints) {
-    VROMatrix4f neckTransform = modelJoints.at(VROBodyJointType::Neck);
-//    pwarn("On Joint Update: %s", neckTransform.extractTranslation().toString().c_str());
+
 }
 
 void VROBodyTrackerTest::onFrameWillRender(const VRORenderContext &context) {
@@ -237,7 +238,7 @@ void VROBodyTrackerTest::renderDebugSkeletal(std::shared_ptr<VROPencil> pencil, 
     std::shared_ptr<VROSkeleton> skeleton = _skinner->getSkeleton();
     // First get all the child joints for this jointIndex
     std::vector<int> childBoneIndexes;
-    for (int i = 0; i < skeleton->getNumBones(); i ++) {
+    for (int i = 0; i < skeleton->getNumBones(); i++) {
         const std::shared_ptr<VROBone> &bone = skeleton->getBone(i);
         if (bone->getParentIndex() == jointIndex && jointIndex != i){
             childBoneIndexes.push_back(i);

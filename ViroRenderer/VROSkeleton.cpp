@@ -175,7 +175,7 @@ void VROSkeleton::setCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone,
     // Grab all the child bones from the current boneId.
     int boneId = bone->getIndex();
     std::vector<int> childBoneIndexes;
-    for (int i = 0; i < getNumBones(); i ++) {
+    for (int i = 0; i < getNumBones(); i++) {
         if (getBone(i)->getParentIndex() == boneId && i != boneId) {
             childBoneIndexes.push_back(i);
         }
@@ -221,7 +221,7 @@ void VROSkeleton::scaleBoneTransforms(int startParentBone,
     }
 
     VROMatrix4f parentTransform = getCurrentBoneWorldTransform(startParentBone);
-    scaleBoneTransform(intermediaryBones.size() - 2,
+    scaleBoneTransform((int) intermediaryBones.size() - 2,
                        intermediaryBones,
                        parentTransform,
                        scaleFactor,
@@ -263,7 +263,7 @@ void VROSkeleton::scaleBoneTransform(int currentBoneIndex,
     // Now determine if this child is a leaf in the skeleton
     // Grab all the child bones from the current boneId.
     std::vector<int> childBoneIndexes;
-    for (int i = 0; i < getNumBones(); i ++) {
+    for (int i = 0; i < getNumBones(); i++) {
         if (getBone(i)->getParentIndex() == currentIndex && i != currentIndex) {
             childBoneIndexes.push_back(i);
         }

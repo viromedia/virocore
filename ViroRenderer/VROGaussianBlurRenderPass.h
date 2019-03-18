@@ -48,12 +48,11 @@ public:
      - normalized controls the 'consistent look' of the blur.
      */
     void setBlurKernel(int kernelSize, float sigma, bool normalized = false);
-
-    int getKernelSize() {
+    
+    int getKernelSize() const {
         return _kernelSize;
     }
-
-    float getSigma() {
+    float getSigma() const {
         return _sigma;
     }
 
@@ -82,6 +81,7 @@ public:
     float getReinforcedIntensity() {
         return _reinforcedIntensity;
     }
+    
 private:
     /*
      Sigma controls gaussian "drop-off", and thus the blur intensity. The higher

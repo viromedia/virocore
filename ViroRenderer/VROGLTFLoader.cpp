@@ -304,7 +304,7 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
     for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
         tinygltf::Skin skin = model.skins[skinIndex];
 
-        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+        for (int jointIndex = 0; jointIndex < skin.joints.size(); jointIndex++) {
             int nodeIndexOfJoint = skin.joints[jointIndex];
             skinIndexToNodeJointIndexes[skinIndex][nodeIndexOfJoint] = jointIndex;
             _skinIndexToJointNodeIndex[skinIndex][jointIndex] = nodeIndexOfJoint;
@@ -317,7 +317,7 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
     std::map<int, std::map<int, int>> skinIndexToJointParentJoint;
     for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
         tinygltf::Skin skin = model.skins[skinIndex];
-        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+        for (int jointIndex = 0; jointIndex < skin.joints.size(); jointIndex++) {
 
             // Grab the node index corresponding to this joint.
             int nodeIndex = _skinIndexToJointNodeIndex[skinIndex][jointIndex];
@@ -353,7 +353,7 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
         }
 
         std::vector<std::shared_ptr<VROBone>> bones;
-        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+        for (int jointIndex = 0; jointIndex < skin.joints.size(); jointIndex++) {
             int parentJointIndex = skinIndexToJointParentJoint[skinIndex][jointIndex];
             
             // TODO We need the bone local transform if we want layered animations to work with GLTF
@@ -401,7 +401,7 @@ bool VROGLTFLoader::processAnimations(const tinygltf::Model &model) {
         tinygltf::Animation anim = model.animations[animIndex];
 
         // For each animation, iterate through the channel input data.
-        for (int cIndex = 0 ; cIndex < anim.channels.size(); cIndex ++) {
+        for (int cIndex = 0; cIndex < anim.channels.size(); cIndex++) {
             tinygltf::AnimationChannel channel = anim.channels[cIndex];
 
             // Group all the channel input data with the same matching sampler inputAcessor
@@ -419,7 +419,7 @@ bool VROGLTFLoader::processAnimations(const tinygltf::Model &model) {
     std::map<int, std::set<int>> skinToNodeMap;
     for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
         tinygltf::Skin skin = model.skins[skinIndex];
-        for (int jointIndex = 0 ; jointIndex < skin.joints.size(); jointIndex ++) {
+        for (int jointIndex = 0; jointIndex < skin.joints.size(); jointIndex++) {
             skinToNodeMap[skinIndex].insert(skin.joints[jointIndex]);
         }
     }
@@ -517,7 +517,7 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
     float duration = frames.back()->time;
 
     // Normalize the input key frame time (expected by Viro's animation system)
-    for (int i = 0; i < frames.size(); i ++) {
+    for (int i = 0; i < frames.size(); i++) {
         frames[i]->time = frames[i]->time / duration;
     }
 
@@ -574,7 +574,7 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
     if (VROStringUtil::strcmpinsensitive(channelProperty, kVROGLTFInputSamplerKey)) {
         // A kVROGLTFInputSamplerKey channelProperty param is provided when creating new, empty
         // VROKeyFrameAnimations to be used for storing animation data.
-        for (int i = 0; i < gDataAcessor.count; i ++){
+        for (int i = 0; i < gDataAcessor.count; i++) {
             std::unique_ptr<VROKeyframeAnimationFrame> frame
                     = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
             framesOut.push_back(std::move(frame));
@@ -663,7 +663,7 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
     }
 
     // Process any skeletal animation that is associated with each skinner in the scene.
-    for (int i = 0; i < skeletalAnimToSkinPair.size(); i ++) {
+    for (int i = 0; i < skeletalAnimToSkinPair.size(); i++) {
         int skinIndex = skeletalAnimToSkinPair[i].second;
         int skeletalAnimationIndex = skeletalAnimToSkinPair[i].first;
 

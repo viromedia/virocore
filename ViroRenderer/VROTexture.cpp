@@ -277,7 +277,7 @@ void VROTexture::setWrapS(VROWrapMode wrapMode) {
         return;
     }
 
-    for (int i = 0; i < _substrates.size(); i ++) {
+    for (int i = 0; i < _substrates.size(); i++) {
         _substrates[i]->updateWrapMode(wrapMode, _wrapT);
     }
 }
@@ -288,7 +288,7 @@ void VROTexture::setWrapT(VROWrapMode wrapMode) {
         return;
     }
 
-    for (int i = 0; i < _substrates.size(); i ++) {
+    for (int i = 0; i < _substrates.size(); i++) {
         _substrates[i]->updateWrapMode(_wrapS, wrapMode);
     }
 }

@@ -244,7 +244,7 @@ void VROParticleEmitter::updateParticles(double currentTime,
             = std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All);
 
     float minX = FLT_MAX, maxX = -FLT_MAX, minY = FLT_MAX, maxY = -FLT_MAX, minZ = FLT_MAX, maxZ = -FLT_MAX;
-    for (int i = 0; i < _particles.size(); i ++) {
+    for (int i = 0; i < _particles.size(); i++) {
         if (_particles[i].fixedToEmitter) {
             // If the particle is fixedToEmitter, position the particle in referenceFactor to the
             // emitter's base transform.
@@ -277,7 +277,7 @@ void VROParticleEmitter::updateParticles(double currentTime,
 }
 
 void VROParticleEmitter::updateParticlePhysics(double currentTime) {
-    for (int i = 0; i < _particles.size(); i ++) {
+    for (int i = 0; i < _particles.size(); i++) {
         // Apply Physics modifiers
         _particles[i].timeSinceSpawnedInMs = currentTime - _particles[i].spawnTimeMs;
         VROVector3f velocity
@@ -304,7 +304,7 @@ void VROParticleEmitter::updateParticlePhysics(double currentTime) {
 }
 
 void VROParticleEmitter::updateParticleAppearance(double currentTime) {
-    for (int i = 0; i < _particles.size(); i ++) {
+    for (int i = 0; i < _particles.size(); i++) {
         if (_particles[i].isZombie) {
             continue;
         }
@@ -458,7 +458,7 @@ void VROParticleEmitter::spawnParticle(int numberOfParticles, double currentTime
         return;
     }
 
-    for (int i = newParticles; i > 0; i --) {
+    for (int i = newParticles; i > 0; i--) {
         VROParticle particle;
         resetParticle(particle, currentTime);
         _particles.push_back(particle);

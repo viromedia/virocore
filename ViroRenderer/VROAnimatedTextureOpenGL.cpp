@@ -16,6 +16,7 @@
 #include "VRODriver.h"
 #include "VROTextureSubstrate.h"
 #include "VROFrameScheduler.h"
+#include "VROStringUtil.h"
 #include "VROTextureSubstrateOpenGL.h"
 #include "VROPlatformUtil.h"
 
@@ -81,7 +82,7 @@ void VROAnimatedTextureOpenGL::animateTexture(double globalCurrentTimeMs) {
      */
     int i = 0;
     double animationTimeMs = globalCurrentTimeMs - _processedAnimationStartTime;
-    for (i = 0; i < _animatedFrameData.size() - 1; i ++) {
+    for (i = 0; i < _animatedFrameData.size() - 1; i++) {
         if (animationTimeMs > _animatedFrameData[i].timeStamp
             && animationTimeMs < _animatedFrameData[i + 1].timeStamp) {
             break;
@@ -174,7 +175,7 @@ bool VROAnimatedTextureOpenGL::parseGIFFile(std::string path, std::string &error
     int error;
     GifFileType *gifFile = DGifOpenFileName(path.c_str(), &error);
     if (gifFile == NULL){
-        errorOut = "Failed to open GIF FILE. Error: " + error;
+        errorOut = "Failed to open GIF file [error: " + VROStringUtil::toString(error) + "]";
         return false;
     }
 

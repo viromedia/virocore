@@ -18,7 +18,7 @@ LowPassFilter::LowPassFilter(double alpha, VROVector3f initialValue) {
 }
 
 VROVector3f LowPassFilter::filter(VROVector3f value, double alpha) {
-    VROVector3f result ;
+    VROVector3f result;
     if (_initialized)
         result = alpha * value + (1.0 - alpha) * _lastFiltered;
     else {
@@ -73,7 +73,7 @@ VROVector3f VROOneEuroFilter::filter(VROVector3f value, double timestamp, bool d
 }
 
 double VROOneEuroFilter::computeAlpha(double cutoff) {
-    double te = 1.0 / _frequency ;
+    double te = 1.0 / _frequency;
     double tau = 1.0 / (2 * M_PI * cutoff);
     return 1.0 / (1.0 + tau / te);
 }
@@ -142,7 +142,7 @@ float VROOneEuroFilterF::filter(float value, double timestamp, bool debug) {
 }
 
 double VROOneEuroFilterF::computeAlpha(double cutoff) {
-    double te = 1.0 / _frequency ;
+    double te = 1.0 / _frequency;
     double tau = 1.0 / (2 * M_PI * cutoff);
     return 1.0 / (1.0 + tau / te);
 }

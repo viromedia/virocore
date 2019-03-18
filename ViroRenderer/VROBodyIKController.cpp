@@ -820,12 +820,7 @@ void VROBodyIKController::projectJointsInto3DSpace(std::map<VROBodyJointType, VR
 
 void VROBodyIKController::findDampenedTorsoClusteredDepth(std::map<VROBodyJointType, VROBodyJoint> &latestJoints){
     // Perform a window depth test around the body joint root to get an average Z depth.
-    VROBodyJoint rootJoint = latestJoints[kArHitTestJoint];
-    VROVector3f screenCoord = rootJoint.getScreenCoords();
-    VROMatrix4f projectedTrans = VROMatrix4f::identity();
-
     VROMatrix4f tempTrans = VROMatrix4f::identity();
-    //if (!performWindowDepthTest(screenCoord.x, screenCoord.y, projectedTrans)) {
     if (!findTorsoClusteredDepth(latestJoints, tempTrans)) {
         latestJoints.clear();
         return;

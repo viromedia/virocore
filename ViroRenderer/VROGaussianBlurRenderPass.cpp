@@ -81,16 +81,16 @@ void VROGaussianBlurRenderPass::initBlurPass(std::shared_ptr<VRODriver> driver) 
 
     // Convert the kernel weights into shader code.
     std::string kernelWeightShader = VROStringUtil::toString(kernelWeight[0], 10);
-    for (int i = 1; i < kernelWeight.size(); i ++){
+    for (int i = 1; i < kernelWeight.size(); i++) {
         kernelWeightShader += ", " + VROStringUtil::toString(kernelWeight[i], 10);
     }
     std::string kernelOffsetShader = VROStringUtil::toString(kernelOffsets[0], 10);
-    for (int i = 1; i < kernelOffsets.size(); i ++){
+    for (int i = 1; i < kernelOffsets.size(); i++) {
         kernelOffsetShader += ", " + VROStringUtil::toString(kernelOffsets[i], 10);
     }
 
     // Create our blur shader with the newly set kernel window and weights.
-    int size = kernelWeight.size();
+    int size = (int) kernelWeight.size();
     std::string sizeStr = VROStringUtil::toString(size);
     std::vector<std::string> samplers = { "image" };
     std::vector<std::string> code = {
@@ -106,7 +106,7 @@ void VROGaussianBlurRenderPass::initBlurPass(std::shared_ptr<VRODriver> driver) 
     };
 
     code.push_back("if (horizontal) {");
-    for (int i = 1; i < size; i ++) {
+    for (int i = 1; i < size; i++) {
         std::string iStr = VROStringUtil::toString(i);
         code.push_back("highp vec4 p"+iStr+" = texture(image, v_texcoord + vec2(tex_offset.x * offset["+iStr+"], 0.0));");
         code.push_back("result += (p"+iStr+" * weight["+iStr+"]);");
@@ -237,7 +237,7 @@ std::vector<float> VROGaussianBlurRenderPass::calculateKernel(float sigma, float
     std::vector<std::pair<std::vector<std::vector<float>>, float>> allSamples = {{outsideSamplesLeft, 0}};
 
     // Now sample kernel taps and calculate tap weights
-    for(int tap=0; tap < kernelSize; ++tap) {
+    for(int tap = 0; tap < kernelSize; ++tap) {
         float left = kernelLeft - 0.5 + tap;
         std::vector<std::vector<float>> tapSamples
                 = calculateSamplesForRange(left, left+1, samplesPerBin, sigma);
@@ -262,7 +262,7 @@ std::vector<float> VROGaussianBlurRenderPass::calculateKernel(float sigma, float
     }
 
     std::vector<float> finalKernel;
-    for(int i = allSamples.size() / 2; i < allSamples.size() -1; ++i) {
+    for(int i = (int) allSamples.size() / 2; i < allSamples.size() - 1; ++i) {
         float k = allSamples[i].second;
         finalKernel.push_back(k);
     }
