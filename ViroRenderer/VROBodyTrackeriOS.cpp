@@ -618,23 +618,24 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
 
     std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
-        
-        if (tracker && tracker->_isTracking) {
-            std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
+    if (!joints.empty()) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
             
-            if (delegate) {
-                VROPoseFrame dampenedJoints = newPoseFrame();
-                if (!_poseFilter) {
-                    dampenedJoints = joints;
-                } else {
-                    dampenedJoints = tracker->_poseFilter->filterJoints(joints);
+            if (tracker && tracker->_isTracking) {
+                std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
+                if (delegate) {
+                    VROPoseFrame dampenedJoints = newPoseFrame();
+                    if (!_poseFilter) {
+                        dampenedJoints = joints;
+                    } else {
+                        dampenedJoints = tracker->_poseFilter->filterJoints(joints);
+                    }
+                    delegate->onBodyJointsFound(dampenedJoints);
                 }
-                delegate->onBodyJointsFound(dampenedJoints);
             }
-        }
-    });
+        });
+    }
     
     // Compute FPS
     uint64_t nanosecondsThisFrame = VRONanoTime();
