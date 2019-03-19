@@ -17,19 +17,8 @@
 #include "VROARSession.h"
 
 #if VRO_PLATFORM_IOS
-#include "VROViewAR.h"
-#import <UIKit/UIKit.h>
-
-@interface VROBodyRecognitionDrawDelegate : NSObject<VRODebugDrawDelegate>
-- (void)drawRect;
-- (void)setLabels:(std::vector<NSString *>)labels positions:(std::vector<VROVector3f>)positions;
-- (void)setBoxes:(std::vector<VROBoundingBox>)boxes;
-- (void)setColors:(std::vector<UIColor *>)colors;
-- (void)setConfidences:(std::vector<float>)confidences;
-- (void)setDynamicCropBox:(CGRect)box;
-- (void)setViewWidth:(int)width height:(int)height;
-@end
-
+#import "VROViewAR.h"
+#import "VROSkeletonRenderer.h"
 #endif
 
 class VROPoseFilter;
@@ -77,10 +66,9 @@ private:
     std::vector<std::shared_ptr<VRONode>> _bodyPointsSpheres;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROBodyTracker> _bodyTracker;
-    
+            
 #if VRO_PLATFORM_IOS
-    VROViewAR *_view;
-    VROBodyRecognitionDrawDelegate *_drawDelegate;
+    std::shared_ptr<VROSkeletonRenderer> _skeletonRenderer;
 #endif
     
 };

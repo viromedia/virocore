@@ -18,6 +18,7 @@
 #if VRO_PLATFORM_IOS
 #include "VRODriverOpenGLiOS.h"
 #include "VROAnimBodyDataiOS.h"
+#include "VROSkeletonRenderer.h"
 #endif
 
 static const float kAutomaticSizingRatio = 1;
@@ -28,16 +29,21 @@ static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
 
 VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer,
                                                    std::shared_ptr<VRODriver> driver,
+                                                   std::shared_ptr<VROBodyTracker> tracker,
                                                    std::shared_ptr<VRONode> sceneRoot) {
     _currentTrackedState = VROBodyTrackedState::NotAvailable;
     _needsInitialCalibration = false;
     _renderer = renderer;
+    _drawSkeleton = false;
     
     _bodyControllerRoot = std::make_shared<VRONode>();
     sceneRoot->addChildNode(_bodyControllerRoot);
 
 #if VRO_PLATFORM_IOS
     _view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
+    if (tracker) {
+        _skeletonRenderer = std::make_shared<VROSkeletonRenderer>(_view, tracker);
+    }
 #endif
 }
 
@@ -46,6 +52,10 @@ VROBodyTrackerController::~VROBodyTrackerController() {
 
 void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
     _delegate = delegate;
+}
+
+void VROBodyTrackerController::setDrawSkeleton(bool drawSkeleton) {
+    _drawSkeleton = drawSkeleton;
 }
 
 bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode) {
@@ -76,10 +86,7 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
         }
     }
 
-    // Project all joints into 3D space
     projectJointsInto3DSpace(joints);
-    
-    // Update body tracking state
     updateBodyTrackingState(joints);
     
     // Update calibration
@@ -90,6 +97,9 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
     std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
     if (delegate) {
         delegate->onJointUpdate(jointPositions);
+    }
+    if (_skeletonRenderer && _drawSkeleton) {
+        _skeletonRenderer->onBodyJointsFound(inferredJoints);
     }
 }
 

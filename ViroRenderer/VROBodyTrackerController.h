@@ -19,6 +19,8 @@
 #import <UIKit/UIKit.h>
 #endif
 
+class VROSkeletonRenderer;
+
 /*
  States representing the current tracking fidelity of this VROBodyTrackerController.
  */
@@ -137,6 +139,7 @@ class VROBodyTrackerController : public VROBodyTrackerDelegate,
 public:
     VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer,
                              std::shared_ptr<VRODriver> driver,
+                             std::shared_ptr<VROBodyTracker> tracker,
                              std::shared_ptr<VRONode> sceneRoot);
     ~VROBodyTrackerController();
 
@@ -156,6 +159,11 @@ public:
      onBodyTrackStateUpdate() notifications.
      */
     void setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate);
+                                     
+    /*
+     Set to true to draw the skeleton each frame using the VROSkeletonRenderer.
+     */
+    void setDrawSkeleton(bool drawSkeleton);
 
     // VROBodyTrackerDelegate implementation
     void onBodyJointsFound(const VROPoseFrame &joints);
@@ -204,9 +212,15 @@ private:
      tracked ML body positions.
      */
     std::shared_ptr<VRONode> _bodyControllerRoot;
+                                     
+    /*
+     True to draw the skeleton using the _skeletonRenderer.
+     */
+    bool _drawSkeleton;
 
 #if VRO_PLATFORM_IOS
     VROViewAR *_view;
+    std::shared_ptr<VROSkeletonRenderer> _skeletonRenderer;
 #endif
 
     /*
