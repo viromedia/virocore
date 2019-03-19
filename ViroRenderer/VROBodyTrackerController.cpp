@@ -30,7 +30,7 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
                                                    std::shared_ptr<VRODriver> driver,
                                                    std::shared_ptr<VRONode> sceneRoot) {
     _currentTrackedState = VROBodyTrackedState::NotAvailable;
-    _calibrating = false;
+    _needsInitialCalibration = false;
     _renderer = renderer;
     
     _bodyControllerRoot = std::make_shared<VRONode>();
@@ -44,6 +44,10 @@ VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> 
 VROBodyTrackerController::~VROBodyTrackerController() {
 }
 
+void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
+    _delegate = delegate;
+}
+
 bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode) {
     _bodyControllerRoot->removeAllChildren();
     _modelRootNode = nullptr;
@@ -51,25 +55,6 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     _modelRootNode = modelRootNode;
     _bodyControllerRoot->setScale(VROVector3f(1, 1, 1));
     return true;
-}
-
-void VROBodyTrackerController::startCalibration() {
-    if (_calibrating) {
-        return;
-    }
-
-    // Clear previously calibrated data
-    _calibrating = true;
-    _projectedPlanePosition = kInitialModelPos;
-    _projectedPlaneNormal = VROVector3f(0, 0, 0);
-
-    // Reset the model and bones back to their initial configuration
-    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
-    _modelRootNode->setScale(VROVector3f(1, 1, 1));
-    _modelRootNode->setRotation(VROQuaternion());
-    _modelRootNode->setPosition(kInitialModelPos);
-    _modelRootNode->removeAllConstraints();
-    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
 }
 
 void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoints) {
@@ -91,42 +76,15 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
         }
     }
 
-    processJoints(joints);
-    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> jointPositions = extractJointPositions(joints);
+    // Project all joints into 3D space
+    projectJointsInto3DSpace(joints);
     
-    // Ensure we at least have the root inferred joint (neck) before updating our model
-    if (_currentTrackedState != NotAvailable) {
-        // Only update the model if we have the required scalable joints (hips)
-        if (_currentTrackedState == LimitedEffectors || _currentTrackedState == FullEffectors) {
-            // Reset the model and bones back to their initial configuration
-            std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
-            _modelRootNode->setScale(VROVector3f(1, 1, 1));
-            _modelRootNode->setRotation(VROQuaternion());
-            _modelRootNode->setPosition(kInitialModelPos);
-            _modelRootNode->computeTransforms(parentNode->getWorldTransform(),
-                                              parentNode->getWorldRotation());
-            
-            // Dynamically scale the model to the right size.
-            calibrateModelToMLTorsoScale(jointPositions);
-        }
-        
-        // Only calibrate the rig with the results if we haven't yet done so.
-        if (_calibrating) {
-            // If we are calibrating without scale joints, we may not have found
-            // the hips yet. Set a reasonable scale for now.
-            if (_currentTrackedState == NoScalableJointsAvailable) {
-                float fixedUserTorsoHeight = 0.45; // Average torso height.
-                float modelToMLRatio = fixedUserTorsoHeight / kSkeletonTorsoHeight * kAutomaticSizingRatio;
-                _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
-            }
-            
-            std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
-            if (delegate) {
-                delegate->onCalibrationFinished();
-            }
-            _calibrating = false;
-        }
-    }
+    // Update body tracking state
+    updateBodyTrackingState(joints);
+    
+    // Update calibration
+    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> jointPositions = extractJointPositions(joints);
+    updateCalibration(jointPositions);
 
     // Always notify our delegates with the latest set of joint data    
     std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
@@ -151,27 +109,10 @@ std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> V
     return jointPositions;
 }
 
-void VROBodyTrackerController::processJoints(std::map<VROBodyJointType, VROBodyJoint> &joints) {
-    // First, convert the joints into 3d space.
-    projectJointsInto3DSpace(joints);
-    
-    // With the new found joints, update the current tracking statep
-    bool hasHipJoints = joints.find(VROBodyJointType::RightHip) != joints.end() &&
-                        joints.find(VROBodyJointType::LeftHip)  != joints.end();
-    
-    if (joints.find(kArHitTestJoint) == joints.end()) {
-        setBodyTrackedState(VROBodyTrackedState::NotAvailable);
-    } else if (!hasHipJoints) {
-        setBodyTrackedState(VROBodyTrackedState::NoScalableJointsAvailable);
-    } else if (joints.size() == kNumBodyJoints) {
-        setBodyTrackedState(VROBodyTrackedState::FullEffectors);
-    } else if (joints.size() >= 4) {
-        setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
-    }
-}
+#pragma mark - Point Projection
 
-void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
-    if (latestJoints.find(kArHitTestJoint) == latestJoints.end()) {
+void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints) {
+    if (joints.find(kArHitTestJoint) == joints.end()) {
         return;
     }
 
@@ -184,11 +125,11 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
     _projectedPlaneNormal = (camPos - _projectedPlanePosition).normalize();
 
     // Project the 2D joints into 3D coordinates as usual.
-    for (auto &joint : latestJoints) {
+    for (auto &joint : joints) {
         VROMatrix4f hitTransform;
         float pointX = joint.second.getScreenCoords().x;
         float pointY = joint.second.getScreenCoords().y;
-        bool success = performUnprojectionToPlane(pointX, pointY, hitTransform);
+        bool success = performUnprojectionToPlane(pointX, pointY, &hitTransform);
         if (!success) {
             joint.second.clearProjectedTransform();
         } else {
@@ -197,15 +138,15 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
     }
 
     // Remove points that have failed projections from the map of latestJoints
-    for (auto it = latestJoints.cbegin(), next_it = it; it != latestJoints.cend(); it = next_it) {
+    for (auto it = joints.cbegin(), next_it = it; it != joints.cend(); it = next_it) {
         ++next_it;
         if (!it->second.hasValidProjectedTransform()) {
-            latestJoints.erase(it);
+            joints.erase(it);
         }
     }
 }
 
-bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut) {
+bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROMatrix4f *outMatrix) {
     const VROCamera &camera = _renderer->getCamera();
     int viewport[4] = {0, 0, camera.getViewport().getWidth(), camera.getViewport().getHeight()};
     VROMatrix4f mvp = camera.getProjection().multiply(camera.getLookAtMatrix());
@@ -230,16 +171,34 @@ bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROM
     // Find the intersection between the plane and the controller forward
     VROVector3f intersectionPoint;
     bool success = ray.rayIntersectPlane(_projectedPlanePosition, _projectedPlaneNormal, ncpWorld, &intersectionPoint);
-    matOut.toIdentity();
-    matOut.translate(intersectionPoint);
+    
+    outMatrix->toIdentity();
+    outMatrix->translate(intersectionPoint);
     return success;
 }
 
-void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
+#pragma mark - Body Tracking State
+
+void VROBodyTrackerController::updateBodyTrackingState(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
+    bool hasHipJoints = joints.find(VROBodyJointType::RightHip) != joints.end() &&
+    joints.find(VROBodyJointType::LeftHip)  != joints.end();
+    
+    if (joints.find(kArHitTestJoint) == joints.end()) {
+        setBodyTrackingState(VROBodyTrackedState::NotAvailable);
+    } else if (!hasHipJoints) {
+        setBodyTrackingState(VROBodyTrackedState::NoScalableJointsAvailable);
+    } else if (joints.size() == kNumBodyJoints) {
+        setBodyTrackingState(VROBodyTrackedState::FullEffectors);
+    } else if (joints.size() >= 4) {
+        setBodyTrackingState(VROBodyTrackedState::LimitedEffectors);
+    }
+}
+
+void VROBodyTrackerController::setBodyTrackingState(VROBodyTrackedState state) {
     if (_currentTrackedState == state) {
         return;
     }
-
+    
     _currentTrackedState = state;
     std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
     if (delegate != nullptr) {
@@ -247,8 +206,60 @@ void VROBodyTrackerController::setBodyTrackedState(VROBodyTrackedState state) {
     }
 }
 
-void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate) {
-    _delegate = delegate;
+#pragma mark - Calibration
+
+void VROBodyTrackerController::startCalibration() {
+    if (_needsInitialCalibration) {
+        return;
+    }
+    
+    // Clear previously calibrated data
+    _needsInitialCalibration = true;
+    _projectedPlanePosition = kInitialModelPos;
+    _projectedPlaneNormal = VROVector3f(0, 0, 0);
+    
+    // Reset the model and bones back to their initial configuration
+    std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+    _modelRootNode->setScale(VROVector3f(1, 1, 1));
+    _modelRootNode->setRotation(VROQuaternion());
+    _modelRootNode->setPosition(kInitialModelPos);
+    _modelRootNode->removeAllConstraints();
+    _modelRootNode->computeTransforms(parentNode->getWorldTransform(), parentNode->getWorldRotation());
+}
+
+void VROBodyTrackerController::updateCalibration(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) {
+    // Every frame we update the calibration scale using the latest joints
+    if (_currentTrackedState != NotAvailable) {
+        if (_currentTrackedState == LimitedEffectors || _currentTrackedState == FullEffectors) {
+            // Reset the model and bones back to their initial configuration
+            std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
+            _modelRootNode->setScale(VROVector3f(1, 1, 1));
+            _modelRootNode->setRotation(VROQuaternion());
+            _modelRootNode->setPosition(kInitialModelPos);
+            _modelRootNode->computeTransforms(parentNode->getWorldTransform(),
+                                              parentNode->getWorldRotation());
+            
+            // Dynamically scale the model to the right size
+            calibrateModelToMLTorsoScale(joints);
+        }
+        
+        // If we're waiting for our first calibration...
+        if (_needsInitialCalibration) {
+            // If we didn't get enough joint data, make the first calibration use
+            // a sensible default
+            if (_currentTrackedState == NoScalableJointsAvailable) {
+                float fixedUserTorsoHeight = 0.45; // Average torso height.
+                float modelToMLRatio = fixedUserTorsoHeight / kSkeletonTorsoHeight * kAutomaticSizingRatio;
+                _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
+            }
+            
+            std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
+            if (delegate) {
+                delegate->onCalibrationFinished();
+            }
+            _needsInitialCalibration = false;
+        }
+    }
 }
 
 void VROBodyTrackerController::calibrateModelToMLTorsoScale(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const {

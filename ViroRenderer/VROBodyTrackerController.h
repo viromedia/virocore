@@ -147,7 +147,7 @@ public:
 
     /*
      Notifies the controller to start aligning the underlying 3D model's root with
-     the latest ML joint data.
+     the latest inferred joint data.
      */
     void startCalibration();
 
@@ -157,7 +157,7 @@ public:
      */
     void setDelegate(std::shared_ptr<VROBodyTrackerControllerDelegate> delegate);
 
-    // VROBodyTrackerDelegate
+    // VROBodyTrackerDelegate implementation
     void onBodyJointsFound(const VROPoseFrame &joints);
 
 private:
@@ -197,7 +197,7 @@ private:
     /*
      True if this controller is currently calibrating the latest set of ML joints to the IKRig.
      */
-    bool _calibrating;
+    bool _needsInitialCalibration;
 
     /*
      Debugging UI components containing debug box nodes representing the locations of
@@ -213,27 +213,39 @@ private:
      Process, filter and update this controller's latest known set of _cachedTrackedJoints
      with the latest found ML 2D points given by VROBodyTracker.
      */
-    void processJoints(std::map<VROBodyJointType, VROBodyJoint> &joints);
     void projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints);
-
-    void calibrateModelToMLTorsoScale(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const;
-    VROVector3f getMLRootPosition(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const;
-                                     
+                         
     /*
-     Updates the current VROBodyTrackedState and notifies the attached VROBodyTrackerControllerDelegate.
+     Update body tracking state based on the information from the given joints.
      */
-    void setBodyTrackedState(VROBodyTrackedState state);
+    void updateBodyTrackingState(const std::map<VROBodyJointType, VROBodyJoint> &joints);
+
+    /*
+     Set the current VROBodyTrackedState and notifies the attached VROBodyTrackerControllerDelegate.
+     */
+    void setBodyTrackingState(VROBodyTrackedState state);
 
     /*
      Convert the given map of joints to a map of joint positions that can be passed to the
      delegate.
      */
     std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> extractJointPositions(const std::map<VROBodyJointType, VROBodyJoint> &joints);
-
+                                     
     /*
-     Depth tests for projecting a 2D ML screen coordinate into 3D space.
+     Update the calibration using the given joint data.
      */
-    bool performUnprojectionToPlane(float x, float y, VROMatrix4f &matOut);
+     void updateCalibration(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints);
+                                     
+    /*
+     Calibration utilities used to detect scale given a set of body joint positions.
+     */
+     void calibrateModelToMLTorsoScale(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const;
+     VROVector3f getMLRootPosition(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const;
+
+     /*
+      Depth tests for projecting a 2D ML screen coordinate into 3D space.
+      */
+     bool performUnprojectionToPlane(float x, float y, VROMatrix4f *outMatrix);
 
 };
 
