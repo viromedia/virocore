@@ -122,10 +122,6 @@ std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> V
 #pragma mark - Point Projection
 
 void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints) {
-    if (joints.find(kArHitTestJoint) == joints.end()) {
-        return;
-    }
-
     // Always project the depth to a known position in space.
     VROVector3f camPos = _renderer->getCamera().getPosition();
     VROVector3f camForward = _renderer->getCamera().getForward();
