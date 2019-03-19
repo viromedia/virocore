@@ -188,7 +188,7 @@ void VROText::update() {
 
     _typefaceCollection = driver->newTypefaceCollection(_typefaceNames, _size, _fontStyle, _fontWeight);
 
-    float realizedWidth, realizedHeight;
+    float realizedWidth = 0, realizedHeight = 0;
     if (_extrusion > 0.0001) {
         buildVectorizedText(_text, _typefaceCollection, _color, _extrusion, _width, _height, _horizontalAlignment, _verticalAlignment,
                             _lineBreakMode, _clipMode, _maxLines, getMaterials(), sources, elements, materials,
