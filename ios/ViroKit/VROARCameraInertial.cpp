@@ -103,7 +103,7 @@ VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near,
          3.85051, 0, -0.00236702, 0
          0, 1.77825, -8.47578e-05, 0
          0, 0, -1.0002, -0.010002
-         0, 0, -1, 0"
+         0, 0, -1, 0
          */
         VROMatrix4f projection;
         projection[0] = 3.85051;
