@@ -56,9 +56,7 @@ static const double kCropEuroFilterBeta = 1.0;
 static const double kCropEuroFilterFCMin = 1.7;
 
 static const double kCropPaddingMultiplierX = 0.25;
-static const double kCropPaddingMultiplierY = 0.10;
-
-static const bool kBodyTrackerDiscardPelvisAndThorax = false;
+static const double kCropPaddingMultiplierY = 0.25;
 
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 0, VROBodyJointType::RightAnkle },
@@ -736,27 +734,34 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
     y -= height * kCropPaddingMultiplierY;
     width *= (1 + 2 * kCropPaddingMultiplierX);
     height *= (1 + 2 * kCropPaddingMultiplierY);
-    
+        
     // Expand the crop box in the direction of unfound joints, to increase the chance of them
     // being found in the next frame
     if (!jointsFound[(int) VROBodyJointType::LeftWrist] || !jointsFound[(int) VROBodyJointType::LeftAnkle]) {
         float expansion = width * kCropPaddingMultiplierX;
-        width += expansion;
+        x -= expansion;
+        width += 2 * expansion;
     }
     if (!jointsFound[(int) VROBodyJointType::Top]) {
         float expansion = height * kCropPaddingMultiplierY;
         y -= expansion;
-        height += expansion;
+        height += 2 * expansion;
     }
     if (!jointsFound[(int) VROBodyJointType::RightWrist] || !jointsFound[(int) VROBodyJointType::RightAnkle]) {
         float expansion = width * kCropPaddingMultiplierX;
         x -= expansion;
-        width += expansion;
+        width += 2 * expansion;
     }
     if (!jointsFound[(int) VROBodyJointType::LeftAnkle] && !jointsFound[(int) VROBodyJointType::RightAnkle]) {
         float expansion = height * 4 * kCropPaddingMultiplierY;
-        height += expansion;
+        y -= expansion;
+        height += 2 * expansion;
     }
+    
+    x = fmax(x, 0);
+    y = fmax(y, 0);
+    width = fmin(width, 1);
+    height = fmin(height, 1);
 
     return CGRectMake(x, y, width, height);
 }
