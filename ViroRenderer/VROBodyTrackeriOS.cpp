@@ -243,10 +243,6 @@ VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROCameraP
      */
     for (int k = 0; k < numJoints; k++) {
         VROBodyJointType type = _mpiiTypesToJointTypes[k];
-        if (kBodyTrackerDiscardPelvisAndThorax &&
-            (type == VROBodyJointType::Thorax || type == VROBodyJointType::Pelvis)) {
-            continue;
-        }
         if (type == VROBodyJointType::Unknown) {
             continue;
         }
