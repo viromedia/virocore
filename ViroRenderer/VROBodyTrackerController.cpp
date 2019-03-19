@@ -58,12 +58,12 @@ void VROBodyTrackerController::startCalibration() {
         return;
     }
 
-    // Clear previously calibrated data.
+    // Clear previously calibrated data
     _calibrating = true;
     _projectedPlanePosition = kInitialModelPos;
     _projectedPlaneNormal = VROVector3f(0, 0, 0);
 
-    // Reset the model and bones back to it's initial configuration
+    // Reset the model and bones back to their initial configuration
     std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
     _modelRootNode->setScale(VROVector3f(1, 1, 1));
     _modelRootNode->setRotation(VROQuaternion());
@@ -91,14 +91,14 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
         }
     }
 
-    // Filter new joints found given by the VROBodyTracker and update _cachedTrackedJoints
     processJoints(joints);
+    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> jointPositions = extractJointPositions(joints);
     
-    // Ensure we at least have the root ml joint before updating our model (neck)
+    // Ensure we at least have the root inferred joint (neck) before updating our model
     if (_currentTrackedState != NotAvailable) {
         // Only update the model if we have the required scalable joints (hips)
         if (_currentTrackedState == LimitedEffectors || _currentTrackedState == FullEffectors) {
-            // Reset the model and bones back to it's initial configuration
+            // Reset the model and bones back to their initial configuration
             std::shared_ptr<VRONode> parentNode = _modelRootNode->getParentNode();
             _modelRootNode->setScale(VROVector3f(1, 1, 1));
             _modelRootNode->setRotation(VROQuaternion());
@@ -107,7 +107,7 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
                                               parentNode->getWorldRotation());
             
             // Dynamically scale the model to the right size.
-            calibrateModelToMLTorsoScale();
+            calibrateModelToMLTorsoScale(jointPositions);
         }
         
         // Only calibrate the rig with the results if we haven't yet done so.
@@ -128,73 +128,45 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
         }
     }
 
-    // Always notify our delegates with the latest set of joint data.
-    notifyOnJointUpdateDelegates();
+    // Always notify our delegates with the latest set of joint data    
+    std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onJointUpdate(jointPositions);
+    }
 }
 
-void VROBodyTrackerController::notifyOnJointUpdateDelegates() {
-    std::shared_ptr<VROBodyTrackerControllerDelegate> delegate = _delegate.lock();
-    if (delegate == nullptr) {
-        return;
-    }
-
-    // Construct a map containing filtered cached ML joints before dampening.
-    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPos> jointsFiltered;
-    for (auto &jointPair : _cachedTrackedJoints) {
+std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> VROBodyTrackerController::extractJointPositions(const std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
+    
+    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> jointPositions;
+    for (auto &jointPair : latestJoints) {
         VROBodyJoint bodyJoint = jointPair.second;
 
-        VROBodyTrackerControllerDelegate::VROJointPos filteredJoint;
-        filteredJoint.screenPosX = bodyJoint.getScreenCoords().x;
-        filteredJoint.screenPosY = bodyJoint.getScreenCoords().y;
-        filteredJoint.worldPosition = bodyJoint.getProjectedTransform().extractTranslation();
+        VROBodyTrackerControllerDelegate::VROJointPosition joint;
+        joint.screenPosX = bodyJoint.getScreenCoords().x;
+        joint.screenPosY = bodyJoint.getScreenCoords().y;
+        joint.worldPosition = bodyJoint.getProjectedTransform().extractTranslation();
         
-        jointsFiltered[jointPair.first] = filteredJoint;
+        jointPositions[jointPair.first] = joint;
     }
-    delegate->onJointUpdate(jointsFiltered, _cachedModelJoints, {});
+    return jointPositions;
 }
 
-void VROBodyTrackerController::processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
-    // Grab all the 2D joints of high confidence for the targets we want.
-    std::map<VROBodyJointType, VROBodyJoint> latestJoints;
-    for (auto &kv : joints) {
-        latestJoints[kv.first] = kv.second;
-    }
-
+void VROBodyTrackerController::processJoints(std::map<VROBodyJointType, VROBodyJoint> &joints) {
     // First, convert the joints into 3d space.
-    projectJointsInto3DSpace(latestJoints);
-
-    // Then, perform filtering and update our known set of cached joints.
-    updateCachedJoints(latestJoints);
+    projectJointsInto3DSpace(joints);
     
-    // With the new found joints, update the current tracking state
-    bool hasRequiredJoints = true;
+    // With the new found joints, update the current tracking statep
+    bool hasHipJoints = joints.find(VROBodyJointType::RightHip) != joints.end() &&
+                        joints.find(VROBodyJointType::LeftHip)  != joints.end();
     
-    // First examine if we have the joints needed for positioning and scaling.
-    if (_cachedTrackedJoints.find(VROBodyJointType::Neck) == _cachedTrackedJoints.end()) {
-        hasRequiredJoints = false;
-    }
-    
-    // Then, examine if we have the joints needed for scaling (right + left) or (Top) joints.
-    bool hasHipJoints = true;
-    if (_cachedTrackedJoints.find(VROBodyJointType::RightHip) == _cachedTrackedJoints.end() ||
-        _cachedTrackedJoints.find(VROBodyJointType::LeftHip) == _cachedTrackedJoints.end())  {
-        hasHipJoints = false;
-    }
-    if (!hasRequiredJoints) {
+    if (joints.find(kArHitTestJoint) == joints.end()) {
         setBodyTrackedState(VROBodyTrackedState::NotAvailable);
     } else if (!hasHipJoints) {
         setBodyTrackedState(VROBodyTrackedState::NoScalableJointsAvailable);
-    } else if (_cachedTrackedJoints.size() >= 4) {
+    } else if (joints.size() == kNumBodyJoints) {
+        setBodyTrackedState(VROBodyTrackedState::FullEffectors);
+    } else if (joints.size() >= 4) {
         setBodyTrackedState(VROBodyTrackedState::LimitedEffectors);
-    }
-
-    // Finally update _cachedModelJoints to be set on the IKRig.
-    _cachedModelJoints.clear();
-    
-    // If we are not dampening, simply set the _cachedModelJoints and return.
-    for (auto &jointPair : _cachedTrackedJoints) {
-        VROVector3f pos = jointPair.second.getProjectedTransform().extractTranslation();
-        _cachedModelJoints[jointPair.first] = pos;
     }
 }
 
@@ -230,13 +202,6 @@ void VROBodyTrackerController::projectJointsInto3DSpace(std::map<VROBodyJointTyp
         if (!it->second.hasValidProjectedTransform()) {
             latestJoints.erase(it);
         }
-    }
-}
-
-void VROBodyTrackerController::updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
-    _cachedTrackedJoints.clear();
-    for (auto &latestjointPair : latestJoints) {
-        _cachedTrackedJoints[latestjointPair.first] = latestjointPair.second;
     }
 }
 
@@ -286,10 +251,15 @@ void VROBodyTrackerController::setDelegate(std::shared_ptr<VROBodyTrackerControl
     _delegate = delegate;
 }
 
-void VROBodyTrackerController::calibrateModelToMLTorsoScale() {
+void VROBodyTrackerController::calibrateModelToMLTorsoScale(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const {
+    auto neck = joints.find(VROBodyJointType::Neck);
+    if (neck == joints.end()) {
+        return;
+    }
+    
     // Calculate the neckToMLRoot distance
-    VROVector3f neckPos = _cachedModelJoints[VROBodyJointType::Neck];
-    VROVector3f midHipLoc = getMLRootPosition();
+    VROVector3f neckPos = neck->second.worldPosition;
+    VROVector3f midHipLoc = getMLRootPosition(joints);
     float userTorsoHeight = midHipLoc.distanceAccurate(neckPos);
     
     // Calculate the different distances, grab the ratio.
@@ -299,13 +269,21 @@ void VROBodyTrackerController::calibrateModelToMLTorsoScale() {
     _modelRootNode->setScale(VROVector3f(modelToMLRatio, modelToMLRatio, modelToMLRatio));
 }
 
-VROVector3f VROBodyTrackerController::getMLRootPosition() {
+VROVector3f VROBodyTrackerController::getMLRootPosition(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const {
     if (_currentTrackedState == VROBodyTrackedState::NotAvailable) {
         pwarn("Unable to determine ML Root position without proper body tracking data.");
         return VROVector3f();
     }
     
-    VROVector3f start = _cachedModelJoints[VROBodyJointType::LeftHip];
-    VROVector3f end = _cachedModelJoints[VROBodyJointType::RightHip];
-    return (start - end).scale(0.5f) + end;
+    auto leftHip = joints.find(VROBodyJointType::LeftHip);
+    auto rightHip = joints.find(VROBodyJointType::RightHip);
+    
+    if (leftHip != joints.end() && rightHip != joints.end()) {
+        VROVector3f start = leftHip->second.worldPosition;
+        VROVector3f end   = rightHip->second.worldPosition;
+        return (start - end).scale(0.5f) + end;
+    } else {
+        pwarn("Unable to determine ML Root position without proper body tracking data.");
+        return VROVector3f();
+    }
 }

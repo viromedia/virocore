@@ -103,7 +103,7 @@ public:
      Represents the positional ML joint data in world space and its corresponding
      2D screen space position.
      */
-    struct VROJointPos {
+    struct VROJointPosition {
         VROVector3f worldPosition;
         float screenPosX;
         float screenPosY;
@@ -124,12 +124,8 @@ public:
 
     /*
      Triggered when the controller has processed new joints after it has been calibrated.
-
-     TODO: Remove unnecessary joint maps after narrowing down which joint data to use and expose.
      */
-    virtual void onJointUpdate(const std::map<VROBodyJointType, VROJointPos> &mlJointsFiltered,
-                               const std::map<VROBodyJointType, VROVector3f> &mlJointsDampened,
-                               const std::map<VROBodyJointType, VROMatrix4f> &modelJoints) = 0;
+    virtual void onJointUpdate(const std::map<VROBodyJointType, VROJointPosition> &joints) = 0;
 };
 
 /*
@@ -182,12 +178,6 @@ private:
     std::weak_ptr<VROBodyTrackerControllerDelegate> _delegate;
 
     /*
-     A cache of all filtered ML joints provided by the VROBodyTracker thus far with a
-     valid position in 3D space.
-     */
-    std::map<VROBodyJointType, VROBodyJoint> _cachedTrackedJoints;
-
-    /*
      Final filtered and processed joint positional data on which to apply onto the IKRig.
      */
     std::map<VROBodyJointType, VROVector3f> _cachedModelJoints;
@@ -223,12 +213,11 @@ private:
      Process, filter and update this controller's latest known set of _cachedTrackedJoints
      with the latest found ML 2D points given by VROBodyTracker.
      */
-    void processJoints(const std::map<VROBodyJointType, VROBodyJoint> &joints);
+    void processJoints(std::map<VROBodyJointType, VROBodyJoint> &joints);
     void projectJointsInto3DSpace(std::map<VROBodyJointType, VROBodyJoint> &joints);
-    void updateCachedJoints(std::map<VROBodyJointType, VROBodyJoint> &joints);
 
-    void calibrateModelToMLTorsoScale();
-    VROVector3f getMLRootPosition();
+    void calibrateModelToMLTorsoScale(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const;
+    VROVector3f getMLRootPosition(const std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> &joints) const;
                                      
     /*
      Updates the current VROBodyTrackedState and notifies the attached VROBodyTrackerControllerDelegate.
@@ -236,9 +225,10 @@ private:
     void setBodyTrackedState(VROBodyTrackedState state);
 
     /*
-     Updates 3D model's rig with the latest set of known 3D positions
+     Convert the given map of joints to a map of joint positions that can be passed to the
+     delegate.
      */
-    void notifyOnJointUpdateDelegates();
+    std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> extractJointPositions(const std::map<VROBodyJointType, VROBodyJoint> &joints);
 
     /*
      Depth tests for projecting a 2D ML screen coordinate into 3D space.
