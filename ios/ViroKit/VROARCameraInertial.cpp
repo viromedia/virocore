@@ -15,6 +15,8 @@
 #include "VROCameraTextureiOS.h"
 #include "VROARSession.h"
 
+static bool kCameraInertialUseFixedPerspectiveProjection = true;
+
 VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) {
     _trackingType = trackingType;
     _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
@@ -94,29 +96,56 @@ VROVector3f VROARCameraInertial::getPosition() const {
 }
 
 VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) {
-    if (_cameraTexture) {
-        *outFOV = VRORenderer::computeFOVFromMinorAxis(_cameraTexture->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
-    } else {
-        *outFOV = VRORenderer::computeFOVFromMinorAxis(_captureController->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+    if (kCameraInertialUseFixedPerspectiveProjection) {
+        /*
+         iPhone XS front-facing (derived from ARKit face tracking config).
+         
+         3.85051, 0, -0.00236702, 0
+         0, 1.77825, -8.47578e-05, 0
+         0, 0, -1.0002, -0.010002
+         0, 0, -1, 0"
+         */
+        VROMatrix4f projection;
+        projection[0] = 3.85051;
+        projection[5] = 1.77825;
+        projection[8] = -0.00236702;
+        projection[9] = -8.47578e-05;
+        projection[10] = -1.0002;
+        projection[11] = -1;
+        projection[14] = -0.010002;
+        projection[15] = 0;
+        
+        float fovX = toDegrees(atan(1.0f / projection[0]) * 2.0);
+        float fovY = toDegrees(atan(1.0f / projection[5]) * 2.0);
+        *outFOV = VROFieldOfView(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
+        
+        return projection;
     }
-    
-    VROVector3f cameraImageSize = getImageSize();
-    float fx = fabs((float)cameraImageSize.x / (2 * tan(toRadians(outFOV->getLeft() + outFOV->getRight()) / 2.0)));
-    float fy = fx;
-    
-    float s = 0;
-    float x0 = viewport.getWidth() / 2.0;
-    float y0 = viewport.getHeight() / 2.0;
-    float X = near + far;
-    float Y = near * far;
-    
-    float intrinsic[16] = {fx,   0,   0,  0,
-                            s,  fy,   0,  0,
-                          -x0, -y0,   X, -1,
-                            0,   0,   Y,  0 };
-    VROMatrix4f intrinsicMatrix(intrinsic);
-    
-    return viewport.getOrthographicProjection(near, far) * intrinsicMatrix;
+    else {
+        if (_cameraTexture) {
+            *outFOV = VRORenderer::computeFOVFromMinorAxis(_cameraTexture->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+        } else {
+            *outFOV = VRORenderer::computeFOVFromMinorAxis(_captureController->getHorizontalFOV(), viewport.getWidth(), viewport.getHeight());
+        }
+        
+        VROVector3f cameraImageSize = getImageSize();
+        float fx = fabs((float)cameraImageSize.x / (2 * tan(toRadians(outFOV->getLeft() + outFOV->getRight()) / 2.0)));
+        float fy = fx;
+        
+        float s = 0;
+        float x0 = viewport.getWidth() / 2.0;
+        float y0 = viewport.getHeight() / 2.0;
+        float X = near + far;
+        float Y = near * far;
+        
+        float intrinsic[16] = {fx,   0,   0,  0,
+            s,  fy,   0,  0,
+            -x0, -y0,   X, -1,
+            0,   0,   Y,  0 };
+        VROMatrix4f intrinsicMatrix(intrinsic);
+        
+        return viewport.getOrthographicProjection(near, far) * intrinsicMatrix;
+    }
 }
 
 VROVector3f VROARCameraInertial::getImageSize() {
