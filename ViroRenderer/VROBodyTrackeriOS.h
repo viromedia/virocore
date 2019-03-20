@@ -101,9 +101,9 @@ private:
     VROMatrix4f _visionToImageSpace, _imageToViewportSpace;
     
     /*
-     True when an image is being processed now.
+     The image being processed now. Null if no image is currently being processed.
      */
-    bool _isProcessingImage;
+    CVPixelBufferRef _processingImage;
     
     /*
      The image (along with its ARKit transform and orientation) that is queued to be

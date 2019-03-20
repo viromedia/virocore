@@ -120,7 +120,7 @@ VROBodyTrackeriOS::VROBodyTrackeriOS() {
     _fpsTickIndex = 0;
     _fpsTickSum = 0;
     _neuralEngineInitialized = false;
-    _isProcessingImage = false;
+    _processingImage = nil;
     _nextImage = nil;
     _cropScratchBuffer = nil;
     _cropScratchBufferLength = 0;
@@ -329,7 +329,6 @@ void VROBodyTrackeriOS::update(const VROARFrame *frame) {
     
     // Store the given image, which we'll run when the neural engine
     // is done processing its current image
-    
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
         _nextTransform = frame->getViewportToCameraImageTransform().invert();
@@ -371,27 +370,32 @@ void VROBodyTrackeriOS::nextImage() {
     NSLog(@"Starting neural engine frame");
 #endif
     
-    CVPixelBufferRef image = nullptr;
+    VROMatrix4f transform;
+    CGImagePropertyOrientation orientation;
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
         // Only process one image at a time
-        if (_isProcessingImage || !_nextImage) {
+        if (_processingImage || !_nextImage) {
             return;
         }
-        _isProcessingImage = true;
-        image = CVBufferRetain(_nextImage);
+        
+        _processingImage = CVBufferRetain(_nextImage);
+        CVBufferRelease(_nextImage);
+        _nextImage = nil;
+        
+        transform = _nextTransform;
+        orientation = _nextOrientation;
     }
     
 #if VRO_PROFILE_NEURAL_ENGINE
     NSLog(@"   Idle time %f", VROTimeCurrentMillis() - _betweenImageTime);
 #endif
 
-    trackImage(image, _nextTransform, _nextOrientation);
-    CVBufferRelease(image);
-
+    trackImage(_processingImage, transform, orientation);
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
-        _isProcessingImage = false;
+        CVBufferRelease(_processingImage);
+        _processingImage = nil;
     }
     _betweenImageTime = VROTimeCurrentMillis();
     
@@ -611,7 +615,6 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
 #endif
 
     std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
-
     if (!joints.empty()) {
         dispatch_async(dispatch_get_main_queue(), ^{
             std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
