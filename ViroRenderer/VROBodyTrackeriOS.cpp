@@ -114,6 +114,8 @@ std::map<int, VROBodyJointType> _pilTypesToJointTypes = {
 
 @end
 
+#pragma mark - Initialization
+
 VROBodyTrackeriOS::VROBodyTrackeriOS() {
     _visionQueue = dispatch_queue_create("com.viro.bodyTrackerVisionQueue", DISPATCH_QUEUE_SERIAL);
     _isTracking = false;
@@ -218,100 +220,6 @@ double VROBodyTrackeriOS::getDampeningPeriodMs() const {
     return _dampeningPeriodMs;
 }
 
-VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition,
-                                               VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
-                                               std::pair<VROVector3f, float> *outImageSpaceJoints) {
-    if (heatmap.shape.count < 3) {
-        return {};
-    }
-        
-    int numJoints = (int) heatmap.shape[0].integerValue;
-    int heatmapHeight = (int) heatmap.shape[1].integerValue;
-    int heatmapWidth = (int) heatmap.shape[2].integerValue;
-    
-    passert (heatmap.dataType == MLMultiArrayDataTypeFloat32);
-    float *array = (float *) heatmap.dataPointer;
-    int stride_c = (int) heatmap.strides[0].integerValue;
-    int stride_h = (int) heatmap.strides[1].integerValue;
-    
-    VROInferredBodyJoint bodyMap[kNumBodyJoints];
-    double creationTime = VROTimeCurrentMillis();
-    
-    /*
-     The ML model will return the heatmap tiles for each joint; choose the highest
-     confidence tile for each joint.
-     */
-    for (int k = 0; k < numJoints; k++) {
-        VROBodyJointType type = _mpiiTypesToJointTypes[k];
-        if (type == VROBodyJointType::Unknown) {
-            continue;
-        }
-        
-        for (int i = 0; i < heatmapHeight; i++) {
-            for (int j = 0; j < heatmapWidth; j++) {
-                long index = k * stride_c + i * stride_h + j;
-                float confidence = array[index];
-                
-                if (confidence > 0) {
-                    VROInferredBodyJoint &joint = bodyMap[(int) type];
-                    
-                    /*
-                     The point we create here is just the index of the heatmap tile
-                     (i and j). We will convert this into a floating point value once
-                     we find the highest confidence tile.
-                     */
-                    if (confidence > joint.getConfidence()) {
-                        VROInferredBodyJoint inferredJoint(type);
-                        inferredJoint.setConfidence(confidence);
-                        inferredJoint.setTileIndices(j, i);
-                        inferredJoint.setCreationTime(creationTime);
-                        
-                        bodyMap[(int) type] = inferredJoint;
-                    }
-                }
-            }
-        }
-    }
-    
-    /*
-     Now we have a map with the highest confidence tile for each joint. Convert the
-     heatmap tile indices into normalized coordinates [0, 1].
-     */
-    for (VROInferredBodyJoint &joint : bodyMap) {
-        if (joint.getConfidence() > 0) {
-            VROVector3f    tilePoint  = { (float) joint.getTileX(), (float) joint.getTileY() };
-            
-            // Convert tile indices to vision coordinates [0, 1]
-            VROVector3f visionPoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
-                                        (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
-            
-            // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
-            VROVector3f imagePoint = visionToImageSpace.multiply(visionPoint);
-            VROVector3f viewportPoint = imageToViewportSpace.multiply(imagePoint);
-            
-            // Store the image points for bounding box computation
-            outImageSpaceJoints[(int) joint.getType()].first = imagePoint;
-            outImageSpaceJoints[(int) joint.getType()].second = joint.getConfidence();
-            
-            // Mirror the X dimension if we're using the front-facing camera
-            if (cameraPosition == VROCameraPosition::Front) {
-                viewportPoint.x = 1.0 - viewportPoint.x;
-            }
-            VROBoundingBox viewportBounds = VROBoundingBox(viewportPoint.x, viewportPoint.x, viewportPoint.y, viewportPoint.y, 0, 0);
-            joint.setBounds(viewportBounds);
-        }
-    }
-    
-    VROPoseFrame poseFrame = newPoseFrame();
-    for (int i = 0; i < kNumBodyJoints; i++) {
-        VROInferredBodyJoint &inferredJoint = bodyMap[i];
-        if (inferredJoint.getConfidence() > 0) {
-            poseFrame[i].push_back(inferredJoint);
-        }
-    }
-    return poseFrame;
-}
-
 void VROBodyTrackeriOS::startBodyTracking() {
     _isTracking = true;
 }
@@ -319,6 +227,8 @@ void VROBodyTrackeriOS::startBodyTracking() {
 void VROBodyTrackeriOS::stopBodyTracking() {
     _isTracking = false;
 }
+
+#pragma mark - Renderer Thread
 
 void VROBodyTrackeriOS::update(const VROARFrame *frame) {
     if (!_isTracking) {
@@ -363,6 +273,8 @@ void VROBodyTrackeriOS::update(const VROARFrame *frame) {
         }
     });
 }
+
+#pragma mark - Vision Queue (pre-processing for CoreML)
 
 // Invoked on the _visionQueue
 void VROBodyTrackeriOS::nextImage() {
@@ -589,60 +501,6 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
 }
 
 // Invoked on the _visionQueue
-void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error) {
-#if VRO_PROFILE_NEURAL_ENGINE
-    NSLog(@"   Neural engine time %f", VROTimeCurrentMillis() - _startNeural);
-#endif
-    _startHeatmap = VROTimeCurrentMillis();
-    NSArray *array = [request results];
-    
-    VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
-    MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
-    
-    std::pair<VROVector3f, float> imageSpaceJoints[kNumBodyJoints];
-    VROPoseFrame joints = convertHeatmap(heatmap, _cameraPosition, _visionToImageSpace, _imageToViewportSpace, imageSpaceJoints);
-    _dynamicCropBox = deriveBounds(imageSpaceJoints);
-    
-    CGAffineTransform imageToViewport = CGAffineTransformMake(_imageToViewportSpace[0], _imageToViewportSpace[1], _imageToViewportSpace[4],
-                                                              _imageToViewportSpace[5], _imageToViewportSpace[12], _imageToViewportSpace[13]);
-    _dynamicCropBoxViewport = CGRectApplyAffineTransform(_dynamicCropBox, imageToViewport);
-    if (_cameraPosition == VROCameraPosition::Front) {
-        _dynamicCropBoxViewport.origin.x = 1.0 - _dynamicCropBoxViewport.size.width - _dynamicCropBoxViewport.origin.x;
-    }
-    
-#if VRO_PROFILE_NEURAL_ENGINE
-    NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);
-#endif
-
-    std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
-    if (!joints.empty()) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
-            
-            if (tracker && tracker->_isTracking) {
-                std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
-                if (delegate) {
-                    if (!tracker->_poseFilter) {
-                        delegate->onBodyJointsFound(joints);
-                    } else {
-                        delegate->onBodyJointsFound(tracker->_poseFilter->filterJoints(joints));
-                    }
-                }
-            }
-        });
-    }
-    
-    // Compute FPS
-    uint64_t nanosecondsThisFrame = VRONanoTime();
-    uint64_t tick = nanosecondsThisFrame - _nanosecondsLastFrame;
-    _nanosecondsLastFrame = nanosecondsThisFrame;
-    updateFPS(tick);
-    
-#if VRO_PROFILE_NEURAL_ENGINE
-    NSLog(@"Neural Engine FPS %f\n", getFPS());
-#endif
-}
-
 static int debugCropAndPadCurrentFrame = 0;
 CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
                                                       int *outCropX, int *outCropY,
@@ -695,6 +553,158 @@ CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
         ++debugCropAndPadCurrentFrame;
     }
     return cropped;
+}
+
+#pragma mark - Vision Queue (post-processing CoreML output)
+
+// Invoked on the _visionQueue
+void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error) {
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"   Neural engine time %f", VROTimeCurrentMillis() - _startNeural);
+#endif
+    _startHeatmap = VROTimeCurrentMillis();
+    NSArray *array = [request results];
+    
+    VNCoreMLFeatureValueObservation *topResult = (VNCoreMLFeatureValueObservation *)(array[0]);
+    MLMultiArray *heatmap = topResult.featureValue.multiArrayValue;
+    
+    std::pair<VROVector3f, float> imageSpaceJoints[kNumBodyJoints];
+    VROPoseFrame joints = convertHeatmap(heatmap, _cameraPosition, _visionToImageSpace, _imageToViewportSpace, imageSpaceJoints);
+    _dynamicCropBox = deriveBounds(imageSpaceJoints);
+    
+    CGAffineTransform imageToViewport = CGAffineTransformMake(_imageToViewportSpace[0], _imageToViewportSpace[1], _imageToViewportSpace[4],
+                                                              _imageToViewportSpace[5], _imageToViewportSpace[12], _imageToViewportSpace[13]);
+    _dynamicCropBoxViewport = CGRectApplyAffineTransform(_dynamicCropBox, imageToViewport);
+    if (_cameraPosition == VROCameraPosition::Front) {
+        _dynamicCropBoxViewport.origin.x = 1.0 - _dynamicCropBoxViewport.size.width - _dynamicCropBoxViewport.origin.x;
+    }
+    
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"   Heatmap processing time %f", VROTimeCurrentMillis() - _startHeatmap);
+#endif
+
+    std::weak_ptr<VROBodyTrackeriOS> tracker_w = std::dynamic_pointer_cast<VROBodyTrackeriOS>(shared_from_this());
+
+    if (!joints.empty()) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            std::shared_ptr<VROBodyTrackeriOS> tracker = tracker_w.lock();
+            
+            if (tracker && tracker->_isTracking) {
+                std::shared_ptr<VROBodyTrackerDelegate> delegate = _bodyMeshDelegate_w.lock();
+                if (delegate) {
+                    if (!tracker->_poseFilter) {
+                        delegate->onBodyJointsFound(joints);
+                    } else {
+                        delegate->onBodyJointsFound(tracker->_poseFilter->filterJoints(joints));
+                    }
+                }
+            }
+        });
+    }
+    
+    // Compute FPS
+    uint64_t nanosecondsThisFrame = VRONanoTime();
+    uint64_t tick = nanosecondsThisFrame - _nanosecondsLastFrame;
+    _nanosecondsLastFrame = nanosecondsThisFrame;
+    updateFPS(tick);
+    
+#if VRO_PROFILE_NEURAL_ENGINE
+    NSLog(@"Neural Engine FPS %f\n", getFPS());
+#endif
+}
+
+VROPoseFrame VROBodyTrackeriOS::convertHeatmap(MLMultiArray *heatmap, VROCameraPosition cameraPosition,
+                                               VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                               std::pair<VROVector3f, float> *outImageSpaceJoints) {
+    if (heatmap.shape.count < 3) {
+        return {};
+    }
+    
+    int numJoints = (int) heatmap.shape[0].integerValue;
+    int heatmapHeight = (int) heatmap.shape[1].integerValue;
+    int heatmapWidth = (int) heatmap.shape[2].integerValue;
+    
+    passert (heatmap.dataType == MLMultiArrayDataTypeFloat32);
+    float *array = (float *) heatmap.dataPointer;
+    int stride_c = (int) heatmap.strides[0].integerValue;
+    int stride_h = (int) heatmap.strides[1].integerValue;
+    
+    VROInferredBodyJoint bodyMap[kNumBodyJoints];
+    double creationTime = VROTimeCurrentMillis();
+    
+    /*
+     The ML model will return the heatmap tiles for each joint; choose the highest
+     confidence tile for each joint.
+     */
+    for (int k = 0; k < numJoints; k++) {
+        VROBodyJointType type = _mpiiTypesToJointTypes[k];
+        if (type == VROBodyJointType::Unknown) {
+            continue;
+        }
+        
+        for (int i = 0; i < heatmapHeight; i++) {
+            for (int j = 0; j < heatmapWidth; j++) {
+                long index = k * stride_c + i * stride_h + j;
+                float confidence = array[index];
+                
+                if (confidence > 0) {
+                    VROInferredBodyJoint &joint = bodyMap[(int) type];
+                    
+                    /*
+                     The point we create here is just the index of the heatmap tile
+                     (i and j). We will convert this into a floating point value once
+                     we find the highest confidence tile.
+                     */
+                    if (confidence > joint.getConfidence()) {
+                        VROInferredBodyJoint inferredJoint(type);
+                        inferredJoint.setConfidence(confidence);
+                        inferredJoint.setTileIndices(j, i);
+                        inferredJoint.setCreationTime(creationTime);
+                        
+                        bodyMap[(int) type] = inferredJoint;
+                    }
+                }
+            }
+        }
+    }
+    
+    /*
+     Now we have a map with the highest confidence tile for each joint. Convert the
+     heatmap tile indices into normalized coordinates [0, 1].
+     */
+    for (VROInferredBodyJoint &joint : bodyMap) {
+        if (joint.getConfidence() > 0) {
+            VROVector3f    tilePoint  = { (float) joint.getTileX(), (float) joint.getTileY() };
+            
+            // Convert tile indices to vision coordinates [0, 1]
+            VROVector3f visionPoint = { (tilePoint.x + 0.5f) / (float) (heatmapWidth),
+                (tilePoint.y + 0.5f) / (float) (heatmapHeight), 0 };
+            
+            // Multiply by the ARKit transform to get normalized viewport coordinates [0, 1]
+            VROVector3f imagePoint = visionToImageSpace.multiply(visionPoint);
+            VROVector3f viewportPoint = imageToViewportSpace.multiply(imagePoint);
+            
+            // Store the image points for bounding box computation
+            outImageSpaceJoints[(int) joint.getType()].first = imagePoint;
+            outImageSpaceJoints[(int) joint.getType()].second = joint.getConfidence();
+            
+            // Mirror the X dimension if we're using the front-facing camera
+            if (cameraPosition == VROCameraPosition::Front) {
+                viewportPoint.x = 1.0 - viewportPoint.x;
+            }
+            VROBoundingBox viewportBounds = VROBoundingBox(viewportPoint.x, viewportPoint.x, viewportPoint.y, viewportPoint.y, 0, 0);
+            joint.setBounds(viewportBounds);
+        }
+    }
+    
+    VROPoseFrame poseFrame = newPoseFrame();
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        VROInferredBodyJoint &inferredJoint = bodyMap[i];
+        if (inferredJoint.getConfidence() > 0) {
+            poseFrame[i].push_back(inferredJoint);
+        }
+    }
+    return poseFrame;
 }
 
 CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imageSpaceJoints) {
@@ -764,6 +774,8 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
 
     return CGRectMake(x, y, width, height);
 }
+
+#pragma mark - FPS Computation
 
 void VROBodyTrackeriOS::updateFPS(uint64_t newTick) {
     // Simple moving average: subtract value falling off, and add new value
