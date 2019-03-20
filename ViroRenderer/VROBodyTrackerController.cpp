@@ -25,7 +25,6 @@ static const float kAutomaticSizingRatio = 1;
 static const float kSkeletonTorsoHeight = 0.640863955;
 static const VROVector3f kInitialModelPos = VROVector3f(-10, -10, 10);
 static const float kUsePresetDepthDistanceMeter = 1;
-static const VROBodyJointType kArHitTestJoint = VROBodyJointType::Neck;
 
 VROBodyTrackerController::VROBodyTrackerController(std::shared_ptr<VRORenderer> renderer,
                                                    std::shared_ptr<VRODriver> driver,
@@ -187,9 +186,9 @@ bool VROBodyTrackerController::performUnprojectionToPlane(float x, float y, VROM
 
 void VROBodyTrackerController::updateBodyTrackingState(const std::map<VROBodyJointType, VROBodyJoint> &joints) {
     bool hasHipJoints = joints.find(VROBodyJointType::RightHip) != joints.end() &&
-    joints.find(VROBodyJointType::LeftHip)  != joints.end();
+                        joints.find(VROBodyJointType::LeftHip) != joints.end();
     
-    if (joints.find(kArHitTestJoint) == joints.end()) {
+    if (joints.empty()) {
         setBodyTrackingState(VROBodyTrackedState::NotAvailable);
     } else if (!hasHipJoints) {
         setBodyTrackingState(VROBodyTrackedState::NoScalableJointsAvailable);
