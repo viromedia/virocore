@@ -211,6 +211,12 @@ private:
     CGRect deriveBounds(const std::pair<VROVector3f, float> *imageSpaceJoints);
     
     /*
+     Derive the full body bounds from the given pose, interpolate from the previous
+     crop box to this new bounds, and return the result.
+     */
+    CGRect deriveBoundsSmooth(const std::pair<VROVector3f, float> *imageSpaceJoints);
+    
+    /*
      Update and get FPS.
      */
     void updateFPS(uint64_t newTick);

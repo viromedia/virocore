@@ -55,8 +55,28 @@ static const double kCropEuroFilterDCutoff = 1;
 static const double kCropEuroFilterBeta = 1.0;
 static const double kCropEuroFilterFCMin = 1.7;
 
-static const double kCropPaddingMultiplierX = 0.25;
+// The amount of additional padding (as percentage of the body bounds) to
+// add to the dynamic crop box.
+static const double kCropPaddingMultiplierX = 0.40;
 static const double kCropPaddingMultiplierY = 0.25;
+
+// The interpolation amount to use when moving from an old crop box to a
+// newly found one. Higher number means we'll move more quickly to the
+// latest crop box, while lower values prioritize more smoothing.
+static const float kCropBoxSmoothingFactor = 0.2;
+
+// The dynamic crop box is thrown out in favor of the entire screen if we
+// find fewer than these many joints.
+static const int kCropMinimumJoints = 6;
+
+// Amount to subtract from the crop region to prevent CoreML bugs when
+// using region of interest.
+static const double kRegionOfInterestCroppingEpsilon = 0.001;
+
+// When using region of interest, if our cropping box is this close (in
+// normalized image coordinates) to the full screen in both dimensions,
+// then just use the full screen.
+static const double kRegionOfInterestRoundingEpsilon = 0.05;
 
 std::map<int, VROBodyJointType> _mpiiTypesToJointTypes = {
     { 0, VROBodyJointType::RightAnkle },
@@ -432,7 +452,7 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
     }
     else if (_cropAndScaleOption == VROCropAndScaleOption::Viro_RegionOfInterest) {
         float cropX, cropY, cropWidth, cropHeight;
-        
+       
         if (CGRectIsNull(_dynamicCropBox)) {
             cropX = 0;
             cropY = 0;
@@ -444,28 +464,22 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
             cropWidth  = _dynamicCropBox.size.width;
             cropHeight = _dynamicCropBox.size.height;
             
-            cropX = clamp(cropX, 0.001, .999);
-            cropY = clamp(cropY, 0.001, .999);
-            cropWidth  = clamp(cropWidth,  0, 0.999 - cropX);
-            cropHeight = clamp(cropHeight, 0, 0.999 - cropY);
+            cropX = clamp(cropX, kRegionOfInterestCroppingEpsilon, 1.0 - kRegionOfInterestCroppingEpsilon);
+            cropY = clamp(cropY, kRegionOfInterestCroppingEpsilon, 1.0 - kRegionOfInterestCroppingEpsilon);
+            cropWidth  = clamp(cropWidth,  0, 1.0 - kRegionOfInterestCroppingEpsilon - cropX);
+            cropHeight = clamp(cropHeight, 0, 1.0 - kRegionOfInterestCroppingEpsilon - cropY);
         }
         
         // Derive the transform from vision space to *cropped* image space.
-        // This is similar logic to CoreML_Fit.
+        // This is similar logic to CoreML_Fit. Note CoreML always fits the
+        // long side, even if our crop region's width is greater than its
+        // height.
         VROMatrix4f visionToCroppedImage;
-        if (cropWidth > cropHeight) {
-            float scale = (float) (cropWidth * width) / (float) (cropHeight * height);
-            
-            // Add top and bottom bars
-            visionToCroppedImage[5] = scale;
-            visionToCroppedImage[13] = (1 - scale) / 2.0;
-        } else {
-            float scale = (float) (cropHeight * height) / (float) (cropWidth * width);
-            
-            // Add left and right bars
-            visionToCroppedImage[0] = scale;
-            visionToCroppedImage[12] = (1 - scale) / 2.0;
-        }
+        float scale = (float) (cropHeight * height) / (float) (cropWidth * width);
+        
+        // Add left and right bars
+        visionToCroppedImage[0] = scale;
+        visionToCroppedImage[12] = (1 - scale) / 2.0;
         
         // Then derive the transform from cropped image space to original
         // image space.
@@ -478,8 +492,19 @@ void VROBodyTrackeriOS::trackImage(CVPixelBufferRef image, VROMatrix4f transform
         // Finally concatenate to get the vision to image transform.
         toImage = croppedImageToImage.multiply(visionToCroppedImage);
         
-        // Set the region of interest to teh crop region. The fabs is to prevent the value
-        // -0.000, which breaks CoreML.
+        // If the region of interest is close to the full screen, then just use the
+        // full screen (for efficiency and to prevent artifacts).
+        if (fabs(1.0 - cropWidth) < kRegionOfInterestRoundingEpsilon &&
+            fabs(1.0 - cropHeight) < kRegionOfInterestRoundingEpsilon) {
+            
+            cropX = 0;
+            cropY = 0;
+            cropWidth = 1;
+            cropHeight = 1;
+        }
+        
+        // Set the region of interest to the crop region. The fabs is to prevent the value
+        // -0.000, which for unknown reasons breaks CoreML.
         _visionRequest.regionOfInterest = CGRectMake(cropX, fabs(1 - cropY - cropHeight), cropWidth, cropHeight);
     }
     
@@ -505,7 +530,6 @@ static int debugCropAndPadCurrentFrame = 0;
 CVPixelBufferRef VROBodyTrackeriOS::performCropAndPad(CVPixelBufferRef image,
                                                       int *outCropX, int *outCropY,
                                                       int *outCropWidth, int *outCropHeight) {
-    
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
     
@@ -570,7 +594,7 @@ void VROBodyTrackeriOS::processVisionResults(VNRequest *request, NSError *error)
     
     std::pair<VROVector3f, float> imageSpaceJoints[kNumBodyJoints];
     VROPoseFrame joints = convertHeatmap(heatmap, _cameraPosition, _visionToImageSpace, _imageToViewportSpace, imageSpaceJoints);
-    _dynamicCropBox = deriveBounds(imageSpaceJoints);
+    _dynamicCropBox = deriveBoundsSmooth(imageSpaceJoints);
     
     CGAffineTransform imageToViewport = CGAffineTransformMake(_imageToViewportSpace[0], _imageToViewportSpace[1], _imageToViewportSpace[4],
                                                               _imageToViewportSpace[5], _imageToViewportSpace[12], _imageToViewportSpace[13]);
@@ -728,7 +752,7 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
         }
     }
     
-    if (numJointsFound < 6) {
+    if (numJointsFound < kCropMinimumJoints) {
         return CGRectNull;
     }
     
@@ -767,11 +791,53 @@ CGRect VROBodyTrackeriOS::deriveBounds(const std::pair<VROVector3f, float> *imag
         height += 2 * expansion;
     }
     
+    // If the pelvis was visible, then ensure the bounds have a height of at least
+    // pelvis to legs in either direction of the pelvis.
+    if (jointsFound[(int) VROBodyJointType::Pelvis]) {
+        float maxPelvisAnkleDistance = 0;
+        VROVector3f pelvisPosition = imageSpaceJoints[(int) VROBodyJointType::Pelvis].first;
+        
+        if (jointsFound[(int) VROBodyJointType::LeftAnkle]) {
+            maxPelvisAnkleDistance = fmax(maxPelvisAnkleDistance,
+                                          pelvisPosition.distance(imageSpaceJoints[(int) VROBodyJointType::LeftAnkle].first));
+        }
+        if (jointsFound[(int) VROBodyJointType::RightAnkle]) {
+            maxPelvisAnkleDistance = fmax(maxPelvisAnkleDistance,
+                                          pelvisPosition.distance(imageSpaceJoints[(int) VROBodyJointType::RightAnkle].first));
+        }
+        
+        if (pelvisPosition.y - maxPelvisAnkleDistance < y) {
+            float yAdj = pelvisPosition.y - maxPelvisAnkleDistance;
+            height += (y - yAdj);
+            y = yAdj;
+        }
+    }
+    
     x = fmax(x, 0);
     y = fmax(y, 0);
-    width = fmin(width, 1);
-    height = fmin(height, 1);
+    width = fmin(width, 1 - x);
+    height = fmin(height, 1 - y);
+    
+    return CGRectMake(x, y, width, height);
+}
 
+CGRect VROBodyTrackeriOS::deriveBoundsSmooth(const std::pair<VROVector3f, float> *imageSpaceJoints) {
+    CGRect newBounds = deriveBounds(imageSpaceJoints);
+    if (CGRectIsNull(_dynamicCropBox)) {
+        return newBounds;
+    }
+    
+    float interpolation = kCropBoxSmoothingFactor;
+    float x = VROMathInterpolate(interpolation, 0, 1, _dynamicCropBox.origin.x, newBounds.origin.x);
+    float y = VROMathInterpolate(interpolation, 0, 1, _dynamicCropBox.origin.y, newBounds.origin.y);
+    float width = VROMathInterpolate(interpolation, 0, 1, _dynamicCropBox.size.width, newBounds.size.width);
+    float height = VROMathInterpolate(interpolation, 0, 1, _dynamicCropBox.size.height, newBounds.size.height);
+
+    x = fmax(x, 0);
+    y = fmax(y, 0);
+    width = fmin(width, 1 - x);
+    height = fmin(height, 1 - y);
+    
     return CGRectMake(x, y, width, height);
 }
 
