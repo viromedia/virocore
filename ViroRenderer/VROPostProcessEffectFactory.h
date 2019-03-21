@@ -35,6 +35,8 @@ enum class VROPostProcessEffect{
     ThermalVision,
     Pixelated,
     CrossHatch,
+    SwirlDistortion,
+    ZoomInDistortion,
     None
 };
 
@@ -107,6 +109,11 @@ public:
     void enableWindowMask(std::shared_ptr<VRODriver> driver);
     void disableWindowMask(std::shared_ptr<VRODriver> driver);
     void updateWindowMask(VROVector3f tl, VROVector3f tr, VROVector3f bl, VROVector3f br);
+
+    // TODO: Create a better way to pass effect-specific parameters to our post process effects.
+    void setSwirlSpeedMultiplier(float speed) {
+        _swirlSpeedMultiplier = speed;
+    }
     void setDistortion(float distortion) {
         _circularDistortion = distortion;
     }
@@ -138,6 +145,8 @@ private:
     std::shared_ptr<VROImagePostProcess> createThermalVision(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createPixel(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createCrossHatch(std::shared_ptr<VRODriver> driver);
+    std::shared_ptr<VROImagePostProcess> createSwirlEffect(std::shared_ptr<VRODriver> driver);
+    std::shared_ptr<VROImagePostProcess> createZoomEffect(std::shared_ptr<VRODriver> driver);
     std::shared_ptr<VROImagePostProcess> createEmptyEffect(std::shared_ptr<VRODriver> driver);
     std::vector<std::string> getHBCSModification(float hue, float brightness, float contrast, float saturation);
 
@@ -149,7 +158,9 @@ private:
     VROVector3f _maskTr;
     VROVector3f _maskBl;
     VROVector3f _maskBr;
+    VROVector3f _outputAspectRatio;
 
+    float _swirlSpeedMultiplier;
     float _circularDistortion;
 };
 

@@ -11,6 +11,7 @@
 #include "VROImageShaderProgram.h"
 #include "VRODriver.h"
 #include "VROShaderModifier.h"
+#include "VROTime.h"
 
 static thread_local std::shared_ptr<VROImagePostProcess> sGrayScale;
 static thread_local std::shared_ptr<VROImagePostProcess> sSepia;
@@ -22,11 +23,14 @@ static thread_local std::shared_ptr<VROImagePostProcess> sInverted;
 static thread_local std::shared_ptr<VROImagePostProcess> sThermalVision;
 static thread_local std::shared_ptr<VROImagePostProcess> sPixellated;
 static thread_local std::shared_ptr<VROImagePostProcess> sCrossHatch;
+static thread_local std::shared_ptr<VROImagePostProcess> sSwirl;
+static thread_local std::shared_ptr<VROImagePostProcess> sZoomEffect;
 static thread_local std::shared_ptr<VROImagePostProcess> sEmptyEffect;
 static thread_local std::shared_ptr<VROImagePostProcess> sWindowMask;
 
 VROPostProcessEffectFactory::VROPostProcessEffectFactory() {
     _enabledWindowMask = false;
+    _swirlSpeedMultiplier = 2;
 }
 
 VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {
@@ -76,6 +80,11 @@ void VROPostProcessEffectFactory::enableEffect(VROPostProcessEffect effect, std:
         appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createPixel(driver));
     } else if (effect == VROPostProcessEffect::CrossHatch){
         appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createCrossHatch(driver));
+    } else if (effect == VROPostProcessEffect::SwirlDistortion){
+        _circularDistortion = 0.35;
+        appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createSwirlEffect(driver));
+    } else if (effect == VROPostProcessEffect::ZoomInDistortion){
+        appliedEffect = std::pair<VROPostProcessEffect, std::shared_ptr<VROImagePostProcess>>(effect, createZoomEffect(driver));
     } else {
         pwarn("Selected unsupported effect!");
         return;
@@ -211,6 +220,10 @@ std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::renderEffects(std:
                                                                             std::shared_ptr<VRORenderTarget> targetA,
                                                                             std::shared_ptr<VRORenderTarget> targetB,
                                                                             std::shared_ptr<VRODriver> driver) {
+    // Save the aspect ratio of the final output if needed.
+    _outputAspectRatio.x = targetB->getWidth();
+    _outputAspectRatio.y = targetB->getHeight();
+
     // Compound post process effects by blitting ping-pong style between input and output targets.
     std::shared_ptr<VRORenderTarget> outputTarget = input;
     
@@ -537,6 +550,282 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createCrossHat
         sCrossHatch = driver->newImagePostProcess(shader);
     }
     return sCrossHatch;
+}
+
+std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createSwirlEffect(std::shared_ptr<VRODriver> driver) {
+    if (!sSwirl) {
+        std::vector<std::string> samplers = { "source_texture" };
+        std::vector<std::string> code = {
+                "uniform sampler2D source_texture;",
+                "uniform highp vec3 tl;",
+                "uniform highp vec3 tr;",
+                "uniform highp vec3 bl;",
+                "uniform highp vec3 br;",
+                "uniform highp float currentTimeSec;",
+                "uniform highp vec3 aspectRatio;",
+                "uniform highp float distortionPower;",
+
+                "if (v_texcoord.x < bl.x ||",
+                "v_texcoord.x > br.x ||",
+                "v_texcoord.y < bl.y ||",
+                "v_texcoord.y > tl.y) {",
+                "    frag_color = texture(source_texture, v_texcoord);"
+                        "    return;",
+                "}",
+
+                // Determine the center of the swirl
+                "highp float centerX = tl.x + (tr.x - tl.x) * 0.5;",
+                "highp float centerY = bl.y + (tl.y - bl.y) * 0.5;",
+                "highp vec2 center = vec2(centerX, centerY);",
+
+                // Determine the current offset from the center.
+                // To determine the size of the circle, account for the aspect ratio
+                // TODO: account for horizontal ratios
+                "highp float ap = aspectRatio.y / aspectRatio.x;",
+                "highp vec2 center_corrected = vec2(center.x, center.y * ap);",
+                "highp vec2 v_texcoord_corrected = vec2(v_texcoord.x, v_texcoord.y * ap);",
+                "highp float dist = length(v_texcoord_corrected - center_corrected);",
+
+                // Now calculate the rotating swirl angle, use width/2 as the radius
+                "highp float width = (tr.x - tl.x) / 2.0;",
+                "highp float height = (tl.y - bl.y) / 2.0;",
+                "highp float radius = width > height ? height : width;",
+                "highp float angle = sin(currentTimeSec);",
+
+                // If we are ouside the distortion area, render as normal
+                "if (dist > radius) {",
+                "    frag_color = texture(source_texture, v_texcoord);",
+                "    return;",
+                "}",
+
+                // Else, we are in the distortion zone
+                "highp vec2 uv;",
+                "highp float percent = (radius - dist) / radius;",
+                "highp float theta = percent * percent * angle * 8.0;",
+                "highp float s = sin(theta * distortionPower);",
+                "highp float c = cos(sin(theta * distortionPower));",
+
+                "highp vec2 tc = v_texcoord;",
+                "tc -= center;",
+                "tc = vec2(dot(tc, vec2(c, -s)), dot(tc, vec2(s, c)));",
+                "tc += center;",
+
+                // Apply the colors.,
+                "frag_color = texture(source_texture, tc);"
+        };
+
+        // Add modifiers for blurring the image horizontally and vertically.
+        std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
+        std::weak_ptr<VROPostProcessEffectFactory> weakSelf = std::dynamic_pointer_cast<VROPostProcessEffectFactory>(shared_from_this());
+        modifier->setUniformBinder("tl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({0, 1, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskTl.x, strongSelf->_maskTl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("tr", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({1, 1, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskTr.x, strongSelf->_maskTr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("bl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({0, 0, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskBl.x, strongSelf->_maskBl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("br", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({1, 0, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskBr.x, strongSelf->_maskBr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("currentTimeSec", VROShaderProperty::Float,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setFloat(VROTimeCurrentSeconds() * strongSelf->_swirlSpeedMultiplier);
+                                       }
+                                   });
+        modifier->setUniformBinder("distortionPower", VROShaderProperty::Float,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setFloat(strongSelf->_circularDistortion);
+                                       }
+                                   });
+        modifier->setUniformBinder("aspectRatio", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       pwarn("Daniel grab aspectRatio");
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setVec3({strongSelf->_outputAspectRatio.x, strongSelf->_outputAspectRatio.y, 0});
+                                       }
+                                   });
+
+        // Finally create our ImagePostProcess program and cache it.
+        std::vector<std::shared_ptr<VROShaderModifier>> modifiers = { modifier };
+        std::shared_ptr<VROImageShaderProgram> shader = std::make_shared<VROImageShaderProgram>(samplers, modifiers, driver);
+        sSwirl = driver->newImagePostProcess(shader);
+    }
+    _circularDistortion = 0.35;
+    return sSwirl;
+}
+
+std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createZoomEffect(std::shared_ptr<VRODriver> driver) {
+    if (!sZoomEffect) {
+        std::vector<std::string> samplers = { "source_texture" };
+        std::vector<std::string> code = {
+                "uniform sampler2D source_texture;",
+                "uniform highp vec3 tl;",
+                "uniform highp vec3 tr;",
+                "uniform highp vec3 bl;",
+                "uniform highp vec3 br;",
+                "uniform highp vec3 aspectRatio;",
+                "uniform highp float magnification;",
+                "highp float border_thickness = 0.01;",
+
+                // Determine the center and radius of the zoom circle
+                "highp float width = (tr.x - tl.x) / 2.0;",
+                "highp float height = (tl.y - bl.y) / 2.0;",
+                "highp float radius = width > height ? height : width;",
+                "radius = radius - (2.0 * border_thickness);",
+
+                "highp float centerX = tl.x + ((tr.x - tl.x) * 0.5);",
+                "highp float centerY = bl.y + ((tl.y - bl.y) * 0.5);",
+                "highp vec2 center = vec2(centerX, centerY);",
+
+                // To determine the size of the circle, account for the aspect ratio
+                // TODO: account for horizontal ratios
+                "highp float ap = aspectRatio.y / aspectRatio.x;",
+                "highp vec2 center_corrected = vec2(center.x, center.y * ap);",
+                "highp vec2 v_texcoord_corrected = vec2(v_texcoord.x, v_texcoord.y * ap);",
+
+                // now determine if we are in the circle or not, if not render as normal.
+                "highp float dist = length(v_texcoord_corrected - center_corrected);",
+                "if (dist > radius + border_thickness) {",
+                "    frag_color = texture(source_texture, v_texcoord);",
+                "    return;",
+                "} else if (dist > radius) {",
+                "    frag_color = vec4(0.1, 0.1, 0.1, 1.0);",
+                "    return;",
+                "}",
+
+                // Else, we are in the distortion zone
+                "highp vec2 uv = center + ( (v_texcoord - center) / magnification);",
+                "frag_color = texture(source_texture, uv);"
+        };
+
+        // Add modifiers for blurring the image horizontally and vertically.
+        std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
+        std::weak_ptr<VROPostProcessEffectFactory> weakSelf = std::dynamic_pointer_cast<VROPostProcessEffectFactory>(shared_from_this());
+        modifier->setUniformBinder("tl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({0, 1, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskTl.x, strongSelf->_maskTl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("tr", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({1, 1, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskTr.x, strongSelf->_maskTr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("bl", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({0, 0, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskBl.x, strongSelf->_maskBl.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("br", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           if (!strongSelf->_enabledWindowMask) {
+                                               uniform->setVec3({1, 0, 0});
+                                               return;
+                                           }
+
+                                           uniform->setVec3({strongSelf->_maskBr.x, strongSelf->_maskBr.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("aspectRatio", VROShaderProperty::Vec3,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setVec3({strongSelf->_outputAspectRatio.x, strongSelf->_outputAspectRatio.y, 0});
+                                       }
+                                   });
+        modifier->setUniformBinder("magnification", VROShaderProperty::Float,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setFloat(strongSelf->_circularDistortion);
+                                       }
+                                   });
+        // Finally create our ImagePostProcess program and cache it.
+        std::vector<std::shared_ptr<VROShaderModifier>> modifiers = { modifier };
+        std::shared_ptr<VROImageShaderProgram> shader = std::make_shared<VROImageShaderProgram>(samplers, modifiers, driver);
+        sZoomEffect = driver->newImagePostProcess(shader);
+    }
+    _circularDistortion = 2;
+    return sZoomEffect;
 }
 
 std::vector<std::string> VROPostProcessEffectFactory::getHBCSModification(float hue, float brightness, float contrast, float saturation){
