@@ -21,6 +21,13 @@ public:
     VROPoseFrame temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,
                                 const VROPoseFrame &newFrame);
     
+    /*
+     Set the parameters to use for *all* joints. See VROPoseFilterEuro.cpp top-notes
+     for a description of these parameters.
+     */
+    void setBeta(float beta);
+    void setFCMin(float fcMin);
+    
 private:
     std::vector<std::shared_ptr<VROOneEuroFilter>> _filters;
     

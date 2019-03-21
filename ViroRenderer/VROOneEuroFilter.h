@@ -54,6 +54,13 @@ public:
     
     VROVector3f filter(VROVector3f value, double timestamp, bool debug = false);
     
+    void setBeta(float beta) {
+        _beta = beta;
+    }
+    void setFCMin(float fcMin) {
+        _minFrequencyCutoff = fcMin;
+    }
+    
 private:
     double _frequency;
     double _minFrequencyCutoff;
@@ -91,6 +98,13 @@ public:
     ~VROOneEuroFilterF();
     
     float filter(float value, double timestamp, bool debug = false);
+    
+    void setBeta(float beta) {
+        _beta = beta;
+    }
+    void setFCMin(float fcMin) {
+        _minFrequencyCutoff = fcMin;
+    }
     
 private:
     double _frequency;

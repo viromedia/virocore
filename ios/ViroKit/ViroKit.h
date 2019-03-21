@@ -160,6 +160,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROGeometryUtil.h>
 #import <ViroKit/VROTextureUtil.h>
 #import <ViroKit/VROTaskQueue.h>
+#import <ViroKit/VRODeviceUtil.h>
 
 // Physics
 #import <ViroKit/VROPhysicsShape.h>
@@ -201,6 +202,8 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROBodyTrackeriOS.h>
 #import <ViroKit/VROBodyTrackerYolo.h>
 #import <ViroKit/VROBodyAnimData.h>
+#import <ViroKit/VROPoseFilter.h>
+#import <ViroKit/VROPoseFilterEuro.h>
 
 // OpenCV
 //#import <ViroKit/VROOpenCV.h>

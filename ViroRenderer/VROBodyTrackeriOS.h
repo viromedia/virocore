@@ -61,6 +61,13 @@ public:
         return _dynamicCropBoxViewport;
     }
     
+    /*
+     Get the filter being used to smooth the output joint data.
+     */
+    std::shared_ptr<VROPoseFilter> getPoseFilter() {
+        return _poseFilter;
+    }
+    
 private:
     
     /*

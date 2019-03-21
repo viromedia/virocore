@@ -26,6 +26,8 @@
 //
 // Note that parameters fcmin and beta have clear conceptual relationships: if high speed lag is
 // a problem, increase beta; if slow speed jitter is a problem, decrease fcmin.
+//
+// These are the defaults; they can be overriden.
 static const double kEuroBeta = 1.0;
 static const double kEuroFCMin = 1.7;
 
@@ -43,6 +45,18 @@ VROPoseFilterEuro::VROPoseFilterEuro(float trackingPeriodMs, float confidenceThr
 
 VROPoseFilterEuro::~VROPoseFilterEuro() {
 
+}
+
+void VROPoseFilterEuro::setBeta(float beta) {
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        _filters[i]->setBeta(beta);
+    }
+}
+
+void VROPoseFilterEuro::setFCMin(float fcMin) {
+    for (int i = 0; i < kNumBodyJoints; i++) {
+        _filters[i]->setFCMin(fcMin);
+    }
 }
 
 VROPoseFrame VROPoseFilterEuro::temporalFilter(const std::vector<VROPoseFrame> &frames, const VROPoseFrame &combinedFrame,

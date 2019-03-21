@@ -57,7 +57,9 @@ VROVector3f VROOneEuroFilter::filter(VROVector3f value, double timestamp, bool d
     if (isinf(_frequency)) {
         return value;
     }
-    
+    if (debug) {
+        pinfo("Filtering with beta %f, fcmin %f", _beta, _minFrequencyCutoff);
+    }
     // Estimate the current variation per second
     VROVector3f dvalue = _x->hasLastRawValue() ? (value - _x->getLastRawValue()) * _frequency : VROVector3f(0, 0, 0);
     VROVector3f edvalue = _dx->filter(dvalue, computeAlpha(_derivativeCutoff));

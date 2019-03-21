@@ -1127,10 +1127,10 @@
 		8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
 		8FAE50442228D46D0043220B /* hourglass_2_1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */; };
 		8FAE504722298DCD0043220B /* VROPoseFilterEuro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE504522298DCD0043220B /* VROPoseFilterEuro.cpp */; };
-		8FAE504822298DCD0043220B /* VROPoseFilterEuro.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504622298DCD0043220B /* VROPoseFilterEuro.h */; };
+		8FAE504822298DCD0043220B /* VROPoseFilterEuro.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504622298DCD0043220B /* VROPoseFilterEuro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE504C222C3CD40043220B /* DeviceList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE5049222C3CD40043220B /* DeviceList.plist */; };
 		8FAE504D222C3CD40043220B /* DeviceList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE5049222C3CD40043220B /* DeviceList.plist */; };
-		8FAE504E222C3CD40043220B /* VRODeviceUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504A222C3CD40043220B /* VRODeviceUtil.h */; };
+		8FAE504E222C3CD40043220B /* VRODeviceUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504A222C3CD40043220B /* VRODeviceUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE504F222C3CD40043220B /* VRODeviceUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE504A222C3CD40043220B /* VRODeviceUtil.h */; };
 		8FAE5050222C3CD40043220B /* VRODeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE504B222C3CD40043220B /* VRODeviceUtil.m */; };
 		8FAE5051222C3CD40043220B /* VRODeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE504B222C3CD40043220B /* VRODeviceUtil.m */; };
@@ -1144,7 +1144,7 @@
 		8FAE505D2238881E0043220B /* VROAVCaptureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE50592238881D0043220B /* VROAVCaptureController.h */; };
 		8FAE5063223AED530043220B /* VROOneEuroFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE5061223AED510043220B /* VROOneEuroFilter.cpp */; };
 		8FAE5064223AED530043220B /* VROOneEuroFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE5061223AED510043220B /* VROOneEuroFilter.cpp */; };
-		8FAE5065223AED530043220B /* VROOneEuroFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE5062223AED510043220B /* VROOneEuroFilter.h */; };
+		8FAE5065223AED530043220B /* VROOneEuroFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE5062223AED510043220B /* VROOneEuroFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE5066223AED530043220B /* VROOneEuroFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE5062223AED510043220B /* VROOneEuroFilter.h */; };
 		8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58B1E143F7900EDB629 /* optional.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */; };

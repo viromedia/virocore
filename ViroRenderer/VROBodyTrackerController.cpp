@@ -66,6 +66,8 @@ bool VROBodyTrackerController::bindModel(std::shared_ptr<VRONode> modelRootNode)
     return true;
 }
 
+#pragma mark - Joint Processing
+
 void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoints) {
     if (_modelRootNode == nullptr) {
         return;
