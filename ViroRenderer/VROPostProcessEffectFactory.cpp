@@ -17,7 +17,6 @@ static thread_local std::shared_ptr<VROImagePostProcess> sGrayScale;
 static thread_local std::shared_ptr<VROImagePostProcess> sSepia;
 static thread_local std::shared_ptr<VROImagePostProcess> sSinCity;
 static thread_local std::shared_ptr<VROImagePostProcess> sBarallel;
-static thread_local std::shared_ptr<VROImagePostProcess> sPincushion;
 static thread_local std::shared_ptr<VROImagePostProcess> sToonify;
 static thread_local std::shared_ptr<VROImagePostProcess> sInverted;
 static thread_local std::shared_ptr<VROImagePostProcess> sThermalVision;
@@ -25,8 +24,8 @@ static thread_local std::shared_ptr<VROImagePostProcess> sPixellated;
 static thread_local std::shared_ptr<VROImagePostProcess> sCrossHatch;
 static thread_local std::shared_ptr<VROImagePostProcess> sSwirl;
 static thread_local std::shared_ptr<VROImagePostProcess> sZoomEffect;
-static thread_local std::shared_ptr<VROImagePostProcess> sEmptyEffect;
 static thread_local std::shared_ptr<VROImagePostProcess> sWindowMask;
+static thread_local std::shared_ptr<VROImagePostProcess> sEmptyEffect;
 
 VROPostProcessEffectFactory::VROPostProcessEffectFactory() {
     _enabledWindowMask = false;
@@ -38,12 +37,14 @@ VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {
     sSepia = nullptr;
     sSinCity = nullptr;
     sBarallel = nullptr;
-    sPincushion = nullptr;
     sToonify = nullptr;
     sInverted = nullptr;
     sThermalVision = nullptr;
     sPixellated = nullptr;
     sCrossHatch = nullptr;
+    sSwirl = nullptr;
+    sZoomEffect = nullptr;
+    sWindowMask = nullptr;
     sEmptyEffect = nullptr;
 }
 
