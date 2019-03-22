@@ -31,6 +31,8 @@ public:
                     std::shared_ptr<VRODriver> driver);
     virtual ~VROARSessioniOS();
     
+    void setTrackingType(VROTrackingType trackingType);
+
     void run();
     void pause();
     bool isReady() const;
@@ -210,6 +212,8 @@ private:
 #endif /* ENABLE_OPENCV */
     
     std::shared_ptr<VROVisionModel> _visionModel;
+    
+    void updateTrackingType(VROTrackingType trackingType);
     
 };
 

@@ -21,6 +21,8 @@ public:
     VROARSessionInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver);
     virtual ~VROARSessionInertial();
     
+    void setTrackingType(VROTrackingType trackingType) {}
+
     void run();
     void pause();
     bool isReady() const;

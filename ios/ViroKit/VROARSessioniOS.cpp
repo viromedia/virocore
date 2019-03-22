@@ -48,47 +48,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     _background = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::YCBCR);
     _videoTextureCache = std::dynamic_pointer_cast<VROVideoTextureCacheOpenGL>(driver->newVideoTextureCache());
         
-    if (getTrackingType() == VROTrackingType::DOF3) {
-        _sessionConfiguration = [[AROrientationTrackingConfiguration alloc] init];
-        _sessionConfiguration.lightEstimationEnabled = YES;
-    }
-    else { // DOF6
-        // Note that default anchor detection gets overwritten by VROARScene when the
-        // session is injected into the scene (the scene will propagate whatever anchor
-        // detection setting it has over to this session).
-        ARWorldTrackingConfiguration *config = [[ARWorldTrackingConfiguration alloc] init];
-        config.planeDetection = ARPlaneDetectionNone;
-        config.lightEstimationEnabled = YES;
-        switch(getWorldAlignment()) {
-            case VROWorldAlignment::Camera:
-                config.worldAlignment = ARWorldAlignmentCamera;
-                break;
-            case VROWorldAlignment::GravityAndHeading:
-                config.worldAlignment = ARWorldAlignmentGravityAndHeading;
-                break;
-            case VROWorldAlignment::Gravity:
-            default:
-                config.worldAlignment = ARWorldAlignmentGravity;
-                break;
-        }
-        
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-        if (@available(iOS 11.3, *)) {
-            _arKitImageDetectionSet = [[NSMutableSet alloc] init];
-            config.detectionImages = _arKitImageDetectionSet;
-        }
-#endif
-        
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
-        if (@available(iOS 12.0, *)) {
-            _arKitObjectDetectionSet = [[NSMutableSet alloc] init];
-            config.detectionObjects = _arKitObjectDetectionSet;
-        }
-#endif
-        
-        _sessionConfiguration = config;
-    }
+    updateTrackingType(trackingType);
     
 #if ENABLE_OPENCV
     _trackingHelper = [[VROTrackingHelper alloc] init];
@@ -113,6 +73,66 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
 
 VROARSessioniOS::~VROARSessioniOS() {
 
+}
+
+void VROARSessioniOS::setTrackingType(VROTrackingType trackingType) {
+    if (trackingType == _trackingType) {
+        return;
+    }
+    
+    updateTrackingType(trackingType);
+    pause();
+    run();
+}
+
+void VROARSessioniOS::updateTrackingType(VROTrackingType trackingType) {
+    _trackingType = trackingType;
+    
+    if (getTrackingType() == VROTrackingType::DOF3) {
+        NSLog(@"DOF3 tracking configuration");
+
+        _sessionConfiguration = [[AROrientationTrackingConfiguration alloc] init];
+        _sessionConfiguration.lightEstimationEnabled = YES;
+    }
+    else {
+        NSLog(@"DOF6 tracking configuration");
+
+        // Note that default anchor detection gets overwritten by VROARScene when the
+        // session is injected into the scene (the scene will propagate whatever anchor
+        // detection setting it has over to this session).
+        ARWorldTrackingConfiguration *config = [[ARWorldTrackingConfiguration alloc] init];
+        config.planeDetection = ARPlaneDetectionNone;
+        config.lightEstimationEnabled = YES;
+        switch(getWorldAlignment()) {
+            case VROWorldAlignment::Camera:
+                config.worldAlignment = ARWorldAlignmentCamera;
+                break;
+            case VROWorldAlignment::GravityAndHeading:
+                config.worldAlignment = ARWorldAlignmentGravityAndHeading;
+                break;
+            case VROWorldAlignment::Gravity:
+            default:
+                config.worldAlignment = ARWorldAlignmentGravity;
+                break;
+        }
+        
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+        if (@available(iOS 11.3, *)) {
+            _arKitImageDetectionSet = [[NSMutableSet alloc] init];
+            config.detectionImages = _arKitImageDetectionSet;
+        }
+#endif
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+        if (@available(iOS 12.0, *)) {
+            _arKitObjectDetectionSet = [[NSMutableSet alloc] init];
+            config.detectionObjects = _arKitObjectDetectionSet;
+        }
+#endif
+        
+        _sessionConfiguration = config;
+    }
 }
 
 void VROARSessioniOS::run() {

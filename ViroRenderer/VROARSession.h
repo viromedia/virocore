@@ -100,6 +100,12 @@ public:
     VROTrackingType getTrackingType() const {
         return _trackingType;
     }
+    
+    /*
+     Change the tracking type used by the AR session. Note this may
+     restart the AR session, causing all objects to lose tracking.
+     */
+    virtual void setTrackingType(VROTrackingType trackingType) = 0;
 
     VROWorldAlignment getWorldAlignment() const {
         return _worldAlignment;
@@ -290,9 +296,12 @@ public:
      */
     virtual void setVisionModel(std::shared_ptr<VROVisionModel> visionModel) = 0;
     
-private:
+protected:
     
     VROTrackingType _trackingType;
+
+private:
+    
     VROWorldAlignment _worldAlignment;
     VROImageTrackingImpl _imageTrackingImpl;
     std::shared_ptr<VROScene> _scene;
