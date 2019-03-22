@@ -250,6 +250,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROIKRig.cpp
              ${VIRO_RENDERER_SRC}/VROBoneUBO.cpp
              ${VIRO_RENDERER_SRC}/VROBodyTrackerController.cpp
+             ${VIRO_RENDERER_SRC}/VROBodyIKController.cpp
              ${VIRO_RENDERER_SRC}/VROSkeletalAnimation.cpp
              ${VIRO_RENDERER_SRC}/VROLayeredSkeletalAnimation.cpp
              ${VIRO_RENDERER_SRC}/VROKeyframeAnimation.cpp

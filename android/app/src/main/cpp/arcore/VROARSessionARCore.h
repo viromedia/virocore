@@ -39,6 +39,7 @@ public:
     VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROARSessionARCore();
 
+    void setTrackingType(VROTrackingType type) {}
     void run();
     void pause();
     bool isReady() const;

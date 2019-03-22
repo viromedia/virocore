@@ -99,9 +99,11 @@ void VROBodyTrackerController::onBodyJointsFound(const VROPoseFrame &inferredJoi
     if (delegate) {
         delegate->onJointUpdate(jointPositions);
     }
+#if VRO_PLATFORM_IOS
     if (_skeletonRenderer && _drawSkeleton) {
         _skeletonRenderer->onBodyJointsFound(inferredJoints);
     }
+#endif
 }
 
 std::map<VROBodyJointType, VROBodyTrackerControllerDelegate::VROJointPosition> VROBodyTrackerController::extractJointPositions(const std::map<VROBodyJointType, VROBodyJoint> &latestJoints) {
