@@ -48,8 +48,13 @@ VROMatrix4f VROARFrameInertial::getViewportToCameraImageTransform() const {
     float scaleY = (float) _viewport.getHeight() / imageSize.y;
     
     VROMatrix4f matrix;
-    matrix[0] = scaleX / scaleY;
-    matrix[5] = 1.0;
+    if (scaleX < scaleY) {
+        matrix[0] = scaleX / scaleY;
+        matrix[5] = 1.0;
+    } else {
+        matrix[0] = 1.0;
+        matrix[5] = scaleY / scaleX;
+    }
     matrix[12] = (1 - matrix[0]) / 2.0;
     matrix[13] = (1 - matrix[5]) / 2.0;
     return matrix;
