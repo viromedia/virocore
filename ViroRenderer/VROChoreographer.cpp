@@ -50,6 +50,10 @@ VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_
 
     _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
     _renderToTextureDelegate = nullptr;
+        
+    // This is always created so that it can be configured even if HDR is off. Useful
+    // for applications that dynamically turn HDR on and off.
+    _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -76,13 +80,12 @@ void VROChoreographer::createRenderTargets() {
     _hdrTarget.reset();
     _blurTargetA.reset();
     _blurTargetB.reset();
-    _gaussianBlurPass.reset();
     _additiveBlendPostProcess.reset();
     _toneMappingPass.reset();
     _preprocesses.clear();
 
     VRORenderTargetType colorType = _hdrEnabled ? VRORenderTargetType::ColorTextureHDR16 : VRORenderTargetType::ColorTexture;
-    
+
     if (_mrtSupported) {
         std::vector<std::string> blitSamplers = { "source_texture" };
         std::vector<std::string> blitCode = {
@@ -114,7 +117,6 @@ void VROChoreographer::createRenderTargets() {
             _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 3, 1, false, true);
             _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
             _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
-            _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
             
             std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
             std::vector<std::string> code = {
