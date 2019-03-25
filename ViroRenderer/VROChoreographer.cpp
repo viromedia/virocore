@@ -93,7 +93,7 @@ void VROChoreographer::createRenderTargets() {
         std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
         _blitPostProcess = driver->newImagePostProcess(blitShader);
         _blitTarget = driver->newRenderTarget(colorType, 1, 1, false, true);
-        _rttTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false, false);
+        _rttTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1, false, true);
 
         _preprocesses.clear();
         if (_shadowsEnabled) {
