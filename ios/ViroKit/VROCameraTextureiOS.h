@@ -39,6 +39,12 @@ public:
      */
     CMSampleBufferRef getSampleBuffer() const;
     
+    /*
+     Get the camera intrinsics that correspond to the last image displayed on this
+     texture.
+     */
+    std::vector<float> getCameraIntrinsics() const;
+    
 private:
     
     /*

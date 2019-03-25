@@ -64,6 +64,12 @@ public:
      */
     virtual VROVector3f getImageSize() const = 0;
     
+    /*
+     Get the camera intrinsics that correspond to the last image displayed on this
+     texture.
+     */
+    virtual std::vector<float> getCameraIntrinsics() const = 0;
+    
 };
 
 #endif /* VROCameraTexture_h */

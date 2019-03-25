@@ -36,13 +36,13 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrient
     std::weak_ptr<VROCameraTextureiOS> shared_w = std::dynamic_pointer_cast<VROCameraTextureiOS>(shared_from_this());
     std::weak_ptr<VRODriver> driver_w = driver;
     
-    _controller->setUpdateListener([shared_w, driver_w] (CMSampleBufferRef sampleBuffer) {
+    _controller->setUpdateListener([shared_w, driver_w] (CMSampleBufferRef sampleBuffer, std::vector<float> intrinsics) {
         std::shared_ptr<VROCameraTextureiOS> texture = shared_w.lock();
         std::shared_ptr<VROVideoTextureCache> cache = texture->_videoTextureCache;
         std::shared_ptr<VRODriver> driver = driver_w.lock();
         if (cache && driver) {
             texture->setSubstrate(0, cache->createTextureSubstrate(sampleBuffer,
-                                                                    driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
+                                                                   driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
         }
     });
     
@@ -71,5 +71,9 @@ bool VROCameraTextureiOS::isPaused() {
 
 CMSampleBufferRef VROCameraTextureiOS::getSampleBuffer() const {
     return _controller->getSampleBuffer();
+}
+
+std::vector<float> VROCameraTextureiOS::getCameraIntrinsics() const {
+    return _controller->getCameraIntrinsics();
 }
 

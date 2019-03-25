@@ -16,6 +16,7 @@
 #include "VROConvert.h"
 #include "VROImagePreprocessor.h"
 #include "VRODriverOpenGLiOS.h"
+#include "VROByteBuffer.h"
 
 VROAVCaptureController::VROAVCaptureController() :
     _paused(true),
@@ -87,6 +88,10 @@ void VROAVCaptureController::initCapture(VROCameraPosition position, VROCameraOr
     [_captureSession addOutput:dataOutput];
     updateOrientation(orientation);
     [_captureSession commitConfiguration];
+    
+    if (dataOutput.connections.firstObject.cameraIntrinsicMatrixDeliverySupported) {
+        dataOutput.connections.firstObject.cameraIntrinsicMatrixDeliveryEnabled = true;
+    }
     
     _orientationListener = [[VROCameraOrientationListener alloc] initWithCaptureController:shared];
     [[NSNotificationCenter defaultCenter] addObserver:_orientationListener
@@ -168,15 +173,16 @@ bool VROAVCaptureController::isPaused() {
     return _paused;
 }
 
-void VROAVCaptureController::update(CMSampleBufferRef sampleBuffer) {
+void VROAVCaptureController::update(CMSampleBufferRef sampleBuffer, std::vector<float> intrinsics) {
     if (_lastSampleBuffer) {
         CFRelease(_lastSampleBuffer);
     }
     CFRetain(sampleBuffer);
     _lastSampleBuffer = sampleBuffer;
+    _lastCameraIntrinsics = intrinsics;
     
     if (_updateListener) {
-        _updateListener(sampleBuffer);
+        _updateListener(sampleBuffer, intrinsics);
     }
 }
 
@@ -203,7 +209,21 @@ fromConnection:(AVCaptureConnection *)connection {
     
     std::shared_ptr<VROAVCaptureController> controller = self.controller.lock();
     if (controller) {
-        controller->update(sampleBuffer);
+        CFDataRef cameraIntrinsics = (CFDataRef) CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil);
+        
+        CFIndex length = CFDataGetLength(cameraIntrinsics);
+        uint8_t bytes[length];
+        CFDataGetBytes(cameraIntrinsics, CFRangeMake(0, length), bytes);
+        
+        VROByteBuffer buffer(bytes, (int) length, false);
+        std::vector<float> intrinsics;
+        for (int i = 0; i < 12; i++) {
+            intrinsics.push_back(buffer.readFloat());
+        }
+        
+        controller->update(sampleBuffer, intrinsics);
+    } else {
+        controller->update(sampleBuffer, {});
     }
 }
 

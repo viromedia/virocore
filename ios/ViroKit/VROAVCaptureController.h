@@ -10,6 +10,7 @@
 #define VROAVCaptureController_h
 
 #include "VROCameraTexture.h"
+#include <vector>
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -33,10 +34,10 @@ public:
     float getHorizontalFOV() const;
     VROVector3f getImageSize() const;
     
-    void update(CMSampleBufferRef sampleBuffer);
+    void update(CMSampleBufferRef sampleBuffer, std::vector<float> intrinsics);
     void updateOrientation(VROCameraOrientation orientation);
     
-    void setUpdateListener(std::function<void(CMSampleBufferRef)> listener) {
+    void setUpdateListener(std::function<void(CMSampleBufferRef, std::vector<float>)> listener) {
         _updateListener = listener;
     }
     
@@ -46,6 +47,14 @@ public:
      */
     CMSampleBufferRef getSampleBuffer() const {
         return _lastSampleBuffer;
+    }
+    
+    /*
+     Get the camera intrinsics that correspond to the last image produced by this
+     controller.
+     */
+    std::vector<float> getCameraIntrinsics() const {
+        return _lastCameraIntrinsics;
     }
     
 private:
@@ -69,9 +78,14 @@ private:
     CMSampleBufferRef _lastSampleBuffer;
     
     /*
+     The camera intrinsics for _lastSampleBuffer.
+     */
+    std::vector<float> _lastCameraIntrinsics;
+    
+    /*
      Set a listener (optional) to respond to the sample buffer being updated.
      */
-    std::function<void(CMSampleBufferRef)> _updateListener;
+    std::function<void(CMSampleBufferRef, std::vector<float>)> _updateListener;
     
 };
 
