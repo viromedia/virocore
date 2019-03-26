@@ -208,7 +208,7 @@ void VROAVCaptureController::update(CMSampleBufferRef sampleBuffer, std::vector<
 fromConnection:(AVCaptureConnection *)connection {
     
     std::shared_ptr<VROAVCaptureController> controller = self.controller.lock();
-    if (controller) {
+    if (controller && captureOutput.connections.firstObject.cameraIntrinsicMatrixDeliveryEnabled) {
         CFDataRef cameraIntrinsics = (CFDataRef) CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil);
         
         CFIndex length = CFDataGetLength(cameraIntrinsics);
