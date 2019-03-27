@@ -332,7 +332,7 @@ public class ViroActivity extends AppCompatActivity {
         testAugmentedImageDatabase(scene);
 
         // Add a box in front of the user
-        /*
+
         Box box = new Box(.2f, .2f, .2f);
         box.setMaterials(Arrays.asList(new Material()));
         Node boxNode = new Node();
@@ -349,14 +349,14 @@ public class ViroActivity extends AppCompatActivity {
         boxNode.setDragPlanePoint(new Vector(0,-1,0));
         boxNode.setDragPlaneNormal(new Vector(0,1,0));
         boxNode.setDragMaxDistance(5);
-        */
+
         //nodes.addAll(testImperativePlane(scene));
         //testARHitTest(scene, 0, 5);
         //testAddArbitraryAnchors(scene, 0, 5);
         //testHostCloudAnchors(scene, 0, 2);
         //testResolveCloudAnchor(scene, "ua-ceb1cbf2825bf3545b4ef91650fbeff2");
         //nodes.addAll(testARImageTarget(scene));
-        testCameraImageCapture(scene);
+        //testCameraImageCapture(scene);
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
