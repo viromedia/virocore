@@ -584,7 +584,7 @@ namespace arcore {
     void FrameNative::getBackgroundTexcoords(float *outTexcoords) {
         // BL, TL, BR, TR
         const float source[8] = {0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0};
-        ArFrame_transformDisplayUvCoords(_session, _frame, 8, source, outTexcoords);
+        ArFrame_transformCoordinates2d(_session, _frame, AR_COORDINATES_2D_VIEW_NORMALIZED, 4, source, AR_COORDINATES_2D_TEXTURE_NORMALIZED, outTexcoords);
     }
 
     PointCloud *FrameNative::acquirePointCloud() {
