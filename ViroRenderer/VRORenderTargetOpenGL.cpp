@@ -601,7 +601,6 @@ bool VRORenderTargetOpenGL::restoreFramebuffers() {
 void VRORenderTargetOpenGL::deleteFramebuffers() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (!driver) {
-        pinfo("Failed delete render target: driver was released");
         return;
     }
 
