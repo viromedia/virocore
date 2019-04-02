@@ -1244,14 +1244,14 @@ void VROGLTFLoader::processPBR(const tinygltf::Model &gModel, std::shared_ptr<VR
     if (gPbrMap.find("metallicFactor") != gPbrMap.end()) {
         metallicFactor = gPbrMap["metallicFactor"].Factor();
     }
-    vroMat->getMetalness().setIntensity(metallicFactor);
+    vroMat->getMetalness().setColor({ (float)metallicFactor, 1.0, 1.0, 1.0 });
 
     // Process PBR roughness factor, defaults to fully rough.
     double roughnessFactor = 1;
     if (gPbrMap.find("roughnessFactor") != gPbrMap.end()) {
         roughnessFactor = gPbrMap["roughnessFactor"].Factor();
     }
-    vroMat->getRoughness().setIntensity(roughnessFactor);
+    vroMat->getRoughness().setColor({ (float)roughnessFactor, 1.0, 1.0, 1.0 });
 
     // Process a metallic / roughness texture if any, where metalness values are sampled from the
     // B channel and roughness values are sampled from the G channel.
