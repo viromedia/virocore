@@ -924,6 +924,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     node->setPosition(pos);
     node->setScale(scale);
     node->setRotation(rot);
+    node->setName(gNode.name);
 
     // Process the Geometry for this node, if any.
     // Fail fast if we have failed to process the node's mesh.
