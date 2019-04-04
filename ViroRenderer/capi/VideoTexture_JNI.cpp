@@ -40,9 +40,9 @@ VRO_METHOD(VRO_REF(VROVideoTexture), nativeCreateVideoTexture)(VRO_ARGS
     std::shared_ptr<VROVideoTexture> videoTexture;
 #if VRO_PLATFORM_ANDROID
     std::shared_ptr<VROVideoTextureAVP> videoAVP = std::make_shared<VROVideoTextureAVP>(mode);
-    videoAVP->init();
 
     VROPlatformDispatchAsyncRenderer([videoAVP, context_w] {
+        videoAVP->init();
         std::shared_ptr<ViroContext> context = context_w.lock();
         if (!context) {
             return;
