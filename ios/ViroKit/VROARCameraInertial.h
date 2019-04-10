@@ -19,6 +19,7 @@ class VROHeadTracker;
 class VROCameraTexture;
 class VROAVCaptureController;
 class VRODriver;
+class VROTexture;
 enum class VROTrackingType;
 enum class VROCameraOrientation;
 
@@ -31,24 +32,24 @@ public:
     VROARTrackingState getTrackingState() const;
     VROARTrackingStateReason getLimitedTrackingStateReason() const;
     
-    VROMatrix4f getRotation() const;
-    VROVector3f getPosition() const;
-    VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV);
+    virtual VROMatrix4f getRotation() const;
+    virtual VROVector3f getPosition() const;
+    virtual VROMatrix4f getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV);
     
-    VROVector3f getImageSize();
+    virtual VROVector3f getImageSize();
     
     /*
      Internal methods.
      */
-    void run();
-    void pause();
-    void updateCameraOrientation(VROCameraOrientation orientation);
+    virtual void run();
+    virtual void pause();
+    virtual void updateCameraOrientation(VROCameraOrientation orientation);
 
-    std::shared_ptr<VROCameraTexture> getBackgroundTexture() {
-        return _cameraTexture;
+    virtual std::shared_ptr<VROTexture> getBackgroundTexture() {
+        return std::dynamic_pointer_cast<VROTexture>(_cameraTexture);
     }
     
-    CMSampleBufferRef getSampleBuffer() const;
+    virtual CMSampleBufferRef getSampleBuffer() const;
     
 private:
     

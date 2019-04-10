@@ -53,6 +53,12 @@ static const float kZFarMultiplier = 1.15;
 // Number of samples to collect when computing FPS
 static const int kFPSMaxSamples = 100;
 
+// The FOV we use for the larger dimension of the viewport, when in
+// mono-rendering mode. This is similar to Hor+ scaling, in that one
+// dimension is fixed, and other is dependent on the viewport. Note
+// this value is degrees from edge to edge of the frustum.
+static const double kFovMonoMajor = 90;
+
 class VRORenderer {
 public:
 

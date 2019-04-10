@@ -33,9 +33,10 @@ enum class VROCameraOrientation; //defined in VROCameraTexture.h
  tracks both orientation and position.
  */
 enum class VROTrackingType {
-    Front,  // Tracks nothing, using front-facing camera
-    DOF3,   // Tracks orientation, using back-facing camera
-    DOF6    // Tracks orientation and position, using back-facing camera
+    PrerecordedVideo,   // Tracks nothing, uses pre-recorded video as camera
+    Front,              // Tracks orientation, using front-facing camera
+    DOF3,               // Tracks orientation, using back-facing camera
+    DOF6                // Tracks orientation and position, using back-facing camera
 };
 
 /*

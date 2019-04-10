@@ -40,7 +40,11 @@ std::vector<std::shared_ptr<VROARHitTestResult>> VROARFrameInertial::hitTest(int
 
 VROMatrix4f VROARFrameInertial::getViewportToCameraImageTransform() const {
     VROVector3f imageSize = _camera->getImageSize();
-    
+
+    if (imageSize.magnitude() == 0) {
+        return VROMatrix4f::identity();
+    }
+
     // When the image is rendered, it's expanded to the viewport's size, which
     // may end up stretching the image as the scale is anisotropic. Here we return
     // texture coordinates to apply in order to undo this elongation.

@@ -1500,6 +1500,9 @@
 		A547DB6B2022EC8900C8FE67 /* brdf_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */; };
 		A547DB6C2022ED0700C8FE67 /* brdf_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */; };
 		A547DB6D2022ED0700C8FE67 /* brdf_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A547DB682022EC8900C8FE67 /* brdf_vsh.glsl */; };
+		A54F73A3225D4CA70059D725 /* Yoga.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A54F73A2225D4CA50059D725 /* Yoga.mp4 */; };
+		A54F73A6225E6B3B0059D725 /* VROARCameraPrerecorded.h in Headers */ = {isa = PBXBuildFile; fileRef = A54F73A4225E6B3B0059D725 /* VROARCameraPrerecorded.h */; };
+		A54F73A7225E6B3B0059D725 /* VROARCameraPrerecorded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54F73A5225E6B3B0059D725 /* VROARCameraPrerecorded.cpp */; };
 		A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2567,6 +2570,9 @@
 		A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = particles_fsh.glsl; sourceTree = "<group>"; };
 		A547DB682022EC8900C8FE67 /* brdf_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = brdf_vsh.glsl; sourceTree = "<group>"; };
 		A547DB692022EC8900C8FE67 /* brdf_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = brdf_fsh.glsl; sourceTree = "<group>"; };
+		A54F73A2225D4CA50059D725 /* Yoga.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = Yoga.mp4; path = ViroSample/Yoga.mp4; sourceTree = "<group>"; };
+		A54F73A4225E6B3B0059D725 /* VROARCameraPrerecorded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARCameraPrerecorded.h; sourceTree = "<group>"; };
+		A54F73A5225E6B3B0059D725 /* VROARCameraPrerecorded.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARCameraPrerecorded.cpp; sourceTree = "<group>"; };
 		A56529A41EFD8051008097D7 /* VROTransformDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegate.h; sourceTree = "<group>"; };
 		A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegate.h; sourceTree = "<group>"; };
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
@@ -3566,6 +3572,8 @@
 				8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */,
 				8F3488A51EE83DD3008917CB /* VROARAnchorInertial.h */,
 				8F3488A41EE83DD3008917CB /* VROARAnchorInertial.cpp */,
+				A54F73A5225E6B3B0059D725 /* VROARCameraPrerecorded.cpp */,
+				A54F73A4225E6B3B0059D725 /* VROARCameraPrerecorded.h */,
 			);
 			name = Inertial;
 			sourceTree = "<group>";
@@ -3870,6 +3878,7 @@
 				8AD76EB5211CD59B0045BD5F /* alcohol_bottle.arobject */,
 				8AD76EB4211CD59B0045BD5F /* diet_coke.arobject */,
 				8AD76EB6211CD59C0045BD5F /* google_home.arobject */,
+				A54F73A2225D4CA50059D725 /* Yoga.mp4 */,
 				A5BE9E1520E14F7700DB4E7A /* RiggedSimple.glb */,
 				A5BE9E1320E14F6800DB4E7A /* RiggedFigure.glb */,
 				A5BE9E1120E14F3F00DB4E7A /* Monster.glb */,
@@ -4575,6 +4584,7 @@
 				A5A1074C212D518B008B2DFB /* gif_lib.h in Headers */,
 				A5A10742212D417B008B2DFB /* VROAnimatedTextureOpenGL.h in Headers */,
 				8A291A1C21DD533200BB3934 /* VROBodyTracker.h in Headers */,
+				A54F73A6225E6B3B0059D725 /* VROARCameraPrerecorded.h in Headers */,
 				8F9278081C670FD900FF892A /* VROTriangle.h in Headers */,
 				8F65F78E1C90D83600415115 /* VROTransformConstraint.h in Headers */,
 				8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */,
@@ -5144,6 +5154,7 @@
 				8F5EEE9120323E9F0059C9E7 /* dragao_map.jpg in Resources */,
 				8F0F13DD21934D6000E8810B /* bumblebee_Metallic.jpg in Resources */,
 				8FEACEDA2012605F0082D18B /* pbr_sample_albedo.png in Resources */,
+				A54F73A3225D4CA70059D725 /* Yoga.mp4 in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */,
 				8F5EEE9C20325C310059C9E7 /* object_pumpkin_normal.png in Resources */,
@@ -6023,6 +6034,7 @@
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,
 				8FD4DF111C18ED3C003DC425 /* VROLight.cpp in Sources */,
 				8FEACF1420191F280082D18B /* VROTextureReference.cpp in Sources */,
+				A54F73A7225E6B3B0059D725 /* VROARCameraPrerecorded.cpp in Sources */,
 				8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */,
 				8FDDB4AA1DAF2A4000DE0968 /* VROPolyline.cpp in Sources */,
 				8FD2A55B1F817D4200E831A6 /* VROPhysicsTest.cpp in Sources */,

@@ -689,7 +689,6 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createSwirlEff
         modifier->setUniformBinder("aspectRatio", VROShaderProperty::Vec3,
                                    [weakSelf] (VROUniform *uniform,
                                                const VROGeometry *geometry, const VROMaterial *material) {
-                                       pwarn("Daniel grab aspectRatio");
                                        std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
                                        if (strongSelf) {
                                            uniform->setVec3({strongSelf->_outputAspectRatio.x, strongSelf->_outputAspectRatio.y, 0});

@@ -14,10 +14,16 @@
 #include "VROViewport.h"
 #include "VROLog.h"
 #include "VROVisionModel.h"
+#include "VROARCameraPrerecorded.h"
 
-VROARSessionInertial::VROARSessionInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
+VROARSessionInertial::VROARSessionInertial(VROTrackingType trackingType,
+                                           std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType, VROWorldAlignment::Gravity) {
-    _camera = std::make_shared<VROARCameraInertial>(trackingType, driver);
+        if (trackingType == VROTrackingType::PrerecordedVideo) {
+            _camera = std::make_shared<VROARCameraPrerecorded>(trackingType, driver);
+        } else {
+            _camera = std::make_shared<VROARCameraInertial>(trackingType, driver);
+        }
 }
 
 VROARSessionInertial::~VROARSessionInertial() {
@@ -88,8 +94,11 @@ std::shared_ptr<VROTexture> VROARSessionInertial::getCameraBackgroundTexture() {
 }
 
 std::unique_ptr<VROARFrame> &VROARSessionInertial::updateFrame() {
+    if (_trackingType == VROTrackingType::PrerecordedVideo) {
+        std::static_pointer_cast<VROARCameraPrerecorded>(_camera)->updateFrame();
+    }
+
     _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameInertial(_camera, _viewport));
-    
     if (_visionModel) {
         _visionModel->update(_currentFrame.get());
     }

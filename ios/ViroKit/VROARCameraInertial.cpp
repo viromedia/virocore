@@ -17,7 +17,11 @@
 
 VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) {
     _trackingType = trackingType;
-    _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
+    
+    // Head tracking is not enabled for Pre-recorded cameras for now.
+    if (trackingType != VROTrackingType::PrerecordedVideo) {
+        _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
+    }
     
     VROCameraOrientation cameraOrientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
     VROCameraPosition cameraPosition = (trackingType == VROTrackingType::Front) ? VROCameraPosition::Front : VROCameraPosition::Back;
@@ -37,7 +41,10 @@ VROARCameraInertial::~VROARCameraInertial() {
 }
 
 void VROARCameraInertial::run() {
-    _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
+    if (_headTracker) {
+        _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
+    }
+
     if (_cameraTexture) {
         _cameraTexture->play();
     } else {
@@ -46,7 +53,10 @@ void VROARCameraInertial::run() {
 }
 
 void VROARCameraInertial::pause() {
-    _headTracker->stopTracking();
+    if (_headTracker) {
+        _headTracker->stopTracking();
+    }
+    
     if (_cameraTexture) {
         _cameraTexture->pause();
     } else {
@@ -63,6 +73,10 @@ VROARTrackingStateReason VROARCameraInertial::getLimitedTrackingStateReason() co
 }
 
 VROMatrix4f VROARCameraInertial::getRotation() const {
+    if (!_headTracker) {
+        return VROMatrix4f::identity();
+    }
+    
     if (_trackingType == VROTrackingType::Front) {
         /*
          For the front-facing camera we take the head tracker rotation use it
@@ -161,6 +175,10 @@ CMSampleBufferRef VROARCameraInertial::getSampleBuffer() const {
 }
 
 void VROARCameraInertial::updateCameraOrientation(VROCameraOrientation orientation) {
+    if (!_headTracker) {
+        return;
+    }
+    
     UIInterfaceOrientation deviceOrientation = VROConvert::toDeviceOrientation(orientation);
     _headTracker->updateDeviceOrientation(deviceOrientation);
 }

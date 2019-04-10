@@ -16,16 +16,18 @@
 #include "VRODriver.h"
 #include "VROTextureSubstrate.h"
 #include "VROVideoDelegateiOS.h"
+#include "VROCameraTexture.h"
 
 # define ONE_FRAME_DURATION 0.03
 
 static NSString *const kStatusKey = @"status";
 static NSString *const kPlaybackKeepUpKey = @"playbackLikelyToKeepUp";
 
-VROVideoTextureiOS::VROVideoTextureiOS(VROStereoMode stereoMode) :
+VROVideoTextureiOS::VROVideoTextureiOS(VROStereoMode stereoMode,
+                                       bool enableCMSampleBuffer) :
     VROVideoTexture(VROTextureType::Texture2D, stereoMode),
-    _paused(true) {
-    
+    _paused(true),
+    _isCMSampleBuffered(enableCMSampleBuffer) {
     ALLOCATION_TRACKER_ADD(VideoTextures, 1);
 }
 
@@ -128,12 +130,35 @@ void VROVideoTextureiOS::playerDidBuffer() {
     }
 }
 
+VROVector3f VROVideoTextureiOS::getVideoDimensions() {
+    if (_player && _player.error == nil) {
+        NSArray<AVAssetTrack *> * tracks
+                = [_player.currentItem.asset tracksWithMediaType:AVMediaTypeVideo];
+        if (tracks.count == 0) {
+            return VROVector3f(0,0,0);
+        }
+
+        AVAssetTrack *track = [tracks firstObject];
+        if (track != nil) {
+            CGSize naturalSize = [track naturalSize];
+            naturalSize = CGSizeApplyAffineTransform(naturalSize, track.preferredTransform);
+            float width = (float) naturalSize.width;
+            float height = (float) naturalSize.height;
+            return VROVector3f(abs(width), abs(height), 0);
+        }
+    }
+
+    return VROVector3f(0,0,0);
+}
+
 void VROVideoTextureiOS::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    std::shared_ptr<VRODriver> driver) {
-    
-    frameSynchronizer->removeFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
-    frameSynchronizer->addFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
+    // If we no VROFrameSynchronizer is given, or _isCMSampleBuffered, do not attach provided synchronizer
+    if (frameSynchronizer != nullptr && !_isCMSampleBuffered) {
+        frameSynchronizer->removeFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
+        frameSynchronizer->addFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
+    }
     
     _player = [AVPlayer playerWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]];
     _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
@@ -160,9 +185,13 @@ void VROVideoTextureiOS::loadVideo(std::string url,
                              context:this];
 }
 
-void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {
+void VROVideoTextureiOS::updateFrame() {
     [_avPlayerDelegate renderFrame];
     VROVideoTexture::updateVideoTime();
+}
+
+void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {
+    updateFrame();
 }
 
 void VROVideoTextureiOS::onFrameDidRender(const VRORenderContext &context) {
@@ -173,6 +202,10 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     setSubstrate(0, std::move(substrate));
 }
 
+CMSampleBufferRef VROVideoTextureiOS::getSampleBuffer() const {
+    return [_avPlayerDelegate getSampleBuffer];
+}
+
 #pragma mark - AVPlayer Video Playback Delegate
 
 @interface VROAVPlayerDelegate () {
@@ -181,7 +214,12 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     int _currentTextureIndex;
     std::weak_ptr<VRODriver> _driver;
     std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
-    
+
+    /*
+     The last received CMSampleBufferRef, which represents the current contents of the
+     rendered video texture.
+     */
+    CMSampleBufferRef _lastSampleBuffer;
 }
 
 @property (readonly) VROVideoTextureiOS *texture;
@@ -216,6 +254,17 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     }
     
     return self;
+}
+
+-(void)dealloc {
+    if (_lastSampleBuffer) {
+        CFRelease(_lastSampleBuffer);
+        _lastSampleBuffer = nullptr;
+    }
+}
+
+-(CMSampleBufferRef)getSampleBuffer {
+    return _lastSampleBuffer;
 }
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender {
@@ -308,6 +357,28 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             self.texture->displayPixelBuffer(_videoTextureCache->createTextureSubstrate(pixelBuffer,
                                                                                         driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
+            // If processing CMSampleBuffer data, save the last known video
+            // frame into the _lastSampleBuffer if possible.
+            if (self.texture->isCMSampleBufferEnabled()) {
+                if (_lastSampleBuffer) {
+                    CFRelease(_lastSampleBuffer);
+                }
+
+                CMVideoFormatDescriptionRef formatDescription;
+                bool hasFormatDescription
+                    = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault,
+                                                                   pixelBuffer,
+                                                                   &formatDescription) == noErr;
+                if (hasFormatDescription) {
+                    CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault,
+                                                             pixelBuffer,
+                                                             formatDescription,
+                                                             &kCMTimingInfoInvalid,
+                                                             &_lastSampleBuffer);
+                    CFRelease(formatDescription);
+                }
+            }
+
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             CFRelease(pixelBuffer);
         }

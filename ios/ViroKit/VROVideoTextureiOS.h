@@ -22,14 +22,15 @@ class VROFrameSynchronizer;
 class VRODriver;
 class VROMaterial;
 class VROVideoTextureCache;
-
+class VROVector3f;
 static const long kInFlightVideoTextures = 3;
 
 class VROVideoTextureiOS : public VROVideoTexture {
     
 public:
     
-    VROVideoTextureiOS(VROStereoMode stereoMode = VROStereoMode::None);
+    VROVideoTextureiOS(VROStereoMode stereoMode = VROStereoMode::None,
+                       bool enableCMSampleBuffer = false);
     virtual ~VROVideoTextureiOS();
     
     /*
@@ -76,14 +77,34 @@ public:
      */
     void displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate);
     
-private:
+    /*
+     Internal: Invoked by onFrameWillRender or manually called to process textures.
+     */
+    void updateFrame();
     
+    /*
+     Returns the width and height of the current video.
+     */
+    VROVector3f getVideoDimensions();
+    
+    /*
+     Returns the CMSampleBufferRef that corresponds to the last image rendered
+     by this video texture through the AVPlayer.
+     */
+    CMSampleBufferRef getSampleBuffer() const;
+
+    bool isCMSampleBufferEnabled() {
+        return _isCMSampleBuffered;
+    }
+    
+private:
     /*
      AVPlayer for recorded video playback.
      */
     AVPlayer *_player;
     bool _paused;
     bool _loop;
+    bool _isCMSampleBuffered;
     VROAVPlayerDelegate *_avPlayerDelegate;
     VROVideoNotificationListener *_videoNotificationListener;
     
@@ -97,6 +118,7 @@ private:
 - (id)initWithVideoTexture:(VROVideoTextureiOS *)texture player:(AVPlayer *)player
                     driver:(std::shared_ptr<VRODriver>)driver;
 - (void)renderFrame;
+- (CMSampleBufferRef)getSampleBuffer;
 
 @end
 

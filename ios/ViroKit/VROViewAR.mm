@@ -230,8 +230,8 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     if (NSClassFromString(@"ARSession") == nil) {
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
-    } else if (_trackingType == VROTrackingType::Front) {
-        _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::Front, _driver);
+    } else if (_trackingType == VROTrackingType::Front || _trackingType == VROTrackingType::PrerecordedVideo) {
+        _arSession = std::make_shared<VROARSessionInertial>(_trackingType, _driver);
     } else {
         _arSession = std::make_shared<VROARSessioniOS>(_trackingType, _worldAlignment, _driver);
     }
@@ -687,7 +687,7 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     const std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
     const std::shared_ptr<VROARCamera> camera = frame->getCamera();
-    
+
     /*
      Update the AR camera background transform (maps the camera background to our scene).
      If we're in front-facing mode, we also have to mirror the camera background.
