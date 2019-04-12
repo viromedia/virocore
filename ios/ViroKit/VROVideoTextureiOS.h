@@ -107,7 +107,11 @@ private:
     bool _isCMSampleBuffered;
     VROAVPlayerDelegate *_avPlayerDelegate;
     VROVideoNotificationListener *_videoNotificationListener;
-    
+
+    /*
+     Initializes the video's dimensions considering EXIF meta if possible.
+     */
+    void initVideoDimensions();
 };
 
 /*

@@ -132,6 +132,16 @@ void VROVideoTextureiOS::playerDidBuffer() {
 
 VROVector3f VROVideoTextureiOS::getVideoDimensions() {
     if (_player && _player.error == nil) {
+        // First, try getting the dimensions from the current player item.
+        AVPlayerItem *currentItem = [_player currentItem] ;
+        if (currentItem != NULL && currentItem.videoComposition != NULL) {
+            CGSize naturalSize = currentItem.videoComposition.renderSize;
+            float width = (float) naturalSize.width;
+            float height = (float) naturalSize.height;
+            return VROVector3f(width, height, 0);
+        }
+
+        // Else grab the dimensions from the first track's preferred transform.
         NSArray<AVAssetTrack *> * tracks
                 = [_player.currentItem.asset tracksWithMediaType:AVMediaTypeVideo];
         if (tracks.count == 0) {
@@ -151,6 +161,101 @@ VROVector3f VROVideoTextureiOS::getVideoDimensions() {
     return VROVector3f(0,0,0);
 }
 
+void VROVideoTextureiOS::initVideoDimensions() {
+    // First, ensure we have a valid track to create dimensions from
+    NSArray<AVAssetTrack *> * tracks = [_player.currentItem.asset
+                                        tracksWithMediaType:AVMediaTypeVideo];
+    if (tracks.count == 0) {
+        return;
+    }
+
+    // Step 1: Create our mainComposition containing the original video feed.
+    AVAssetTrack *videoTrack = [tracks firstObject];
+    CMTime trackDuration = [[videoTrack asset] duration];
+    CMTime insertionPoint = kCMTimeZero;
+    NSError *error = nil;
+    AVMutableComposition *mainComposition = [AVMutableComposition composition];
+    AVMutableCompositionTrack *compositionVideoTrack = [mainComposition
+                                                        addMutableTrackWithMediaType:AVMediaTypeVideo
+                                                        preferredTrackID:kCMPersistentTrackID_Invalid];
+    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, trackDuration)
+                                   ofTrack:videoTrack atTime:insertionPoint error:&error];
+    if (error) {
+        return;
+    }
+
+    // Step 2: Calculate position and size of rendered video after rotating
+    CGAffineTransform t1;
+    CGAffineTransform t2;
+    CGAffineTransform transform = [videoTrack preferredTransform];
+    double radians = atan2(transform.b,transform.a);
+    float degrees = radians_to_degrees(radians);
+    float width = abs(videoTrack.naturalSize.width);
+    float height = abs(videoTrack.naturalSize.height);
+    float toDiagonal = sqrt(width*width+height*height);
+    float toDiagonalAngle = radians_to_degrees(acosf(width / toDiagonal));
+    float toDiagonalAngle2 = 90 - radians_to_degrees(acosf(width / toDiagonal));
+    float toDiagonalAngleComple;
+    float toDiagonalAngleComple2;
+    float finalHeight;
+    float finalWidth;
+
+    if (degrees >= 0 && degrees <= 90) {
+        toDiagonalAngleComple = toDiagonalAngle + degrees;
+        toDiagonalAngleComple2 = toDiagonalAngle2 + degrees;
+        finalHeight = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple)));
+        finalWidth = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple2)));
+        t1 = CGAffineTransformMakeTranslation(height * sinf(degrees_to_radians(degrees)), 0.0);
+    } else if (degrees > 90 && degrees <= 180) {
+        float degrees2 = degrees - 90;
+        toDiagonalAngleComple = toDiagonalAngle + degrees2;
+        toDiagonalAngleComple2 = toDiagonalAngle2 + degrees2;
+        finalHeight = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple2)));
+        finalWidth = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple)));
+        t1 = CGAffineTransformMakeTranslation(width * sinf(degrees_to_radians(degrees2))+ height * cosf(degrees_to_radians(degrees2)), height * sinf(degrees_to_radians(degrees2)));
+    } else if (degrees >= -90 && degrees < 0) {
+        float degrees2 = degrees - 90;
+        float degreesabs = abs(degrees);
+        toDiagonalAngleComple = toDiagonalAngle+degrees2;
+        toDiagonalAngleComple2 = toDiagonalAngle2+degrees2;
+        finalHeight = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple2)));
+        finalWidth = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple)));
+        t1 = CGAffineTransformMakeTranslation(0, width * sinf(degrees_to_radians(degreesabs)));
+    } else if (degrees >= -180 && degrees < -90) {
+        float degreesabs = abs(degrees);
+        float degreesplus = degreesabs - 90;
+        toDiagonalAngleComple = toDiagonalAngle + degrees;
+        toDiagonalAngleComple2 = toDiagonalAngle2 + degrees;
+        finalHeight = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple)));
+        finalWidth = abs(toDiagonal * sinf(degrees_to_radians(toDiagonalAngleComple2)));
+        t1 = CGAffineTransformMakeTranslation(width * sinf(degrees_to_radians(degreesplus)), height * sinf(degrees_to_radians(degreesplus)) + width * cosf(degrees_to_radians(degreesplus)));
+    } else {
+        return;
+    }
+    t2 = CGAffineTransformRotate(t1, degrees_to_radians(degrees));
+
+    // Step 3: Now make the video composition that will contain our rotation
+    AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
+    videoComposition.renderSize = CGSizeMake(finalWidth,finalHeight);
+    videoComposition.frameDuration = CMTimeMake(1, 30);
+
+    // Step 4: Create the rotation instructions
+    AVMutableVideoCompositionInstruction *instructions = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    instructions.timeRange = CMTimeRangeMake(kCMTimeZero, trackDuration);
+    AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:[mainComposition.tracks objectAtIndex:0]];
+    [layerInstruction setTransform:t2 atTime:kCMTimeZero];
+    instructions.layerInstructions = [NSArray arrayWithObject:layerInstruction];
+    videoComposition.instructions = [NSArray arrayWithObject:instructions];
+
+    // Step 5: Finally create the Player item and set it the videoComposition.
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc] initWithAsset:mainComposition];
+    playerItem.videoComposition = videoComposition;
+
+    // Set the player item with the rotated source.
+    [_player replaceCurrentItemWithPlayerItem:playerItem];
+    [_player seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+}
+
 void VROVideoTextureiOS::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    std::shared_ptr<VRODriver> driver) {
@@ -161,6 +266,8 @@ void VROVideoTextureiOS::loadVideo(std::string url,
     }
     
     _player = [AVPlayer playerWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]];
+    initVideoDimensions();
+    
     _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
                                                                    player:_player
                                                                    driver:driver];
