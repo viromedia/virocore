@@ -10,6 +10,7 @@
 #include "VRORenderer.h"
 #include "VROCameraTextureiOS.h"
 #include "VROVideoTextureiOS.h"
+static const double kFovMajorPrerecordedCamera = 70;
 
 VROARCameraPrerecorded::VROARCameraPrerecorded(VROTrackingType trackingType,
                                                std::shared_ptr<VRODriver> driver):
@@ -47,7 +48,7 @@ VROMatrix4f VROARCameraPrerecorded::getProjection(VROViewport viewport, float ne
     float viewportHeight = viewport.getHeight();
 
     // Assume that the user cannot move the camera in VROTrackingType::Video.
-    *outFOV = VRORenderer::computeFOVFromMajorAxis(kFovMonoMajor, viewportWidth, viewportHeight);
+    *outFOV = VRORenderer::computeFOVFromMajorAxis(kFovMajorPrerecordedCamera, viewportWidth, viewportHeight);
 
     // Use the computed fov to calculate projection.
     return outFOV->toPerspectiveProjection(near, far);
