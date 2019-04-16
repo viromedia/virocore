@@ -97,6 +97,10 @@ public:
         return _isCMSampleBuffered;
     }
     
+    AVPlayer *getAVPlayer() {
+        return _player;
+    }
+    
 private:
     /*
      AVPlayer for recorded video playback.
