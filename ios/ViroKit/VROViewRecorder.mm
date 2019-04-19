@@ -161,6 +161,11 @@
     [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:errorBlock];
 }
 
+- (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath   {
+    _audioFilePath = audioPath;
+    [self stopVideoRecordingWithHandler:completionHandler];
+}
+
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     if (!_isRecording) {
         completionHandler(NO, nil, kVROViewErrorAlreadyStopped);

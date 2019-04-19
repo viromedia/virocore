@@ -51,6 +51,7 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
                  errorBlock:(VROViewRecordingErrorBlock)errorBlock;
 
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler;
+- (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath;
 - (void)takeScreenshot:(NSString *)fileName
       saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler;
