@@ -46,11 +46,11 @@ static VROVector3f const kZeroVector = VROVector3f();
     std::shared_ptr<VROARSession> _arSession;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROInputControllerAR> _inputController;
+    VROViewport _viewport;
     
     CADisplayLink *_displayLink;
     int _frame;
     double _suspendedNotificationTime;
-
     VROWorldAlignment _worldAlignment;
 }
 
@@ -82,7 +82,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (self) {
         _suspended = YES;
         _worldAlignment = VROWorldAlignment::Gravity;
-        
+        _viewport = VROViewport(-1, -1, -1, -1);
         VRORendererConfiguration config;
         [self initRenderer:config];
     }
@@ -106,6 +106,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         _suspended = YES;
         _worldAlignment = worldAlignment;
         _trackingType = trackingType;
+        _viewport = VROViewport(-1, -1, -1, -1);
         if (_trackingType == VROTrackingType::Front) {
             _cameraPosition = VROCameraPosition::Front;
         } else {
@@ -643,8 +644,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     glEnable(GL_DEPTH_TEST);    
     _driver->setCullMode(VROCullMode::Back);
     
-    VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
+    VROViewport viewport;
+    if (_viewport.getWidth() == -1) {
+        viewport = VROViewport(0, 0,
+                               self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
+    } else {
+        viewport = _viewport;
+    }
     
     /*
      Attempt to initialize the ARSession if we have not yet done so.
@@ -782,6 +789,11 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     _arSession->setViewport(viewport);
     _arSession->run();
+}
+
+- (void)setRenderedFrameViewPort:(VROViewport)viewport{
+    _viewport = viewport;
+    [self.viewRecorder setRecorderWidth:viewport.getWidth() height:viewport.getHeight()];
 }
 
 + (BOOL) isARSupported {

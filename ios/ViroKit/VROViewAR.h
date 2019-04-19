@@ -14,6 +14,7 @@
 
 class VROARSessionDelegate;
 class VRORendererConfiguration;
+class VROViewport;
 enum class VROCameraPosition;
 
 @protocol VRODebugDrawDelegate
@@ -47,6 +48,13 @@ enum class VROCameraPosition;
                  trackingType:(VROTrackingType)trackingType;
 
 - (void)setARSessionDelegate:(std::shared_ptr<VROARSessionDelegate>)delegate;
+
+/*
+ Manually overrides renderer's viewport parameters with a different width and
+ height, instead of using the dimensions of the underlying GLView. Note that
+ this only affects dimenions used for the rendering pipeline.
+ */
+- (void)setRenderedFrameViewPort:(VROViewport)viewport;
 
 /*
  Should be invoked before this object gets deallocated, to clean up GL

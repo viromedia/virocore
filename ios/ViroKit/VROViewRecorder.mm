@@ -44,6 +44,7 @@
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROViewRecorderRTTDelegate> _rttDelegate;
     __weak GLKView *_view;
+    std::pair<int, int> _videoOutputDimensions;
 }
 
 @end
@@ -59,6 +60,7 @@
         _renderer = renderer;
         _driver = driver;
         _addWatermark = false;
+        _videoOutputDimensions = std::make_pair(-1, -1);
     }
     return self;
 }
@@ -376,6 +378,10 @@
 }
 
 #pragma mark - Video Recording
+- (void)setRecorderWidth:(int)width
+                  height:(int)height {
+    _videoOutputDimensions = std::make_pair(width, height);
+}
 
 /*
  The following functions encapsulate all the logic to grab and record the rendered frames to a file
@@ -389,9 +395,17 @@
     
     NSError *error = nil;
     _videoWriter = [[AVAssetWriter alloc] initWithURL:filePath fileType:AVFileTypeMPEG4 error:&error];
-    int width  = view.frame.size.width  * view.contentScaleFactor;
-    int height = view.frame.size.height * view.contentScaleFactor;
     
+    int width;
+    int height;
+    if (_videoOutputDimensions.first == -1) {
+        width  = view.frame.size.width  * view.contentScaleFactor;
+        height = view.frame.size.height * view.contentScaleFactor;
+    } else {
+        width  = _videoOutputDimensions.first;
+        height = _videoOutputDimensions.second;
+    }
+      
     /*
      * https://stackoverflow.com/questions/29505631/crop-video-in-ios-see-weird-green-line-around-video
      * The video width & height need to be even

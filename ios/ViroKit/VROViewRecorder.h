@@ -82,4 +82,10 @@ private:
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler;
 - (void)lockPixelBuffer;
 
+/*
+ Manually overrides video recording parameters with a different width and
+ height, instead of using the dimensions of the underlying GLView.
+ */
+- (void)setRecorderWidth:(int)width
+                  height:(int)height;
 @end
