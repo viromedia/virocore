@@ -165,6 +165,9 @@ void VROVideoTextureiOS::initVideoDimensions() {
     // First, ensure we have a valid track to create dimensions from
     NSArray<AVAssetTrack *> * tracks = [_player.currentItem.asset
                                         tracksWithMediaType:AVMediaTypeVideo];
+    
+    NSArray<AVAssetTrack *> * audioTracks = [_player.currentItem.asset
+                                        tracksWithMediaType:AVMediaTypeAudio];
     if (tracks.count == 0) {
         return;
     }
@@ -178,8 +181,18 @@ void VROVideoTextureiOS::initVideoDimensions() {
     AVMutableCompositionTrack *compositionVideoTrack = [mainComposition
                                                         addMutableTrackWithMediaType:AVMediaTypeVideo
                                                         preferredTrackID:kCMPersistentTrackID_Invalid];
+    
     [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, trackDuration)
                                    ofTrack:videoTrack atTime:insertionPoint error:&error];
+    
+
+    if ( audioTracks.count != 0) {
+        AVAssetTrack *audioTrack = [audioTracks firstObject];
+        CMTime audiotrackDuration = [[audioTrack asset] duration];
+        AVMutableCompositionTrack *compositionAudioTrack = [mainComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,audiotrackDuration) ofTrack:audioTrack atTime:insertionPoint error:nil];
+    }
+    
     if (error) {
         return;
     }
