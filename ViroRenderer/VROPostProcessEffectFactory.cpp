@@ -715,7 +715,7 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createZoomEffe
                 "uniform highp vec3 br;",
                 "uniform highp vec3 aspectRatio;",
                 "uniform highp float magnification;",
-                "highp float border_thickness = 0.01;",
+                "highp float border_thickness = 0.0;", 
 
                 // Determine the center and radius of the zoom circle
                 "highp float width = (tr.x - tl.x) / 2.0;",
