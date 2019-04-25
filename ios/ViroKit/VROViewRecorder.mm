@@ -37,6 +37,7 @@
     AVAudioRecorder *_audioRecorder;
     double _startTimeMillis;
     NSURL *_audioFilePath;
+    NSURL *_overwrittenAudioFilePath;
     NSTimer *_videoLoopTimer;
     CVPixelBufferRef _videoPixelBuffer;
     std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
@@ -61,6 +62,7 @@
         _driver = driver;
         _addWatermark = false;
         _videoOutputDimensions = std::make_pair(-1, -1);
+        _overwrittenAudioFilePath = nil;
     }
     return self;
 }
@@ -164,7 +166,7 @@
 }
 
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath   {
-    _audioFilePath = audioPath;
+    _overwrittenAudioFilePath = audioPath;
     [self stopVideoRecordingWithHandler:completionHandler];
 }
 
@@ -176,9 +178,10 @@
     // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
     VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSInteger errorCode) {
         NSURL *videoURL = [self checkAndGetTempFileURL:[_videoFileName stringByAppendingString:kVROViewVideoSuffix]];
+        NSURL *targetedAudioURL = _overwrittenAudioFilePath == NULL ? _audioFilePath : _overwrittenAudioFilePath;
         
         // once the video finishes writing, then we need to merge the video w/ audio
-        [self mergeAudio:_audioFilePath withVideo:filepath outputPath:videoURL completionHandler:^(BOOL success) {
+        [self mergeAudio:targetedAudioURL withVideo:filepath outputPath:videoURL completionHandler:^(BOOL success) {
             
             // delete the temp audio/video files.
             NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -298,8 +301,15 @@
     
     AVMutableComposition *mergedComposition = [AVMutableComposition composition];
     
-    AVMutableCompositionTrack *compositionAudioTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration) ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    
+    // Perform a sanity check here to ensure our audioAsset has audio (in case we use overwritten sources).
+    if ([[audioAsset tracksWithMediaType:AVMediaTypeAudio] count] != 0) {
+        AVMutableCompositionTrack *compositionAudioTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                                          preferredTrackID:kCMPersistentTrackID_Invalid];
+        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration)
+                                       ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0]
+                                        atTime:kCMTimeZero error:nil];
+    }
     
     AVMutableCompositionTrack *compositionVideoTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
     [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
