@@ -30,6 +30,7 @@ static thread_local std::shared_ptr<VROImagePostProcess> sEmptyEffect;
 VROPostProcessEffectFactory::VROPostProcessEffectFactory() {
     _enabledWindowMask = false;
     _swirlSpeedMultiplier = 2;
+    _shouldPostProcessWindowMask = true;
 }
 
 VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {
@@ -121,6 +122,7 @@ void VROPostProcessEffectFactory::enableWindowMask(std::shared_ptr<VRODriver> dr
                 "uniform highp vec3 tr;",
                 "uniform highp vec3 bl;",
                 "uniform highp vec3 br;",
+                "uniform int postProcessBox;",
 
                 // For the given quad that we are drawing, determine if pixel is within window mask or not.
                 "highp vec2 p = v_texcoord.xy;",
@@ -130,6 +132,7 @@ void VROPostProcessEffectFactory::enableWindowMask(std::shared_ptr<VRODriver> dr
                 "        && ( ((bl.x - br.x) * (p.y - br.y)) - ((p.x - br.x) * (bl.y - br.y)) ) < 0.0",
                 "        && ( ((tl.x - bl.x) * (p.y - bl.y)) - ((p.x - bl.x) * (tl.y - bl.y)) ) < 0.0",
                 ");",
+                "isInsideBox = (postProcessBox == 1) ? isInsideBox : !isInsideBox;"
                 "frag_color = (isInsideBox) ? texture(post_processed_texture, v_texcoord) : texture(source_texture, v_texcoord);",
         };
 
@@ -172,6 +175,14 @@ void VROPostProcessEffectFactory::enableWindowMask(std::shared_ptr<VRODriver> dr
                                            uniform->setVec3({strongSelf->_maskBr.x, strongSelf->_maskBr.y, 0});
                                        }
                                    });
+        modifier->setUniformBinder("postProcessBox", VROShaderProperty::Int,
+                                   [weakSelf] (VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+                                       std::shared_ptr<VROPostProcessEffectFactory> strongSelf = weakSelf.lock();
+                                       if (strongSelf) {
+                                           uniform->setInt(strongSelf->_shouldPostProcessWindowMask);
+                                       }
+                                   });
 
 
         // Finally create our ImagePostProcess program and cache it.
@@ -192,6 +203,10 @@ void VROPostProcessEffectFactory::updateWindowMask(VROVector3f tl, VROVector3f t
     _maskTr = tr;
     _maskBl = bl;
     _maskBr = br;
+}
+
+void VROPostProcessEffectFactory::setShouldPostProcessWindowMask(bool shouldPostProcessMask) {
+    _shouldPostProcessWindowMask = shouldPostProcessMask;
 }
 
 std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::handlePostProcessing(std::shared_ptr<VRORenderTarget> source,

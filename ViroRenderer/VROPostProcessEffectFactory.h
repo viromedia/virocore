@@ -108,6 +108,7 @@ public:
 
     void enableWindowMask(std::shared_ptr<VRODriver> driver);
     void disableWindowMask(std::shared_ptr<VRODriver> driver);
+    void setShouldPostProcessWindowMask(bool inverse);
     void updateWindowMask(VROVector3f tl, VROVector3f tr, VROVector3f bl, VROVector3f br);
 
     // TODO: Create a better way to pass effect-specific parameters to our post process effects.
@@ -154,6 +155,7 @@ private:
      Properties for applying the post process effects within a window mask.
      */
     bool _enabledWindowMask;
+    bool _shouldPostProcessWindowMask;
     VROVector3f _maskTl;
     VROVector3f _maskTr;
     VROVector3f _maskBl;
