@@ -27,6 +27,7 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
     cap.aoMap = false;
     cap.diffuseTextureStereoMode = VROStereoMode::None;
     cap.bloom = false;
+    cap.postProcessMask = false;
     cap.receivesShadows = true;
     
     cap.additionalModifierKeys = VROShaderModifier::getShaderModifierKey(material.getShaderModifiers());
@@ -127,6 +128,9 @@ VROMaterialShaderCapabilities VROShaderCapabilities::deriveMaterialCapabilitiesK
     
     // Bloom
     cap.bloom = material.isBloomSupported();
+
+    // Post Process Mask
+    cap.postProcessMask = material.getPostProcessMask();
 
     // Chroma key filtering
     if (material.isChromaKeyFilteringEnabled()) {

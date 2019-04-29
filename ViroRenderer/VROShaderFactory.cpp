@@ -43,6 +43,7 @@ static thread_local std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static thread_local std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static thread_local std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
 static thread_local std::shared_ptr<VROShaderModifier> sBloomModifier;
+static thread_local std::shared_ptr<VROShaderModifier> sPostProcesMaskModifier;
 static thread_local std::shared_ptr<VROShaderModifier> sToneMappingMaskModifier;
 
 static thread_local std::map<std::tuple<int, int, int>, std::shared_ptr<VROShaderModifier>> sChromaKeyModifiers;
@@ -254,6 +255,11 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     // Bloom
     if (lightingCapabilities.hdr && materialCapabilities.bloom && driver->isBloomSupported()) {
         modifiers.push_back(createBloomModifier());
+    }
+
+    // Post Process Mask. Also apply the same isBloomSupported optimizations.
+    if (materialCapabilities.postProcessMask) {
+        modifiers.push_back(createPostProcessMaskModifier());
     }
     
     // Custom material modifiers. These are added to the back of the modifiers list
@@ -901,26 +907,45 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createChromaKeyModifier(int
     return modifier;
 }
 
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createPostProcessMaskModifier() {
+    if (!sPostProcesMaskModifier) {
+        std::vector<std::string> modifierCode =  {
+            "layout (location = 3) out highp vec4 _mask_color;",
+            "uniform highp float postProcessMask;",
+            "_mask_color = vec4(postProcessMask, 0.0, 0.0, 1.0);",
+        };
+        sPostProcesMaskModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
+        sPostProcesMaskModifier->setUniformBinder("postProcessMask", VROShaderProperty::Float,
+                                         [](VROUniform *uniform,
+                                            const VROGeometry *geometry, const VROMaterial *material) {
+            float hasPostProcessMask = material->getPostProcessMask() ? 1.0 : 0.0;
+            uniform->setFloat(hasPostProcessMask);
+        });
+        sPostProcesMaskModifier->setName("postProcessMask");
+    }
+    return sPostProcesMaskModifier;
+}
+
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
     /*
      Modifier that writes bloom regions to an output variable _bright_color.
      */
     if (!sBloomModifier) {
         std::vector<std::string> modifierCode =  {
-            "layout (location = 2) out highp vec4 _bright_color;",
-            "uniform highp float bloom_threshold;",
-            
-            "highp float brightness = dot(_output_color.rgb, vec3(0.2126, 0.7152, 0.0722));",
-            "if (brightness > bloom_threshold) {",
-            "   _bright_color = vec4(_output_color.rgb, _output_color.a);",
-            "}",
+                "layout (location = 2) out highp vec4 _bright_color;",
+                "uniform highp float bloom_threshold;",
+
+                "highp float brightness = dot(_output_color.rgb, vec3(0.2126, 0.7152, 0.0722));",
+                "if (brightness > bloom_threshold) {",
+                "   _bright_color = vec4(_output_color.rgb, _output_color.a);",
+                "}",
         };
         sBloomModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
         sBloomModifier->setUniformBinder("bloom_threshold", VROShaderProperty::Float,
                                          [](VROUniform *uniform,
                                             const VROGeometry *geometry, const VROMaterial *material) {
-            uniform->setFloat(material->getBloomThreshold());
-        });
+                                             uniform->setFloat(material->getBloomThreshold());
+                                         });
         sBloomModifier->setName("bloom");
     }
     return sBloomModifier;

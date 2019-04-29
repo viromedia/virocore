@@ -23,6 +23,7 @@ class VROShaderModifier;
 class VRODriverOpenGL;
 class VRODriver;
 class VRORenderTarget;
+class VROTexture;
 
 enum class VROPostProcessEffect{
     GrayScale,
@@ -78,6 +79,7 @@ public:
     std::shared_ptr<VRORenderTarget> handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
                                                           std::shared_ptr<VRORenderTarget> targetA,
                                                           std::shared_ptr<VRORenderTarget> targetB,
+                                                          std::shared_ptr<VROTexture> mask,
                                                           std::shared_ptr<VRODriver> driver);
 
     static VROPostProcessEffect getEffectForString(std::string strEffect){
@@ -106,6 +108,7 @@ public:
         return VROPostProcessEffect::None;
     }
 
+    void createPostProcessMask(std::shared_ptr<VRODriver> driver);
     void enableWindowMask(std::shared_ptr<VRODriver> driver);
     void disableWindowMask(std::shared_ptr<VRODriver> driver);
     void setShouldPostProcessWindowMask(bool inverse);

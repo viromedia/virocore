@@ -40,12 +40,14 @@ VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_
     _hdrSupported = _mrtSupported && driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
     _pbrSupported = _hdrSupported;
     _bloomSupported = _mrtSupported && _hdrSupported && driver->isBloomSupported();
+    _postProcessMaskSupported = _mrtSupported;
         
     // Enable defaults based on input flags and and support
     _shadowsEnabled = _mrtSupported && config.enableShadows;
     _hdrEnabled = _hdrSupported && config.enableHDR;
     _pbrEnabled = _hdrSupported && config.enablePBR;
     _bloomEnabled = _bloomSupported && config.enableBloom;
+    _postProcessMaskEnabled = false; // Off by default.
     createRenderTargets();
 
     _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
@@ -111,10 +113,21 @@ void VROChoreographer::createRenderTargets() {
         _postProcessTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
         _postProcessTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
 
+        // Configure the number of render targets.
+        // TODO: Consider making the assignment of render target attachments more dynamic.
+        int renderTargetNum;
+        if (_postProcessMaskEnabled) {
+            renderTargetNum = 4;
+        } else if (_bloomEnabled) {
+            renderTargetNum = 3;
+        } else {
+            renderTargetNum = 2;
+        }
+
         if (_bloomEnabled) {
             // The HDR target includes an additional attachment to which we render a tone-mapping mask
             // (indicating what fragments require tone-mapping), and one to which we render bloom
-            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 3, 1, false, true);
+            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, renderTargetNum, 1, false, true);
             _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
             _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
             
@@ -133,11 +146,10 @@ void VROChoreographer::createRenderTargets() {
                 "frag_color.a = frag_color.a > 1.0 ? 1.0 : frag_color.a;"
             };
             _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
-        }
-        else {
+        } else {
             // The HDR target includes an additional attachment to which we render a tone-mapping mask
             // (indicating what fragments require tone-mapping)
-            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1, false, true);
+            _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, renderTargetNum, 1, false, true);
         }
 
         bool needsSoftwareGammaPass = driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware;
@@ -269,9 +281,12 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             driver->setBlendingMode(VROBlendMode::Alpha);
 
             // Run additional post-processing on the normal HDR image
+            bool canProcessMask = metadata->requiresPostProcessMaskPass() && _postProcessMaskEnabled;
+            std::shared_ptr<VROTexture> postProcessMask = canProcessMask  ? _hdrTarget->getTexture(3) : nullptr;
             std::shared_ptr<VRORenderTarget> postProcessTarget = _postProcessEffectFactory->handlePostProcessing(_blitTarget,
                                                                                                                  _postProcessTargetA,
                                                                                                                  _postProcessTargetB,
+                                                                                                                 postProcessMask,
                                                                                                                  driver);
             passert (postProcessTarget->getTexture(0) != nullptr);
             // Blend, tone map, and gamma correct
@@ -296,9 +311,12 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
             
             // Run additional post-processing on the HDR image
+            bool canProcessMask = metadata->requiresPostProcessMaskPass() && _postProcessMaskEnabled;
+            std::shared_ptr<VROTexture> postProcessMask = canProcessMask  ? _hdrTarget->getTexture(3) : nullptr;
             std::shared_ptr<VRORenderTarget> postProcessTarget = _postProcessEffectFactory->handlePostProcessing(_hdrTarget,
                                                                                                                  _postProcessTargetA,
                                                                                                                  _postProcessTargetB,
+                                                                                                                 postProcessMask,
                                                                                                                  driver);
             
             // Perform tone-mapping with gamma correction
@@ -464,6 +482,26 @@ bool VROChoreographer::setBloomEnabled(bool enableBloom) {
         }
         else if (!_bloomEnabled) {
             _bloomEnabled = true;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+}
+
+bool VROChoreographer::setPostProcessMaskEnabled(bool enablePostProcessMask) {
+    if (!enablePostProcessMask) {
+        if (_postProcessMaskEnabled) {
+            _postProcessMaskEnabled = false;
+            _renderTargetsChanged = true;
+        }
+        return true;
+    }
+    else {
+        if (!_postProcessMaskSupported) {
+            return false;
+        }
+        else if (!_postProcessMaskEnabled) {
+            _postProcessMaskEnabled = true;
             _renderTargetsChanged = true;
         }
         return true;

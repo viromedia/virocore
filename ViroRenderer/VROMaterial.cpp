@@ -34,6 +34,7 @@ VROMaterial::VROMaterial() : VROThreadRestricted(VROThreadName::Renderer),
     _readsFromDepthBuffer(true),
     _colorWriteMask(VROColorMaskAll),
     _bloomThreshold(-1),
+    _postProcessMask(false),
     _receivesShadows(true),
     _castsShadows(true),
     _chromaKeyFilteringEnabled(false),
@@ -81,6 +82,7 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) : VROThreadRestr
  _readsFromDepthBuffer(material->_readsFromDepthBuffer),
  _colorWriteMask(material->_colorWriteMask),
  _bloomThreshold(material->_bloomThreshold),
+ _postProcessMask(material->_postProcessMask),
  _receivesShadows(material->_receivesShadows),
  _castsShadows(material->_castsShadows),
  _chromaKeyFilteringEnabled(material->_chromaKeyFilteringEnabled),
@@ -146,6 +148,7 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _readsFromDepthBuffer = material->_readsFromDepthBuffer;
     _colorWriteMask = material->_colorWriteMask;
     _bloomThreshold = material->_bloomThreshold;
+    _postProcessMask = material->_postProcessMask;
     _receivesShadows = material->_receivesShadows;
     _castsShadows = material->_castsShadows;
     _chromaKeyFilteringEnabled = material->_chromaKeyFilteringEnabled;

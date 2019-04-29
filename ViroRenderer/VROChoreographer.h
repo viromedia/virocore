@@ -87,7 +87,13 @@ public:
      return false. Defaults to true if supported by the device.
      */
     bool setBloomEnabled(bool enableBloom);
-    
+
+    /*
+     Enable or disable the additional rendering texture attachement needed
+     for a post processing mask.
+     */
+    bool setPostProcessMaskEnabled(bool enableMask);
+
     /*
      Sets a delegate that is invoked each time a frame has been rendered. The delegate
      reeives a reference to the final VRORenderTarget, which contains a texture representing
@@ -159,7 +165,14 @@ private:
      modifier. This buffer is blurred and added back to the scene.
      */
     bool _bloomSupported, _bloomEnabled;
-    
+
+    /*
+     True if PostProcessMask is enabled. When enabled, materials targeting the
+     postprocessing mask are rendered onto the additional color buffer, to be
+     considered in the post-processing pass.
+     */
+    bool _postProcessMaskSupported, _postProcessMaskEnabled;
+
     /*
      True if for the next frame render targets need to be recreated.
      */
