@@ -32,8 +32,7 @@
 VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_ptr<VRODriver> driver) :
     _driver(driver),
     _clearColor({ 0, 0, 0, 1 }),
-    _renderTargetsChanged(false),
-    _blurScaling(0.5) {
+    _renderTargetsChanged(false) {
 
     // Derive supported features on this GPU
     _mrtSupported = driver->getGPUType() != VROGPUType::Adreno330OrOlder;
@@ -47,15 +46,15 @@ VROChoreographer::VROChoreographer(VRORendererConfiguration config, std::shared_
     _hdrEnabled = _hdrSupported && config.enableHDR;
     _pbrEnabled = _hdrSupported && config.enablePBR;
     _bloomEnabled = _bloomSupported && config.enableBloom;
-    _postProcessMaskEnabled = false; // Off by default.
-    createRenderTargets();
-
-    _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
+    _postProcessMaskEnabled = false;
     _renderToTextureDelegate = nullptr;
         
     // This is always created so that it can be configured even if HDR is off. Useful
     // for applications that dynamically turn HDR on and off.
     _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
+    _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
+    _postProcessEffectFactory->setGaussianBlurPass(_gaussianBlurPass);
+    createRenderTargets();
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -80,11 +79,10 @@ void VROChoreographer::createRenderTargets() {
     _postProcessTargetA.reset();
     _postProcessTargetB.reset();
     _hdrTarget.reset();
-    _blurTargetA.reset();
-    _blurTargetB.reset();
     _additiveBlendPostProcess.reset();
     _toneMappingPass.reset();
     _preprocesses.clear();
+    _gaussianBlurPass->resetRenderTargets();
 
     VRORenderTargetType colorType = _hdrEnabled ? VRORenderTargetType::ColorTextureHDR16 : VRORenderTargetType::ColorTexture;
 
@@ -118,8 +116,10 @@ void VROChoreographer::createRenderTargets() {
         int renderTargetNum;
         if (_postProcessMaskEnabled) {
             renderTargetNum = 4;
+            _gaussianBlurPass->createRenderTargets(driver);
         } else if (_bloomEnabled) {
             renderTargetNum = 3;
+            _gaussianBlurPass->createRenderTargets(driver);
         } else {
             renderTargetNum = 2;
         }
@@ -128,9 +128,7 @@ void VROChoreographer::createRenderTargets() {
             // The HDR target includes an additional attachment to which we render a tone-mapping mask
             // (indicating what fragments require tone-mapping), and one to which we render bloom
             _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, renderTargetNum, 1, false, true);
-            _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
-            _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
-            
+
             std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
             std::vector<std::string> code = {
                 "uniform sampler2D hdr_texture;",
@@ -215,14 +213,7 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
             failed = true;
         }
     }
-    if (_blurTargetA) {
-        _blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(), (int) (rtViewport.getWidth()  * _blurScaling),
-                                                                          (int) (rtViewport.getHeight() * _blurScaling) });
-    }
-    if (_blurTargetB) {
-        _blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int) (rtViewport.getWidth()  * _blurScaling),
-                                    (int) (rtViewport.getHeight() * _blurScaling) });
-    }
+    _gaussianBlurPass->setViewPort(viewport, driver);
 
     if (failed) {
         pwarn("One or more render targets failed creation: disabling HDR and retrying");
@@ -258,26 +249,22 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
     VRORenderPassInputOutput inputs;
     if (_hdrEnabled) {
         if (_bloomEnabled && metadata->requiresBloomPass()) {
-            _blurTargetA->hydrate();
-            _blurTargetB->hydrate();
 
             // Render the scene + bloom to the floating point HDR MRT target
             inputs.outputTarget = _hdrTarget;
             _baseRenderPass->render(scene, outgoingScene, inputs, context, driver);
-            
+
             // Blur the image. The finished result will reside in _blurTargetB.
             inputs.textures[kGaussianInput] = _hdrTarget->getTexture(2);
-            inputs.targets[kGaussianPingPong] = _blurTargetA;
-            inputs.outputTarget = _blurTargetB;
             _gaussianBlurPass->render(scene, outgoingScene, inputs, context, driver);
-            
+
             // Additively blend the bloom back into the image, store in _blitTarget. Note we
             // have to set the blend mode to PremultiplyAlpha because the input texture (the blur
             // texture) has alpha premultiplied -- so we don't want OpenGL to multiply its colors
             // by alpha *again*.
             driver->bindRenderTarget(_blitTarget, VRORenderTargetUnbindOp::Invalidate);
             driver->setBlendingMode(VROBlendMode::PremultiplyAlpha);
-            _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), _blurTargetB->getTexture(0) }, driver);
+            _additiveBlendPostProcess->blit({ _hdrTarget->getTexture(0), inputs.outputTarget->getTexture(0) }, driver);
             driver->setBlendingMode(VROBlendMode::Alpha);
 
             // Run additional post-processing on the normal HDR image
@@ -287,6 +274,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
                                                                                                                  _postProcessTargetA,
                                                                                                                  _postProcessTargetB,
                                                                                                                  postProcessMask,
+                                                                                                                 context,
                                                                                                                  driver);
             passert (postProcessTarget->getTexture(0) != nullptr);
             // Blend, tone map, and gamma correct
@@ -317,6 +305,7 @@ void VROChoreographer::renderScene(std::shared_ptr<VROScene> scene,
                                                                                                                  _postProcessTargetA,
                                                                                                                  _postProcessTargetB,
                                                                                                                  postProcessMask,
+                                                                                                                 context,
                                                                                                                  driver);
             
             // Perform tone-mapping with gamma correction
@@ -362,12 +351,6 @@ void VROChoreographer::setClearColor(VROVector4f color, std::shared_ptr<VRODrive
     }
     if (_hdrTarget) {
         _hdrTarget->setClearColor(color);
-    }
-    if (_blurTargetA) {
-        _blurTargetA->setClearColor(color);
-    }
-    if (_blurTargetB) {
-        _blurTargetB->setClearColor(color);
     }
     if (_postProcessTargetA) {
         _postProcessTargetA->setClearColor(color);

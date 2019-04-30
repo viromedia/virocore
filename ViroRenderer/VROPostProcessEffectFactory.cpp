@@ -13,6 +13,7 @@
 #include "VROShaderModifier.h"
 #include "VROTime.h"
 #include "VROTexture.h"
+#include "VROGaussianBlurRenderPass.h"
 
 static thread_local std::shared_ptr<VROImagePostProcess> sGrayScale;
 static thread_local std::shared_ptr<VROImagePostProcess> sSepia;
@@ -124,11 +125,17 @@ void VROPostProcessEffectFactory::createPostProcessMask(std::shared_ptr<VRODrive
                 "uniform sampler2D mask_texture;",
                 "uniform int shouldPostProcessMask;",
 
-                // For the given quad that we are drawing, determine if pixel is within window mask or not.
+                // Grab the post process mask and normalize it.
                 "highp vec4 maskPixel = texture(mask_texture, v_texcoord);",
-                "bool shouldPostProcess = maskPixel.r >= 1.0;",
-                "shouldPostProcess = (shouldPostProcessMask == 1) ? shouldPostProcess : !shouldPostProcess;",
-                "frag_color = shouldPostProcess ? texture(post_processed_texture, v_texcoord) : texture(source_texture, v_texcoord);",
+                "highp float ratio = maskPixel.r;",
+                "ratio = min(1.0, ratio);",
+                "ratio = max(0.0, ratio);",
+
+                // Alpha blend the post processed scene and the original scene, via the mask.
+                "ratio = (shouldPostProcessMask == 1) ? ratio : (1.0 - ratio);",
+                "highp vec4 postProcess = texture(post_processed_texture, v_texcoord);",
+                "highp vec4 dest = texture(source_texture, v_texcoord);",
+                "frag_color = ratio * postProcess + (1.0 - ratio) * dest;",
         };
 
         std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
@@ -245,10 +252,15 @@ void VROPostProcessEffectFactory::setShouldPostProcessWindowMask(bool shouldPost
     _shouldPostProcessWindowMask = shouldPostProcessMask;
 }
 
+void  VROPostProcessEffectFactory::setGaussianBlurPass(std::shared_ptr<VROGaussianBlurRenderPass> pass) {
+    _gaussianBlurPass = pass;
+}
+
 std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
                                                                                    std::shared_ptr<VRORenderTarget> targetA,
                                                                                    std::shared_ptr<VRORenderTarget> targetB,
                                                                                    std::shared_ptr<VROTexture> materialMask,
+                                                                                   VRORenderContext *context,
                                                                                    std::shared_ptr<VRODriver> driver) {
     if (_cachedPrograms.size() == 0) {
         return source;
@@ -264,6 +276,13 @@ std::shared_ptr<VRORenderTarget> VROPostProcessEffectFactory::handlePostProcessi
 
     // Else, if we have a material mask, apply that.
     if (materialMask != nullptr) {
+        // Feather the mask.
+        VRORenderPassInputOutput inputs;
+        inputs.textures[kGaussianInput] = materialMask;
+        _gaussianBlurPass->render(nullptr, nullptr, inputs, context, driver);
+        materialMask = inputs.outputTarget->getTexture(0);
+
+        // Initialize our post process shaders if we haven't yet already.
         createPostProcessMask(driver);
 
         // If the post process mask is enabled, blend the source and post processed result

@@ -252,18 +252,6 @@ private:
 #pragma mark - Bloom
     
     /*
-     Render targets for ping-ponging the blur operation.
-     */
-    std::shared_ptr<VRORenderTarget> _blurTargetA;
-    std::shared_ptr<VRORenderTarget> _blurTargetB;
-
-    /*
-     The size of the blur targets relative to the display. Smaller scale leads to
-     less accurate but faster blur.
-     */
-    float _blurScaling;
-    
-    /*
      Render pass that iteratively performs Gaussian blur on the two blur targets.
      */
     std::shared_ptr<VROGaussianBlurRenderPass> _gaussianBlurPass;

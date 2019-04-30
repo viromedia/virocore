@@ -17,8 +17,10 @@
 #include "VROMaterial.h"
 #include "VROStringUtil.h"
 #include "VROMath.h"
+#include "VROViewport.h"
 
 VROGaussianBlurRenderPass::VROGaussianBlurRenderPass() :
+    _blurScaling(0.5),
     _numBlurIterations(4),
     _horizontal(false),
     _bilinearTextureLookup(true),
@@ -28,10 +30,36 @@ VROGaussianBlurRenderPass::VROGaussianBlurRenderPass() :
     _normalizedKernel(true),
     _considerTransparentPixels(false),
     _preBlurPass(nullptr),
-    _gaussianBlur(nullptr) {
+    _gaussianBlur(nullptr),
+    _blurTargetA(nullptr),
+    _blurTargetB(nullptr) {
 }
 
 VROGaussianBlurRenderPass::~VROGaussianBlurRenderPass() {
+}
+
+void VROGaussianBlurRenderPass::createRenderTargets(std::shared_ptr<VRODriver> &driver) {
+    _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
+    _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1, false, false);
+}
+
+void VROGaussianBlurRenderPass::resetRenderTargets() {
+    _blurTargetA.reset();
+    _blurTargetB.reset();
+}
+
+void VROGaussianBlurRenderPass::setViewPort(VROViewport rtViewport,
+                                            std::shared_ptr<VRODriver> &driver) {
+    if (_blurTargetA) {
+        _blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(),
+                                    (int) (rtViewport.getWidth()  * _blurScaling),
+                                    (int) (rtViewport.getHeight() * _blurScaling) });
+    }
+    if (_blurTargetB) {
+        _blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(),
+                                    (int) (rtViewport.getWidth()  * _blurScaling),
+                                    (int) (rtViewport.getHeight() * _blurScaling) });
+    }
 }
 
 void VROGaussianBlurRenderPass::setNumBlurIterations(int numIterations) {
@@ -55,6 +83,13 @@ void VROGaussianBlurRenderPass::setBilinearTextureLookup(bool enabled) {
 }
 
 void VROGaussianBlurRenderPass::setClearColor(VROVector4f color) {
+    if (_blurTargetA) {
+        _blurTargetA->setClearColor(color);
+    }
+    if (_blurTargetB) {
+        _blurTargetB->setClearColor(color);
+    }
+
     _considerTransparentPixels = color.w != 1.0;
     resetShaders();
 }
@@ -179,6 +214,12 @@ void VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene,
                                        VRORenderPassInputOutput &inputs,
                                        VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     passert (_numBlurIterations % 2 == 0);
+    passert (_blurTargetA != nullptr && _blurTargetB != nullptr);
+    _blurTargetA->hydrate();
+    _blurTargetB->hydrate();
+
+    inputs.targets[kGaussianPingPong] = _blurTargetA;
+    inputs.outputTarget = _blurTargetB;
 
     // Setup blur shaders if we haven't already.
     if (_gaussianBlur == nullptr) {

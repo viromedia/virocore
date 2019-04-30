@@ -24,6 +24,8 @@ class VRODriverOpenGL;
 class VRODriver;
 class VRORenderTarget;
 class VROTexture;
+class VROGaussianBlurRenderPass;
+class VRORenderContext;
 
 enum class VROPostProcessEffect{
     GrayScale,
@@ -80,6 +82,7 @@ public:
                                                           std::shared_ptr<VRORenderTarget> targetA,
                                                           std::shared_ptr<VRORenderTarget> targetB,
                                                           std::shared_ptr<VROTexture> mask,
+                                                          VRORenderContext *context,
                                                           std::shared_ptr<VRODriver> driver);
 
     static VROPostProcessEffect getEffectForString(std::string strEffect){
@@ -121,8 +124,13 @@ public:
     void setDistortion(float distortion) {
         _circularDistortion = distortion;
     }
-private:
 
+    /*
+     Sets the gaussian blur render pass to be used by this post process factory.
+     */
+    void setGaussianBlurPass(std::shared_ptr<VROGaussianBlurRenderPass> pass);
+
+private:
     std::shared_ptr<VRORenderTarget> renderEffects(std::shared_ptr<VRORenderTarget> input,
                                                    std::shared_ptr<VRORenderTarget> targetA,
                                                    std::shared_ptr<VRORenderTarget> targetB,
@@ -167,6 +175,7 @@ private:
 
     float _swirlSpeedMultiplier;
     float _circularDistortion;
+    std::shared_ptr<VROGaussianBlurRenderPass> _gaussianBlurPass;
 };
 
 #endif /* VROPostProcessEffectFactory_h */

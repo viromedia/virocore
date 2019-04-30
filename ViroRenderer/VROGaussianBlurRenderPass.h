@@ -14,6 +14,7 @@
 
 class VRODriver;
 class VROImagePostProcess;
+class VROViewport;
 
 /*
  Keys for the gaussian render pass.
@@ -30,11 +31,19 @@ public:
     
     VROGaussianBlurRenderPass();
     virtual ~VROGaussianBlurRenderPass();
-    
+
     void render(std::shared_ptr<VROScene> scene,
                 std::shared_ptr<VROScene> outgoingScene,
                 VRORenderPassInputOutput &inputs,
                 VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
+
+    /*
+     Functions for handling the render targets associated with this Gaussian Blur.
+     */
+    void createRenderTargets(std::shared_ptr<VRODriver> &driver);
+    void resetRenderTargets();
+    void setViewPort(VROViewport viewport, std::shared_ptr<VRODriver> &driver);
+    void setClearColor(VROVector4f color, std::shared_ptr<VRODriver> driver);
 
     /*
      The more iterations, the more blur. Must be an even number.
@@ -83,6 +92,13 @@ public:
     }
     
 private:
+
+    /*
+     Render targets for ping-ponging the blur operation.
+     */
+    std::shared_ptr<VRORenderTarget> _blurTargetA;
+    std::shared_ptr<VRORenderTarget> _blurTargetB;
+
     /*
      Sigma controls gaussian "drop-off", and thus the blur intensity. The higher
      the sigma, the faster the drop-off, decreasing the intensity of the blur.
@@ -138,6 +154,12 @@ private:
      Program for pre-processing the image before it is blurred.
      */
     std::shared_ptr<VROImagePostProcess> _preBlurPass;
+
+    /*
+     The size of the blur targets relative to the display. Smaller scale leads to
+     less accurate but faster blur.
+     */
+    float _blurScaling;
 
     /*
      Initializes and replaces _gaussianBlur and _preBlurPass shaders.
