@@ -26,6 +26,11 @@ VROARCameraInertial::VROARCameraInertial(VROTrackingType trackingType, std::shar
     VROCameraOrientation cameraOrientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
     VROCameraPosition cameraPosition = (trackingType == VROTrackingType::Front) ? VROCameraPosition::Front : VROCameraPosition::Back;
     
+    // We don't need a camera texture or capture controller, so return here.
+    if (trackingType == VROTrackingType::PrerecordedVideo) {
+        return;
+    }
+    
     if (kInertialRenderCameraUsingPreviewLayer) {
         _captureController = std::make_shared<VROAVCaptureController>();
         _captureController->initCapture(cameraPosition, cameraOrientation, true, driver);

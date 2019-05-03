@@ -55,7 +55,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
-@property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
 @property (readwrite, nonatomic) VROTrackingType trackingType;
 
 // Image Tracking Output

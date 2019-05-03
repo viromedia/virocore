@@ -24,6 +24,7 @@
     bool _isFirstRecordingFrame;
     bool _saveToCameraRoll;
     bool _addWatermark;
+    bool _useMicrophone;
     UIImage *_watermarkImage;
     CGRect _watermarkFrame;
     CIImage *_resizedWatermarkImage;
@@ -36,7 +37,7 @@
     AVAssetWriterInputPixelBufferAdaptor *_videoWriterPixelBufferAdaptor;
     AVAudioRecorder *_audioRecorder;
     double _startTimeMillis;
-    NSURL *_audioFilePath;
+    NSURL *_tempAudioFilePath;
     NSURL *_overwrittenAudioFilePath;
     NSTimer *_videoLoopTimer;
     CVPixelBufferRef _videoPixelBuffer;
@@ -51,12 +52,12 @@
 @end
 
 @implementation VROViewRecorder
-
 - (id)initWithView:(GLKView *)view
           renderer:(std::shared_ptr<VRORenderer>)renderer
             driver:(std::shared_ptr<VRODriver>)driver {
     self = [super init];
     if (self) {
+        _useMicrophone = true;
         _view = view;
         _renderer = renderer;
         _driver = driver;
@@ -99,29 +100,30 @@
     // Note, we don't need to ask for camera permissions here because
     //  1) we're grabbing image from the renderer
     //  2) in AR, the renderer accesses the camera and so it should ask for permission
-    
-    switch([[AVAudioSession sharedInstance] recordPermission]) {
-            // continue executing if we have permissions
-        case AVAudioSessionRecordPermissionGranted:
-            NSLog(@"[Recording] Microphone permission granted.");
-            break;
-            // notify permission error and exit if we don't have permission
-        case AVAudioSessionRecordPermissionDenied:
-            NSLog(@"[Recording] Microphone permission denied.");
-            if (_errorBlock) {
-                _errorBlock(kVROViewErrorNoPermissions);
-            }
-            return;
-            // if we dont have permissions, then attempt to get it
-        case AVAudioSessionRecordPermissionUndetermined:
-            NSLog(@"[Recording] Microphone permission undetermined.");
-            [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
-                // just call this function again because we'll check for permission state again.
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:_errorBlock];
-                });
-            }];
-            return;
+    if (_useMicrophone) {
+        switch([[AVAudioSession sharedInstance] recordPermission]) {
+                // continue executing if we have permissions
+            case AVAudioSessionRecordPermissionGranted:
+                NSLog(@"[Recording] Microphone permission granted.");
+                break;
+                // notify permission error and exit if we don't have permission
+            case AVAudioSessionRecordPermissionDenied:
+                NSLog(@"[Recording] Microphone permission denied.");
+                if (_errorBlock) {
+                    _errorBlock(kVROViewErrorNoPermissions);
+                }
+                return;
+                // if we dont have permissions, then attempt to get it
+            case AVAudioSessionRecordPermissionUndetermined:
+                NSLog(@"[Recording] Microphone permission undetermined.");
+                [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                    // just call this function again because we'll check for permission state again.
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:_errorBlock];
+                    });
+                }];
+                return;
+        }
     }
     
     // If we're saving this file to camera roll, then also check for that permission before we start
@@ -149,7 +151,11 @@
     _videoFileName = fileName;
     _tempVideoFilePath = [self checkAndGetTempFileURL:[fileName stringByAppendingString:kVROViewTempVideoSuffix]];
     
-    _audioFilePath = [self startAudioRecordingInternal:fileName];
+    if (_useMicrophone) {
+        _tempAudioFilePath = [self startAudioRecordingInternal:fileName];
+    } else {
+        _tempAudioFilePath = NULL;
+    }
     [self startVideoRecordingInternal:_tempVideoFilePath];
 }
 
@@ -178,15 +184,19 @@
     // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
     VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSInteger errorCode) {
         NSURL *videoURL = [self checkAndGetTempFileURL:[_videoFileName stringByAppendingString:kVROViewVideoSuffix]];
-        NSURL *targetedAudioURL = _overwrittenAudioFilePath == NULL ? _audioFilePath : _overwrittenAudioFilePath;
+        NSURL *targetedAudioURL = _overwrittenAudioFilePath == NULL ? _tempAudioFilePath : _overwrittenAudioFilePath;
         
-        // once the video finishes writing, then we need to merge the video w/ audio
-        [self mergeAudio:targetedAudioURL withVideo:filepath outputPath:videoURL completionHandler:^(BOOL success) {
-            
+        // Once the video finishes writing, we'll need to generate the final video file from the
+        // temp video output. We'll also need to merge any video w/ audio, if any.
+        [self generateFinalVideoFile:targetedAudioURL withVideo:filepath outputPath:videoURL completionHandler:^(BOOL success) {
             // delete the temp audio/video files.
             NSFileManager *fileManager = [NSFileManager defaultManager];
             [fileManager removeItemAtPath:[_tempVideoFilePath path] error:nil];
-            [fileManager removeItemAtPath:[_audioFilePath path] error:nil];
+            
+            // Remove any temporary audio file path, if any.
+            if (_tempAudioFilePath) {
+                [fileManager removeItemAtPath:[_tempAudioFilePath path] error:nil];
+            }
             
             if (success) {
                 if (_saveToCameraRoll) {
@@ -202,8 +212,11 @@
             // we're done with watermarking!
             _addWatermark = NO;
         }];
+        
     };
-    [self stopAudioRecordingInternal];
+    if (_useMicrophone) {
+        [self stopAudioRecordingInternal];
+    }
     [self stopVideoRecordingInternal:wrappedCompleteHandler];
 }
 
@@ -219,7 +232,7 @@
     // clean up the temp files
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (_tempVideoFilePath) [fileManager removeItemAtPath:[_tempVideoFilePath path] error:nil];
-    if (_audioFilePath) [fileManager removeItemAtPath:[_audioFilePath path] error:nil];
+    if (_tempAudioFilePath) [fileManager removeItemAtPath:[_tempAudioFilePath path] error:nil];
 }
 
 - (void)takeScreenshot:(NSString *)fileName saveToCameraRoll:(BOOL)saveToCamera
@@ -282,28 +295,38 @@
     return [PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized;
 }
 
-- (void)mergeAudio:(NSURL *)audioPath withVideo:(NSURL *)videoPath outputPath:(NSURL *)outputPath completionHandler:(void (^)(BOOL))handler {
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath:[audioPath path]] || ![fileManager fileExistsAtPath:[videoPath path]]) {
-        NSLog(@"[Recording] Audio/Video merge failed because file does not exist.");
-        handler(NO);
-        return;
+- (void)generateFinalVideoFile:(NSURL *)audioPath withVideo:(NSURL *)videoPath outputPath:(NSURL *)outputPath completionHandler:(void (^)(BOOL))handler {
+    // First grab the audio files, if any.
+    AVURLAsset *audioAsset = NULL;
+    if (audioPath != NULL) {
+        // Ensure the provided audio file path exists.
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:[audioPath path]] || ![fileManager fileExistsAtPath:[videoPath path]]) {
+            NSLog(@"[Recording] Audio/Video merge failed because required audio file does not exist.");
+            handler(NO);
+            return;
+        }
+        
+        // And that it is playable.
+        audioAsset = [[AVURLAsset alloc] initWithURL:audioPath options:nil];
+        if (![audioAsset isPlayable]) {
+            NSLog(@"[Recording] Audio/Video merge failed because audio file is not playable.");
+            handler(NO);
+            return;
+        }
     }
-    AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:audioPath options:nil];
-    AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:videoPath options:nil];
     
-    if (![audioAsset isPlayable] || ![videoAsset isPlayable]) {
-        NSLog(@"[Recording] Audio/Video merge failed because a file is not playable.");
+    // Ensure that our recorded temp video is in a valid state.
+    AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:videoPath options:nil];
+    if (![videoAsset isPlayable]) {
+        NSLog(@"[Recording] Audio/Video merge failed because the video file is not playable.");
         handler(NO);
         return;
     }
     
     AVMutableComposition *mergedComposition = [AVMutableComposition composition];
-    
-    
-    // Perform a sanity check here to ensure our audioAsset has audio (in case we use overwritten sources).
-    if ([[audioAsset tracksWithMediaType:AVMediaTypeAudio] count] != 0) {
+    // Ready our audio composition track to be merge, if any (also check for valid tracks within audio).
+    if (audioAsset != NULL && [[audioAsset tracksWithMediaType:AVMediaTypeAudio] count] != 0) {
         AVMutableCompositionTrack *compositionAudioTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeAudio
                                                                                           preferredTrackID:kCMPersistentTrackID_Invalid];
         [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration)
@@ -311,14 +334,14 @@
                                         atTime:kCMTimeZero error:nil];
     }
     
+    // Ready the vdieo composition track to be merge.
     AVMutableCompositionTrack *compositionVideoTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
     
+    // Finally perform the merge.
     AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mergedComposition presetName:AVAssetExportPresetPassthrough];
-    
     exportSession.outputFileType = AVFileTypeMPEG4;
     exportSession.outputURL = outputPath;
-    
     [exportSession exportAsynchronouslyWithCompletionHandler:^(void) {
         // let the handler know that the merge was successful if the status is completed
         handler(exportSession.status == AVAssetExportSessionStatusCompleted);
@@ -385,6 +408,10 @@
         [_audioRecorder stop];
     }
     _audioRecorder = nil;
+}
+
+- (void)setUseMicrophone:(BOOL)microphone{
+    _useMicrophone = microphone;
 }
 
 #pragma mark - Video Recording

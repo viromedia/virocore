@@ -81,6 +81,7 @@ private:
       saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler;
 - (void)lockPixelBuffer;
+- (void)setUseMicrophone:(BOOL)useMicrophone;
 
 /*
  Manually overrides video recording parameters with a different width and

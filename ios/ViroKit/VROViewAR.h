@@ -30,6 +30,7 @@ enum class VROCameraPosition;
 @interface VROViewAR : GLKView <VROView, UIGestureRecognizerDelegate>
 
 @property (readwrite, nonatomic) BOOL suspended;
+@property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
 
 /*
  The camera used for AR (front or back).
