@@ -193,7 +193,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)handleRotate:(UIRotationGestureRecognizer *)recognizer {
-    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    CGPoint location = [recognizer locationInView:recognizer.view];
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
     
     if(recognizer.state == UIGestureRecognizerStateBegan) {
@@ -207,7 +207,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
-    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    CGPoint location = [recognizer locationInView:recognizer.view];
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
   
     if(recognizer.state == UIGestureRecognizerStateBegan) {
@@ -220,7 +220,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)handleLongPress:(UIPanGestureRecognizer *)recognizer {
-    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    CGPoint location = [recognizer locationInView:recognizer.view];
     
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
     
@@ -234,7 +234,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)handleTap:(UITapGestureRecognizer *)recognizer {
-    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    CGPoint location = [recognizer locationInView:recognizer.view];
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
     
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
