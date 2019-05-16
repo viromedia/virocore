@@ -48,6 +48,14 @@ public:
                    std::shared_ptr<VRODriver> driver);
     
     /*
+     Utility functions for loading videos with AVPlayerItems.
+     */
+    void loadVideo(AVPlayerItem *newItem,
+                   std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                   std::shared_ptr<VRODriver> driver);
+    void replaceVideo(AVPlayerItem *newItem, std::shared_ptr<VRODriver> driver);
+    
+    /*
      Perform video initialization (which causes a stutter) early.
      */
     void prewarm();
@@ -127,7 +135,8 @@ private:
                     driver:(std::shared_ptr<VRODriver>)driver;
 - (void)renderFrame;
 - (CMSampleBufferRef)getSampleBuffer;
-
+- (void)forceDetachCurrentItem;
+- (void)forceAttachCurrentItem;
 @end
 
 /*

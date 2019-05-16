@@ -269,6 +269,83 @@ void VROVideoTextureiOS::initVideoDimensions() {
     [_player seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }
 
+void VROVideoTextureiOS::loadVideo(AVPlayerItem *newItem,
+                                   std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                   std::shared_ptr<VRODriver> driver) {
+    // If we no VROFrameSynchronizer is given, or _isCMSampleBuffered, do not attach provided synchronizer
+    if (frameSynchronizer != nullptr && !_isCMSampleBuffered) {
+        frameSynchronizer->removeFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
+        frameSynchronizer->addFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
+    }
+    
+    _player = [[AVPlayer alloc] initWithPlayerItem:newItem];
+    initVideoDimensions();
+    
+    _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
+                                                                   player:_player
+                                                                   driver:driver];
+    
+    [_player.currentItem addObserver:_avPlayerDelegate
+                          forKeyPath:kStatusKey
+                             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                             context:this];
+    
+    [_player.currentItem addObserver:_avPlayerDelegate
+                          forKeyPath:kPlaybackKeepUpKey
+                             options:NSKeyValueObservingOptionNew
+                             context:this];
+    
+    _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
+                                                                                      loop:_loop
+                                                                             videoDelegate:_delegate.lock()];
+    
+    [_player.currentItem addObserver:_videoNotificationListener
+                          forKeyPath:kStatusKey
+                             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                             context:this];
+}
+
+void VROVideoTextureiOS::replaceVideo(AVPlayerItem *newItem, std::shared_ptr<VRODriver> driver) {
+    // Return if we do not have a player.
+    if (_player == nil) {
+        pwarn("Unable to replace AVPlayerItem on an unintialized video player!");
+        return;
+    }
+    
+    // Remove all the listeners that were associated with the previous AVPlayerItem.
+    if (_avPlayerDelegate) {
+        [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kStatusKey context:this];
+        [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kPlaybackKeepUpKey context:this];
+    }
+    [_player.currentItem removeObserver:_videoNotificationListener forKeyPath:kStatusKey context:this];
+    
+    // Replace previous video with the newly provided one.
+    [_avPlayerDelegate forceDetachCurrentItem];
+    [_player replaceCurrentItemWithPlayerItem:newItem];
+    [_player seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+    [_avPlayerDelegate forceAttachCurrentItem];
+    
+    // Finally hook up the listeners again to the new player item.
+    [_player.currentItem addObserver:_avPlayerDelegate
+                          forKeyPath:kStatusKey
+                             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                             context:this];
+    
+    [_player.currentItem addObserver:_avPlayerDelegate
+                          forKeyPath:kPlaybackKeepUpKey
+                             options:NSKeyValueObservingOptionNew
+                             context:this];
+    
+    _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
+                                                                                      loop:_loop
+                                                                             videoDelegate:_delegate.lock()];
+    
+    [_player.currentItem addObserver:_videoNotificationListener
+                          forKeyPath:kStatusKey
+                             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                             context:this];
+}
+
 void VROVideoTextureiOS::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    std::shared_ptr<VRODriver> driver) {
@@ -441,7 +518,14 @@ CMSampleBufferRef VROVideoTextureiOS::getSampleBuffer() const {
     self.output = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
     [self.output setDelegate:self queue:_videoQueue];
     [self.output requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-    
+    [self.player.currentItem addOutput:self.output];
+}
+
+-(void)forceDetachCurrentItem {
+    [self.player.currentItem removeOutput:self.output];
+}
+
+-(void)forceAttachCurrentItem {
     [self.player.currentItem addOutput:self.output];
 }
 
