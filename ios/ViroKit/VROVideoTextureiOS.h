@@ -53,7 +53,9 @@ public:
     void loadVideo(AVPlayerItem *newItem,
                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                    std::shared_ptr<VRODriver> driver);
-    void replaceVideo(AVPlayerItem *newItem, std::shared_ptr<VRODriver> driver);
+    void replaceVideo(AVPlayerItem *newItem,
+                      std::shared_ptr<VRODriver> driver,
+                      bool shouldRecalculateSize = false);
     
     /*
      Perform video initialization (which causes a stutter) early.

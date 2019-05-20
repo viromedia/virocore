@@ -305,7 +305,9 @@ void VROVideoTextureiOS::loadVideo(AVPlayerItem *newItem,
                              context:this];
 }
 
-void VROVideoTextureiOS::replaceVideo(AVPlayerItem *newItem, std::shared_ptr<VRODriver> driver) {
+void VROVideoTextureiOS::replaceVideo(AVPlayerItem *newItem,
+                                      std::shared_ptr<VRODriver> driver,
+                                      bool shouldRecalculateSize) {
     // Return if we do not have a player.
     if (_player == nil) {
         pwarn("Unable to replace AVPlayerItem on an unintialized video player!");
@@ -322,6 +324,9 @@ void VROVideoTextureiOS::replaceVideo(AVPlayerItem *newItem, std::shared_ptr<VRO
     // Replace previous video with the newly provided one.
     [_avPlayerDelegate forceDetachCurrentItem];
     [_player replaceCurrentItemWithPlayerItem:newItem];
+    if (shouldRecalculateSize) {
+        initVideoDimensions();
+    }
     [_player seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     [_avPlayerDelegate forceAttachCurrentItem];
     
