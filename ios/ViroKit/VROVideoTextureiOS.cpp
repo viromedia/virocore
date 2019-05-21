@@ -322,13 +322,15 @@ void VROVideoTextureiOS::replaceVideo(AVPlayerItem *newItem,
     [_player.currentItem removeObserver:_videoNotificationListener forKeyPath:kStatusKey context:this];
     
     // Replace previous video with the newly provided one.
-    [_avPlayerDelegate forceDetachCurrentItem];
     [_player replaceCurrentItemWithPlayerItem:newItem];
     if (shouldRecalculateSize) {
         initVideoDimensions();
     }
     [_player seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
-    [_avPlayerDelegate forceAttachCurrentItem];
+    _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
+                                                                   player:_player
+                                                                   driver:driver];
+    
     
     // Finally hook up the listeners again to the new player item.
     [_player.currentItem addObserver:_avPlayerDelegate
@@ -523,14 +525,6 @@ CMSampleBufferRef VROVideoTextureiOS::getSampleBuffer() const {
     self.output = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
     [self.output setDelegate:self queue:_videoQueue];
     [self.output requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-    [self.player.currentItem addOutput:self.output];
-}
-
--(void)forceDetachCurrentItem {
-    [self.player.currentItem removeOutput:self.output];
-}
-
--(void)forceAttachCurrentItem {
     [self.player.currentItem addOutput:self.output];
 }
 
