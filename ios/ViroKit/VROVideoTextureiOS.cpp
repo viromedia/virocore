@@ -322,15 +322,14 @@ void VROVideoTextureiOS::replaceVideo(AVPlayerItem *newItem,
     [_player.currentItem removeObserver:_videoNotificationListener forKeyPath:kStatusKey context:this];
     
     // Replace previous video with the newly provided one.
+    [_avPlayerDelegate forceDetachCurrentItem];
+
     [_player replaceCurrentItemWithPlayerItem:newItem];
     if (shouldRecalculateSize) {
         initVideoDimensions();
     }
     [_player seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
-    _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
-                                                                   player:_player
-                                                                   driver:driver];
-    
+    [_avPlayerDelegate forceAttachCurrentItem];
     
     // Finally hook up the listeners again to the new player item.
     [_player.currentItem addObserver:_avPlayerDelegate
@@ -472,7 +471,7 @@ CMSampleBufferRef VROVideoTextureiOS::getSampleBuffer() const {
 }
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender {
-    _mediaReady = true;
+    self.mediaReady = true;
 }
 
 - (void)observeValueForKeyPath:(NSString *)path ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -528,12 +527,25 @@ CMSampleBufferRef VROVideoTextureiOS::getSampleBuffer() const {
     [self.player.currentItem addOutput:self.output];
 }
 
+-(void)forceDetachCurrentItem {
+    self.mediaReady = false;
+    [self.player.currentItem removeOutput:self.output];
+}
+
+-(void)forceAttachCurrentItem {
+    [self.player.currentItem addOutput:self.output];
+    self.mediaReady = true;
+    [self.output requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
+}
+
 - (void)renderFrame {
     /*
      Stuttering is significantly reduced by placing this code in willRender() as opposed
      to didRender(). Reason unknown: contention of resources somewhere?
      */
-    if (!_mediaReady) {
+    if (!self.mediaReady ||
+        self.player.status != AVPlayerStatusReadyToPlay ||
+        self.player.currentItem.status != AVPlayerItemStatusReadyToPlay) {
         return;
     }
     
