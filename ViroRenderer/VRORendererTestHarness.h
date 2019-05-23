@@ -50,6 +50,7 @@ enum class VRORendererTestType {
     BodyTracker,
     ObjectRecognition,
     BodyRecognition,
+    BodyMesher,
     NumTests,
 };
 

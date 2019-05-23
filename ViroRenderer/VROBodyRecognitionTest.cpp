@@ -5,8 +5,6 @@
 //  Created by Raj Advani on 1/14/19.
 //  Copyright © 2019 Viro Media. All rights reserved.
 //
-static const bool kTestVideoTracking = false;
-
 #include "VROBodyRecognitionTest.h"
 #include "VROTestUtil.h"
 #include "VROSphere.h"
@@ -18,8 +16,9 @@ static const bool kTestVideoTracking = false;
 #include "VROBodyTrackeriOS.h"
 #include "VRODriverOpenGLiOS.h"
 #include "VROVideoTexture.h"
-
 #endif
+
+static const bool kTestVideoTracking = false;
 
 VROBodyRecognitionTest::VROBodyRecognitionTest() :
 VRORendererTest(VRORendererTestType::BodyRecognition) {

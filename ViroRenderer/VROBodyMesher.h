@@ -11,6 +11,8 @@
 
 #include "VROVisionModel.h"
 
+enum class VROCameraPosition;
+
 class VROBodyMesherDelegate {
 public:
     virtual void onBodyMeshUpdated() = 0;

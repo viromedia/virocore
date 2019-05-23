@@ -39,6 +39,7 @@
 #include "VROBodyTrackerTest.h"
 #include "VROObjectRecognitionTest.h"
 #include "VROBodyRecognitionTest.h"
+#include "VROBodyMesherTest.h"
 
 #if VRO_PLATFORM_IOS
 #include "VROARImageTrackingTest.h"
@@ -150,6 +151,8 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VROObjectRecognitionTest>();
         case VRORendererTestType::BodyRecognition:
             return std::make_shared<VROBodyRecognitionTest>();
+        case VRORendererTestType::BodyMesher:
+            return std::make_shared<VROBodyMesherTest>();
         default:
             pabort();
             return nullptr;
