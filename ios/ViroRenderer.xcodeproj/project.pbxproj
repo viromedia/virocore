@@ -1185,6 +1185,8 @@
 		8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8FB9EA4D1F6B55DE0068FCA7 /* pug_body_diffuse.ktx */; };
 		8FB9EA501F6B55DF0068FCA7 /* pug_body_specular.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8FB9EA4E1F6B55DE0068FCA7 /* pug_body_specular.ktx */; };
 		8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBDBE291D01EE5E00801B59 /* VROSortKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FC542872296144F00D2AFBB /* VROVisionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC542852296144F00D2AFBB /* VROVisionEngine.cpp */; };
+		8FC542882296144F00D2AFBB /* VROVisionEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC542862296144F00D2AFBB /* VROVisionEngine.h */; };
 		8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1D91CECB376008EFD5F /* constant_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1CF1CECB364008EFD5F /* constant_fsh.glsl */; };
@@ -2315,6 +2317,8 @@
 		8FB9EA4D1F6B55DE0068FCA7 /* pug_body_diffuse.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pug_body_diffuse.ktx; path = ViroSample/pug_body_diffuse.ktx; sourceTree = "<group>"; };
 		8FB9EA4E1F6B55DE0068FCA7 /* pug_body_specular.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pug_body_specular.ktx; path = ViroSample/pug_body_specular.ktx; sourceTree = "<group>"; };
 		8FBDBE291D01EE5E00801B59 /* VROSortKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSortKey.h; sourceTree = "<group>"; };
+		8FC542852296144F00D2AFBB /* VROVisionEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROVisionEngine.cpp; sourceTree = "<group>"; };
+		8FC542862296144F00D2AFBB /* VROVisionEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROVisionEngine.h; sourceTree = "<group>"; };
 		8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lighting_general_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1CF1CECB364008EFD5F /* constant_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1D01CECB364008EFD5F /* constant_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -3025,6 +3029,8 @@
 				8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */,
 				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
 				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
+				8FC542862296144F00D2AFBB /* VROVisionEngine.h */,
+				8FC542852296144F00D2AFBB /* VROVisionEngine.cpp */,
 				8B08B42D213F7B9A00196F05 /* VROBodyTrackeriOS.h */,
 				8B08B42E213F7B9A00196F05 /* VROBodyTrackeriOS.cpp */,
 				8F2C7B1521EF91F300B8A154 /* VROBodyTrackerYolo.h */,
@@ -4555,6 +4561,7 @@
 				A51347411F3544A800FF3726 /* VROParticleUBO.h in Headers */,
 				A51347421F3544AC00FF3726 /* VROParticleEmitter.h in Headers */,
 				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
+				8FC542882296144F00D2AFBB /* VROVisionEngine.h in Headers */,
 				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
 				8FD2A5561F813C4100E831A6 /* VROHDRTest.h in Headers */,
@@ -6050,6 +6057,7 @@
 				8FD4DF151C18ED44003DC425 /* Vector3d.mm in Sources */,
 				8FD2A5111F81323500E831A6 /* VROBoxTest.cpp in Sources */,
 				8FD2A54F1F813C4100E831A6 /* VROHDRTest.cpp in Sources */,
+				8FC542872296144F00D2AFBB /* VROVisionEngine.cpp in Sources */,
 				8ABD8F3E1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m in Sources */,
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
