@@ -111,7 +111,7 @@ bool VROBodyTrackeriOS::initBodyTracking(VROCameraPosition position,
 #endif
     }
     
-    _visionEngine = std::make_shared<VROVisionEngine>(model, position, VROCropAndScaleOption::Viro_RegionOfInterest);
+    _visionEngine = std::make_shared<VROVisionEngine>(model, 256, position, VROCropAndScaleOption::Viro_RegionOfInterest);
     std::shared_ptr<VROVisionEngineDelegate> delegate = std::dynamic_pointer_cast<VROVisionEngineDelegate>(shared_from_this());
     passert (delegate != nullptr);
     _visionEngine->setDelegate(delegate);

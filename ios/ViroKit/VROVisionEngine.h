@@ -60,7 +60,8 @@ public:
 class VROVisionEngine : public std::enable_shared_from_this<VROVisionEngine> {
 public:
     
-    VROVisionEngine(MLModel *model, VROCameraPosition position, VROCropAndScaleOption cropAndScaleOption);
+    VROVisionEngine(MLModel *model, int imageSize, VROCameraPosition position,
+                    VROCropAndScaleOption cropAndScaleOption);
     virtual ~VROVisionEngine();
     
     /*
@@ -89,6 +90,7 @@ private:
      Core ML parameters.
      */
     MLModel *_model;
+    int _imageSize;
     VNCoreMLModel *_coreMLModel;
     VNCoreMLRequest *_visionRequest;
     

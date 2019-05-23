@@ -24,9 +24,6 @@
 
 static const float kConfidenceThreshold = 0.15;
 
-// The size of the image input into the CoreML model
-static const int kVisionImageSize = 256;
-
 // Set to true to save the crop and padding result of one of the early
 // frames to the Photo Library, for debubbing.
 static bool kDebugCropAndPadResult = false;
@@ -63,9 +60,11 @@ static const double kRegionOfInterestRoundingEpsilon = 0.05;
 
 #pragma mark - Initialization
 
-VROVisionEngine::VROVisionEngine(MLModel *model, VROCameraPosition position, VROCropAndScaleOption cropAndScaleOption) {
+VROVisionEngine::VROVisionEngine(MLModel *model, int imageSize, VROCameraPosition position,
+                                 VROCropAndScaleOption cropAndScaleOption) {
     _visionQueue = dispatch_queue_create("com.viro.visionQueue", DISPATCH_QUEUE_SERIAL);
 
+    _imageSize = imageSize;
     _fpsTickIndex = 0;
     _fpsTickSum = 0;
     _neuralEngineInitialized = false;
@@ -400,8 +399,8 @@ void VROVisionEngine::trackImage(CVPixelBufferRef image, VROMatrix4f transform, 
 // Invoked on the _visionQueue
 static int debugCropAndPadCurrentFrame = 0;
 CVPixelBufferRef VROVisionEngine::performCropAndPad(CVPixelBufferRef image,
-                                                      int *outCropX, int *outCropY,
-                                                      int *outCropWidth, int *outCropHeight) {
+                                                    int *outCropX, int *outCropY,
+                                                    int *outCropWidth, int *outCropHeight) {
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
     
@@ -438,7 +437,7 @@ CVPixelBufferRef VROVisionEngine::performCropAndPad(CVPixelBufferRef image,
     *outCropHeight = clamp(*outCropHeight, 0, (int) height - *outCropY);
     
     CVPixelBufferRef cropped = VROImagePreprocessor::cropAndResize(image, *outCropX, *outCropY, *outCropWidth, *outCropHeight,
-                                                                   kVisionImageSize, _cropScratchBuffer);
+                                                                   _imageSize, _cropScratchBuffer);
     if (kDebugCropAndPadResult) {
         if (debugCropAndPadCurrentFrame >= kDebugCropAndPadResultFrame &&
             debugCropAndPadCurrentFrame < kDebugCropAndPadResultFrame + 1) {
