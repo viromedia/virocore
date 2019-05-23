@@ -43,7 +43,7 @@ enum class VROBodyJointType {
     Unknown             = 16
 };
 
-// Supported bone names within 3D models for ml joint tracking.
+// Supported bone names within 3D models for joint tracking.
 static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
     {VROBodyJointType::Top,             "Top"},
     {VROBodyJointType::Neck,            "Neck"},
@@ -61,7 +61,10 @@ static const std::map<VROBodyJointType, std::string> kVROBodyBoneTags = {
     {VROBodyJointType::LeftAnkle,       "LeftAnkle"},
 };
 
-
+/*
+ Represents a body joint inferred from the ML system. Joints
+ have a type, bounds, and confidence score.
+ */
 class VROInferredBodyJoint {
 public:
     
@@ -121,11 +124,18 @@ static VROPoseFrame newPoseFrame() {
     return VROPoseFrame(kNumBodyJoints);
 }
 
+/*
+ Delegate responsible for handling new joint input data.
+ */
 class VROBodyTrackerDelegate {
 public:
     virtual void onBodyJointsFound(const VROPoseFrame &joints) = 0;
 };
 
+/*
+ Tracks a single subject's joints across frames. Each time new joints are found, they
+ are sent to the VROBodyTrackerDelegate.
+ */
 class VROBodyTracker : public VROVisionModel {
     
 public:

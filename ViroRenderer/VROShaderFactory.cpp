@@ -326,7 +326,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createNormalMapTextureModif
     if (!sNormalMapTextureModifier) {
         std::vector<std::string> modifierCode =  {
             // Note that both normalize() calls are necessary: we normalize the sample, then normalize the
-            // result after multiplyign by TBN. If we remove one, the 'glinting' effect in PBR disappears as
+            // result after multiplying by TBN. If we remove one, the 'glinting' effect in PBR disappears as
             // we lose unit length
             "uniform sampler2D normal_texture;",
             "_surface.normal = normalize(v_tbn * normalize( texture(normal_texture, _surface.diffuse_texcoord).xyz * 2.0 - 1.0 ));"
