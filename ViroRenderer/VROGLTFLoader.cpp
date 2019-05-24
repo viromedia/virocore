@@ -970,7 +970,8 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
 
         // Grab Vertex indexing information needed for creating meshes.
         bool successVertex = processVertexElement(gModel, gPrimitive, elements);
-        bool successAttributes  =processVertexAttributes(gModel, gPrimitive.attributes, sources, elements.size() - 1);
+        bool successAttributes = processVertexAttributes(gModel, gPrimitive.attributes, sources, elements.size() - 1);
+        processTangent(elements, sources, elements.size() - 1);
         if (!successVertex || !successAttributes) {
             pwarn("Failed to process mesh %s.", gMesh.name.c_str());
             return false;
@@ -995,6 +996,201 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
     rootNode->setGeometry(geometry);
     geometry->setMaterials(materials);
     return true;
+}
+
+void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                                   std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                                   size_t geoElementIndex) {
+    // Determine if tangent data is missing and thus needs to be calculated.
+    std::shared_ptr<VROGeometrySource> pos = nullptr;
+    std::shared_ptr<VROGeometrySource> texcoord = nullptr;
+    std::shared_ptr<VROGeometrySource> normal = nullptr;
+    std::shared_ptr<VROGeometrySource> tangent = nullptr;
+
+    for (auto &source : sources) {
+        if (source->getGeometryElementIndex() != geoElementIndex) {
+            continue;
+        }
+
+        VROGeometrySourceSemantic semantic = source->getSemantic();
+        if (semantic == VROGeometrySourceSemantic::Vertex) {
+            pos = source;
+        } else if (semantic == VROGeometrySourceSemantic::Normal) {
+            normal = source;
+        } else if (semantic == VROGeometrySourceSemantic::Texcoord) {
+            texcoord = source;
+        } else if (semantic == VROGeometrySourceSemantic::Tangent) {
+            tangent = source;
+        }
+    }
+
+    // Return if we already have tangent data.
+    if (tangent != nullptr) {
+        return;
+    }
+
+    // Else, to calculate tangent, we MUST have positional, texcoord and normal data.
+    if (normal == nullptr || pos == nullptr || texcoord == nullptr) {
+        pwarn("Unable to missing generate tangents for this model.");
+        return;
+    }
+
+    std::vector<VROVector3f> posArray;
+    pos->processVertices([&posArray](int index, VROVector3f vertex) {
+        posArray.push_back(vertex);
+    });
+
+    std::vector<VROVector3f> normArray;
+    normal->processVertices([&normArray](int index, VROVector3f vertex) {
+        normArray.push_back(vertex);
+    });
+
+    std::vector<VROVector3f> texCoordArray;
+    texcoord->processVertices([&texCoordArray](int index, VROVector3f vertex) {
+        texCoordArray.push_back(vertex);
+    });
+
+    std::vector<int> elementIndicesArray;
+    std::shared_ptr<VROGeometryElement> targetedElement = elements[geoElementIndex];
+    targetedElement->processIndices([&elementIndicesArray](int index, int indexRead) {
+        elementIndicesArray.push_back(indexRead);
+    });
+
+    // Generate the tangents for this model given the attributes for this element index.
+    std::vector<VROVector4f> generatedTangents;
+    regenerateTangent(posArray, normArray, texCoordArray, elementIndicesArray, generatedTangents);
+    if (generatedTangents.size() <= 0) {
+        pwarn("Unable to generate tangetns for this model.");
+        return;
+    }
+
+    // Finally store the data back into a Tangent geometry source.
+    int sizeOfTangent = 4;
+    int vertexSize = pos->getVertexCount();
+    float *dataOut = new float[vertexSize * sizeOfTangent];
+    for (int i = 0; i < vertexSize; i ++ ) {
+        dataOut[(i * sizeOfTangent)]     = generatedTangents[i].x;
+        dataOut[(i * sizeOfTangent) + 1] = generatedTangents[i].y;
+        dataOut[(i * sizeOfTangent) + 2] = generatedTangents[i].z;
+        dataOut[(i * sizeOfTangent) + 3] = generatedTangents[i].w;        
+    }
+
+    int sizeOfSingleTangent = (int) GLTFType::Vec4 * (int) GLTFTypeComponent::Float;
+    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) dataOut,
+                                        vertexSize * sizeOfSingleTangent,
+                                        VRODataOwnership::Move);
+    tangent = std::make_shared<VROGeometrySource>(indexData,
+                                        VROGeometrySourceSemantic::Tangent,
+                                        vertexSize,
+                                        true,
+                                        (int)GLTFType::Vec4,
+                                        (int)GLTFTypeComponent::Float,
+                                        0,
+                                        sizeOfSingleTangent);
+    tangent->setGeometryElementIndex((int) geoElementIndex);
+    sources.push_back(tangent);
+    return;
+}
+
+void VROGLTFLoader::regenerateTangent(std::vector<VROVector3f> &posArray,
+                                      std::vector<VROVector3f> &normArray,
+                                      std::vector<VROVector3f> &texCoordArray,
+                                      std::vector<int> &elementIndicesArray,
+                                      std::vector<VROVector4f> &generatedTangents) {
+    int vertexSize = posArray.size();
+    // Sanity check.
+    if (normArray.size() != vertexSize
+        || texCoordArray.size() != vertexSize) {
+        pwarn("Unable to missing generate tangents for this model - vertex count does not match.");
+        return;
+    }
+
+    VROVector3f *tan1 = new VROVector3f[vertexSize * 2];
+    VROVector3f *tan2 = tan1 + vertexSize;
+
+    // For each triangle, compute the tangent and bitangent
+    for (size_t i = 0; i < elementIndicesArray.size(); i += 3) {
+        int i1 = elementIndicesArray[i + 0];
+        int i2 = elementIndicesArray[i + 1];
+        int i3 = elementIndicesArray[i + 2];
+
+        VROVector3f &var1 = posArray[i1];
+        VROVector3f &var2 = posArray[i2];
+        VROVector3f &var3 = posArray[i3];
+
+        VROVector3f v1(var1.x, var1.y, var1.z);
+        VROVector3f v2(var2.x, var2.y, var2.z);
+        VROVector3f v3(var3.x, var3.y, var3.z);
+
+        VROVector3f &texcoord1 = texCoordArray[i1];
+        VROVector3f &texcoord2 = texCoordArray[i2];
+        VROVector3f &texcoord3 = texCoordArray[i3];
+
+        VROVector3f w1(texcoord1.x, texcoord1.y, 0);
+        VROVector3f w2(texcoord2.x, texcoord2.y, 0);
+        VROVector3f w3(texcoord3.x, texcoord3.y, 0);
+
+        float x1 = v2.x - v1.x;
+        float x2 = v3.x - v1.x;
+        float y1 = v2.y - v1.y;
+        float y2 = v3.y - v1.y;
+        float z1 = v2.z - v1.z;
+        float z2 = v3.z - v1.z;
+
+        float s1 = w2.x - w1.x;
+        float s2 = w3.x - w1.x;
+        float t1 = w2.y - w1.y;
+        float t2 = w3.y - w1.y;
+
+        float r = 1.0f / (s1 * t2 - s2 * t1);
+        VROVector3f sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+        VROVector3f tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+        // ADD the tangent to the existing value; this way we average across all triangles
+        // that share this vertex. Note we do not normalize, and that is intentional: we
+        // want larger triangles to have a bigger "impact" than smaller triangles
+        tan1[i1] += sdir;
+        tan1[i2] += sdir;
+        tan1[i3] += sdir;
+
+        tan2[i1] += tdir;
+        tan2[i2] += tdir;
+        tan2[i3] += tdir;
+    }
+
+    VROVector3f *tan3 = tan1 + vertexSize;
+    for (size_t i = 0; i < vertexSize; i++) {
+        VROVector3f n = { normArray[i].x, normArray[i].y, normArray[i].z };
+        VROVector3f t = tan1[i];
+
+        // Gram-Schmidt orthogonalize
+        VROVector3f tangent = (t - n * n.dot(t)).normalize();
+
+        // Calculate handedness
+        float handedness = (n.cross(t).dot(tan3[i]) < 0.0F) ? -1.0F : 1.0F;
+
+        // Ensure that tangent is valid before saving it.
+        float magnitude = tangent.magnitude();
+        if (!isnan(magnitude) && !isinf(magnitude)) {
+            generatedTangents.push_back({tangent.x, tangent.y, tangent.z, handedness});
+            continue;
+        }
+
+        // Else, generate a default tangent with perpendicular assumptions.
+        VROVector3f c1 = n.cross(VROVector3f(0,0,1));
+        VROVector3f c2 = n.cross(VROVector3f(0,1,0));
+        VROVector3f tangent2;
+        if (c1.magnitude() > c2.magnitude()) {
+            tangent2 = c1;
+        } else {
+            tangent2 = c2;
+        }
+
+        tangent = tangent.normalize();
+        generatedTangents.push_back({tangent2.x, tangent2.y, tangent2.z, -1.0});
+    }
+
+    delete[] tan1;
 }
 
 bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,

@@ -98,6 +98,13 @@ private:
     static bool processVertexAttributes(const tinygltf::Model &gModel, std::map<std::string, int> &gAttributes,
                                         std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                         size_t geoElementIndex);
+    static void processTangent(std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                               std::vector<std::shared_ptr<VROGeometrySource>> &sources, size_t geoElementIndex);
+    static void regenerateTangent(std::vector<VROVector3f> &posArray,
+                                  std::vector<VROVector3f> &normArray,
+                                  std::vector<VROVector3f> &texCoordArray,
+                                  std::vector<int> &elementIndicesArray,
+                                  std::vector<VROVector4f> &generatedTangents);
     static void injectGLTF(std::shared_ptr<VRONode> gltfNode, std::shared_ptr<VRONode> rootNode,
                            std::shared_ptr<VRODriver> driver, std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish);
 
