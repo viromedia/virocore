@@ -1194,6 +1194,20 @@
 		8FC5428E22972E1800D2AFBB /* VROBodyMesher.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC5428C22972E0D00D2AFBB /* VROBodyMesher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC542912297497C00D2AFBB /* VROBodyMesherTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC5428F2297497C00D2AFBB /* VROBodyMesherTest.cpp */; };
 		8FC542922297497C00D2AFBB /* VROBodyMesherTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC542902297497C00D2AFBB /* VROBodyMesherTest.h */; };
+		8FC542952297598A00D2AFBB /* cnpy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC542932297598A00D2AFBB /* cnpy.cpp */; };
+		8FC542962297598A00D2AFBB /* cnpy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC542932297598A00D2AFBB /* cnpy.cpp */; };
+		8FC542972297598A00D2AFBB /* cnpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC542942297598A00D2AFBB /* cnpy.h */; };
+		8FC542982297598A00D2AFBB /* cnpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC542942297598A00D2AFBB /* cnpy.h */; };
+		8FC5429F22988EAA00D2AFBB /* vbml_m_uv_mask.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC5429B22988EAA00D2AFBB /* vbml_m_uv_mask.npy */; };
+		8FC542A022988EAA00D2AFBB /* vbml_m_uv_mask.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC5429B22988EAA00D2AFBB /* vbml_m_uv_mask.npy */; };
+		8FC542A122988EAA00D2AFBB /* vbml_m_texcoords.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC5429C22988EAA00D2AFBB /* vbml_m_texcoords.npy */; };
+		8FC542A222988EAA00D2AFBB /* vbml_m_texcoords.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC5429C22988EAA00D2AFBB /* vbml_m_texcoords.npy */; };
+		8FC542A522988EAA00D2AFBB /* vbml_m_v_to_vt.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC5429E22988EAA00D2AFBB /* vbml_m_v_to_vt.npy */; };
+		8FC542A622988EAA00D2AFBB /* vbml_m_v_to_vt.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC5429E22988EAA00D2AFBB /* vbml_m_v_to_vt.npy */; };
+		8FC542A8229DD3DB00D2AFBB /* test_uv.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC542A7229DD3DA00D2AFBB /* test_uv.npy */; };
+		8FC542A9229DD3DB00D2AFBB /* test_uv.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC542A7229DD3DA00D2AFBB /* test_uv.npy */; };
+		8FC542AB229DE12F00D2AFBB /* vbml_m_face_to_v.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC542AA229DE12E00D2AFBB /* vbml_m_face_to_v.npy */; };
+		8FC542AC229DE12F00D2AFBB /* vbml_m_face_to_v.npy in Resources */ = {isa = PBXBuildFile; fileRef = 8FC542AA229DE12E00D2AFBB /* vbml_m_face_to_v.npy */; };
 		8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1D91CECB376008EFD5F /* constant_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1CF1CECB364008EFD5F /* constant_fsh.glsl */; };
@@ -2332,6 +2346,13 @@
 		8FC5428C22972E0D00D2AFBB /* VROBodyMesher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyMesher.h; sourceTree = "<group>"; };
 		8FC5428F2297497C00D2AFBB /* VROBodyMesherTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROBodyMesherTest.cpp; sourceTree = "<group>"; };
 		8FC542902297497C00D2AFBB /* VROBodyMesherTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROBodyMesherTest.h; sourceTree = "<group>"; };
+		8FC542932297598A00D2AFBB /* cnpy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cnpy.cpp; sourceTree = "<group>"; };
+		8FC542942297598A00D2AFBB /* cnpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cnpy.h; sourceTree = "<group>"; };
+		8FC5429B22988EAA00D2AFBB /* vbml_m_uv_mask.npy */ = {isa = PBXFileReference; lastKnownFileType = file; path = vbml_m_uv_mask.npy; sourceTree = "<group>"; };
+		8FC5429C22988EAA00D2AFBB /* vbml_m_texcoords.npy */ = {isa = PBXFileReference; lastKnownFileType = file; path = vbml_m_texcoords.npy; sourceTree = "<group>"; };
+		8FC5429E22988EAA00D2AFBB /* vbml_m_v_to_vt.npy */ = {isa = PBXFileReference; lastKnownFileType = file; path = vbml_m_v_to_vt.npy; sourceTree = "<group>"; };
+		8FC542A7229DD3DA00D2AFBB /* test_uv.npy */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_uv.npy; sourceTree = "<group>"; };
+		8FC542AA229DE12E00D2AFBB /* vbml_m_face_to_v.npy */ = {isa = PBXFileReference; lastKnownFileType = file; path = vbml_m_face_to_v.npy; sourceTree = "<group>"; };
 		8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lighting_general_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1CF1CECB364008EFD5F /* constant_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1D01CECB364008EFD5F /* constant_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -3409,6 +3430,8 @@
 		8F5C414B1BD825A9006D7A77 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				8FC542942297598A00D2AFBB /* cnpy.h */,
+				8FC542932297598A00D2AFBB /* cnpy.cpp */,
 				8F7569DB21962AAC00730FB3 /* gzip_stream.cpp */,
 				8F87517F20629F45002D9BF8 /* VROJenkinsHash.h */,
 				8F87517E20629F45002D9BF8 /* VROJenkinsHash.cpp */,
@@ -3698,10 +3721,8 @@
 		8FC5428922971BE100D2AFBB /* Vision */ = {
 			isa = PBXGroup;
 			children = (
-				8FC5428A2297297300D2AFBB /* bodymesh.mlmodel */,
-				8FAE5052222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel */,
-				8FAE5053222C6BF10043220B /* hourglass_2_1_t.mlmodel */,
-				8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */,
+				8FC5429A22988E9900D2AFBB /* Data */,
+				8FC5429922988E8900D2AFBB /* Models */,
 				8FC542862296144F00D2AFBB /* VROVisionEngine.h */,
 				8FC542852296144F00D2AFBB /* VROVisionEngine.cpp */,
 				8B08B42D213F7B9A00196F05 /* VROBodyTrackeriOS.h */,
@@ -3716,6 +3737,29 @@
 				8F2C7AFD21ECCE5300B8A154 /* VROImagePreprocessor.cpp */,
 			);
 			name = Vision;
+			sourceTree = "<group>";
+		};
+		8FC5429922988E8900D2AFBB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8FC5428A2297297300D2AFBB /* bodymesh.mlmodel */,
+				8FAE5052222C6BF10043220B /* hourglass_2_1_ds_t.mlmodel */,
+				8FAE5053222C6BF10043220B /* hourglass_2_1_t.mlmodel */,
+				8FAE50432228D46D0043220B /* hourglass_2_1.mlmodel */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		8FC5429A22988E9900D2AFBB /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				8FC542A7229DD3DA00D2AFBB /* test_uv.npy */,
+				8FC542AA229DE12E00D2AFBB /* vbml_m_face_to_v.npy */,
+				8FC5429C22988EAA00D2AFBB /* vbml_m_texcoords.npy */,
+				8FC5429B22988EAA00D2AFBB /* vbml_m_uv_mask.npy */,
+				8FC5429E22988EAA00D2AFBB /* vbml_m_v_to_vt.npy */,
+			);
+			name = Data;
 			sourceTree = "<group>";
 		};
 		8FC6E1CE1CECB350008EFD5F /* Constant */ = {
@@ -4542,6 +4586,7 @@
 				13B67450212229B20040FB72 /* VROCredentials.h in Headers */,
 				13B67451212229B20040FB72 /* VROAction.h in Headers */,
 				13B67452212229B20040FB72 /* VROExecutableNodeAnimation.h in Headers */,
+				8FC542982297598A00D2AFBB /* cnpy.h in Headers */,
 				13B67453212229B20040FB72 /* VROKnuthPlassFormatter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4764,6 +4809,7 @@
 				8FA9D6C72225FD4E0003C9D2 /* VROPoseFilter.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */,
+				8FC542972297598A00D2AFBB /* cnpy.h in Headers */,
 				8F39A31D1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8F17D5401FCE165400141042 /* VROViewRecorder.h in Headers */,
@@ -5106,6 +5152,7 @@
 				13B6745B212229B20040FB72 /* particles_fsh.glsl in Resources */,
 				13B6745C212229B20040FB72 /* particles_vsh.glsl in Resources */,
 				13B6745D212229B20040FB72 /* equirect_to_cube_fsh.glsl in Resources */,
+				8FC542A622988EAA00D2AFBB /* vbml_m_v_to_vt.npy in Resources */,
 				13B6745E212229B20040FB72 /* irradiance_convolution_fsh.glsl in Resources */,
 				13B6745F212229B20040FB72 /* point_cloud.png in Resources */,
 				13B67460212229B20040FB72 /* pbr_fsh.glsl in Resources */,
@@ -5113,12 +5160,16 @@
 				13B67462212229B20040FB72 /* standard_vsh.glsl in Resources */,
 				13B67463212229B20040FB72 /* skinning_vsh.glsl in Resources */,
 				13B67464212229B20040FB72 /* standard_fsh.glsl in Resources */,
+				8FC542A222988EAA00D2AFBB /* vbml_m_texcoords.npy in Resources */,
 				13B67465212229B20040FB72 /* constant_functions_fsh_adreno.glsl in Resources */,
 				13B67466212229B20040FB72 /* surface_functions_fsh.glsl in Resources */,
 				13B67467212229B20040FB72 /* irradiance_convolution_vsh.glsl in Resources */,
 				13B67468212229B20040FB72 /* lighting_general_functions_fsh.glsl in Resources */,
 				13B67469212229B20040FB72 /* constant_functions_fsh.glsl in Resources */,
 				13B6746A212229B20040FB72 /* constant_fsh.glsl in Resources */,
+				8FC542A9229DD3DB00D2AFBB /* test_uv.npy in Resources */,
+				8FC542A022988EAA00D2AFBB /* vbml_m_uv_mask.npy in Resources */,
+				8FC542AC229DE12F00D2AFBB /* vbml_m_face_to_v.npy in Resources */,
 				13B6746B212229B20040FB72 /* equirect_to_cube_vsh.glsl in Resources */,
 				13B6746C212229B20040FB72 /* surface_functions_fsh_adreno.glsl in Resources */,
 				13B6746D212229B20040FB72 /* blank.png in Resources */,
@@ -5398,6 +5449,7 @@
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
 				8FEACEF12017E58D0082D18B /* equirect_to_cube_fsh.glsl in Resources */,
+				8FC542A522988EAA00D2AFBB /* vbml_m_v_to_vt.npy in Resources */,
 				8FEACF0920182D240082D18B /* irradiance_convolution_fsh.glsl in Resources */,
 				8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */,
 				8FEACED220114B680082D18B /* pbr_fsh.glsl in Resources */,
@@ -5405,12 +5457,16 @@
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */,
+				8FC542A122988EAA00D2AFBB /* vbml_m_texcoords.npy in Resources */,
 				8FB3286C2033696F0026375A /* constant_functions_fsh_adreno.glsl in Resources */,
 				8F705DED1E8C7376008BE8F8 /* surface_functions_fsh.glsl in Resources */,
 				8FEACF0820182D240082D18B /* irradiance_convolution_vsh.glsl in Resources */,
 				8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */,
 				8FC6E1D91CECB376008EFD5F /* constant_fsh.glsl in Resources */,
+				8FC542A8229DD3DB00D2AFBB /* test_uv.npy in Resources */,
+				8FC5429F22988EAA00D2AFBB /* vbml_m_uv_mask.npy in Resources */,
+				8FC542AB229DE12F00D2AFBB /* vbml_m_face_to_v.npy in Resources */,
 				8FEACEF02017E58D0082D18B /* equirect_to_cube_vsh.glsl in Resources */,
 				8FB32874203369D60026375A /* surface_functions_fsh_adreno.glsl in Resources */,
 				8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */,
@@ -5784,6 +5840,7 @@
 				13B67288212229B20040FB72 /* VROHDRTest.cpp in Sources */,
 				13B67289212229B20040FB72 /* VROApiKeyMetrics.m in Sources */,
 				13B6728B212229B20040FB72 /* Matrix3x3d.mm in Sources */,
+				8FC542962297598A00D2AFBB /* cnpy.cpp in Sources */,
 				13B6728C212229B20040FB72 /* VROMatrix4f.cpp in Sources */,
 				13B6728D212229B20040FB72 /* VROTextureSubstrate.cpp in Sources */,
 				13B6728E212229B20040FB72 /* VROPortalTest.cpp in Sources */,
@@ -6069,6 +6126,7 @@
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
 				8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */,
 				8AABB6FD1F1ECD4E00D48D5C /* VROWeakProxy.mm in Sources */,
+				8FC542952297598A00D2AFBB /* cnpy.cpp in Sources */,
 				8FD4DEFC1C18ED22003DC425 /* VROBox.cpp in Sources */,
 				8F83DEAA1C49B0540089C31A /* VROAllocationTracker.cpp in Sources */,
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,

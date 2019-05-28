@@ -22,8 +22,7 @@
 
 class VROPoseFilter;
 
-class VROBodyMesherTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate,
-                          public VROBodyMesherDelegate, public std::enable_shared_from_this<VROBodyMesherTest> {
+class VROBodyMesherTest : public VRORendererTest, public VROSceneController::VROSceneControllerDelegate, public VROBodyMesherDelegate, public std::enable_shared_from_this<VROBodyMesherTest> {
 public:
     
     VROBodyMesherTest();
@@ -55,7 +54,7 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onBodyMeshUpdated();
+    virtual void onBodyMeshUpdated(std::shared_ptr<VROGeometry> mesh);
 private:
     
     std::shared_ptr<VRONode> _pointOfView;
@@ -63,6 +62,9 @@ private:
     std::shared_ptr<VROARScene> _arScene;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROBodyMesher> _bodyMesher;
+    
+    std::shared_ptr<VRONode> _bodyMeshNode;
+    std::shared_ptr<VROGeometry> _bodyMesh;
     
 };
 

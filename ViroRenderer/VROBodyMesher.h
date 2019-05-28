@@ -12,25 +12,44 @@
 #include "VROVisionModel.h"
 
 enum class VROCameraPosition;
+class VROGeometry;
 
+/*
+ Delegate invoked each time the body mesh is updated.
+ */
 class VROBodyMesherDelegate {
 public:
-    virtual void onBodyMeshUpdated() = 0;
+    virtual void onBodyMeshUpdated(std::shared_ptr<VROGeometry> mesh) = 0;
 };
 
+/*
+ Tracks and meshes the primary body in the camera view, creating a VROGeometry
+ out of the result.
+ */
 class VROBodyMesher : public VROVisionModel {
     
 public:
     VROBodyMesher() {};
     virtual ~VROBodyMesher() {}
     
+    /*
+     Lifecycle methods.
+     */
     virtual bool initBodyTracking(VROCameraPosition position, std::shared_ptr<VRODriver> driver) = 0;
     virtual void startBodyTracking() = 0;
     virtual void stopBodyTracking() = 0;
     
+    /*
+     Set a delegate to receive body mesh updates.
+     */
     void setDelegate(std::shared_ptr<VROBodyMesherDelegate> delegate) {
         _bodyMeshDelegate_w = delegate;
     }
+    
+    /*
+     Get the body mesh as tracked by this controller. This mesh is updated continually.
+     */
+    virtual std::shared_ptr<VROGeometry> getBodyMesh() = 0;
     
     /*
      Sets the window period at which we sample points for dampening. If period == 0,

@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 };
 
 static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::BodyRecognition;
+static const VRORendererTestType kRendererTest = VRORendererTestType::BodyMesher;
 static const bool kSceneCheckeredBackground = NO;
 
 @interface VROTestViewController ()
@@ -48,7 +48,7 @@ static const bool kSceneCheckeredBackground = NO;
                                                     config:config
                                                    context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]
                                             worldAlignment:VROWorldAlignment::Gravity
-                                              trackingType:VROTrackingType::Front];
+                                              trackingType:VROTrackingType::DOF6];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         view.renderDelegate = self.renderDelegate;
         view.suspended = NO;

@@ -51,7 +51,16 @@ void VROBodyMesherTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene->getRootNode()->addLight(ambient);
 }
 
-void VROBodyMesherTest::onBodyMeshUpdated() {
+void VROBodyMesherTest::onBodyMeshUpdated(std::shared_ptr<VROGeometry> mesh) {
+    if (!_bodyMeshNode) {
+        _bodyMeshNode = std::make_shared<VRONode>();
+        _bodyMeshNode->setPosition({ 0, 0, -2 });
+        _arScene->getRootNode()->addChildNode(_bodyMeshNode);
+    }
     
+    if (!_bodyMesh) {
+        _bodyMesh = mesh;
+        _bodyMeshNode->setGeometry(_bodyMesh);
+    }
 }
 

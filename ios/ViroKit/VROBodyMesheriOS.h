@@ -15,6 +15,7 @@
 #include "VROCameraTexture.h"
 #import <Foundation/Foundation.h>
 #include "VROMatrix4f.h"
+#include "cnpy.h"
 
 class VRODriver;
 class VROPoseFilter;
@@ -31,6 +32,10 @@ public:
     void startBodyTracking();
     void stopBodyTracking();
     void update(const VROARFrame *frame);
+    
+    std::shared_ptr<VROGeometry> getBodyMesh() {
+        return _bodyMesh;
+    }
     
     /*
      Process the output of the VROVisionEngine. This will convert the raw output from CoreML into the
@@ -87,13 +92,40 @@ private:
     double _dampeningPeriodMs;
     
     /*
+     The body mesh constructed by this controller.
+     */
+    std::shared_ptr<VROGeometry> _bodyMesh;
+    
+    /*
+     UV map data for resampling.
+     */
+    cnpy::NpyArray _uvTexcoords;
+    cnpy::NpyArray _uvMask;
+    cnpy::NpyArray _uvVtoVt;
+    cnpy::NpyArray _uvFaceToV;
+    
+    cnpy::NpyArray _testUv;
+    
+    /*
      Converts the output from the given CoreML MLMultiArray into a full body mesh in screen
      coordinates. The given transforms go from vision space [0, 1] to image space [0, 1], to
      normalized viewport space [0, 1].
      */
-    static std::shared_ptr<VROGeometry> buildMesh(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
-                                                  VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
-                                                  std::pair<VROVector3f, float> *outImageSpaceJoints);
+    std::shared_ptr<VROGeometry> buildMesh(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
+                                           VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                           std::pair<VROVector3f, float> *outImageSpaceJoints);
+    
+    /*
+     Get a sampling kernel that, if added to a texture coordinate, represents the box of
+     samples we should take around that coordinate, in order of preference.
+     */
+    std::vector<std::vector<int>> getSamplingKernel(int distance);
+    
+    /*
+     Load Numpy arrays included in the bundle.
+     */
+    static cnpy::NpyArray loadNumpyArray(NSString *prefix, NSString *array);
+    static cnpy::NpyArray loadNumpyArray(NSString *name);
     
 };
 
