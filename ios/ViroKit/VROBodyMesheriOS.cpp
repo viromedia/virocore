@@ -139,7 +139,24 @@ std::vector<std::pair<VROVector3f, float>> VROBodyMesheriOS::processVisionOutput
     
     // TODO Make this allocation efficient again
     std::vector<std::pair<VROVector3f, float>> imageSpaceJoints(kNumBodyJoints);
-    std::shared_ptr<VROGeometry> mesh = buildMesh(uvmap, cameraPosition, visionToImageSpace, imageToViewportSpace, imageSpaceJoints.data());
+    
+    std::shared_ptr<VROGeometrySource> vertices = buildMeshVertices(uvmap, cameraPosition, visionToImageSpace, imageToViewportSpace,
+                                                                    imageSpaceJoints.data());
+    if (!_bodyMesh) {
+        std::vector<std::shared_ptr<VROGeometrySource>> sources = { vertices };
+        std::vector<std::shared_ptr<VROGeometryElement>> elements = { buildMeshFaces() };
+        _bodyMesh = std::make_shared<VROGeometry>(sources, elements);
+        
+        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+        material->getDiffuse().setColor({ 1.0, 0.0, 0.0, 1.0 });
+        material->setTransparency(0.5f);
+        material->setCullMode(VROCullMode::None);
+        
+        _bodyMesh->setMaterials({ material });
+    }
+    else {
+        _bodyMesh->setSources({ vertices });
+    }
     
     std::weak_ptr<VROBodyMesheriOS> tracker_w = std::dynamic_pointer_cast<VROBodyMesheriOS>(shared_from_this());
     
@@ -149,7 +166,7 @@ std::vector<std::pair<VROVector3f, float>> VROBodyMesheriOS::processVisionOutput
         if (tracker && tracker->_isTracking) {
             std::shared_ptr<VROBodyMesherDelegate> delegate = _bodyMeshDelegate_w.lock();
             if (delegate) {
-                delegate->onBodyMeshUpdated(mesh);
+                delegate->onBodyMeshUpdated(_bodyMesh);
             }
         }
     });
@@ -177,16 +194,12 @@ std::vector<std::vector<int>> VROBodyMesheriOS::getSamplingKernel(int distance) 
     return kernel;
 }
 
-std::shared_ptr<VROGeometry> VROBodyMesheriOS::buildMesh(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
-                                                         VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
-                                                         std::pair<VROVector3f, float> *outImageSpaceJoints) {
+std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
+                                                                       VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                                                       std::pair<VROVector3f, float> *outImageSpaceJoints) {
     if (uvmap.shape.count < 3) {
         return {};
     }
-    
-    int numColors = (int) uvmap.shape[0].integerValue;
-    int heatmapHeight = (int) uvmap.shape[1].integerValue;
-    int heatmapWidth = (int) uvmap.shape[2].integerValue;
     
     passert (uvmap.dataType == MLMultiArrayDataTypeFloat32);
     float *array = (float *) uvmap.dataPointer;
@@ -197,7 +210,6 @@ std::shared_ptr<VROGeometry> VROBodyMesheriOS::buildMesh(MLMultiArray *uvmap, VR
     
     bool *uv_mask = _uvMask.data<bool>();
     size_t *vt_to_v = _uvVtoVt.data<size_t>();
-    size_t *face_to_v = _uvFaceToV.data<size_t>();
     size_t *texcoords = _uvTexcoords.data<size_t>();
     
     // The sampling kernel is a sorted (by preference, earlier is better) array
@@ -284,13 +296,6 @@ std::shared_ptr<VROGeometry> VROBodyMesheriOS::buildMesh(MLMultiArray *uvmap, VR
         resampled_vertices[i * 3 + 2] = vertex[2];
     }
     
-    int num_corners = (int) _uvFaceToV.shape[0];
-    std::vector<int> vertex_faces;
-    for (int i = 0; i < num_corners; i++) {
-        vertex_faces.push_back((int) face_to_v[i]);
-    }
-    
-    
     std::shared_ptr<VROData> varData = std::make_shared<VROData>(resampled_vertices.data(), resampled_vertices.size() * sizeof(float));
     std::shared_ptr<VROGeometrySource> vertexSource = std::make_shared<VROGeometrySource>(varData,
                                                                                           VROGeometrySourceSemantic::Vertex,
@@ -300,20 +305,21 @@ std::shared_ptr<VROGeometry> VROBodyMesheriOS::buildMesh(MLMultiArray *uvmap, VR
                                                                                           sizeof(float),                 // Bytes per component
                                                                                           0,                             // Offset
                                                                                           sizeof(float) * 3);            // Stride
+    return vertexSource;
+}
+
+std::shared_ptr<VROGeometryElement> VROBodyMesheriOS::buildMeshFaces() {
+    int numCorners = (int) _uvFaceToV.shape[0];
+    size_t *faceToV = _uvFaceToV.data<size_t>();
+
+    std::vector<int> vertex_faces;
+    for (int i = 0; i < numCorners; i++) {
+        vertex_faces.push_back((int) faceToV[i]);
+    }
     
     std::shared_ptr<VROData> facesData = std::make_shared<VROData>(vertex_faces.data(), vertex_faces.size() * sizeof(int));
     std::shared_ptr<VROGeometryElement> facesSource = std::make_shared<VROGeometryElement>(facesData, VROGeometryPrimitiveType::Triangle,
-                                                                                           num_corners / 3, sizeof(int));
-    
-    std::vector<std::shared_ptr<VROGeometrySource>> sources = { vertexSource };
-    std::vector<std::shared_ptr<VROGeometryElement>> elements = { facesSource };
-    _bodyMesh = std::make_shared<VROGeometry>(sources, elements);
-    
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->getDiffuse().setColor({ 1.0, 0.0, 0.0, 1.0 });
-    material->setTransparency(0.5f);
-    material->setCullMode(VROCullMode::None);
-    
-    _bodyMesh->setMaterials({ material });
-    return _bodyMesh;
+                                                                                           numCorners / 3, sizeof(int));
+    return facesSource;
 }
+

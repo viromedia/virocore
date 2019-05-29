@@ -20,6 +20,8 @@
 class VRODriver;
 class VROPoseFilter;
 class VROGeometry;
+class VROGeometryElement;
+class VROGeometrySource;
 class VROOneEuroFilterF;
 
 class API_AVAILABLE(ios(11.0)) VROBodyMesheriOS : public VROBodyMesher, public VROVisionEngineDelegate {
@@ -107,13 +109,19 @@ private:
     cnpy::NpyArray _testUv;
     
     /*
+     Generate geometry element (faces array) for the human body mesh. This never needs to
+     be updated.
+     */
+    std::shared_ptr<VROGeometryElement> buildMeshFaces();
+    
+    /*
      Converts the output from the given CoreML MLMultiArray into a full body mesh in screen
      coordinates. The given transforms go from vision space [0, 1] to image space [0, 1], to
      normalized viewport space [0, 1].
      */
-    std::shared_ptr<VROGeometry> buildMesh(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
-                                           VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
-                                           std::pair<VROVector3f, float> *outImageSpaceJoints);
+    std::shared_ptr<VROGeometrySource> buildMeshVertices(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
+                                                         VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                                         std::pair<VROVector3f, float> *outImageSpaceJoints);
     
     /*
      Get a sampling kernel that, if added to a texture coordinate, represents the box of
