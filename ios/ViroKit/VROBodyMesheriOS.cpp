@@ -29,6 +29,7 @@
 
 #import "bodymesh.h"
 
+static bool kTestResampling = false;
 static const float kConfidenceThreshold = 0.15;
 static const float kInitialDampeningPeriodMs = 125;
 
@@ -72,7 +73,7 @@ bool VROBodyMesheriOS::initBodyTracking(VROCameraPosition position,
     pinfo("Loaded Test UV array: word size %d, count %d, shape (%d, %d, %d)",
           (int) _testUv.word_size, (int) _testUv.num_vals, (int) _testUv.shape[0], (int) _testUv.shape[1], (int) _testUv.shape[2]);
     
-    _visionEngine = std::make_shared<VROVisionEngine>(model, 224, position, VROCropAndScaleOption::Viro_RegionOfInterest);
+    _visionEngine = std::make_shared<VROVisionEngine>(model, 224, position, VROCropAndScaleOption::CoreML_Fit);
     std::shared_ptr<VROVisionEngineDelegate> delegate = std::dynamic_pointer_cast<VROVisionEngineDelegate>(shared_from_this());
     passert (delegate != nullptr);
     _visionEngine->setDelegate(delegate);
@@ -140,10 +141,11 @@ std::vector<std::pair<VROVector3f, float>> VROBodyMesheriOS::processVisionOutput
     // TODO Make this allocation efficient again
     std::vector<std::pair<VROVector3f, float>> imageSpaceJoints(kNumBodyJoints);
     
-    std::shared_ptr<VROGeometrySource> vertices = buildMeshVertices(uvmap, cameraPosition, visionToImageSpace, imageToViewportSpace,
-                                                                    imageSpaceJoints.data());
+    std::vector<float> vertices = deriveVertices(uvmap, cameraPosition, visionToImageSpace, imageToViewportSpace, imageSpaceJoints.data());
+    std::shared_ptr<VROGeometrySource> vertexSource = buildMeshVertices(vertices);
+    
     if (!_bodyMesh) {
-        std::vector<std::shared_ptr<VROGeometrySource>> sources = { vertices };
+        std::vector<std::shared_ptr<VROGeometrySource>> sources = { vertexSource };
         std::vector<std::shared_ptr<VROGeometryElement>> elements = { buildMeshFaces() };
         _bodyMesh = std::make_shared<VROGeometry>(sources, elements);
         
@@ -155,7 +157,7 @@ std::vector<std::pair<VROVector3f, float>> VROBodyMesheriOS::processVisionOutput
         _bodyMesh->setMaterials({ material });
     }
     else {
-        _bodyMesh->setSources({ vertices });
+        _bodyMesh->setSources({ vertexSource });
     }
     
     std::weak_ptr<VROBodyMesheriOS> tracker_w = std::dynamic_pointer_cast<VROBodyMesheriOS>(shared_from_this());
@@ -166,7 +168,7 @@ std::vector<std::pair<VROVector3f, float>> VROBodyMesheriOS::processVisionOutput
         if (tracker && tracker->_isTracking) {
             std::shared_ptr<VROBodyMesherDelegate> delegate = _bodyMeshDelegate_w.lock();
             if (delegate) {
-                delegate->onBodyMeshUpdated(_bodyMesh);
+                delegate->onBodyMeshUpdated(vertices, _bodyMesh);
             }
         }
     });
@@ -174,29 +176,9 @@ std::vector<std::pair<VROVector3f, float>> VROBodyMesheriOS::processVisionOutput
     return imageSpaceJoints;
 }
 
-std::vector<std::vector<int>> VROBodyMesheriOS::getSamplingKernel(int distance) {
-    int dimension_size = distance * 2 + 1;
-    std::vector<std::vector<int>> kernel(dimension_size * dimension_size);
-    
-    int p = -1;
-    int idx = 0;
-    for (int n = 0; n < distance + 1; n++) {
-        for (int x = -n; x < n + 1; x++) {
-            for (int y = -n; y < n + 1; y++) {
-                if (abs(x) > p or abs(y) > p) {
-                    kernel[idx] = { x, y };
-                    idx += 1;
-                }
-            }
-        }
-        p = n;
-    }
-    return kernel;
-}
-
-std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
-                                                                       VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
-                                                                       std::pair<VROVector3f, float> *outImageSpaceJoints) {
+std::vector<float> VROBodyMesheriOS::deriveVertices(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
+                                                    VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                                    std::pair<VROVector3f, float> *outImageSpaceJoints) {
     if (uvmap.shape.count < 3) {
         return {};
     }
@@ -217,8 +199,12 @@ std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(MLMultiAr
     // texture coordinate.
     std::vector<std::vector<int>> sampling_kernel = getSamplingKernel(2);
     
-    std::vector<std::vector<float>> vertices(_uvTexcoords.shape[0]);
+    std::vector<VROVector3f> vertices(_uvTexcoords.shape[0]);
     int num_failed_texcoords = 0;
+    
+    float normMinZ = -200;
+    float normMaxZ = 200;
+    float normLengthZ = normMaxZ - normMinZ;
     
     // Iterate through each texcoord, and sample its position in the UV map. This
     // gives us the vertex corresponding to the texcoord.
@@ -244,13 +230,16 @@ std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(MLMultiAr
             if (uv_mask[coord[0] * 224 + coord[1]] > 0) {
                 float xyz[3];
                 for (int k = 0; k < 3; k++) {
-                    //long index = k * stride_c + coord[0] * stride_h + coord[1];
-                    //xyz[k] = array[index];
-                    
-                    xyz[k] = test_array[coord[0] * (224 * 3) + coord[1] * 3 + k];
+                    if (!kTestResampling) {
+                        xyz[k] = array[k * stride_c + coord[0] * stride_h + coord[1]];
+                    } else {
+                        xyz[k] = test_array[coord[0] * (224 * 3) + coord[1] * 3 + k];
+                    }
                 }
                 
-                vertices[i] = { xyz[0], xyz[1], xyz[2] };
+                vertices[i] = { xyz[0], xyz[1], xyz[2] * normLengthZ + normMinZ };
+                vertices[i] = visionToImageSpace.multiply(vertices[i]);
+                vertices[i] = imageToViewportSpace.multiply(vertices[i]);
                 
                 found_something = true;
                 break;
@@ -265,8 +254,10 @@ std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(MLMultiAr
                     
     // Now we have the resampled vertices, except they're indexed by texcoord
     // indices. We need to re-index them by vertex indices.
-    std::vector<float> resampled_vertices(_uvVtoVt.shape[0] * 3);
-    for (int i = 0; i < _uvVtoVt.shape[0]; i++) {
+    int numVertices = (int) _uvVtoVt.shape[0];
+    std::vector<float> resampledVertices(numVertices * 3);
+    
+    for (int i = 0; i < numVertices; i++) {
         // Get the indices of the texcoords that correspond to vertex index i.
         std::vector<int> texcoordIndices;
         for (int j = 0; j < 4; j++) {
@@ -280,31 +271,50 @@ std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(MLMultiAr
         // Find the resampled vertex that corresponds to the texcoord indices.
         // Typically there is only one, but in case there was more than one
         // take the mean.
-        std::vector<float> vertex = vertices[texcoordIndices[0]];
+        VROVector3f vertex = vertices[texcoordIndices[0]];
         for (int j = 1; j < (int) texcoordIndices.size(); j++) {
-            std::vector<float> nextVertex = vertices[texcoordIndices[j]];
-            for (int k = 0; k < 3; k++) {
-                vertex[k] += nextVertex[k];
-            }
+            vertex += vertices[texcoordIndices[j]];
         }
-        for (int k = 0; k < 3; k++) {
-            vertex[k] /= (float) texcoordIndices.size();
-        }
+        vertex = vertex.scale(1.0 / (float) texcoordIndices.size());
         
-        resampled_vertices[i * 3 + 0] = vertex[0];
-        resampled_vertices[i * 3 + 1] = vertex[1];
-        resampled_vertices[i * 3 + 2] = vertex[2];
+        resampledVertices[i * 3 + 0] = vertex.x;
+        resampledVertices[i * 3 + 1] = vertex.y;
+        resampledVertices[i * 3 + 2] = vertex.z;
     }
     
-    std::shared_ptr<VROData> varData = std::make_shared<VROData>(resampled_vertices.data(), resampled_vertices.size() * sizeof(float));
+    return resampledVertices;
+}
+
+std::vector<std::vector<int>> VROBodyMesheriOS::getSamplingKernel(int distance) {
+    int dimension_size = distance * 2 + 1;
+    std::vector<std::vector<int>> kernel(dimension_size * dimension_size);
+    
+    int p = -1;
+    int idx = 0;
+    for (int n = 0; n < distance + 1; n++) {
+        for (int x = -n; x < n + 1; x++) {
+            for (int y = -n; y < n + 1; y++) {
+                if (abs(x) > p or abs(y) > p) {
+                    kernel[idx] = { x, y };
+                    idx += 1;
+                }
+            }
+        }
+        p = n;
+    }
+    return kernel;
+}
+
+std::shared_ptr<VROGeometrySource> VROBodyMesheriOS::buildMeshVertices(std::vector<float> &vertices) {
+    std::shared_ptr<VROData> varData = std::make_shared<VROData>(vertices.data(), vertices.size() * sizeof(float));
     std::shared_ptr<VROGeometrySource> vertexSource = std::make_shared<VROGeometrySource>(varData,
                                                                                           VROGeometrySourceSemantic::Vertex,
-                                                                                          resampled_vertices.size() / 3, // Count
-                                                                                          true,                          // Float components
-                                                                                          3,                             // Components per vertex
-                                                                                          sizeof(float),                 // Bytes per component
-                                                                                          0,                             // Offset
-                                                                                          sizeof(float) * 3);            // Stride
+                                                                                          vertices.size() / 3,  // Count
+                                                                                          true,                 // Float components
+                                                                                          3,                    // Components per vertex
+                                                                                          sizeof(float),        // Bytes per component
+                                                                                          0,                    // Offset
+                                                                                          sizeof(float) * 3);   // Stride
     return vertexSource;
 }
 

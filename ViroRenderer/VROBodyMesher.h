@@ -12,6 +12,7 @@
 #include "VROVisionModel.h"
 
 enum class VROCameraPosition;
+class VRODriver;
 class VROGeometry;
 
 /*
@@ -19,7 +20,7 @@ class VROGeometry;
  */
 class VROBodyMesherDelegate {
 public:
-    virtual void onBodyMeshUpdated(std::shared_ptr<VROGeometry> mesh) = 0;
+    virtual void onBodyMeshUpdated(const std::vector<float> &vertices, std::shared_ptr<VROGeometry> mesh) = 0;
 };
 
 /*

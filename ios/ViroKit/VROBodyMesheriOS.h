@@ -109,6 +109,14 @@ private:
     cnpy::NpyArray _testUv;
     
     /*
+     Derive the vertex points from the output of the CoreML model. The given transforms go from
+     vision space [0, 1] to image space [0, 1], to normalized viewport space [0, 1].
+     */
+    std::vector<float> deriveVertices(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
+                                      VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
+                                      std::pair<VROVector3f, float> *outImageSpaceJoints);
+    
+    /*
      Generate geometry element (faces array) for the human body mesh. This never needs to
      be updated.
      */
@@ -116,12 +124,9 @@ private:
     
     /*
      Converts the output from the given CoreML MLMultiArray into a full body mesh in screen
-     coordinates. The given transforms go from vision space [0, 1] to image space [0, 1], to
-     normalized viewport space [0, 1].
+     coordinates.
      */
-    std::shared_ptr<VROGeometrySource> buildMeshVertices(MLMultiArray *uvmap, VROCameraPosition cameraPosition,
-                                                         VROMatrix4f visionToImageSpace, VROMatrix4f imageToViewportSpace,
-                                                         std::pair<VROVector3f, float> *outImageSpaceJoints);
+    std::shared_ptr<VROGeometrySource> buildMeshVertices(std::vector<float> &vertices);
     
     /*
      Get a sampling kernel that, if added to a texture coordinate, represents the box of

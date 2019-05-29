@@ -18,6 +18,7 @@
 
 #if VRO_PLATFORM_IOS
 #import "VROViewAR.h"
+#import "VROBodySurfaceRenderer.h"
 #endif
 
 class VROPoseFilter;
@@ -54,7 +55,7 @@ public:
     virtual void onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     }
     
-    virtual void onBodyMeshUpdated(std::shared_ptr<VROGeometry> mesh);
+    virtual void onBodyMeshUpdated(const std::vector<float> &vertices, std::shared_ptr<VROGeometry> mesh);
 private:
     
     std::shared_ptr<VRONode> _pointOfView;
@@ -66,6 +67,9 @@ private:
     std::shared_ptr<VRONode> _bodyMeshNode;
     std::shared_ptr<VROGeometry> _bodyMesh;
     
+#if VRO_PLATFORM_IOS
+    std::shared_ptr<VROBodySurfaceRenderer> _surfaceRenderer;
+#endif
 };
 
 #endif /* VROBodyMesherTest_h */

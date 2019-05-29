@@ -40,6 +40,7 @@ void VROBodyMesherTest::build(std::shared_ptr<VRORenderer> renderer,
 #if VRO_PLATFORM_IOS
     VROViewAR *view = (VROViewAR *) std::dynamic_pointer_cast<VRODriverOpenGLiOS>(driver)->getView();
     _bodyMesher = std::make_shared<VROBodyMesheriOS>();
+    _surfaceRenderer = std::make_shared<VROBodySurfaceRenderer>(view, _bodyMesher);
 
     _bodyMesher->setDelegate(shared_from_this());
     _bodyMesher->initBodyTracking(view.cameraPosition, driver);
@@ -51,11 +52,22 @@ void VROBodyMesherTest::build(std::shared_ptr<VRORenderer> renderer,
     _arScene->getRootNode()->addLight(ambient);
 }
 
-void VROBodyMesherTest::onBodyMeshUpdated(std::shared_ptr<VROGeometry> mesh) {
+void VROBodyMesherTest::onBodyMeshUpdated(const std::vector<float> &vertices, std::shared_ptr<VROGeometry> mesh) {
+    if (true) {
+        _surfaceRenderer->onBodyMeshUpdated(vertices, mesh);
+        return;
+    }
     if (!_bodyMeshNode) {
         _bodyMeshNode = std::make_shared<VRONode>();
-        _bodyMeshNode->setPosition({ 0, 0, -2 });
+        _bodyMeshNode->setPosition({ 0, -1.0, -2 });
+        //_bodyMeshNode->setRotationEuler({ 0, M_PI_2, 0 });
         _arScene->getRootNode()->addChildNode(_bodyMeshNode);
+        
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(10);
+        //_bodyMeshNode->setRotationEulerY(M_PI - 0.0001);
+        
+        VROTransaction::commit();
     }
     
     if (!_bodyMesh) {
