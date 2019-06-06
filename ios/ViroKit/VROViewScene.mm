@@ -302,6 +302,15 @@ static VROVector3f const kZeroVector = VROVector3f();
     [self.viewRecorder startVideoRecording:fileName withWatermark:watermarkImage withFrame:watermarkFrame saveToCameraRoll:saveToCamera errorBlock:errorBlock];
 }
 
+- (void)startVideoRecording:(NSString *)fileName
+                    gifFile:(NSString *)gifFile
+              withWatermark:(UIImage *)watermarkImage
+                  withFrame:(CGRect)watermarkFrame
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
+    [self.viewRecorder startVideoRecording:fileName gifFile:gifFile withWatermark:watermarkImage withFrame:watermarkFrame saveToCameraRoll:saveToCamera errorBlock:errorBlock];
+}
+
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     [self.viewRecorder stopVideoRecordingWithHandler:completionHandler];
 }

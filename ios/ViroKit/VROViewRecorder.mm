@@ -7,7 +7,9 @@
 //
 
 #import "VROViewRecorder.h"
-#import <memory>
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <ImageIO/ImageIO.h>
 #import "VROVideoTextureCache.h"
 #import "VROTime.h"
 #import "VRODriver.h"
@@ -17,6 +19,7 @@
 #import "VROChoreographer.h"
 #import "VRORenderTarget.h"
 
+
 @interface VROViewRecorder () {
     
     VROViewRecordingErrorBlock _errorBlock;
@@ -24,6 +27,7 @@
     bool _isFirstRecordingFrame;
     bool _saveToCameraRoll;
     bool _addWatermark;
+    bool _saveGif;
     bool _useMicrophone;
     UIImage *_watermarkImage;
     CGRect _watermarkFrame;
@@ -32,11 +36,17 @@
     CIContext *_watermarkCIContext;
     NSString *_videoFileName;
     NSURL *_tempVideoFilePath;
+    NSString *_gifFileName;
+    int _gifFps;
+    double _gifScale;
+    NSURL *_tempGifFilePath;
     AVAssetWriter *_videoWriter;
     AVAssetWriterInput *_videoWriterInput;
     AVAssetWriterInputPixelBufferAdaptor *_videoWriterPixelBufferAdaptor;
     AVAudioRecorder *_audioRecorder;
+    CGImageDestinationRef _gifDestination;
     double _startTimeMillis;
+    double _lastTimeAddedFrameToGif;
     NSURL *_tempAudioFilePath;
     NSURL *_overwrittenAudioFilePath;
     NSTimer *_videoLoopTimer;
@@ -62,8 +72,10 @@
         _renderer = renderer;
         _driver = driver;
         _addWatermark = false;
+        _saveGif = false;
         _videoOutputDimensions = std::make_pair(-1, -1);
         _overwrittenAudioFilePath = nil;
+        _gifFps = 10; // limit GIF fps to 10
     }
     return self;
 }
@@ -164,11 +176,29 @@
                   withFrame:(CGRect)watermarkFrame
            saveToCameraRoll:(BOOL)saveToCamera
                  errorBlock:(VROViewRecordingErrorBlock)errorBlock {
-    _addWatermark = true;
-    _watermarkImage = watermarkImage;
-    _watermarkFrame = watermarkFrame;
+    if (watermarkImage) {
+        _addWatermark = true;
+        _watermarkImage = watermarkImage;
+        _watermarkFrame = watermarkFrame;
+    }
 
     [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:errorBlock];
+}
+
+- (void)startVideoRecording:(NSString *)fileName
+                    gifFile:(NSString *)gifFile
+              withWatermark:(UIImage *)watermarkImage
+                  withFrame:(CGRect)watermarkFrame
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
+    
+    if (gifFile) {
+        _saveGif = true;
+        _gifFileName = gifFile;
+        _tempGifFilePath = [self checkAndGetTempFileURL:[gifFile stringByAppendingString:kVROViewGifSuffix]];
+    }
+    [self startVideoRecording:fileName withWatermark:watermarkImage withFrame:watermarkFrame saveToCameraRoll:saveToCamera errorBlock:errorBlock];
+    
 }
 
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath   {
@@ -178,11 +208,11 @@
 
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     if (!_isRecording) {
-        completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
+        completionHandler(NO, nil, nil, kVROViewErrorAlreadyStopped);
         return;
     }
     // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
-    VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSInteger errorCode) {
+    VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSURL *gifPath, NSInteger errorCode) {
         NSURL *videoURL = [self checkAndGetTempFileURL:[_videoFileName stringByAppendingString:kVROViewVideoSuffix]];
         NSURL *targetedAudioURL = _overwrittenAudioFilePath == NULL ? _tempAudioFilePath : _overwrittenAudioFilePath;
         
@@ -200,17 +230,18 @@
             
             if (success) {
                 if (_saveToCameraRoll) {
-                    [self writeMediaToCameraRoll:videoURL isPhoto:NO withCompletionHandler:completionHandler];
+                    [self writeMediaToCameraRoll:videoURL isPhoto:NO gifPath:gifPath withCompletionHandler:completionHandler];
                 } else {
-                    completionHandler(YES, videoURL, kVROViewErrorNone);
+                    completionHandler(YES, videoURL, gifPath, kVROViewErrorNone);
                 }
             } else {
-                completionHandler(NO, nil, kVROViewErrorUnknown);
+                completionHandler(NO, nil, gifPath, kVROViewErrorUnknown);
             }
             _saveToCameraRoll = NO;
             _isRecording = NO;
             // we're done with watermarking!
             _addWatermark = NO;
+            _saveGif = NO;
         }];
         
     };
@@ -252,7 +283,7 @@
             case PHAuthorizationStatusRestricted:
                 if (completionHandler) {
                     NSLog(@"[Recording] Photo library permission denied.");
-                    completionHandler(NO, nil, kVROViewErrorNoPermissions);
+                    completionHandler(NO, nil, nil, kVROViewErrorNoPermissions);
                 }
                 return;
             case PHAuthorizationStatusNotDetermined:
@@ -267,14 +298,15 @@
     [UIImagePNGRepresentation(view.snapshot) writeToFile:[filePath path] atomically:YES];
     
     if (saveToCamera) {
-        [self writeMediaToCameraRoll:filePath isPhoto:YES withCompletionHandler:completionHandler];
+        [self writeMediaToCameraRoll:filePath isPhoto:YES gifPath:nil withCompletionHandler:completionHandler];
     } else {
-        completionHandler(YES, filePath, kVROViewErrorNone);
+        completionHandler(YES, filePath, nil, kVROViewErrorNone);
     }
 }
 
 - (void)writeMediaToCameraRoll:(NSURL *)filePath
                        isPhoto:(BOOL)isPhoto
+                       gifPath:(NSURL *)gifPath
          withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     
     PHAssetResourceType type = isPhoto ? PHAssetResourceTypePhoto : PHAssetResourceTypeVideo;
@@ -283,10 +315,10 @@
     } completionHandler:^(BOOL success, NSError *error) {
         if (success) {
             NSLog(@"[Recording] saving media worked!");
-            completionHandler(YES, filePath, kVROViewErrorNone);
+            completionHandler(YES, filePath, gifPath, kVROViewErrorNone);
         } else {
             NSLog(@"[Recording] saving media failed w/ error: %@", error.localizedDescription);
-            completionHandler(NO, filePath, kVROViewErrorWriteToFile);
+            completionHandler(NO, filePath, gifPath, kVROViewErrorWriteToFile);
         }
     }];
 }
@@ -515,6 +547,18 @@
         _resizedWatermarkImage = [CIImage imageWithCGImage:newImage.CGImage];
     }
     
+    if (_saveGif) {
+        // TODO: can we use an arbitrary frame count?
+        int frameCount = 1000;
+        _gifDestination = CGImageDestinationCreateWithURL((__bridge CFURLRef)_tempGifFilePath, kUTTypeGIF , frameCount, NULL);
+        // create an infinitely looping gif
+        NSDictionary *fileProperties = @{(NSString *)kCGImagePropertyGIFDictionary:
+                                             @{(NSString *)kCGImagePropertyGIFLoopCount: @(0)}
+                                         };
+        CGImageDestinationSetProperties(_gifDestination, (CFDictionaryRef)fileProperties);
+
+    }
+    
     // We only need to use sRGB textures here if gamma correction is performed
     // on hardware. If gamma correction is performed in software, then the texture
     // we've received from the renderer is *already* gamma corrected. If gamma
@@ -531,21 +575,26 @@
 
     _isRecording = YES;
     _isFirstRecordingFrame = YES;
-    _videoLoopTimer = [NSTimer timerWithTimeInterval:0.03 target:self selector:@selector(recordFrame) userInfo:nil repeats:YES];
+    _videoLoopTimer = [NSTimer timerWithTimeInterval:0.025 target:self selector:@selector(recordFrame) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:_videoLoopTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)recordFrame {
     if (_isRecording) {
         if ([_videoWriterInput isReadyForMoreMediaData]) {
-            double currentTime;
+            double elapsedTime;
+            double currentTime = VROTimeCurrentMillis();
+            size_t width = CVPixelBufferGetWidth(_videoPixelBuffer);
+            size_t height = CVPixelBufferGetHeight(_videoPixelBuffer);
             if (_isFirstRecordingFrame) {
                 _startTimeMillis = VROTimeCurrentMillis();
-                currentTime = 0;
+                elapsedTime = 0;
                 _isFirstRecordingFrame = false;
+                _lastTimeAddedFrameToGif = VROTimeCurrentMillis();
+                _gifScale = sqrt(80000.0 / (width * height)); // this scale (@ 80k pixels) results in a ~4MB file for a 10 second, 10 fps GIF.
             }
             else {
-                currentTime = VROTimeCurrentMillis() - _startTimeMillis;
+                elapsedTime = VROTimeCurrentMillis() - _startTimeMillis;
             }
             
             BOOL success = NO;
@@ -558,11 +607,56 @@
                 // grab the CVPixelBuffer of the combined image
                 [_watermarkCIContext render:outputImage toCVPixelBuffer:_compositePixelBuffer];
                 
-                success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_compositePixelBuffer withPresentationTime:CMTimeMake(currentTime, 1000)];
+                success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_compositePixelBuffer withPresentationTime:CMTimeMake(elapsedTime, 1000)];
+
+                if (_saveGif && _gifDestination) {
+                    double duration = (currentTime - _lastTimeAddedFrameToGif) / 1000.0; // in seconds
+                    if ((1.0 / _gifFps) < duration || abs((1.0 / _gifFps) - duration) < .003) {
+                        
+                        CIFilter *filter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
+                        [filter setValue:outputImage forKey:@"inputImage"];
+                        [filter setValue:@(_gifScale) forKey:@"inputScale"];
+                        [filter setValue:@1.0 forKey:@"inputAspectRatio"];
+                        CIImage *scaledImage = filter.outputImage;
+                        
+                        CGImageRef imageRef = [_watermarkCIContext createCGImage:scaledImage fromRect:[scaledImage extent]];
+                        NSDictionary *frameProperties = @{(NSString *)kCGImagePropertyGIFDictionary:
+                                                              @{(NSString *)kCGImagePropertyGIFDelayTime: @(duration)},
+                                                          (NSString *)kCGImagePropertyColorModel:(NSString *)kCGImagePropertyColorModelRGB
+                                                          };
+                        CGImageDestinationAddImage(_gifDestination, imageRef, (CFDictionaryRef)frameProperties);
+                        CGImageRelease(imageRef);
+                        
+                        _lastTimeAddedFrameToGif = currentTime;
+                    }
+                }
+                
             } else {
                 success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_videoPixelBuffer
-                                                       withPresentationTime:CMTimeMake(currentTime, 1000)];
-                CVPixelBufferUnlockBaseAddress(_videoPixelBuffer, 0);
+                                                       withPresentationTime:CMTimeMake(elapsedTime, 1000)];
+                
+                if (_saveGif && _gifDestination) {
+                    // TODO: this code below captures the GIF w/ the wrong colors also no scaling here, but this is the case w/o watermark & so not used in Posemoji
+                    CVPixelBufferLockBaseAddress(_videoPixelBuffer, kCVPixelBufferLock_ReadOnly);
+                    void *baseAddr = CVPixelBufferGetBaseAddress(_videoPixelBuffer);
+                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                    CGContextRef cgContext = CGBitmapContextCreate(baseAddr, width, height, 8, CVPixelBufferGetBytesPerRow(_videoPixelBuffer), colorSpace, kCGImageAlphaNoneSkipLast);
+                    
+                    CGImageRef imageRef = CGBitmapContextCreateImage(cgContext);
+                    CGContextRelease(cgContext);
+                    
+                    NSDictionary *frameProperties = @{(NSString *)kCGImagePropertyGIFDictionary:
+                                                          @{(NSString *)kCGImagePropertyGIFDelayTime: @((currentTime - _lastTimeAddedFrameToGif) / 1000)},
+                                                      (NSString *)kCGImagePropertyColorModel:(NSString *)kCGImagePropertyColorModelRGB
+                                                      };
+                    
+                    CGImageDestinationAddImage(_gifDestination, imageRef, (CFDictionaryRef)frameProperties);
+                    
+                    CGImageRelease(imageRef);
+                    CVPixelBufferUnlockBaseAddress(_videoPixelBuffer, kCVPixelBufferLock_ReadOnly);
+                    
+                    _lastTimeAddedFrameToGif = currentTime;
+                }
             }
             
             if (!success) {
@@ -584,20 +678,34 @@
     // Turn off RTT in the choreographer
     _renderer->getChoreographer()->setRenderToTextureDelegate(nullptr);
     
+    // Finalize the GIF
+    bool gifSaveSuccess = true;
+    if (_saveGif) {
+        gifSaveSuccess = CGImageDestinationFinalize(_gifDestination);
+        if (_gifDestination) {
+            CFRelease(_gifDestination);
+        }
+    }
+    
     [_videoWriterInput markAsFinished];
     if (_videoWriter.status == AVAssetWriterStatusWriting) {
         // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
         [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
         [_videoWriter finishWritingWithCompletionHandler:^(void) {
-            if (_videoWriter.status == AVAssetWriterStatusCompleted) {
-                completionHandler(YES, _tempVideoFilePath, kVROViewErrorNone);
+            if (_videoWriter.status == AVAssetWriterStatusCompleted && gifSaveSuccess) {
+                completionHandler(YES, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorNone);
             } else {
-                NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
-                completionHandler(NO, _tempVideoFilePath, kVROViewErrorWriteToFile);
+                if (gifSaveSuccess) {
+                    NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
+                    completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteToFile);
+                } else {
+                    NSLog(@"[Recording] Finalizing GIF failed");
+                    completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteGifToFile);
+                }
             }
         }];
     } else {
-        completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
+        completionHandler(NO, nil, nil, kVROViewErrorAlreadyStopped);
     }
 
     CVPixelBufferRelease(_videoPixelBuffer);

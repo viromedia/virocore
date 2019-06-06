@@ -502,6 +502,15 @@
     // no-op
 }
 
+- (void)startVideoRecording:(NSString *)fileName
+                    gifFile:(NSString *)gifFile
+              withWatermark:(UIImage *)watermarkImage
+                  withFrame:(CGRect)watermarkFrame
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
+    // no-op
+}
+
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     // no-op
 }

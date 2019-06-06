@@ -50,6 +50,13 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
            saveToCameraRoll:(BOOL)saveToCamera
                  errorBlock:(VROViewRecordingErrorBlock)errorBlock;
 
+- (void)startVideoRecording:(NSString *)fileName
+                    gifFile:(NSString *)gifFile
+              withWatermark:(UIImage *)watermarkImage
+                  withFrame:(CGRect)watermarkFrame
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock;
+
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler;
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath;
 - (void)takeScreenshot:(NSString *)fileName
