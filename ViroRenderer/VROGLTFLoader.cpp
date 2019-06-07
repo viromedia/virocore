@@ -774,14 +774,14 @@ void VROGLTFLoader::injectGLTF(std::shared_ptr<VRONode> gltfNode,
                              std::shared_ptr<VRODriver> driver,
                              std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
     if (gltfNode) {
-        // The top-level fbxNode is a dummy; all of the data is stored in the children, so we
+        // The top-level glTF Node is a dummy; all of the data is stored in the children, so we
         // simply transfer those children over to the destination node
         for (std::shared_ptr<VRONode> child : gltfNode->getChildNodes()) {
             rootNode->addChildNode(child);
         }
 
         // Recompute the node's umbrellaBoundingBox and set the atomic rendering properties before
-        // we notify the user that their FBX has finished loading
+        // we notify the user that their glTF has finished loading
         rootNode->recomputeUmbrellaBoundingBox();
         rootNode->syncAppThreadProperties();
         rootNode->setIgnoreEventHandling(rootNode->getIgnoreEventHandling());
@@ -964,14 +964,15 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     std::vector<std::shared_ptr<VROMaterial>> materials;
 
-    // A Single Mesh may contain more than one type of primitive type to be drawn. Cycle through them here.
+    // A single mesh may contain more than one type of primitive type to be drawn. Cycle through them here.
     const std::vector<tinygltf::Primitive> &gPrimitives = gMesh.primitives;
     for (tinygltf::Primitive gPrimitive : gPrimitives) {
 
-        // Grab Vertex indexing information needed for creating meshes.
+        // Grab vertex indexing information needed for creating meshes.
         bool successVertex = processVertexElement(gModel, gPrimitive, elements);
         bool successAttributes = processVertexAttributes(gModel, gPrimitive.attributes, sources, elements.size() - 1);
         processTangent(elements, sources, elements.size() - 1);
+        
         if (!successVertex || !successAttributes) {
             pwarn("Failed to process mesh %s.", gMesh.name.c_str());
             return false;
@@ -985,7 +986,7 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
         }
     }
 
-    // Apply a default material if none has been specified:
+    // Apply a default material if none has been specified.
     if (materials.size() == 0) {
         materials.push_back(std::make_shared<VROMaterial>());
     }
@@ -1060,7 +1061,7 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
     std::vector<VROVector4f> generatedTangents;
     regenerateTangent(posArray, normArray, texCoordArray, elementIndicesArray, generatedTangents);
     if (generatedTangents.size() <= 0) {
-        pwarn("Unable to generate tangetns for this model.");
+        pwarn("Unable to generate tangents for this model");
         return;
     }
 
@@ -1097,7 +1098,7 @@ void VROGLTFLoader::regenerateTangent(std::vector<VROVector3f> &posArray,
                                       std::vector<VROVector3f> &texCoordArray,
                                       std::vector<int> &elementIndicesArray,
                                       std::vector<VROVector4f> &generatedTangents) {
-    int vertexSize = posArray.size();
+    int vertexSize = (int) posArray.size();
     // Sanity check.
     if (normArray.size() != vertexSize
         || texCoordArray.size() != vertexSize) {
@@ -1207,7 +1208,7 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
     if (gPimitiveIndicesIndex < 0) {
         // Fallback to glDrawArrays if no indexed vertices are provided.
         // TODO VIRO-3664: Support Draw Arrays for Viro Geometry in the main render pass.
-        pwarn("Models requiring glDrawArray functionality are not yet supported.");
+        pwarn("Models requiring glDrawArray functionality are not yet supported");
         return false;
     }
 
@@ -1226,7 +1227,7 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
         && gTypeComponent != GLTFTypeComponent::UnsignedInt
         && gTypeComponent != GLTFTypeComponent::UnsignedShort
         && gTypeComponent != GLTFTypeComponent::Short) {
-        perror("Unsupported Primitive type provided for GLTF vertex indexes.");
+        perror("Unsupported primitive type provided for GLTF vertex indexes");
         return false;
     }
 

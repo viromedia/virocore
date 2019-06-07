@@ -359,6 +359,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROBodyTrackerTest.cpp
              ${VIRO_RENDERER_SRC}/VROBodyRecognitionTest.cpp
              ${VIRO_RENDERER_SRC}/VROObjectRecognitionTest.cpp
+             ${VIRO_RENDERER_SRC}/VROBodyMesherTest.cpp
              )
 
 # Add pre-built libraries

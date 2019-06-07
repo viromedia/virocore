@@ -1306,7 +1306,7 @@ void VRONode::onAnimationFinished() {
 #pragma mark - Hit Testing
 
 VROBoundingBox VRONode::getBoundingBox() const {
-    if (_geometry && _geometry->getInstancedUBO() != nullptr){
+    if (_geometry && _geometry->getInstancedUBO() != nullptr) {
         return _geometry->getInstancedUBO()->getInstancedBoundingBox();
     }
     return _worldBoundingBox;
