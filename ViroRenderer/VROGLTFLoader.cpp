@@ -28,6 +28,7 @@
 #include "VROSkeletalAnimation.h"
 #include "VROSkeleton.h"
 #include "VROBoneUBO.h"
+#include "VROLog.h"
 
 static std::string kVROGLTFInputSamplerKey = "timeInput";
 std::map<std::string, std::shared_ptr<VROData>> VROGLTFLoader::_dataCache;
@@ -38,6 +39,31 @@ std::map<int, std::map<int,std::vector<int>>> VROGLTFLoader::_skinIndexToJointCh
 std::map<int, std::map<int, std::shared_ptr<VROKeyframeAnimation>>> VROGLTFLoader::_nodeKeyFrameAnims;
 std::map<int, std::vector<std::shared_ptr<VROSkeletalAnimation>>> VROGLTFLoader::_skinSkeletalAnims;
 std::map<int, std::shared_ptr<VROSkinner>> VROGLTFLoader::_skinMap;
+
+static int getTypeSize(GLTFType type) {
+    switch (type) {
+        case GLTFType::Scalar: return 1;
+        case GLTFType::Vec2: return 2;
+        case GLTFType::Vec3: return 3;
+        case GLTFType::Vec4: return 4;
+        case GLTFType::Mat2: return 4;
+        case GLTFType::Mat3: return 9;
+        case GLTFType::Mat4: return 16;
+        default: pabort();
+    }
+}
+
+static int getComponentTypeSize(GLTFTypeComponent type) {
+    switch (type) {
+        case GLTFTypeComponent::Byte: return 1;
+        case GLTFTypeComponent::UnsignedByte: return 1;
+        case GLTFTypeComponent::Short: return 2;
+        case GLTFTypeComponent::UnsignedShort: return 2;
+        case GLTFTypeComponent::UnsignedInt: return 4;
+        case GLTFTypeComponent::Float: return 4;
+        default: pabort();
+    }
+}
 
 VROGeometrySourceSemantic VROGLTFLoader::getGeometryAttribute(std::string name) {
     if (VROStringUtil::strcmpinsensitive(name, "POSITION")) {
@@ -590,7 +616,7 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
     const tinygltf::BufferView &gIndiceBufferView = gModel.bufferViews[gDataAcessor.bufferView];
     size_t bufferViewStride = gIndiceBufferView.byteStride;
     if (bufferViewStride == 0) {
-        int sizeOfSingleElement = (int) gType * (int) gTypeComponent;
+        int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
         bufferViewStride = sizeOfSingleElement;
     }
 
@@ -611,7 +637,7 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
 
         // For the current element, cycle through each of its float or type component
         // and convert them into a float through the math conversions required by gLTF.
-        for (int componentCount = 0; componentCount < (int) gType; componentCount ++) {
+        for (int componentCount = 0; componentCount < getTypeSize(gType); componentCount ++) {
             if (gTypeComponent == GLTFTypeComponent::Float) {
                 float floatData = buffer.readFloat();
                 tempVec.push_back(floatData);
@@ -916,7 +942,7 @@ bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
     const tinygltf::BufferView &gIndiceBufferView = gModel.bufferViews[gDataAcessor.bufferView];
     size_t bufferViewStride = gIndiceBufferView.byteStride;
     if (bufferViewStride == 0) {
-        int sizeOfSingleElement = (int) gType * (int) gTypeComponent;
+        int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
         bufferViewStride = sizeOfSingleElement;
     }
 
@@ -1076,7 +1102,7 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
         dataOut[(i * sizeOfTangent) + 3] = generatedTangents[i].w;        
     }
 
-    int sizeOfSingleTangent = (int) GLTFType::Vec4 * (int) GLTFTypeComponent::Float;
+    int sizeOfSingleTangent = getTypeSize(GLTFType::Vec4) * getComponentTypeSize(GLTFTypeComponent::Float);
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) dataOut,
                                         vertexSize * sizeOfSingleTangent,
                                         VRODataOwnership::Move);
@@ -1084,8 +1110,8 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
                                         VROGeometrySourceSemantic::Tangent,
                                         vertexSize,
                                         true,
-                                        (int)GLTFType::Vec4,
-                                        (int)GLTFTypeComponent::Float,
+                                        getTypeSize(GLTFType::Vec4),
+                                        getComponentTypeSize(GLTFTypeComponent::Float),
                                         0,
                                         sizeOfSingleTangent);
     tangent->setGeometryElementIndex((int) geoElementIndex);
@@ -1204,8 +1230,8 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
     }
 
     // Grab the vertex indices for this primitive.
-    int gPimitiveIndicesIndex = gPrimitive.indices;
-    if (gPimitiveIndicesIndex < 0) {
+    int gPrimitiveIndicesIndex = gPrimitive.indices;
+    if (gPrimitiveIndicesIndex < 0) {
         // Fallback to glDrawArrays if no indexed vertices are provided.
         // TODO VIRO-3664: Support Draw Arrays for Viro Geometry in the main render pass.
         pwarn("Models requiring glDrawArray functionality are not yet supported");
@@ -1214,10 +1240,10 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
 
     // Grab the accessor that maps to a bufferView through which to view the data buffer
     // representing this geometry's indexed vertices.
-    const tinygltf::Accessor &gIndiceAccessor = gModel.accessors[gPimitiveIndicesIndex];
+    const tinygltf::Accessor &gIndicesAccessor = gModel.accessors[gPrimitiveIndicesIndex];
     GLTFTypeComponent gTypeComponent;
     GLTFType gType;
-    if (!getComponentType(gIndiceAccessor, gTypeComponent) || !getComponent(gIndiceAccessor, gType)) {
+    if (!getComponentType(gIndicesAccessor, gTypeComponent) || !getComponent(gIndicesAccessor, gType)) {
         return false;
     }
 
@@ -1232,17 +1258,17 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
     }
 
     // Calculate the byte stride size if none is provided from the BufferView.
-    const tinygltf::BufferView &gIndiceBufferView = gModel.bufferViews[gIndiceAccessor.bufferView];
+    const tinygltf::BufferView &gIndiceBufferView = gModel.bufferViews[gIndicesAccessor.bufferView];
     size_t bufferViewStride = gIndiceBufferView.byteStride;
     if (bufferViewStride == 0) {
-        int sizeOfSingleElement = (int) gType * (int) gTypeComponent;
+        int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
         bufferViewStride = sizeOfSingleElement;
     }
 
     // Determine offsets and data sizes representing the indexed vertices's 'window of data' in the buffer
-    int primitiveCount = VROGeometryUtilGetPrimitiveCount((int) gIndiceAccessor.count, primitiveType);
-    size_t elementCount = gIndiceAccessor.count;
-    size_t dataOffset = gIndiceAccessor.byteOffset + gIndiceBufferView.byteOffset;
+    int primitiveCount = VROGeometryUtilGetPrimitiveCount((int) gIndicesAccessor.count, primitiveType);
+    size_t elementCount = gIndicesAccessor.count;
+    size_t dataOffset = gIndicesAccessor.byteOffset + gIndiceBufferView.byteOffset;
     size_t dataLength = elementCount *  bufferViewStride;
 
     // Finally, grab the raw indexed vertex data from the buffer to be created with VROGeometryElement
@@ -1254,7 +1280,9 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
             = std::make_shared<VROGeometryElement>(data,
                                                    primitiveType,
                                                    primitiveCount,
-                                                   (int) gTypeComponent);
+                                                   getComponentTypeSize(gTypeComponent),
+                                                   gTypeComponent != GLTFTypeComponent::UnsignedByte &&
+                                                   gTypeComponent != GLTFTypeComponent::UnsignedShort);
     elements.push_back(element);
     return true;
 }
@@ -1294,7 +1322,7 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
         // Calculate the byte stride size if none is provided from the BufferView.
         size_t bufferViewStride = gIndiceBufferView.byteStride;
         if (bufferViewStride == 0) {
-            int sizeOfSingleElement = (int) gType * (int) gTypeComponent;
+            int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
             bufferViewStride = sizeOfSingleElement;
         }
 
@@ -1316,8 +1344,8 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
                                                          attributeType,
                                                          elementCount,
                                                          isFloat,
-                                                         (int) gType,
-                                                         (int) gTypeComponent,
+                                                         getTypeSize(gType),
+                                                         getComponentTypeSize(gTypeComponent),
                                                          attributeAccessorOffset,
                                                          bufferViewStride);
         } else {
@@ -1328,7 +1356,7 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
 
             // Parse the gLTF buffers for the weight of each bone and normalize them.
             // The normalized data is stored in dataOut.
-            int sizeOfSingleBoneWeight = (int) gType * (int) gTypeComponent;
+            int sizeOfSingleBoneWeight = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
             float *dataOut = new float[sizeOfSingleBoneWeight * gAttributeAccesor.count]();
             for (int elementIndex = 0; elementIndex < gAttributeAccesor.count; elementIndex++) {
 
@@ -1336,7 +1364,7 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
                 // and convert them into a float through the math conversions required by gLTF.
                 buffer.setPosition(elementIndex * bufferViewStride);
                 std::vector<float> weight;
-                for (int componentCount = 0; componentCount < (int) gType; componentCount++) {
+                for (int componentCount = 0; componentCount < getTypeSize(gType); componentCount++) {
                     if (gTypeComponent == GLTFTypeComponent::Float) {
                         float floatData = buffer.readFloat();
                         weight.push_back(floatData);
@@ -1372,8 +1400,8 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
                                                          attributeType,
                                                          gAttributeAccesor.count,
                                                          isFloat,
-                                                         (int) gType,
-                                                         (int) gTypeComponent,
+                                                         getTypeSize(gType),
+                                                         getComponentTypeSize(gTypeComponent),
                                                          0,
                                                          sizeOfSingleBoneWeight);
         }

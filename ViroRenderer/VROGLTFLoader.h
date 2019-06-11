@@ -51,25 +51,25 @@ namespace tinygltf {
  GLTFTypeComponent components.
  */
 enum class GLTFType {
-    Scalar  = 1,
-    Vec2    = 2,
-    Vec3    = 3,
-    Vec4    = 4,
-    Mat2    = 4,
-    Mat3    = 9,
-    Mat4    = 16
+    Scalar,
+    Vec2,
+    Vec3,
+    Vec4,
+    Mat2,
+    Mat3,
+    Mat4
 };
 
 /*
  Enum representing the byte size of a single GLTFTypeComponent contained within a GLTFType.
  */
 enum class GLTFTypeComponent {
-    Byte            = 1,
-    UnsignedByte    = 1,
-    Short           = 2,
-    UnsignedShort   = 2,
-    UnsignedInt     = 4,
-    Float           = 4
+    Byte,
+    UnsignedByte,
+    Short,
+    UnsignedShort,
+    UnsignedInt,
+    Float
 };
 
 /*
