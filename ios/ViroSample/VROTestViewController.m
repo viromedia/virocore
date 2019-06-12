@@ -125,7 +125,7 @@ static const bool kSceneCheckeredBackground = NO;
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         NSLog(@"[VROTestViewController] stopped video recording");
-        [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSURL *gifUrl NSInteger errorCode) {
+        [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSURL *gifUrl, NSInteger errorCode) {
             if (url) {
                 [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
             }
@@ -141,7 +141,7 @@ static const bool kSceneCheckeredBackground = NO;
     NSLog(@"[VROSample] taking screenshot in 5 seconds");
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
+        [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionHandler:^(BOOL success, NSURL *url, NSURL *gifUrl, NSInteger errorCode) {
             if (url) {
                 [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
             }
