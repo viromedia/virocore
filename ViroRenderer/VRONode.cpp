@@ -270,9 +270,7 @@ void VRONode::recomputeUmbrellaBoundingBox() {
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
     computeTransforms(parentTransform, parentRotation);
-    _umbrellaBoundingBox = VROBoundingBox(_worldPosition.x, _worldPosition.x, _worldPosition.y,
-                                          _worldPosition.y, _worldPosition.z, _worldPosition.z);
-    computeUmbrellaBounds(&_umbrellaBoundingBox);
+    computeUmbrellaBounds();
 }
 
 #pragma mark - Sorting and Transforms
@@ -619,11 +617,7 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
 void VRONode::updateVisibility(const VRORenderContext &context) {
     const VROFrustum &frustum = context.getCamera().getFrustum();
     
-    // The umbrellaBoundingBox should be positioned at the node's position, not at [0,0,0],
-    // because bounding boxes are in world coordinates
-    _umbrellaBoundingBox = VROBoundingBox(_worldPosition.x, _worldPosition.x, _worldPosition.y,
-                                          _worldPosition.y, _worldPosition.z, _worldPosition.z);
-    computeUmbrellaBounds(&_umbrellaBoundingBox);
+    computeUmbrellaBounds();
     
     VROFrustumResult result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
     if (result == VROFrustumResult::Inside || !kEnableVisibilityFrustumTest) {
@@ -648,10 +642,31 @@ void VRONode::setVisibilityRecursive(bool visible) {
     }
 }
 
-void VRONode::computeUmbrellaBounds(VROBoundingBox *bounds) const {
-    bounds->unionDestructive(getBoundingBox());
+void VRONode::computeUmbrellaBounds() {
+    computeUmbrellaBounds(&_umbrellaBoundingBox, false);
+    
+    // If the bounds were empty (e.g. no geometry all the way down), then set the
+    // bounds to the world position.
+    if (_umbrellaBoundingBox.getExtents().isZero()) {
+        _umbrellaBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
+                                 _worldPosition.y, _worldPosition.z, _worldPosition.z);
+    }
+}
+
+void VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
+    if (_geometry) {
+        VROBoundingBox localBounds = _geometry->getBoundingBox().transform(_worldTransform);
+        if (!isSet) {
+            *bounds = localBounds;
+            isSet = true;
+        } else {
+            bounds->unionDestructive(localBounds);
+        }
+        
+    }
+    
     for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->computeUmbrellaBounds(bounds);
+        childNode->computeUmbrellaBounds(bounds, isSet);
     }
 }
 
