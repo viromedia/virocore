@@ -1052,6 +1052,13 @@
 		8F8754BA20632DF7002D9BF8 /* VROTypefaceCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */; };
 		8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F8755372064B353002D9BF8 /* VROSparseBitSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F87517B206298C2002D9BF8 /* VROSparseBitSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F8F4C3F22B2C53800A82C59 /* mustang_wheel.glb in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C3E22B2C53800A82C59 /* mustang_wheel.glb */; };
+		8F8F4C4122B2FAD100A82C59 /* roughness_metalness.gltf in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C4022B2FAD100A82C59 /* roughness_metalness.gltf */; };
+		8F8F4C4422B3EB4700A82C59 /* roughness_metalness.bin in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C4222B3EB4700A82C59 /* roughness_metalness.bin */; };
+		8F8F4C4522B3EB4700A82C59 /* roughness_metalness.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C4322B3EB4700A82C59 /* roughness_metalness.jpg */; };
+		8F8F4C4722B3EF2600A82C59 /* roughness_metalness_y.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C4622B3EF2500A82C59 /* roughness_metalness_y.jpg */; };
+		8F8F4C4A22B3F56600A82C59 /* roughness_metalness_gradient.gltf in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C4822B3F56500A82C59 /* roughness_metalness_gradient.gltf */; };
+		8F8F4C4B22B3F56600A82C59 /* roughness_metalness_g.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F8F4C4922B3F56500A82C59 /* roughness_metalness_g.jpg */; };
 		8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */; };
 		8F9209151F3CAF72003305C8 /* VROImageShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */; };
 		8F9209191F3CCF9D003305C8 /* VROImagePostProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */; };
@@ -2227,6 +2234,13 @@
 		8F8754B820632DF7002D9BF8 /* VROTypefaceCollection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTypefaceCollection.cpp; sourceTree = "<group>"; };
 		8F8754B920632DF7002D9BF8 /* VROTypefaceCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTypefaceCollection.h; sourceTree = "<group>"; };
 		8F87553520646267002D9BF8 /* harfbuzz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = harfbuzz.a; path = Libraries/harfbuzz/armv7_arm64/harfbuzz.a; sourceTree = "<group>"; };
+		8F8F4C3E22B2C53800A82C59 /* mustang_wheel.glb */ = {isa = PBXFileReference; lastKnownFileType = file; name = mustang_wheel.glb; path = ViroSample/mustang_wheel.glb; sourceTree = "<group>"; };
+		8F8F4C4022B2FAD100A82C59 /* roughness_metalness.gltf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = roughness_metalness.gltf; path = ViroSample/roughness_metalness.gltf; sourceTree = "<group>"; };
+		8F8F4C4222B3EB4700A82C59 /* roughness_metalness.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = roughness_metalness.bin; path = ViroSample/roughness_metalness.bin; sourceTree = "<group>"; };
+		8F8F4C4322B3EB4700A82C59 /* roughness_metalness.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = roughness_metalness.jpg; path = ViroSample/roughness_metalness.jpg; sourceTree = "<group>"; };
+		8F8F4C4622B3EF2500A82C59 /* roughness_metalness_y.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = roughness_metalness_y.jpg; path = ViroSample/roughness_metalness_y.jpg; sourceTree = "<group>"; };
+		8F8F4C4822B3F56500A82C59 /* roughness_metalness_gradient.gltf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = roughness_metalness_gradient.gltf; path = ViroSample/roughness_metalness_gradient.gltf; sourceTree = "<group>"; };
+		8F8F4C4922B3F56500A82C59 /* roughness_metalness_g.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = roughness_metalness_g.jpg; path = ViroSample/roughness_metalness_g.jpg; sourceTree = "<group>"; };
 		8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROImageShaderProgram.cpp; sourceTree = "<group>"; };
 		8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImageShaderProgram.h; sourceTree = "<group>"; };
 		8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROImagePostProcess.h; sourceTree = "<group>"; };
@@ -3948,6 +3962,13 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F8F4C4922B3F56500A82C59 /* roughness_metalness_g.jpg */,
+				8F8F4C4822B3F56500A82C59 /* roughness_metalness_gradient.gltf */,
+				8F8F4C4622B3EF2500A82C59 /* roughness_metalness_y.jpg */,
+				8F8F4C4222B3EB4700A82C59 /* roughness_metalness.bin */,
+				8F8F4C4322B3EB4700A82C59 /* roughness_metalness.jpg */,
+				8F8F4C4022B2FAD100A82C59 /* roughness_metalness.gltf */,
+				8F8F4C3E22B2C53800A82C59 /* mustang_wheel.glb */,
 				A57ABAE721F2B73500C1033A /* cute_monster */,
 				A5C931EB21E028EE00564C2D /* ninja */,
 				8A53E89921E96BB6006125D0 /* app_logo_viro.png */,
@@ -5246,6 +5267,7 @@
 				8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */,
 				8F660AB31E931C6F006D063F /* 4096_night_lights.jpg in Resources */,
 				8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */,
+				8F8F4C4522B3EB4700A82C59 /* roughness_metalness.jpg in Resources */,
 				8A35CF1F206461D000ADD393 /* variety_magazine.jpg in Resources */,
 				8F1B4A211F64B61E00156809 /* portal_wood_frame_diffuse.png in Resources */,
 				8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */,
@@ -5291,6 +5313,7 @@
 				8F043723201A43B800D98D26 /* ibl_wooden_door.hdr in Resources */,
 				8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
+				8F8F4C4122B2FAD100A82C59 /* roughness_metalness.gltf in Resources */,
 				8F6E5B1F20DD335B00BEE45F /* cr_city.vrx in Resources */,
 				8AD76EB9211CD59C0045BD5F /* google_home.arobject in Resources */,
 				8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */,
@@ -5328,6 +5351,7 @@
 				A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */,
 				8F6E5B1720DD335B00BEE45F /* cr_ar_badges_Roughness.png in Resources */,
 				8FCED0571EBBCFCF00C19BCA /* Global_Illumination.png in Resources */,
+				8F8F4C4B22B3F56600A82C59 /* roughness_metalness_g.jpg in Resources */,
 				8F6E5B1A20DD335B00BEE45F /* cr_floorplan.vrx in Resources */,
 				8F6E5B1B20DD335B00BEE45F /* cr_cars.vrx in Resources */,
 				8F129FA31ECEC0A100341D83 /* texture.png in Resources */,
@@ -5344,6 +5368,7 @@
 				8FA9A24F207E83980022C55D /* Lamborginhi_glass_Metallic.png in Resources */,
 				8F68E3A5219B3050000A7C64 /* darkSmoke.png in Resources */,
 				8F0F13EE2193812E00E8810B /* san_giuseppe_bridge_1k.hdr in Resources */,
+				8F8F4C4722B3EF2600A82C59 /* roughness_metalness_y.jpg in Resources */,
 				A57CA8E020AE027400DE85A1 /* DuckCM.png in Resources */,
 				8F5EEE9920325C310059C9E7 /* object_pumpkin_diffuse.png in Resources */,
 				8F0F13E621934D6000E8810B /* bumblebee_Base_Color.png in Resources */,
@@ -5369,6 +5394,7 @@
 				8AD76EB8211CD59C0045BD5F /* alcohol_bottle.arobject in Resources */,
 				8F6E5B1520DD335B00BEE45F /* cr_cars_BaseColor.png in Resources */,
 				8F1B4A281F64B6E000156809 /* emoji_smile_specular.png in Resources */,
+				8F8F4C3F22B2C53800A82C59 /* mustang_wheel.glb in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
 				8F6E5B2220DD335B00BEE45F /* cr_logo.vrx in Resources */,
 				8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */,
@@ -5376,10 +5402,12 @@
 				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
 				8FEACED92012605F0082D18B /* pbr_sample_ao.png in Resources */,
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
+				8F8F4C4422B3EB4700A82C59 /* roughness_metalness.bin in Resources */,
 				8FA9A254207E83980022C55D /* Lamborginhi_glass_Roughness.png in Resources */,
 				8F5EEEA920329C9B0059C9E7 /* cupcake.obj in Resources */,
 				A5C931EC21E028EE00564C2D /* ninja in Resources */,
 				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
+				8F8F4C4A22B3F56600A82C59 /* roughness_metalness_gradient.gltf in Resources */,
 				A5BE9E1420E14F6800DB4E7A /* RiggedFigure.glb in Resources */,
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
