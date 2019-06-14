@@ -1019,7 +1019,7 @@ private:
      Recursively expand the given bounding box by this node's _worldBoundingBox.
      */
     void computeUmbrellaBounds();
-    void computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const;
+    bool computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const;
     
     /*
      Compute the transform for this node, taking into the account the parent's transform.

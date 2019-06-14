@@ -653,9 +653,10 @@ void VRONode::computeUmbrellaBounds() {
     }
 }
 
-void VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
+bool VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
     if (_geometry) {
         VROBoundingBox localBounds = _geometry->getBoundingBox().transform(_worldTransform);
+        
         if (!isSet) {
             *bounds = localBounds;
             isSet = true;
@@ -666,8 +667,11 @@ void VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
     }
     
     for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->computeUmbrellaBounds(bounds, isSet);
+        if (childNode->computeUmbrellaBounds(bounds, isSet)) {
+            isSet = true;
+        }
     }
+    return isSet;
 }
 
 int VRONode::countVisibleNodes() const {
