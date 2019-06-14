@@ -484,7 +484,9 @@ void VROShaderProgram::addStandardUniforms() {
     addUniform(VROShaderProperty::Float, 1, "material_shininess");
     
     addUniform(VROShaderProperty::Float, 1, "material_roughness");
+    addUniform(VROShaderProperty::Float, 1, "material_roughness_intensity");
     addUniform(VROShaderProperty::Float, 1, "material_metalness");
+    addUniform(VROShaderProperty::Float, 1, "material_metalness_intensity");
     addUniform(VROShaderProperty::Float, 1, "material_ao");
 }
 

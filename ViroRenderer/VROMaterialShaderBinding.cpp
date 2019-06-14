@@ -29,7 +29,9 @@ VROMaterialShaderBinding::VROMaterialShaderBinding(std::shared_ptr<VROShaderProg
     _alphaUniform(nullptr),
     _shininessUniform(nullptr),
     _roughnessUniform(nullptr),
+    _roughnessIntensityUniform(nullptr),
     _metalnessUniform(nullptr),
+    _metalnessIntensityUniform(nullptr),
     _aoUniform(nullptr),
     _normalMatrixUniform(nullptr),
     _modelMatrixUniform(nullptr),
@@ -54,7 +56,9 @@ void VROMaterialShaderBinding::loadUniforms() {
     _alphaUniform = program->getUniform("material_alpha");
     _shininessUniform = program->getUniform("material_shininess");
     _roughnessUniform = program->getUniform("material_roughness");
+    _roughnessIntensityUniform = program->getUniform("material_roughness_intensity");
     _metalnessUniform = program->getUniform("material_metalness");
+    _metalnessIntensityUniform = program->getUniform("material_metalness_intensity");
     _aoUniform = program->getUniform("material_ao");
     
     _normalMatrixUniform = program->getUniform("normal_matrix");
@@ -166,8 +170,14 @@ void VROMaterialShaderBinding::bindMaterialUniforms(const VROMaterial &material,
     if (_roughnessUniform != nullptr) {
         _roughnessUniform->setFloat(material.getRoughness().getColor().x);
     }
+    if (_roughnessIntensityUniform != nullptr) {
+        _roughnessIntensityUniform->setFloat(material.getRoughness().getIntensity());
+    }
     if (_metalnessUniform != nullptr) {
         _metalnessUniform->setFloat(material.getMetalness().getColor().x);
+    }
+    if (_metalnessIntensityUniform != nullptr) {
+        _metalnessIntensityUniform->setFloat(material.getMetalness().getIntensity());
     }
     if (_aoUniform != nullptr) {
         _aoUniform->setFloat(material.getAmbientOcclusion().getColor().x);

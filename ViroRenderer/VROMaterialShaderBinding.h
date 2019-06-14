@@ -88,6 +88,8 @@ private:
     VROUniform *_shininessUniform;
     VROUniform *_roughnessUniform;
     VROUniform *_metalnessUniform;
+    VROUniform *_roughnessIntensityUniform;
+    VROUniform *_metalnessIntensityUniform;
     VROUniform *_aoUniform;
     
     VROUniform *_normalMatrixUniform;

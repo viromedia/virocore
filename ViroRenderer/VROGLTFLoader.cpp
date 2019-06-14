@@ -1425,13 +1425,13 @@ std::shared_ptr<VROMaterial> VROGLTFLoader::getMaterial(const tinygltf::Model &g
     processPBR(gModel, vroMat, gMat);
 
     // Process Normal textures
-    std::shared_ptr<VROTexture> normalTexture = getTexture(gModel,gAdditionalMap, "normalTexture", false);
+    std::shared_ptr<VROTexture> normalTexture = getTexture(gModel, gAdditionalMap, "normalTexture", false);
     if (normalTexture != nullptr) {
         vroMat->getNormal().setTexture(normalTexture);
     }
 
     // Process Occlusion Textures
-    std::shared_ptr<VROTexture> occlusionTexture = getTexture(gModel,gAdditionalMap, "occlusionTexture", false);
+    std::shared_ptr<VROTexture> occlusionTexture = getTexture(gModel, gAdditionalMap, "occlusionTexture", false);
     if (occlusionTexture != nullptr) {
         vroMat->getAmbientOcclusion().setTexture(occlusionTexture);
     }
@@ -1477,7 +1477,7 @@ void VROGLTFLoader::processPBR(const tinygltf::Model &gModel, std::shared_ptr<VR
         metallicFactor = gPbrMap["metallicFactor"].Factor();
     }
     vroMat->getMetalness().setIntensity(metallicFactor);
-
+    
     // Process PBR roughness factor, defaults to fully rough.
     double roughnessFactor = 1;
     if (gPbrMap.find("roughnessFactor") != gPbrMap.end()) {
@@ -1491,6 +1491,10 @@ void VROGLTFLoader::processPBR(const tinygltf::Model &gModel, std::shared_ptr<VR
     if (metallicRoughnessTexture != nullptr) {
         vroMat->getMetalness().setTexture(metallicRoughnessTexture);
         vroMat->getRoughness().setTexture(metallicRoughnessTexture);
+    }
+    else {
+        vroMat->getMetalness().setColor({ (float) metallicFactor, 1.0, 1.0, 1.0 });
+        vroMat->getRoughness().setColor({ (float) roughnessFactor, 1.0, 1.0, 1.0 });
     }
 
     // Grab the base color texture in sRGB space.
