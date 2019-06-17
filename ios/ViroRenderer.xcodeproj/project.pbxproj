@@ -1128,7 +1128,7 @@
 		8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */; };
 		8FAE18C41EE79D470021C7BB /* VROARSessioniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C51EE79D6D0021C7BB /* VROARFrameiOS.cpp */; };
-		8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */; };
+		8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE18CB1EE79D880021C7BB /* VROARCameraiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */; };
 		8FAE18CC1EE79D880021C7BB /* VROARCameraiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */; };
 		8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
@@ -4851,6 +4851,7 @@
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
 				8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */,
+				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
 				8A291A2121DD9F0700BB3934 /* VROBodyTrackeriOS.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
 				8F2C7B1B21EFCB3400B8A154 /* VROVisionModel.h in Headers */,
@@ -4970,7 +4971,6 @@
 				8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */,
 				A523E7A920AB46AD00D24B42 /* VROGLTFLoader.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
-				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
 				8F8754BB20632DF7002D9BF8 /* VROTypefaceCollection.h in Headers */,
 				8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */,
 				8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */,
