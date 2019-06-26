@@ -30,6 +30,7 @@ static NSInteger const kVROViewErrorWriteToFile = 3;
 static NSInteger const kVROViewErrorAlreadyRunning = 4;
 static NSInteger const kVROViewErrorAlreadyStopped = 5;
 static NSInteger const kVROViewErrorWriteGifToFile = 6;
+static NSInteger const kVROViewErrorAudioFailure = 7;
 
 static NSString *const kVROViewTempMediaDirectory = @"viro_media";
 static NSString *const kVROViewAudioSuffix = @".m4a";

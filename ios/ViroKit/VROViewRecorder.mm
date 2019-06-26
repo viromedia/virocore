@@ -73,6 +73,8 @@
         _driver = driver;
         _addWatermark = false;
         _saveGif = false;
+        _videoPixelBuffer = NULL;
+        _gifDestination = NULL;
         _videoOutputDimensions = std::make_pair(-1, -1);
         _overwrittenAudioFilePath = nil;
         _gifFps = 10; // limit GIF fps to 10
@@ -86,7 +88,8 @@
     }
 }
 
-#pragma mark - Recording and Screen Capture
+#pragma mark - Start Recording
+
 // TODO: not a huge fan of the current implementation because
 //   1) code will attempt to ask for permission before recording, "delaying" the actual recording
 //   2) developer doesn't get any status updates other than complete failures (no delay notification)
@@ -116,18 +119,18 @@
         switch([[AVAudioSession sharedInstance] recordPermission]) {
                 // continue executing if we have permissions
             case AVAudioSessionRecordPermissionGranted:
-                NSLog(@"[Recording] Microphone permission granted.");
+                NSLog(@"[Recording] Microphone permission granted");
                 break;
                 // notify permission error and exit if we don't have permission
             case AVAudioSessionRecordPermissionDenied:
-                NSLog(@"[Recording] Microphone permission denied.");
+                NSLog(@"[Recording] Microphone permission denied");
                 if (_errorBlock) {
                     _errorBlock(kVROViewErrorNoPermissions);
                 }
                 return;
                 // if we dont have permissions, then attempt to get it
             case AVAudioSessionRecordPermissionUndetermined:
-                NSLog(@"[Recording] Microphone permission undetermined.");
+                NSLog(@"[Recording] Microphone permission undetermined");
                 [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
                     // just call this function again because we'll check for permission state again.
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -146,7 +149,7 @@
             case PHAuthorizationStatusDenied:
             case PHAuthorizationStatusRestricted:
                 if (_errorBlock) {
-                    NSLog(@"[Recording] Photo library permission denied.");
+                    NSLog(@"[Recording] Photo library permission denied");
                     _errorBlock(kVROViewErrorNoPermissions);
                 }
                 return;
@@ -165,10 +168,17 @@
     
     if (_useMicrophone) {
         _tempAudioFilePath = [self startAudioRecordingInternal:fileName];
+        if (_tempAudioFilePath) {
+           [self startVideoRecordingInternal:_tempVideoFilePath];
+        }
+        else {
+           NSLog(@"[Recording] Failed to start audio recording");
+           [self stopVideoRecordingWithError:kVROViewErrorAudioFailure];
+        }
     } else {
         _tempAudioFilePath = NULL;
+         [self startVideoRecordingInternal:_tempVideoFilePath];
     }
-    [self startVideoRecordingInternal:_tempVideoFilePath];
 }
 
 - (void)startVideoRecording:(NSString *)fileName
@@ -197,9 +207,11 @@
         _gifFileName = gifFile;
         _tempGifFilePath = [self checkAndGetTempFileURL:[gifFile stringByAppendingString:kVROViewGifSuffix]];
     }
-    [self startVideoRecording:fileName withWatermark:watermarkImage withFrame:watermarkFrame saveToCameraRoll:saveToCamera errorBlock:errorBlock];
     
+    [self startVideoRecording:fileName withWatermark:watermarkImage withFrame:watermarkFrame saveToCameraRoll:saveToCamera errorBlock:errorBlock];
 }
+
+#pragma mark - Stop Recording
 
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath   {
     _overwrittenAudioFilePath = audioPath;
@@ -266,6 +278,8 @@
     if (_tempAudioFilePath) [fileManager removeItemAtPath:[_tempAudioFilePath path] error:nil];
 }
 
+#pragma mark - Screenshot
+
 - (void)takeScreenshot:(NSString *)fileName saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     
@@ -282,7 +296,7 @@
             case PHAuthorizationStatusDenied:
             case PHAuthorizationStatusRestricted:
                 if (completionHandler) {
-                    NSLog(@"[Recording] Photo library permission denied.");
+                    NSLog(@"[Recording] Photo library permission denied");
                     completionHandler(NO, nil, nil, kVROViewErrorNoPermissions);
                 }
                 return;
@@ -304,6 +318,8 @@
     }
 }
 
+#pragma mark - Media Writing
+
 - (void)writeMediaToCameraRoll:(NSURL *)filePath
                        isPhoto:(BOOL)isPhoto
                        gifPath:(NSURL *)gifPath
@@ -314,10 +330,10 @@
         [[PHAssetCreationRequest creationRequestForAsset] addResourceWithType:type fileURL:filePath options:nil];
     } completionHandler:^(BOOL success, NSError *error) {
         if (success) {
-            NSLog(@"[Recording] saving media worked!");
+            NSLog(@"[Recording] Saving media successful!");
             completionHandler(YES, filePath, gifPath, kVROViewErrorNone);
         } else {
-            NSLog(@"[Recording] saving media failed w/ error: %@", error.localizedDescription);
+            NSLog(@"[Recording] Saving media failed with error: %@", error.localizedDescription);
             completionHandler(NO, filePath, gifPath, kVROViewErrorWriteToFile);
         }
     }];
@@ -334,7 +350,7 @@
         // Ensure the provided audio file path exists.
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if (![fileManager fileExistsAtPath:[audioPath path]] || ![fileManager fileExistsAtPath:[videoPath path]]) {
-            NSLog(@"[Recording] Audio/Video merge failed because required audio file does not exist.");
+            NSLog(@"[Recording] Audio/Video merge failed because required audio file does not exist");
             handler(NO);
             return;
         }
@@ -342,7 +358,7 @@
         // And that it is playable.
         audioAsset = [[AVURLAsset alloc] initWithURL:audioPath options:nil];
         if (![audioAsset isPlayable]) {
-            NSLog(@"[Recording] Audio/Video merge failed because audio file is not playable.");
+            NSLog(@"[Recording] Audio/Video merge failed because audio file is not playable");
             handler(NO);
             return;
         }
@@ -351,7 +367,7 @@
     // Ensure that our recorded temp video is in a valid state.
     AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:videoPath options:nil];
     if (![videoAsset isPlayable]) {
-        NSLog(@"[Recording] Audio/Video merge failed because the video file is not playable.");
+        NSLog(@"[Recording] Audio/Video merge failed because the video file is not playable");
         handler(NO);
         return;
     }
@@ -428,11 +444,11 @@
 
     if ([_audioRecorder prepareToRecord]) {
         [_audioRecorder record];
+        return url;
     } else {
-        NSLog(@"[Recording] preparing to record audio failed with error: %@", [error localizedDescription]);
-        [self stopVideoRecordingWithError:kVROViewErrorUnknown];
+        NSLog(@"[Recording] Preparing to record audio failed with error: %@", [error localizedDescription]);
+        return nil;
     }
-    return url;
 }
 
 - (void)stopAudioRecordingInternal {
@@ -446,7 +462,8 @@
     _useMicrophone = microphone;
 }
 
-#pragma mark - Video Recording
+#pragma mark - Video Recording Internal
+
 - (void)setRecorderWidth:(int)width
                   height:(int)height {
     _videoOutputDimensions = std::make_pair(width, height);
@@ -672,43 +689,63 @@
 }
 
 - (void)stopVideoRecordingInternal:(VROViewWriteMediaFinishBlock)completionHandler {
-    // stop the loop that grabs each frame.
-    [_videoLoopTimer invalidate];
+    // Note we have null checks throughout this function to account for the possibility
+    // of this being called before startVideoRecordingInternal.
+    
+    
+    // top the loop that grabs each frame
+    if (_videoLoopTimer != NULL) {
+        [_videoLoopTimer invalidate];
+    }
     
     // Turn off RTT in the choreographer
     _renderer->getChoreographer()->setRenderToTextureDelegate(nullptr);
     
     // Finalize the GIF
     bool gifSaveSuccess = true;
-    if (_saveGif) {
+    if (_saveGif && _gifDestination != NULL) {
         gifSaveSuccess = CGImageDestinationFinalize(_gifDestination);
         if (_gifDestination) {
             CFRelease(_gifDestination);
+            _gifDestination = NULL;
         }
     }
     
-    [_videoWriterInput markAsFinished];
-    if (_videoWriter.status == AVAssetWriterStatusWriting) {
-        // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
-        [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
-        [_videoWriter finishWritingWithCompletionHandler:^(void) {
-            if (_videoWriter.status == AVAssetWriterStatusCompleted && gifSaveSuccess) {
-                completionHandler(YES, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorNone);
-            } else {
-                if (gifSaveSuccess) {
-                    NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
-                    completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteToFile);
+    if (_videoWriterInput != NULL) {
+        [_videoWriterInput markAsFinished];
+        if (_videoWriter.status == AVAssetWriterStatusWriting) {
+            // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
+            [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
+            [_videoWriter finishWritingWithCompletionHandler:^(void) {
+                if (_videoWriter.status == AVAssetWriterStatusCompleted && gifSaveSuccess) {
+                    if (completionHandler) {
+                        completionHandler(YES, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorNone);
+                    }
                 } else {
-                    NSLog(@"[Recording] Finalizing GIF failed");
-                    completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteGifToFile);
+                    if (gifSaveSuccess) {
+                        NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
+                        if (completionHandler) {
+                            completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteToFile);
+                        }
+                    } else {
+                        NSLog(@"[Recording] Finalizing GIF failed");
+                        if (completionHandler) {
+                            completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteGifToFile);
+                        }
+                    }
                 }
-            }
-        }];
-    } else {
+            }];
+        } else if (completionHandler) {
+            completionHandler(NO, nil, nil, kVROViewErrorAlreadyStopped);
+        }
+    } else if (completionHandler) {
         completionHandler(NO, nil, nil, kVROViewErrorAlreadyStopped);
     }
 
-    CVPixelBufferRelease(_videoPixelBuffer);
+    if (_videoPixelBuffer != NULL) {
+        CVPixelBufferRelease(_videoPixelBuffer);
+        _videoPixelBuffer = NULL;
+    }
 }
 
 + (CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image {

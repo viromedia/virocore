@@ -16,7 +16,7 @@ enum class VROTestSceneType {
 };
 
 static const VROTestSceneType kTestType = VROTestSceneType::AR;
-static const VRORendererTestType kRendererTest = VRORendererTestType::BodyMesher;
+static const VRORendererTestType kRendererTest = VRORendererTestType::FBX;
 static const bool kSceneCheckeredBackground = NO;
 
 @interface VROTestViewController ()
@@ -62,7 +62,7 @@ static const bool kSceneCheckeredBackground = NO;
             session->setNumberOfTrackedImages(1);
         }
         
-        //[self testVideoRecording];
+        [self testVideoRecording];
         //[self testScreenshot];
     }
     else {
@@ -102,17 +102,20 @@ static const bool kSceneCheckeredBackground = NO;
     VROViewAR *arView = (VROViewAR *)self.view;
     int rand = arc4random_uniform(1000);
     
-    NSLog(@"[VROTestViewController] started video recording");
-    
     NSString *filename = [NSString stringWithFormat:@"testvideo%d", rand];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"[Recording] Starting video recording...");
+
         // test record with a watermark
         UIImage *image = [UIImage imageNamed:@"app_logo_viro.png"];
-        [arView startVideoRecording:filename withWatermark:image withFrame:CGRectMake(200, 500, 150, 100) saveToCameraRoll:YES errorBlock:nil];
+        [arView startVideoRecording:filename withWatermark:image withFrame:CGRectMake(200, 500, 150, 100) saveToCameraRoll:YES errorBlock:^(NSInteger errorCode) {
+            NSLog(@"[Recording] Failed video recording with error code %d", (int) errorCode);
+        }];
     });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        NSLog(@"[VROTestViewController] stopped video recording");
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        NSLog(@"[Recording] Stopping video recording...");
         [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSURL *gifUrl, NSInteger errorCode) {
+            NSLog(@"[Recording] Finished video recording with success %d, error code %d", success, (int) errorCode);
             if (url) {
                 [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
             }
@@ -120,12 +123,15 @@ static const bool kSceneCheckeredBackground = NO;
     });
     
     NSString *filename2 = [NSString stringWithFormat:@"testvideo%d", rand];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"[Recording] Starting video recording...");
+
         [arView startVideoRecording:filename2 saveToCameraRoll:YES errorBlock:nil];
     });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        NSLog(@"[VROTestViewController] stopped video recording");
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 25 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        NSLog(@"[Recording] Stopping video recording...");
         [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSURL *gifUrl, NSInteger errorCode) {
+            NSLog(@"[Recording] Finished video recording with success %d, error code %d", success, (int) errorCode);
             if (url) {
                 [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
             }
