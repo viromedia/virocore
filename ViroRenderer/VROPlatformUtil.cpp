@@ -259,7 +259,7 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
 
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
-    UIImage *image = [UIImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
+    UIImage *image = [UIImage imageWithContentsOfFile:[NSString stringWithUTF8String:filename.c_str()]];
     return std::make_shared<VROImageiOS>(image, format);
 }
 
