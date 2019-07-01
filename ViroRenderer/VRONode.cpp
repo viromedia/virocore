@@ -619,7 +619,22 @@ void VRONode::updateVisibility(const VRORenderContext &context) {
     
     computeUmbrellaBounds();
     
-    VROFrustumResult result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
+    VROFrustumResult result = VROFrustumResult::Outside;
+    
+    // First check for an edge case: if the bounds of the object _enclose_ the
+    // camera. This is common for mdoels or effects that surround the user, and
+    // our usual frustum test fails to handle this correctly.
+    if (_umbrellaBoundingBox.containsPoint(context.getCamera().getPosition())) {
+        result = VROFrustumResult::Intersects;
+    }
+    // Otherwise do the normal frustum test.
+    else {
+        result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
+    }
+    
+    // Process the results of the frustum test, iterating down the tree if there
+    // was an intersection, or else wholesale including or excluding all child nodes
+    // in the other two cases.
     if (result == VROFrustumResult::Inside || !kEnableVisibilityFrustumTest) {
         setVisibilityRecursive(true);
     }
@@ -663,7 +678,6 @@ bool VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
         } else {
             bounds->unionDestructive(localBounds);
         }
-        
     }
     
     for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
