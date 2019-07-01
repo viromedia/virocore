@@ -670,7 +670,12 @@ void VRONode::computeUmbrellaBounds() {
 
 bool VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
     if (_geometry) {
-        VROBoundingBox localBounds = _geometry->getBoundingBox().transform(_worldTransform);
+        VROBoundingBox localBounds;
+        if (_geometry->getInstancedUBO() != nullptr) {
+            localBounds = _geometry->getInstancedUBO()->getInstancedBoundingBox();
+        } else {
+            localBounds = _geometry->getBoundingBox().transform(_worldTransform);
+        }
         
         if (!isSet) {
             *bounds = localBounds;

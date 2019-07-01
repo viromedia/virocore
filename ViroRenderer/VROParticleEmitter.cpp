@@ -269,8 +269,8 @@ void VROParticleEmitter::updateParticles(double currentTime,
     }
 
     VROBoundingBox box =  VROBoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
-    if (_particles.size() == 0){
-        box = VROBoundingBox(0,0,0,0,0,0);
+    if (_particles.size() == 0) {
+        box = VROBoundingBox(0, 0, 0, 0, 0, 0);
     }
     std::shared_ptr<VROInstancedUBO> instancedUBO = _particleGeometry->getInstancedUBO();
     std::static_pointer_cast<VROParticleUBO>(instancedUBO)->update(_particles, box);

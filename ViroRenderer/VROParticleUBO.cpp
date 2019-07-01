@@ -140,6 +140,6 @@ void VROParticleUBO::update(std::vector<VROParticle> &particles, VROBoundingBox 
     _lastKnownBoundingBox = particleBox;
 }
 
-VROBoundingBox VROParticleUBO::getInstancedBoundingBox(){
+VROBoundingBox VROParticleUBO::getInstancedBoundingBox() {
     return _lastKnownBoundingBox;
 }
