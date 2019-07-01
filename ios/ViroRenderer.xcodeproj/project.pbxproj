@@ -341,7 +341,7 @@
 		13B67369212229B20040FB72 /* KeenProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 13F6319A2065BF8200A74EFC /* KeenProperties.h */; };
 		13B6736A212229B20040FB72 /* VROViewGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE66D1CD29BF900A4C297 /* VROViewGVR.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B6736B212229B20040FB72 /* VROAllocationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B6736C212229B20040FB72 /* VROARFrameInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */; };
+		13B6736C212229B20040FB72 /* VROARFrameInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B6736D212229B20040FB72 /* VROApiKeyValidatorDynamo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F391DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h */; };
 		13B6736E212229B20040FB72 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B6736F212229B20040FB72 /* VROThreadRestricted.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F705DEF1E8D5337008BE8F8 /* VROThreadRestricted.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -874,7 +874,7 @@
 		8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */; };
 		8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A71EE83DD3008917CB /* VROARCameraInertial.h */; };
 		8F3488B01EE83DD3008917CB /* VROARFrameInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A81EE83DD3008917CB /* VROARFrameInertial.cpp */; };
-		8F3488B11EE83DD3008917CB /* VROARFrameInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */; };
+		8F3488B11EE83DD3008917CB /* VROARFrameInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */; };
 		8F3488B31EE83DD3008917CB /* VROARSessionInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */; };
 		8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
