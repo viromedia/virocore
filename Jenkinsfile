@@ -1,8 +1,5 @@
 pipeline {
   agent any
-  triggers {
-    cron('0 6 * * *')
-  }
   stages {
     stage('initial_setup') {
       steps {
