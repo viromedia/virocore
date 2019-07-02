@@ -518,7 +518,11 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     _worldTransform = parentTransform * _worldTransform;
     _worldPosition = { _worldTransform[12], _worldTransform[13], _worldTransform[14] };
     if (_geometry) {
-        _worldBoundingBox = _geometry->getBoundingBox().transform(_worldTransform);
+        if (_geometry->getInstancedUBO() != nullptr) {
+            _worldBoundingBox = _geometry->getInstancedUBO()->getInstancedBoundingBox();
+        } else {
+            _worldBoundingBox = _geometry->getBoundingBox().transform(_worldTransform);
+        }
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
         _worldBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
@@ -658,11 +662,11 @@ void VRONode::setVisibilityRecursive(bool visible) {
 }
 
 void VRONode::computeUmbrellaBounds() {
-    computeUmbrellaBounds(&_umbrellaBoundingBox, false);
+    bool isSet = computeUmbrellaBounds(&_umbrellaBoundingBox, false);
     
     // If the bounds were empty (e.g. no geometry all the way down), then set the
     // bounds to the world position.
-    if (_umbrellaBoundingBox.getExtents().isZero()) {
+    if (!isSet) {
         _umbrellaBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
                                  _worldPosition.y, _worldPosition.z, _worldPosition.z);
     }
@@ -1143,21 +1147,42 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
     _lastWorldTransform = transform;
     
     if (_geometry) {
-        _lastWorldBoundingBox = _geometry->getLastBoundingBox().transform(transform);
+        if (_geometry->getInstancedUBO() != nullptr) {
+            _lastWorldBoundingBox = _geometry->getInstancedUBO()->getInstancedBoundingBox();
+        } else {
+            _lastWorldBoundingBox = _geometry->getBoundingBox().transform(transform);
+        }
+        _hasWorldBoundingBox = true;
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
         _lastWorldBoundingBox = { worldPosition.x, worldPosition.x,
                                   worldPosition.y, worldPosition.y,
                                   worldPosition.z, worldPosition.z };
+        _hasWorldBoundingBox = false;
     }
+}
 
+bool VRONode::computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parentNodeBeingUpdated, bool isSet) {
+    if (_hasWorldBoundingBox) {
+        if (!isSet) {
+            parentNodeBeingUpdated->_lastUmbrellaBoundingBox.store(_lastWorldBoundingBox);
+            isSet = true;
+        } else {
+            VROBoundingBox current = parentNodeBeingUpdated->_lastUmbrellaBoundingBox;
+            current.unionDestructive(_lastWorldBoundingBox);
+            parentNodeBeingUpdated->_lastUmbrellaBoundingBox.store(current);
+        }
+    }
+    return isSet;
+}
+
+void VRONode::setEmptyAtomicUmbrellaBounds() {
+    VROVector3f lastWorldPosition = _lastWorldPosition;
     
-    // TODO VIRO-3701 Currently it is unsafe to compute the umbrella bounding box because the
-    //                subnodes cannot be accessed
-    //VROVector3f computedPosition = _lastWorldPosition;
-    //VROBoundingBox umbrellaBoundingBox(computedPosition.x, computedPosition.x, computedPosition.y,
-    //                                  computedPosition.y, computedPosition.z, computedPosition.z);
-    //computeUmbrellaBounds(&umbrellaBoundingBox);
+    // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
+    _lastUmbrellaBoundingBox = { lastWorldPosition.x, lastWorldPosition.x,
+                                 lastWorldPosition.y, lastWorldPosition.y,
+                                 lastWorldPosition.z, lastWorldPosition.z };
 }
 
 #pragma mark - Sync Rendering Thread <> Application Thread

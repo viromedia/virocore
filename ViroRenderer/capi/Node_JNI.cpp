@@ -360,6 +360,22 @@ VRO_METHOD(void, nativeUpdateWorldTransforms)(VRO_ARGS
     }
 }
 
+VRO_METHOD(VRO_BOOL, nativeUpdateAtomicUmbrellaBounds)(VRO_ARGS
+                                                       VRO_REF(VRONode) node_bounds_to_update_j,
+                                                       VRO_REF(VRONode) node_j,
+                                                       VRO_BOOL isSet) {
+    std::shared_ptr<VRONode> nodeBoundsToUpdate = VRO_REF_GET(VRONode, node_bounds_to_update_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+
+    return node->computeAtomicUmbrellaBounds(nodeBoundsToUpdate, isSet);
+}
+
+VRO_METHOD(void, nativeSetEmptyAtomicUmbrellaBounds)(VRO_ARGS
+                                                     VRO_REF(VRONode) node_j) {
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+    node->setEmptyAtomicUmbrellaBounds();
+}
+
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetPosition)(VRO_ARGS
                                                VRO_REF(VRONode) node_j) {
 

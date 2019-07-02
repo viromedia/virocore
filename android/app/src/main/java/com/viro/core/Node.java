@@ -377,6 +377,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         mChildren.add(childNode);
         childNode.mParent = new WeakReference<Node>(this);
         nativeAddChildNode(mNativeRef, childNode.mNativeRef);
+
+        updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -476,6 +479,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void setPosition(Vector position) {
         nativeSetPosition(mNativeRef, position.x, position.y, position.z);
         updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -505,6 +509,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void setRotation(Vector rotation) {
         nativeSetRotationEuler(mNativeRef, rotation.x, rotation.y, rotation.z);
         updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -515,6 +520,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void setRotation(Quaternion rotation) {
         nativeSetRotationQuaternion(mNativeRef, rotation.x, rotation.y, rotation.z, rotation.w);
         updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -567,6 +573,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     public void setScale(Vector scale) {
         nativeSetScale(mNativeRef, scale.x, scale.y, scale.z);
         updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -596,6 +603,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
         mRotationPivot = pivot;
         nativeSetRotationPivot(mNativeRef, pivot.x, pivot.y, pivot.z);
         updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -628,6 +636,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
         mScalePivot = pivot;
         nativeSetScalePivot(mNativeRef, pivot.x, pivot.y, pivot.z);
         updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
@@ -1725,6 +1734,8 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetRotationPivot(long nodeReference, float x, float y, float z);
     private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
     private native void nativeUpdateWorldTransforms(long nodeReference, long parentReference);
+    private native boolean nativeUpdateAtomicUmbrellaBounds(long nodeToUpdateRef, long nodeRef, boolean isSet);
+    private native void nativeSetEmptyAtomicUmbrellaBounds(long nodeRef);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetRenderingOrder(long nodeReference, int renderingOrder);
@@ -1832,8 +1843,12 @@ public class Node implements EventDelegate.EventDelegateCallback {
         return new NodeBuilder<>();
     }
 
+// +---------------------------------------------------------------------------+
+// | Atomic property updates
+// +---------------------------------------------------------------------------+
+
     /**
-     * Recursively updates the world tranform of this node and all of its children. Invoked any
+     * Recursively updates the world transform of this node and all of its children. Invoked any
      * time position, scale, or rotation are changed. Traverses the scene graph on the UI thread,
      * invoking atomic operations on the native nodes.
      */
@@ -1849,6 +1864,50 @@ public class Node implements EventDelegate.EventDelegateCallback {
         for (Node child : mChildren) {
             child.updateWorldTransforms();
         }
+    }
+
+    /**
+     * After all world transforms are finished updating, update the umbrella bounding
+     * boxes of all nodes, starting at the top of the tree.
+     */
+    private void updateAllUmbrellaBounds() {
+        PortalScene root = getParentPortalScene();
+        if (root == null) {
+            this.updateUmbrellaBounds();
+        } else {
+            root.updateUmbrellaBounds();
+        }
+    }
+
+    /**
+     * Update the umbrella bounding box of this node and all of its children.
+     */
+    protected void updateUmbrellaBounds() {
+        boolean isSet = updateUmbrellaBounds(this, false);
+
+        // If the bounds were empty (e.g. no geometry all the way down), then set the
+        // bounds to the world position.
+        if (!isSet) {
+            nativeSetEmptyAtomicUmbrellaBounds(mNativeRef);
+        }
+
+        for (Node child : mChildren) {
+            child.updateUmbrellaBounds();
+        }
+    }
+
+    /**
+     * Updates the given node's umbrella bounds with the bounds of this node, recursing
+     * down to all of this node's children.
+     */
+    private boolean updateUmbrellaBounds(final Node nodeBeingUpdated, boolean isSet) {
+        isSet = nativeUpdateAtomicUmbrellaBounds(nodeBeingUpdated.mNativeRef, mNativeRef, isSet);
+        for (Node child : mChildren) {
+            if (child.updateUmbrellaBounds(nodeBeingUpdated, isSet)) {
+                isSet = true;
+            }
+        }
+        return isSet;
     }
 
 // +---------------------------------------------------------------------------+

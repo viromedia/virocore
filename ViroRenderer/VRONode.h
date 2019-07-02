@@ -345,7 +345,7 @@ public:
     
 #pragma mark - Application Thread Properties
 
-    // Viro platforms in general properties on the main thread and dispatch those setters
+    // Viro platforms (e.g. ViroCore) in general set properties on the main thread and dispatch those setters
     // to the rendering thread. This maintains thread-safety (and speed) because we don't
     // interfere with the ongoing render cycle when setting variables. However, it's common that
     // the user wants to set something on the application thread and then immediately invoke some
@@ -378,14 +378,28 @@ public:
     /*
      Must be invoked for this node and its children (all the way down the scene graph) whenever
      atomic position, scale, scale pivot, rotation, or rotation pivot are set. Computes _lastWorldTransform,
-     _lastWorldPosition, _lastWorldRotation, _lastWorldBoundingBox, and _lastUmbrellaBoundingBox,
-     on this node only. Requires the latest data from this node's parent to make the computations.
+     _lastWorldPosition, _lastWorldRotation, and _lastWorldBoundingBox, on this node only. Requires the
+     latest data from this node's parent to make the computations.
 
      This does not recurse down the scene graph on its own because we do not have access to an
      application thread copy of the scene graph. ViroCore does have such a copy in Java-land, so it
      handles the recursive invocation of this method.
      */
     void computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f parentRotation);
+    
+    /*
+     Helper function used to update the _lastUmbrellaBoundingBox of the given node with the world
+     bounds of _this_ node; that is, the bounds of this node will be union-ed with the bounds of the
+     given node. Note that if isSet is false, then instead of performing a union, we will directly set
+     the bounds of the parentNodeBeingUpdated to this node's world bounds. Return true if the
+     parentNodeBeingUpdated bounds have been set after this call.
+     */
+    bool computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parentNodeBeingUpdated, bool isSet);
+    
+    /*
+     Set the _lastUmbrellaBoundingBox to an empty box around the node's position.
+     */
+    void setEmptyAtomicUmbrellaBounds();
     
     /*
      Recursively sync the application thread properties with the latest values from the rendering
@@ -887,6 +901,12 @@ private:
     VROAtomic<VROMatrix4f> _lastWorldRotation;
     VROAtomic<VROBoundingBox> _lastWorldBoundingBox;
     VROAtomic<VROBoundingBox> _lastUmbrellaBoundingBox;
+    
+    /*
+     Temporary variable used while computing the umbrella bounding box on the application
+     thread.
+     */
+    VROAtomic<bool> _hasWorldBoundingBox;
     
     /*
      Directly-set application thread properties.
