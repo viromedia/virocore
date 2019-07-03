@@ -20,9 +20,9 @@ public class GLSurfaceViewQueue implements RenderCommandQueue {
 
     @Override
     public void queueEvent(Runnable r) {
-        if (mSurfaceView != null){
+        if (mSurfaceView != null) {
             mSurfaceView.queueEvent(r);
-        } else if (mTextureView != null){
+        } else if (mTextureView != null) {
             mTextureView.queueEvent(r);
         }
     }

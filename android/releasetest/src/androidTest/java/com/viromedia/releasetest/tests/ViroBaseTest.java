@@ -321,7 +321,6 @@ public abstract class ViroBaseTest {
             delegateJni.setEventDelegateCallback(callbackTwo);
         }
 
-
         return delegateJni;
     }
 

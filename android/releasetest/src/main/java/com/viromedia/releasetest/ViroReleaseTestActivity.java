@@ -48,7 +48,6 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        System.out.println("onCreate called");
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
             if (BuildConfig.VR_ENABLED == 1) {

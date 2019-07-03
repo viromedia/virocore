@@ -148,7 +148,6 @@ public class ViroViewScene extends ViroView {
             if (view == null) {
                 return;
             }
-
             for (FrameListener listener : view.mFrameListeners) {
                 listener.onDrawFrame();
             }

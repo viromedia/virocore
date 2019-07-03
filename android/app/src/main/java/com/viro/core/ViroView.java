@@ -173,7 +173,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
         mSavedOrientation = activity.getRequestedOrientation();
         mSystemVisibilityListener = new SystemVisibilityListenerImpl(this);
-       activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
+        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
 
         final Context activityContext = getContext();
         mKeyValidator = new KeyValidator(activityContext);
