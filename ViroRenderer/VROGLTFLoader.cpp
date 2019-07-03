@@ -35,7 +35,7 @@
 #include "VROMorpher.h"
 
 static std::string kVROGLTFInputSamplerKey = "timeInput";
-std::map<std::string, std::shared_ptr<VROData>> VROGLTFLoader::_dataCache;
+std::map<std::string, std::shared_ptr<VROVertexBuffer>> VROGLTFLoader::_dataCache;
 std::map<std::string, std::shared_ptr<VROTexture>> VROGLTFLoader::_textureCache;
 std::map<int, std::shared_ptr<VROSkeleton>> VROGLTFLoader::_skinIndexToSkeleton;
 std::map<int, std::map<int,int>> VROGLTFLoader::_skinIndexToJointNodeIndex;
@@ -85,7 +85,7 @@ VROGeometrySourceSemantic VROGLTFLoader::getGeometryAttribute(std::string name) 
     } else if (VROStringUtil::strcmpinsensitive(name, "WEIGHTS_0")) {
         return VROGeometrySourceSemantic::BoneWeights;
     } else {
-        pwarn("Atempted to parse an unknown geometry attribute: %s", name.c_str());
+        pwarn("Attempted to parse an unknown geometry attribute: %s", name.c_str());
     }
     return VROGeometrySourceSemantic::Invalid;
 }
@@ -287,7 +287,7 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                         bool success = true;
                         std::shared_ptr<VRONode> gltfRootNode = std::make_shared<VRONode>();
                         for (const tinygltf::Scene gScene : model.scenes) {
-                            if (!processScene(model, gltfRootNode, gScene)) {
+                            if (!processScene(model, gltfRootNode, gScene, driver)) {
                                 success = false;
                                 break;
                             }
@@ -879,14 +879,15 @@ void VROGLTFLoader::injectGLTF(std::shared_ptr<VRONode> gltfNode,
     }
 }
 
-bool VROGLTFLoader::processScene(const tinygltf::Model &gModel, std::shared_ptr<VRONode> rootNode, const tinygltf::Scene &gScene) {
+bool VROGLTFLoader::processScene(const tinygltf::Model &gModel, std::shared_ptr<VRONode> rootNode, const tinygltf::Scene &gScene,
+                                 std::shared_ptr<VRODriver> driver) {
     std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
     sceneNode->setName(gScene.name);
 
     std::vector<int> gNodeIndexes = gScene.nodes;
     for (int gNodeIndex : gNodeIndexes) {
         // Fail fast if we have failed to process a node in the scene.
-        if (!processNode(gModel, sceneNode, gNodeIndex)) {
+        if (!processNode(gModel, sceneNode, gNodeIndex, driver)) {
             return false;
         }
     }
@@ -895,7 +896,8 @@ bool VROGLTFLoader::processScene(const tinygltf::Model &gModel, std::shared_ptr<
     return true;
 }
 
-bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<VRONode> &parentNode, int gNodeIndex) {
+bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<VRONode> &parentNode, int gNodeIndex,
+                                std::shared_ptr<VRODriver> driver) {
     tinygltf::Node gNode = gModel.nodes[gNodeIndex];
 
     // Grab the main transformations for this node.
@@ -929,7 +931,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     // Process the Geometry for this node, if any.
     // Fail fast if we have failed to process the node's mesh.
     int meshIndex = gNode.mesh;
-    if (meshIndex >= 0 && !processMesh(gModel, node, gModel.meshes[meshIndex])) {
+    if (meshIndex >= 0 && !processMesh(gModel, node, gModel.meshes[meshIndex], driver)) {
         return false;
     }
 
@@ -963,7 +965,7 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     std::vector<int> gNodeChildrenIndexes = gNode.children;
     for (int gNodeIndex : gNodeChildrenIndexes) {
         // Fail fast if we have failed to process a node in the scene.
-        if (!processNode(gModel, node, gNodeIndex)) {
+        if (!processNode(gModel, node, gNodeIndex, driver)) {
             return false;
         }
     }
@@ -1023,7 +1025,8 @@ bool VROGLTFLoader::processSkinnerInverseBindData(const tinygltf::Model &gModel,
     return true;
 }
 
-bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<VRONode> &rootNode, const tinygltf::Mesh &gMesh) {
+bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<VRONode> &rootNode, const tinygltf::Mesh &gMesh,
+                                std::shared_ptr<VRODriver> driver) {
     if (gMesh.primitives.size() <=0) {
         perr("GTLF requires mesh data to contain at least one primitive!");
         return false;
@@ -1041,7 +1044,7 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
 
         // Grab vertex indexing information needed for creating meshes.
         bool successVertex = processVertexElement(gModel, gPrimitive, elements);
-        bool successAttributes = processVertexAttributes(gModel, gPrimitive.attributes, sources, elements.size() - 1);
+        bool successAttributes = processVertexAttributes(gModel, gPrimitive.attributes, sources, elements.size() - 1, driver);
         processTangent(elements, sources, elements.size() - 1);
         
         if (!successVertex || !successAttributes) {
@@ -1058,7 +1061,7 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
         }
 
         // Process Morph targets for each primitive.
-        if (!processMorphTargets(gModel, gMesh, gPrimitive, material, sources, elements, morphers)) {
+        if (!processMorphTargets(gModel, gMesh, gPrimitive, material, sources, elements, morphers, driver)) {
             pwarn("Failed to process morph target for mesh %s.", gMesh.name.c_str());
             return false;
         }
@@ -1075,6 +1078,7 @@ bool VROGLTFLoader::processMesh(const tinygltf::Model &gModel, std::shared_ptr<V
 
     // Finally construct our geometry with the processed vertex and attribute data.
     std::shared_ptr<VROGeometry> geometry = std::make_shared<VROGeometry>(sources, elements);
+    
     geometry->setName(gMesh.name);
     rootNode->setGeometry(geometry);
     geometry->setMaterials(materials);
@@ -1115,7 +1119,7 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
 
     // Else, to calculate tangent, we MUST have positional, texcoord and normal data.
     if (normal == nullptr || pos == nullptr || texcoord == nullptr) {
-        pwarn("Unable to missing generate tangents for this model.");
+        pwarn("Unable to generate missing tangents for this model");
         return;
     }
 
@@ -1347,7 +1351,8 @@ bool VROGLTFLoader::processVertexElement(const tinygltf::Model &gModel,
 bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
                                             std::map<std::string, int> &gAttributes,
                                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                                            size_t geoElementIndex) {
+                                            size_t geoElementIndex,
+                                            std::shared_ptr<VRODriver> driver) {
     if (gAttributes.size() <= 0) {
         return false;
     }
@@ -1366,104 +1371,39 @@ bool VROGLTFLoader::processVertexAttributes(const tinygltf::Model &gModel,
         // Grab the accessor that maps to a bufferView through which to access the data buffer
         // representing this attribute's raw data.
         const tinygltf::Accessor &gAttributeAccesor = gModel.accessors[attributeAccessorIndex];
-        GLTFTypeComponent gTypeComponent;
         GLTFType gType;
+        GLTFTypeComponent gTypeComponent;
         if (!getComponentType(gAttributeAccesor, gTypeComponent) || !getComponent(gAttributeAccesor, gType)) {
             return false;
         }
-
+        
         // Determine the offsets and data sizes representing the 'window of data' for this attribute in the buffer
         const tinygltf::BufferView gIndiceBufferView = gModel.bufferViews[gAttributeAccesor.bufferView];
-        bool isFloat = gTypeComponent == GLTFTypeComponent::Float;
-        size_t bufferViewOffset = gIndiceBufferView.byteOffset;
-        size_t bufferViewTotalSize = gIndiceBufferView.byteLength;
-        size_t attributeAccessorOffset = gAttributeAccesor.byteOffset;
-
-        // Calculate the byte stride size if none is provided from the BufferView.
-        size_t bufferViewStride = gIndiceBufferView.byteStride;
-        if (bufferViewStride == 0) {
-            int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
-            bufferViewStride = sizeOfSingleElement;
-        }
-
+        
         std::shared_ptr<VROGeometrySource> source;
+
         if (attributeType != VROGeometrySourceSemantic::BoneWeights) {
+            size_t bufferViewOffset = gIndiceBufferView.byteOffset;
+            size_t bufferViewTotalSize = gIndiceBufferView.byteLength;
+            
             // Process and cache the attribute data to be used by the VROGeometrySource associated with
             // this attribute. If we've already been processed (cached) it before, simply grab it.
             std::string key = VROStringUtil::toString(gAttributeAccesor.bufferView);
-            if (VROGLTFLoader::_dataCache.find(VROStringUtil::toString(gAttributeAccesor.bufferView)) == VROGLTFLoader::_dataCache.end()) {
+            std::shared_ptr<VROVertexBuffer> vbo;
+            
+            auto it = VROGLTFLoader::_dataCache.find(key);
+            if (it == VROGLTFLoader::_dataCache.end()) {
                 const tinygltf::Buffer &gbuffer = gModel.buffers[gIndiceBufferView.buffer];
-                void *rawData = (void*)gbuffer.data.data();
-                VROGLTFLoader::_dataCache[key] = std::make_shared<VROData>(rawData, bufferViewTotalSize, bufferViewOffset);
+                vbo = driver->newVertexBuffer(std::make_shared<VROData>((void *) gbuffer.data.data(), bufferViewTotalSize, bufferViewOffset));
+                VROGLTFLoader::_dataCache[key] = vbo;
+            } else {
+                vbo = it->second;
             }
-
-            // Finally, build the Geometry source.
-            int elementCount = (int) gAttributeAccesor.count;
-            std::shared_ptr<VROData> data = VROGLTFLoader::_dataCache[key];
-            source = std::make_shared<VROGeometrySource>(data,
-                                                         attributeType,
-                                                         elementCount,
-                                                         isFloat,
-                                                         getTypeSize(gType),
-                                                         getComponentTypeSize(gTypeComponent),
-                                                         attributeAccessorOffset,
-                                                         bufferViewStride);
+            source = buildGeometrySource(attributeType, gType, gTypeComponent, gAttributeAccesor, gIndiceBufferView, vbo);
+            
         } else {
-            // gLTF requires the manual normalization of weighted bone attributes. As such,
-            // we process them here before constructing our VROGeometrySource.
-            const tinygltf::Buffer &gbuffer = gModel.buffers[gIndiceBufferView.buffer];
-            VROByteBuffer buffer((char *) gbuffer.data.data() + bufferViewOffset, bufferViewTotalSize, false);
-
-            // Parse the gLTF buffers for the weight of each bone and normalize them.
-            // The normalized data is stored in dataOut.
-            int sizeOfSingleBoneWeight = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
-            float *dataOut = new float[sizeOfSingleBoneWeight * gAttributeAccesor.count]();
-            for (int elementIndex = 0; elementIndex < gAttributeAccesor.count; elementIndex++) {
-
-                // For the current element, cycle through each of its float or type component
-                // and convert them into a float through the math conversions required by gLTF.
-                buffer.setPosition(elementIndex * bufferViewStride);
-                std::vector<float> weight;
-                for (int componentCount = 0; componentCount < getTypeSize(gType); componentCount++) {
-                    if (gTypeComponent == GLTFTypeComponent::Float) {
-                        float floatData = buffer.readFloat();
-                        weight.push_back(floatData);
-                    } else if (gTypeComponent == GLTFTypeComponent::UnsignedByte) {
-                        unsigned uByteData = buffer.readUnsignedByte();
-                        float point = uByteData / 255.0;
-                        weight.push_back(point);
-                    } else if (gTypeComponent == GLTFTypeComponent::UnsignedShort) {
-                        unsigned short uShortData = buffer.readUnsignedShort();
-                        float point = uShortData / 65535.0;
-                        weight.push_back(point);
-                    } else {
-                        perr("Invalid weighted bone data provided for the 3D gLTF skinner.");
-                        return false;
-                    }
-                }
-
-                float totalWeight = weight[0] + weight[1] + weight[2] + weight[3];
-                VROVector4f normalizedWeight;
-                VROVector4f(weight[0], weight[1], weight[2], weight[3]).scale(1/totalWeight, &normalizedWeight);
-                dataOut[(elementIndex * 4)]     = normalizedWeight.x;
-                dataOut[(elementIndex * 4) + 1] = normalizedWeight.y;
-                dataOut[(elementIndex * 4) + 2] = normalizedWeight.z;
-                dataOut[(elementIndex * 4) + 3] = normalizedWeight.w;
-            }
-
-            // Finally create our geometry sources with the normalized data.
-            std::shared_ptr<VROData> indexData
-                    = std::make_shared<VROData>((void *) dataOut,
-                                                sizeOfSingleBoneWeight * gAttributeAccesor.count, VRODataOwnership::Move);
-
-            source = std::make_shared<VROGeometrySource>(indexData,
-                                                         attributeType,
-                                                         gAttributeAccesor.count,
-                                                         isFloat,
-                                                         getTypeSize(gType),
-                                                         getComponentTypeSize(gTypeComponent),
-                                                         0,
-                                                         sizeOfSingleBoneWeight);
+            const tinygltf::Buffer &gBuffer = gModel.buffers[gIndiceBufferView.buffer];
+            source = buildBoneWeightSource(gType, gTypeComponent, gAttributeAccesor, gIndiceBufferView, gBuffer);
         }
 
         // Because GLTF can have VROGeometryElements that corresponds to different sets of VROGeometrySources,
@@ -1483,7 +1423,8 @@ bool VROGLTFLoader::processMorphTargets(const tinygltf::Model &gModel,
                                         std::shared_ptr<VROMaterial> &mat,
                                         std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                         std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                                        std::map<int, std::shared_ptr<VROMorpher>> &morphers) {
+                                        std::map<int, std::shared_ptr<VROMorpher>> &morphers,
+                                        std::shared_ptr<VRODriver> driver) {
     // Return early if we have no morph data to process for this geometry.
     if (gPrimitive.targets.size() <= 0) {
         return true;
@@ -1513,7 +1454,7 @@ bool VROGLTFLoader::processMorphTargets(const tinygltf::Model &gModel,
     for (int targetIndex = 0; targetIndex < gPrimitive.targets.size(); targetIndex ++) {
         std::vector<std::shared_ptr<VROGeometrySource>> morphTargetSources;
         std::map<std::string, int> gAttributes = gPrimitive.targets[targetIndex];
-        if (!processVertexAttributes(gModel, gAttributes, morphTargetSources, elements.size() -1)) {
+        if (!processVertexAttributes(gModel, gAttributes, morphTargetSources, elements.size() -1, driver)) {
             pwarn("Invalid Attribute found for morph target!");
             return false;
         }
@@ -1565,6 +1506,105 @@ std::string VROGLTFLoader::getMorphTargetName(const tinygltf::Model &gModel,
     }
 
     return key;
+}
+
+std::shared_ptr<VROGeometrySource> VROGLTFLoader::buildGeometrySource(VROGeometrySourceSemantic attributeType,
+                                                                      GLTFType gType,
+                                                                      GLTFTypeComponent gTypeComponent,
+                                                                      const tinygltf::Accessor &gAttributeAccesor,
+                                                                      const tinygltf::BufferView &gIndiceBufferView,
+                                                                      std::shared_ptr<VROVertexBuffer> vbo) {
+    bool isFloat = gTypeComponent == GLTFTypeComponent::Float;
+    size_t attributeAccessorOffset = gAttributeAccesor.byteOffset;
+    
+    // Calculate the byte stride size if none is provided from the BufferView
+    size_t bufferViewStride = gIndiceBufferView.byteStride;
+    if (bufferViewStride == 0) {
+        int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
+        bufferViewStride = sizeOfSingleElement;
+    }
+    
+    // Build the GeometrySource
+    int elementCount = (int) gAttributeAccesor.count;
+    return std::make_shared<VROGeometrySource>(vbo,
+                                               attributeType,
+                                               elementCount,
+                                               isFloat,
+                                               getTypeSize(gType),
+                                               getComponentTypeSize(gTypeComponent),
+                                               attributeAccessorOffset,
+                                               bufferViewStride);
+}
+
+std::shared_ptr<VROGeometrySource> VROGLTFLoader::buildBoneWeightSource(GLTFType gType,
+                                                                        GLTFTypeComponent gTypeComponent,
+                                                                        const tinygltf::Accessor &gAttributeAccesor,
+                                                                        const tinygltf::BufferView &gIndiceBufferView,
+                                                                        const tinygltf::Buffer &gbuffer) {
+    bool isFloat = gTypeComponent == GLTFTypeComponent::Float;
+    size_t bufferViewOffset = gIndiceBufferView.byteOffset;
+    size_t bufferViewTotalSize = gIndiceBufferView.byteLength;
+    
+    // Calculate the byte stride size if none is provided from the BufferView.
+    size_t bufferViewStride = gIndiceBufferView.byteStride;
+    if (bufferViewStride == 0) {
+        int sizeOfSingleElement = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
+        bufferViewStride = sizeOfSingleElement;
+    }
+    
+    // gLTF requires the manual normalization of weighted bone attributes. As such,
+    // we process them here before constructing our VROGeometrySource.
+    VROByteBuffer buffer((char *) gbuffer.data.data() + bufferViewOffset, bufferViewTotalSize, false);
+    
+    // Parse the gLTF buffers for the weight of each bone and normalize them.
+    // The normalized data is stored in dataOut.
+    int sizeOfSingleBoneWeight = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
+    float *dataOut = new float[sizeOfSingleBoneWeight * gAttributeAccesor.count]();
+    for (int elementIndex = 0; elementIndex < gAttributeAccesor.count; elementIndex++) {
+        
+        // For the current element, cycle through each of its float or type component
+        // and convert them into a float through the math conversions required by gLTF.
+        buffer.setPosition(elementIndex * bufferViewStride);
+        std::vector<float> weight;
+        for (int componentCount = 0; componentCount < getTypeSize(gType); componentCount++) {
+            if (gTypeComponent == GLTFTypeComponent::Float) {
+                float floatData = buffer.readFloat();
+                weight.push_back(floatData);
+            } else if (gTypeComponent == GLTFTypeComponent::UnsignedByte) {
+                unsigned uByteData = buffer.readUnsignedByte();
+                float point = uByteData / 255.0;
+                weight.push_back(point);
+            } else if (gTypeComponent == GLTFTypeComponent::UnsignedShort) {
+                unsigned short uShortData = buffer.readUnsignedShort();
+                float point = uShortData / 65535.0;
+                weight.push_back(point);
+            } else {
+                perr("Invalid weighted bone data provided for the 3D glTF skinner.");
+                return {};
+            }
+        }
+        
+        float totalWeight = weight[0] + weight[1] + weight[2] + weight[3];
+        VROVector4f normalizedWeight;
+        VROVector4f(weight[0], weight[1], weight[2], weight[3]).scale(1/totalWeight, &normalizedWeight);
+        dataOut[(elementIndex * 4)]     = normalizedWeight.x;
+        dataOut[(elementIndex * 4) + 1] = normalizedWeight.y;
+        dataOut[(elementIndex * 4) + 2] = normalizedWeight.z;
+        dataOut[(elementIndex * 4) + 3] = normalizedWeight.w;
+    }
+    
+    // Finally create our geometry sources with the normalized data.
+    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) dataOut,
+                                                                   sizeOfSingleBoneWeight * gAttributeAccesor.count,
+                                                                   VRODataOwnership::Move);
+    return std::make_shared<VROGeometrySource>(indexData,
+                                               VROGeometrySourceSemantic::BoneWeights,
+                                               gAttributeAccesor.count,
+                                               isFloat,
+                                               getTypeSize(gType),
+                                               getComponentTypeSize(gTypeComponent),
+                                               0,
+                                               sizeOfSingleBoneWeight);
 }
 
 std::shared_ptr<VROMaterial> VROGLTFLoader::getMaterial(const tinygltf::Model &gModel, const tinygltf::Material &gMat) {

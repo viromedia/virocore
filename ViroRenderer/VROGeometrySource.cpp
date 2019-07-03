@@ -11,10 +11,22 @@
 #include "VROByteBuffer.h"
 #include "VROMath.h"
 #include "VROLog.h"
+#include "VROVertexBuffer.h"
 #include <float.h>
 
+std::shared_ptr<VROData> VROGeometrySource::getData() const {
+    if (_data != nullptr) {
+        return _data;
+    } else if (_vbo != nullptr) {
+        return _vbo->getData();
+    } else {
+        return nullptr;
+    }
+}
+
 void VROGeometrySource::processVertices(std::function<void (int, VROVector4f)> function) const {
-    VROByteBuffer buffer(_data->getData(), _data->getDataLength(), false);
+    std::shared_ptr<VROData> data = getData();
+    VROByteBuffer buffer(data->getData(), data->getDataLength(), false);
     
     for (int i = 0; i < _vertexCount; i++) {
         buffer.setPosition(i * _dataStride + _dataOffset);
@@ -107,7 +119,8 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector4f)> f
 }
 
 void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROVector3f vertex)> function) const {
-    VROByteBuffer buffer(_data->getData(), _data->getDataLength(), false);
+    std::shared_ptr<VROData> data = getData();
+    VROByteBuffer buffer(data->getData(), data->getDataLength(), false);
     
     for (int i = 0; i < _vertexCount; i++) {
         buffer.setPosition(i * _dataStride + _dataOffset);

@@ -12,6 +12,7 @@
 #include "VRODriver.h"
 #include "VRODefines.h"
 #include "VROStringUtil.h"
+#include "VROVertexBufferOpenGL.h"
 #include "VROGeometrySubstrateOpenGL.h"
 #include "VROMaterialSubstrateOpenGL.h"
 #include "VROTextureSubstrateOpenGL.h"
@@ -405,6 +406,11 @@ public:
         std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, numAttachments, numImages,
                                                                                           enableMipmaps, needsDepthStencil, driver);
         return target;
+    }
+    
+    std::shared_ptr<VROVertexBuffer> newVertexBuffer(std::shared_ptr<VROData> data) {
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        return std::make_shared<VROVertexBufferOpenGL>(data, driver);
     }
     
     std::shared_ptr<VROImagePostProcess> newImagePostProcess(std::shared_ptr<VROShaderProgram> shader) {

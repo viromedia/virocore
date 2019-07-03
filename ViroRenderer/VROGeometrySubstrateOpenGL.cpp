@@ -17,6 +17,7 @@
 #include "VROInstancedUBO.h"
 #include "VROShaderProgram.h"
 #include "VROTextureReference.h"
+#include "VROVertexBufferOpenGL.h"
 #include <map>
 
 VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
@@ -28,8 +29,8 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
     if (geometry.getSkinner()) {
         _boneUBO = std::unique_ptr<VROBoneUBO>(new VROBoneUBO(driver));
 
-        // For gLTF, bone and weights data are already processed into geometry sources.
-        if (geometry.getSkinner()->getBoneIndices() != nullptr){
+        // For glTF, bone and weights data are already processed into geometry sources.
+        if (geometry.getSkinner()->getBoneIndices() != nullptr) {
             sources.push_back(geometry.getSkinner()->getBoneIndices());
             sources.push_back(geometry.getSkinner()->getBoneWeights());
         }
@@ -47,7 +48,10 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
             driver->deleteBuffer(element.buffer);
         }
         for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
-            driver->deleteBuffer(vd.buffer);
+            if (vd.ownsBuffer) {
+                driver->deleteBuffer(vd.buffer);
+                ALLOCATION_TRACKER_SUB(VBO, 1);
+            }
         }
         for (GLuint vao : _vaos) {
             driver->deleteVertexArray(vao);
@@ -85,67 +89,87 @@ void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::sha
 
 void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shared_ptr<VROGeometrySource>> &sources) {
     std::map<std::shared_ptr<VROData>, std::vector<std::shared_ptr<VROGeometrySource>>> dataMap;
+    std::map<std::shared_ptr<VROVertexBuffer>, std::vector<std::shared_ptr<VROGeometrySource>>> vboMap;
 
     /*
-     Sort the sources into groups defined by the data buffer they're using.
+     Sort the sources into groups defined by the data buffer (or vertex buffer) they're using.
      */
     for (std::shared_ptr<VROGeometrySource> source : sources) {
-        std::shared_ptr<VROData> data = source->getData();
-        if (data == nullptr || data->getDataLength() == 0) {
-            continue;
-        }
-        
-        auto it = dataMap.find(data);
-        if (it == dataMap.end()) {
-            std::vector<std::shared_ptr<VROGeometrySource>> group = { source };
-            dataMap[data] = group;
-        }
-        else {
-            std::vector<std::shared_ptr<VROGeometrySource>> &group = it->second;
-            group.push_back(source);
+        std::shared_ptr<VROVertexBuffer> vertexBuffer = source->getVertexBuffer();
+        if (vertexBuffer) {
+            vboMap[vertexBuffer].push_back(source);
+        } else {
+            std::shared_ptr<VROData> data = source->getData();
+            if (data && data->getDataLength() > 0) {
+                dataMap[data].push_back(source);
+            }
         }
     }
     
     /*
-     For each group of GeometrySources we create a VROVertexDescriptorOpenGL.
+     Upload VBOs to the GPU (if they have not been already), and create vertex descriptors
+     defining the attributes over the buffer.
      */
-    for (auto &kv : dataMap) {
+    for (auto &kv : vboMap) {
+        std::shared_ptr<VROVertexBufferOpenGL> vbo = std::dynamic_pointer_cast<VROVertexBufferOpenGL>(kv.first);
         std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
         
-        VROVertexDescriptorOpenGL vd;
-        vd.stride = group[0]->getDataStride();
-        vd.numAttributes = 0;
+        vbo->hydrate();
         
-        GL( glGenBuffers(1, &vd.buffer) );
-        GL( glBindBuffer(GL_ARRAY_BUFFER, vd.buffer) );
-        GL( glBufferData(GL_ARRAY_BUFFER, kv.first->getDataLength(), kv.first->getData(), GL_STATIC_DRAW) );
-        
-        /*
-         Create an attribute for each geometry source in this group.
-         */
-        for (int i = 0; i < group.size(); i++) {
-            std::shared_ptr<VROGeometrySource> source = group[i];
-            int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
-            std::pair<GLuint, int> format = parseVertexFormat(source);
-            
-            vd.attributes[vd.numAttributes].index = attrIdx;
-            vd.attributes[vd.numAttributes].size = format.second;
-            vd.attributes[vd.numAttributes].type = format.first;
-            vd.attributes[vd.numAttributes].offset = source->getDataOffset();
-            vd.numAttributes++;
-            passert (source->getDataStride() == vd.stride);
-
-            int elementIndex = source->getGeometryElementIndex();
-            if (elementIndex != -1) {
-                if (_elementToDescriptorsMap.find(elementIndex) == _elementToDescriptorsMap.end()) {
-                    _elementToDescriptorsMap[elementIndex] = std::vector<VROVertexDescriptorOpenGL>();
-                }
-                _elementToDescriptorsMap[elementIndex].push_back(vd);
-            }
-        }
-        
+        VROVertexDescriptorOpenGL vd = configureVertexDescriptor(vbo->getVBO(), group);
+        vd.ownsBuffer = false;
         _vertexDescriptors.push_back(vd);
     }
+    
+    /*
+     Do the same for the raw CPU data buffers, uploading them to the GPU and assigning
+     vertex descriptors.
+     */
+    for (auto &kv : dataMap) {
+        std::shared_ptr<VROData> data = kv.first;
+        std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
+        
+        GLuint buffer;
+        GL( glGenBuffers(1, &buffer) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, buffer) );
+        GL( glBufferData(GL_ARRAY_BUFFER, data->getDataLength(), data->getData(), GL_STATIC_DRAW) );
+        
+        ALLOCATION_TRACKER_ADD(VBO, 1);
+        
+        VROVertexDescriptorOpenGL vd = configureVertexDescriptor(buffer, group);
+        vd.ownsBuffer = true;
+        _vertexDescriptors.push_back(vd);
+    }
+}
+
+VROVertexDescriptorOpenGL VROGeometrySubstrateOpenGL::configureVertexDescriptor(GLuint buffer, std::vector<std::shared_ptr<VROGeometrySource>> group) {
+    VROVertexDescriptorOpenGL vd;
+    vd.stride = group[0]->getDataStride();
+    vd.numAttributes = 0;
+    vd.buffer = buffer;
+    
+    for (int i = 0; i < group.size(); i++) {
+        std::shared_ptr<VROGeometrySource> source = group[i];
+
+        int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
+        std::pair<GLuint, int> format = parseVertexFormat(source);
+        
+        vd.attributes[vd.numAttributes].index = attrIdx;
+        vd.attributes[vd.numAttributes].size = format.second;
+        vd.attributes[vd.numAttributes].type = format.first;
+        vd.attributes[vd.numAttributes].offset = source->getDataOffset();
+        vd.numAttributes++;
+        passert (source->getDataStride() == vd.stride);
+        
+        int elementIndex = source->getGeometryElementIndex();
+        if (elementIndex != -1) {
+            if (_elementToDescriptorsMap.find(elementIndex) == _elementToDescriptorsMap.end()) {
+                _elementToDescriptorsMap[elementIndex] = std::vector<VROVertexDescriptorOpenGL>();
+            }
+            _elementToDescriptorsMap[elementIndex].push_back(vd);
+        }
+    }
+    return vd;
 }
 
 void VROGeometrySubstrateOpenGL::createVAO() {

@@ -42,6 +42,7 @@ struct VROVertexDescriptorOpenGL {
     GLuint stride;
     int numAttributes;
     VROVertexAttributeOpenGL attributes[10];
+    bool ownsBuffer;
 };
 
 class VROGeometrySubstrateOpenGL : public VROGeometrySubstrate {
@@ -109,6 +110,12 @@ private:
      Parse a GL primitive type from the given geometry VROGeometryPrimitiveType.
      */
     GLuint parsePrimitiveType(VROGeometryPrimitiveType primitive);
+    
+    /*
+     Configure a vertex descriptor using the properties of the given geometry
+     sources, each of which corresponds to an attribute.
+     */
+    VROVertexDescriptorOpenGL configureVertexDescriptor(GLuint buffer, std::vector<std::shared_ptr<VROGeometrySource>> group);
 
     /*
      Weak reference to the driver that created this substrate. The driver's lifecycle

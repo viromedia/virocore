@@ -255,7 +255,7 @@ void VROFBXLoader::readFBXProtobufAsync(std::string resource, VROResourceType ty
                                                                        : type,
                                                                        loadingTexturesFromResourceMap
                                                                        ? fileMap : nullptr,
-                                                                       textureCache, taskQueue);
+                                                                       textureCache, taskQueue, driver);
 
                             // Run all the async tasks. When they're complete, inject the finished FBX into the
                             // node
@@ -293,7 +293,8 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::shared_
                                                std::string base, VROResourceType type,
                                                std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache,
-                                               std::shared_ptr<VROTaskQueue> taskQueue) {
+                                               std::shared_ptr<VROTaskQueue> taskQueue,
+                                               std::shared_ptr<VRODriver> driver) {
     
     // The root node contains the skeleton, if any
     std::shared_ptr<VROSkeleton> skeleton;
@@ -309,7 +310,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::shared_
     std::shared_ptr<VRONode> tempRootNode = std::make_shared<VRONode>();
     for (int i = 0; i < node_pb.subnode_size(); i++) {
         std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), skeleton, base, type,
-                                                    resourceMap, textureCache, taskQueue);
+                                                    resourceMap, textureCache, taskQueue, driver);
         tempRootNode->addChildNode(node);
     }
     trimEmptyNodes(tempRootNode);
@@ -322,7 +323,8 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                                                    std::string base, VROResourceType type,
                                                    std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                    std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache,
-                                                   std::shared_ptr<VROTaskQueue> taskQueue) {
+                                                   std::shared_ptr<VROTaskQueue> taskQueue,
+                                                   std::shared_ptr<VRODriver> driver) {
     
     if (kDebugFBXLoading) {
         pinfo("Loading node [%s]", node_pb.name().c_str());
@@ -340,11 +342,11 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     
     if (node_pb.has_geometry()) {
         const viro::Node_Geometry &geo_pb = node_pb.geometry();
-        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(geo_pb, base, type, resourceMap, textureCache, taskQueue);
+        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(geo_pb, base, type, resourceMap, textureCache, taskQueue, driver);
         geo->setName(node_pb.name());
         
         if (geo_pb.has_skin() && skeleton) {
-            std::shared_ptr<VROSkinner> skinner = loadFBXSkinner(geo_pb.skin(), skeleton);
+            std::shared_ptr<VROSkinner> skinner = loadFBXSkinner(geo_pb.skin(), skeleton, driver);
             geo->setSkinner(skinner);
             skinner->setSkinnerNode(node);
             
@@ -407,7 +409,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     
     for (int i = 0; i < node_pb.subnode_size(); i++) {
         std::shared_ptr<VRONode> subnode = loadFBXNode(node_pb.subnode(i), skeleton, base, type,
-                                                       resourceMap, textureCache, taskQueue);
+                                                       resourceMap, textureCache, taskQueue, driver);
         node->addChildNode(subnode);
     }
     
@@ -418,13 +420,15 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
                                                            std::string base, VROResourceType type,
                                                            std::shared_ptr<std::map<std::string, std::string>> resourceMap,
                                                            std::shared_ptr<std::map<std::string, std::shared_ptr<VROTexture>>> textureCache,
-                                                           std::shared_ptr<VROTaskQueue> taskQueue) {
+                                                           std::shared_ptr<VROTaskQueue> taskQueue,
+                                                           std::shared_ptr<VRODriver> driver) {
     std::shared_ptr<VROData> varData = std::make_shared<VROData>(geo_pb.data().c_str(), geo_pb.data().length());
+    std::shared_ptr<VROVertexBuffer> vertexBuffer = driver->newVertexBuffer(varData);
     
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     for (int i = 0; i < geo_pb.source_size(); i++) {
         const viro::Node::Geometry::Source &source_pb = geo_pb.source(i);
-        std::shared_ptr<VROGeometrySource> source = std::make_shared<VROGeometrySource>(varData,
+        std::shared_ptr<VROGeometrySource> source = std::make_shared<VROGeometrySource>(vertexBuffer,
                                                                                         convert(source_pb.semantic()),
                                                                                         source_pb.vertex_count(),
                                                                                         source_pb.float_components(),
@@ -703,7 +707,8 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
 }
 
 std::shared_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
-                                                         std::shared_ptr<VROSkeleton> skeleton) {
+                                                         std::shared_ptr<VROSkeleton> skeleton,
+                                                         std::shared_ptr<VRODriver> driver) {
     
     float geometryBindMtx[16];
     for (int j = 0; j < 16; j++) {
@@ -729,7 +734,7 @@ std::shared_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
     
     const viro::Node::Geometry::Source &bone_indices_pb = skin_pb.bone_indices();
     std::shared_ptr<VROData> boneIndicesData = std::make_shared<VROData>(bone_indices_pb.data().c_str(), bone_indices_pb.data().length());
-    std::shared_ptr<VROGeometrySource> boneIndices = std::make_shared<VROGeometrySource>(boneIndicesData,
+    std::shared_ptr<VROGeometrySource> boneIndices = std::make_shared<VROGeometrySource>(driver->newVertexBuffer(boneIndicesData),
                                                                                          convert(bone_indices_pb.semantic()),
                                                                                          bone_indices_pb.vertex_count(),
                                                                                          bone_indices_pb.float_components(),
@@ -740,7 +745,7 @@ std::shared_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
     
     const viro::Node::Geometry::Source &bone_weights_pb = skin_pb.bone_weights();
     std::shared_ptr<VROData> boneWeightsData = std::make_shared<VROData>(bone_weights_pb.data().c_str(), bone_weights_pb.data().length());
-    std::shared_ptr<VROGeometrySource> boneWeights = std::make_shared<VROGeometrySource>(boneWeightsData,
+    std::shared_ptr<VROGeometrySource> boneWeights = std::make_shared<VROGeometrySource>(driver->newVertexBuffer(boneWeightsData),
                                                                                          convert(bone_weights_pb.semantic()),
                                                                                          bone_weights_pb.vertex_count(),
                                                                                          bone_weights_pb.float_components(),
