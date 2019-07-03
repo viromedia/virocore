@@ -21,7 +21,7 @@ import com.viromedia.releasetest.ViroReleaseTestActivity;
  */
 
 public class ViroActivityTestRule<T extends Activity> extends ActivityTestRule {
-    private static final String TAG = ViroReleaseTestActivity.class.getSimpleName();
+    private static final String TAG = ViroActivityTestRule.class.getSimpleName();
 
     public ViroActivityTestRule(final Class activityClass, final boolean initialTouchMode,
                                 final boolean launchActivity) {
@@ -30,18 +30,21 @@ public class ViroActivityTestRule<T extends Activity> extends ActivityTestRule {
 
     @Override
     protected void beforeActivityLaunched() {
+        // This is called before onCreate -> onStart -> onResume
         Log.i(TAG, "beforeActivityLaunched");
         super.beforeActivityLaunched();
-        // may be we want to do something here in the future
-        // This is called before onCreate -> onStart -> onResume is called.
     }
 
     @Override
     protected void afterActivityLaunched() {
+        // This is called after onCreate -> onStart -> onResume, but before a @Before -> @Test -> @After
         Log.i(TAG, "afterActivityLaunched");
         super.afterActivityLaunched();
-        // maybe we want to do something here in the future
-        // this is called after onCreate -> onStart -> onResume, but before a @Before -> @Test -> @After
+
+        // We start the renderer here, after activity construction; this way we don't block
+        // the tests from starting by hogging the event queue for rendering.
+        final ViroReleaseTestActivity activity = (ViroReleaseTestActivity) getActivity();
+        activity.startRenderer();
     }
 
     @Override

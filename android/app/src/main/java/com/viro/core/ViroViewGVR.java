@@ -27,6 +27,7 @@ import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
 import com.viro.core.internal.BuildInfo;
 import com.viro.core.internal.GLSurfaceViewQueue;
+import com.viro.core.internal.GLTextureView;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.renderer.BuildConfig;
 import com.viro.core.internal.ViroTouchGestureListener;
@@ -92,6 +93,7 @@ public class ViroViewGVR extends ViroView {
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private PlatformUtil mPlatformUtil;
+    private GLSurfaceView mSurfaceView;
     private GvrLayout mGVRLayout;
     private WeakReference<GLSurfaceView> mGLSurfaceView;;
     private StartupListener mStartupListener;
@@ -299,7 +301,7 @@ public class ViroViewGVR extends ViroView {
 
         mBaseTouchListener = new ViroOnTouchListener(this);
         final Context activityContext = getContext();
-        final GLSurfaceView glSurfaceView = createSurfaceView();
+        final GLSurfaceView glSurfaceView = createSurfaceView(startupListener == null);
         mGLSurfaceView = new WeakReference<GLSurfaceView>(glSurfaceView);
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -351,33 +353,36 @@ public class ViroViewGVR extends ViroView {
 
     /**
      * Used by release tests.
+     *
      * @hide
-     * @param listener
      */
-    public void setStartupListener(StartupListener listener) {
-        mStartupListener = listener;
+    public void startTests() {
+        mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
     /**
      * Create (or update) the {@link GLSurfaceView} to be used by GVR. This view will be shared
      * between both VR and 360 modes.
      */
-    private GLSurfaceView createSurfaceView() {
+    private GLSurfaceView createSurfaceView(boolean pauseOnStart) {
         int colorBits = 8;
         int alphaBits = 0;
         int depthBits = 16;
         int stencilBits = 8;
 
-        GLSurfaceView glSurfaceView = new GLSurfaceView(getContext().getApplicationContext());
-        glSurfaceView.setEGLContextClientVersion(3);
-        glSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
-        glSurfaceView.setPreserveEGLContextOnPause(true);
+        mSurfaceView = new GLSurfaceView(getContext().getApplicationContext());
+        mSurfaceView.setEGLContextClientVersion(3);
+        mSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
+        mSurfaceView.setPreserveEGLContextOnPause(true);
+        mSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, mSurfaceView));
+        mSurfaceView.setOnTouchListener(mBaseTouchListener);
 
-        glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
-        glSurfaceView.setOnTouchListener(mBaseTouchListener);
-
-
-        return glSurfaceView;
+        if (pauseOnStart) {
+            mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        } else {
+            mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        }
+        return mSurfaceView;
     }
 
     /**

@@ -96,7 +96,6 @@ public abstract class ViroBaseTest {
 
         mActivity = (ViroReleaseTestActivity) mActivityTestRule.getActivity();
         mViroView = mActivity.getViroView();
-        await().until(glInitialized());
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             mScene = new ARScene();
@@ -124,11 +123,6 @@ public abstract class ViroBaseTest {
                 mUIThreadHandler.postDelayed(this, 1000);
             }
         }, 1000);
-    }
-
-    private Callable<Boolean> glInitialized() {
-        Log.d(TAG, "glInitialized called - " + mActivity.isGlInitialized());
-        return () -> mActivity.isGlInitialized();
     }
 
     private void createBaseTestScene() {

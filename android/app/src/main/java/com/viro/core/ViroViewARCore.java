@@ -549,7 +549,7 @@ public class ViroViewARCore extends ViroView {
         mHeight = size.y;
 
         // Initialize the native renderer.
-        initSurfaceView();
+        initSurfaceView(startupListener == null);
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -573,10 +573,9 @@ public class ViroViewARCore extends ViroView {
     /**
      * Used by release tests.
      * @hide
-     * @param listener
      */
-    public void setStartupListener(StartupListener listener) {
-        mStartupListener = listener;
+    public void startTests() {
+        mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
     private void notifyRendererStart() {
@@ -662,14 +661,18 @@ public class ViroViewARCore extends ViroView {
     /**
      * Initialize this {@link GLSurfaceView}.
      */
-    private void initSurfaceView() {
+    private void initSurfaceView(boolean pauseOnStart) {
         mSurfaceView.setEGLContextClientVersion(3);
         mSurfaceView.setEGLConfigChooser(new ViroEGLConfigChooser(mRendererConfig.isMultisamplingEnabled()));
         mSurfaceView.setPreserveEGLContextOnPause(true);
         mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
 
         mSurfaceView.setRenderer(new ViroARRenderer(this));
-        mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        if (pauseOnStart) {
+            mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        } else {
+            mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        }
 
         /*
          Don't start the SurfaceView yet; we need to wait until the ARCore session

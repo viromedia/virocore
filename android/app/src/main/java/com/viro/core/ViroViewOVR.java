@@ -215,15 +215,6 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    /**
-     * Used by release tests.
-     * @hide
-     * @param listener
-     */
-    public void setStartupListener(StartupListener listener) {
-        mStartupListener = listener;
-    }
-
     @Override
     public void recenterTracking() {
         mNativeRenderer.recenterTracking();

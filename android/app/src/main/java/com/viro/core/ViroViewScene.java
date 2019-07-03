@@ -222,7 +222,6 @@ public class ViroViewScene extends ViroView {
         }
     }
 
-    private Renderer mRenderer;
     private GLTextureView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
@@ -303,7 +302,7 @@ public class ViroViewScene extends ViroView {
 
         final Context activityContext = getContext();
         final Activity activity = (Activity) getContext();
-        initSurfaceView();
+        initSurfaceView(rendererStartListener == null);
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -329,19 +328,23 @@ public class ViroViewScene extends ViroView {
      * Used by release tests.
      *
      * @hide
-     * @param listener
      */
-    public void setStartupListener(StartupListener listener) {
-        mStartupListener = listener;
+    public void startTests() {
+        mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
-    private void initSurfaceView() {
+    private void initSurfaceView(boolean pauseOnStart) {
         mSurfaceView.setEGLContextClientVersion(3);
         mSurfaceView.setEGLConfigChooser(new ViroEGLConfigChooser(mRendererConfig.isMultisamplingEnabled()));
         mSurfaceView.setPreserveEGLContextOnPause(true);
         mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLTextureWindowSurfaceFactory());
+
         mSurfaceView.setRenderer(new ViroSceneRenderer(this));
-        mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        if (pauseOnStart) {
+            mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        } else {
+            mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        }
     }
 
     /**

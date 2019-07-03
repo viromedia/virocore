@@ -12,11 +12,9 @@ package com.viromedia.releasetest;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -26,7 +24,6 @@ import com.viro.core.ViroView;
 import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
 import com.crashlytics.android.Crashlytics;
-import com.viro.core.ViroViewOVR;
 import com.viro.core.ViroViewScene;
 
 import io.fabric.sdk.android.Fabric;
@@ -38,10 +35,8 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
     private static final String TAG = ViroReleaseTestActivity.class.getSimpleName();
 
     private ViroView mViroView;
-    private Handler mHandler;
     private ImageView mThumbsUp;
     private ImageView mThumbsDown;
-    private boolean mGLInitialized = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -66,69 +61,27 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
 
         mViroView = (ViroView) findViewById(R.id.viro_view);
 
+        if (BuildConfig.VR_ENABLED == 0) {
+            mThumbsUp = (ImageView) findViewById(R.id.thumbsUp);
+            mThumbsDown = (ImageView) findViewById(R.id.thumbsDown);
+        }
+    }
+
+    public void startRenderer() {
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            ((ViroViewGVR) mViroView).setStartupListener(new ViroViewGVR.StartupListener() {
-                @Override
-                public void onSuccess() {
-                    onRendererStart();
-                }
-
-                @Override
-                public void onFailure(ViroViewGVR.StartupError error, String errorMessage) {
-
-                }
-            });
+            ((ViroViewGVR) mViroView).startTests();
             ((ViroViewGVR) mViroView).setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
             mViroView.setVRModeEnabled(BuildConfig.VR_ENABLED == 1);
-        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-            ((ViroViewOVR) mViroView).setStartupListener(new ViroViewOVR.StartupListener() {
-                @Override
-                public void onSuccess() {
-                    onRendererStart();
-                }
-
-                @Override
-                public void onFailure(ViroViewOVR.StartupError error, String errorMessage) {
-
-                }
-            });
-
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-            ((ViroViewARCore) mViroView).setStartupListener(new ViroViewARCore.StartupListener() {
-                @Override
-                public void onSuccess() {
-                    onRendererStart();
-                }
-
-                @Override
-                public void onFailure(ViroViewARCore.StartupError error, String errorMessage) {
-
-                }
-            });
+            ((ViroViewARCore) mViroView).startTests();
 
             ViroViewARCore arView = (ViroViewARCore) mViroView;
             Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             arView.setCameraRotation(display.getRotation());
 
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
-            ((ViroViewScene) mViroView).setStartupListener(new ViroViewScene.StartupListener() {
-                @Override
-                public void onSuccess() {
-                    onRendererStart();
-                }
-
-                @Override
-                public void onFailure(ViroViewScene.StartupError error, String errorMessage) {
-
-                }
-            });
+            ((ViroViewScene) mViroView).startTests();
         }
-
-        if (BuildConfig.VR_ENABLED == 0) {
-            mThumbsUp = (ImageView) findViewById(R.id.thumbsUp);
-            mThumbsDown = (ImageView) findViewById(R.id.thumbsDown);
-        }
-        mHandler = new Handler(getMainLooper());
     }
 
     public View getThumbsUpView() {
@@ -138,7 +91,6 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
     public View getThumbsDownView() {
         return mThumbsDown;
     }
-
 
     @Override
     protected void onStart() {
@@ -180,14 +132,6 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         return mViroView;
     }
 
-    public void onRendererStart() {
-        Log.d(TAG, "onRendererStart called");
-        mGLInitialized = true;
-    }
-
-    public Boolean isGlInitialized() {
-        return mGLInitialized;
-    }
 
     @Override
     public void onRendererClosed() {
