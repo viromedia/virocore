@@ -329,7 +329,10 @@ std::shared_ptr<VRONode> VROTestUtil::loadGLTFModel(std::string model, std::stri
     VROGLTFLoader::loadGLTFFromResource(url, {}, resourceType, node, isGLBType, driver,
                                       [scale, position, lightMask, onFinish](std::shared_ptr<VRONode> node, bool success) {
                                           if (!success) {
-                                              onFinish(node, false);
+                                              if (onFinish) {
+                                                  onFinish(node, false);
+                                              }
+                                              return;
                                           }
 
                                           node->setScale(scale);
@@ -345,8 +348,11 @@ std::shared_ptr<VRONode> VROTestUtil::loadGLTFModel(std::string model, std::stri
                                               }
                                           }
 
-                                          onFinish(node, true);
+                                          if (onFinish) {
+                                              onFinish(node, true);
+                                          }
                                           pinfo("GLTF HAS LOADED");
+                                          pinfo("Bounds %s", node->getUmbrellaBoundingBox().toString().c_str());
                                       });
     return node;
 }

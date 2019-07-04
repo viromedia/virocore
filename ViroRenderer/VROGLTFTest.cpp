@@ -125,21 +125,26 @@ void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode, std::string name){
     //VROTransaction::commit();
     
     std::shared_ptr<VROExecutableAnimation> anim = gltfNode->getAnimation(name, true);
-    if (anim != nullptr){
-        anim->execute(gltfNode, [this, name, gltfNode]() {
-            if (gltfNode->getMorphers(true).size() != 0) {
-                if (_computeLocation == VROMorpher::ComputeLocation ::GPU){
-                    _computeLocation = VROMorpher::ComputeLocation::CPU;
-                } else if (_computeLocation == VROMorpher::ComputeLocation::CPU){
-                    _computeLocation = VROMorpher::ComputeLocation::Hybrid;
-                } else if (_computeLocation == VROMorpher::ComputeLocation::Hybrid){
-                    _computeLocation = VROMorpher::ComputeLocation::GPU;
+    if (anim != nullptr) {
+        std::weak_ptr<VRONode> gltf_w = gltfNode;
+        
+        anim->execute(gltfNode, [this, name, gltf_w]() {
+            std::shared_ptr<VRONode> gltf = gltf_w.lock();
+            if (gltf) {
+                if (gltf->getMorphers(true).size() != 0) {
+                    if (_computeLocation == VROMorpher::ComputeLocation ::GPU){
+                        _computeLocation = VROMorpher::ComputeLocation::CPU;
+                    } else if (_computeLocation == VROMorpher::ComputeLocation::CPU){
+                        _computeLocation = VROMorpher::ComputeLocation::Hybrid;
+                    } else if (_computeLocation == VROMorpher::ComputeLocation::Hybrid){
+                        _computeLocation = VROMorpher::ComputeLocation::GPU;
+                    }
+                    
+                    (*gltf->getMorphers(true).begin())->setComputeLocation(_computeLocation);
                 }
                 
-                (*gltfNode->getMorphers(true).begin())->setComputeLocation(_computeLocation);
+                animate(gltf, name);
             }
-            
-            animate(gltfNode, name);
         });
     }
 }
@@ -149,9 +154,10 @@ void VROGLTFTest::rotateModel() {
     std::shared_ptr<VRONode> gltfNode = VROTestUtil::loadGLTFModel(model.name, model.ext,
                                                                    model.position, model.scale,
                                                                    model.lightMask, model.animation, _driver,
-                                                                   [this, model](std::shared_ptr<VRONode> node, bool success){
+                                                                   [this, model](std::shared_ptr<VRONode> node, bool success) {
                                                                        animate(node, model.animation);
                                                                    });
+    
     _gltfContainerNode->removeAllChildren();
     _gltfContainerNode->addChildNode(gltfNode);
 
