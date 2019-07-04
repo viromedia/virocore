@@ -1437,7 +1437,7 @@ bool VROGLTFLoader::processMorphTargets(const tinygltf::Model &gModel,
     }
 
     // Create a base set of geometry sources, required by VROMorpher.
-    int elementIndex = elements.size() -1;
+    int elementIndex = (int) (elements.size() - 1);
     std::vector<std::shared_ptr<VROGeometrySource>> baseSources;
     for (std::shared_ptr<VROGeometrySource> &src : sources) {
         if (src->getGeometryElementIndex() == elementIndex) {

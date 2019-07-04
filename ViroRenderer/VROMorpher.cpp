@@ -189,15 +189,17 @@ void VROMorpher::configureShadersGPU() {
                 addMorphModifier(morphIndex, modTangent, true);
             }
 
-
-            // Add mod Attribute.
+            // Add mod attribute
             attributes = attributes | (int) getMorphShaderAttrIndex(morphIndex);
 
             // Add mod uniform block weight
-            std::shared_ptr<VROMorphTarget> morphTarget = target.second;
-            VROUniformBindingBlock block = [morphTarget](VROUniform *uniform,
-                                                         const VROGeometry *geometry, const VROMaterial *material) {
-                uniform->setFloat(morphTarget->startWeight);
+            std::weak_ptr<VROMorphTarget> morphTarget_w = target.second;
+            VROUniformBindingBlock block = [morphTarget_w](VROUniform *uniform,
+                                                           const VROGeometry *geometry, const VROMaterial *material) {
+                std::shared_ptr<VROMorphTarget> morphTarget_s = morphTarget_w.lock();
+                if (morphTarget_s) {
+                    uniform->setFloat(morphTarget_s->startWeight);
+                }
             };
             uniformBlocks.push_back(std::make_pair("uniform_" + VROStringUtil::toString(morphIndex), block));
 
@@ -281,11 +283,14 @@ void VROMorpher::configureShadersHybrid() {
     // Add Morph Target Uniforms based on configured modifiers from active targets.
     std::string uniformKey = "uniform_morph_t";
     modifierCode.push_back("uniform highp float uniform_morph_t;");
+    
     std::shared_ptr<VROMorpher> morpher = std::dynamic_pointer_cast<VROMorpher>(shared_from_this());
-    VROUniformBindingBlock block = [morpher](VROUniform *uniform,
-                                             const VROGeometry *geometry, const VROMaterial *material) {
-        if (geometry != nullptr) {
-            uniform->setFloat(morpher->_hybridAnimationDuration);
+    std::weak_ptr<VROMorpher> morpher_w = morpher;
+    VROUniformBindingBlock block = [morpher_w](VROUniform *uniform,
+                                               const VROGeometry *geometry, const VROMaterial *material) {
+        std::shared_ptr<VROMorpher> morpher_s = morpher_w.lock();
+        if (geometry != nullptr && morpher_s) {
+            uniform->setFloat(morpher_s->_hybridAnimationDuration);
         }
     };
 
