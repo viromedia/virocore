@@ -204,6 +204,7 @@ add_library( # Sets the name of the library.
              ${VIRO_RENDERER_SRC}/VROPrefilterRenderPass.cpp
              ${VIRO_RENDERER_SRC}/VROBRDFRenderPass.cpp
              ${VIRO_RENDERER_SRC}/VROFixedParticleEmitter.cpp
+             ${VIRO_RENDERER_SRC}/VROVertexBufferOpenGL.cpp
 
              # AR (no arcore dependencies)
              ${VIRO_RENDERER_SRC}/VROARSceneController.cpp
