@@ -71,15 +71,15 @@ void VROYuvImageConverter::convertImage(arcore::Image *image, uint8_t *data) {
     int32_t uvStride = image->getPlaneRowStride(1);
     int32_t uvPixelStride = image->getPlanePixelStride(1);
 
-    uint8_t *yPixel = nullptr;
+    const uint8_t *yPixel = nullptr;
     int32_t yLen;
     image->getPlaneData(0, &yPixel, &yLen);
 
-    uint8_t *vPixel = nullptr;
+    const uint8_t *vPixel = nullptr;
     int32_t vLen;
     image->getPlaneData(1, &vPixel, &vLen);
 
-    uint8_t *uPixel = nullptr;
+    const uint8_t *uPixel = nullptr;
     int32_t uLen;
     image->getPlaneData(2, &uPixel, &uLen);
 
@@ -115,15 +115,15 @@ void VROYuvImageConverter::convertImage90(arcore::Image *image, uint8_t *data) {
     int32_t uvStride = image->getPlaneRowStride(1);
     int32_t uvPixelStride = image->getPlanePixelStride(1);
 
-    uint8_t *yPixel = nullptr;
+    const uint8_t *yPixel = nullptr;
     int32_t yLen;
     image->getPlaneData(0, &yPixel, &yLen);
 
-    uint8_t *vPixel = nullptr;
+    const uint8_t *vPixel = nullptr;
     int32_t vLen;
     image->getPlaneData(1, &vPixel, &vLen);
 
-    uint8_t *uPixel = nullptr;
+    const uint8_t *uPixel = nullptr;
     int32_t uLen;
     image->getPlaneData(2, &uPixel, &uLen);
 
@@ -164,15 +164,15 @@ void VROYuvImageConverter::convertImage180(arcore::Image *image, uint8_t *data) 
     int32_t uvStride = image->getPlaneRowStride(1);
     int32_t uvPixelStride = image->getPlanePixelStride(1);
 
-    uint8_t *yPixel = nullptr;
+    const uint8_t *yPixel = nullptr;
     int32_t yLen;
     image->getPlaneData(0, &yPixel, &yLen);
 
-    uint8_t *vPixel = nullptr;
+    const uint8_t *vPixel = nullptr;
     int32_t vLen;
     image->getPlaneData(1, &vPixel, &vLen);
 
-    uint8_t *uPixel = nullptr;
+    const uint8_t *uPixel = nullptr;
     int32_t uLen;
     image->getPlaneData(2, &uPixel, &uLen);
 
@@ -211,15 +211,15 @@ void VROYuvImageConverter::convertImage270(arcore::Image *image, uint8_t *data) 
     int32_t uvStride = image->getPlaneRowStride(1);
     int32_t uvPixelStride = image->getPlanePixelStride(1);
 
-    uint8_t *yPixel = nullptr;
+    const uint8_t *yPixel = nullptr;
     int32_t yLen;
     image->getPlaneData(0, &yPixel, &yLen);
 
-    uint8_t *vPixel = nullptr;
+    const uint8_t *vPixel = nullptr;
     int32_t vLen;
     image->getPlaneData(1, &vPixel, &vLen);
 
-    uint8_t *uPixel = nullptr;
+    const uint8_t *uPixel = nullptr;
     int32_t uLen;
     image->getPlaneData(2, &uPixel, &uLen);
 

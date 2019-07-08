@@ -433,8 +433,9 @@ namespace arcore {
 
 #pragma mark - Image
 
-    ImageNative::ImageNative(ArImage *arImage) : _arImage(arImage) {
-        ArImage_getNdkImage(_arImage, &_image);
+    ImageNative::ImageNative(ArImage *arImage, ArSession *session) :
+    _arImage(arImage),
+    _session(session) {
     }
 
     ImageNative::~ImageNative() {
@@ -443,52 +444,50 @@ namespace arcore {
 
     int32_t ImageNative::getWidth() {
         int32_t width;
-        media_status_t status = AImage_getWidth(_image, &width);
-        return status == AMEDIA_OK ? width : 0;
+        ArImage_getWidth(_session, _arImage, &width);
+        return width;
     }
 
     int32_t ImageNative::getHeight() {
         int32_t height;
-        media_status_t status = AImage_getHeight(_image, &height);
-        return status == AMEDIA_OK ? height : 0;
+        ArImage_getHeight(_session, _arImage, &height);
+        return height;
     }
 
     int32_t ImageNative::getFormat() {
-        int32_t format;
-        media_status_t status = AImage_getFormat(_image, &format);
-        return status == AMEDIA_OK ? format : 0;
+        ArImageFormat format;
+        ArImage_getFormat(_session, _arImage, &format);
+        return (int32_t)format;
     }
 
     void ImageNative::getCropRect(int *outLeft, int *outRight, int *outBottom, int *outTop) {
-        AImageCropRect rect;
-        AImage_getCropRect(_image, &rect);
 
-        *outLeft = rect.left;
-        *outRight = rect.right;
-        *outBottom = rect.bottom;
-        *outTop = rect.top;
+        *outLeft = 0;
+        *outRight = getWidth();
+        *outBottom = getHeight();
+        *outTop = 0;
     }
 
     int32_t ImageNative::getNumberOfPlanes() {
         int32_t numPlanes;
-        media_status_t status = AImage_getNumberOfPlanes(_image, &numPlanes);
-        return status == AMEDIA_OK ? numPlanes : 0;
+        ArImage_getNumberOfPlanes(_session, _arImage, &numPlanes);
+        return numPlanes;
     }
 
     int32_t ImageNative::getPlanePixelStride(int planeIdx) {
         int32_t planePixelStride;
-        media_status_t status = AImage_getPlanePixelStride(_image, planeIdx, &planePixelStride);
-        return status == AMEDIA_OK ? planePixelStride : 0;
+        ArImage_getPlanePixelStride(_session, _arImage, planeIdx, &planePixelStride);
+        return planePixelStride;
     }
 
     int32_t ImageNative::getPlaneRowStride(int planeIdx) {
         int32_t planeRowStride;
-        media_status_t status = AImage_getPlaneRowStride(_image, planeIdx, &planeRowStride);
-        return status == AMEDIA_OK ? planeRowStride : 0;
+        ArImage_getPlaneRowStride(_session, _arImage, planeIdx, &planeRowStride);
+        return planeRowStride;
     }
 
-    void ImageNative::getPlaneData(int planeIdx, uint8_t **outData, int *outDataLength) {
-        AImage_getPlaneData(_image, planeIdx, outData, outDataLength);
+    void ImageNative::getPlaneData(int planeIdx, const uint8_t **outData, int *outDataLength) {
+        ArImage_getPlaneData(_session, _arImage, planeIdx, outData, outDataLength);
     }
 
 #pragma mark - Frame
@@ -605,7 +604,7 @@ namespace arcore {
         } else if (status == AR_ERROR_NOT_YET_AVAILABLE) {
             return ImageRetrievalStatus::NotYetAvailable;
         } else if (status == AR_SUCCESS) {
-            *outImage = new ImageNative(arImage);
+            *outImage = new ImageNative(arImage, _session);
             return ImageRetrievalStatus::Success;
         } else {
             return ImageRetrievalStatus::UnknownError;

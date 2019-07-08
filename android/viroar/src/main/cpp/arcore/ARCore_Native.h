@@ -144,7 +144,7 @@ namespace arcore {
 
     class ImageNative : public Image {
     public:
-        ImageNative(ArImage *image);
+        ImageNative(ArImage *image, ArSession *session);
         virtual ~ImageNative();
         virtual int32_t getWidth();
         virtual int32_t getHeight();
@@ -153,10 +153,10 @@ namespace arcore {
         virtual int32_t getNumberOfPlanes();
         virtual int32_t getPlanePixelStride(int planeIdx);
         virtual int32_t getPlaneRowStride(int planeIdx);
-        virtual void getPlaneData(int planeIdx, uint8_t **outData, int *outDataLength);
+        virtual void getPlaneData(int planeIdx, const uint8_t **outData, int *outDataLength);
     private:
         ArImage *_arImage;
-        const AImage *_image;
+        ArSession *_session;
     };
 
     class FrameNative : public Frame {

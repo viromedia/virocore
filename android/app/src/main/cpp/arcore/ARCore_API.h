@@ -212,7 +212,7 @@ namespace arcore {
         virtual int32_t getNumberOfPlanes() = 0;
         virtual int32_t getPlanePixelStride(int planeIdx) = 0;
         virtual int32_t getPlaneRowStride(int planeIdx) = 0;
-        virtual void getPlaneData(int planeIdx, uint8_t **outData, int *outDataLength) = 0;
+        virtual void getPlaneData(int planeIdx, const uint8_t **outData, int *outDataLength) = 0;
     };
 
     class Frame {
