@@ -114,7 +114,7 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
     rootNode->setEventDelegate(_eventDelegate);
 }
 
-void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode, std::string name){
+void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode, std::string name) {
     //std::set<std::shared_ptr<VROMorpher>> morphers = gltfNode->getMorphers(true);
     //std::shared_ptr<VROMorpher> morpher = *morphers.begin();
 
@@ -132,11 +132,11 @@ void VROGLTFTest::animate(std::shared_ptr<VRONode> gltfNode, std::string name){
             std::shared_ptr<VRONode> gltf = gltf_w.lock();
             if (gltf) {
                 if (gltf->getMorphers(true).size() != 0) {
-                    if (_computeLocation == VROMorpher::ComputeLocation ::GPU){
+                    if (_computeLocation == VROMorpher::ComputeLocation::GPU) {
                         _computeLocation = VROMorpher::ComputeLocation::CPU;
-                    } else if (_computeLocation == VROMorpher::ComputeLocation::CPU){
+                    } else if (_computeLocation == VROMorpher::ComputeLocation::CPU) {
                         _computeLocation = VROMorpher::ComputeLocation::Hybrid;
-                    } else if (_computeLocation == VROMorpher::ComputeLocation::Hybrid){
+                    } else if (_computeLocation == VROMorpher::ComputeLocation::Hybrid) {
                         _computeLocation = VROMorpher::ComputeLocation::GPU;
                     }
                     

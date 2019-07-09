@@ -223,7 +223,6 @@ void VROMorpher::configureShadersGPU() {
     if (modNormal.size() > 0) {
         modNormal = "_geometry.normal = _geometry.normal " + modNormal + ";";
         modifierCode.push_back(modNormal);
-
     }
 
     if (modTangent.size() > 0) {
@@ -231,21 +230,21 @@ void VROMorpher::configureShadersGPU() {
         modifierCode.push_back(modTangent);
     }
 
-    std::shared_ptr<VROShaderModifier> morphMod
-            = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
+    std::shared_ptr<VROShaderModifier> morphMod = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
     morphMod->setAttributes(attributes);
     for (auto block : uniformBlocks) {
         morphMod->setUniformBinder(block.first, VROShaderProperty::Float, block.second);
     }
 
-    if (_shaderMod != nullptr && morphMod == _shaderMod) {
-        return;
-    } else if (_shaderMod != nullptr){
+    if (_shaderMod != nullptr && morphMod != _shaderMod) {
         _material->removeShaderModifier(_shaderMod);
+        _material->addShaderModifier(morphMod);
+        _shaderMod = morphMod;
     }
-
-    _material->addShaderModifier(morphMod);
-    _shaderMod = morphMod;
+    else if (_shaderMod == nullptr) {
+        _material->addShaderModifier(morphMod);
+        _shaderMod = morphMod;
+    }
 }
 
 void VROMorpher::configureShadersHybrid() {
@@ -533,11 +532,15 @@ void VROMorpher::setWeightForTarget(std::string key, float targetWeight, bool sh
      */
     std::shared_ptr<VROMorphTarget> target = _morphTargets[key];
     std::shared_ptr<VROMorpher> morpher = std::dynamic_pointer_cast<VROMorpher>(shared_from_this());
-
+    std::weak_ptr<VROMorpher> morpher_w = morpher;
+    
     if (_computeLocation == VROMorpher::ComputeLocation::CPU) {
-        animate(std::make_shared<VROAnimationFloat>([target, morpher, targetWeight](VROAnimatable *const animatable, float w) {
-                    target->startWeight = w;
-                    morpher->_needsUpdate = true;
+        animate(std::make_shared<VROAnimationFloat>([target, morpher_w, targetWeight](VROAnimatable *const animatable, float w) {
+            std::shared_ptr<VROMorpher>  morpher_s = morpher_w.lock();
+            if (morpher_s) {
+                target->startWeight = w;
+                morpher_s->_needsUpdate = true;
+            }
                 }, target->startWeight, targetWeight));
         return;
     }
