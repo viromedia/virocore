@@ -202,7 +202,7 @@ private:
      out after the parsing of a single gLTF model. Note that _nodeKeyFrameAnims is of the form:
      <nodeIndex , <animationIndex, VROKeyframeAnimation>>> _nodeKeyframeAnims.
      */
-    static std::map<int, std::map<int, std::shared_ptr<VROKeyframeAnimation>>> _nodeKeyFrameAnims;
+    static std::map<int, std::map<int, std::vector<std::shared_ptr<VROKeyframeAnimation>>>> _nodeKeyFrameAnims;
     static std::map<int, std::vector<std::shared_ptr<VROSkeletalAnimation>>> _skinSkeletalAnims;
 
 };

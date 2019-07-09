@@ -40,7 +40,7 @@ std::map<std::string, std::shared_ptr<VROTexture>> VROGLTFLoader::_textureCache;
 std::map<int, std::shared_ptr<VROSkeleton>> VROGLTFLoader::_skinIndexToSkeleton;
 std::map<int, std::map<int,int>> VROGLTFLoader::_skinIndexToJointNodeIndex;
 std::map<int, std::map<int,std::vector<int>>> VROGLTFLoader::_skinIndexToJointChildJoints;
-std::map<int, std::map<int, std::shared_ptr<VROKeyframeAnimation>>> VROGLTFLoader::_nodeKeyFrameAnims;
+std::map<int, std::map<int, std::vector<std::shared_ptr<VROKeyframeAnimation>>>> VROGLTFLoader::_nodeKeyFrameAnims;
 std::map<int, std::vector<std::shared_ptr<VROSkeletalAnimation>>> VROGLTFLoader::_skinSkeletalAnims;
 std::map<int, std::shared_ptr<VROSkinner>> VROGLTFLoader::_skinMap;
 
@@ -494,27 +494,43 @@ bool VROGLTFLoader::processAnimationKeyFrame(const tinygltf::Model &model,
             // Thus, perform a sanity check here to ensure we only have one.
             int animationIndex = anim.first;
             std::map<int, std::vector<int>> channelData = anim.second;
+
+            // In some models, for the same animation, we can have multiple time input
+            // sampler data. Although strange, this would only hold true if we want to
+            // animate separate animation properties at different interval speeds towards
+            // the same end duration. For example, a translation in a different speed than
+            // rotation, for the same node, for the same animation.
             if (channelData.size() > 1) {
-                pwarn("Invalid GLTF animations provided");
-                return false;
+                pwarn("Multiple time input samplers detected for a single animation.");
             }
 
-            // Create a VROKeyframeAnimation with the targeted channel.
-            std::shared_ptr<VROKeyframeAnimation> animation = nullptr;
-            if (!processAnimationChannels(model,
-                                          model.animations[animationIndex],
-                                          channelData.begin()->second,
-                                          animation)) {
-                return false;
+            for (auto inputSamplerToAnimationsPair : channelData) {
+                // Create a VROKeyframeAnimation with the targeted channel.
+                std::shared_ptr<VROKeyframeAnimation> animation = nullptr;
+                if (!processAnimationChannels(model,
+                                              model.animations[animationIndex],
+                                              inputSamplerToAnimationsPair.second,
+                                              animation)) {
+                    return false;
+                }
+                
+                // If no animation is given, set a default one with an index reference.
+                std::string name = model.animations[anim.first].name;
+                if (name.size() == 0) {
+                    name = "animation_" + VROStringUtil::toString(animationIndex);
+                }
+                animation->setName(name);
+                
+                float duration = animation->getDuration();
+                for (auto currAnim : _nodeKeyFrameAnims[nodeIndex][anim.first]) {
+                    if (duration != currAnim->getDuration()) {
+                        perr("Detected mis-matching durations for animation properties.");
+                        return false;
+                    }
+                }
+                
+                _nodeKeyFrameAnims[nodeIndex][anim.first].push_back(animation);
             }
-
-            // If no animation is given, set a default one with an index reference.
-            std::string name = model.animations[anim.first].name;
-            if (name.size() == 0) {
-                name = "animation_" + VROStringUtil::toString(animationIndex);
-            }
-            animation->setName(name);
-            _nodeKeyFrameAnims[nodeIndex][anim.first] = animation;
         }
     }
     return true;
@@ -739,7 +755,10 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         // Create a set of skeletal Frames, populate them with empty key frames
         std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> skeletalFrames;
         int firstNodeIndex = _skinIndexToJointNodeIndex[skinIndex][0];
-        std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = _nodeKeyFrameAnims[firstNodeIndex][skeletalAnimationIndex];
+        std::vector<std::shared_ptr<VROKeyframeAnimation>> keyFrameAnims = _nodeKeyFrameAnims[firstNodeIndex][skeletalAnimationIndex];
+
+        // TODO: Support mutli-layered parallel keyframe animations.
+        std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = keyFrameAnims.front();
         float totalDuration = keyFrameAnim->getDuration();
 
         const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = keyFrameAnim->getFrames();
@@ -771,13 +790,10 @@ void VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         }
 
         // Remove any KeyFrameAnimations that were "turned into" and used for skeletal animations.
+        // If an animation is on a skinner node, it is always treated as a skeletal animation.
         for (auto &jointNode : _skinIndexToJointNodeIndex[skinIndex]) {
             int nodeIndex = jointNode.second;
-            std::map<int, std::shared_ptr<VROKeyframeAnimation>>::iterator iter
-                            = _nodeKeyFrameAnims[nodeIndex].find(skeletalAnimationIndex);
-            if (iter != _nodeKeyFrameAnims[nodeIndex].end()) {
-                _nodeKeyFrameAnims[nodeIndex].erase(iter);
-            }
+            _nodeKeyFrameAnims[nodeIndex][skeletalAnimationIndex].clear();
         }
 
         // Finally construct our skeletal animation
@@ -794,7 +810,9 @@ void VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
     // If we are at the root, process its transform to be cascaded down the model's scene tree.
     if (currentJointIndex == 0) {
         int childNodeIndex = _skinIndexToJointNodeIndex[skin][0];
-        std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex];
+        std::vector<std::shared_ptr<VROKeyframeAnimation>> animations = _nodeKeyFrameAnims[childNodeIndex][animationIndex];
+        // TODO support multi-layered keyframe animations
+        std::shared_ptr<VROKeyframeAnimation> animation = animations.front();
         const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
         VROMatrix4f localTransform;
         localTransform.toIdentity();
@@ -814,8 +832,11 @@ void VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
     for (int childJointIndex : childJoints) {
         // Get the actual node index for the child joint Index and it's animation to set.
         int childNodeIndex = _skinIndexToJointNodeIndex[skin][childJointIndex];
-        std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex];
 
+        std::vector<std::shared_ptr<VROKeyframeAnimation>> animations = _nodeKeyFrameAnims[childNodeIndex][animationIndex];
+        // TODO support multi-layered keyframe animations
+        std::shared_ptr<VROKeyframeAnimation> animation = animations.front();
+        
         // Grab the animation transform of the current keyFrame
         const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
         VROMatrix4f localTransform;
@@ -948,8 +969,11 @@ bool VROGLTFLoader::processNode(const tinygltf::Model &gModel, std::shared_ptr<V
     // Set the animations on this node, if any.
     if (_nodeKeyFrameAnims.find(gNodeIndex) != _nodeKeyFrameAnims.end()) {
         for (int i = 0; i < _nodeKeyFrameAnims[gNodeIndex].size(); i ++) {
-            std::shared_ptr<VROKeyframeAnimation> anim = _nodeKeyFrameAnims[gNodeIndex][i];
-            node->addAnimation(anim->getName(), anim);
+            // Add in parallel all animated keyframe properties within this
+            // animation, within this node.
+            for (auto anim : _nodeKeyFrameAnims[gNodeIndex][i]) {
+                node->addAnimation(anim->getName(), anim);
+            }
         }
     }
 
