@@ -39,9 +39,10 @@ public:
     /*
      Purge all shaders that are no longer used. If force is true, then we
      disregard time. If force is false, we only purge as many as we can
-     until running out of frame time.
+     until running out of frame time. Returns true if all shaders were
+     purged, and false if we ran out of time.
      */
-    void purgeUnusedShaders(const VROFrameTimer &timer, bool force);
+    bool purgeUnusedShaders(const VROFrameTimer &timer, bool force);
     
     /*
      Retrieve a shader that has the given material and lighting capabilities.

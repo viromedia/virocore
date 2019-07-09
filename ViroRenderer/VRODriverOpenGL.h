@@ -119,10 +119,11 @@ public:
         
         // If we haven't had a full purge in awhile, force it, irrespective of time
         // remaining
-        bool forcePurge = context.getFrame() - _lastPurgeFrame > kResourcePurgeForceFrameInterval;
-        _shaderFactory->purgeUnusedShaders(timer, forcePurge);
-        
-        _lastPurgeFrame = context.getFrame();
+        bool forcePurge = context.getFrame() - _lastPurgeFrame >= kResourcePurgeForceFrameInterval;
+        bool wasFullPurge = _shaderFactory->purgeUnusedShaders(timer, forcePurge);
+        if (wasFullPurge) {
+            _lastPurgeFrame = context.getFrame();
+        }
     }
     
     void willRenderEye(const VRORenderContext &context) {

@@ -71,6 +71,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::getShader(VROMaterialShaderC
     capabilities.materialCapabilities = materialCapabilities;
     capabilities.lightingCapabilities = lightingCapabilities;
     
+    // Note that the shader modifiers are included in the materialCapabilities key
     auto it = _cachedPrograms.find(capabilities);
     if (it == _cachedPrograms.end()) {
         std::shared_ptr<VROShaderProgram> program = buildShader(capabilities, modifiers, driver);
@@ -83,20 +84,20 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::getShader(VROMaterialShaderC
     }
 }
 
-void VROShaderFactory::purgeUnusedShaders(const VROFrameTimer &timer, bool force) {
+bool VROShaderFactory::purgeUnusedShaders(const VROFrameTimer &timer, bool force) {
     std::map<VROShaderCapabilities, std::shared_ptr<VROShaderProgram>>::iterator it = _cachedPrograms.begin();
     while (it != _cachedPrograms.end()) {
-        if (!force && timer.isTimeRemainingInFrame()) {
-            return;
+        if (!force && !timer.isTimeRemainingInFrame()) {
+            return false;
         }
         
         if (it->second.unique()) {
             it = _cachedPrograms.erase(it);
-        }
-        else {
+        } else {
             ++it;
         }
     }
+    return true;
 }
 
 std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabilities capabilities,
