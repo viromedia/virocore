@@ -799,7 +799,7 @@ public class ViroViewARCore extends ViroView {
      */
     @Override
     public void onActivityResumed(Activity activity) {
-        if (mNativeRenderer == null) {
+        if (mNativeRenderer == null || mSurfaceView == null) {
             return;
         }
 
