@@ -936,6 +936,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
             nativeClearGeometry(mNativeRef);
         }
         mGeometry = geometry;
+
+        updateWorldTransforms();
+        updateAllUmbrellaBounds();
     }
 
     /**
