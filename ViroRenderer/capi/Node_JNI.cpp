@@ -351,6 +351,10 @@ VRO_METHOD(void, nativeSetScalePivot)(VRO_ARGS
 VRO_METHOD(void, nativeUpdateWorldTransforms)(VRO_ARGS
                                               VRO_REF(VRONode) node_j,
                                               VRO_REF(VRONode) parent_j) {
+    if (VRO_REF_NULL(node_j)) {
+        return;
+    }
+
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     if (VRO_REF_NULL(parent_j)) {
         node->computeTransformsAtomic(VROMatrix4f::identity(), VROMatrix4f::identity());
@@ -364,6 +368,9 @@ VRO_METHOD(VRO_BOOL, nativeUpdateAtomicUmbrellaBounds)(VRO_ARGS
                                                        VRO_REF(VRONode) node_bounds_to_update_j,
                                                        VRO_REF(VRONode) node_j,
                                                        VRO_BOOL isSet) {
+    if (VRO_REF_NULL(node_j) || VRO_REF_NULL(node_bounds_to_update_j)) {
+        return false;
+    }
     std::shared_ptr<VRONode> nodeBoundsToUpdate = VRO_REF_GET(VRONode, node_bounds_to_update_j);
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
 
@@ -372,6 +379,9 @@ VRO_METHOD(VRO_BOOL, nativeUpdateAtomicUmbrellaBounds)(VRO_ARGS
 
 VRO_METHOD(void, nativeSetEmptyAtomicUmbrellaBounds)(VRO_ARGS
                                                      VRO_REF(VRONode) node_j) {
+    if (VRO_REF_NULL(node_j)) {
+        return;
+    }
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
     node->setEmptyAtomicUmbrellaBounds();
 }
