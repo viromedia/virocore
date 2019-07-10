@@ -294,6 +294,13 @@ public:
     VROMatrix4f    getLastScalePivot() const;
     VROMatrix4f    getLastRotationPivot() const;
     VROBoundingBox getLastUmbrellaBoundingBox() const;
+    VROBoundingBox getLastGeometryBoundingBox() const;
+    
+    /*
+     The atomic geometry bounding box is set on the application thread as soon as a
+     geometry is set for this Node.
+     */
+    void setLastGeometryBoundingBox(VROBoundingBox bounds);
     
     /*
      Set the rotation, position, or scale. Animatable.
@@ -910,10 +917,11 @@ private:
     VROAtomic<VROBoundingBox> _lastUmbrellaBoundingBox;
     
     /*
-     Temporary variable used while computing the umbrella bounding box on the application
-     thread.
+     Temporary variables used while computing the umbrella bounding box on the application
+     thread. True if this node has a world geometry box and/or a geometry bounding box.
      */
-    VROAtomic<bool> _hasWorldBoundingBox;
+    VROAtomic<bool> _hasWorldBounds;
+    VROAtomic<bool> _hasGeometryBounds;
     
     /*
      Directly-set application thread properties.
@@ -925,6 +933,7 @@ private:
     VROAtomic<VROMatrix4f> _lastRotationPivot, _lastRotationPivotInverse;
     VROAtomic<bool> _lastHasScalePivot;
     VROAtomic<bool> _lastHasRotationPivot;
+    VROAtomic<VROBoundingBox> _lastGeometryBounds;
 
     /*
      The transformed bounding box containing this node's geometry. The 

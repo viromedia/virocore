@@ -762,6 +762,10 @@ VROBoundingBox VRONode::getLastUmbrellaBoundingBox() const {
     return _lastUmbrellaBoundingBox;
 }
 
+VROBoundingBox VRONode::getLastGeometryBoundingBox() const {
+    return _lastGeometryBounds;
+}
+
 #pragma mark - Scene Graph
 
 void VRONode::addChildNode(std::shared_ptr<VRONode> node) {
@@ -1147,24 +1151,29 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
     _lastWorldRotation = parentRotation.multiply(rotation.getMatrix());
     _lastWorldTransform = transform;
     
-    if (_geometry) {
+    if (_hasGeometryBounds) {
+        VROBoundingBox lastGeometryBounds = _lastGeometryBounds;
+        _lastWorldBoundingBox = lastGeometryBounds.transform(transform);
+        _hasWorldBounds = true;
+    }
+    else if (_geometry) {
         if (_geometry->getInstancedUBO() != nullptr) {
             _lastWorldBoundingBox = _geometry->getInstancedUBO()->getInstancedBoundingBox();
         } else {
             _lastWorldBoundingBox = _geometry->getBoundingBox().transform(transform);
         }
-        _hasWorldBoundingBox = true;
+        _hasWorldBounds = true;
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
         _lastWorldBoundingBox = { worldPosition.x, worldPosition.x,
                                   worldPosition.y, worldPosition.y,
                                   worldPosition.z, worldPosition.z };
-        _hasWorldBoundingBox = false;
+        _hasWorldBounds = false;
     }
 }
 
 bool VRONode::computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parentNodeBeingUpdated, bool isSet) {
-    if (_hasWorldBoundingBox) {
+    if (_hasWorldBounds) {
         if (!isSet) {
             parentNodeBeingUpdated->_lastUmbrellaBoundingBox.store(_lastWorldBoundingBox);
             isSet = true;
@@ -1184,6 +1193,10 @@ void VRONode::setEmptyAtomicUmbrellaBounds() {
     _lastUmbrellaBoundingBox = { lastWorldPosition.x, lastWorldPosition.x,
                                  lastWorldPosition.y, lastWorldPosition.y,
                                  lastWorldPosition.z, lastWorldPosition.z };
+}
+
+void VRONode::setLastGeometryBoundingBox(VROBoundingBox bounds) {
+    _lastGeometryBounds.store(bounds);
 }
 
 #pragma mark - Sync Rendering Thread <> Application Thread
@@ -1212,10 +1225,20 @@ void VRONode::syncAppThreadProperties() {
     VROVector3f scale = _scale;
     VROBoundingBox worldBoundingBox = _worldBoundingBox;
     VROBoundingBox umbrellaBoundingBox = _umbrellaBoundingBox;
+    
+    VROBoundingBox geometryBounds;
+    bool hasGeometryBounds = false;
+    
+    if (_geometry && _geometry->getInstancedUBO() == nullptr) {
+        geometryBounds = _geometry->getBoundingBox();
+        hasGeometryBounds = true;
+    } else {
+        hasGeometryBounds = false;
+    }
 
     VROPlatformDispatchAsyncApplication([worldTransform, worldPosition, worldRotation, position,
                                          rotation, scale, worldBoundingBox, umbrellaBoundingBox,
-                                         node_w] {
+                                         geometryBounds, hasGeometryBounds, node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
             node->_lastWorldTransform = worldTransform;
@@ -1226,6 +1249,8 @@ void VRONode::syncAppThreadProperties() {
             node->_lastScale = scale;
             node->_lastWorldBoundingBox = worldBoundingBox;
             node->_lastUmbrellaBoundingBox = umbrellaBoundingBox;
+            node->_lastGeometryBounds = geometryBounds;
+            node->_hasGeometryBounds = hasGeometryBounds;
         }
     });
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {

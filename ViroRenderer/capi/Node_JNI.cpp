@@ -109,14 +109,23 @@ VRO_METHOD(void, nativeSetTag)(VRO_ARGS
 VRO_METHOD(void, nativeSetGeometry)(VRO_ARGS
                                     VRO_REF(VRONode) node_j,
                                     VRO_REF(VROGeometry) geo_j) {
-    std::weak_ptr<VROGeometry> geo_w = VRO_REF_GET(VROGeometry, geo_j);
-    std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, node_j);
-    VROPlatformDispatchAsyncRenderer([geo_w, node_w] {
-        std::shared_ptr<VROGeometry> geo = geo_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
 
-        if (geo && node) {
-            node->setGeometry(geo);
+    std::shared_ptr<VROGeometry> geo = VRO_REF_GET(VROGeometry, geo_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+
+    // Immediately set the node's bounding box so it's reflected in
+    // bounding box calculations (even before the geometry is set via
+    // the rendering thread)
+    node->setLastGeometryBoundingBox(geo->getBoundingBox());
+
+    std::weak_ptr<VROGeometry> geo_w = geo;
+    std::weak_ptr<VRONode> node_w = node;
+    VROPlatformDispatchAsyncRenderer([geo_w, node_w] {
+        std::shared_ptr<VROGeometry> geo_s = geo_w.lock();
+        std::shared_ptr<VRONode> node_s = node_w.lock();
+
+        if (geo_s && node_s) {
+            node_s->setGeometry(geo_s);
         }
     });
 }
