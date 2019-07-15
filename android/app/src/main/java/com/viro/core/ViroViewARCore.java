@@ -484,25 +484,6 @@ public class ViroViewARCore extends ViroView {
 
     private void init(final Context context, final StartupListener startupListener) {
         mStartupListener = startupListener;
-        ARCoreAvailability availability = isARSupportedOnDevice(context);
-
-        if (availability != ARCoreAvailability.SUPPORTED) { // UNSUPPORTED, UNKNOWN or TRANSIENT
-            switch (availability) {
-                case UNKNOWN:
-                    notifyRendererFailed(StartupError.ARCORE_UNKNOWN,
-                            "Unknown error detecting ARCore on the device.");
-                    break;
-                case TRANSIENT:
-                    notifyRendererFailed(StartupError.ARCORE_TRANSIENT,
-                            "Transient error detecting ARCore on the device. " +
-                                    "Application should check again soon.");
-                    break;
-                default: //UNSUPPORTED
-                    notifyRendererFailed(StartupError.ARCORE_NOT_SUPPORTED,
-                            "This device is not compatible with ARCore");
-            }
-            throw new DeviceNotCompatibleException();
-        }
 
         // We wait to load the viro_arcore library until after the ARCore check, otherwise
         // UnsatisfiedLinkErrors may occur on devices that are using Android 23 or earlier
@@ -611,13 +592,6 @@ public class ViroViewARCore extends ViroView {
                     break;
             }
 
-            // This is HACKY, but on some devices (Pixel 2), even when Google says ARCore is
-            // installed, it really isn't, and creating the Session will fail with "Device
-            // not compatible" error
-            Thread.sleep(100);
-
-            // Create a dummy session just to check if it's possible
-            new Session(activity);
             mARCoreInstalled.set(true);
             ((RendererARCore) mNativeRenderer).onARCoreInstalled(getContext());
             ((RendererARCore) mNativeRenderer).setARDisplayGeometry(mRotation, mWidth, mHeight);
@@ -625,25 +599,10 @@ public class ViroViewARCore extends ViroView {
             if (mRendererSurfaceInitialized.get()) {
                 notifyRendererStart();
             }
-        } catch (UnavailableArcoreNotInstalledException e) {
-            error = StartupError.ARCORE_NOT_INSTALLED;
-            Log.i(TAG, "Error: ARCore not installed on device", e);
-            message = "Please install ARCore on this device to use AR features";
-
-        } catch (UnavailableUserDeclinedInstallationException e) {
+        }  catch (UnavailableUserDeclinedInstallationException e) {
             error = StartupError.ARCORE_USER_DECLINED_INSTALL;
             Log.i(TAG, "Error: User declined installing ARCore on device");
             message = "Please install ARCore on this device to use AR features";
-
-        } catch (UnavailableApkTooOldException e) {
-            error = StartupError.ARCORE_NEEDS_UPDATE;
-            Log.i(TAG, "Error: ARCore on this device needs to be updated");
-            message = "Please update ARCore on this device to use AR features";
-
-        } catch (UnavailableSdkTooOldException e) {
-            error = StartupError.ARCORE_SDK_NEEDS_UPDATE;
-            Log.i(TAG, "Error: ARCore SDK used by this application needs to be updated");
-            message = "Please update this app to support AR features";
 
         } catch (Exception e) {
             error = StartupError.ARCORE_UNKNOWN;
