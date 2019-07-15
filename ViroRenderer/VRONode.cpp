@@ -46,6 +46,10 @@ static const float kHiddenOpacityThreshold = 0.02;
 // Set to false to disable visibility testing
 static const bool kEnableVisibilityFrustumTest = true;
 
+// Set to true to output log statements debugging bounding box computation
+static const bool kDebugBoundingBoxComputation = false;
+static const std::string kDebugBoundingBoxNodeName = "Stage";
+
 // Set to true to debut the sort order
 bool kDebugSortOrder = false;
 int  kDebugSortOrderFrameFrequency = 60;
@@ -1212,6 +1216,11 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
 void VRONode::startComputeAtomicUmbrellaBounds() {
     _lastUmbrellaBoundsSet = false;
     
+    if (kDebugBoundingBoxComputation && _name == kDebugBoundingBoxNodeName) {
+        pinfo("------------------------");
+        pinfo("Last geometry bounding box %s", _lastGeometryBoundingBox.load().toString().c_str());
+    }
+    
     VROBoundingBox box = _lastGeometryBoundingBox;
     if (box.getSpanX() * box.getSpanY() * box.getSpanZ() > kEpsilon) {
         // Use _geometryBoundingBox instead of _localBoundingBox because we do not apply this Node's transform
@@ -1222,12 +1231,20 @@ void VRONode::startComputeAtomicUmbrellaBounds() {
 }
 
 VROMatrix4f VRONode::computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parentNodeBeingUpdated, VROMatrix4f transform) {
+    if (kDebugBoundingBoxComputation && parentNodeBeingUpdated->_name == kDebugBoundingBoxNodeName) {
+        pinfo("    Updating with with Node %s bounding box %s", _name.c_str(), _lastGeometryBoundingBox.load().toString().c_str());
+    }
+    
     VROBoundingBox box = _lastGeometryBoundingBox;
     if (box.getSpanX() * box.getSpanY() * box.getSpanZ() > kEpsilon) {
         if (!parentNodeBeingUpdated->_lastUmbrellaBoundsSet) {
             parentNodeBeingUpdated->_lastLocalUmbrellaBoundingBox.store(_lastLocalBoundingBox.load().transform(transform));
             parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox.store(_lastWorldBoundingBox);
             parentNodeBeingUpdated->_lastUmbrellaBoundsSet = true;
+            
+            if (kDebugBoundingBoxComputation && parentNodeBeingUpdated->_name == kDebugBoundingBoxNodeName) {
+                pinfo("    Set to world bounds %s", _lastWorldBoundingBox.load().toString().c_str());
+            }
         } else {
             VROBoundingBox currentLocal = parentNodeBeingUpdated->_lastLocalUmbrellaBoundingBox;
             currentLocal.unionDestructive(_lastLocalBoundingBox.load().transform(transform));
@@ -1236,6 +1253,15 @@ VROMatrix4f VRONode::computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parent
             VROBoundingBox currentWorld = parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox;
             currentWorld.unionDestructive(_lastWorldBoundingBox.load());
             parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox.store(currentWorld);
+            
+            if (kDebugBoundingBoxComputation) {
+                if (parentNodeBeingUpdated->_name == kDebugBoundingBoxNodeName) {
+                    pinfo("    Unioned with world bounds %s", _lastWorldBoundingBox.load().toString().c_str());
+                }
+                if (parentNodeBeingUpdated->_name == kDebugBoundingBoxNodeName) {
+                    pinfo("    Umbrella result %s", parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox.load().toString().c_str());
+                }
+            }
         }
     }
     
@@ -1253,10 +1279,16 @@ void VRONode::endComputeAtomicUmbrellaBounds() {
                                           lastWorldPosition.z, lastWorldPosition.z };
         _lastLocalUmbrellaBoundingBox =  { 0, 0, 0, 0, 0, 0 };
     }
+    if (kDebugBoundingBoxComputation && _name == kDebugBoundingBoxNodeName) {
+        pinfo("Final world bounds %s", _lastWorldUmbrellaBoundingBox.load().toString().c_str());
+    }
 }
 
 void VRONode::setLastGeometryBoundingBox(VROBoundingBox bounds) {
     _lastGeometryBoundingBox.store(bounds);
+    if (kDebugBoundingBoxComputation && _name == kDebugBoundingBoxNodeName) {
+        pinfo("--- Explicitly set last geometry bounding box %s", _lastGeometryBoundingBox.load().toString().c_str());
+    }
 }
 
 #pragma mark - Sync Rendering Thread <> Application Thread
@@ -1289,6 +1321,10 @@ void VRONode::syncAppThreadProperties() {
     VROBoundingBox localBoundingBox = _localBoundingBox;
     VROBoundingBox localUmbrellaBoundingBox = _localUmbrellaBoundingBox;
     VROBoundingBox geometryBoundingBox = _geometryBoundingBox;
+    
+    if (kDebugBoundingBoxComputation && _name == kDebugBoundingBoxNodeName) {
+        pinfo("--- Renderer setting last geometry bounding box %s", geometryBoundingBox.toString().c_str());
+    }
     
     std::string name = _name;
     
