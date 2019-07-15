@@ -93,13 +93,24 @@ VROARSessionARCore::~VROARSessionARCore() {
         delete (_frame);
     }
 
+    // Remove all anchors
+    pinfo("Removing all anchors (%d) from session", (int) _anchors.size());
+
+    std::vector<std::shared_ptr<VROARAnchorARCore>> anchorsToRemove = _anchors;
+    for (std::shared_ptr<VROARAnchorARCore> anchor : anchorsToRemove) {
+        removeAnchor(anchor);
+        if (kDebugTracking) {
+            pinfo("   Removed anchor %p on session destroy", anchor->getId().c_str());
+        }
+    }
+
     if (_session != nullptr) {
         pinfo("Destroying ARCore session");
 
         // Deleting the session could take a few seconds, so to prevent blocking the main thread,
         // they recommend pausing the session, then deleting on a background thread!
         _session->pause();
-        VROPlatformDispatchAsyncBackground([this]{
+        VROPlatformDispatchAsyncBackground([this] {
             delete(_session);
         });
 
@@ -661,7 +672,7 @@ std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorForNative(arcore::Anch
  This method does most of the ARCore processing. ARCore consists of two concepts: trackable and
  anchor. Trackables are detected real-world objects, like horizontal and vertical planes, or image
  targets. Anchors are virtual objects that are attached to the real world, either relative to a
- trackable, relative to an AR hit result, or relative to an arbirary position.
+ trackable, relative to an AR hit result, or relative to an arbitrary position.
 
  Unlike ARCore, Viro (and ARKit) merge these concepts together: trackables *are* anchors.
  In order to bridge this conceptual difference with ARCore, this method will create one ARCore anchor
@@ -709,7 +720,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
 
     // Find all new and updated anchors, update/create new ones and notify this class.
     // The anchors in this list are *both* those that are tied to trackables (managed anchors)
-    // and those that were created at arbirary world positions or in response to hit tests
+    // and those that were created at arbitrary world positions or in response to hit tests
     // (manual anchors). However, we only process manual anchors here. Anchors with trackables are
     // processed afterward as the trackables themselves are updated.
     for (int i = 0; i < anchorsSize; i++) {

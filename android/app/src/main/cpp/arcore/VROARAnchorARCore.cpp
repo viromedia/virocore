@@ -10,6 +10,7 @@
 #include "VROMatrix4f.h"
 #include "VROARSessionARCore.h"
 #include "VROPlatformUtil.h"
+#include "VROAllocationTracker.h"
 
 VROARAnchorARCore::VROARAnchorARCore(std::string key,
                                      std::shared_ptr<arcore::Anchor> anchor,
@@ -19,6 +20,8 @@ VROARAnchorARCore::VROARAnchorARCore(std::string key,
     _trackable(trackable),
     _session(session) {
     setId(key);
+
+    ALLOCATION_TRACKER_ADD(Anchors, 1);
 }
 
 VROARAnchorARCore::~VROARAnchorARCore() {
@@ -34,6 +37,8 @@ VROARAnchorARCore::~VROARAnchorARCore() {
             anchor->detach();
         }
     });
+
+    ALLOCATION_TRACKER_SUB(Anchors, 1);
 }
 
 void VROARAnchorARCore::sync() {

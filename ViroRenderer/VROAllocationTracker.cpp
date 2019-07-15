@@ -71,5 +71,6 @@ void VROAllocationTracker::printNow() {
     pinfo("    Render Targets:      %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::RenderTargets)].load()));
     pinfo("    VBO:                 %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::VBO)].load()));
     pinfo("    Task Queues:         %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TaskQueues)].load()));
+    pinfo("    Anchors:             %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Anchors)].load()));
     VROTaskQueue::printTaskQueues();
 }
