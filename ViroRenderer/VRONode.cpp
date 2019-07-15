@@ -137,6 +137,12 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _lastRotationPivotInverse(node._lastRotationPivotInverse.load()),
     _lastHasScalePivot(node._lastHasScalePivot.load()),
     _lastHasRotationPivot(node._lastHasRotationPivot.load()),
+    _lastWorldBoundingBox(node._lastWorldBoundingBox.load()),
+    _lastLocalBoundingBox(node._lastLocalBoundingBox.load()),
+    _lastGeometryBoundingBox(node._lastGeometryBoundingBox.load()),
+    _lastLocalUmbrellaBoundingBox(node._lastLocalUmbrellaBoundingBox.load()),
+    _lastWorldUmbrellaBoundingBox(node._lastWorldUmbrellaBoundingBox.load()),
+    _lastUmbrellaBoundsSet(node._lastUmbrellaBoundsSet),
 #else
     _lastLocalTransform(node._lastLocalTransform),
     _lastWorldTransform(node._lastWorldTransform),
@@ -151,6 +157,12 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _lastRotationPivotInverse(node._lastRotationPivotInverse),
     _lastHasScalePivot(node._lastHasScalePivot),
     _lastHasRotationPivot(node._lastHasRotationPivot),
+    _lastWorldBoundingBox(node._lastWorldBoundingBox),
+    _lastLocalBoundingBox(node._lastLocalBoundingBox),
+    _lastGeometryBoundingBox(node._lastGeometryBoundingBox),
+    _lastLocalUmbrellaBoundingBox(node._lastLocalUmbrellaBoundingBox),
+    _lastWorldUmbrellaBoundingBox(node._lastWorldUmbrellaBoundingBox),
+    _lastUmbrellaBoundsSet(node._lastUmbrellaBoundsSet),
 #endif
     _holdRendering(node._holdRendering) {
         
