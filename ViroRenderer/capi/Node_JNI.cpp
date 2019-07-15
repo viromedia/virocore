@@ -373,26 +373,40 @@ VRO_METHOD(void, nativeUpdateWorldTransforms)(VRO_ARGS
     }
 }
 
-VRO_METHOD(VRO_BOOL, nativeUpdateAtomicUmbrellaBounds)(VRO_ARGS
-                                                       VRO_REF(VRONode) node_bounds_to_update_j,
-                                                       VRO_REF(VRONode) node_j,
-                                                       VRO_BOOL isSet) {
-    if (VRO_REF_NULL(node_j) || VRO_REF_NULL(node_bounds_to_update_j)) {
-        return false;
-    }
-    std::shared_ptr<VRONode> nodeBoundsToUpdate = VRO_REF_GET(VRONode, node_bounds_to_update_j);
-    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+VRO_METHOD(void, nativeStartUpdateAtomicUmbrellaBounds)(VRO_ARGS
+                                                        VRO_REF(VRONode) node_j) {
 
-    return node->computeAtomicUmbrellaBounds(nodeBoundsToUpdate, isSet);
-}
-
-VRO_METHOD(void, nativeSetEmptyAtomicUmbrellaBounds)(VRO_ARGS
-                                                     VRO_REF(VRONode) node_j) {
     if (VRO_REF_NULL(node_j)) {
         return;
     }
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
-    node->setEmptyAtomicUmbrellaBounds();
+    node->startComputeAtomicUmbrellaBounds();
+}
+
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeUpdateAtomicUmbrellaBounds)(VRO_ARGS
+                                                              VRO_REF(VRONode) node_bounds_to_update_j,
+                                                              VRO_REF(VRONode) node_j,
+                                                              VRO_FLOAT_ARRAY transform_j) {
+    if (VRO_REF_NULL(node_j) || VRO_REF_NULL(node_bounds_to_update_j)) {
+        return transform_j;
+    }
+    std::shared_ptr<VRONode> nodeBoundsToUpdate = VRO_REF_GET(VRONode, node_bounds_to_update_j);
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+
+    VRO_FLOAT *transform_m = VRO_FLOAT_ARRAY_GET_ELEMENTS(transform_j);
+    VROMatrix4f transform(transform_m);
+    VRO_FLOAT_ARRAY_RELEASE_ELEMENTS(transform_j, transform_m);
+
+    return ARUtilsCreateFloatArrayFromMatrix(node->computeAtomicUmbrellaBounds(nodeBoundsToUpdate, transform));
+}
+
+VRO_METHOD(void, nativeEndUpdateAtomicUmbrellaBounds)(VRO_ARGS
+                                                      VRO_REF(VRONode) node_j) {
+    if (VRO_REF_NULL(node_j)) {
+        return;
+    }
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+    node->endComputeAtomicUmbrellaBounds();
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetPosition)(VRO_ARGS
@@ -433,7 +447,13 @@ VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetRotationQuaternion)(VRO_ARGS
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetBoundingBox)(VRO_ARGS
                                                   VRO_REF(VRONode) node_j) {
     std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
-    return ARUtilsCreateFloatArrayFromBoundingBox(node->getLastUmbrellaBoundingBox());
+    return ARUtilsCreateFloatArrayFromBoundingBox(node->getLastWorldUmbrellaBoundingBox());
+}
+
+VRO_METHOD(VRO_FLOAT_ARRAY, nativeGetBoundingBoxLocal)(VRO_ARGS
+                                                       VRO_REF(VRONode) node_j) {
+    std::shared_ptr<VRONode> node = VRO_REF_GET(VRONode, node_j);
+    return ARUtilsCreateFloatArrayFromBoundingBox(node->getLastLocalUmbrellaBoundingBox());
 }
 
 VRO_METHOD(VRO_FLOAT_ARRAY, nativeConvertLocalPositionToWorldSpace)(VRO_ARGS

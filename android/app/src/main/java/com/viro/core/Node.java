@@ -952,13 +952,24 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the {@link BoundingBox} of this Node. This bounding box encompasses this Node's geometry
-     * <i>and</i> the bounds of all of this Node's children.
+     * Get the {@link BoundingBox} of this Node in <i>world</i> coordinates. This bounding box encompasses
+     * this Node's geometry <i>and</i> the bounds of all of this Node's children.
      *
      * @return The {@link BoundingBox} of this Node.
      */
     public BoundingBox getBoundingBox() {
         return new BoundingBox(nativeGetBoundingBox(mNativeRef));
+    }
+
+    /**
+     * Get the {@link BoundingBox} of this Node in <i>local</i> coordinates; that is, in the
+     * coordinate system of this Node's parent. This bounding box encompasses this Node's geometry
+     * <i>and</i> the bounds of all of this Node's children.
+     *
+     * @return The {@link BoundingBox} of this Node.
+     */
+    public BoundingBox getBoundingBoxLocal() {
+        return new BoundingBox(nativeGetBoundingBoxLocal(mNativeRef));
     }
 
     /**
@@ -1737,8 +1748,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeSetRotationPivot(long nodeReference, float x, float y, float z);
     private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
     private native void nativeUpdateWorldTransforms(long nodeReference, long parentReference);
-    private native boolean nativeUpdateAtomicUmbrellaBounds(long nodeToUpdateRef, long nodeRef, boolean isSet);
-    private native void nativeSetEmptyAtomicUmbrellaBounds(long nodeRef);
+    private native void nativeStartUpdateAtomicUmbrellaBounds(long nodeRef);
+    private native float[] nativeUpdateAtomicUmbrellaBounds(long nodeToUpdateRef, long nodeRef, float[] transform);
+    private native void nativeEndUpdateAtomicUmbrellaBounds(long nodeRef);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetRenderingOrder(long nodeReference, int renderingOrder);
@@ -1757,6 +1769,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native float[] nativeGetRotationEuler(long nodeReference);
     private native float[] nativeGetRotationQuaternion(long nodeReference);
     private native float[] nativeGetBoundingBox(long boundingBox);
+    private native float[] nativeGetBoundingBoxLocal(long boundingBox);
     private native String[] nativeGetAnimationKeys(long nodeReference);
     private native void nativeSetTag(long nodeReference, String tag);
     private native void nativeSetCamera(long nodeReference, long cameraReference);
@@ -1886,13 +1899,12 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * Update the umbrella bounding box of this node and all of its children.
      */
     protected void updateUmbrellaBounds() {
-        boolean isSet = updateUmbrellaBounds(this, false);
-
-        // If the bounds were empty (e.g. no geometry all the way down), then set the
-        // bounds to the world position.
-        if (!isSet) {
-            nativeSetEmptyAtomicUmbrellaBounds(mNativeRef);
-        }
+        nativeStartUpdateAtomicUmbrellaBounds(mNativeRef);
+        updateUmbrellaBounds(this, true, new float[] { 1, 0, 0, 0,
+                              0, 1, 0, 0,
+                              0, 0, 1, 0,
+                              0, 0, 0, 1 });
+        nativeEndUpdateAtomicUmbrellaBounds(mNativeRef);
 
         for (Node child : mChildren) {
             child.updateUmbrellaBounds();
@@ -1903,14 +1915,13 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * Updates the given node's umbrella bounds with the bounds of this node, recursing
      * down to all of this node's children.
      */
-    private boolean updateUmbrellaBounds(final Node nodeBeingUpdated, boolean isSet) {
-        isSet = nativeUpdateAtomicUmbrellaBounds(nodeBeingUpdated.mNativeRef, mNativeRef, isSet);
-        for (Node child : mChildren) {
-            if (child.updateUmbrellaBounds(nodeBeingUpdated, isSet)) {
-                isSet = true;
-            }
+    private void updateUmbrellaBounds(final Node nodeBeingUpdated, boolean skipParent, float[] transform) {
+        if (!skipParent) {
+            transform = nativeUpdateAtomicUmbrellaBounds(nodeBeingUpdated.mNativeRef, mNativeRef, transform);
         }
-        return isSet;
+        for (Node child : mChildren) {
+            child.updateUmbrellaBounds(nodeBeingUpdated, false, transform);
+        }
     }
 
 // +---------------------------------------------------------------------------+

@@ -81,6 +81,7 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _dragPlanePoint({ 0, 0, 0 }),
     _dragPlaneNormal({ 0, 0 ,0 }),
     _dragMaxDistance(10),
+    _lastLocalTransform(VROMatrix4f::identity()),
     _lastWorldTransform(VROMatrix4f::identity()),
     _lastWorldPosition({ 0, 0, 0 }),
     _lastWorldRotation(VROMatrix4f::identity()),
@@ -123,6 +124,7 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     // Atomics need to be explicitly loaded if in initializer lists
     // (normally the assignment operator will automatically load the
     // atomic)
+    _lastLocalTransform(node._lastLocalTransform.load()),
     _lastWorldTransform(node._lastWorldTransform.load()),
     _lastWorldPosition(node._lastWorldPosition.load()),
     _lastWorldRotation(node._lastWorldRotation.load()),
@@ -136,6 +138,7 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _lastHasScalePivot(node._lastHasScalePivot.load()),
     _lastHasRotationPivot(node._lastHasRotationPivot.load()),
 #else
+    _lastLocalTransform(node._lastLocalTransform),
     _lastWorldTransform(node._lastWorldTransform),
     _lastWorldPosition(node._lastWorldPosition),
     _lastWorldRotation(node._lastWorldRotation),
@@ -271,7 +274,6 @@ void VRONode::recomputeUmbrellaBoundingBox() {
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
     computeTransforms(parentTransform, parentRotation);
-    computeUmbrellaBounds();
 }
 
 #pragma mark - Sorting and Transforms
@@ -456,24 +458,21 @@ void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
 void VRONode::computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
     passert_thread(__func__);
     
-    /*
-     Compute the transform for this node.
-     */
+    // Compute the transform for this node
     doComputeTransform(parentTransform);
 
-    /*
-     Compute the rotation for this node.
-     */
+    //Compute the rotation for this node
     _worldRotation = parentRotation.multiply(_rotation.getMatrix());
 
-    // Apply the world transform for spatial sounds, if any.
+    // Apply the world transform for spatial sounds, if any
     for (std::shared_ptr<VROSound> &sound : _sounds) {
         sound->setTransformedPosition(_worldTransform.multiply(sound->getPosition()));
     }
+    
+    // Compute the umbrella bounding box for this node
+    computeUmbrellaBounds();
 
-    /*
-     Move down the tree.
-     */
+    // Recurse down the tree
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->computeTransforms(_worldTransform, _worldRotation);
     }
@@ -484,7 +483,7 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
      Compute the world transform for this node. The full formula is:
      _worldTransform = parentTransform * T * Rpiv * R * Rpiv -1 * Spiv * S * Spiv-1
      */
-    _worldTransform.toIdentity();
+    _localTransform.toIdentity();
     
     /*
      Scale.
@@ -492,21 +491,20 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     if (_scalePivot) {
         VROMatrix4f scale;
         scale.scale(_scale.x, _scale.y, _scale.z);
-        _worldTransform = *_scalePivot * scale * *_scalePivotInverse;
-    }
-    else {
-        _worldTransform.scale(_scale.x, _scale.y, _scale.z);
+        _localTransform = *_scalePivot * scale * *_scalePivotInverse;
+    } else {
+        _localTransform.scale(_scale.x, _scale.y, _scale.z);
     }
     
     /*
      Rotation.
      */
     if (_rotationPivot) {
-        _worldTransform = *_rotationPivotInverse * _worldTransform;
+        _localTransform = *_rotationPivotInverse * _localTransform;
     }
-    _worldTransform = _rotation.getMatrix() * _worldTransform;
+    _localTransform = _rotation.getMatrix() * _localTransform;
     if (_rotationPivot) {
-        _worldTransform = *_rotationPivot * _worldTransform;
+        _localTransform = *_rotationPivot * _localTransform;
     }
     
     /*
@@ -514,20 +512,35 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
      */
     VROMatrix4f translate;
     translate.translate(_position.x, _position.y, _position.z);
-    _worldTransform = translate * _worldTransform;
+    _localTransform = translate * _localTransform;
 
-    _worldTransform = parentTransform * _worldTransform;
+    _worldTransform = parentTransform * _localTransform;
     _worldPosition = { _worldTransform[12], _worldTransform[13], _worldTransform[14] };
+    
     if (_geometry) {
         if (_geometry->getInstancedUBO() != nullptr) {
             _worldBoundingBox = _geometry->getInstancedUBO()->getInstancedBoundingBox();
+            
+            // TODO The local bounding box for particles is not set correctly. Try
+            //      simply subtracting the world position.
+            _geometryBoundingBox = _worldBoundingBox;
+            _localBoundingBox = _worldBoundingBox;
         } else {
-            _worldBoundingBox = _geometry->getBoundingBox().transform(_worldTransform);
+            // The local bounding box is the geometry's bounding box multiplied by
+            // local tranforms only. The world bounding box is the geometry's bounding box
+            // multiplied by the full world transform.
+            _geometryBoundingBox = _geometry->getBoundingBox();
+            _localBoundingBox    = _geometryBoundingBox.transform(_localTransform);
+            _worldBoundingBox    = _geometryBoundingBox.transform(_worldTransform);
         }
     } else {
         // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
+        _geometryBoundingBox.set(_position.x, _position.x, _position.y,
+                                 _position.y, _position.z, _position.z);
+        _localBoundingBox.set(_position.x, _position.x, _position.y,
+                              _position.y, _position.z, _position.z);
         _worldBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
-                                 _worldPosition.y, _worldPosition.z, _worldPosition.z);
+                              _worldPosition.y, _worldPosition.z, _worldPosition.z);
     }
 }
 
@@ -621,20 +634,17 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
 
 void VRONode::updateVisibility(const VRORenderContext &context) {
     const VROFrustum &frustum = context.getCamera().getFrustum();
-    
-    computeUmbrellaBounds();
-    
     VROFrustumResult result = VROFrustumResult::Outside;
     
     // First check for an edge case: if the bounds of the object _enclose_ the
     // camera. This is common for mdoels or effects that surround the user, and
     // our usual frustum test fails to handle this correctly.
-    if (_umbrellaBoundingBox.containsPoint(context.getCamera().getPosition())) {
+    if (_worldUmbrellaBoundingBox.containsPoint(context.getCamera().getPosition())) {
         result = VROFrustumResult::Intersects;
     }
     // Otherwise do the normal frustum test.
     else {
-        result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
+        result = frustum.intersectAllOpt(_worldUmbrellaBoundingBox, &_umbrellaBoxMetadata);
     }
     
     // Process the results of the frustum test, iterating down the tree if there
@@ -663,35 +673,53 @@ void VRONode::setVisibilityRecursive(bool visible) {
 }
 
 void VRONode::computeUmbrellaBounds() {
-    bool isSet = computeUmbrellaBounds(&_umbrellaBoundingBox, false);
+    // The world umbrella bounding box is the bounding box of this Node in world coordinates,
+    // union-ed with the bounding boxes of all children, and their children, etc.
+    //
+    // The local unbrella bounding box is similar, except its in the coordinate system of
+    // the node. This means it is the bounding box of this Node's geometry (with no transforms
+    // applied), union-ed with the bounding box of each child's geometry multiplied by
+    // each child's transform, union-ed with the bounding box of each grandchild's geometry
+    // multiplied by the child and grandchild transforms, etc. Importantly, the transform of
+    // _this_ node is not applied.
+    bool isSet = false;
+    if (_geometry) {
+        // Use _geometryBoundingBox instead of _localBoundingBox because we do not apply this Node's transform
+        _localUmbrellaBoundingBox = _geometryBoundingBox;
+        _worldUmbrellaBoundingBox = _worldBoundingBox;
+        isSet = true;
+    }
+    for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
+        if (childNode->computeUmbrellaBounds(&_localUmbrellaBoundingBox, &_worldUmbrellaBoundingBox, VROMatrix4f::identity(), isSet)) {
+            isSet = true;
+        }
+    }
     
     // If the bounds were empty (e.g. no geometry all the way down), then set the
-    // bounds to the world position.
+    // bounds to the position.
     if (!isSet) {
-        _umbrellaBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
-                                 _worldPosition.y, _worldPosition.z, _worldPosition.z);
+        _worldUmbrellaBoundingBox.set(_worldPosition.x, _worldPosition.x, _worldPosition.y,
+                                      _worldPosition.y, _worldPosition.z, _worldPosition.z);
+        _localUmbrellaBoundingBox.set(0, 0, 0, 0, 0, 0);
     }
 }
 
-bool VRONode::computeUmbrellaBounds(VROBoundingBox *bounds, bool isSet) const {
+bool VRONode::computeUmbrellaBounds(VROBoundingBox *localBounds, VROBoundingBox *worldBounds, VROMatrix4f transform, bool isSet) const {
     if (_geometry) {
-        VROBoundingBox localBounds;
-        if (_geometry->getInstancedUBO() != nullptr) {
-            localBounds = _geometry->getInstancedUBO()->getInstancedBoundingBox();
-        } else {
-            localBounds = _geometry->getBoundingBox().transform(_worldTransform);
-        }
-        
         if (!isSet) {
-            *bounds = localBounds;
+            *localBounds = _localBoundingBox.transform(transform);
+            *worldBounds = _worldBoundingBox;
             isSet = true;
         } else {
-            bounds->unionDestructive(localBounds);
+            localBounds->unionDestructive(_localBoundingBox.transform(transform));
+            worldBounds->unionDestructive(_worldBoundingBox);
         }
     }
     
+    transform = transform * _localTransform;
+    
     for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
-        if (childNode->computeUmbrellaBounds(bounds, isSet)) {
+        if (childNode->computeUmbrellaBounds(localBounds, worldBounds, transform, isSet)) {
             isSet = true;
         }
     }
@@ -758,12 +786,16 @@ VROMatrix4f VRONode::getLastRotationPivot() const {
     }
 }
 
-VROBoundingBox VRONode::getLastUmbrellaBoundingBox() const {
-    return _lastUmbrellaBoundingBox;
+VROBoundingBox VRONode::getLastWorldUmbrellaBoundingBox() const {
+    return _lastWorldUmbrellaBoundingBox;
 }
 
-VROBoundingBox VRONode::getLastGeometryBoundingBox() const {
-    return _lastGeometryBounds;
+VROBoundingBox VRONode::getLastLocalUmbrellaBoundingBox() const {
+    return _lastLocalUmbrellaBoundingBox;
+}
+
+VROBoundingBox VRONode::getLastLocalBoundingBox() const {
+    return _lastLocalBoundingBox;
 }
 
 #pragma mark - Scene Graph
@@ -1113,90 +1145,106 @@ void VRONode::computeTransformsAtomic(VROMatrix4f parentTransform, VROMatrix4f p
     VROQuaternion rotation = _lastRotation;
     VROVector3f position = _lastPosition;
     
-    // The world transform is aggregated into this matrix
-    VROMatrix4f transform;
+    // The local transform is aggregated into this matrix
+    VROMatrix4f localTransform;
     
     // First compute scale
     VROVector3f scale = _lastScale;
     if (_lastHasScalePivot) {
         VROMatrix4f scaleMatrix;
         scaleMatrix.scale(scale.x, scale.y, scale.z);
-        transform = _lastScalePivot * scaleMatrix * _lastScalePivotInverse;
+        localTransform = _lastScalePivot * scaleMatrix * _lastScalePivotInverse;
     }
     else {
-        transform.scale(scale.x, scale.y, scale.z);
+        localTransform.scale(scale.x, scale.y, scale.z);
     }
     
     // Rotation is after scale
     bool hasRotationPivot = _lastHasRotationPivot;
     if (hasRotationPivot) {
-        transform = _lastRotationPivotInverse * transform;
+        localTransform = _lastRotationPivotInverse * localTransform;
     }
-    transform = rotation.getMatrix() * transform;
+    localTransform = rotation.getMatrix() * localTransform;
     if (hasRotationPivot) {
-        transform = _lastRotationPivot * transform;
+        localTransform = _lastRotationPivot * localTransform;
     }
     
     // Translation is after scale and rotation
     VROMatrix4f translate;
     translate.translate(position.x, position.y, position.z);
-    transform = translate * transform;
+    localTransform = translate * localTransform;
+    _lastLocalTransform = localTransform;
     
     // Finally multiply by the parent transform to get the final world transform
-    transform = parentTransform * transform;
+    VROMatrix4f worldTransform = parentTransform * localTransform;
 
     // Store the final values in the atomics
-    VROVector3f worldPosition = { transform[12], transform[13], transform[14] };
+    VROVector3f worldPosition = { worldTransform[12], worldTransform[13], worldTransform[14] };
     _lastWorldPosition = worldPosition;
     _lastWorldRotation = parentRotation.multiply(rotation.getMatrix());
-    _lastWorldTransform = transform;
+    _lastWorldTransform = worldTransform;
     
-    if (_hasGeometryBounds) {
-        VROBoundingBox lastGeometryBounds = _lastGeometryBounds;
-        _lastWorldBoundingBox = lastGeometryBounds.transform(transform);
-        _hasWorldBounds = true;
-    }
-    else if (_geometry) {
-        if (_geometry->getInstancedUBO() != nullptr) {
-            _lastWorldBoundingBox = _geometry->getInstancedUBO()->getInstancedBoundingBox();
-        } else {
-            _lastWorldBoundingBox = _geometry->getBoundingBox().transform(transform);
-        }
-        _hasWorldBounds = true;
+    // We have to set the _lastWorldBoundingBox using the latest transform.
+    // Because _lastLocalBoundingBox is flawed for particle systems, we check
+    // if we have an instanced UBO first.
+    if (_geometry && _geometry->getInstancedUBO() != nullptr) {
+        _lastWorldBoundingBox = _geometry->getInstancedUBO()->getInstancedBoundingBox();
+        _lastLocalBoundingBox = _lastWorldBoundingBox.load(); // TODO This is flawed
     } else {
-        // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
-        _lastWorldBoundingBox = { worldPosition.x, worldPosition.x,
-                                  worldPosition.y, worldPosition.y,
-                                  worldPosition.z, worldPosition.z };
-        _hasWorldBounds = false;
+        VROBoundingBox lastGeometryBounds = _lastGeometryBoundingBox;
+        _lastLocalBoundingBox = lastGeometryBounds.transform(localTransform);
+        _lastWorldBoundingBox = lastGeometryBounds.transform(worldTransform);
     }
 }
 
-bool VRONode::computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parentNodeBeingUpdated, bool isSet) {
-    if (_hasWorldBounds) {
-        if (!isSet) {
-            parentNodeBeingUpdated->_lastUmbrellaBoundingBox.store(_lastWorldBoundingBox);
-            isSet = true;
+void VRONode::startComputeAtomicUmbrellaBounds() {
+    _lastUmbrellaBoundsSet = false;
+    
+    VROBoundingBox box = _lastGeometryBoundingBox;
+    if (box.getSpanX() * box.getSpanY() * box.getSpanZ() > kEpsilon) {
+        // Use _geometryBoundingBox instead of _localBoundingBox because we do not apply this Node's transform
+        _lastLocalUmbrellaBoundingBox = _lastGeometryBoundingBox.load();
+        _lastWorldUmbrellaBoundingBox = _lastWorldBoundingBox.load();
+        _lastUmbrellaBoundsSet = true;
+    }
+}
+
+VROMatrix4f VRONode::computeAtomicUmbrellaBounds(std::shared_ptr<VRONode> parentNodeBeingUpdated, VROMatrix4f transform) {
+    VROBoundingBox box = _lastGeometryBoundingBox;
+    if (box.getSpanX() * box.getSpanY() * box.getSpanZ() > kEpsilon) {
+        if (!parentNodeBeingUpdated->_lastUmbrellaBoundsSet) {
+            parentNodeBeingUpdated->_lastLocalUmbrellaBoundingBox.store(_lastLocalBoundingBox.load().transform(transform));
+            parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox.store(_lastWorldBoundingBox);
+            parentNodeBeingUpdated->_lastUmbrellaBoundsSet = true;
         } else {
-            VROBoundingBox current = parentNodeBeingUpdated->_lastUmbrellaBoundingBox;
-            current.unionDestructive(_lastWorldBoundingBox);
-            parentNodeBeingUpdated->_lastUmbrellaBoundingBox.store(current);
+            VROBoundingBox currentLocal = parentNodeBeingUpdated->_lastLocalUmbrellaBoundingBox;
+            currentLocal.unionDestructive(_lastLocalBoundingBox.load().transform(transform));
+            parentNodeBeingUpdated->_lastLocalUmbrellaBoundingBox.store(currentLocal);
+            
+            VROBoundingBox currentWorld = parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox;
+            currentWorld.unionDestructive(_lastWorldBoundingBox.load());
+            parentNodeBeingUpdated->_lastWorldUmbrellaBoundingBox.store(currentWorld);
         }
     }
-    return isSet;
+    
+    return transform * _lastLocalTransform;
 }
 
-void VRONode::setEmptyAtomicUmbrellaBounds() {
-    VROVector3f lastWorldPosition = _lastWorldPosition;
-    
-    // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
-    _lastUmbrellaBoundingBox = { lastWorldPosition.x, lastWorldPosition.x,
-                                 lastWorldPosition.y, lastWorldPosition.y,
-                                 lastWorldPosition.z, lastWorldPosition.z };
+void VRONode::endComputeAtomicUmbrellaBounds() {
+    VROBoundingBox box = _lastWorldUmbrellaBoundingBox;
+    if (box.getSpanX() * box.getSpanY() * box.getSpanZ() < kEpsilon) {
+        VROVector3f lastWorldPosition = _lastWorldPosition;
+        
+        // If there is no geometry, then the bounding box should be updated to be a 0 size box at the node's position.
+        _lastWorldUmbrellaBoundingBox = { lastWorldPosition.x, lastWorldPosition.x,
+                                          lastWorldPosition.y, lastWorldPosition.y,
+                                          lastWorldPosition.z, lastWorldPosition.z };
+        _lastLocalUmbrellaBoundingBox =  { 0, 0, 0, 0, 0, 0 };
+    }
 }
 
 void VRONode::setLastGeometryBoundingBox(VROBoundingBox bounds) {
-    _lastGeometryBounds.store(bounds);
+    _lastGeometryBoundingBox.store(bounds);
 }
 
 #pragma mark - Sync Rendering Thread <> Application Thread
@@ -1217,6 +1265,7 @@ void VRONode::syncAppThreadProperties() {
      Because we insist on this, we can consider in the future making these variables
      NOT atomic.
      */
+    VROMatrix4f localTransform = _localTransform;
     VROMatrix4f worldTransform = _worldTransform;
     VROVector3f worldPosition = _worldPosition;
     VROMatrix4f worldRotation = _worldRotation;
@@ -1224,23 +1273,19 @@ void VRONode::syncAppThreadProperties() {
     VROQuaternion rotation = _rotation;
     VROVector3f scale = _scale;
     VROBoundingBox worldBoundingBox = _worldBoundingBox;
-    VROBoundingBox umbrellaBoundingBox = _umbrellaBoundingBox;
+    VROBoundingBox worldUmbrellaBoundingBox = _worldUmbrellaBoundingBox;
+    VROBoundingBox localBoundingBox = _localBoundingBox;
+    VROBoundingBox localUmbrellaBoundingBox = _localUmbrellaBoundingBox;
+    VROBoundingBox geometryBoundingBox = _geometryBoundingBox;
     
-    VROBoundingBox geometryBounds;
-    bool hasGeometryBounds = false;
+    std::string name = _name;
     
-    if (_geometry && _geometry->getInstancedUBO() == nullptr) {
-        geometryBounds = _geometry->getBoundingBox();
-        hasGeometryBounds = true;
-    } else {
-        hasGeometryBounds = false;
-    }
-
-    VROPlatformDispatchAsyncApplication([worldTransform, worldPosition, worldRotation, position,
-                                         rotation, scale, worldBoundingBox, umbrellaBoundingBox,
-                                         geometryBounds, hasGeometryBounds, node_w] {
+    VROPlatformDispatchAsyncApplication([name, localTransform, worldTransform, worldPosition, worldRotation, position,
+                                         rotation, scale, worldBoundingBox, worldUmbrellaBoundingBox,
+                                         localBoundingBox, localUmbrellaBoundingBox, geometryBoundingBox, node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
+            node->_lastLocalTransform = localTransform;
             node->_lastWorldTransform = worldTransform;
             node->_lastWorldPosition = worldPosition;
             node->_lastWorldRotation = worldRotation;
@@ -1248,9 +1293,10 @@ void VRONode::syncAppThreadProperties() {
             node->_lastRotation = rotation;
             node->_lastScale = scale;
             node->_lastWorldBoundingBox = worldBoundingBox;
-            node->_lastUmbrellaBoundingBox = umbrellaBoundingBox;
-            node->_lastGeometryBounds = geometryBounds;
-            node->_hasGeometryBounds = hasGeometryBounds;
+            node->_lastWorldUmbrellaBoundingBox = worldUmbrellaBoundingBox;
+            node->_lastLocalBoundingBox = localBoundingBox;
+            node->_lastLocalUmbrellaBoundingBox = localUmbrellaBoundingBox;
+            node->_lastGeometryBoundingBox = geometryBoundingBox;
         }
     });
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
@@ -1413,14 +1459,11 @@ std::set<std::shared_ptr<VROMorpher>> VRONode::getMorphers(bool recursive) {
 #pragma mark - Hit Testing
 
 VROBoundingBox VRONode::getBoundingBox() const {
-    if (_geometry && _geometry->getInstancedUBO() != nullptr) {
-        return _geometry->getInstancedUBO()->getInstancedBoundingBox();
-    }
     return _worldBoundingBox;
 }
 
 VROBoundingBox VRONode::getUmbrellaBoundingBox() const {
-    return _umbrellaBoundingBox;
+    return _worldUmbrellaBoundingBox;
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
