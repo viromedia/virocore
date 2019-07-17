@@ -73,14 +73,14 @@ public:
     void setCurrentBoneWorldTransform(std::shared_ptr<VROBone> bone, VROMatrix4f transform, bool recurse);
 
     /*
-     Sets a weak reference to the model's root for boneToWorld calculations.
+     Sets a weak reference to the skinner's root for boneToWorld calculations.
      */
-    void setModelRootNode(std::shared_ptr<VRONode> modelRootNode);
+    void setSkinnerRootNode(std::shared_ptr<VRONode> modelRootNode);
 
     /*
      Returns the model's root node referenced by this VROSkeleton.
      */
-    std::shared_ptr<VRONode> getModelRootNode();
+    std::shared_ptr<VRONode> getSkinnerRootNode();
 
     /*
      Positions and scales all bones between and including the given parent and child bone

@@ -294,7 +294,8 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                         }
 
                         for (auto &skeletonPair : _skinIndexToSkeleton) {
-                            skeletonPair.second->setModelRootNode(rootNode);
+                            std::shared_ptr<VROSkinner> skin = _skinMap[skeletonPair.first];
+                            skeletonPair.second->setSkinnerRootNode(skin->getSkinnerNode());
                         }
 
                         // Once we have processed the model, injected it into the scene.

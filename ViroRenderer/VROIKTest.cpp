@@ -541,7 +541,7 @@ void VROIKTest::restoreTopBoneTransform() {
 
     // Move the resulting unrolled bone space transform into model space, and then world space.
     VROMatrix4f boneTransformModelSpace =  _skinner->getInverseBindTransforms().at(topIndex).multiply(computedBoneTransform);
-    VROMatrix4f skinnerNodeTrans = _skinner->getSkeleton()->getModelRootNode()->getWorldTransform();
+    VROMatrix4f skinnerNodeTrans = _skinner->getSkeleton()->getSkinnerRootNode()->getWorldTransform();
     VROMatrix4f output = skinnerNodeTrans.multiply(boneTransformModelSpace);
 
     // Save the result back into the skeleton.

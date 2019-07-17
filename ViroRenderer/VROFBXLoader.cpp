@@ -300,7 +300,6 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(viro::Node &node_pb, std::shared_
     std::shared_ptr<VROSkeleton> skeleton;
     if (node_pb.has_skeleton()) {
         skeleton = loadFBXSkeleton(node_pb.skeleton());
-        skeleton->setModelRootNode(finalRootNode);
     }
     
     // The outer node of the protobuf has no mesh data, it contains
@@ -349,6 +348,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
             std::shared_ptr<VROSkinner> skinner = loadFBXSkinner(geo_pb.skin(), skeleton, driver);
             geo->setSkinner(skinner);
             skinner->setSkinnerNode(node);
+            skeleton->setSkinnerRootNode(node);
             
             bool hasScaling = false;
             for (int i = 0; i < node_pb.skeletal_animation_size(); i++) {

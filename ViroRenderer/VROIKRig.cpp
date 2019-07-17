@@ -63,7 +63,7 @@ VROIKRig::VROIKRig(std::shared_ptr<VROSkeleton> skeleton,
                    std::map<std::string, int> endEffectorBoneIndexMap) {
     _rootJoint = std::make_shared<VROIKJoint>();
     _rootJoint->id = 1;
-    _rootJoint->syncNode = skeleton->getModelRootNode();
+    _rootJoint->syncNode = skeleton->getSkinnerRootNode();
     _rootJoint->syncBone = 0;
     _allKnownIKJoints.push_back(_rootJoint);
     _skeleton = skeleton;

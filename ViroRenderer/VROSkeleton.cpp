@@ -42,7 +42,7 @@ VROSkeleton::VROSkeleton(std::vector<std::shared_ptr<VROBone>> bones) {
     }
 }
 
-void VROSkeleton::setModelRootNode(std::shared_ptr<VRONode> modelRootNode) {
+void VROSkeleton::setSkinnerRootNode(std::shared_ptr<VRONode> modelRootNode) {
     _modelRootNode_w = modelRootNode;
 
     // Iterate through and create a VROBoneConstraint for each boneNodeAttachment
@@ -68,7 +68,7 @@ void VROSkeleton::setModelRootNode(std::shared_ptr<VRONode> modelRootNode) {
     }
 }
 
-std::shared_ptr<VRONode> VROSkeleton::getModelRootNode() {
+std::shared_ptr<VRONode> VROSkeleton::getSkinnerRootNode() {
     return _modelRootNode_w.lock();
 }
 

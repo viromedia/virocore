@@ -26,7 +26,7 @@ VROMatrix4f VROBoneConstraint::getTransform(const VRORenderContext &context, VRO
     }
 
     // Grab the bone transforms in model space.
-    VROMatrix4f modelWorldTrans = skeleton->getModelRootNode()->getWorldTransform();
+    VROMatrix4f modelWorldTrans = skeleton->getSkinnerRootNode()->getWorldTransform();
     VROMatrix4f boneWorldTrans = skeleton->getCurrentBoneWorldTransform(_constraintedBoneIndex);
     VROMatrix4f boneTransInModelSpace = boneWorldTrans * modelWorldTrans.invert();
 
