@@ -167,10 +167,11 @@ private:
                                       int channelTarget,
                                       const tinygltf::AnimationSampler &gChannelSampler,
                                       std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &framesOut);
-    static void processSkeletalAnimation(const tinygltf::Model &gModel,
-                                         std::vector<std::pair<int,int>> &skeletalAnimToSkinPair);
-    static void processSkeletalTransformsForFrame(int skin,
+    static bool processSkeletalAnimation(const tinygltf::Model &gModel,
+                                         std::map<int, std::pair<int, std::vector<int>>> &skeletalAnimToSkinToNodeMap);
+    static bool processSkeletalTransformsForFrame(int skin,
                                                   int animation,
+                                                  int subAnimPropertyIndex,
                                                   int keyFrameIndex,
                                                   int currentJointIndex,
                                                   std::map<int, VROMatrix4f> &transforms);

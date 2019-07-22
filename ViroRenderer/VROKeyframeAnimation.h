@@ -48,13 +48,10 @@ public:
 
     VROKeyframeAnimation(std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames,
                          float duration, bool hasTranslation, bool hasRotation, bool hasScale,
-                         float hasMorphWeights) {
-        _hasTranslation = hasTranslation;
-        _hasRotation = hasRotation;
-        _hasScale = hasScale;
+                         float hasMorphWeights) : _hasTranslation(hasTranslation),
+                         _hasRotation(hasRotation), _hasScale(hasScale), _hasMorphWeights(hasMorphWeights) {
         _frames = std::move(frames);
         _duration = duration;
-        _hasMorphWeights = hasMorphWeights;
     }
 
     virtual ~VROKeyframeAnimation() { }
@@ -97,7 +94,8 @@ public:
     void resume();
     void terminate(bool jumpToEnd);
     void preload() {}
-    
+    const bool _hasTranslation, _hasRotation, _hasScale, _hasMorphWeights;
+
     std::string toString() const;
 private:
     
@@ -109,7 +107,6 @@ private:
     /*
      The types of properties animated by this keyframe animation.
      */
-    bool _hasTranslation, _hasRotation, _hasScale, _hasMorphWeights;
 
     /*
      The animation frames, in order of time.
