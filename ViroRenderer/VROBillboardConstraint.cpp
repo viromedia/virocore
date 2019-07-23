@@ -15,23 +15,19 @@
 
 VROMatrix4f VROBillboardConstraint::getTransform(const VRORenderContext &context,
                                                  VROMatrix4f transform) {
-
-    VROMatrix4f rotation = transform;
-    rotation[12] = 0;
-    rotation[13] = 0;
-    rotation[14] = 0;
+    
+    VROVector3f translation = transform.extractTranslation();
 
     // The object is assumed to start facing in the positive Z
-    // direction; we rotate it by the transform to get the current
-    // lookAt vector
+    // direction. VRONode.cpp (the calling function) handles Node
+    // rotation (we ignore it here).
     VROVector3f lookAt(0, 0, 1);
-    lookAt = rotation.multiply(lookAt).normalize();
 
     const VROCamera &camera = context.getCamera();
 
     if (_freeAxis == VROBillboardAxis::All) {
         // Billboard with free Y axis
-        VROVector3f objToCam = camera.getPosition().subtract(transform.extractTranslation());
+        VROVector3f objToCam = camera.getPosition().subtract(translation);
         
         VROVector3f objToCamProj = objToCam;
         objToCamProj.y = 0;
@@ -46,19 +42,16 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRORenderContext &context
         VROVector3f axis;
         if (objToCam.y < 0) {
             axis = { 1, 0, 0 };
-        }
-        else {
+        } else {
             axis = { -1, 0, 0 };
         }
         
         VROQuaternion quaternionX;
         if (angleCosine > 0.99999999) {
             quaternionX = VROQuaternion::fromAngleAxis(0, axis);
-        }
-        else if (angleCosine < -0.99999999) {
+        } else if (angleCosine < -0.99999999) {
             quaternionX = VROQuaternion::fromAngleAxis(M_PI, axis);
-        }
-        else {
+        } else {
             quaternionX = VROQuaternion::fromAngleAxis(acos(angleCosine), axis);
         }
         
@@ -66,18 +59,16 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRORenderContext &context
         return composed.getMatrix();
     }
     else {
-        VROVector3f objToCamProj = camera.getPosition().subtract(transform.extractTranslation());
+        VROVector3f objToCamProj = camera.getPosition().subtract(translation);
         VROVector3f defaultAxis;
 
         if (_freeAxis == VROBillboardAxis::X) {
             objToCamProj.x = 0;
             defaultAxis = { 1, 0, 0 };
-        }
-        else if (_freeAxis == VROBillboardAxis::Y) {
+        } else if (_freeAxis == VROBillboardAxis::Y) {
             objToCamProj.y = 0;
             defaultAxis = { 0, 1, 0 };
-        }
-        else if (_freeAxis == VROBillboardAxis::Z) {
+        } else if (_freeAxis == VROBillboardAxis::Z) {
             objToCamProj.z = 0;
             defaultAxis = { 0, 0, 1 };
         }

@@ -583,12 +583,19 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
         } else {
             VROMatrix4f billboardRotation = constraint->getTransform(context, _worldTransform);
 
-            // To apply the billboard rotation, translate the object to the origin, apply
-            // the rotation, then translate back to its previously computed world position.
-            // Do not update _worldRotation as it isn't necessary after the afterConstraints() phase
-            _worldTransform.translate(_worldPosition.scale(-1));
-            _worldTransform = billboardRotation.multiply(_worldTransform);
-            _worldTransform.translate(_worldPosition);
+            // The billboardRotation was computed assuming the Node has no internal rotation
+            // (it overwrites any set rotation to force the object to face the camera). Therefore,
+            // to apply the billboard rotation we have to remove the object's internal rotation.
+            // We also translate the object to the origin so we can apply the rotation, then
+            // translate back to its previously computed world position.
+            
+            // Do not update _worldRotation as it isn't necessary after the afterConstraints() phase.
+            VROVector3f translation = _worldTransform.extractTranslation();
+            VROVector3f scale = _worldTransform.extractScale();
+            
+            _worldTransform = billboardRotation;
+            _worldTransform.scale(scale.x, scale.y, scale.z);
+            _worldTransform.translate(translation);
         }
         
         updated = true;
