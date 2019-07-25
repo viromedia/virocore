@@ -197,6 +197,7 @@ private:
     static std::map<int, std::map<int,int>> _skinIndexToJointNodeIndex;
     static std::map<int, std::map<int,std::vector<int>>> _skinIndexToJointChildJoints;
     static std::map<int, std::shared_ptr<VROSkinner>> _skinMap;
+    static std::map<int, int> _skinIndexToSkeletonRootJoint;
 
     /*
      Cached maps of nodeIndexes to it's corresponding animations. These caches are cleared

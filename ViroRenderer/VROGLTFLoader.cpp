@@ -38,11 +38,20 @@ static std::string kVROGLTFInputSamplerKey = "timeInput";
 std::map<std::string, std::shared_ptr<VROVertexBuffer>> VROGLTFLoader::_dataCache;
 std::map<std::string, std::shared_ptr<VROTexture>> VROGLTFLoader::_textureCache;
 std::map<int, std::shared_ptr<VROSkeleton>> VROGLTFLoader::_skinIndexToSkeleton;
-std::map<int, std::map<int,int>> VROGLTFLoader::_skinIndexToJointNodeIndex;
-std::map<int, std::map<int,std::vector<int>>> VROGLTFLoader::_skinIndexToJointChildJoints;
 std::map<int, std::map<int, std::vector<std::shared_ptr<VROKeyframeAnimation>>>> VROGLTFLoader::_nodeKeyFrameAnims;
 std::map<int, std::vector<std::shared_ptr<VROSkeletalAnimation>>> VROGLTFLoader::_skinSkeletalAnims;
 std::map<int, std::shared_ptr<VROSkinner>> VROGLTFLoader::_skinMap;
+
+// An map of all skinner joint index to its corresponding node index (provided by tinygLTF).
+std::map<int, std::map<int,int>> VROGLTFLoader::_skinIndexToJointNodeIndex;
+
+// An map of all skinner joint index to its skinner child joint indexes (Not Nodes).
+// Note: the first joint index at 0 is not necessairly the root joint. This is only the
+// order of which the inverse bind data is provided in the gLTF JSON structure.
+std::map<int, std::map<int,std::vector<int>>> VROGLTFLoader::_skinIndexToJointChildJoints;
+
+// An map of all root skeleton joint indexes.
+std::map<int, int> VROGLTFLoader::_skinIndexToSkeletonRootJoint;
 
 static int getTypeSize(GLTFType type) {
     switch (type) {
@@ -322,6 +331,7 @@ void VROGLTFLoader::clearCachedData() {
     _skinMap.clear();
     _nodeKeyFrameAnims.clear();
     _skinSkeletalAnims.clear();
+    _skinIndexToSkeletonRootJoint.clear();
 }
 
 bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
@@ -370,13 +380,22 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
                 skinIndexToJointParentJoint[skinIndex][subJointIndex] = jointIndex;
             }
         }
+        
+        // Save a reference to the root
+        int nodeIndexOfSkeleton = skin.skeleton;
+        if (nodeIndexOfSkeleton >= 0) {
+            _skinIndexToSkeletonRootJoint[skinIndex] = skinIndexToNodeJointIndexes[skinIndex][nodeIndexOfSkeleton];
+        } else {
+            // Else grab the first item in the joint list and treat it as the root node.
+            _skinIndexToSkeletonRootJoint[skinIndex] = 0;
+        }
     }
 
     // Finally, use the joint tree to construct our VROSkeleton and VROSkinners.
     for (int skinIndex = 0; skinIndex < model.skins.size(); skinIndex ++) {
         tinygltf::Skin skin = model.skins[skinIndex];
 
-        // Process and cache a copy of a VROSkinner.
+        // Process the vec of inverse bind transforms (in the order of specific joints in the gLTF file).
         std::vector<VROMatrix4f> invBindTransformsOut;
         if (!processSkinnerInverseBindData(model, model.skins[skinIndex], invBindTransformsOut)) {
             pwarn("Failed to process Skinner");
@@ -384,12 +403,18 @@ bool VROGLTFLoader::processSkinner(const tinygltf::Model &model) {
         }
 
         std::vector<std::shared_ptr<VROBone>> bones;
+        int rootJoint = _skinIndexToSkeletonRootJoint[skinIndex];
+        
+        // Create a vec hiearachy of bones, starting at the root bone.
         for (int jointIndex = 0; jointIndex < skin.joints.size(); jointIndex++) {
             int parentJointIndex = skinIndexToJointParentJoint[skinIndex][jointIndex];
+            if (jointIndex == rootJoint) {
+                parentJointIndex = -1;
+            }
             
             // TODO We need the bone local transform if we want layered animations to work with GLTF
             VROMatrix4f boneSpaceBindTransform = invBindTransformsOut[jointIndex];
-            std::string name = "BoneIndex_" + VROStringUtil::toString(parentJointIndex);
+            std::string name = "BoneIndex_" + VROStringUtil::toString(jointIndex);
 
             std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(jointIndex,
                                                                       parentJointIndex,
@@ -846,7 +871,9 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
     for (auto animToSkinToNodePair : skeletalAnimToSkinToNodeMap) {
         int skinIndex = animToSkinToNodePair.second.first;
         int skeletalAnimationIndex = animToSkinToNodePair.first;
-        int animatedNodeIndexFirst = animToSkinToNodePair.second.second.front();
+        
+        int rootJointIndexForSkin = _skinIndexToSkeletonRootJoint[skinIndex];
+        int animatedNodeIndexFirst = _skinIndexToJointNodeIndex[skinIndex][rootJointIndexForSkin];
 
         // For the current skeletal animation, grab first joint/Node, and then grab
         // it's vec of VROKeyframeAnimations. (This is because at this point, a given
@@ -855,6 +882,10 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
 
         // For each animatedProperty, construct a corresponding skeletal animation.
         animatedProperties = _nodeKeyFrameAnims[animatedNodeIndexFirst][skeletalAnimationIndex];
+        if (animatedProperties.size() > 1) {
+            pwarn("Viro: Animations with multi-time interval inputs are not yet supported!");
+        }
+        
         for (int animSubPropertyIndex = 0; animSubPropertyIndex < animatedProperties.size(); animSubPropertyIndex ++) {
             std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = animatedProperties[animSubPropertyIndex];
             float totalDuration = keyFrameAnim->getDuration();
@@ -930,11 +961,19 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
             const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
             VROMatrix4f localTransform;
             localTransform.toIdentity();
-            localTransform.scale(frames[keyFrameTime]->scale.x,
-                                 frames[keyFrameTime]->scale.y,
-                                 frames[keyFrameTime]->scale.z);
-            localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
-            localTransform.translate(frames[keyFrameTime]->translation);
+            if (animation->_hasScale) {
+                localTransform.scale(frames[keyFrameTime]->scale.x,
+                                     frames[keyFrameTime]->scale.y,
+                                     frames[keyFrameTime]->scale.z);
+            }
+
+            if (animation->_hasRotation) {
+                localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
+            }
+
+            if (animation->_hasTranslation) {
+                localTransform.translate(frames[keyFrameTime]->translation);
+            }
             transformsOut[0] = localTransform;
         }
     }
@@ -957,11 +996,18 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
             // Grab the animation transform of the current keyFrame
             std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex].at(subAnimPropertyIndex);
             const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
-            localTransform.scale(frames[keyFrameTime]->scale.x,
-                                 frames[keyFrameTime]->scale.y,
-                                 frames[keyFrameTime]->scale.z);
-            localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
-            localTransform.translate(frames[keyFrameTime]->translation);
+            if (animation->_hasScale) {
+                localTransform.scale(frames[keyFrameTime]->scale.x,
+                                     frames[keyFrameTime]->scale.y,
+                                     frames[keyFrameTime]->scale.z);
+            }
+            if (animation->_hasRotation) {
+                localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
+            }
+            
+            if (animation->_hasTranslation) {
+                localTransform.translate(frames[keyFrameTime]->translation);
+            }
         }
         
         // Now cascade and compute the actual world computed transform in model space, save it in transformsOut
