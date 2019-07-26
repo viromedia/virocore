@@ -345,6 +345,7 @@ public class Object3D extends Node {
         }
 
         Type type = Type.valueOf(modelType);
+
         /*
          If the model loaded is OBJ, create a Java Geometry to wrap the native Geometry.
          This enables developers to set/manipulate materials on the Geometry.
@@ -355,6 +356,9 @@ public class Object3D extends Node {
 
         mMaterialList = Arrays.asList(materials);
         inflateChildNodes(this);
+
+        updateWorldTransforms();
+        updateAllUmbrellaBounds();
 
         if (mAsyncListener != null) {
             mAsyncListener.onObject3DLoaded(this, type);

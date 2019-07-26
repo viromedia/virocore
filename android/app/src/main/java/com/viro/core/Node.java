@@ -1868,7 +1868,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * time position, scale, or rotation are changed. Traverses the scene graph on the UI thread,
      * invoking atomic operations on the native nodes.
      */
-    private void updateWorldTransforms() {
+    protected void updateWorldTransforms() {
         long parentRef = 0;
         if (mParent != null) {
             Node parent = mParent.get();
@@ -1886,7 +1886,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * After all world transforms are finished updating, update the umbrella bounding
      * boxes of all nodes, starting at the top of the tree.
      */
-    private void updateAllUmbrellaBounds() {
+    protected void updateAllUmbrellaBounds() {
         PortalScene root = getParentPortalScene();
         if (root == null) {
             this.updateUmbrellaBounds();
