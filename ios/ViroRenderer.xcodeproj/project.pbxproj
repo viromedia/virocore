@@ -1040,6 +1040,9 @@
 		8F6E5B2020DD335B00BEE45F /* cr_ar_badges_Normal_OpenGL.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1220DD335A00BEE45F /* cr_ar_badges_Normal_OpenGL.png */; };
 		8F6E5B2120DD335B00BEE45F /* cr_labels.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1320DD335A00BEE45F /* cr_labels.png */; };
 		8F6E5B2220DD335B00BEE45F /* cr_logo.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E5B1420DD335A00BEE45F /* cr_logo.vrx */; };
+		8F6FCC4D22EB40F9004A8A40 /* roughness-metalness-test_roughness-gradient.gltf in Resources */ = {isa = PBXBuildFile; fileRef = 8F6FCC4C22EB40F8004A8A40 /* roughness-metalness-test_roughness-gradient.gltf */; };
+		8F6FCC5022EB4316004A8A40 /* roughness-gradient.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F6FCC4E22EB4316004A8A40 /* roughness-gradient.jpg */; };
+		8F6FCC5122EB4316004A8A40 /* roughness-original-1.bin in Resources */ = {isa = PBXBuildFile; fileRef = 8F6FCC4F22EB4316004A8A40 /* roughness-original-1.bin */; };
 		8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F705DE01E8ACFD0008BE8F8 /* VRODebugHUD.cpp */; };
 		8F705DE31E8ACFD0008BE8F8 /* VRODebugHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F705DE11E8ACFD0008BE8F8 /* VRODebugHUD.h */; };
 		8F705DED1E8C7376008BE8F8 /* surface_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */; };
@@ -2228,6 +2231,9 @@
 		8F6E5B1220DD335A00BEE45F /* cr_ar_badges_Normal_OpenGL.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_ar_badges_Normal_OpenGL.png; path = ViroSample/cr_ar_badges_Normal_OpenGL.png; sourceTree = "<group>"; };
 		8F6E5B1320DD335A00BEE45F /* cr_labels.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cr_labels.png; path = ViroSample/cr_labels.png; sourceTree = "<group>"; };
 		8F6E5B1420DD335A00BEE45F /* cr_logo.vrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cr_logo.vrx; path = ViroSample/cr_logo.vrx; sourceTree = "<group>"; };
+		8F6FCC4C22EB40F8004A8A40 /* roughness-metalness-test_roughness-gradient.gltf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "roughness-metalness-test_roughness-gradient.gltf"; path = "ViroSample/roughness-metalness-test_roughness-gradient.gltf"; sourceTree = "<group>"; };
+		8F6FCC4E22EB4316004A8A40 /* roughness-gradient.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "roughness-gradient.jpg"; path = "ViroSample/roughness-gradient.jpg"; sourceTree = "<group>"; };
+		8F6FCC4F22EB4316004A8A40 /* roughness-original-1.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = "roughness-original-1.bin"; path = "ViroSample/roughness-original-1.bin"; sourceTree = "<group>"; };
 		8F705DE01E8ACFD0008BE8F8 /* VRODebugHUD.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODebugHUD.cpp; sourceTree = "<group>"; };
 		8F705DE11E8ACFD0008BE8F8 /* VRODebugHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODebugHUD.h; sourceTree = "<group>"; };
 		8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = surface_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -4024,6 +4030,9 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F6FCC4E22EB4316004A8A40 /* roughness-gradient.jpg */,
+				8F6FCC4F22EB4316004A8A40 /* roughness-original-1.bin */,
+				8F6FCC4C22EB40F8004A8A40 /* roughness-metalness-test_roughness-gradient.gltf */,
 				A5AD008A22CD262F0019EB8A /* AnimatedMorphSphere.bin */,
 				A5AD008B22CD26300019EB8A /* AnimatedMorphSphere.gltf */,
 				8F8F4C4922B3F56500A82C59 /* roughness_metalness_g.jpg */,
@@ -5328,6 +5337,7 @@
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
 				8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */,
 				8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */,
+				8F6FCC5122EB4316004A8A40 /* roughness-original-1.bin in Resources */,
 				8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */,
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
 				8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */,
@@ -5372,6 +5382,7 @@
 				A54F73A3225D4CA70059D725 /* Yoga.mp4 in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */,
+				8F6FCC5022EB4316004A8A40 /* roughness-gradient.jpg in Resources */,
 				8F5EEE9C20325C310059C9E7 /* object_pumpkin_normal.png in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				A517D2CC1F41A16400A22219 /* cloud.png in Resources */,
@@ -5386,6 +5397,7 @@
 				8F0F13E221934D6000E8810B /* bumblebee_Roughness.jpg in Resources */,
 				8A35CEFB2060711300ADD393 /* george.jpg in Resources */,
 				8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */,
+				8F6FCC4D22EB40F9004A8A40 /* roughness-metalness-test_roughness-gradient.gltf in Resources */,
 				8FEACEDC2012605F0082D18B /* pbr_sample_metallic.png in Resources */,
 				8F6E5B1920DD335B00BEE45F /* cr_labels.vrx in Resources */,
 				8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */,

@@ -341,9 +341,10 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createNormalMapTextureModif
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createRoughnessTextureModifier() {
     if (!sRoughnessTextureModifier) {
+        // Note the clamp to avoid potential divide by 0 (0.06 is min required for iPhone 7)
         std::vector<std::string> modifierCode =  {
             "uniform sampler2D roughness_map;",
-            "_surface.roughness = max(0.04, texture(roughness_map, _surface.diffuse_texcoord).g * _surface.roughness_intensity);"
+            "_surface.roughness = max(0.06, texture(roughness_map, _surface.diffuse_texcoord).g * _surface.roughness_intensity);"
         };
         sRoughnessTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                         modifierCode);

@@ -27,6 +27,8 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
 
     _driver = driver;
     VROGLTFModel duck("SimpleMeshes", "gltf", { 0, -1.5, -5 }, { 1, 1, 1 }, 1, "");
+    VROGLTFModel roughness("roughness-metalness-test_roughness-gradient", "gltf", { 0, -1.5, -5 }, { 2, 2, 2 }, 1, "");
+
     //VROGLTFModel buggy("Buggy", "glb", { -0.75, -1.5, -5 }, { 0.03, 0.03, 0.03 }, 1, "");
     VROGLTFModel anim1("RiggedSimple", "glb", { 0, 0, -5 }, { 0.5,  0.5,  0.5 }, 1, "animation_0");
     VROGLTFModel anim2("RiggedFigure", "glb", { 0, 0, -2 }, { 1,  1,  1 }, 1, "animation_0");
@@ -36,6 +38,7 @@ void VROGLTFTest::build(std::shared_ptr<VRORenderer> renderer,
     VROGLTFModel anim6("AnimatedMorphSphere", "gltf", { 0, -0.3, -3.5 }, { 1,1,1 }, 1, "Globe");
 
     _models.push_back(duck);
+    _models.push_back(roughness);
     //_models.push_back(buggy);
     _models.push_back(anim1);
     _models.push_back(anim2);
@@ -155,7 +158,9 @@ void VROGLTFTest::rotateModel() {
                                                                    model.position, model.scale,
                                                                    model.lightMask, model.animation, _driver,
                                                                    [this, model](std::shared_ptr<VRONode> node, bool success) {
-                                                                       animate(node, model.animation);
+                                                                       if (success) {
+                                                                           animate(node, model.animation);
+                                                                       }
                                                                    });
     
     _gltfContainerNode->removeAllChildren();
