@@ -7,6 +7,7 @@
 
 #include "ARDeclarativeImageNode_JNI.h"
 #include "ARImageTarget_JNI.h"
+#include "VROARAnchorARCore.h"
 
 #if VRO_PLATFORM_ANDROID
 #define VRO_METHOD(return_type, method_name) \

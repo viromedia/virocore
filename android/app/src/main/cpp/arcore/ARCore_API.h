@@ -79,6 +79,12 @@ namespace arcore {
         Tracking
     };
 
+    enum class TrackingMethod {
+        NotTracking,
+        Tracking,
+        LastKnownPose
+    };
+
     enum class TrackableType {
         Image,
         Plane,
@@ -188,6 +194,7 @@ namespace arcore {
     public:
         virtual ~AugmentedImage() {}
         virtual char *getName() = 0;
+        virtual TrackingMethod getTrackingMethod() = 0;
         virtual void getCenterPose(Pose *outPose) = 0;
         virtual float getExtentX() = 0;
         virtual float getExtentZ() = 0;

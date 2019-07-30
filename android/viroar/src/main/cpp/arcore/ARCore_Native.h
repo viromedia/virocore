@@ -116,6 +116,7 @@ namespace arcore {
         virtual ~AugmentedImageNative();
 
         virtual Anchor *acquireAnchor(Pose *pose);
+        virtual TrackingMethod getTrackingMethod();
         virtual TrackingState getTrackingState();
         virtual TrackableType getType();
 

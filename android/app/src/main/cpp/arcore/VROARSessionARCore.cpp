@@ -854,6 +854,14 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
             // that we only detect each image once
             std::string key = getKeyForTrackable(image);
 
+            arcore::TrackingMethod arTrackingMethod = image->getTrackingMethod();
+            VROARImageTrackingMethod trackingMethod = VROARImageTrackingMethod::NotTracking;
+            if (arTrackingMethod == arcore::TrackingMethod::Tracking) {
+                trackingMethod = VROARImageTrackingMethod::Tracking;
+            } else if (arTrackingMethod == arcore::TrackingMethod::LastKnownPose) {
+                trackingMethod = VROARImageTrackingMethod::LastKnownPose;
+            }
+
             bool imageIsTracked = (trackable->getTrackingState() == arcore::TrackingState::Tracking);
             if (imageIsTracked) {
                 auto it = _nativeAnchorMap.find(key);
@@ -865,6 +873,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                             vAnchor->getTrackable());
 
                     if (vAnchor) {
+                        imageAnchor->setTrackingMethod(trackingMethod);
                         syncImageAnchorWithARCore(imageAnchor, image);
                         vAnchor->sync();
                         updateAnchor(vAnchor);
@@ -895,7 +904,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frameAR) {
                     }
 
                     std::shared_ptr<VROARImageAnchor> vImage = std::make_shared<VROARImageAnchor>(
-                            target);
+                            target, trackingMethod);
                     syncImageAnchorWithARCore(vImage, image);
 
                     // Create a new anchor to correspond with the found image

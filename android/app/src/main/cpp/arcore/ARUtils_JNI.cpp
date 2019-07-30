@@ -70,9 +70,23 @@ VRO_OBJECT ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anch
          */
         const char *typeArr = "image";
         VRO_STRING type = VRO_NEW_STRING(typeArr);
-        return VROPlatformConstructHostObject("com/viro/core/ARImageAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V",
+
+        VRO_STRING trackingMethod;
+        switch(imageAnchor->getTrackingMethod()) {
+            case VROARImageTrackingMethod::NotTracking:
+                trackingMethod = VRO_NEW_STRING("notTracking");
+                break;
+            case VROARImageTrackingMethod::Tracking:
+                trackingMethod = VRO_NEW_STRING("tracking");
+                break;
+            case VROARImageTrackingMethod::LastKnownPose:
+                trackingMethod = VRO_NEW_STRING("lastKnownPose");
+                break;
+        }
+
+        return VROPlatformConstructHostObject("com/viro/core/ARImageAnchor", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;)V",
                                               anchorId, type, positionArray, rotationArray,
-                                              scaleArray);
+                                              scaleArray, trackingMethod);
     }
 
     // Otherwise this anchor has no associated trackable: create a normal ARAnchor object and return it

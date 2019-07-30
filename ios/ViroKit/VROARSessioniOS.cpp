@@ -626,7 +626,7 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
         auto it = _arKitReferenceImageMap.find(imageAnchor.referenceImage);
         if (it != _arKitReferenceImageMap.end()) {
             std::shared_ptr<VROARImageTarget> target = it->second;
-            vAnchor = std::make_shared<VROARImageAnchor>(target);
+            vAnchor = std::make_shared<VROARImageAnchor>(target, VROARImageTrackingMethod::Tracking);
             target->setAnchor(vAnchor);
         }
     }

@@ -355,6 +355,19 @@ namespace arcore {
         return new AnchorNative(anchor, _session);
     }
 
+    TrackingMethod AugmentedImageNative::getTrackingMethod() {
+        ArAugmentedImageTrackingMethod trackingMethod;
+        ArAugmentedImage_getTrackingMethod(_session, ArAsAugmentedImage(_trackable), &trackingMethod);
+
+        if (trackingMethod == AR_AUGMENTED_IMAGE_TRACKING_METHOD_FULL_TRACKING) {
+            return TrackingMethod::Tracking;
+        } else if (trackingMethod == AR_AUGMENTED_IMAGE_TRACKING_METHOD_LAST_KNOWN_POSE) {
+            return TrackingMethod::LastKnownPose;
+        } else {
+            return TrackingMethod::NotTracking;
+        }
+    }
+
     TrackingState AugmentedImageNative::getTrackingState() {
         ArTrackingState trackingState;
         ArTrackable_getTrackingState(_session, _trackable, &trackingState);
