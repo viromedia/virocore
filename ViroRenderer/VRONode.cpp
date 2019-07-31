@@ -596,6 +596,13 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
             _worldTransform = billboardRotation;
             _worldTransform.scale(scale.x, scale.y, scale.z);
             _worldTransform.translate(translation);
+            
+            // Recompute bounding boxes using the new transform. Note we don't update the local
+            // transform or bounds, just the world transform and bounds. Also we don't consider
+            // particle systems (where getInstancedUBO() != nullptr).
+            if (_geometry && _geometry->getInstancedUBO() == nullptr) {
+                _worldBoundingBox = _geometryBoundingBox.transform(_worldTransform);
+            }
         }
         
         updated = true;
@@ -1540,6 +1547,20 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     
     VROMatrix4f transform = _worldTransform;
     boundsOnly = boundsOnly && !getHighAccuracyEvents();
+    
+    // Automatically activate high accuracy hit testing for billboarded objects, to avoid
+    // issues with axis-aligned bounding boxes causing the bounds to grow and shrink.
+    bool hasBillboarding = false;
+    for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
+        if (constraint->getConstraintType() == VROConstraintType::Billboard) {
+            hasBillboarding = true;
+            break;
+        }
+    }
+    if (hasBillboarding) {
+        boundsOnly = false;
+    }
+    
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold && _visible) {
         VROVector3f intPt;
         if (getBoundingBox().intersectsRay(ray, origin, &intPt)) {
