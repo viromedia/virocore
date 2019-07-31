@@ -515,8 +515,8 @@ public class ParticleEmitter {
         @Override
         public float[][] getInitialRange() {
             float[][] range = new float[2][3];
-            range[0] = new float[] { Color.red(mInitialMin), Color.green(mInitialMin), Color.blue(mInitialMin) };
-            range[1] = new float[] { Color.red(mInitialMax), Color.green(mInitialMax), Color.blue(mInitialMax) };
+            range[0] = new float[] { Color.red(mInitialMin)/255.0f, Color.green(mInitialMin)/255.0f, Color.blue(mInitialMin)/255.0f };
+            range[1] = new float[] { Color.red(mInitialMax)/255.0f, Color.green(mInitialMax)/255.0f, Color.blue(mInitialMax)/255.0f };
             return range;
         }
         /**
@@ -545,9 +545,9 @@ public class ParticleEmitter {
             float[][] points = new float[mEndValues.size()][3];
             for (int i = 0; i < points.length; i++) {
                 int color = mEndValues.get(i);
-                points[i][0] = Color.red(color);
-                points[i][1] = Color.green(color);
-                points[i][2] = Color.blue(color);
+                points[i][0] = Color.red(color)/255.0f;
+                points[i][1] = Color.green(color)/255.0f;
+                points[i][2] = Color.blue(color)/255.0f;
             }
             return points;
         }
