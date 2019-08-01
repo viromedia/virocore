@@ -138,7 +138,9 @@ public:
     std::map<std::string, VROMatrix4f> getAttachmentTransforms() {
         return _attachmentTransforms;
     }
+    
 private:
+    
     /*
      The index of this node in the skeleton.
      */
