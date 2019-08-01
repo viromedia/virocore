@@ -50,7 +50,7 @@ public class AnimationGroup extends ExecutableAnimation {
     }
 
     @Override
-    public void destroy() {
+    public void dispose() {
         if (mLazyMaterial != null) {
             mLazyMaterial.destroy();
         }

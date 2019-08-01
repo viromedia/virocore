@@ -33,7 +33,7 @@ public class AnimationChain extends ExecutableAnimation {
     }
 
     @Override
-    public void destroy() {
+    public void dispose() {
         if (mNativeRef != 0) {
             nativeDestroyAnimationChain(mNativeRef);
         }

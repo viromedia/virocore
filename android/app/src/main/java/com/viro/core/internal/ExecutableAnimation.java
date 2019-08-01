@@ -41,6 +41,25 @@ public class ExecutableAnimation {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
+    }
+
+    /**
+     * Release native resources associated with this animation.
+     */
+    public void dispose() {
+        if (mNativeRef != 0) {
+            nativeDestroyAnimation(mNativeRef);
+            mNativeRef = 0;
+        }
+    }
+
     public void setDuration(float durationSeconds) {
         mDurationSeconds = durationSeconds;
         nativeSetDuration(mNativeRef, durationSeconds);
@@ -81,7 +100,6 @@ public class ExecutableAnimation {
     public void terminate(boolean jumpToEnd) {
         nativeTerminateAnimation(mNativeRef, jumpToEnd);
     }
-    public void destroy() { nativeDestroyAnimation(mNativeRef); }
 
     /**
      * AnimationDelegate
