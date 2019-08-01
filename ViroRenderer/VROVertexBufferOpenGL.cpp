@@ -20,10 +20,14 @@ VROVertexBufferOpenGL::VROVertexBufferOpenGL(std::shared_ptr<VROData> data,
 
 VROVertexBufferOpenGL::~VROVertexBufferOpenGL() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
-    if (_buffer > 0 && driver) {
-        driver->deleteBuffer(_buffer);
+    if (_buffer > 0) {
+        if (driver) {
+            driver->deleteBuffer(_buffer);
+        }
         _buffer = 0;
         
+        // Even if the driver was released we subtract the VBO, because a released
+        // driver implies the entire GL context (including all VBOs) were released.
         ALLOCATION_TRACKER_SUB(VBO, 1);
     }
 }

@@ -56,6 +56,14 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
         for (GLuint vao : _vaos) {
             driver->deleteVertexArray(vao);
         }
+    } else {
+        // Make the allocation tracker subtract VBOs if the driver was
+        // released, just to keep the counter accurate.
+        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
+            if (vd.ownsBuffer) {
+                ALLOCATION_TRACKER_SUB(VBO, 1);
+            }
+        }
     }
 
     std::map<int, std::vector<VROVertexDescriptorOpenGL>>::iterator it;
