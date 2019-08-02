@@ -89,15 +89,16 @@ void VROSoundGVR::play() {
 
     // create the sound if it hasn't been created yet.
     if (_audioId == -1) {
+        // Note: we substring(7) the getLocalFilePath() because it includes `file://` and GVR doesn't like those paths
         switch (_type) {
             case VROSoundType::Normal:
-                _audioId = gvrAudio->CreateStereoSound(_data->getLocalFilePath());
+                _audioId = gvrAudio->CreateStereoSound(_data->getLocalFilePath().substr(7));
                 break;
             case VROSoundType::Spatial:
-                _audioId = gvrAudio->CreateSoundObject(_data->getLocalFilePath());
+                _audioId = gvrAudio->CreateSoundObject(_data->getLocalFilePath().substr(7));
                 break;
             case VROSoundType::SoundField:
-                _audioId = gvrAudio->CreateSoundfield(_data->getLocalFilePath());
+                _audioId = gvrAudio->CreateSoundfield(_data->getLocalFilePath().substr(7));
                 break;
         }
 
