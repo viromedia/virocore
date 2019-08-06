@@ -15,7 +15,7 @@ import java.util.Map;
 public class ARImageAnchor extends ARAnchor {
 
     /**
-     * Specifies the current tracking method used to track the {@link ARImageAnchor}'s position
+     * Specifies the tracking method used to track the {@link ARImageAnchor}'s position.
      */
     public enum TrackingMethod {
         /**
@@ -74,6 +74,8 @@ public class ARImageAnchor extends ARAnchor {
 
     /**
      * Returns the current {@link TrackingMethod} used for this anchor.
+     *
+     * @return The tracking method used for this anchor.
      */
     public TrackingMethod getTrackingMethod() {
         return mTrackingMethod;

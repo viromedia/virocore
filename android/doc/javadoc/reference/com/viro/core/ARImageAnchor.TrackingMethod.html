@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ARImageAnchor | Viro Developers
+  <title>ARImageAnchor.TrackingMethod | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -257,7 +257,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.html">ARHitTestResult</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
@@ -341,7 +341,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/AnimationTimingFunction.html">AnimationTimingFunction</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARAnchor.Type.html">ARAnchor.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARHitTestResult.Type.html">ARHitTestResult.Type</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARImageTarget.Orientation.html">ARImageTarget.Orientation</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARPlaneAnchor.Alignment.html">ARPlaneAnchor.Alignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ARScene.TrackingState.html">ARScene.TrackingState</a></li>
@@ -582,15 +582,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">ARImageAnchor</h1>
+<h1 class="api-title">ARImageAnchor.TrackingMethod</h1>
 <p>
 <code class="api-signature">
   public
+  static
+  final
   
-  
-  
-  class
-  ARImageAnchor
+  enum
+  ARImageAnchor.TrackingMethod
 </code>
 <br>
 
@@ -603,7 +603,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a>
+    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a>&gt;
   
   
   
@@ -629,7 +629,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/ARAnchor.html">com.viro.core.ARAnchor</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">com.viro.core.ARImageAnchor.TrackingMethod</a>&gt;
     </td>
   </tr>
   
@@ -640,7 +640,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARImageAnchor
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ARImageAnchor.TrackingMethod
     </td>
   </tr>
   
@@ -653,9 +653,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ARImageAnchor is a specialized <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> that represents a detected <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code>
- in the real world. To determine what <code><a href="../../../../reference/com/viro/core/ARImageTarget.html">ARImageTarget</a></code> this anchor is tracking, compare
- <code><a href="../../../../reference/com/viro/core/ARAnchor.html#getAnchorId()">getAnchorId()</a></code> with each image target's <code><a href="../../../../reference/com/viro/core/ARImageTarget.html#getId()">getId()</a></code>.
+  <p>Specifies the tracking method used to track the <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code>'s position.
 </p>
 
 
@@ -670,38 +668,55 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
 
+
+
+
+
+
+
+
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+<table id="enumconstants" class="responsive constants">
+  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
 
   
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code>
-        <p>Specifies the tracking method used to track the <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code>'s position.&nbsp;
-        
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>LAST_KNOWN_POSE</code>
+      <p>The <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> is not currently being tracked but its last known pose is being used.&nbsp;
+      
     
 </p>
-      </td>
-    </tr>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>NOT_TRACKING</code>
+      <p>The <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> is not currently being tracked.&nbsp;
+      
     
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>TRACKING</code>
+      <p>The <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> is currently being tracked actively.&nbsp;
+      
     
-
-
-
-
-
-
-
-
-
+</p>
+    </td>
+  </tr>
+  
+  
 
 
 
@@ -733,7 +748,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
-        
+        static
         
         
         <a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code>
@@ -741,13 +756,30 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARImageAnchor.html#getTrackingMethod()">getTrackingMethod</a>()
+      <a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
       </code>
       
-        <p>Returns the current <code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code> used for this anchor.
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
         
-    
-</p>
+        
+        static
+        final
+        
+        <a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">TrackingMethod[]</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html#values()">values</a>()
+      </code>
       
     </td>
   </tr>
@@ -767,6 +799,85 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Enum Values -->
+
+
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
+<h2 class="api-section">Enum values</h2>
+
+
+
+
+<A NAME="LAST_KNOWN_POSE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">LAST_KNOWN_POSE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a> LAST_KNOWN_POSE</pre>
+    
+    
+
+    
+  <p>The <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> is not currently being tracked but its last known pose is being used.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="NOT_TRACKING"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">NOT_TRACKING</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a> NOT_TRACKING</pre>
+    
+    
+
+    
+  <p>The <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> is not currently being tracked.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="TRACKING"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">TRACKING</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a> TRACKING</pre>
+    
+    
+
+    
+  <p>The <code><a href="../../../../reference/com/viro/core/ARImageAnchor.html">ARImageAnchor</a></code> is currently being tracked actively.
+</p></p>
+
+    
+</div>
+
+
 
 
 <!-- Constants -->
@@ -791,10 +902,10 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="getTrackingMethod()"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getTrackingMethod</h3>
+    <h3 class="api-name">valueOf</h3>
     <div class="api-level">
       <div></div>
       
@@ -802,18 +913,53 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a> getTrackingMethod ()</pre>
+<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
     
     
 
     
-  <p>Returns the current <code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code> used for this anchor.</p></p>
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>name</code></td>
+        <td width="100%">
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">ARImageAnchor.TrackingMethod</a></code></td>
-        <td width="100%">The tracking method used for this anchor.
-</p></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="values()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">values</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">TrackingMethod[]</a> values ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/ARImageAnchor.TrackingMethod.html">TrackingMethod[]</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
