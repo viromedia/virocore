@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Object3D | Viro Developers
+  <title>Object3D.MorphMode | Viro Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -282,7 +282,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.NodeBuilder.html">Node.NodeBuilder</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.OmniLightBuilder.html">OmniLight.OmniLightBuilder</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.html">ParticleEmitter</a></li>
@@ -357,7 +357,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.TransparencyMode.html">Material.TransparencyMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.DragType.html">Node.DragType</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.TransformBehavior.html">Node.TransformBehavior</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.Factor.html">ParticleEmitter.Factor</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsBody.RigidBodyType.html">PhysicsBody.RigidBodyType</a></li>
@@ -582,15 +582,15 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Object3D</h1>
+<h1 class="api-title">Object3D.MorphMode</h1>
 <p>
 <code class="api-signature">
   public
+  static
+  final
   
-  
-  
-  class
-  Object3D
+  enum
+  Object3D.MorphMode
 </code>
 <br>
 
@@ -603,7 +603,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/Node.html">Node</a>
+    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a>&gt;
   
   
   
@@ -629,7 +629,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Node.html">com.viro.core.Node</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">com.viro.core.Object3D.MorphMode</a>&gt;
     </td>
   </tr>
   
@@ -640,7 +640,7 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Object3D
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Object3D.MorphMode
     </td>
   </tr>
   
@@ -653,24 +653,8 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX, OBJ, GLTF, or GLB models. These file formats
- may contain not just single Geometry instances but entire subgraphs of Nodes. This Node acts
- as the parent to the generated subgraph.
- <p>
- OBJ loading supports MTL files, for loading material properties and textures. For OBJ files,
- Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>.
- <p>
- FBX loading supports Blinn/Phong material properties, diffuse, specular, and normal maps, skeletal and
- keyframe animation, and PBR material properties (roughness, metalness, ambient occlusion) through
- Stingray.
- <p>
- GLTF and GLB loading similarly support all material properties including PBR properties. Skeletal
- and keyframe animation however is currently <i>not</i> supported by GLTF/GLB. This support is
- forthcoming.
- <p>
-
- For an extended discussion on 3D model loading, refer to the <a href="https://virocore.viromedia.com/docs/3d-objects">3D
- Objects Guide</a>.
+  <p>MorphMode represents the method used to calculate and blend morph target data in this
+ Object3D.
 </p>
 
 
@@ -685,47 +669,6 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
-
-
-  
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code>
-        <p>MorphMode represents the method used to calculate and blend morph target data in this
- Object3D.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>
-        <p>Supported model formats for loading into an <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code>.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
 
 
 
@@ -734,47 +677,86 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<table id="pubctors" class="responsive constructors">
-<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
-
-
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+<table id="enumconstants" class="responsive constants">
+  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
 
   
   <tr class="api apilevel-" >
-  
-  
+    <td><code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code>&nbsp;</td>
     <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#Object3D()">Object3D</a>()
-      </code>
+      <code>CPU</code>
+      <p>Performs morph target blending calculations on the CPU.&nbsp;
       
-        <p>Construct a new Object3D.
-        
     
 </p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>GPU</code>
+      <p>Performs morph target blending calculations on the GPU.&nbsp;
       
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>HYBRID</code>
+      <p>Morph target blending calculations are done on the CPU, but are interpolated back onto
+ the geometry of this model on the GPU.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+
+
+
+
+
+
+
+
+
+<!-- =========== FIELD SUMMARY =========== -->
+<table id="lfields" class="responsive properties">
+<tr><th colspan="2"><h3>Fields</h3></th></tr>
+
+
+
+  <tr class="api apilevel-" >
+    <td><code>
+    public
+    
+    final
+    <a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
+    <td width="100%">
+      <code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html#mStringValue">mStringValue</a></code>
+      <p>
+      
+    
+</p>
     </td>
   </tr>
   
 
 
 </table>
+
+
+
+
+
 
 
 
@@ -794,21 +776,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
         
         
-        
-        void</code>
+        <a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#dispose()">dispose</a>()
+      <a href="../../../../reference/com/viro/core/Object3D.MorphMode.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
       </code>
-      
-        <p>Release native resources associated with this Object3D.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -821,211 +798,16 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
+        final
         
-        
-        
-        void</code>
+        <a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">MorphMode[]</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#disposeModel()">disposeModel</a>()
+      <a href="../../../../reference/com/viro/core/Object3D.MorphMode.html#values()">values</a>()
       </code>
-      
-        <p>Remove and dispose the model that was loaded in this Object3D.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt;</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#getMaterials()">getMaterials</a>()
-      </code>
-      
-        <p>Get a list of unique <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects used by this 3D model.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        <a href="http://d.android.com/reference/java/util/Set.html">Set</a>&lt;<a href="http://d.android.com/reference/java/lang/String.html">String</a>&gt;</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#getMorphTargetKeys()">getMorphTargetKeys</a>()
-      </code>
-      
-        <p>Get the names of the available morph targets on this Node or any of its children.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel</a>(<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)
-      </code>
-      
-        <p>Load the model at the given URI into this Node.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#setLightReceivingBitMask(int)">setLightReceivingBitMask</a>(int bitMask)
-      </code>
-      
-        <p>Set the bit mask that determines what lights will illuminate this Node.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#setMorphMode(com.viro.core.Object3D.MorphMode)">setMorphMode</a>(<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a> mode)
-      </code>
-      
-        <p>Sets the <code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code> this Object3D will use to render applied morph target weights.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#setMorphTargetWeight(java.lang.String, float)">setMorphTargetWeight</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name, float weight)
-      </code>
-      
-        <p>Sets the weight of the morph target with the given name in this 3D model.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#setShadowCastingBitMask(int)">setShadowCastingBitMask</a>(int bitMask)
-      </code>
-      
-        <p>Set the bit mask that determines for which lights the contents of this Node will cast
- shadows.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -1047,43 +829,140 @@ href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Enum Values -->
 
 
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
+<h2 class="api-section">Enum values</h2>
+
+
+
+
+<A NAME="CPU"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">CPU</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a> CPU</pre>
+    
+    
+
+    
+  <p>Performs morph target blending calculations on the CPU.
+ <p>
+ Because calculations are CPU based, there is no pre-defined limit to the number
+ of morph targets your model can have. However, keep in mind that a large number
+ of morph targets can lead to a performance bottleneck on the CPU.
+ <p>
+ This mode is ideal for models with a large number of morph targets.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="GPU"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">GPU</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a> GPU</pre>
+    
+    
+
+    
+  <p>Performs morph target blending calculations on the GPU. This is done by plumbing
+ each target's data through vertex array attributes and blending them in the vertex
+ shader.
+ <p>
+ Because the number of vertex array attributes are limited, Viro only supports at most
+ 7 morph targets on the GPU. If your model contains more than 7 morph targets, Viro
+ will automatically fall back into CPU mode.
+ <p>
+ This mode is ideal for models with a low number of morph targets.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="HYBRID"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">HYBRID</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a> HYBRID</pre>
+    
+    
+
+    
+  <p>Morph target blending calculations are done on the CPU, but are interpolated back onto
+ the geometry of this model on the GPU.
+ <p>
+ This mode is ideal for animating large numbers of morph target properties
+ through animations with long durations.
+</p></p>
+
+    
+</div>
+
+
+
+
 <!-- Constants -->
 
 
 <!-- Fields -->
 
 
-<!-- Public ctors -->
-
-
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<h2 class="api-section">Public constructors</h2>
+<!-- ========= FIELD DETAIL ======== -->
+<h2 class="api-section">Fields</h2>
 
 
 
-<A NAME="Object3D()"></A>
+
+<A NAME="mStringValue"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">Object3D</h3>
+    <h3 class="api-name">mStringValue</h3>
     <div class="api-level">
-      <div></div>
+      
       
   
 
     </div>
 <pre class="api-signature no-pretty-print">
-Object3D ()</pre>
+<a href="http://d.android.com/reference/java/lang/String.html">String</a> mStringValue</pre>
     
     
 
     
-  <p>Construct a new Object3D. To load 3D model data into this Node, use
- <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(ViroContext, Uri, Type, AsyncObject3DListener)</a></code>.
-</p></p>
+  <p></p></p>
 
+    
 </div>
 
 
+
+
+<!-- Public ctors -->
 
 
 
@@ -1099,10 +978,10 @@ Object3D ()</pre>
 
 
 
-<A NAME="dispose()"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">dispose</h3>
+    <h3 class="api-name">valueOf</h3>
     <div class="api-level">
       <div></div>
       
@@ -1110,270 +989,35 @@ Object3D ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void dispose ()</pre>
+<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
     
     
 
     
-  <p>Release native resources associated with this Object3D.
-</p></p>
-
-</div>
-
-
-<A NAME="disposeModel()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">disposeModel</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void disposeModel ()</pre>
-    
-    
-
-    
-  <p>Remove and dispose the model that was loaded in this Object3D. This will remove and delete
- all the <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code>, <code><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></code>, <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code>, and <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> objects created
- during the last call to <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(ViroContext, Uri, Type, AsyncObject3DListener)</a></code>.
- <p>
- This is especially useful when removing models with a large memory footprint, to ensure
- they're deleted quickly without having to wait for GC. Note this method does not dispose of
- <i>this</i> Node; you can still load a new model into this Node via <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(ViroContext, Uri, Type, AsyncObject3DListener)</a></code>.
-</p></p>
-
-</div>
-
-
-<A NAME="getMaterials()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getMaterials</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt; getMaterials ()</pre>
-    
-    
-
-    
-  <p>Get a list of unique <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> objects used by this 3D model. These may be modified
- at runtime to change the textures and/or other material properties of the model. Materials
- can often be identified by their name, which is set by the 3D model loader.<p>
- <p>
- Note that if a model file contains multiple geometries, this list will contain
- <i>all</i> the materials across all geometries.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="http://d.android.com/reference/java/util/List.html">List</a>&lt;<a href="../../../../reference/com/viro/core/Material.html">Material</a>&gt;</code></td>
-        <td width="100%">A list containing each <code><a href="../../../../reference/com/viro/core/Material.html">Material</a></code> used by this 3D model.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getMorphTargetKeys()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getMorphTargetKeys</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="http://d.android.com/reference/java/util/Set.html">Set</a>&lt;<a href="http://d.android.com/reference/java/lang/String.html">String</a>&gt; getMorphTargetKeys ()</pre>
-    
-    
-
-    
-  <p>Get the names of the available morph targets on this Node or any of its children.
- If this Node represents a scene loaded from a 3D file format like FBX, then the returned
- set will contain the names of all morph targets that were installed.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="http://d.android.com/reference/java/util/Set.html">Set</a>&lt;<a href="http://d.android.com/reference/java/lang/String.html">String</a>&gt;</code></td>
-        <td width="100%">The names of each morph target in this Node.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="loadModel(com.viro.core.ViroContext, android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">loadModel</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void loadModel (<a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a> viroContext, 
-                <a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
-                <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, 
-                <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)</pre>
-    
-    
-
-    
-  <p>Load the model at the given URI into this Node. The model will load asynchronously, and the
- provided listener will receive a notification when model loading is completed. To load
- Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>.
- <p>
- If the model requires other resources (e.g. textures), then for FBX and OBJ models those
- resources are expected to be found at the same base path as the model URI. For GLTB and GLB
- models, resources are expected at the relative paths specified in the GLTF JSON.
- <p>
- If another model is already loaded into this Object3D, that model will be immediately
- removed. If the Object3D is currently loading another model, that model will be disposed.
- <p></p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>viroContext</code></td>
-        <td width="100%">
-          <code>ViroContext</code>: The <code><a href="../../../../reference/com/viro/core/ViroContext.html">ViroContext</a></code> is required to load models.</p></td>
-      </tr>
-      <tr>
-        <td><code>uri</code></td>
-        <td width="100%">
-          <code>Uri</code>: The URI of the model to load.</p></td>
-      </tr>
-      <tr>
-        <td><code>type</code></td>
-        <td width="100%">
-          <code>Object3D.Type</code>: The model input format.</p></td>
-      </tr>
-      <tr>
-        <td><code>asyncListener</code></td>
-        <td width="100%">
-          <code>AsyncObject3DListener</code>: Listener to respond to model loading status.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setLightReceivingBitMask(int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setLightReceivingBitMask</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setLightReceivingBitMask (int bitMask)</pre>
-    
-    
-
-    
-  <p>Set the bit mask that determines what lights will illuminate this Node. This bit mask is
- bitwise and-ed (&) with each Light's influenceBitMask. If the result is > 0, then the Light
- will illuminate this Node. The default value is 0x1.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>bitMask</code></td>
-        <td width="100%">
-          <code>int</code>: The bit mask to set.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setMorphMode(com.viro.core.Object3D.MorphMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setMorphMode</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setMorphMode (<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a> mode)</pre>
-    
-    
-
-    
-  <p>Sets the <code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code> this Object3D will use to render applied morph target weights.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>mode</code></td>
-        <td width="100%">
-          <code>Object3D.MorphMode</code>: The MorphMode to apply.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setMorphTargetWeight(java.lang.String, float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setMorphTargetWeight</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setMorphTargetWeight (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name, 
-                float weight)</pre>
-    
-    
-
-    
-  <p>Sets the weight of the morph target with the given name in this 3D model.</p></p>
+  <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>name</code></td>
         <td width="100%">
-          <code>String</code>: The name of the target to morph.</p></td>
+          <code>String</code> <!-- no parameter comment --></p></td>
       </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>weight</code></td>
-        <td width="100%">
-          <code>float</code>: The amount by which to morph toward the target, between 0 and 1.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">Object3D.MorphMode</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="setShadowCastingBitMask(int)"></A>
+<A NAME="values()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setShadowCastingBitMask</h3>
+    <h3 class="api-name">values</h3>
     <div class="api-level">
       <div></div>
       
@@ -1381,21 +1025,17 @@ void setMorphTargetWeight (<a href="http://d.android.com/reference/java/lang/Str
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setShadowCastingBitMask (int bitMask)</pre>
+<a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">MorphMode[]</a> values ()</pre>
     
     
 
     
-  <p>Set the bit mask that determines for which lights the contents of this Node will cast
- shadows.  This bit mask is bitwise and-ed (&) with each Light's influenceBitMask. If the
- result is > 0, then this Node will cast shadows from the light. The default value is 0x1.</p></p>
+  <p></p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>bitMask</code></td>
-        <td width="100%">
-          <code>int</code>: The bit mask to set.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/Object3D.MorphMode.html">MorphMode[]</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 

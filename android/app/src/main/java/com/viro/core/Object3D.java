@@ -230,8 +230,8 @@ public class Object3D extends Node {
     //#ENDIF
 
     /**
-     * MorphMode represents the method used to calculate and blend Morph Target data in this
-     * Object3D model.
+     * MorphMode represents the method used to calculate and blend morph target data in this
+     * Object3D.
      */
     public enum MorphMode {
         /**
@@ -240,33 +240,30 @@ public class Object3D extends Node {
          * shader.
          * <p>
          * Because the number of vertex array attributes are limited, Viro only supports at most
-         * 7 morph target properties with this mode. If your model contains > 7 morph target
-         * properties, Viro will automatically fall back onto CPU mode in order to continue
-         * animating morph target data.
+         * 7 morph targets on the GPU. If your model contains more than 7 morph targets, Viro
+         * will automatically fall back into CPU mode.
          * <p>
          * This mode is ideal for models with a low number of morph targets.
          */
         GPU("gpu"),
 
         /**
-         * Performs morph target blending calculations all on the CPU and combining the
-         * calculated result onto the base geometric mesh of this model.
+         * Performs morph target blending calculations on the CPU.
          * <p>
          * Because calculations are CPU based, there is no pre-defined limit to the number
          * of morph targets your model can have. However, keep in mind that a large number
-         * of morph targets can lead to a performance bottle neck on the CPU.
+         * of morph targets can lead to a performance bottleneck on the CPU.
          * <p>
-         * This mode is ideal for models with a reasonably large number of morph targets.
+         * This mode is ideal for models with a large number of morph targets.
          */
         CPU("cpu"),
 
         /**
-         * Similarly to CPU mode, morph target blending calculations are done on the CPU.
-         * However, they are interpolated back onto the base geometric mesh of this model
-         * on the GPU.
+         * Morph target blending calculations are done on the CPU, but are interpolated back onto
+         * the geometry of this model on the GPU.
          * <p>
-         * This mode is ideal for animating a large number of morph target properties
-         * through AnimationTransactions with long duration periods.
+         * This mode is ideal for animating large numbers of morph target properties
+         * through animations with long durations.
          */
         HYBRID("hybrid");
 
@@ -279,7 +276,7 @@ public class Object3D extends Node {
     /**
      * Get the names of the available morph targets on this Node or any of its children.
      * If this Node represents a scene loaded from a 3D file format like FBX, then the returned
-     * Set will contain the names of all morph targets that were installed.
+     * set will contain the names of all morph targets that were installed.
      *
      * @return The names of each morph target in this Node.
      */
@@ -288,13 +285,13 @@ public class Object3D extends Node {
     }
 
     /**
-     * Sets the weight of the morph target matching the given targetKey in this 3D model.
+     * Sets the weight of the morph target with the given name in this 3D model.
      *
-     * @param targetKey The key representing the target to morph.
-     * @param weight The weight representing the amount of which to morph towards target.
+     * @param name The name of the target to morph.
+     * @param weight The amount by which to morph toward the target, between 0 and 1.
      */
-    public void setMorphTargetWeight(String targetKey, float weight) {
-        nativeSetMorphTargetWithWeight(mNativeRef, targetKey, weight);
+    public void setMorphTargetWeight(String name, float weight) {
+        nativeSetMorphTargetWithWeight(mNativeRef, name, weight);
     }
 
     /**
