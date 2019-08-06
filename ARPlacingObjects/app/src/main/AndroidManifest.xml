@@ -18,7 +18,7 @@
 
         <meta-data
             android:name="com.viromedia.API_KEY"
-            android:value="API_KEY_HERE" />
+            android:value="7EEDCB99-2C3B-4681-AE17-17BC165BF792" />
         <meta-data android:name="com.google.ar.core" android:value="optional" />
 
         <activity
