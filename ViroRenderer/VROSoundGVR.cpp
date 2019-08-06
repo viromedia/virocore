@@ -89,16 +89,24 @@ void VROSoundGVR::play() {
 
     // create the sound if it hasn't been created yet.
     if (_audioId == -1) {
-        // Note: we substring(7) the getLocalFilePath() because it includes `file://` and GVR doesn't like those paths
+
+        // For some reason GVR behaves differently between iOS and Android where on iOS it does not
+        // like the path starting with "file://" whereas their Android API does want it, so remove the
+        // "file://" prefix only on iOS
+#if VRO_PLATFORM_ANDROID
+        std::string path = _data->getLocalFilePath();
+#else
+        std::string path = _data->getLocalFilePath().substr(7);
+#endif
         switch (_type) {
             case VROSoundType::Normal:
-                _audioId = gvrAudio->CreateStereoSound(_data->getLocalFilePath().substr(7));
+                _audioId = gvrAudio->CreateStereoSound(path);
                 break;
             case VROSoundType::Spatial:
-                _audioId = gvrAudio->CreateSoundObject(_data->getLocalFilePath().substr(7));
+                _audioId = gvrAudio->CreateSoundObject(path);
                 break;
             case VROSoundType::SoundField:
-                _audioId = gvrAudio->CreateSoundfield(_data->getLocalFilePath().substr(7));
+                _audioId = gvrAudio->CreateSoundfield(path);
                 break;
         }
 
