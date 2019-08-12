@@ -44,8 +44,6 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.viro.core.internal.BuildInfo;
-import com.viro.core.internal.keys.KeyValidationListener;
-import com.viro.core.internal.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
 
@@ -92,11 +90,9 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     private int mSavedOrientation;
     Renderer mNativeRenderer;
     protected ViroContext mNativeViroContext;
-    private KeyValidator mKeyValidator;
     private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
     protected boolean mDestroyed = false;
     protected WeakReference<Activity> mWeakActivity;
-    private String mApiKey;
     protected Scene mCurrentScene;
     protected RendererConfiguration mRendererConfig;
 
@@ -104,48 +100,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     private boolean mHDREnabled = true;
     private boolean mPBREnabled = true;
     private boolean mBloomEnabled = true;
-
-    private static class KeyValidatorListenerImpl implements KeyValidationListener {
-        final WeakReference<Renderer> mWeakRenderer;
-        final WeakReference<ViroView> mWeakViroView;
-
-        public KeyValidatorListenerImpl(Renderer renderer, ViroView viroView) {
-            mWeakRenderer = new WeakReference<Renderer>(renderer);
-            mWeakViroView = new WeakReference<ViroView>(viroView);
-        }
-
-        public void onResponse(boolean success) {
-            ViroView viroView = mWeakViroView.get();
-            if (viroView == null) {
-                return;
-            }
-
-            if (!viroView.mDestroyed) {
-                Renderer renderer = mWeakRenderer.get();
-                if(renderer != null ) {
-                    renderer.setSuspended(!success);
-                }
-            }
-
-            // If the key was invalid in a debug build, then let's show a toast!
-            if (!success && BuildInfo.isDebug(viroView.getContext())) {
-
-                Handler mainHandler = new Handler(viroView.getContext().getMainLooper());
-                Runnable showToastRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        ViroView viroViewStrong = mWeakViroView.get();
-                        if (viroViewStrong != null) {
-                            Toast toast = Toast.makeText(viroViewStrong.getContext().getApplicationContext(),
-                                    INVALID_KEY_MESSAGE, Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                    }
-                };
-                mainHandler.post(showToastRunnable);
-            }
-        }
-    }
 
     private static class SystemVisibilityListenerImpl implements OnSystemUiVisibilityChangeListener {
 
@@ -195,18 +149,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
 
         final Context activityContext = getContext();
-        mKeyValidator = new KeyValidator(activityContext);
-        try {
-            final ApplicationInfo ai = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
-            final Bundle bundle = ai.metaData;
-            if (bundle != null) {
-
-                final String viroApiKey = bundle.getString(API_KEY_METADATA_TAG);
-                mApiKey = viroApiKey;
-            }
-        } catch (final PackageManager.NameNotFoundException e) {
-            Log.w("Viro", "Unable to find package name: " + e.getMessage());
-        }
     }
 
     @Override
@@ -393,47 +335,6 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      */
     public void setFrameListener(FrameListener listener) {
         getRenderer().setFrameListener(listener);
-    }
-
-    /**
-     * (Used by Java API, mApiKey picked up from Metadata in Android Manifest) Your Viro API key must be validated, via this method, prior to rendering content. Content
-     * will render during the validation process; if the key fails validation, the screen will
-     * deactivate and render black.
-     *
-     * @hide
-     */
-     final void validateAPIKeyFromManifest() {
-         mNativeRenderer.setSuspended(false);
-         // we actually care more about the headset than platform in this case.
-         validateAPIKey(mApiKey);
-    }
-
-    /**
-     * (Used by React Viro, apiKey passed through react)Your Viro API key must be validated, via this method, prior to rendering content. Content
-     * will render during the validation process; if the key fails validation, the screen will
-     * deactivate and render black.
-     *
-     * @hide
-     */
-    public final void validateAPIKey(String apiKey) {
-        mNativeRenderer.setSuspended(false);
-        // we actually care more about the headset than platform in this case.
-;
-        // set defaults
-        String viewType = "VR";
-        String platform = "cardboard";
-        if (this instanceof ViroViewARCore) {
-            viewType = "AR";
-            platform = "arcore";
-        } else if (this instanceof ViroViewGVR || this instanceof ViroViewOVR) {
-            viewType = "VR";
-            platform = getHeadset();
-        } else if (this instanceof ViroViewScene) {
-            viewType = "3DScene";
-            platform = "none";
-        }
-
-        mKeyValidator.validateKey(apiKey, viewType, platform, new KeyValidatorListenerImpl(mNativeRenderer, this));
     }
 
     /**

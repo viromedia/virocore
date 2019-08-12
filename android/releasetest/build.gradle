@@ -1,9 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
 
 android {
     flavorDimensions "target_platform"
@@ -95,7 +90,4 @@ dependencies {
     // testing dependencies
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'org.awaitility:awaitility:3.0.0'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
-        transitive = true;
-    }
 }

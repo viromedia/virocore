@@ -916,7 +916,7 @@ static void ovrApp_Clear( ovrApp * app )
     app->BackButtonDown = false;
     app->BackButtonDownStartTime = 0.0;
     app->UseMultiview = true;
-    app->suspended = true;
+    app->suspended = false;
     app->suspendedNotificationTime = VROTimeCurrentSeconds();
     ovrEgl_Clear( &app->Egl );
     ovrRenderer_Clear( &app->Renderer );

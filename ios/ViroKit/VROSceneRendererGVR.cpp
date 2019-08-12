@@ -51,7 +51,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(int width, int height, UIInterfaceOrien
     _contentScaleFactor(contentScaleFactor),
     _renderer(renderer),
     _driver(driver),
-    _rendererSuspended(true),
+    _rendererSuspended(false),
     _sizeChanged(false),
     _vrModeEnabled(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()) {

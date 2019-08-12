@@ -350,10 +350,6 @@ public class ViroViewGVR extends ViroView {
 
         // Default the mode to VR
         setVRModeEnabled(vrMode);
-
-        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest();
-        }
     }
 
     @Override

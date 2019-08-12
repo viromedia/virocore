@@ -181,7 +181,6 @@ public class ViroNativeActivity extends AppCompatActivity {
 
         mViroView.setVRModeEnabled(true);
         mViroView.setDebugHUDEnabled(true);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
     }
 
     private void onRendererFailed(String error, String errorMessage) {

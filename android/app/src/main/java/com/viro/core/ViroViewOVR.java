@@ -218,10 +218,6 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Prevent screen from switching to portrait
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest();
-        }
     }
 
     @Override

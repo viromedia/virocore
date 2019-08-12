@@ -37,10 +37,8 @@ import com.viro.core.RendererCloseListener;
 import com.viro.core.ViroView;
 import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
-import com.crashlytics.android.Crashlytics;
 import com.viro.core.ViroViewScene;
 
-import io.fabric.sdk.android.Fabric;
 /**
  * Created by manish on 10/25/17.
  */
@@ -56,7 +54,6 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
     protected void onCreate(final Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
             if (BuildConfig.VR_ENABLED == 1) {

@@ -4,8 +4,6 @@ platform :ios, '9.3'
 
 def common_pods
     pod 'GVRAudioSDK', '1.120.0'
-    pod 'AWSCore', '2.6.7'
-    pod 'AWSDynamoDB', '2.6.7'
 end
 
 target 'ViroSample' do

@@ -31,8 +31,6 @@
 #import "VROTime.h"
 #import "VROEye.h"
 #import "VRODriverOpenGLiOS.h"
-#import "VROApiKeyValidator.h"
-#import "VROApiKeyValidatorDynamo.h"
 #import "VROARSessioniOS.h" 
 #import "VROARSessionInertial.h"
 #import "VROARCamera.h"
@@ -72,7 +70,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     VROWorldAlignment _worldAlignment;
 }
 
-@property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) VROTrackingType trackingType;
 
 // Image Tracking Output
@@ -97,7 +94,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _suspended = YES;
+        _suspended = NO;
         _worldAlignment = VROWorldAlignment::Gravity;
         _viewport = VROViewport(-1, -1, -1, -1);
         VRORendererConfiguration config;
@@ -120,7 +117,7 @@ static VROVector3f const kZeroVector = VROVector3f();
                  trackingType:(VROTrackingType)trackingType {
     self = [super initWithFrame:frame context:context];
     if (self) {
-        _suspended = YES;
+        _suspended = NO;
         _worldAlignment = worldAlignment;
         _trackingType = trackingType;
         _viewport = VROViewport(-1, -1, -1, -1);
@@ -301,8 +298,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     _pointOfView->setCamera(std::make_shared<VRONodeCamera>());
     _renderer->setPointOfView(_pointOfView);
     
-    self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
-
     UIRotationGestureRecognizer *rotateGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotate:)];
     [rotateGesture setDelegate:self];
     [self addGestureRecognizer:rotateGesture];
@@ -567,28 +562,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setDebugDrawDelegate:(NSObject<VRODebugDrawDelegate> *)debugDrawDelegate {
     self.glassView = [[VROGlassView alloc] initWithFrame:self.bounds delegate:debugDrawDelegate];
     [self addSubview:self.glassView];
-}
-
-#pragma mark - Key Validation
-
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
-    // If the user gives us a key, then let them use the API until we successfully checked the key.
-    self.suspended = NO;
-    __weak typeof(self) weakSelf = self;
-    
-    VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
-        typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        
-        strongSelf.suspended = !valid;
-        completionBlock(valid);
-        NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
-    };
-    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
-    // Record keen_io metrics
-    [[VROMetricsRecorder sharedClientWithViewType:@"AR" platform:@"arkit"] recordEvent:@"renderer_init"];
 }
 
 #pragma mark - Camera

@@ -114,9 +114,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
 
 public class ViroActivity extends AppCompatActivity {
     private static final String TAG = ViroActivity.class.getSimpleName();
@@ -131,7 +128,6 @@ public class ViroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         mHandler = new Handler(getMainLooper());
 
         RendererConfiguration config = new RendererConfiguration();
@@ -273,7 +269,6 @@ public class ViroActivity extends AppCompatActivity {
 
         mViroView.setVRModeEnabled(true);
         mViroView.setDebugHUDEnabled(true);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             initializeArScene();

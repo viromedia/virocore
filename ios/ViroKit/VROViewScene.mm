@@ -31,8 +31,6 @@
 #import "VROTime.h"
 #import "VROEye.h"
 #import "VRODriverOpenGLiOS.h"
-#import "VROApiKeyValidator.h"
-#import "VROApiKeyValidatorDynamo.h"
 #import "VROConvert.h"
 #import "VRONodeCamera.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
@@ -56,7 +54,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     double _suspendedNotificationTime;
 }
 
-@property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
 
 @end
@@ -71,7 +68,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _suspended = YES;
+        _suspended = NO;
         VRORendererConfiguration config;
         [self initRenderer:config];
     }
@@ -83,7 +80,7 @@ static VROVector3f const kZeroVector = VROVector3f();
                       context:(EAGLContext *)context {
     self = [super initWithFrame:frame context:context];
     if (self) {
-        _suspended = YES;
+        _suspended = NO;
         [self initRenderer:config];
     }
     return self;
@@ -164,8 +161,6 @@ static VROVector3f const kZeroVector = VROVector3f();
              withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
                    error:nil];
     
-    self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
-
     UIRotationGestureRecognizer *rotateGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotate:)];
     [rotateGesture setDelegate:self];
     [self addGestureRecognizer:rotateGesture];
@@ -376,29 +371,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (NSString *)getController {
     return [NSString stringWithUTF8String:_inputController->getController().c_str()];
-}
-
-#pragma mark - Key Validation
-
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
-    // If the user gives us a key, then let them use the API until we successfully checked the key.
-    self.suspended = NO;
-    __weak typeof(self) weakSelf = self;
-    
-    VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
-        typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        
-        strongSelf.suspended = !valid;
-        completionBlock(valid);
-        NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
-    };
-    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
-  
-  [[VROMetricsRecorder sharedClientWithViewType:@"3DScene" platform:@"none"] recordEvent:@"renderer_init"];
-
 }
 
 #pragma mark - Camera

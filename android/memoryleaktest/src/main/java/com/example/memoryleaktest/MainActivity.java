@@ -25,8 +25,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by vadvani on 11/10/17.
@@ -39,7 +37,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_memory_leak_test);
         Button boxButton = (Button)findViewById(R.id.box_button);
         boxButton.setOnClickListener(new View.OnClickListener() {

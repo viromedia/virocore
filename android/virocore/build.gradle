@@ -49,7 +49,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
             libraryVariants.all { variant ->
                 variant.outputs.all { output ->
                     //TODO This variable will come from maven-push.gradle when we integrate pushing
@@ -63,7 +62,6 @@ android {
         }
         debug {
             minifyEnabled false
-            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
         }
     }
 
@@ -84,11 +82,6 @@ dependencies {
     implementation project(':libs:gvr')
     implementation project(':libs:arcore')
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
-    implementation 'com.amazonaws:aws-android-sdk-core:2.7.7'
-    implementation 'com.amazonaws:aws-android-sdk-ddb:2.7.7'
-    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.7.7'
-    implementation 'com.amazonaws:aws-android-sdk-cognito:2.7.7'
-    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.7.7'
 }
 
 // We have to add dependencies to Android tasks in this deferred way because these tasks

@@ -59,7 +59,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
                                                std::shared_ptr<gvr::AudioApi> gvrAudio) :
-    _rendererSuspended(true),
+    _rendererSuspended(false),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
     _arcoreInstalled(false),
     _destroyed(false) {

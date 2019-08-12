@@ -39,8 +39,6 @@ class VRONode;
 class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
 
-typedef void (^VROViewValidApiKeyBlock)(BOOL);
-
 @protocol VROView <NSObject>
 
 @required
@@ -54,7 +52,6 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
             timingFunction:(VROTimingFunctionType)timingFunctionType;
 
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node;
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock;
 - (void)setDebugHUDEnabled:(BOOL)enabled;
 - (void)recenterTracking;
 

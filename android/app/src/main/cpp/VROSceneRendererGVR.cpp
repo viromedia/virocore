@@ -53,7 +53,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(VRORendererConfiguration config,
                                          std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _sceneViewport(_gvr->CreateBufferViewport()),
-    _rendererSuspended(true),
+    _rendererSuspended(false),
     _vrModeEnabled(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()) {
 

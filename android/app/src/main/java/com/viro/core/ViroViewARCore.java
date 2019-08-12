@@ -564,10 +564,6 @@ public class ViroViewARCore extends ViroView {
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mViroTouchGestureListener = new ViroTouchGestureListener(activity, mNativeRenderer);
         setOnTouchListener(mViroTouchGestureListener);
-
-        if (BuildConfig.VIRO_PLATFORM.equalsIgnoreCase(PLATFORM_VIRO_CORE)) {
-            validateAPIKeyFromManifest();
-        }
     }
 
     /**

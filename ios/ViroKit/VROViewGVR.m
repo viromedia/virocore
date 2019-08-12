@@ -33,7 +33,6 @@
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
 #import "VROReticle.h"
-#import "VROApiKeyValidatorDynamo.h"
 #import "VROAllocationTracker.h"
 #import "VRORenderDelegateiOS.h"
 #import "VROInputControllerCardboardiOS.h"
@@ -68,7 +67,6 @@
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererGVR> sceneRenderer;
-@property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 @property (readwrite, nonatomic) BOOL initialized;
 @property (readwrite, nonatomic) BOOL VRModeEnabled;
 @property (readwrite, nonatomic) VROOverlayViewDelegate *gvrDelegate;
@@ -172,7 +170,6 @@
                                                            self.bounds.size.height * self.contentScaleFactor,
                                                            [[UIApplication sharedApplication] statusBarOrientation],
                                                            self.contentScaleFactor, _renderer, _driver);
-    self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
 
     /*
      Add a tap gesture to handle viewer trigger action.
@@ -417,32 +414,6 @@
 }
 
 #pragma mark - ViroView
-
-/*
- This function will asynchronously validate the given API key and notify the
- renderer if the key is invalid.
- */
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
-    // If the user gives us a key, then let them use the API until we successfully checked the key.
-    _sceneRenderer->setSuspended(false);
-    __weak typeof(self) weakSelf = self;
-    
-    VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
-        VROViewGVR *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        
-        strongSelf->_sceneRenderer->setSuspended(!valid);
-        completionBlock(valid);
-        NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
-    };
-    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
-    
-  // Record keen_io metrics
-  [[VROMetricsRecorder sharedClientWithViewType:@"VR" platform:@"cardboard"] recordEvent:@"renderer_init"];
-}
-
 - (void)recenterTracking {
     _sceneRenderer->recenterTracking();
 }
