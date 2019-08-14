@@ -7,7 +7,7 @@
 //
 
 #include "VROSoundDataGVR.h"
-#include <VROPlatformUtil.h>
+#include "VROPlatformUtil.h"
 #include "VROLog.h"
 
 std::shared_ptr<VROSoundDataGVR> VROSoundDataGVR::create(std::string resource, VROResourceType type) {

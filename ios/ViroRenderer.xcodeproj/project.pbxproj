@@ -5684,11 +5684,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5782,11 +5778,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5823,11 +5815,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -6525,14 +6513,8 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6549,20 +6531,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
-				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
-					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
-					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
-				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -6645,14 +6615,8 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6672,20 +6636,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
-				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
-					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
-					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
-				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -7043,14 +6995,8 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -7067,20 +7013,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
-				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
-					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
-					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
-				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -7164,14 +7098,8 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/opencv",
-				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -7191,20 +7119,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
-				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
-					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
-					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
-					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
-				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

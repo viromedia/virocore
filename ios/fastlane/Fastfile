@@ -19,10 +19,7 @@ platform :ios do
   before_all do
     BUILD_INTERMEDIATES = "/var/tmp/build_intermediates/"
     GIT_BRANCH = git_branch
-    Dir.chdir("../") do
-    	sh("pod repo update")
-    end
-    cocoapods
+    # cocoapods
   end
 
   def on_error(exception)
@@ -40,17 +37,61 @@ platform :ios do
        )
   end
 
-  desc "Build ViroKit framework (release)"
+  desc "Build ViroKit (framework + static lib), (iphoneos + iphonesimulator)"
+
+
   lane :virorender_viroreact_virokit do
-    begin
-     Dir.chdir("../") do
-       # clean
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release clean | xcpretty -c")
-       # build scheme for simulator
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphonesimulator -arch x86_64| xcpretty -c")
-       # build scheme for devices
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit -configuration Release -sdk iphoneos | xcpretty -c")
-     end
+    cocoapods
+    virorender_viroreact_virokit_framework
+    virorender_viroreact_virokit_static_lib
+  end
+
+  desc "Build ViroKit framework (release)"
+  lane :virorender_viroreact_virokit_framework do
+    begin       
+       # Clean virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Clean virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Build virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+       )
+
+       # Build virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+       )
     rescue => exception
            on_error(exception)
     end
@@ -58,22 +99,53 @@ platform :ios do
 
   lane :virorender_viroreact_virokit_static_lib do
     begin
-     Dir.chdir("../") do
-       # clean
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release clean | xcpretty -c")
-       # build scheme for simulator
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator -arch x86_64| xcpretty -c")
-       # build scheme for devices
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos | xcpretty -c")
+     
+       # Clean virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
 
-       # The above two builds seem to have intermittent failures (with no explaination),
-       # adding them to be built twice (just in case)
-       
-       # build scheme for simulator
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphonesimulator -arch x86_64| xcpretty -c")
-       # build scheme for devices
-       sh("xcodebuild -workspace ViroRenderer.xcworkspace/ -scheme ViroKit_static_lib -configuration Release -sdk iphoneos | xcpretty -c")
-     end
+       # Clean virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Build virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+          # clean: true,
+       )
+
+       # Build virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+          # clean: true,
+       )
+     
     rescue => exception
            on_error(exception)
     end
