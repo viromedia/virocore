@@ -867,7 +867,7 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
 
     // First, iterate through each skeletal animation that is associated with each
     // skinner in the scene. Also assume that an animation can only move a single
-    // skinner at a time (multi-skinner is not supported)
+    // skinner at a time (multi-skinner-animation for a single animation is not supported)
     for (auto animToSkinToNodePair : skeletalAnimToSkinToNodeMap) {
         int skinIndex = animToSkinToNodePair.second.first;
         int skeletalAnimationIndex = animToSkinToNodePair.first;
@@ -880,61 +880,73 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         // joint can have different animated properties with different input time samples).
         std::vector<std::shared_ptr<VROKeyframeAnimation>> animatedProperties = _nodeKeyFrameAnims[animatedNodeIndexFirst][skeletalAnimationIndex];
 
+        // If there are no animations for the root node, keep iterating until we find one.
+        // We are assuming here that the animation for this skinner has the same
+        // duration and keyframe intervals for all of its bones.
+        if (animatedProperties.size() == 0) {
+            std::vector<int> intersectingAnimatedJoints = animToSkinToNodePair.second.second;
+            for (auto jointIndex : intersectingAnimatedJoints) {
+                animatedProperties = _nodeKeyFrameAnims[jointIndex][skeletalAnimationIndex];
+                if (animatedProperties.size() != 0) {
+                    break;
+                }
+            }
+        }
+
         // For each animatedProperty, construct a corresponding skeletal animation.
-        animatedProperties = _nodeKeyFrameAnims[animatedNodeIndexFirst][skeletalAnimationIndex];
         if (animatedProperties.size() > 1) {
             pwarn("Viro: Animations with multi-time interval inputs are not yet supported!");
+        } else if (animatedProperties.size() == 0) {
+            pwarn("Viro: No animations found!");
+            return true;
         }
-        
-        for (int animSubPropertyIndex = 0; animSubPropertyIndex < animatedProperties.size(); animSubPropertyIndex ++) {
-            std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = animatedProperties[animSubPropertyIndex];
-            float totalDuration = keyFrameAnim->getDuration();
 
-            // First, create a set of skeletal Frames, populate them with empty key frames (with time stamp data).
-            std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> skeletalFrames;
-            const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = keyFrameAnim->getFrames();
-            for (int i = 0; i < frames.size(); i++) {
-                std::unique_ptr<VROSkeletalAnimationFrame> skeletalFrame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
-                skeletalFrame->time = frames[i]->time;
+        // TODO: There can be cases where there are multiple animated properties with different
+        // keyframe interval durations (for example, translation animates at a different speed
+        // than rotation, towards the same duration, for the same animation). Thus, in this case
+        // we'll need to combine the different skeletal animations into a layered skeletal
+        // animation. For the moment, we simply not include the data (only consider the first index)
+        int animSubPropertyIndex = 0;
 
-                // TODO We should support the non-legacy (concatenated transform) format
-                skeletalFrame->boneTransformsLegacy = true;
-                skeletalFrames.push_back(std::move(skeletalFrame));
-            }
+        // First, create a set of skeletal Frames, populate them with empty key frames (with time stamp data)
+        std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = animatedProperties[animSubPropertyIndex];
+        float totalDuration = keyFrameAnim->getDuration();
+        std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> skeletalFrames;
+        const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = keyFrameAnim->getFrames();
+        for (int i = 0; i < frames.size(); i++) {
+            std::unique_ptr<VROSkeletalAnimationFrame> skeletalFrame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
+            skeletalFrame->time = frames[i]->time;
 
-            // Then iterate through each frame and populate them with the computed transform for each joint/bone.
-            std::shared_ptr<VROSkeleton> currentSkeleton = _skinIndexToSkeleton[skinIndex];
-            std::shared_ptr<VROSkinner> currentSkinner = _skinMap[skinIndex];
-            for (int i = 0; i < frames.size(); i++) {
-                std::map<int, VROMatrix4f> computedAnimatedJointTrans;
-                if (!processSkeletalTransformsForFrame(skinIndex, skeletalAnimationIndex, animSubPropertyIndex, i, 0,
+            // TODO We should support the non-legacy (concatenated transform) format
+            skeletalFrame->boneTransformsLegacy = true;
+            skeletalFrames.push_back(std::move(skeletalFrame));
+        }
+
+        // Then iterate through each frame and populate them with the computed transform for each joint/bone.
+        std::shared_ptr<VROSkeleton> currentSkeleton = _skinIndexToSkeleton[skinIndex];
+        std::shared_ptr<VROSkinner> currentSkinner = _skinMap[skinIndex];
+        for (int i = 0; i < frames.size(); i++) {
+            std::map<int, VROMatrix4f> computedAnimatedJointTrans;
+            if (!processSkeletalTransformsForFrame(model, skinIndex, skeletalAnimationIndex, animSubPropertyIndex, i, 0,
                                                        computedAnimatedJointTrans)) {
-                    return false;
-                }
-
-                // Then, for each joint, move the transform the computed joint back into bone space
-                // and save that into the skeletalFrames for the animation.
-                for (int jointI = 0; jointI < computedAnimatedJointTrans.size(); jointI++) {
-                    VROMatrix4f invBind = _skinMap[skinIndex]->getSkeleton()->getBone(jointI)->getBindTransform();
-                    VROMatrix4f computedAnimatedBoneTrans = invBind.multiply(computedAnimatedJointTrans[jointI]);
-                    skeletalFrames[i]->boneIndices.push_back(jointI);
-                    skeletalFrames[i]->boneTransforms.push_back(computedAnimatedBoneTrans);
-                }
+                return false;
             }
 
-            // Finally construct our skeletal animation
-            std::shared_ptr<VROSkeletalAnimation> skeletalAnimation
-                    = std::make_shared<VROSkeletalAnimation>(currentSkinner, skeletalFrames, totalDuration);
-            skeletalAnimation->setName(keyFrameAnim->getName());
-            _skinSkeletalAnims[skinIndex].push_back(skeletalAnimation);
-
-            // TODO: There can be cases where there are multiple animated properties with different
-            // keyframe interval durations (for example, translation animates at a different speed
-            // than rotation, towards the same duration, for the same animation). Thus, in this case
-            // we'll need to combine the different skeletal animations into a layered skeletal animation.
-            // For the moment, we simply just break out and not include the data.
-            break;
+            // Then, for each joint, move the transform the computed joint back into bone space
+            // and save that into the skeletalFrames for the animation.
+            for (int jointI = 0; jointI < computedAnimatedJointTrans.size(); jointI++) {
+                VROMatrix4f invBind = _skinMap[skinIndex]->getSkeleton()->getBone(jointI)->getBindTransform();
+                VROMatrix4f computedAnimatedBoneTrans = invBind.multiply(computedAnimatedJointTrans[jointI]);
+                skeletalFrames[i]->boneIndices.push_back(jointI);
+                skeletalFrames[i]->boneTransforms.push_back(computedAnimatedBoneTrans);
+            }
         }
+
+        // Finally construct our skeletal animation
+        std::shared_ptr<VROSkeletalAnimation> skeletalAnimation
+                = std::make_shared<VROSkeletalAnimation>(currentSkinner, skeletalFrames, totalDuration);
+        skeletalAnimation->setName(keyFrameAnim->getName());
+        _skinSkeletalAnims[skinIndex].push_back(skeletalAnimation);
 
         // Remove any KeyFrameAnimations that were "turned into" and used for skeletal animations.
         // If an animation is on a skinner node, it is always treated as a skeletal animation.
@@ -946,16 +958,23 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
     return true;
 }
 
-bool VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationIndex, int subAnimPropertyIndex, int keyFrameTime,
-                                                      int currentJointIndex, std::map<int, VROMatrix4f> &transformsOut){
+bool VROGLTFLoader::processSkeletalTransformsForFrame(const tinygltf::Model &gModel,
+                                                      int skin,
+                                                      int animationIndex,
+                                                      int subAnimPropertyIndex,
+                                                      int keyFrameTime,
+                                                      int currentJointIndex,
+                                                      std::map<int, VROMatrix4f> &transformsOut) {
     // If we are at the root, process its transform to be cascaded down the model's scene tree.
     int childNodeIndex = _skinIndexToJointNodeIndex[skin][0];
 
     if (currentJointIndex == 0) {
         if (_nodeKeyFrameAnims.find(childNodeIndex) == _nodeKeyFrameAnims.end() ||
             _nodeKeyFrameAnims[childNodeIndex].find(animationIndex) == _nodeKeyFrameAnims[childNodeIndex].end()) {
-            perr("Skinner animation is not fully configured");
-            return false;
+
+            // If the there are no animations configured for this bone, simply get the model's
+            // original local transform.
+            transformsOut[0] = getTransformOfNode(gModel, childNodeIndex);
         } else {
             std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex].at(subAnimPropertyIndex);
             const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = animation->getFrames();
@@ -990,8 +1009,7 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
         VROMatrix4f localTransform = VROMatrix4f::identity();
         if (_nodeKeyFrameAnims.find(childNodeIndex) == _nodeKeyFrameAnims.end() ||
             _nodeKeyFrameAnims[childNodeIndex].find(animationIndex) == _nodeKeyFrameAnims[childNodeIndex].end()) {
-            perr("Skinner animation is not fully configured");
-            return false;
+            localTransform = getTransformOfNode(gModel, childNodeIndex);
         } else {
             // Grab the animation transform of the current keyFrame
             std::shared_ptr<VROKeyframeAnimation> animation = _nodeKeyFrameAnims[childNodeIndex][animationIndex].at(subAnimPropertyIndex);
@@ -1004,7 +1022,7 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
             if (animation->_hasRotation) {
                 localTransform = frames[keyFrameTime]->rotation.getMatrix() * localTransform;
             }
-            
+
             if (animation->_hasTranslation) {
                 localTransform.translate(frames[keyFrameTime]->translation);
             }
@@ -1015,7 +1033,7 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(int skin, int animationInd
         transformsOut[childJointIndex] = computedJointTransformInMeshCoords;
 
         // Continue going down the skeletal tree
-        if (!processSkeletalTransformsForFrame(skin, animationIndex, subAnimPropertyIndex,
+        if (!processSkeletalTransformsForFrame(gModel, skin, animationIndex, subAnimPropertyIndex,
                                                keyFrameTime, childJointIndex, transformsOut)) {
             return false;
         }
@@ -1946,4 +1964,35 @@ std::shared_ptr<VROTexture> VROGLTFLoader::getTexture(const tinygltf::Model &gMo
     std::string key = VROStringUtil::toString(imageIndex);
     VROGLTFLoader::_textureCache[key] = texture;
     return texture;
+}
+
+VROMatrix4f VROGLTFLoader::getTransformOfNode(const tinygltf::Model &gModel, int nodeIndex) {
+    tinygltf::Node gNode = gModel.nodes[nodeIndex];
+
+    // Grab the main transformations for this node.
+    std::vector<double> gScale = gNode.scale;
+    std::vector<double> gPos = gNode.translation;
+    std::vector<double> gRot = gNode.rotation;
+    VROVector3f pos = gPos.size() > 0 ? VROVector3f(gPos[0], gPos[1], gPos[2]) : VROVector3f();
+    VROVector3f scale = gScale.size() > 0 ? VROVector3f(gScale[0], gScale[1], gScale[2]) : VROVector3f(1,1,1);
+    VROQuaternion rot = gRot.size() > 0 ? VROQuaternion(gRot[0], gRot[1], gRot[2], gRot[3]) : VROQuaternion();
+
+    // If a transformation matrix is provided, we use that instead.
+    std::vector<double> gMat = gNode.matrix;
+    if (gMat.size() > 0) {
+        std::vector<float> gFloatMatrix;
+        for (int i = 0; i < 16; i ++) {
+            gFloatMatrix.push_back((float)gMat[i]);
+        }
+        VROMatrix4f mat = VROMatrix4f(&gFloatMatrix[0]);
+        pos = mat.extractTranslation();
+        scale = mat.extractScale();
+        rot = mat.extractRotation(scale);
+    }
+
+    VROMatrix4f localTransform;
+    localTransform.scale(scale.x, scale.y, scale.z);
+    localTransform.rotate(rot);
+    localTransform.translate(pos);
+    return localTransform;
 }
