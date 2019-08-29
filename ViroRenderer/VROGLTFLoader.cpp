@@ -439,31 +439,29 @@ bool VROGLTFLoader::processAnimations(const tinygltf::Model &model) {
         return true;
     }
 
-    // In gLTF, model.animations represents a mixed mixed group of keyframe animation and
-    // skeletal animation data corresponding to different nodes with different input times.
-    // Thus, we need to group gLTF animation data for easier parsing. We group as follows:
-    //
-    // - Group all animations that apply only to it's corresponding node.
-    // - Then group a node's set of animation data by animation name or id.
-    // - Then group the single animation's data with by same input time frame / inputIndex.
-    // - Data is then stored and referred to as channelIndex.
-    //
-    // This results in:
-    // <nodeIndex, <animationIndex , <inputIndex, vec<channelIndex>>>> nodeToAnimDataMap;
-    //
-    std::map<int, std::map<int, std::map<int, std::vector<int>>>> nodeToAnimDataMap;
+    /*
+     In gLTF, model.animations contain an array of gLTF animations, and a single gLTF animation
+     contains an array of gLTF "channels". A channel targets a node with the time and raw
+     animation data. As such, we'll need to convert a single gLTF channel into a
+     VROKeyframeAnimation to be then applied onto a node.
+
+     Thus, we need to group gLTF animation data for easier parsing. We group as follows:
+     - Map a gLTF animation to its corresponding node index.
+     - And for each node index, map a vec of channels.
+
+     This results in:
+     <nodeIndex, <animationIndex, vec<channelIndexes>> nodeToAnimDataMap
+    */
+
+    std::map<int, std::map<int, std::vector<int>>> nodeToAnimDataMap;
     std::map<int, std::set<int>> animToNodeIndexMap;
     for (int animIndex = 0; animIndex < model.animations.size(); animIndex++) {
         tinygltf::Animation anim = model.animations[animIndex];
 
-        // For each animation, iterate through the channel input data.
+        // For each animation, grab the targeted node and its animation channel data.
         for (int cIndex = 0; cIndex < anim.channels.size(); cIndex++) {
             tinygltf::AnimationChannel channel = anim.channels[cIndex];
-
-            // Group all the channel input data with the same matching sampler inputAcessor
-            // index (ensures same keyframe data).
-            int channelInputIndex = anim.samplers[channel.sampler].input;
-            nodeToAnimDataMap[channel.target_node][animIndex][channelInputIndex].push_back(cIndex);
+            nodeToAnimDataMap[channel.target_node][animIndex].push_back(cIndex);
 
             // Also save a reverse map of anim to nodeIndexes for skeletal animation processing.
             animToNodeIndexMap[animIndex].insert(channel.target_node);
@@ -502,179 +500,73 @@ bool VROGLTFLoader::processAnimations(const tinygltf::Model &model) {
         }
     }
 
-    // Finally, process all animations after grouping the data above.
-    if (!processAnimationKeyFrame(model, nodeToAnimDataMap)) {
+    // For each animation channel in the gltf model, convert them into VROKeyframeAnimations
+    // and cache them in _nodeKeyFrameAnims to be later set on a VRONode.
+    if (!processKeyFrameAnimations(model, nodeToAnimDataMap)) {
         perr("Error when parsing key frame animations");
         return false;
     }
 
+    // Finally also process skeletal animations, if any.
     processSkeletalAnimation(model, skeletalAnimToSkinToNodeMap);
     return true;
 }
 
-bool VROGLTFLoader::processAnimationKeyFrame(const tinygltf::Model &model,
-                                             std::map<int, std::map<int, std::map<int, std::vector<int>>>> &animatedNodes) {
-    // Iterate through all animations that are mapped to a node in nodeIndex within
-    // animatedNodes. For each animation, process its data via animation channels
-    // and create a VROKeyframeAnimation from it. Cache the results in _nodeKeyFrameAnim.
+bool VROGLTFLoader::processKeyFrameAnimations(const tinygltf::Model &model,
+                                             std::map<int, std::map<int, std::vector<int>>> &animatedNodes) {
+    // First, iterate through all the affected animated nodes.
     for (auto const& animNode : animatedNodes) {
-
-        // Grab grouped animations of the form: <animationIndex , <inputIndex, vec<channelIndex>>>
-        std::map<int, std::map<int, std::vector<int>>> animations = animNode.second;
+        std::map<int, std::vector<int>> animations = animNode.second;
         int nodeIndex = animNode.first;
-
+        
+        // Then iterate through all the animations for this node.
         for (auto const &anim : animations) {
-            // A single animation for a Node should only have one 'time' input sampler
-            // that effectively outlines the entire duration of that animation.
-            // Else, it is ambiguous as to the order of multiple input samplers.
-            // Thus, perform a sanity check here to ensure we only have one.
             int animationIndex = anim.first;
-            std::map<int, std::vector<int>> channelData = anim.second;
+            std::vector<int> channelsData = anim.second;
 
-            // In some models, for the same animation, we can have multiple time input
-            // sampler data. Although strange, this would only hold true if we want to
-            // animate separate animation properties at different interval speeds towards
-            // the same end duration. For example, a translation in a different speed than
-            // rotation, for the same node, for the same animation.
-            if (channelData.size() > 1) {
-                pwarn("Multiple time input samplers detected for a single animation.");
-            }
-
-            for (auto inputSamplerToAnimationsPair : channelData) {
-                // Create a VROKeyframeAnimation with the targeted channel.
-                std::shared_ptr<VROKeyframeAnimation> animation = nullptr;
-                if (!processAnimationChannels(model,
-                                              model.animations[animationIndex],
-                                              inputSamplerToAnimationsPair.second,
-                                              animation)) {
+            // Then iterate through all the channel data for this animation
+            // and create a corresponding VROKeyframeAnimation. Note that
+            // we need to create a Keyframe animation for each channel as
+            // they may have different sampler time durations.
+            for (int channelIndex : channelsData) {
+                std::shared_ptr<VROKeyframeAnimation> animation
+                                    = convertChannelToKeyFrameAnimation(model,
+                                                                        model.animations[animationIndex],
+                                                                        channelIndex);
+                if (animation == nullptr) {
                     return false;
                 }
-                
+
                 // If no animation is given, set a default one with an index reference.
                 std::string name = model.animations[anim.first].name;
                 if (name.size() == 0) {
                     name = "animation_" + VROStringUtil::toString(animationIndex);
                 }
                 animation->setName(name);
-                
-                float duration = animation->getDuration();
-                for (auto currAnim : _nodeKeyFrameAnims[nodeIndex][anim.first]) {
-                    if (duration != currAnim->getDuration()) {
-                        perr("Detected mis-matching durations for animation properties.");
-                        return false;
-                    }
-                }
-                
                 _nodeKeyFrameAnims[nodeIndex][anim.first].push_back(animation);
-            }
-
-            std::vector<std::shared_ptr<VROKeyframeAnimation>> animatedProperties = _nodeKeyFrameAnims[nodeIndex][anim.first];
-
-            // If this animation has a group of animated properties, attempt to consolidate
-            // these properties into a single animation.
-            if (animatedProperties.size() > 1) {
-                // Clear the animations in this node in prepration for the setting of
-                // an animation with combined animated properties.
-                _nodeKeyFrameAnims[nodeIndex][anim.first].clear();
-
-                // Firstly, map sub property animations with the same keyframes & durations.
-                // (Because an animation, although with same durations, can have different
-                // properties with different frame counts / intervals)
-                std::map<std::string, std::vector<std::shared_ptr<VROKeyframeAnimation>>> timeToAnim;
-                for (auto keyFrameAnim : animatedProperties) {
-                    float duration = keyFrameAnim->getDuration();
-                    int numberOfFrames = (int) keyFrameAnim->getFrames().size();
-                    std::string key = VROStringUtil::toString(numberOfFrames) + " - " + VROStringUtil::toString(duration, 5);
-                    timeToAnim[key].push_back(keyFrameAnim);
-                }
-
-                // Then, for each unique keyframe-duration's list of sub-property animations
-                // that were mapped previously, combine them into a single animation with
-                // multiple properties. Override overlapping properties (as they are part of
-                // the same animation, with the same duration, and same property).
-                for (auto animWithSameFramesAndTime : timeToAnim) {
-                    std::vector<std::shared_ptr<VROKeyframeAnimation>> anims = animWithSameFramesAndTime.second;
-
-                    // Skip if we come across a keyframe-duration pair that has a single
-                    // sub-property animation (no need to combine).
-                    if (anims.size() <= 1) {
-                        _nodeKeyFrameAnims[nodeIndex][anim.first].push_back(anims.front());
-                        continue;
-                    }
-
-                    // First, construct a new set of frames with time stamp data.
-                    std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> combineFrames;
-                    const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &currFrames = anims.front()->getFrames();
-                    for (int f = 0; f < currFrames.size(); f ++) {
-                        std::unique_ptr<VROKeyframeAnimationFrame> animatedFrame
-                        = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
-                        animatedFrame->time = currFrames[f]->time;
-                        combineFrames.push_back(std::move(animatedFrame));
-                    }
-
-                    // Then iterate through all the animated properties, and for each keyframe within them
-                    // combine the properties into the final combineFrames VROKeyframeAnimationFrame.
-                    bool hasTrans, hasScale, hasRotation, hasMorph = false;
-                    for (int animPropIndex = 0; animPropIndex < anims.size(); animPropIndex++) {
-                        for (int keyFrameTime = 0; keyFrameTime < combineFrames.size(); keyFrameTime++) {
-                            const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &currFrames = anims[animPropIndex]->getFrames();
-
-                            // Note we simply replace.
-                            if (anims[animPropIndex]->_hasTranslation) {
-                                hasTrans = true;
-                                combineFrames[keyFrameTime]->translation = currFrames[keyFrameTime]->translation;
-                            } else if (anims[animPropIndex]->_hasScale) {
-                                hasScale = true;
-                                combineFrames[keyFrameTime]->scale = currFrames[keyFrameTime]->scale;
-                            } else if (anims[animPropIndex]->_hasRotation) {
-                                hasRotation = true;
-                                combineFrames[keyFrameTime]->rotation = currFrames[keyFrameTime]->rotation;
-                            } else if (anims[animPropIndex]->_hasMorphWeights) {
-                                hasMorph = true;
-                                combineFrames[keyFrameTime]->morphWeights = currFrames[keyFrameTime]->morphWeights;
-                            }
-                        }
-                    }
-
-                    // Finally construct the resulting animation.
-                    float duration = anims.front()->getDuration();
-                    std::shared_ptr<VROKeyframeAnimation> combinedAnim
-                                    = std::make_shared<VROKeyframeAnimation>(combineFrames,
-                                                                             duration,
-                                                                             hasTrans,
-                                                                             hasRotation,
-                                                                             hasScale,
-                                                                             hasMorph);
-                    combinedAnim->setName(anims.front()->getName());
-                    _nodeKeyFrameAnims[nodeIndex][anim.first].push_back(combinedAnim);
-                }
             }
         }
     }
+
     return true;
 }
 
-bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
-                                             const tinygltf::Animation &anim,
-                                             std::vector<int> targetedChannelIndexes,
-                                             std::shared_ptr<VROKeyframeAnimation> &animOut) {
-    if (targetedChannelIndexes.size() <= 0) {
-        pwarn("Attempted to process an invalid gLTF animation.");
-        return false;
-    }
-
+std::shared_ptr<VROKeyframeAnimation> VROGLTFLoader::convertChannelToKeyFrameAnimation(
+        const tinygltf::Model &gModel,
+        const tinygltf::Animation &anim,
+        int targetedChannel) {
     // Process input key frames first to create our vector of KeyFrameAnimationFrames to populate
     // with animation data like Position, Rotation, Scaling.
     std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> frames;
-    tinygltf::AnimationChannel inputChannel = anim.channels[targetedChannelIndexes.front()];
+    tinygltf::AnimationChannel inputChannel = anim.channels[targetedChannel];
     tinygltf::AnimationSampler inputSampler = anim.samplers[inputChannel.sampler];
     if (!processRawChannelData(gModel, kVROGLTFInputSamplerKey, inputChannel.target_node, inputSampler, frames)) {
-        return false;
+        return nullptr;
     }
 
     if (frames.size() == 0) {
         perror("Unable to properly parse Animation frames");
-        return false;
+        return nullptr;
     }
 
     // Set the total duration of this keyframe animation, in seconds
@@ -691,27 +583,24 @@ bool VROGLTFLoader::processAnimationChannels(const tinygltf::Model &gModel,
     bool hasRotation = false;
     bool hasScale = false;
     bool hasMorphWeights = false;
-    for (int channelIndex : targetedChannelIndexes) {
-        tinygltf::AnimationChannel channel = anim.channels[channelIndex];
-        tinygltf::AnimationSampler gSampler = anim.samplers[channel.sampler];
-        if (!processRawChannelData(gModel, channel.target_path, channel.target_node, gSampler, frames)) {
-            perr("Failed to process channel index %s for gltf model!", channel.target_path.c_str());
-            return false;
-        }
-
-        if (VROStringUtil::strcmpinsensitive(channel.target_path, "translation")) {
-            hasTranslation = true;
-        } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "scale")) {
-            hasScale = true;
-        } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "rotation")) {
-            hasRotation = true;
-        }  else if (VROStringUtil::strcmpinsensitive(channel.target_path, "weights")) {
-            hasMorphWeights = true;
-        }
+    tinygltf::AnimationChannel channel = anim.channels[targetedChannel];
+    tinygltf::AnimationSampler gSampler = anim.samplers[channel.sampler];
+    if (!processRawChannelData(gModel, channel.target_path, channel.target_node, gSampler, frames)) {
+        perr("Failed to process channel index %s for gltf model!", channel.target_path.c_str());
+        return nullptr;
     }
 
-    animOut = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale, hasMorphWeights);
-    return true;
+    if (VROStringUtil::strcmpinsensitive(channel.target_path, "translation")) {
+        hasTranslation = true;
+    } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "scale")) {
+        hasScale = true;
+    } else if (VROStringUtil::strcmpinsensitive(channel.target_path, "rotation")) {
+        hasRotation = true;
+    }  else if (VROStringUtil::strcmpinsensitive(channel.target_path, "weights")) {
+        hasMorphWeights = true;
+    }
+
+    return std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale, hasMorphWeights);
 }
 
 bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
@@ -865,10 +754,12 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         return true;
     }
 
+    flattenSkeletalKeyframeAnimations(skeletalAnimToSkinToNodeMap);
+
     // First, iterate through each skeletal animation that is associated with each
     // skinner in the scene. Also assume that an animation can only move a single
     // skinner at a time (multi-skinner-animation for a single animation is not supported)
-    for (auto animToSkinToNodePair : skeletalAnimToSkinToNodeMap) {
+    for (auto &animToSkinToNodePair : skeletalAnimToSkinToNodeMap) {
         int skinIndex = animToSkinToNodePair.second.first;
         int skeletalAnimationIndex = animToSkinToNodePair.first;
         
@@ -878,25 +769,26 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         // For the current skeletal animation, grab first joint/Node, and then grab
         // it's vec of VROKeyframeAnimations. (This is because at this point, a given
         // joint can have different animated properties with different input time samples).
-        std::vector<std::shared_ptr<VROKeyframeAnimation>> animatedProperties = _nodeKeyFrameAnims[animatedNodeIndexFirst][skeletalAnimationIndex];
+        std::vector<std::shared_ptr<VROKeyframeAnimation>> animatedChannels;
+        animatedChannels = _nodeKeyFrameAnims[animatedNodeIndexFirst][skeletalAnimationIndex];
 
         // If there are no animations for the root node, keep iterating until we find one.
         // We are assuming here that the animation for this skinner has the same
         // duration and keyframe intervals for all of its bones.
-        if (animatedProperties.size() == 0) {
+        if (animatedChannels.size() == 0) {
             std::vector<int> intersectingAnimatedJoints = animToSkinToNodePair.second.second;
             for (auto jointIndex : intersectingAnimatedJoints) {
-                animatedProperties = _nodeKeyFrameAnims[jointIndex][skeletalAnimationIndex];
-                if (animatedProperties.size() != 0) {
+                animatedChannels = _nodeKeyFrameAnims[jointIndex][skeletalAnimationIndex];
+                if (animatedChannels.size() != 0) {
                     break;
                 }
             }
         }
 
         // For each animatedProperty, construct a corresponding skeletal animation.
-        if (animatedProperties.size() > 1) {
+        if (animatedChannels.size() > 1) {
             pwarn("Viro: Animations with multi-time interval inputs are not yet supported!");
-        } else if (animatedProperties.size() == 0) {
+        } else if (animatedChannels.size() == 0) {
             pwarn("Viro: No animations found!");
             return true;
         }
@@ -906,10 +798,10 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         // than rotation, towards the same duration, for the same animation). Thus, in this case
         // we'll need to combine the different skeletal animations into a layered skeletal
         // animation. For the moment, we simply not include the data (only consider the first index)
-        int animSubPropertyIndex = 0;
+        int channelIndex = 0;
 
         // First, create a set of skeletal Frames, populate them with empty key frames (with time stamp data)
-        std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = animatedProperties[animSubPropertyIndex];
+        std::shared_ptr<VROKeyframeAnimation> keyFrameAnim = animatedChannels[channelIndex];
         float totalDuration = keyFrameAnim->getDuration();
         std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> skeletalFrames;
         const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &frames = keyFrameAnim->getFrames();
@@ -927,7 +819,7 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
         std::shared_ptr<VROSkinner> currentSkinner = _skinMap[skinIndex];
         for (int i = 0; i < frames.size(); i++) {
             std::map<int, VROMatrix4f> computedAnimatedJointTrans;
-            if (!processSkeletalTransformsForFrame(model, skinIndex, skeletalAnimationIndex, animSubPropertyIndex, i, 0,
+            if (!processSkeletalTransformsForFrame(model, skinIndex, skeletalAnimationIndex, channelIndex, i, 0,
                                                        computedAnimatedJointTrans)) {
                 return false;
             }
@@ -958,6 +850,124 @@ bool VROGLTFLoader::processSkeletalAnimation(const tinygltf::Model &model,
     return true;
 }
 
+/*
+
+ TODO VIRO-5741: Remove this once we have updated GLTF support for layered skeletal animations.
+
+ In GLTF, a single joint can have multiple VROKeyframeAnimations with different durations
+ and input times, for the same animation. This is can still be supported with layered
+ skeletal animations played in parallel, but we don't yet support that with GLTF models
+ because of the usage of legacy binding transforms.
+
+ As a *temporary* mitigation, we simply group VROKeyframeAnimations with the same input time data
+ (same duration and keyframe intervals), and flatten them into a single VROKeyframeAnimation
+ to be used for skeletal animations (thus no skeletal layering is needed). This has two caveats:
+
+ - Outlying VROKeyframeAnimations that do not match the same input time data are ignored,
+   as there is no way to merge animations with different time data.
+
+ - If we encounter multiple Keyframe animations with identical animated attributes (say if two
+   keyframe animations were modifying rotational properties at the same time), only the latest
+   one is used.
+
+ */
+void VROGLTFLoader::flattenSkeletalKeyframeAnimations(std::map<int, std::pair<int, std::vector<int>>> &skeletalAnimToNodeSkinPair) {
+    // Iterate through each skeletal animation and flattern them if possible.
+    for (auto &animToSkinToNodePair : skeletalAnimToNodeSkinPair) {
+        int skeletalAnimationIndex = animToSkinToNodePair.first;
+
+        // Reset chosen input time data used for flattening animations.
+        float chosenDuration = -1;
+        int chosenNumberOfFrames = -1;
+
+        // Iterate through all the skinner nodes in the skeletal animation
+        // and for each node examine its keyframe animations.
+        for (auto &nodeIndex : animToSkinToNodePair.second.second) {
+
+            // Skip if there's no animation for this node in the skeleton.
+            if (_nodeKeyFrameAnims[nodeIndex][skeletalAnimationIndex].size() == 0) {
+                continue;
+            }
+
+            // Set the duration and keyframes for this skeletal animation if we haven't yet done so.
+            std::vector<std::shared_ptr<VROKeyframeAnimation>> &keyframeAnimations = _nodeKeyFrameAnims[nodeIndex][skeletalAnimationIndex];
+            if (chosenDuration == -1) {
+                chosenDuration = keyframeAnimations.front()->getDuration();
+            }
+
+            if (chosenNumberOfFrames == -1) {
+                chosenNumberOfFrames = keyframeAnimations.front()->getFrames().size();
+            }
+
+            // Remove the keyframe animations for this node with different time input data
+            // (different animation duration and keyframe count).
+            keyframeAnimations.erase(std::remove_if(
+                            keyframeAnimations.begin(),
+                            keyframeAnimations.end(),
+                            [chosenDuration, chosenNumberOfFrames](const std::shared_ptr<VROKeyframeAnimation> & o) {
+                                pwarn("Viro: Removing mis-matching animation - layered skeletal animations not yet supported for gLTF.");
+                                return o->getDuration() != chosenDuration || o->getFrames().size() != chosenNumberOfFrames;}),
+                            keyframeAnimations.end());
+
+            // If there's only one keyframeAnimation for this joint, there's no need to
+            // attempt flattening - simply continue.
+            if (keyframeAnimations.size() <= 1) {
+                continue;
+            }
+
+            // Else, at this point all keyframeAnimations for this node should have the same
+            // time input data (same duration and keyframe count). Now we attempt to
+            // flatten the keyframeAnimations into a single one with combined transforms.
+            std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> flattenedKeyFrames;
+            const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &currFrames = keyframeAnimations.front()->getFrames();
+
+            // First, initialize flattenedKeyFrames with the input time data.
+            for (int f = 0; f < currFrames.size(); f ++) {
+                std::unique_ptr<VROKeyframeAnimationFrame> animatedFrame
+                    = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
+                animatedFrame->time = currFrames[f]->time;
+                flattenedKeyFrames.push_back(std::move(animatedFrame));
+            }
+
+            // Then iterate through all the animated properties, and for each keyframe within them
+            // combine the properties into the final flattenedKeyFrames.
+            bool hasTrans, hasScale, hasRotation, hasMorph = false;
+            for (int channelIndex = 0; channelIndex < keyframeAnimations.size(); channelIndex++) {
+                for (int keyFrameTime = 0; keyFrameTime < flattenedKeyFrames.size(); keyFrameTime++) {
+                    const std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> &currFrames = keyframeAnimations[channelIndex]->getFrames();
+
+                    if (keyframeAnimations[channelIndex]->_hasTranslation) {
+                        hasTrans = true;
+                        flattenedKeyFrames[keyFrameTime]->translation = currFrames[keyFrameTime]->translation;
+                    } else if (keyframeAnimations[channelIndex]->_hasScale) {
+                        hasScale = true;
+                        flattenedKeyFrames[keyFrameTime]->scale = currFrames[keyFrameTime]->scale;
+                    } else if (keyframeAnimations[channelIndex]->_hasRotation) {
+                        hasRotation = true;
+                        flattenedKeyFrames[keyFrameTime]->rotation = currFrames[keyFrameTime]->rotation;
+                    } else if (keyframeAnimations[channelIndex]->_hasMorphWeights) {
+                        hasMorph = true;
+                        flattenedKeyFrames[keyFrameTime]->morphWeights = currFrames[keyFrameTime]->morphWeights;
+                    }
+                }
+            }
+
+            // Finally construct the flattened keyframe animation.
+            float duration = keyframeAnimations.front()->getDuration();
+            std::shared_ptr<VROKeyframeAnimation> flattenedKeyframeAnimation
+                = std::make_shared<VROKeyframeAnimation>(flattenedKeyFrames,
+                        duration,
+                        hasTrans,
+                        hasRotation,
+                        hasScale,
+                        hasMorph);
+            flattenedKeyframeAnimation->setName(keyframeAnimations.front()->getName());
+            keyframeAnimations.clear();
+            keyframeAnimations.push_back(flattenedKeyframeAnimation);
+        }
+    }
+}
+
 bool VROGLTFLoader::processSkeletalTransformsForFrame(const tinygltf::Model &gModel,
                                                       int skin,
                                                       int animationIndex,
@@ -969,8 +979,7 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(const tinygltf::Model &gMo
     int childNodeIndex = _skinIndexToJointNodeIndex[skin][0];
 
     if (currentJointIndex == 0) {
-        if (_nodeKeyFrameAnims.find(childNodeIndex) == _nodeKeyFrameAnims.end() ||
-            _nodeKeyFrameAnims[childNodeIndex].find(animationIndex) == _nodeKeyFrameAnims[childNodeIndex].end()) {
+        if (_nodeKeyFrameAnims[childNodeIndex][animationIndex].size() == 0) {
 
             // If the there are no animations configured for this bone, simply get the model's
             // original local transform.
@@ -1007,8 +1016,7 @@ bool VROGLTFLoader::processSkeletalTransformsForFrame(const tinygltf::Model &gMo
         int childNodeIndex = _skinIndexToJointNodeIndex[skin][childJointIndex];
 
         VROMatrix4f localTransform = VROMatrix4f::identity();
-        if (_nodeKeyFrameAnims.find(childNodeIndex) == _nodeKeyFrameAnims.end() ||
-            _nodeKeyFrameAnims[childNodeIndex].find(animationIndex) == _nodeKeyFrameAnims[childNodeIndex].end()) {
+        if (_nodeKeyFrameAnims[childNodeIndex][animationIndex].size() == 0) {
             localTransform = getTransformOfNode(gModel, childNodeIndex);
         } else {
             // Grab the animation transform of the current keyFrame

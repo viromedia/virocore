@@ -156,12 +156,14 @@ private:
 
     // Processing of Animation Data
     static bool processAnimations(const tinygltf::Model &gModel);
-    static bool processAnimationKeyFrame(const tinygltf::Model &gModel,
-                                         std::map<int, std::map<int, std::map<int, std::vector<int>>>> &gltfAnimatedNodes);
-    static bool processAnimationChannels(const tinygltf::Model &gModel,
-                                         const tinygltf::Animation &anim,
-                                         std::vector<int> targetedChannels,
-                                         std::shared_ptr<VROKeyframeAnimation> &animKeyFrameOut);
+    static bool processKeyFrameAnimations(const tinygltf::Model &gModel,
+                                         std::map<int, std::map<int, std::vector<int>>> &gltfAnimatedNodes);
+    static void flattenSkeletalKeyframeAnimations(
+            std::map<int, std::pair<int, std::vector<int>>> &skeletalAnimToNodeSkinPair);
+    static std::shared_ptr<VROKeyframeAnimation> convertChannelToKeyFrameAnimation(
+                                                  const tinygltf::Model &gModel,
+                                                  const tinygltf::Animation &anim,
+                                                  int targetedChannel);
     static bool processRawChannelData(const tinygltf::Model &gModel,
                                       std::string channelProperty,
                                       int channelTarget,
