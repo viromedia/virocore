@@ -1,13 +1,4 @@
 /*
- * debug_mapinfo.cpp
- *
- * Copyright (c) 2013 Amazon.com, Inc. or its affiliates. All rights reserved.
- *
- * PROPRIETARY/CONFIDENTIAL
- *
- * Use is subject to license terms.
- */
-/*
  * Copyright (C) 2012 The Android Open Source Project
  * All rights reserved.
  *

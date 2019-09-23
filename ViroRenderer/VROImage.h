@@ -1,5 +1,5 @@
 //
-//  VROImage.hpp
+//  VROImage.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/3/16.
