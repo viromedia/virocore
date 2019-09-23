@@ -4,7 +4,6 @@ pipeline {
     stage('initial_setup') {
       steps {
           sh '''cd android
-          fastlane build_start_notification
           fastlane clean_old_artifacts
           fastlane save_git_log'''
       }
