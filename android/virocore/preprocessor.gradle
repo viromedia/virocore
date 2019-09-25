@@ -1,0 +1,140 @@
+String sourceDirectory = '../app/src'
+FileTree javaFiles = fileTree(sourceDirectory) {
+    include '**/*.java'
+}
+
+// auto comment and uncomment source lines between #IFDEF 'configuration' and #ELSE or #ENDIF
+// each matching java source file is edited in-place
+class Preprocessor {
+
+    public enum IfdefState {
+        NONE,
+        IFDEF,
+        ELSE
+    }
+
+    public static void preprocessSourceCode (FileTree javaFiles, String buildType, String flavor) {
+        buildType = buildType.toLowerCase()
+        flavor = flavor.toLowerCase()
+        println("Preprocessor: keeping BUILD_TYPE=" + buildType + ", FLAVOR=" + flavor)
+
+        String buildTypeAndFlavor = buildType + flavor
+        String flavorAndBuildType = flavor + buildType
+        String ifdefRegex = '^([ ]*)(\\/\\/)#IFDEF \'(.*)\'$'
+        String elseRegex = '^([ ]*)(\\/\\/)#ELSE$'
+        String endifRegex = '^([ ]*)(\\/\\/)#ENDIF$'
+        String lineRegex = '^([ ]*)([^ ][^ ])(.*)$'
+        String singleCharLineRegex = '^([ ]*)([^ ])$'
+        String comment = "//"
+        String newline = System.getProperty("line.separator")
+
+        javaFiles.each { File javaFile ->
+            println "Preprocessor: checking for '$ifdefRegex' in $javaFile.name"
+            String content = javaFile.getText()
+            StringBuilder newContent = new StringBuilder()
+            IfdefState match = IfdefState.NONE
+            boolean changed = false;
+            String buildTypeAndOrFlavor = "<undefined>"
+            content.eachLine { line, index ->
+                // process #IFDEF
+                if (line.matches(ifdefRegex)) {
+                    buildTypeAndOrFlavor = (line.split('\'')[1]).toLowerCase()
+                    println("--> #IFDEF on line $index for $buildTypeAndOrFlavor")
+                    if (buildTypeAndOrFlavor.equals(buildType)) {
+                        match = IfdefState.IFDEF
+                        println("--> $buildTypeAndOrFlavor IS A MATCH FOR BUILD_TYPE $buildType")
+                    }
+                    else if (buildTypeAndOrFlavor.equals(flavor)) {
+                        match = IfdefState.IFDEF
+                        println("--> $buildTypeAndOrFlavor IS A MATCH FOR FLAVOR $flavor")
+                    }
+                    else if (buildTypeAndOrFlavor.equals(buildTypeAndFlavor)) {
+                        match = IfdefState.IFDEF
+                        println("--> $buildTypeAndOrFlavor IS A MATCH FOR COMBO BUILD_TYPE PLUS FLAVOR $buildTypeAndFlavor")
+                    }
+                    else if (buildTypeAndOrFlavor.equals(flavorAndBuildType)) {
+                        match = IfdefState.IFDEF
+                        println("--> $buildTypeAndOrFlavor IS A MATCH FOR COMBO FLAVOR PLUS BUILD_TYPE $flavorAndBuildType")
+                    }
+                    else {
+                        match = IfdefState.ELSE
+                        println("--> $buildTypeAndOrFlavor IS NOT A MATCH FOR BUILD_TYPE $buildType OR FLAVOR $flavor OR COMBO $buildTypeAndFlavor OR COMBO $flavorAndBuildType")
+                    }
+                }
+                // process #ELSE
+                else if (line.matches(elseRegex)) {
+                    println("--> #ELSE on line $index for $buildTypeAndOrFlavor")
+                    if (match != IfdefState.ELSE) {
+                        match = IfdefState.ELSE
+                        println("--> $buildTypeAndOrFlavor IS NOT A MATCH FOR #ELSE")
+                    }
+                    else {
+                        match = IfdefState.IFDEF
+                        println("--> $buildTypeAndOrFlavor IS A MATCH FOR #ELSE")
+                    }
+                }
+                // process #ENDIF
+                else if (line.matches(endifRegex)) {
+                    println("--> #ENDIF on line $index for $buildTypeAndOrFlavor")
+                    match = IfdefState.NONE
+                }
+                // comment or uncomment code or leave it unchanged
+                else {
+                    if (match == IfdefState.IFDEF) { // ifdef: uncomment lines up to #ELSE or #ENDIF, as needed
+                        if (line.matches(lineRegex)) {
+                            def matcher = line =~ lineRegex
+                            if (matcher[0][2].equals(comment)) {
+                                line = matcher[0][1] + matcher[0][3]
+                                changed = true
+                                println(line)
+                            }
+                        }
+                    } else if (match == IfdefState.ELSE) { // else: comment-out lines to #ELSE or #ENDIF, as needed
+                        if (line.matches(lineRegex)) {
+                            def matcher = line =~ lineRegex
+                            if (!matcher[0][2].equals(comment)) {
+                                line = matcher[0][1] + comment + matcher[0][2] + matcher[0][3]
+                                changed = true
+                                println(line)
+                            }
+                        }
+                        else if (line.matches(singleCharLineRegex)) {
+                            def matcher = line =~ singleCharLineRegex
+                            if (!matcher[0][2].equals(comment)) {
+                                line = matcher[0][1] + comment + matcher[0][2]
+                                changed = true
+                                println(line)
+                            }
+                        }
+                    }
+                }
+                newContent.append(line + newline)
+            }
+            // save the file if was edited
+            if (changed) {
+                println("==> EDITING THE FILE <==")
+                javaFile.setText(newContent.toString())
+            }
+        }
+    }
+}
+
+task preprocessSourceCodeRelease {
+    Gradle gradle = getGradle()
+    String  tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+    if (tskReqStr.contains("virocore") && tskReqStr.contains("assembleRelease")) {
+        description("preprocess free code after //#IFDEF 'debug' to //#ENDIF");
+        println ("Preprocessor: running [release build]");
+        Preprocessor.preprocessSourceCode(javaFiles, "Release", "virocore");
+    } else {
+        println ("Preprocessor: debug release detected, will not run preprocessor");
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'compileReleaseSources') {
+        logger.debug('---> compileReleaseJavaWithJavac dependsOn preprocessSourceCode')
+        task.dependsOn preprocessSourceCodeRelease
+        preprocessSourceCodeRelease.outputs.upToDateWhen { false } // always run
+    }
+}

@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+
+android {
+    flavorDimensions "target_platform"
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "com.viromedia.releasetest"
+        minSdkVersion 24
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testApplicationId "com.viromedia.releasetest"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy 'product', 'viro_core'
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        gvr_vr_enabled {
+            dimension "target_platform"
+            resValue "string", "app_name", "ReleasTest-gvr-vr"
+            applicationIdSuffix ".gvr"
+            buildConfigField "String", "VR_PLATFORM", "\"GVR\""
+            buildConfigField "Integer", "VR_ENABLED", "1"
+        }
+
+        gvr_vr_disabled {
+            dimension "target_platform"
+            resValue "string", "app_name", "ReleasTest-gvr-360"
+            applicationIdSuffix ".gvr"
+            buildConfigField "String", "VR_PLATFORM", "\"GVR\""
+            buildConfigField "Integer", "VR_ENABLED", "0"
+        }
+
+        ovr {
+            dimension "target_platform"
+            resValue "string", "app_name", "ReleaseTest-ovr"
+            applicationIdSuffix ".ovr"
+            buildConfigField "String", "VR_PLATFORM", "\"OVR\""
+            buildConfigField "Integer", "VR_ENABLED", "1"
+        }
+        arcore {
+            dimension "target_platform"
+            resValue "string", "app_name", "ReleasTest-arcore"
+            applicationIdSuffix ".arcore"
+            buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
+            buildConfigField "Integer", "VR_ENABLED", "0"
+        }
+        scene {
+            dimension "target_platform"
+            resValue "string", "app_name", "ReleasTest-scene"
+            applicationIdSuffix ".scene"
+            buildConfigField "String", "VR_PLATFORM", "\"Scene\""
+            buildConfigField "Integer", "VR_ENABLED", "0"
+        }
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+    tasks.withType(Test) {
+        testLogging {
+            exceptionFormat "full"
+            events "started", "skipped", "passed", "failed"
+            showStandardStreams true
+        }
+    }
+    // Keep the following configuration in order to target Java 8.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation project(':virocore')
+    implementation project(':libs:arcore')
+    implementation project(':libs:gvr')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    // testing dependencies
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'org.awaitility:awaitility:3.0.0'
+}

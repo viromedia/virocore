@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017-present, ViroMedia, Inc.
+  ~ All rights reserved.
+  ~
+  ~ This source code is licensed under the BSD-style license found in the  LICENSE file in the
+  ~ root directory of this source tree. An additional grant  of patent rights can be found in
+  ~ the PATENTS file in the same directory.
+  -->
+
+<com.viro.core.ViroViewARCore xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viro_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.viromedia.releasetest.ViroReleaseTestActivity">
+
+    <ImageView
+        android:id="@+id/thumbsUp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="10dp"
+        android:src="@drawable/icon_thumb_up"
+        android:layout_gravity="bottom|end" />
+
+    <ImageView
+        android:id="@+id/thumbsDown"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="10dp"
+        android:src="@drawable/icon_thumb_down"
+        android:layout_gravity="bottom|start" />
+
+</com.viro.core.ViroViewARCore>

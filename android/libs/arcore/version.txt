@@ -1,0 +1,3 @@
+ARCore version 1.3.0
+
+(Version is for both include files and libs in src/main/jniLibs)

@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+
+android {
+    flavorDimensions "target_platform"
+
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.example.memoryleaktest"
+        minSdkVersion 24
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy 'product', 'viro_core'
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        gvr {
+            dimension "target_platform"
+            resValue "string", "app_name", "MemoryLeakTest-gvr"
+            applicationIdSuffix ".gvr"
+            buildConfigField "String", "VR_PLATFORM", "\"GVR\""
+        }
+        ovr {
+            dimension "target_platform"
+            resValue "string", "app_name", "MemoryLeakTest-ovr"
+            applicationIdSuffix ".ovr"
+            buildConfigField "String", "VR_PLATFORM", "\"OVR\""
+        }
+        arcore {
+            dimension "target_platform"
+            resValue "string", "app_name", "MemoryLeakTest-arcore"
+            applicationIdSuffix ".arcore"
+            buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
+        }
+        scene {
+            dimension "target_platform"
+            resValue "string", "app_name", "MemoryLeakTest-scene"
+            applicationIdSuffix ".scene"
+            buildConfigField "String", "VR_PLATFORM", "\"Scene\""
+        }
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+
+    // Keep the following configuration in order to target Java 8.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation project(':virocore')
+    implementation project(':libs:gvr')
+    implementation project(':libs:arcore')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+}
+
+

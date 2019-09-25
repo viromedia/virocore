@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+
+android {
+    flavorDimensions "target_platform"
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "com.viromedia.renderertest"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        missingDimensionStrategy 'product', 'viro_core'
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        gvr {
+            dimension "target_platform"
+            resValue "string", "app_name", "RendererTest-gvr"
+            applicationIdSuffix ".gvr"
+            buildConfigField "String", "VR_PLATFORM", "\"GVR\""
+        }
+        ovr {
+            dimension "target_platform"
+            resValue "string", "app_name", "RendererTest-ovr"
+            applicationIdSuffix ".ovr"
+            buildConfigField "String", "VR_PLATFORM", "\"OVR\""
+        }
+        arcore {
+            dimension "target_platform"
+            resValue "string", "app_name", "RendererTest-arcore"
+            applicationIdSuffix ".arcore"
+            buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
+        }
+        scene {
+            dimension "target_platform"
+            resValue "string", "app_name", "RendererTest-scene"
+            applicationIdSuffix ".scene"
+            buildConfigField "String", "VR_PLATFORM", "\"Scene\""
+        }
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':libs:arcore')
+    implementation project(':libs:gvr')
+    implementation project(':virocore')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+}

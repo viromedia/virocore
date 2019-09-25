@@ -1,0 +1,437 @@
+google/protobuf/compiler/zip_writer.lo: \
+  google/protobuf/compiler/zip_writer.cc \
+  google/protobuf/compiler/zip_writer.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/vector \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_algobase.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/c++config.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/os_defines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/cpu_defines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/functexcept.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/exception_defines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/cpp_type_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/type_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/numeric_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_pair.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/move.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/concept_check.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/type_traits \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_iterator_base_types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_iterator_base_funcs.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/debug/debug.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_iterator.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/ptr_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/predefined_ops.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/allocator.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/c++allocator.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/new_allocator.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/new \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/exception \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/atomic_lockfree_defines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/exception_ptr.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/nested_exception.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/memoryfwd.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_construct.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/alloc_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/alloc_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_uninitialized.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_vector.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/initializer_list \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_bvector.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/functional_hash.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/hash_bytes.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/range_access.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/vector.tcc \
+  google/protobuf/stubs/common.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/string \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stringfwd.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/char_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/postypes.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cwchar \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/wchar.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/cdefs.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/api-level.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/versioning.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/stdio.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stddef.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/__stddef_max_align_t.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stdint.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/stdint.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/wchar_limits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/int-ll64.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/bitsperlong.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/bitsperlong.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/posix_types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/stddef.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/compiler.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/posix_types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/posix_types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/pthread_types.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stdarg.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/seek_constants.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/struct_file.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/time.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/time.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/time.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/select.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/signal.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/sigcontext.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/timespec.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/limits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/limits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/float.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/limits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/posix_limits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/signal.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/signal.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/signal.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/signal-defs.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/siginfo.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/siginfo.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/ucontext.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/user.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/legacy_signal_inlines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/xlocale.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/mbstate_t.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/wctype.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cstdint \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/localefwd.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/c++locale.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/clocale \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/locale.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/iosfwd \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cctype \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/ctype.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/ostream_insert.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/cxxabi_forced.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_function.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/backward/binders.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/basic_string.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/atomicity.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/gthr.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/gthr-default.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/pthread.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sched.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/sched.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/atomic_word.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/basic_string.tcc \
+  google/protobuf/stubs/port.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/assert.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/stdlib.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/alloca.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/malloc.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/legacy_stdlib_inlines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cstddef \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/string.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/strcasecmp.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/strings.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/legacy_strings_inlines.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/param.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/param.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/param.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/param.h \
+  google/protobuf/stubs/macros.h google/protobuf/stubs/platform_macros.h \
+  google/protobuf/stubs/logging.h google/protobuf/stubs/scoped_ptr.h \
+  google/protobuf/stubs/mutex.h google/protobuf/stubs/callback.h \
+  google/protobuf/stubs/type_traits.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/utility \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_relops.h \
+  google/protobuf/stubs/template_util.h \
+  google/protobuf/io/zero_copy_stream.h \
+  google/protobuf/io/coded_stream.h \
+  /Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/climits
+
+google/protobuf/compiler/zip_writer.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/vector:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_algobase.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/c++config.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/os_defines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/cpu_defines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/functexcept.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/exception_defines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/cpp_type_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/type_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/numeric_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_pair.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/move.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/concept_check.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/type_traits:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_iterator_base_types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_iterator_base_funcs.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/debug/debug.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_iterator.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/ptr_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/predefined_ops.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/allocator.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/c++allocator.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/new_allocator.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/new:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/exception:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/atomic_lockfree_defines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/exception_ptr.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/nested_exception.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/memoryfwd.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_construct.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/alloc_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/alloc_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_uninitialized.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_vector.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/initializer_list:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_bvector.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/functional_hash.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/hash_bytes.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/range_access.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/vector.tcc:
+
+google/protobuf/stubs/common.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/string:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stringfwd.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/char_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/postypes.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cwchar:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/wchar.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/cdefs.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/api-level.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/versioning.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/stdio.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stddef.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/__stddef_max_align_t.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stdint.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/stdint.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/wchar_limits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/int-ll64.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/bitsperlong.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/bitsperlong.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/posix_types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/stddef.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/compiler.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/posix_types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/posix_types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/pthread_types.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/stdarg.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/seek_constants.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/struct_file.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/time.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/time.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/time.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/select.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/signal.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/sigcontext.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/timespec.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/limits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/limits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/lib64/clang/5.0.300080/include/float.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/limits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/posix_limits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/signal.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/signal.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/signal.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/signal-defs.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/siginfo.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/siginfo.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/ucontext.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/user.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/legacy_signal_inlines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/xlocale.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/mbstate_t.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/wctype.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cstdint:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/localefwd.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/c++locale.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/clocale:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/locale.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/iosfwd:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cctype:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/ctype.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/ostream_insert.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/cxxabi_forced.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_function.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/backward/binders.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/basic_string.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/ext/atomicity.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/gthr.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/gthr-default.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/pthread.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sched.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/sched.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/aarch64-linux-android/bits/atomic_word.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/basic_string.tcc:
+
+google/protobuf/stubs/port.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/assert.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/stdlib.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/alloca.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/malloc.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/legacy_stdlib_inlines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/cstddef:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/string.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/bits/strcasecmp.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/strings.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/android/legacy_strings_inlines.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/sys/param.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/linux/param.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm/param.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/sysroot/usr/include/asm-generic/param.h:
+
+google/protobuf/stubs/macros.h:
+
+google/protobuf/stubs/platform_macros.h:
+
+google/protobuf/stubs/logging.h:
+
+google/protobuf/stubs/scoped_ptr.h:
+
+google/protobuf/stubs/mutex.h:
+
+google/protobuf/stubs/callback.h:
+
+google/protobuf/stubs/type_traits.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/utility:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/bits/stl_relops.h:
+
+google/protobuf/stubs/template_util.h:
+
+google/protobuf/io/zero_copy_stream.h:
+
+google/protobuf/io/coded_stream.h:
+
+/Users/radvani/Source/ndk-toolchain/android-23_arm64/bin/../lib/gcc/aarch64-linux-android/4.9.x/../../../../include/c++/4.9.x/climits:

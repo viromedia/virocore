@@ -1,0 +1,327 @@
+google/protobuf/timestamp.pb.lo: google/protobuf/timestamp.pb.cc \
+  google/protobuf/timestamp.pb.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/string \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__config \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/string_view \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__string \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/algorithm \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/initializer_list \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstddef \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stddef.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/alltypes.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__nullptr \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/type_traits \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstring \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/string.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/string.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/string.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/features.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/strings.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/utility \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__tuple \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__debug \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/memory \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/typeinfo \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/exception \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstdlib \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdlib.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/stdlib.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stdlib.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/alloca.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstdint \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdint.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stdint.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/stdint.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/new \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/limits \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__undef_min_max \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/iterator \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/iosfwd \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/wchar.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/wchar.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/wchar.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__functional_base \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/tuple \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdexcept \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/atomic \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstdio \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdio.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stdio.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cwchar \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cwctype \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cctype \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/ctype.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/ctype.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/ctype.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/wctype.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/wctype.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/wctype.h \
+  google/protobuf/stubs/common.h google/protobuf/stubs/port.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/assert.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/param.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/resource.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/time.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/select.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/resource.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/endian.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/limits.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/limits.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/limits.h \
+  google/protobuf/stubs/macros.h google/protobuf/stubs/platform_macros.h \
+  google/protobuf/stubs/logging.h google/protobuf/stubs/scoped_ptr.h \
+  google/protobuf/stubs/mutex.h google/protobuf/stubs/callback.h \
+  google/protobuf/stubs/type_traits.h \
+  google/protobuf/stubs/template_util.h \
+  google/protobuf/io/coded_stream.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/climits \
+  google/protobuf/arena.h google/protobuf/stubs/atomic_sequence_num.h \
+  google/protobuf/stubs/atomicops.h \
+  google/protobuf/stubs/atomicops_internals_emscripten.h \
+  google/protobuf/arenastring.h google/protobuf/stubs/fastmem.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stddef.h \
+  google/protobuf/generated_message_util.h google/protobuf/stubs/once.h \
+  google/protobuf/has_bits.h google/protobuf/metadata.h \
+  google/protobuf/unknown_field_set.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/vector \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__bit_reference \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__split_buffer \
+  google/protobuf/message.h google/protobuf/message_lite.h \
+  google/protobuf/descriptor.h google/protobuf/stubs/shared_ptr.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/set \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__tree \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/functional \
+  google/protobuf/repeated_field.h google/protobuf/stubs/casts.h \
+  google/protobuf/extension_set.h \
+  /Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/map \
+  google/protobuf/wire_format_lite_inl.h \
+  google/protobuf/wire_format_lite.h \
+  google/protobuf/generated_message_reflection.h \
+  google/protobuf/generated_enum_reflection.h \
+  google/protobuf/generated_enum_util.h google/protobuf/reflection_ops.h \
+  google/protobuf/wire_format.h google/protobuf/descriptor.pb.h
+
+google/protobuf/timestamp.pb.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/string:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__config:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/string_view:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__string:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/algorithm:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/initializer_list:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstddef:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stddef.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/alltypes.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__nullptr:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/type_traits:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstring:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/string.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/string.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/string.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/features.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/strings.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/utility:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__tuple:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__debug:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/memory:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/typeinfo:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/exception:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstdlib:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdlib.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/stdlib.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stdlib.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/alloca.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstdint:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdint.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stdint.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/stdint.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/new:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/limits:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__undef_min_max:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/iterator:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/iosfwd:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/wchar.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/wchar.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/wchar.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__functional_base:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/tuple:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdexcept:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/atomic:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cstdio:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stdio.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/stdio.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cwchar:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cwctype:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/cctype:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/ctype.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/ctype.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/ctype.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/wctype.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/compat/wctype.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/wctype.h:
+
+google/protobuf/stubs/common.h:
+
+google/protobuf/stubs/port.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/assert.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/param.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/resource.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/time.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/sys/select.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/resource.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/endian.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/limits.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/limits.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libc/bits/limits.h:
+
+google/protobuf/stubs/macros.h:
+
+google/protobuf/stubs/platform_macros.h:
+
+google/protobuf/stubs/logging.h:
+
+google/protobuf/stubs/scoped_ptr.h:
+
+google/protobuf/stubs/mutex.h:
+
+google/protobuf/stubs/callback.h:
+
+google/protobuf/stubs/type_traits.h:
+
+google/protobuf/stubs/template_util.h:
+
+google/protobuf/io/coded_stream.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/climits:
+
+google/protobuf/arena.h:
+
+google/protobuf/stubs/atomic_sequence_num.h:
+
+google/protobuf/stubs/atomicops.h:
+
+google/protobuf/stubs/atomicops_internals_emscripten.h:
+
+google/protobuf/arenastring.h:
+
+google/protobuf/stubs/fastmem.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/stddef.h:
+
+google/protobuf/generated_message_util.h:
+
+google/protobuf/stubs/once.h:
+
+google/protobuf/has_bits.h:
+
+google/protobuf/metadata.h:
+
+google/protobuf/unknown_field_set.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/vector:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__bit_reference:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__split_buffer:
+
+google/protobuf/message.h:
+
+google/protobuf/message_lite.h:
+
+google/protobuf/descriptor.h:
+
+google/protobuf/stubs/shared_ptr.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/set:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/__tree:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/functional:
+
+google/protobuf/repeated_field.h:
+
+google/protobuf/stubs/casts.h:
+
+google/protobuf/extension_set.h:
+
+/Users/radvani/Source/emsdk/emscripten/1.37.34/system/include/libcxx/map:
+
+google/protobuf/wire_format_lite_inl.h:
+
+google/protobuf/wire_format_lite.h:
+
+google/protobuf/generated_message_reflection.h:
+
+google/protobuf/generated_enum_reflection.h:
+
+google/protobuf/generated_enum_util.h:
+
+google/protobuf/reflection_ops.h:
+
+google/protobuf/wire_format.h:
+
+google/protobuf/descriptor.pb.h:

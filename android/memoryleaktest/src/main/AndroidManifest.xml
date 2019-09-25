@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.example.memoryleaktest">
+
+    <!-- Required for AR -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <meta-data android:name="com.viromedia.API_KEY"
+        android:value="7EEDCB99-2C3B-4681-AE17-17BC165BF792" />
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MemoryLeakTest"
+            android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
+            android:enableVrMode="false"
+            android:screenOrientation="portrait"
+            >
+            <intent-filter>
+                <category android:name="com.google.intent.category.CARDBOARD" />
+                <category android:name="com.google.intent.category.DAYDREAM" />
+            </intent-filter>
+        </activity>
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

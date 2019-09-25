@@ -1,0 +1,97 @@
+apply plugin: 'com.android.library'
+apply from: 'preprocessor.gradle'
+
+android {
+    flavorDimensions  "product"
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+
+        externalNativeBuild {
+            cmake {
+                targets "viro_renderer"
+                cppFlags "-std=c++14 -frtti -fexceptions"
+            }
+        }
+
+        // Used to differentiate virocore from viroreact in code
+        buildConfigField "String", "VIRO_PLATFORM", "\"VIRO_CORE\""
+    }
+
+    sourceSets {
+        main {
+            // Use the /app directory for the source, resources, and assets
+            java.srcDirs = ['../app/src/main/java']
+            res.srcDirs = ['../app/src/main/res']
+            assets.srcDirs = ['../app/src/main/assets']
+
+            // Package both the /app jniLibs viroar's build/natives libs into the AAR
+            jniLibs.srcDirs = ['../app/src/main/jniLibs', '../viroar/build/natives/jni']
+            manifest.srcFile '../app/src/main/AndroidManifest.xml'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../app/CMakeLists.txt"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            libraryVariants.all { variant ->
+                variant.outputs.all { output ->
+                    //TODO This variable will come from maven-push.gradle when we integrate pushing
+                    // maven in our builds. This is temporary.
+                    def version = '-v_1_17_0'
+                    def newName = output.outputFile.name
+                    outputFileName = newName.replace("-release", "-release" + version)
+                    //outputFileName = new File(output.outputFile.parent, newName)
+                }
+            }
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+
+    dexOptions {
+        preDexLibraries true
+    }
+
+    packagingOptions {
+        // x86 is currently not supported, so do not copy over these resources
+        exclude '**/x86/**'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.7.1'
+    implementation project(':libs:gvr')
+    implementation project(':libs:arcore')
+    implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+}
+
+// We have to add dependencies to Android tasks in this deferred way because these tasks
+// are dynamically generated.
+//
+// Before assembling release, compile :viroar:assembleRelease, which will place its .so
+// products in its build/natives folder. The jniLibs source set above will ensure these
+// .so files are included in our final AAR.
+tasks.whenTaskAdded {
+    task-> if (task.name.contains("external") && !task.name.contains("Clean")) {
+        task.dependsOn ':viroar:assembleRelease'
+    }
+}

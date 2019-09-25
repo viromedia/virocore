@@ -1,0 +1,177 @@
+# Customize this file, documentation can be found here:
+# https://docs.fastlane.tools/actions/
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.66.2"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+    BUILD_INTERMEDIATES = "/var/tmp/build_intermediates/"
+    GIT_BRANCH = git_branch
+    # cocoapods
+  end
+
+  def on_error(exception)
+       slack(
+           message: ":thunder_cloud_and_rain: Build Pipeline failed!",
+           success: false,
+           default_payloads: [], #Pass an empty array to suppress all the default payloads.
+           payload: {
+            "Git Repository:" =>  "ViroRenderer/#{GIT_BRANCH}",
+            "Fastlane Lane:" => ENV["FASTLANE_LANE_NAME"],
+            "Detailed Logs:" => "<https://virobuilds.ngrok.io/blue/organizations/jenkins/ViroRenderer/activity|ViroRenderer Pipeline>",
+            "Exception:" => "```#{exception}```"
+           },
+           use_webhook_configured_username_and_icon: true
+       )
+  end
+
+  desc "Build ViroKit (framework + static lib), (iphoneos + iphonesimulator)"
+
+
+  lane :virorender_viroreact_virokit do
+    cocoapods
+    virorender_viroreact_virokit_framework
+    virorender_viroreact_virokit_static_lib
+  end
+
+  desc "Build ViroKit framework (release)"
+  lane :virorender_viroreact_virokit_framework do
+    begin       
+       # Clean virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Clean virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Build virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+       )
+
+       # Build virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+       )
+    rescue => exception
+           on_error(exception)
+    end
+  end
+
+  lane :virorender_viroreact_virokit_static_lib do
+    begin
+     
+       # Clean virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Clean virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+          clean: true,
+       )
+
+       # Build virokit framework for simulator target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphonesimulator",
+          destination: "platform=iOS Simulator,name=iPhone X",
+          skip_package_ipa: true,
+          skip_archive: true,
+          # clean: true,
+       )
+
+       # Build virokit framework for device target
+       gym(
+          workspace: "ViroRenderer.xcworkspace",
+          scheme: "ViroKit_static_lib",
+          configuration: "Release",
+          sdk: "iphoneos",
+          skip_package_ipa: true,
+          skip_archive: true,
+          # clean: true,
+       )
+     
+    rescue => exception
+           on_error(exception)
+    end
+  end
+
+  # You can define as many lanes as you want
+
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+
+    # slack(
+    #   message: "Successfully deployed new App Update."
+    # )
+  end
+
+  error do |lane, exception|
+    # slack(
+    #   message: exception.message,
+    #   success: false
+    # )
+  end
+end
+
+
+# More information about multiple platforms in fastlane: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
+# All available actions: https://docs.fastlane.tools/actions
+
+# fastlane reports which actions are used. No personal data is recorded.
+# Learn more at https://docs.fastlane.tools/#metrics

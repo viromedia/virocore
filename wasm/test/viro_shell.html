@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en-us">
+  <body>
+    <canvas id="viroCanvas" width="600px" height="600px" style="width:600px;height:600px"></canvas>
+    <script async type="text/javascript" src="TestAPI.js"></script>
+    <script type="text/javascript">
+        var canvas = document.getElementsByTagName("canvas")[0];
+        canvas.onclick = function (event) {
+            var api = new viro.TestAPI();
+            api.callNativeMethod("test");
+        }
+    </script>
+
+    {{{ SCRIPT }}}
+  </body>
+</html>

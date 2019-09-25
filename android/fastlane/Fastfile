@@ -1,0 +1,158 @@
+# Customize this file, documentation can be found here:
+# https://docs.fastlane.tools/actions/
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.64.0"
+
+default_platform :android
+
+platform :android do
+  before_all do
+    BUILD_INTERMEDIATES = "/var/tmp/build_intermediates/"
+    GIT_BRANCH = git_branch
+  end
+  
+  def on_error(exception)
+       slack(
+           message: ":thunder_cloud_and_rain: Build Pipeline failed!",
+           success: false,
+           default_payloads: [], #Pass an empty array to suppress all the default payloads.
+           payload: {
+            "Git Repository:" =>  "ViroRenderer/#{GIT_BRANCH}",
+            "Fastlane Lane:" => ENV["FASTLANE_LANE_NAME"],
+            "Detailed Logs:" => "<https://virobuilds.ngrok.io/blue/organizations/jenkins/ViroRenderer/activity|ViroRenderer Pipeline>",
+            "Exception:" => "```#{exception}```"
+           },
+           use_webhook_configured_username_and_icon: true
+       )
+  end
+
+  lane :build_start_notification do
+    slack(message: "*Build pipeline started* :rocket: \n Monitor Build Progress at <https://virobuilds.ngrok.io/blue/organizations/jenkins/pipelines|Viro Builds> :crossed_fingers:",
+    default_payloads: [], #Pass an empty array to suppress all the default payloads.
+    use_webhook_configured_username_and_icon: true
+  )
+  end
+
+  lane :clean_old_artifacts do
+    begin
+      sh("rm -rf #{BUILD_INTERMEDIATES}*")
+      sh("mkdir -p #{BUILD_INTERMEDIATES}")
+      sh("mkdir -p #{BUILD_INTERMEDIATES}s3_artifacts")
+    rescue => exception
+           on_error(exception)
+    end
+  end
+
+  lane :save_git_log do
+    begin
+      sh("echo \"ViroRenderer/#{GIT_BRANCH}\n\" >> #{BUILD_INTERMEDIATES}s3_artifacts/git_log.txt")
+      sh("git log #{GIT_BRANCH} --no-walk >> #{BUILD_INTERMEDIATES}s3_artifacts/git_log.txt")
+    rescue => exception
+           on_error(exception)
+    end
+  end
+  lane :gradle_clean do
+    begin
+      gradle(task: "clean")
+    rescue => exception
+           on_error(exception)
+    end
+  end
+
+  # First step in the pipeline
+  lane :virorenderer_viroreact_aar do
+    begin
+      # https://viromedia.atlassian.net/browse/VIRO-3468 Mitigation to build twice
+      gradle(task: "clean")
+      gradle(task: ":viroreact:assembleRelease")
+      gradle(task: ":viroreact:assembleRelease")
+      sh("mkdir -p #{BUILD_INTERMEDIATES}")
+      sh("mkdir -p #{BUILD_INTERMEDIATES}viroreact_aar/")
+      sh("cp ../viroreact/build/outputs/aar/viroreact-release.aar #{BUILD_INTERMEDIATES}viroreact_aar/viro_renderer-release.aar")
+    rescue => exception
+         on_error(exception)
+     end
+  end
+
+  lane :virorenderer_virocore_aar do
+    begin
+      # https://viromedia.atlassian.net/browse/VIRO-3468 Mitigation to build twice 
+      gradle(task: "clean")
+      gradle(task: ":virocore:assembleRelease")
+      gradle(task: ":virocore:assembleRelease")
+      sh("mkdir -p #{BUILD_INTERMEDIATES}")
+      sh("mkdir -p #{BUILD_INTERMEDIATES}virocore_aar/")
+      sh("cp ../virocore/build/outputs/aar/virocore-*.aar #{BUILD_INTERMEDIATES}virocore_aar/")
+      # Copy to a separate folder, that would be synced with S3
+      sh("mkdir -p #{BUILD_INTERMEDIATES}s3_artifacts")
+      sh("cp ../virocore/build/outputs/aar/virocore-*.aar #{BUILD_INTERMEDIATES}s3_artifacts/")
+    rescue => exception
+           on_error(exception)
+    end
+  end
+  
+  lane :renderer_memoryleaktest do
+    gradle(task: ":memoryleaktest:assembleArcoreDebug")
+  end
+  
+  lane :renderer_releasetest do
+    gradle(task: ":releasetest:assembleArcoreDebug")
+  end
+
+  desc "Build all artifacts for rendererTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_rendererTest do
+    gradle(task: ":rendererTest:assembleRelease")
+  end
+
+  desc "Build all artifacts for releaseTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_releaseTest do
+    gradle(task: ":releaseTest:assembleRelease")
+  end
+  
+
+  desc "Build all artifacts for memoryLeakTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_memoryTest do
+    gradle(task: ":memoryLeakTest:assembleRelease")
+  end
+  
+  
+  desc "Build all artifacts for ViroRenderer (ovr, gvr, arcore, scene)"
+  lane :release_renderer do
+    gradle(task: "assembleRelease")
+  end
+
+  # This block contains all the lanes to run virocore releasetests and memoryleaktests
+  lane :run_releasetest do |options|
+    gradle(task: ":releaseTest:connectedSceneDebugAndroidTest")
+  end
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+
+    # slack(
+    #   message: "Successfully deployed new App Update."
+    # )
+  end
+
+  error do |lane, exception|
+    # slack(
+    #   message: exception.message,
+    #   success: false
+    # )
+  end
+end
+
+# More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
+# All available actions: https://docs.fastlane.tools/actions
+
+# fastlane reports which actions are used. No personal data is recorded.
+# Learn more at https://docs.fastlane.tools/#metrics

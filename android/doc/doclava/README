@@ -1,0 +1,72 @@
+--------------------------------------------------------------------------
+Doclava 1.0.6 (r339; 2012-07-31 14:59:48-0700)
+Doclava is a Javadoc Doclet that generates documentation for Java projects
+--------------------------------------------------------------------------
+
+== Using Doclava with Apache Ant ==
+
+  Ant's built-in javadoc task can be configured to use third-party doclets.
+  The following is an example of how Doclava builds its own documentation:
+
+    <project>
+      ...
+      <target name="doclava" depends="jar">
+        <javadoc packagenames="com.google.*"
+               destdir="build/docs"
+               sourcepath="src"
+               docletpath="${lib.dir}/doclava-1.0.6.jar"
+               bootclasspath="$\{sun.boot.class.path\}">
+          <doclet name="com.google.doclava.Doclava">
+            <param name="-stubs" value="build/stubs" />
+            <param name="-hdf"/> <param name="project.name"/> <param name="Doclava"/>
+            <param name="-since"/> <param name="doclava/previous.xml"/> <param name="v1" />
+            <param name="-apiversion" value="v2"/>
+          </doclet>
+        </javadoc>
+      </target>
+      ...
+    </project>
+
+== Using Doclava with Apache Apache Maven ==
+
+  See Maven's guide for using alternate doclets.
+  Use the doclet "com.google.doclava.Doclava", and you can refer to Doclava via our deployed artifact in
+  Maven's central repository. An example of using Doclava with Maven:
+
+    <project>
+      ...
+      <build>
+        <plugins>
+          ...
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.7</version>
+            <configuration>
+              <docletArtifact>
+                <groupId>com.google.doclava</groupId>
+                <artifactId>doclava</artifactId>
+                <version>1.0.6</version>
+              </docletArtifact>
+              <doclet>com.google.doclava.Doclava</doclet>
+              <bootclasspath>$\{sun.boot.class.path\}</bootclasspath>
+              <additionalparam>
+                 -quiet
+                 -federate JDK http://download.oracle.com/javase/6/docs/api/index.html?
+                 -federationxml JDK http://doclava.googlecode.com/svn/static/api/openjdk-6.xml
+                 -hdf project.name "$\{project.name\}"
+                 -d $\{project.build.directory\}/apidocs
+                 -federate JDK http://download.oracle.com/javase/6/docs/api/index.html?
+                 -federationxml JDK http://doclava.googlecode.com/svn/static/api/openjdk-6.xml
+              </additionalparam>
+              <useStandardDocletOptions>false</useStandardDocletOptions>
+              <additionalJOption>-J-Xmx1024m</additionalJOption>
+            </configuration>
+          </plugin>
+          ...
+        </plugins>
+      </build>
+      ...
+    </project>
+
+  You can build your documentation with the mvn javadoc:javadoc goal.
