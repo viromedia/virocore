@@ -38,34 +38,34 @@ Check out our [blog](https://blog.viromedia.com/) for tutorials, news, and updat
 
 ## Sample Code
 
-### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroActivity.java)
+### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/code-samples/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroActivity.java)
 
-<a href="https://github.com/viromedia/virocore/blob/master/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroActivity.java">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARHelloWorldAndroid/ViroARPlanesDemoActivity.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/code-samples/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/code-samples/ARHelloWorldAndroid/ViroARPlanesDemoActivity.gif">
 </a>
 
-### [AR Placing Objects](https://github.com/viromedia/virocore/blob/master/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroActivity.java)
+### [AR Placing Objects](https://github.com/viromedia/virocore/blob/master/code-samples/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroActivity.java)
 
-<a href="https://github.com/viromedia/virocore/blob/master/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroActivity.java">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARPlacingObjects/ViroARHitTestDemoActivity.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/code-samples/ARPlacingObjects/app/src/main/java/com/example/virosample/ViroActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/code-samples/ARPlacingObjects/ViroARHitTestDemoActivity.gif">
 </a>
 
-### [AR Retail](https://github.com/viromedia/virocore/tree/master/ARRetail)
+### [AR Retail](https://github.com/viromedia/virocore/tree/master/code-samples/ARRetail)
 
-<a href="https://github.com/viromedia/virocore/tree/master/ARRetail">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARRetail/ARRetailActivity.gif">
+<a href="https://github.com/viromedia/virocore/tree/master/code-samples/ARRetail">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/code-samples/ARRetail/ARRetailActivity.gif">
 </a>
 
 [Link to AR Retail tutorial](https://blog.viromedia.com/tutorial-how-to-build-amazons-ar-view-for-arcore-android-using-virocore-and-java-ba1cc3ff2d87)
 
-### [AR Tesla](https://github.com/viromedia/virocore/tree/master/ARTesla)
+### [AR Tesla](https://github.com/viromedia/virocore/tree/master/code-samples/ARTesla)
 
-<a href="https://github.com/viromedia/virocore/blob/master/ARTesla/app/src/main/java/com/example/virosample/ViroActivityAR.java">
-<img src="https://github.com/viromedia/virocore/blob/master/ARTesla/viro_car_marker_demo.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/code-samples/ARTesla/app/src/main/java/com/example/virosample/ViroActivityAR.java">
+<img src="https://github.com/viromedia/virocore/blob/master/code-samples/ARTesla/viro_car_marker_demo.gif">
 </a>
 
-### [AR Black Panther](https://github.com/viromedia/virocore/tree/master/ARBlackPanther)
+### [AR Black Panther](https://github.com/viromedia/virocore/tree/master/code-samples/ARBlackPanther)
 
-<a href="https://github.com/viromedia/virocore/blob/master/ARBlackPanther/app/src/main/java/com/example/virosample/ViroActivityAR.java">
-<img src="https://github.com/viromedia/virocore/blob/master/ARBlackPanther/viro_black_panther_marker_demo.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/code-samples/ARBlackPanther/app/src/main/java/com/example/virosample/ViroActivityAR.java">
+<img src="https://github.com/viromedia/virocore/blob/master/code-samples/ARBlackPanther/viro_black_panther_marker_demo.gif">
 </a>
