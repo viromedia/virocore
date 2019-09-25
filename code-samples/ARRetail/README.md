@@ -6,6 +6,6 @@ This example is meant to be used with our tutorial [here](https://blog.viromedia
 
 Or refer to the instructions for setting up the sample code [here](https://github.com/viromedia/virocore/blob/master/README.md).
 
-<a href="https://github.com/viromedia/virocore/blob/master/ARRetail/app/src/main/java/com/example/virosample/ProductARActivity.java">
-<img src="https://raw.githubusercontent.com/viromedia/virocore/master/ARRetail/ARRetailActivity.gif">
+<a href="https://github.com/viromedia/virocore/blob/master/code-samples/ARRetail/app/src/main/java/com/example/virosample/ProductARActivity.java">
+<img src="https://raw.githubusercontent.com/viromedia/virocore/master/code-samples/ARRetail/ARRetailActivity.gif">
 </a>
