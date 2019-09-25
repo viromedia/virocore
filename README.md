@@ -9,22 +9,25 @@ ViroCore is SceneKit for Android, a 3D framework for developers to build immersi
 Platforms supported:
 Android, ARCore, Google Daydream, Samsung GearVR, Google Cardboard VR
 
-[Sign up](https://viromedia.com/signup) for an API key. The platform is free to use with no limits on distribution.
+The repository contains both the rendering source code, and as well as the ViroCore platform. Both are free to use with no limits on distribution.
 
 To report bugs/issues with the Viro platform, please file new issues on this repository.
 
-### Instructions for running sample code:
+## Instructions for running sample code:
 
 1. Follow the prerequisite directions on our [Quick start guide](https://virocore.viromedia.com/docs/getting-started) to setup dependencies for trying these sample projects with the Viro Media App.
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
-3. Choose the code sample you wish to deploy, and open the root directory in Android studio. 
-4. Edit AndroidManifest.xml, and replace "API_KEY_HERE" with the key emailed to you with signup.
+3. Go to the code-sample directory for a list of current samples.
+4. Choose the code sample you wish to deploy, and open the root directory in Android studio. 
 5. Ensure that [Instant Run](https://developer.android.com/studio/run/index.html#instant-run) is disabled.
 6. (Optional) Clean and gradle sync.
 7. Build and deploy.
 8. You should now be in the application! Enjoy!
 
-### More Information
+## Instructions for building the renderer and ViroCore platform:
+TODO
+
+## More Information
 
 Viro Media Website: https://viromedia.com/
 
@@ -36,7 +39,7 @@ Join our Slack group [here](https://join.slack.com/t/virodevelopers/shared_invit
 
 Check out our [blog](https://blog.viromedia.com/) for tutorials, news, and updates.
 
-## Sample Code
+## Sample Code Examples
 
 ### [AR Hellow World Android](https://github.com/viromedia/virocore/blob/master/code-samples/ARHelloWorldAndroid/app/src/main/java/com/example/virosample/ViroActivity.java)
 
