@@ -25,7 +25,7 @@ To report bugs/issues with the Viro platform, please file new issues on this rep
 8. You should now be in the application! Enjoy!
 
 ## Instructions for building the renderer and ViroCore platform:
-TODO
+-TODO-
 
 ## More Information
 
