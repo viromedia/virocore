@@ -552,6 +552,29 @@ namespace arcore {
         }
     }
 
+    TrackingFailureReason FrameNative::getTrackingFailureReason() {
+        ArCamera *camera;
+        ArFrame_acquireCamera(_session, _frame, &camera);
+
+        ArTrackingFailureReason reason;
+        ArCamera_getTrackingFailureReason(_session, camera, &reason);
+        ArCamera_release(camera);
+
+        if (reason == AR_TRACKING_FAILURE_REASON_NONE) {
+            return TrackingFailureReason::None;
+        } else if (reason == AR_TRACKING_FAILURE_REASON_BAD_STATE) {
+            return TrackingFailureReason::BadState;
+        } else if (reason == AR_TRACKING_FAILURE_REASON_EXCESSIVE_MOTION) {
+            return TrackingFailureReason::ExcessiveMotion;
+        } else if (reason == AR_TRACKING_FAILURE_REASON_INSUFFICIENT_LIGHT) {
+            return TrackingFailureReason::InsufficientLight;
+        } else if (reason == AR_TRACKING_FAILURE_REASON_INSUFFICIENT_FEATURES) {
+            return TrackingFailureReason::InsufficientFeatures;
+        } else {
+            return TrackingFailureReason::None;
+        }
+    }
+
     void FrameNative::getLightEstimate(LightEstimate *outLightEstimate) {
         ArFrame_getLightEstimate(_session, _frame,
                                  ((LightEstimateNative *) outLightEstimate)->_lightEstimate);

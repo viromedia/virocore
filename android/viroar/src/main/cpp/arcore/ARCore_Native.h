@@ -168,6 +168,7 @@ namespace arcore {
         virtual void getProjectionMatrix(float near, float far, float *outMatrix);
         virtual void getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy);
         virtual TrackingState getTrackingState();
+        virtual TrackingFailureReason getTrackingFailureReason();
         virtual void getLightEstimate(LightEstimate *outLightEstimate);
         virtual bool hasDisplayGeometryChanged();
         virtual void hitTest(float x, float y, HitResultList *outList);

@@ -78,6 +78,29 @@ VROARTrackingState VROARCameraARCore::getTrackingState() const {
     };
 }
 
+VROARTrackingStateReason VROARCameraARCore::getLimitedTrackingStateReason() const {
+    std::shared_ptr<VROARSessionARCore> session = _session.lock();
+    if (!session) {
+        return VROARTrackingStateReason::None;
+    }
+
+    arcore::TrackingFailureReason reason = _frame->getTrackingFailureReason();
+    switch (reason) {
+        case arcore::TrackingFailureReason::None:
+            return VROARTrackingStateReason::None;
+        case arcore::TrackingFailureReason::BadState:
+            return VROARTrackingStateReason::None;
+        case arcore::TrackingFailureReason::ExcessiveMotion:
+            return VROARTrackingStateReason::ExcessiveMotion;
+        case arcore::TrackingFailureReason::InsufficientFeatures:
+            return VROARTrackingStateReason::InsufficientFeatures;
+        case arcore::TrackingFailureReason::InsufficientLight:
+            return VROARTrackingStateReason::InsufficientLight;
+        default:
+            return VROARTrackingStateReason::None;
+    };
+}
+
 void VROARCameraARCore::getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy) {
     if (!isImageDataAvailable()) {
         return;
@@ -93,9 +116,6 @@ void VROARCameraARCore::getImageIntrinsics(float *outFx, float *outFy, float *ou
     }
 
 
-}
-VROARTrackingStateReason VROARCameraARCore::getLimitedTrackingStateReason() const {
-    return VROARTrackingStateReason::None;
 }
 
 VROMatrix4f VROARCameraARCore::getRotation() const {

@@ -97,6 +97,14 @@ namespace arcore {
         Tracking
     };
 
+    enum class TrackingFailureReason {
+        None,
+        BadState = 1,
+        InsufficientLight = 2,
+        ExcessiveMotion = 3,
+        InsufficientFeatures = 4
+    };
+
     enum class TrackingMethod {
         NotTracking,
         Tracking,
@@ -247,6 +255,7 @@ namespace arcore {
         virtual void getProjectionMatrix(float near, float far, float *outMatrix) = 0;
         virtual void getImageIntrinsics(float *outFx, float *outFy, float *outCx, float *outCy) = 0;
         virtual TrackingState getTrackingState() = 0;
+        virtual TrackingFailureReason getTrackingFailureReason() = 0;
         virtual void getLightEstimate(LightEstimate *outLightEstimate) = 0;
         virtual bool hasDisplayGeometryChanged() = 0;
         virtual void hitTest(float x, float y, HitResultList *outList) = 0;

@@ -46,7 +46,8 @@ enum class VROARTrackingState {
 enum class VROARTrackingStateReason {
     None = 1,
     ExcessiveMotion = 2,
-    InsufficientFeatures = 3
+    InsufficientFeatures = 3,
+    InsufficientLight = 4,
 };
 
 /*

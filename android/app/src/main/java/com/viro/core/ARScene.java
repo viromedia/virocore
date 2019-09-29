@@ -256,7 +256,13 @@ public class ARScene extends Scene {
          * The scene visible to the camera does not contain enough distinguishable features for
          * optimal position tracking.
          */
-        INSUFFICIENT_FEATURES(3);
+        INSUFFICIENT_FEATURES(3),
+
+        /**
+         * The scene visible to the camera does not contain enough light for optimal position
+         * tracking.
+         */
+        INSUFFICIENT_LIGHT(4);
 
         private int mTypeId;
         TrackingStateReason(int flag){
@@ -822,16 +828,17 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
-    private static TrackingStateReason getTrackingStateReason(int stateInt){
-        switch(stateInt){
+    private static TrackingStateReason getTrackingStateReason(int stateInt) {
+        switch(stateInt) {
             case 1:
                 return TrackingStateReason.NONE;
             case 2:
                 return TrackingStateReason.EXCESSIVE_MOTION;
             case 3:
                 return TrackingStateReason.INSUFFICIENT_FEATURES;
+            case 4:
+                return TrackingStateReason.INSUFFICIENT_LIGHT;
         }
-
         return TrackingStateReason.NONE;
     }
 
