@@ -306,6 +306,11 @@ void VROPlatformCallHostFunction(jobject javaObject,
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
+    if (javaObject == nullptr) {
+        perr("Unable to call (void) method on null object [function %s, method %s]",
+             methodName.c_str(), methodSig.c_str());
+        return;
+    }
     jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
         perr("Unable to find class for making java calls [function %s, method %s]",
@@ -338,6 +343,11 @@ VRO_BOOL VROPlatformCallHostBoolFunction(jobject javaObject,
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
+    if (javaObject == nullptr) {
+        perr("Unable to call (bool) method on null object [function %s, method %s]",
+             methodName.c_str(), methodSig.c_str());
+        return false;
+    }
     jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
         perr("Unable to find class for making java calls [function %s, method %s]",
@@ -371,6 +381,11 @@ VRO_INT VROPlatformCallHostIntFunction(jobject javaObject,
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
+    if (javaObject == nullptr) {
+        perr("Unable to call (int) method on null object [function %s, method %s]",
+             methodName.c_str(), methodSig.c_str());
+        return 0;
+    }
     jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
         perr("Unable to find class for making java calls [function %s, method %s]",
@@ -404,6 +419,11 @@ jlong VROPlatformCallHostLongFunction(jobject javaObject,
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
+    if (javaObject == nullptr) {
+        perr("Unable to call (long) method on null object [function %s, method %s]",
+             methodName.c_str(), methodSig.c_str());
+        return 0;
+    }
     jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
         perr("Unable to find class for making java calls [function %s, method %s]",
@@ -437,6 +457,11 @@ jobject VROPlatformCallHostObjectFunction(jobject javaObject,
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
 
+    if (javaObject == nullptr) {
+        perr("Unable to call (object) method  on null object [function %s, method %s]",
+             methodName.c_str(), methodSig.c_str());
+        return 0;
+    }
     jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
         perr("Unable to find class for making java calls [function %s, method %s]",

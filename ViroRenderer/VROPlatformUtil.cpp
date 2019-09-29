@@ -601,6 +601,11 @@ void VROPlatformDeleteFile(std::string filename) {
 }
 
 std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initialized, will not copy resource to file");
+        return "";
+    }
+
     JNIEnv *env = VROPlatformGetJNIEnv();
     VRO_STRING jasset = VRO_NEW_STRING(asset.c_str());
 
@@ -620,6 +625,10 @@ std::string VROPlatformCopyResourceToFile(std::string asset, bool *isTemp) {
 }
 
 std::map<std::string, std::string> VROPlatformCopyObjResourcesToFile(jobject resourceMap) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initialized, will not copy object resources to file");
+        return {};
+    }
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
@@ -695,6 +704,10 @@ std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::str
 }
 
 std::string VROPlatformCopyAssetToFile(std::string asset) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initialized, will not copy asset");
+        return "";
+    }
     JNIEnv *env = VROPlatformGetJNIEnv();
     VRO_STRING jasset = VRO_NEW_STRING(asset.c_str());
 
@@ -713,6 +726,10 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
 }
 
 std::pair<std::string, int> VROPlatformFindFont(std::string typeface, bool isItalic, int weight) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initialized, cannot find font");
+        return {};
+    }
     JNIEnv *env = VROPlatformGetJNIEnv();
     VRO_STRING jtypeface = VRO_NEW_STRING(typeface.c_str());
     
@@ -756,6 +773,10 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset,
 }
 
 jobject VROPlatformLoadBitmapFromAsset(std::string asset, VROTextureInternalFormat format) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initialized, will not load bitmap from asset");
+        return 0;
+    }
     JNIEnv *env;
     getJNIEnv(&env);
 
@@ -772,6 +793,10 @@ jobject VROPlatformLoadBitmapFromAsset(std::string asset, VROTextureInternalForm
 }
 
 jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat format) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initalized, will not load bitmap from file");
+        return 0;
+    }
     JNIEnv *env;
     getJNIEnv(&env);
 
@@ -790,6 +815,10 @@ jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat
 
 std::shared_ptr<VROImage> VROPlatformLoadImageWithBufferedData(std::vector<unsigned char> rawData,
                                                                VROTextureInternalFormat format) {
+    if (sPlatformUtil == NULL) {
+        pinfo("Platform not initialized, will not load image from buffered data");
+        return 0;
+    }
     JNIEnv *env;
     getJNIEnv(&env);
 
@@ -1107,6 +1136,10 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
 }
 
 void VROPlatformSetBool(JNIEnv *env, jobject jObj, const char *fieldName, jboolean value) {
+    if (jObj == nullptr) {
+        pinfo("Attempted to set bool on null object");
+        return;
+    }
     jclass cls = env->GetObjectClass(jObj);
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "Z");
     if (fieldId == NULL) {
@@ -1119,6 +1152,10 @@ void VROPlatformSetBool(JNIEnv *env, jobject jObj, const char *fieldName, jboole
 }
 
 void VROPlatformSetInt(JNIEnv *env, jobject jObj, const char *fieldName, VRO_INT value) {
+    if (jObj == nullptr) {
+        pinfo("Attempted to set int on null object");
+        return;
+    }
     jclass cls = env->GetObjectClass(jObj);
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "I");
     if (fieldId == NULL) {
@@ -1131,6 +1168,10 @@ void VROPlatformSetInt(JNIEnv *env, jobject jObj, const char *fieldName, VRO_INT
 }
 
 void VROPlatformSetFloat(JNIEnv *env, jobject jObj, const char *fieldName, VRO_FLOAT value) {
+    if (jObj == nullptr) {
+        pinfo("Attempted to set float on null object");
+        return;
+    }
     jclass cls = env->GetObjectClass(jObj);
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "F");
     if (fieldId == NULL){
@@ -1143,6 +1184,10 @@ void VROPlatformSetFloat(JNIEnv *env, jobject jObj, const char *fieldName, VRO_F
 }
 
 void VROPlatformSetString(JNIEnv *env, jobject jObj, const char *fieldName, std::string value) {
+    if (jObj == nullptr) {
+        pinfo("Attempted to set string on null object");
+        return;
+    }
     jclass cls = env->GetObjectClass(jObj);
     jfieldID fieldId = env->GetFieldID(cls, fieldName, "Ljava/lang/String;");
     if (fieldId == NULL){
@@ -1168,6 +1213,11 @@ void VROPlatformSetEnumValue(JNIEnv *env, jobject jObj, const char *fieldName,
     jfieldID enumValueField = env->GetStaticFieldID(enumClass , enumValueStr.c_str(), enumClassPathType.c_str());
     jobject jEnumValue = env->GetStaticObjectField(enumClass, enumValueField);
 
+    if (jObj == nullptr) {
+        pinfo("Attempted to set enum on null object");
+        return;
+    }
+
     // Get the corresponding enum field in jObjClass.java to be set on and set it.
     jclass jObjClass = env->GetObjectClass(jObj);
     jfieldID jEnumField = env->GetFieldID(jObjClass, fieldName, enumClassPathType.c_str());
@@ -1179,6 +1229,10 @@ void VROPlatformSetEnumValue(JNIEnv *env, jobject jObj, const char *fieldName,
 
 void VROPlatformSetObject(JNIEnv *env, jobject jObj, const char *fieldName,
                           const char *fieldType, VRO_OBJECT object) {
+    if (jObj == nullptr) {
+        pinfo("Attempted to set object on null object");
+        return;
+    }
     jclass objclass = env->GetObjectClass(jObj);
     jfieldID fieldId = env->GetFieldID(objclass, fieldName, fieldType);
     if (fieldId == NULL) {
