@@ -43,6 +43,7 @@
 		130F160A22DD477A009983B3 /* VROBodyMesherTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC5428F2297497C00D2AFBB /* VROBodyMesherTest.cpp */; };
 		13477941207EB78A002CE280 /* VROMetricsRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 13477940207EB78A002CE280 /* VROMetricsRecorder.h */; };
 		13477944207EB936002CE280 /* VROMetricsRecorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13477942207EB936002CE280 /* VROMetricsRecorder.mm */; };
+		136FC5C523440AEC00CF2E8D /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */; };
 		13B67219212229B20040FB72 /* VROGLTFTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CA8D920ADFD2F00DE85A1 /* VROGLTFTest.cpp */; };
 		13B6721A212229B20040FB72 /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 13F631A82065C1EA00A74EFC /* keen_io_sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		13B6721B212229B20040FB72 /* KeenConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F6319B2065BF8300A74EFC /* KeenConstants.m */; };
@@ -208,7 +209,6 @@
 		13B672C0212229B20040FB72 /* VROShaderCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEACF162019223C0082D18B /* VROShaderCapabilities.cpp */; };
 		13B672C1212229B20040FB72 /* VROImageiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F53D3A71DCBA06A001C91A8 /* VROImageiOS.cpp */; };
 		13B672C2212229B20040FB72 /* VRODistortionRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDFA8941BDAEAB000883EC0 /* VRODistortionRenderer.cpp */; };
-		13B672C3212229B20040FB72 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC21BCDA2BD0017C70B /* Shaders.metal */; };
 		13B672C4212229B20040FB72 /* VROFBXTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5351F813C4100E831A6 /* VROFBXTest.cpp */; };
 		13B672C5212229B20040FB72 /* VROARPlaneTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5191F813C3C00E831A6 /* VROARPlaneTest.cpp */; };
 		13B672C6212229B20040FB72 /* VROARObjectTargetiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AD76EA3211B7BF10045BD5F /* VROARObjectTargetiOS.cpp */; };
@@ -829,7 +829,6 @@
 		8F1B4A2A1F64B6E000156809 /* emoji_smile.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A261F64B6E000156809 /* emoji_smile.vrx */; };
 		8F1B4AA01F69F4A900156809 /* pug_animated.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */; };
 		8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */; };
-		8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */; };
 		8F1DE3BC21221DDD00C8749D /* VROAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DE3BB21221DDD00C8749D /* VROAtomic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */; };
 		8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DF5A81F36408700886805 /* VROPortalFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1031,7 +1030,6 @@
 		8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF21E8F5D42008BE8F8 /* earth_normal.jpg */; };
 		8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF31E8F5D42008BE8F8 /* earth.jpg */; };
 		8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF41E8F5D42008BE8F8 /* earth.obj */; };
-		8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */; };
 		8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F631F39EDAD00CDBBFC /* pug.vrx */; };
 		8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */; };
 		8F7569DC21962AAC00730FB3 /* gzip_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F7569DB21962AAC00730FB3 /* gzip_stream.cpp */; };
@@ -1415,7 +1413,6 @@
 		8FD4DF241C18EDBF003DC425 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */; };
 		8FD4DF261C18EDC8003DC425 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF251C18EDC8003DC425 /* UIKit.framework */; };
 		8FD4DF281C18EDD4003DC425 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */; };
-		8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC21BCDA2BD0017C70B /* Shaders.metal */; };
 		8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F152A7C1C11351D00A211F8 /* blank.png */; };
 		8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5C413D1BD56F98006D7A77 /* VROScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071DA1BF67F34003B3C3F /* VROCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -5157,7 +5154,7 @@
 		8F517BAE1BCDA2BD0017C70B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Viro Media";
 				TargetAttributes = {
 					13B67216212229B20040FB72 = {
@@ -5267,9 +5264,8 @@
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F5EEE9A20325C310059C9E7 /* pumpkin.vrx in Resources */,
 				8F6E5B1D20DD335B00BEE45F /* cr_cars_Roughness.png in Resources */,
-				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
+				136FC5C523440AEC00CF2E8D /* pug_body_diffuse.png in Resources */,
 				8F5EEEA820329C9B0059C9E7 /* cupcake_vanilla_1001_Roughness.png in Resources */,
-				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
@@ -5285,7 +5281,6 @@
 				8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */,
 				A547DB6A2022EC8900C8FE67 /* brdf_vsh.glsl in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
-				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8F04372B201AA72900D98D26 /* blinn2_Base_Color.png in Resources */,
 				8F68E3A4219B3050000A7C64 /* darkerSmoke.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
@@ -5624,7 +5619,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5643,7 +5642,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VIRO_FRAMEWORK_PATH=$PROJECT_DIR/../../react-viro/ios/dist/ViroRenderer/static_lib\nmkdir -p $VIRO_FRAMEWORK_PATH\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to react-viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib -create -output $VIRO_FRAMEWORK_PATH/ViroKit_static_lib.framework/ViroKit_static_lib\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit_static_lib.podspec $VIRO_FRAMEWORK_PATH";
+			shellScript = "VIRO_FRAMEWORK_PATH=$PROJECT_DIR/../../viro/ios/dist/ViroRenderer/static_lib\nmkdir -p $VIRO_FRAMEWORK_PATH\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib -create -output $VIRO_FRAMEWORK_PATH/ViroKit_static_lib.framework/ViroKit_static_lib\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit_static_lib.podspec $VIRO_FRAMEWORK_PATH\n";
 			showEnvVarsInLog = 0;
 		};
 		13B67476212229B20040FB72 /* Lipo Framework and Copy to Bridge (build intermediates for Jenkins) */ = {
@@ -5658,7 +5657,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VIRO_FRAMEWORK_PATH=/var/tmp/build_intermediates/react_viro_kit/ViroRenderer/static_lib\nmkdir -p $VIRO_FRAMEWORK_PATH\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to react-viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib -create -output $VIRO_FRAMEWORK_PATH/ViroKit_static_lib.framework/ViroKit_static_lib\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit_static_lib.podspec $VIRO_FRAMEWORK_PATH";
+			shellScript = "VIRO_FRAMEWORK_PATH=/var/tmp/build_intermediates/react_viro_kit/ViroRenderer/static_lib\nmkdir -p $VIRO_FRAMEWORK_PATH\nVIRO_DEVICE_FRAMEWORK=$VIRO_FRAMEWORK_PATH/armv7_arm64\nVIRO_SIMULATOR_FRAMEWORK=$VIRO_FRAMEWORK_PATH/x86_64\n\n# Copy the framework (device or simulator) to viro\nif [ ${PLATFORM_NAME} = \"iphonesimulator\" ]; then\nmkdir -p $VIRO_SIMULATOR_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_SIMULATOR_FRAMEWORK\nelse\nmkdir -p $VIRO_DEVICE_FRAMEWORK\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_DEVICE_FRAMEWORK\nfi\n\n# If both the device and simulator frameworks now exist, create the Universal framework\nif [ -f $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ] && [ -f $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib ]; then\ncp -r $TARGET_BUILD_DIR/ViroKit_static_lib.framework $VIRO_FRAMEWORK_PATH\nlipo $VIRO_SIMULATOR_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib $VIRO_DEVICE_FRAMEWORK/ViroKit_static_lib.framework/ViroKit_static_lib -create -output $VIRO_FRAMEWORK_PATH/ViroKit_static_lib.framework/ViroKit_static_lib\nfi\n\n# Copy over the podspec\ncp -r $PROJECT_DIR/ViroKit_static_lib.podspec $VIRO_FRAMEWORK_PATH\n";
 			showEnvVarsInLog = 0;
 		};
 		5002FE67F1FD1C7E4B1A51D2 /* [CP] Check Pods Manifest.lock */ = {
@@ -5714,7 +5713,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5751,7 +5754,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CardboardSDK.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitCore.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitDialogs.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleKitHUD.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialRobotoFontLoader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5983,7 +5990,6 @@
 				13B672C1212229B20040FB72 /* VROImageiOS.cpp in Sources */,
 				8FE52F4121E835BA00BA63D4 /* VROObjectRecognizeriOS.cpp in Sources */,
 				13B672C2212229B20040FB72 /* VRODistortionRenderer.cpp in Sources */,
-				13B672C3212229B20040FB72 /* Shaders.metal in Sources */,
 				13B672C4212229B20040FB72 /* VROFBXTest.cpp in Sources */,
 				13B672C5212229B20040FB72 /* VROARPlaneTest.cpp in Sources */,
 				13B672C6212229B20040FB72 /* VROARObjectTargetiOS.cpp in Sources */,
@@ -6300,7 +6306,6 @@
 				8FEACF172019223C0082D18B /* VROShaderCapabilities.cpp in Sources */,
 				8F53D3A91DCBA06A001C91A8 /* VROImageiOS.cpp in Sources */,
 				8FD4DF181C18ED4C003DC425 /* VRODistortionRenderer.cpp in Sources */,
-				8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */,
 				8FD2A5551F813C4100E831A6 /* VROFBXTest.cpp in Sources */,
 				8FD2A5391F813C4100E831A6 /* VROARPlaneTest.cpp in Sources */,
 				8AD76EA5211B7BF10045BD5F /* VROARObjectTargetiOS.cpp in Sources */,
@@ -6426,7 +6431,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A2662FF813AA989655ACE1B9 /* Pods-ViroKit_static_lib.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6441,8 +6447,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6459,8 +6471,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -6521,7 +6545,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5F74787A42D418320F1E3362 /* Pods-ViroKit_static_lib.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -6535,8 +6560,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6556,8 +6587,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -6604,19 +6647,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -6661,19 +6712,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -6896,7 +6955,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6911,8 +6971,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -6929,8 +6995,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -6992,7 +7070,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -7006,8 +7085,14 @@
 					"$(PROJECT_DIR)/Libraries/opencv",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
-				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/opencv";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"ENABLE_OPENCV=0",
@@ -7027,8 +7112,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
 				);
-				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/armv7_arm64 $(PROJECT_DIR)/Libraries/protobuf/armv7_arm64 $(PROJECT_DIR)/Libraries/bullet/armv7_arm64 $(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64";
-				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/Libraries/freetype/x86_64 $(PROJECT_DIR)/Libraries/protobuf/x86_64 $(PROJECT_DIR)/Libraries/bullet/x86_64 $(PROJECT_DIR)/Libraries/harfbuzz/x86_64";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/protobuf/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/bullet/armv7_arm64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/armv7_arm64",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype/x86_64",
+					"$(PROJECT_DIR)/Libraries/protobuf/x86_64",
+					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
+					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
