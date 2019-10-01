@@ -256,7 +256,7 @@ public class ViroViewARCore extends ViroView {
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             final ViroViewARCore view = mView.get();
-            if (view == null) {
+            if (view == null || view.mSurfaceView == null) {
                 return;
             }
 
