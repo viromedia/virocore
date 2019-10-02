@@ -318,19 +318,25 @@ public class Object3D extends Node {
      * @param mode The MorphMode to apply.
      */
     public void setMorphMode(MorphMode mode) {
-        nativeSetMorphMode(mNativeRef, mode.mStringValue);
+        if (mNativeRef != 0) {
+            nativeSetMorphMode(mNativeRef, mode.mStringValue);
+        }
     }
 
     @Override
     public void setLightReceivingBitMask(int bitMask) {
         mLightReceivingBitMask = bitMask;
-        nativeSetLightReceivingBitMask(mNativeRef, bitMask, true);
+        if (mNativeRef != 0) {
+            nativeSetLightReceivingBitMask(mNativeRef, bitMask, true);
+        }
     }
 
     @Override
     public void setShadowCastingBitMask(int bitMask) {
         mShadowCastingBitMask = bitMask;
-        nativeSetShadowCastingBitMask(mNativeRef, bitMask, true);
+        if (mNativeRef != 0) {
+            nativeSetShadowCastingBitMask(mNativeRef, bitMask, true);
+        }
     }
 
     @Override

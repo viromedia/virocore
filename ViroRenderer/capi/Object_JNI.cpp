@@ -248,8 +248,9 @@ VRO_METHOD(VRO_STRING_ARRAY, nativeGetMorphTargetKeys)(VRO_ARGS
 }
 
 VRO_METHOD(void, nativeSetMorphMode)(VRO_ARGS
-                                           VRO_REF(VRONode) nativeRef,
-                                           VRO_STRING jMode) {
+                                     VRO_REF(VRONode) nativeRef,
+                                     VRO_STRING jMode) {
+
     std::weak_ptr<VRONode> node_w = VRO_REF_GET(VRONode, nativeRef);
     std::string modeString = VRO_STRING_STL(jMode);
     VROPlatformDispatchAsyncRenderer([node_w, modeString] {

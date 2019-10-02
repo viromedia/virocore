@@ -211,7 +211,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
                     @Override
                     public void onAnimationFinish(Animation animation, boolean canceled) {
-                        Log.e("Daniel"," Mode : " + mMorphMode.mStringValue);
+                        Log.e("Viro","Changing morph mode to: " + mMorphMode.mStringValue);
                         switch (mMorphMode){
                             case CPU:
                                 mMorphMode = Object3D.MorphMode.GPU;
@@ -236,6 +236,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         assertPass("Both GLTF Morph cubes SHOULD Animate (wait for 3 cycles).", ()->{
             node.removeFromParentNode();
+            mAnimation.setLoop(false);
         });
     }
 
@@ -257,7 +258,9 @@ public class Viro3DObjectTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Star model loads and begins to animate.");
+        assertPass("Star model loads and begins to animate.", ()->{
+            mAnimation.setLoop(false);
+        });
     }
 
     public void stage2_testFBXAnimPause() {
@@ -288,7 +291,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         };
 
         assertPass("FBX rotates from pause to play.", ()-> {
-            if(mIsAnimPaused) {
+            if (mIsAnimPaused) {
                 mMutableTestMethod = null;
                 if(mIsAnimPaused) {
                     mAnimation.play();
@@ -315,7 +318,9 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
 
         mMutableTestMethod = () -> mAnimation.stop();
-        assertPass("FBX animation stops mid way (after *maybe* one spin)");
+        assertPass("FBX animation stops mid way (after *maybe* one spin)", ()-> {
+            mAnimation.setLoop(false);
+        });
     }
 
     public void stage4_testLoadModelOBJ() {
@@ -627,6 +632,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         assertPass("You should see an animated dragon frozen at timestamp 4.5 seconds, 6s, 1s, 0s",()->{
             object3D.removeFromParentNode();
+            mAnimation.setLoop(false);
         });
     }
 
@@ -685,6 +691,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
         };
         assertPass("You should see an animated dragon move at different speeds: normal, slow, slower, then normal.",()->{
             object3D.removeFromParentNode();
+            mAnimation.setLoop(false);
         });
     }
 
@@ -736,6 +743,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
 
         assertPass("Animated dragon running 4x slower than usual",()->{
             object3D.removeFromParentNode();
+            mAnimation.setLoop(false);
         });
     }
 }
