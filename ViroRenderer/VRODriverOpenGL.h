@@ -109,24 +109,34 @@ public:
             _moribundPrograms.clear();
 
             GLsizei count = (GLsizei) _moribundBuffers.size();
-            GL( glDeleteBuffers(count, _moribundBuffers.data()) );
-            _moribundBuffers.clear();
+            if (count > 0) {
+                GL(glDeleteBuffers(count, _moribundBuffers.data()));
+                _moribundBuffers.clear();
+            }
 
             count = (GLsizei) _moribundVertexArrays.size();
-            GL( glDeleteVertexArrays(count, _moribundVertexArrays.data()) );
-            _moribundVertexArrays.clear();
+            if (count > 0) {
+                GL(glDeleteVertexArrays(count, _moribundVertexArrays.data()));
+                _moribundVertexArrays.clear();
+            }
 
             count = (GLsizei) _moribundFramebuffers.size();
-            GL( glDeleteFramebuffers(count, _moribundFramebuffers.data()) );
-            _moribundFramebuffers.clear();
+            if (count > 0) {
+                GL(glDeleteFramebuffers(count, _moribundFramebuffers.data()));
+                _moribundFramebuffers.clear();
+            }
 
             count = (GLsizei) _moribundRenderbuffers.size();
-            GL( glDeleteRenderbuffers(count, _moribundRenderbuffers.data()) );
-            _moribundRenderbuffers.clear();
+            if (count > 0) {
+                GL(glDeleteRenderbuffers(count, _moribundRenderbuffers.data()));
+                _moribundRenderbuffers.clear();
+            }
 
             count = (GLsizei) _moribundTextures.size();
-            GL( glDeleteTextures(count, _moribundTextures.data()) );
-            _moribundTextures.clear();
+            if (count > 0) {
+                GL(glDeleteTextures(count, _moribundTextures.data()));
+                _moribundTextures.clear();
+            }
         }
     }
     
