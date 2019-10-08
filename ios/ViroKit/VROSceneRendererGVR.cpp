@@ -132,19 +132,6 @@ void VROSceneRendererGVR::onDrawFrame() {
         gvr::Frame frame = _swapchain->AcquireFrame();
         std::dynamic_pointer_cast<VRODisplayOpenGLiOSGVR>(_driver->getDisplay())->setFrame(frame);
         frame.BindBuffer(0);
-
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-        frame.Unbind();
-        frame.Submit(*_viewportList, _headView);
-
-        double newTime = VROTimeCurrentSeconds();
-        // notify the user about bad keys 5 times a second (every 200ms/.2s)
-        if (newTime - _suspendedNotificationTime > .2) {
-            perr("Renderer suspended! Do you have a valid key?");
-            _suspendedNotificationTime = newTime;
-        }
     }
 
     ++_frame;

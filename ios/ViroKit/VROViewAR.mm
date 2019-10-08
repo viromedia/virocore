@@ -618,12 +618,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     GL ();
     
     @autoreleasepool {
-        if (self.suspended) {
-            [self renderSuspended];
-        } else {
-            [self renderFrame];
-        }
+        [self renderFrame];
     }
+
     if (_glassView) {
         [_glassView setNeedsDisplay];
     }
@@ -757,18 +754,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
     _renderer->endFrame(_driver);
-}
-
-- (void)renderSuspended {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    double newTime = VROTimeCurrentSeconds();
-    // notify the user about bad keys 5 times a second (every 200ms/.2s)
-    if (newTime - _suspendedNotificationTime > .2) {
-        perr("Renderer suspended! Do you have a valid key?");
-        _suspendedNotificationTime = newTime;
-    }
 }
 
 - (void)initARSessionWithViewport:(VROViewport)viewport scene:(std::shared_ptr<VROScene>)scene {
