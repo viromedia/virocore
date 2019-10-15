@@ -25,7 +25,49 @@ To report bugs/issues with the Viro platform, please file new issues on this rep
 8. You should now be in the application! Enjoy!
 
 ## Instructions for building the renderer and ViroCore platform:
-TODO
+
+### Building the ViroCore platform:
+1. Follow the same prerequisite directions above from our [Quick start guide](https://virocore.viromedia.com/docs/getting-started).
+2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
+3. Execute the following commands to build the ViroCore platform library
+   ```
+   $ cd android
+   $ ./gradlew :virocore:assembleRelease
+   ```
+4. If the above gradle build succeeded, verify you see a `virocore-*.aar` file (* for the version number) at `android/virocore/build/outputs/aar/virocore-*.aar`
+5. To run ViroCore tests, open the android project at `android/app` in Android Studio and run `releasetest` target on your android device.
+6. To use this updated / newly built `virocore-*.aar` in your own project copy the aar file to `viro_core/` in your project and modify your `viro_core/build.gradle` to point to the new file.
+
+### (Android) Building the renderer to be used in react-viro platform:
+1. Follow the same prerequisite directions above from our [Quick start guide](https://virocore.viromedia.com/docs/getting-started).
+2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
+3. Clone the react-viro repo (named viro) in the same workspace (same parent directory as virocore) with git: `https://github.com/viromedia/viro.git`
+4. Execute the following commands to build the ViroCore platform library
+   ```
+   $ cd android
+   $ ./gradlew :viroreact:assembleRelease
+   ```
+5. If the above gradle build succeeded, verify you see a new `viroreact-release.aar` file at `/viroreact/build/outputs/aar/viroreact-release.aar`.
+6. Additionally verify you see a new file built at `viro/android/viro_renderer/viro_renderer-release.aar` in the viro repo you cloned above in step #3. The build instructions outlined in [viro](https://github.com/viromedia/viro) repo will walk you through steps involved in building the react-viro bridge using this built renderer.
+
+### (iOS) Building the renderer to be used in react-viro platform:
+1. Make sure you followed through steps 1 - 3 mentioned in the android section.
+2. Execute the following commands to install pods from `Podfile`.
+   ```
+   cd ios
+   pod install
+   ```
+3. Open `ViroRenderer.xcworkspace` in Xcode. Build scheme `ViroKit` with Build Configuration set to `Release` and target set to `Generic iOS Device`.
+**Note:**
+    ```
+    3.a If you want the ability to run on Simulator, 
+        change target to any of the `iOS Simulator` targets instead of `Generic iOS Device`. 
+    3.b If in your own app project setup, you prefer to include react-viro as a static library 
+        rather than relying on `use_frameworks!` - build scheme `ViroKit_static_lib` 
+        instead of `ViroKit` as mentioned above in step #3. 
+    ```
+    
+4. If the above Xcode build succeeded, you should see a bunch of new files copied over in `viro/ios/dist/` folder in the viro repo you cloned earlier. The build instructions outlined in [viro](https://github.com/viromedia/viro) repo will walk you through steps involved in building the react-viro bridge using this built renderer.
 
 ## More Information
 
