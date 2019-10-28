@@ -6468,7 +6468,7 @@
 				);
 				INFOPLIST_FILE = ViroKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
@@ -6488,16 +6488,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-iquote",
-					"\"$PODS_CONFIGURATION_BUILD_DIR/GTMSessionFetcher/GTMSessionFetcher.framework/Headers\"",
-					"-iquote",
-					"\"$PODS_CONFIGURATION_BUILD_DIR/GoogleToolboxForMac/GoogleToolboxForMac.framework/Headers\"",
 					"-isystem",
 					"\"${PODS_ROOT}/Headers/Public\"",
-					"-isystem",
-					"\"${PODS_ROOT}/Headers/Public/GVRAudioSDK\"",
-					"-isystem",
-					"\"${PODS_ROOT}/Headers/Public/GVRSDK\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -6581,7 +6573,7 @@
 				);
 				INFOPLIST_FILE = ViroKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6601,6 +6593,7 @@
 					"$(PROJECT_DIR)/Libraries/bullet/x86_64",
 					"$(PROJECT_DIR)/Libraries/harfbuzz/x86_64",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -6699,7 +6692,7 @@
 					"$(SRCROOT)/Libraries/harfbuzz/include",
 					"$(SRCROOT)/../ViroRenderer/",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-ferror-limit=50";
@@ -6759,7 +6752,7 @@
 					"$(SRCROOT)/Libraries/harfbuzz/include",
 					"$(SRCROOT)/../ViroRenderer/",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "-ferror-limit=50";
 				SDKROOT = iphoneos;
@@ -6791,6 +6784,7 @@
 					"$(PROJECT_DIR)/Libraries/freetype",
 					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -6843,7 +6837,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = UN8MD7234Y;
+				DEVELOPMENT_TEAM = GL2Q36BUS6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
