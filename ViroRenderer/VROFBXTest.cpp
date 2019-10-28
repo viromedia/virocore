@@ -54,15 +54,15 @@ void VROFBXTest::build(std::shared_ptr<VRORenderer> renderer,
     VROFBXModel worm("worm", { 0, 0, -3 }, { .2, .2, .2 }, { 0, 0, 0 }, 1, "Take 001");
     VROFBXModel panther("object_bpanther_anim", { 0, -1.5, -8 }, { 2, 2, 2 }, { 0, 0, 0 }, 1, "01");
     VROFBXModel lamborghini("lamborghini_v2", { 0, -1.5, -6 }, { .015, .015, .015 }, { 0, 0, 0 }, 1, "02");
-    VROFBXModel cylinder("cylinder_pbr", { 0, -1.5, -3 }, { 0.4, 0.4, 0.4 }, { 0, 0, 0 }, 1, "02_spin");
+    VROFBXModel cylinder("cylinder_pbr", { 0, -1.85, -4 }, { 0.4, 0.4, 0.4 }, { 0, 0, 0 }, 1, "02_spin");
     VROFBXModel dragon("dragon", { 0, -1.5, -6 }, { 0.2, 0.2, 0.2 }, { 0, 0, 0 }, 1, "01");
     VROFBXModel pumpkin("pumpkin", { 0, -1.5, -3 }, { 1, 1, 1 }, { 0, 0, 0 }, 1, "02");
     
+    _models.push_back({ cylinder });
     _models.push_back({ bumblebeecar });
     _models.push_back({ worm });
     _models.push_back({ cars, city, floorplan, labels, logo });
     _models.push_back({ panther });
-    _models.push_back({ cylinder });
     _models.push_back({ dragon });
     _models.push_back({ lamborghini });
     _models.push_back({ pumpkin });

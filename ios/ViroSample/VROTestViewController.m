@@ -80,7 +80,7 @@ static const bool kSceneCheckeredBackground = NO;
             session->setNumberOfTrackedImages(1);
         }
         
-        [self testVideoRecording];
+        //[self testVideoRecording];
         //[self testScreenshot];
     }
     else {
