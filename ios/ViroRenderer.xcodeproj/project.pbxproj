@@ -1617,7 +1617,6 @@
 		A5B433ED204E659A00E9EE53 /* VROFixedParticleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B433EA204E64A500E9EE53 /* VROFixedParticleEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B433EE204E65B600E9EE53 /* VROFixedParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B433EB204E64A500E9EE53 /* VROFixedParticleEmitter.cpp */; };
 		A5B4AF0920535CDE0006D970 /* VROPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B4AF0620535CDA0006D970 /* VROPolygon.cpp */; };
-		A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; };
 		A5B4AF0B20535D460006D970 /* VROPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5BE9E1020E14F2200DB4E7A /* CesiumMan.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E0F20E14F2200DB4E7A /* CesiumMan.glb */; };
 		A5BE9E1220E14F3F00DB4E7A /* Monster.glb in Resources */ = {isa = PBXBuildFile; fileRef = A5BE9E1120E14F3F00DB4E7A /* Monster.glb */; };
@@ -5520,7 +5519,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5B4AF0A20535CFD0006D970 /* VROPolygon.h in Resources */,
 				A547DB6C2022ED0700C8FE67 /* brdf_fsh.glsl in Resources */,
 				A547DB6D2022ED0700C8FE67 /* brdf_vsh.glsl in Resources */,
 				A597F8E8201AB9EE007EE387 /* prefilter_convolution_fsh.glsl in Resources */,
