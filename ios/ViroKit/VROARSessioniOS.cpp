@@ -47,7 +47,6 @@
 #include "VROBox.h"
 #include "VROProjector.h"
 #include "VROARCameraiOS.h"
-#include "VROARImageTracker.h"
 #include "VROVisionModel.h"
 #include "VROTrackingHelper.h"
 

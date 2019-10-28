@@ -59,11 +59,6 @@
 #include "VROBodyRecognitionTest.h"
 #include "VROBodyMesherTest.h"
 
-#if VRO_PLATFORM_IOS
-#include "VROARImageTrackingTest.h"
-#include "VROARObjectTrackingTest.h"
-#endif
-
 VRORendererTestHarness::VRORendererTestHarness(std::shared_ptr<VRORenderer> renderer,
                                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                std::shared_ptr<VRODriver> driver) :
@@ -129,12 +124,6 @@ std::shared_ptr<VRORendererTest> VRORendererTestHarness::createTest(VRORendererT
             return std::make_shared<VROARPlaneTest>();
         case VRORendererTestType::ARDraggableNode:
             return std::make_shared<VROARDraggableNodeTest>();
-#if VRO_PLATFORM_IOS
-        case VRORendererTestType::ARImageTracking:
-            return std::make_shared<VROARImageTrackingTest>();
-        case VRORendererTestType::ARObjectTracking:
-            return std::make_shared<VROARObjectTrackingTest>();
-#endif
         case VRORendererTestType::Portal:
             return std::make_shared<VROPortalTest>();
         case VRORendererTestType::Shadow:
