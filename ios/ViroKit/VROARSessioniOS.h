@@ -41,7 +41,7 @@ class VROVideoTextureCacheOpenGL;
 class VROTrackingHelper;
 @class VROARKitSessionDelegate;
 
-class VROARSessioniOS : public VROARSession, public std::enable_shared_from_this<VROARSessioniOS> {
+class API_AVAILABLE(ios(12.0)) VROARSessioniOS : public VROARSession, public std::enable_shared_from_this<VROARSessioniOS> {
 public:
     
     VROARSessioniOS(VROTrackingType trackingType,
@@ -238,7 +238,7 @@ private:
 /*
  Delegate for ARKit's ARSession.
  */
-@interface VROARKitSessionDelegate : NSObject<ARSessionDelegate>
+API_AVAILABLE(ios(12.0)) @interface VROARKitSessionDelegate : NSObject<ARSessionDelegate> 
 
 - (id)initWithSession:(std::shared_ptr<VROARSessioniOS>)session;
 
