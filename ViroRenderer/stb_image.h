@@ -1491,18 +1491,18 @@ static unsigned char *stbi__convert_format(unsigned char *data, int img_n, int r
       // convert source image with img_n components to one with req_comp components;
       // avoid switch per pixel, so use switch per scanline and massive macros
       switch (STBI__COMBO(img_n, req_comp)) {
-         STBI__CASE(1,2) { dest[0]=src[0], dest[1]=255;                                     } break;
-         STBI__CASE(1,3) { dest[0]=dest[1]=dest[2]=src[0];                                  } break;
-         STBI__CASE(1,4) { dest[0]=dest[1]=dest[2]=src[0], dest[3]=255;                     } break;
-         STBI__CASE(2,1) { dest[0]=src[0];                                                  } break;
-         STBI__CASE(2,3) { dest[0]=dest[1]=dest[2]=src[0];                                  } break;
-         STBI__CASE(2,4) { dest[0]=dest[1]=dest[2]=src[0], dest[3]=src[1];                  } break;
-         STBI__CASE(3,4) { dest[0]=src[0],dest[1]=src[1],dest[2]=src[2],dest[3]=255;        } break;
-         STBI__CASE(3,1) { dest[0]=stbi__compute_y(src[0],src[1],src[2]);                   } break;
-         STBI__CASE(3,2) { dest[0]=stbi__compute_y(src[0],src[1],src[2]), dest[1] = 255;    } break;
-         STBI__CASE(4,1) { dest[0]=stbi__compute_y(src[0],src[1],src[2]);                   } break;
-         STBI__CASE(4,2) { dest[0]=stbi__compute_y(src[0],src[1],src[2]), dest[1] = src[3]; } break;
-         STBI__CASE(4,3) { dest[0]=src[0],dest[1]=src[1],dest[2]=src[2];                    } break;
+              STBI__CASE(1,2) { static_cast<void>(dest[0]=src[0]), dest[1]=255;                                     } break;
+              STBI__CASE(1,3) { dest[0]=dest[1]=dest[2]=src[0];                                  } break;
+              STBI__CASE(1,4) { static_cast<void>(dest[0]=dest[1]=dest[2]=src[0]), dest[3]=255;                     } break;
+              STBI__CASE(2,1) { dest[0]=src[0];                                                  } break;
+              STBI__CASE(2,3) { dest[0]=dest[1]=dest[2]=src[0];                                  } break;
+              STBI__CASE(2,4) { static_cast<void>(dest[0]=dest[1]=dest[2]=src[0]), dest[3]=src[1];                  } break;
+              STBI__CASE(3,4) { static_cast<void>(dest[0]=src[0]), static_cast<void>(dest[1]=src[1]), static_cast<void>(dest[2]=src[2]),dest[3]=255;        } break;
+              STBI__CASE(3,1) { dest[0]=stbi__compute_y(src[0],src[1],src[2]);                   } break;
+              STBI__CASE(3,2) { static_cast<void>(dest[0]=stbi__compute_y(src[0], src[1], src[2])), dest[1] = 255;    } break;
+              STBI__CASE(4,1) { dest[0]=stbi__compute_y(src[0],src[1],src[2]);                   } break;
+              STBI__CASE(4,2) { static_cast<void>(dest[0]=stbi__compute_y(src[0], src[1], src[2])), dest[1] = src[3]; } break;
+              STBI__CASE(4,3) { static_cast<void>(dest[0]=src[0]), static_cast<void>(dest[1]=src[1]), static_cast<void>(dest[2]=src[2]);                    } break;
          default: STBI_ASSERT(0);
       }
       #undef STBI__CASE
@@ -1540,18 +1540,18 @@ static stbi__uint16 *stbi__convert_format16(stbi__uint16 *data, int img_n, int r
       // convert source image with img_n components to one with req_comp components;
       // avoid switch per pixel, so use switch per scanline and massive macros
       switch (STBI__COMBO(img_n, req_comp)) {
-         STBI__CASE(1,2) { dest[0]=src[0], dest[1]=0xffff;                                     } break;
+         STBI__CASE(1,2) { static_cast<void>(dest[0]=src[0]), dest[1]=0xffff;                                     } break;
          STBI__CASE(1,3) { dest[0]=dest[1]=dest[2]=src[0];                                     } break;
-         STBI__CASE(1,4) { dest[0]=dest[1]=dest[2]=src[0], dest[3]=0xffff;                     } break;
+         STBI__CASE(1,4) { static_cast<void>(dest[0]=dest[1]=dest[2]=src[0]), dest[3]=0xffff;                     } break;
          STBI__CASE(2,1) { dest[0]=src[0];                                                     } break;
          STBI__CASE(2,3) { dest[0]=dest[1]=dest[2]=src[0];                                     } break;
-         STBI__CASE(2,4) { dest[0]=dest[1]=dest[2]=src[0], dest[3]=src[1];                     } break;
-         STBI__CASE(3,4) { dest[0]=src[0],dest[1]=src[1],dest[2]=src[2],dest[3]=0xffff;        } break;
+         STBI__CASE(2,4) { static_cast<void>(dest[0]=dest[1]=dest[2]=src[0]), dest[3]=src[1];                     } break;
+         STBI__CASE(3,4) { static_cast<void>(dest[0]=src[0]), static_cast<void>(dest[1]=src[1]), static_cast<void>(dest[2]=src[2]),dest[3]=0xffff;        } break;
          STBI__CASE(3,1) { dest[0]=stbi__compute_y_16(src[0],src[1],src[2]);                   } break;
-         STBI__CASE(3,2) { dest[0]=stbi__compute_y_16(src[0],src[1],src[2]), dest[1] = 0xffff; } break;
+         STBI__CASE(3,2) { static_cast<void>(dest[0]=stbi__compute_y_16(src[0],src[1],src[2])), dest[1] = 0xffff; } break;
          STBI__CASE(4,1) { dest[0]=stbi__compute_y_16(src[0],src[1],src[2]);                   } break;
-         STBI__CASE(4,2) { dest[0]=stbi__compute_y_16(src[0],src[1],src[2]), dest[1] = src[3]; } break;
-         STBI__CASE(4,3) { dest[0]=src[0],dest[1]=src[1],dest[2]=src[2];                       } break;
+         STBI__CASE(4,2) { static_cast<void>(dest[0]=stbi__compute_y_16(src[0],src[1],src[2])), dest[1] = src[3]; } break;
+         STBI__CASE(4,3) { static_cast<void>(dest[0]=src[0]), static_cast<void>(dest[1]=src[1]), static_cast<void>(dest[2]=src[2]);                       } break;
          default: STBI_ASSERT(0);
       }
       #undef STBI__CASE
@@ -3668,7 +3668,7 @@ static stbi_uc *load_jpeg_image(stbi__jpeg *z, int *out_x, int *out_y, int *comp
                if (n == 1)
                   for (i=0; i < z->s->img_x; ++i) out[i] = y[i];
                else
-                  for (i=0; i < z->s->img_x; ++i) *out++ = y[i], *out++ = 255;
+                  for (i=0; i < z->s->img_x; ++i) static_cast<void>(*out++ = y[i]), *out++ = 255;
             }
          }
       }
@@ -4945,11 +4945,11 @@ static int stbi__high_bit(unsigned int z)
 {
    int n=0;
    if (z == 0) return -1;
-   if (z >= 0x10000) n += 16, z >>= 16;
-   if (z >= 0x00100) n +=  8, z >>=  8;
-   if (z >= 0x00010) n +=  4, z >>=  4;
-   if (z >= 0x00004) n +=  2, z >>=  2;
-   if (z >= 0x00002) n +=  1, z >>=  1;
+    if (z >= 0x10000) static_cast<void>(n += 16), z >>= 16;
+    if (z >= 0x00100) static_cast<void>(n +=  8), z >>=  8;
+    if (z >= 0x00010) static_cast<void>(n +=  4), z >>=  4;
+    if (z >= 0x00004) static_cast<void>(n +=  2), z >>=  2;
+    if (z >= 0x00002) static_cast<void>(n +=  1), z >>=  1;
    return n;
 }
 
@@ -5212,7 +5212,7 @@ static void *stbi__bmp_load(stbi__context *s, int *x, int *y, int *comp, int req
          stbi_uc *p1 = out +      j     *s->img_x*target;
          stbi_uc *p2 = out + (s->img_y-1-j)*s->img_x*target;
          for (i=0; i < (int) s->img_x*target; ++i) {
-            t = p1[i], p1[i] = p2[i], p2[i] = t;
+             static_cast<void>(t = p1[i]), static_cast<void>(p1[i] = p2[i]), static_cast<void>(p2[i] = t);
          }
       }
    }
