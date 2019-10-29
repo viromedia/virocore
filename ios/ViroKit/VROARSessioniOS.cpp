@@ -267,13 +267,15 @@ void VROARSessioniOS::setWorldOrigin(VROMatrix4f relativeTransform) {
 
 void VROARSessioniOS::setNumberOfTrackedImages(int numImages) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
-    if (@available(iOS 12.0, *) && _session && _sessionConfiguration) {
-        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-            ((ARWorldTrackingConfiguration *) _sessionConfiguration).maximumNumberOfTrackedImages = numImages;
-        } else if ([_sessionConfiguration isKindOfClass:[ARImageTrackingConfiguration class]]) {
-            ((ARImageTrackingConfiguration *) _sessionConfiguration).maximumNumberOfTrackedImages = numImages;
+    if (@available(iOS 12.0, *)) {
+        if (_session && _sessionConfiguration) {
+            if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+                ((ARWorldTrackingConfiguration *) _sessionConfiguration).maximumNumberOfTrackedImages = numImages;
+            } else if ([_sessionConfiguration isKindOfClass:[ARImageTrackingConfiguration class]]) {
+                ((ARImageTrackingConfiguration *) _sessionConfiguration).maximumNumberOfTrackedImages = numImages;
+            }
+            [_session runWithConfiguration:_sessionConfiguration];
         }
-        [_session runWithConfiguration:_sessionConfiguration];
     }
 #endif
 }
@@ -293,12 +295,13 @@ bool VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
                 detectionTypes = detectionTypes | ARPlaneDetectionHorizontal;
             }
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-            else if (@available(iOS 11.3, *) && types.find(VROAnchorDetection::PlanesVertical) != types.end()) {
-                detectionTypes = detectionTypes | ARPlaneDetectionVertical;
+            else if (@available(iOS 11.3, *)) {
+                if (types.find(VROAnchorDetection::PlanesVertical) != types.end()) {
+                    detectionTypes = detectionTypes | ARPlaneDetectionVertical;
+                }
             }
 #endif
             ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = detectionTypes;
-
         }
     }
 
@@ -604,22 +607,22 @@ void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAncho
             pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
         }
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-        else if (@available(iOS 11.3, *) && planeAnchor.alignment == ARPlaneAnchorAlignmentVertical) {
-            pAnchor->setAlignment(VROARPlaneAlignment::Vertical);
-        }
-
-        if (@available(iOS 11.3, *) && planeAnchor.geometry && planeAnchor.geometry.boundaryVertices && planeAnchor.geometry.boundaryVertexCount > 0) {
-            std::vector<VROVector3f> points;
-            for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i++) {
-                vector_float3 vertex = planeAnchor.geometry.boundaryVertices[i];
-                SCNVector3 vector3 = SCNVector3FromFloat3(vertex);
-
-                VROVector3f boundaryVertexFromAnchor = VROVector3f(vector3.x, vector3.y, vector3.z);
-                VROVector3f boundaryVertexFromCenter = boundaryVertexFromAnchor - pAnchor->getCenter();
-                points.push_back(boundaryVertexFromCenter);
+        else if (@available(iOS 11.3, *)) {
+            if (planeAnchor.alignment == ARPlaneAnchorAlignmentVertical) {
+                pAnchor->setAlignment(VROARPlaneAlignment::Vertical);
             }
-
-            pAnchor->setBoundaryVertices(points);
+            if (planeAnchor.geometry && planeAnchor.geometry.boundaryVertices && planeAnchor.geometry.boundaryVertexCount > 0) {
+                std::vector<VROVector3f> points;
+                for (int i = 0; i < planeAnchor.geometry.boundaryVertexCount; i++) {
+                    vector_float3 vertex = planeAnchor.geometry.boundaryVertices[i];
+                    SCNVector3 vector3 = SCNVector3FromFloat3(vertex);
+                    
+                    VROVector3f boundaryVertexFromAnchor = VROVector3f(vector3.x, vector3.y, vector3.z);
+                    VROVector3f boundaryVertexFromCenter = boundaryVertexFromAnchor - pAnchor->getCenter();
+                    points.push_back(boundaryVertexFromCenter);
+                }
+                pAnchor->setBoundaryVertices(points);
+            }
         }
 #endif
     }
@@ -638,24 +641,38 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
     }
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     // ignore the warning. The curious thing is that we don't even need the @available() check...
-    else if (@available(iOS 11.3, *) && [anchor isKindOfClass:[ARImageAnchor class]]) {
-        ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
-        auto it = _arKitReferenceImageMap.find(imageAnchor.referenceImage);
-        if (it != _arKitReferenceImageMap.end()) {
-            std::shared_ptr<VROARImageTarget> target = it->second;
-            vAnchor = std::make_shared<VROARImageAnchor>(target, VROARImageTrackingMethod::Tracking);
-            target->setAnchor(vAnchor);
+    else if (@available(iOS 11.3, *)) {
+        if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+            ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
+            auto it = _arKitReferenceImageMap.find(imageAnchor.referenceImage);
+            if (it != _arKitReferenceImageMap.end()) {
+                std::shared_ptr<VROARImageTarget> target = it->second;
+                vAnchor = std::make_shared<VROARImageAnchor>(target, VROARImageTrackingMethod::Tracking);
+                target->setAnchor(vAnchor);
+            }
         }
     }
 #endif
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
-    else if(@available(iOS 12.0, *) && [anchor isKindOfClass:[ARObjectAnchor class]]) {
-        ARObjectAnchor *objAnchor = (ARObjectAnchor *)anchor;
-        auto it = _arKitReferenceObjectMap.find(objAnchor.referenceObject);
-        if (it != _arKitReferenceObjectMap.end()) {
-            std::shared_ptr<VROARObjectTarget> target = it->second;
-            vAnchor = std::make_shared<VROARObjectAnchor>(target);
-            target->setAnchor(vAnchor);
+    else if(@available(iOS 12.0, *)) {
+        if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+            ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
+            auto it = _arKitReferenceImageMap.find(imageAnchor.referenceImage);
+            if (it != _arKitReferenceImageMap.end()) {
+                std::shared_ptr<VROARImageTarget> target = it->second;
+                vAnchor = std::make_shared<VROARImageAnchor>(target, VROARImageTrackingMethod::Tracking);
+                target->setAnchor(vAnchor);
+            }
+        }
+        
+        if ([anchor isKindOfClass:[ARObjectAnchor class]]) {
+            ARObjectAnchor *objAnchor = (ARObjectAnchor *)anchor;
+            auto it = _arKitReferenceObjectMap.find(objAnchor.referenceObject);
+            if (it != _arKitReferenceObjectMap.end()) {
+                std::shared_ptr<VROARObjectTarget> target = it->second;
+                vAnchor = std::make_shared<VROARObjectAnchor>(target);
+                target->setAnchor(vAnchor);
+            }
         }
     }
 #endif
