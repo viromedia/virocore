@@ -122,7 +122,7 @@ void VROGaussianBlurRenderPass::initBlurPass(std::shared_ptr<VRODriver> driver) 
     std::vector<float> kernelOffsets = {};
     std::vector<float> kernelWeight = calculateKernel(_sigma, _kernelSize, 1000);
     float count = 0;
-    for (auto k : kernelWeight) {
+    for (int i = 0; i < (int) kernelWeight.size(); i++) {
         kernelOffsets.push_back(count);
         count = count + 1.0;
     }

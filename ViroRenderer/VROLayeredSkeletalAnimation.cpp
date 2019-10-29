@@ -59,7 +59,7 @@ void VROSkeletalAnimationLayerInternal::buildKeyframes() {
 
 void VROLayeredSkeletalAnimation::flattenAnimationChain(std::shared_ptr<VROAnimationChain> chain, std::vector<std::shared_ptr<VROExecutableAnimation>> *animations) {
     
-    for (const std::shared_ptr<VROExecutableAnimation> child : chain->getAnimations()) {
+    for (const std::shared_ptr<VROExecutableAnimation> &child : chain->getAnimations()) {
         std::shared_ptr<VROAnimationChain> childChain = std::dynamic_pointer_cast<VROAnimationChain>(child);
         if (childChain) {
             flattenAnimationChain(childChain, animations);
@@ -76,7 +76,7 @@ std::shared_ptr<VROExecutableAnimation> VROLayeredSkeletalAnimation::createLayer
     std::map<std::shared_ptr<VROSkinner>, std::vector<std::shared_ptr<VROSkeletalAnimationLayerInternal>>> skeletalLayers;
     float maxDuration = 0;
     
-    for (const std::shared_ptr<VROSkeletalAnimationLayer> layer : layers) {
+    for (const std::shared_ptr<VROSkeletalAnimationLayer> &layer : layers) {
         std::shared_ptr<VROExecutableAnimation> animation = layer->animation;
         
         // Recombine the skeletal animations found into new layered skeletal animations (we drop the input
@@ -88,7 +88,7 @@ std::shared_ptr<VROExecutableAnimation> VROLayeredSkeletalAnimation::createLayer
             
             std::vector<std::shared_ptr<VROExecutableAnimation>> skeletalAnimationsInChain;
             
-            for (const std::shared_ptr<VROExecutableAnimation> child : animationsInChain) {
+            for (const std::shared_ptr<VROExecutableAnimation> &child : animationsInChain) {
                 std::shared_ptr<VROSkeletalAnimation> skeletal = nullptr;
                 
                 std::shared_ptr<VROExecutableNodeAnimation> nodeAnimation = std::dynamic_pointer_cast<VROExecutableNodeAnimation>(child);

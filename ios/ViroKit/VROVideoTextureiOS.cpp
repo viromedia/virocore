@@ -521,12 +521,12 @@ CMSampleBufferRef VROVideoTextureiOS::getSampleBuffer() const {
                 _buffering = !item.playbackLikelyToKeepUp;
                 if (item.playbackLikelyToKeepUp) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        _texture->playerDidBuffer();
+                        self->_texture->playerDidBuffer();
                     });
                 } else {
                     [self.player pause];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        _texture->playerWillBuffer();
+                        self->_texture->playerWillBuffer();
                     });
                 }
             }

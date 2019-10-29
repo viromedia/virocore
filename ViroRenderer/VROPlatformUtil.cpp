@@ -55,7 +55,7 @@ std::string VROPlatformLoadFileAsString(std::string path) {
     if (input) {
         std::string contents;
         input.seekg(0, std::ios::end);
-        contents.resize(input.tellg());
+        contents.resize((size_t) input.tellg());
         input.seekg(0, std::ios::beg);
         input.read(&contents[0], contents.size());
         input.close();

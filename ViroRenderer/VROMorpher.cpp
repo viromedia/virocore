@@ -144,7 +144,7 @@ void VROMorpher::configureShadersGPU() {
     for (auto target : _morphTargets) {
         target.second->isActive = false;
         int attribs = target.second->isCPU ?
-                           target.second->geometryVecs.size() : target.second->geometrySources.size();
+                           (int) target.second->geometryVecs.size() : (int) target.second->geometrySources.size();
         gpuKeyWeightPairs.push_back(std::make_pair(target.first, target.second->startWeight));
         totalAttribs += attribs;
     }
@@ -170,7 +170,7 @@ void VROMorpher::configureShadersGPU() {
     for (int i = 0; i < gpuKeyWeightPairs.size(); i ++) {
         std::shared_ptr<VROMorphTarget> &target = _morphTargets[gpuKeyWeightPairs[i].first];
 
-        int attribs = target->isCPU ? target->geometryVecs.size() : target->geometrySources.size();
+        int attribs = target->isCPU ? (int) target->geometryVecs.size() : (int) target->geometrySources.size();
         if (includedAttribs + attribs <= kMaxSupportedAttirbutes) {
             includedAttribs += attribs;
             target->isActive = true;
@@ -375,7 +375,6 @@ bool VROMorpher::update(std::vector<std::shared_ptr<VROGeometrySource>> &geometr
      Handle the CPU / Hybrid case, where we handle weight calculations on the CPU, after which
      the calculated targets are then loaded in to the GPU vertex shaders.
      */
-    std::vector<std::shared_ptr<VROGeometrySource>>::iterator it = geometrySources.begin();
     geometrySources.erase(
             std::remove_if(geometrySources.begin(), geometrySources.end(),
                            [this](const std::shared_ptr<VROGeometrySource>& src) {
@@ -410,9 +409,9 @@ void VROMorpher::processMorphTargets(bool isBaseAttribute,
     float *sourcesPos = originalMorPosVec.size() > 0 ? new float[originalMorPosVec.size() * 3] : nullptr;
     float *sourcesNorm = originalMorNormVec.size() > 0 ? new float[originalMorNormVec.size() * 3] : nullptr;
     float *sourcesTangent = originalMorTangentVec.size() > 0 ? new float[originalMorTangentVec.size() * 4] : nullptr;
-    resetSrc3(sourcesPos, originalMorPosVec.size());
-    resetSrc3(sourcesNorm, originalMorNormVec.size());
-    resetSrc4(sourcesTangent, originalMorTangentVec.size());
+    resetSrc3(sourcesPos, (int) originalMorPosVec.size());
+    resetSrc3(sourcesNorm, (int) originalMorNormVec.size());
+    resetSrc4(sourcesTangent, (int) originalMorTangentVec.size());
 
     // Create net morph target sources starting with this geometry's original base data.
     addWeightedMorphToSrc3(sourcesPos, originalMorPosVec, 1.0);
@@ -699,7 +698,7 @@ std::shared_ptr<VROGeometrySource> VROMorpher::convertVecToGeoSource(
     }
 
     float *sourcesData = (dataVecIn.size() > 0) ? new float[dataVecIn.size() * componentsPerVertex] : nullptr;
-    int morphSize = dataVecIn.size();
+    int morphSize = (int) dataVecIn.size();
     for (int i = 0; i < morphSize; i ++) {
         sourcesData[ i * componentsPerVertex]           = dataVecIn[i].x;
         sourcesData[(i * componentsPerVertex) + 1]      = dataVecIn[i].y;
@@ -775,7 +774,7 @@ void VROMorpher::addMorphModifier(int morphTargetIndex, std::string &code, bool 
 inline void VROMorpher::addWeightedMorphToSrc3(float *srcDataOut,
                                                std::vector<VROVector4f> &morphData,
                                                float weight) {
-    int morphSize = morphData.size();
+    int morphSize = (int) morphData.size();
     for (int i = 0; i < morphSize; i ++) {
         srcDataOut[i *  3]      += (morphData[i].x * (weight));
         srcDataOut[(i * 3) + 1] += (morphData[i].y * (weight));
@@ -786,7 +785,7 @@ inline void VROMorpher::addWeightedMorphToSrc3(float *srcDataOut,
 inline void VROMorpher::addWeightedMorphToSrc4(float *srcDataOut,
                                                std::vector<VROVector4f> &morphData,
                                                float weight) {
-    int morphSize = morphData.size();
+    int morphSize = (int) morphData.size();
     for (int i = 0; i < morphSize; i ++) {
         srcDataOut[i *  4]       += (morphData[i].x * (weight));
         srcDataOut[(i * 4) + 1] += (morphData[i].y * (weight));

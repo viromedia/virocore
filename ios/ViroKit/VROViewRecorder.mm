@@ -152,7 +152,7 @@
                 [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
                     // just call this function again because we'll check for permission state again.
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:_errorBlock];
+                        [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:self->_errorBlock];
                     });
                 }];
                 return;
@@ -174,7 +174,7 @@
             case PHAuthorizationStatusNotDetermined:
                 [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:_errorBlock];
+                        [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:self->_errorBlock];
                     });
                 }];
                 return;
@@ -243,23 +243,23 @@
     }
     // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
     VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSURL *gifPath, NSInteger errorCode) {
-        NSURL *videoURL = [self checkAndGetTempFileURL:[_videoFileName stringByAppendingString:kVROViewVideoSuffix]];
-        NSURL *targetedAudioURL = _overwrittenAudioFilePath == NULL ? _tempAudioFilePath : _overwrittenAudioFilePath;
+        NSURL *videoURL = [self checkAndGetTempFileURL:[self->_videoFileName stringByAppendingString:kVROViewVideoSuffix]];
+        NSURL *targetedAudioURL = self->_overwrittenAudioFilePath == NULL ? self->_tempAudioFilePath : self->_overwrittenAudioFilePath;
         
         // Once the video finishes writing, we'll need to generate the final video file from the
         // temp video output. We'll also need to merge any video w/ audio, if any.
         [self generateFinalVideoFile:targetedAudioURL withVideo:filepath outputPath:videoURL completionHandler:^(BOOL success) {
             // delete the temp audio/video files.
             NSFileManager *fileManager = [NSFileManager defaultManager];
-            [fileManager removeItemAtPath:[_tempVideoFilePath path] error:nil];
+            [fileManager removeItemAtPath:[self->_tempVideoFilePath path] error:nil];
             
             // Remove any temporary audio file path, if any.
-            if (_tempAudioFilePath) {
-                [fileManager removeItemAtPath:[_tempAudioFilePath path] error:nil];
+            if (self->_tempAudioFilePath) {
+                [fileManager removeItemAtPath:[self->_tempAudioFilePath path] error:nil];
             }
             
             if (success) {
-                if (_saveToCameraRoll) {
+                if (self->_saveToCameraRoll) {
                     [self writeMediaToCameraRoll:videoURL isPhoto:NO gifPath:gifPath withCompletionHandler:completionHandler];
                 } else {
                     completionHandler(YES, videoURL, gifPath, kVROViewErrorNone);
@@ -267,11 +267,11 @@
             } else {
                 completionHandler(NO, nil, gifPath, kVROViewErrorUnknown);
             }
-            _saveToCameraRoll = NO;
-            _isRecording = NO;
+            self->_saveToCameraRoll = NO;
+            self->_isRecording = NO;
             // we're done with watermarking!
-            _addWatermark = NO;
-            _saveGif = NO;
+            self->_addWatermark = NO;
+            self->_saveGif = NO;
         }];
         
     };
@@ -735,20 +735,20 @@
             // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
             [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
             [_videoWriter finishWritingWithCompletionHandler:^(void) {
-                if (_videoWriter.status == AVAssetWriterStatusCompleted && gifSaveSuccess) {
+                if (self->_videoWriter.status == AVAssetWriterStatusCompleted && gifSaveSuccess) {
                     if (completionHandler) {
-                        completionHandler(YES, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorNone);
+                        completionHandler(YES, self->_tempVideoFilePath, self->_tempGifFilePath, kVROViewErrorNone);
                     }
                 } else {
                     if (gifSaveSuccess) {
-                        NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
+                        NSLog(@"[Recording] Failed writing to file: %@", self->_videoWriter.error ? [self->_videoWriter.error localizedDescription] : @"Unknown error");
                         if (completionHandler) {
-                            completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteToFile);
+                            completionHandler(NO, self->_tempVideoFilePath, self->_tempGifFilePath, kVROViewErrorWriteToFile);
                         }
                     } else {
                         NSLog(@"[Recording] Finalizing GIF failed");
                         if (completionHandler) {
-                            completionHandler(NO, _tempVideoFilePath, _tempGifFilePath, kVROViewErrorWriteGifToFile);
+                            completionHandler(NO, self->_tempVideoFilePath, self->_tempGifFilePath, kVROViewErrorWriteGifToFile);
                         }
                     }
                 }
