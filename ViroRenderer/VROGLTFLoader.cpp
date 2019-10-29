@@ -313,7 +313,7 @@ void VROGLTFLoader::loadGLTFFromResource(std::string gltfManifestFilePath, const
                         // those nodes along the way.
                         bool success = true;
                         std::shared_ptr<VRONode> gltfRootNode = std::make_shared<VRONode>();
-                        for (const tinygltf::Scene gScene : model.scenes) {
+                        for (const tinygltf::Scene &gScene : model.scenes) {
                             if (!processScene(model, gltfRootNode, gScene, driver)) {
                                 success = false;
                                 break;
@@ -657,7 +657,7 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
         }
         
         // Always assume that all primitives have the same amount of targets.
-        numberOfMorphTargets = gModel.meshes[meshIndex].primitives.front().targets.size();
+        numberOfMorphTargets = (int) gModel.meshes[meshIndex].primitives.front().targets.size();
     }
 
     // Calculate the byte stride size if none is provided from the BufferView.
@@ -684,13 +684,13 @@ bool VROGLTFLoader::processRawChannelData(const tinygltf::Model &gModel,
     } else if (VROStringUtil::strcmpinsensitive(channelProperty, "weights")) {
         if ((elementCount != (framesOut.size() * numberOfMorphTargets))) {
             perr("Animation frame %s do not match number of morph keyframes %d, %d",
-                 channelProperty.c_str(), elementCount, framesOut.size() * numberOfMorphTargets);
+                 channelProperty.c_str(), (int) elementCount, (int) (framesOut.size() * numberOfMorphTargets));
             return false;
         }
     } else if (elementCount != framesOut.size()) {
         // Else if we are processing an output channel (animation data relating to key frames),
         // ensure that the size of the data aligns with the number of expected key frames.
-        perr("Animation frame %s do not match number of keyframes %d, %d", channelProperty.c_str(), elementCount, framesOut.size());
+        perr("Animation frame %s do not match number of keyframes %d, %d", channelProperty.c_str(), (int) elementCount, (int) framesOut.size());
         return false;
     }
 
@@ -914,7 +914,7 @@ void VROGLTFLoader::flattenSkeletalKeyframeAnimations(std::map<int, std::pair<in
             }
 
             if (chosenNumberOfFrames == -1) {
-                chosenNumberOfFrames = keyframeAnimations.front()->getFrames().size();
+                chosenNumberOfFrames = (int) keyframeAnimations.front()->getFrames().size();
             }
 
             // Remove the keyframe animations for this node with different time input data

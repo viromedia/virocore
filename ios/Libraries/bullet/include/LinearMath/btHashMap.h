@@ -53,7 +53,7 @@ struct btHashString
 			int ret = 0 ;
 
 			while( ! (ret = *(const unsigned char *)src - *(const unsigned char *)dst) && *dst)
-					++src, ++dst;
+                static_cast<void>(++src), ++dst;
 
 			if ( ret < 0 )
 					ret = -1 ;
