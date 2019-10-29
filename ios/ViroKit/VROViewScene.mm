@@ -328,6 +328,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     [self.viewRecorder stopVideoRecordingWithHandler:completionHandler];
 }
 
+- (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler mergeAudioTrack:(NSURL *)audioPath {
+    // No-op in scene view
+}
+
 - (void)takeScreenshot:(NSString *)fileName
       saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
