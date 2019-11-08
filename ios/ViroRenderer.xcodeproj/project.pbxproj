@@ -929,8 +929,6 @@
 		8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* VROTestRenderDelegate.m */; };
 		8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC81BCDA2BD0017C70B /* Assets.xcassets */; };
 		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
-		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
-		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
 		8F52EA301E1D643000F1AF9D /* VROExecutableAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F52EA2F1E1D643000F1AF9D /* VROExecutableAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F53C8F81E00F03E008314B4 /* tiny_obj_loader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */; };
 		8F53C8F91E00F03E008314B4 /* tiny_obj_loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1357,8 +1355,6 @@
 		8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */; };
 		8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */; };
 		8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DECF1C18ECD4003DC425 /* ViroKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
-		8FD4DEDE1C18ECD4003DC425 /* ViroKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */; };
 		8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F63186B1BD95EA6000A75DF /* VROTime.cpp */; };
 		8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C414F1BD8262D006D7A77 /* VROLog.cpp */; };
 		8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C414C1BD825B1006D7A77 /* VROByteBuffer.cpp */; };
@@ -1649,34 +1645,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8FD4DECC1C18ECD4003DC425;
 			remoteInfo = ViroKit;
-		};
-		8F517BD31BCDA2BD0017C70B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F517BB51BCDA2BD0017C70B;
-			remoteInfo = ViroRenderer;
-		};
-		8F517BDE1BCDA2BE0017C70B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F517BB51BCDA2BD0017C70B;
-			remoteInfo = ViroRenderer;
-		};
-		8FD4DED81C18ECD4003DC425 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FD4DECC1C18ECD4003DC425;
-			remoteInfo = ViroKit;
-		};
-		8FD4DEDA1C18ECD4003DC425 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F517BB51BCDA2BD0017C70B;
-			remoteInfo = ViroRenderer;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2072,12 +2040,6 @@
 		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ViroSample/Assets.xcassets; sourceTree = "<group>"; };
 		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ViroSample/Info.plist; sourceTree = "<group>"; };
-		8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroRendererTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroRendererTests.m; sourceTree = "<group>"; };
-		8F517BD81BCDA2BE0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8F517BDD1BCDA2BE0017C70B /* ViroRendererUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroRendererUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroRendererUITests.m; sourceTree = "<group>"; };
-		8F517BE31BCDA2BE0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F517BF41BCDBF140017C70B /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		8F517BF51BCDBF140017C70B /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		8F517BF91BCDC8C20017C70B /* VRORenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderContext.h; sourceTree = "<group>"; };
@@ -2513,9 +2475,6 @@
 		8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ViroKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD4DECF1C18ECD4003DC425 /* ViroKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViroKit.h; sourceTree = "<group>"; };
 		8FD4DED11C18ECD4003DC425 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8FD4DED61C18ECD4003DC425 /* ViroKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroKitTests.m; sourceTree = "<group>"; };
-		8FD4DEDF1C18ECD4003DC425 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8FD4DF251C18EDC8003DC425 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -2757,20 +2716,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8F517BCF1BCDA2BD0017C70B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F517BDA1BCDA2BE0017C70B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8FD4DEC91C18ECD4003DC425 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2800,14 +2745,6 @@
 				8FD4DF1F1C18EDA4003DC425 /* CoreMotion.framework in Frameworks */,
 				8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */,
 				EAD7E32D2DFA518AEAAB48C2 /* Pods_ViroKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8FD4DED31C18ECD4003DC425 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3257,9 +3194,6 @@
 				8FD4DECE1C18ECD4003DC425 /* ViroKit */,
 				13F631912065BEEE00A74EFC /* ViroMetricsClient */,
 				8FD4DF2E1C18F31E003DC425 /* ViroSample */,
-				8F517BD51BCDA2BD0017C70B /* ViroRendererTests */,
-				8F517BE01BCDA2BE0017C70B /* ViroRendererUITests */,
-				8FD4DEDC1C18ECD4003DC425 /* ViroKitTests */,
 				8F517BB71BCDA2BD0017C70B /* Products */,
 				8AFCC4B72005627300AD8B8D /* ViroKit.podspec */,
 				95E5BC90E51A0FC2C3AA4D42 /* Frameworks */,
@@ -3271,10 +3205,7 @@
 			isa = PBXGroup;
 			children = (
 				8F517BB61BCDA2BD0017C70B /* ViroSample.app */,
-				8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */,
-				8F517BDD1BCDA2BE0017C70B /* ViroRendererUITests.xctest */,
 				8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */,
-				8FD4DED61C18ECD4003DC425 /* ViroKitTests.xctest */,
 				13B6747A212229B20040FB72 /* ViroKit_static_lib.framework */,
 			);
 			name = Products;
@@ -3306,24 +3237,6 @@
 				8AF0E0891FA928480083CBAE /* point_cloud.png */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		8F517BD51BCDA2BD0017C70B /* ViroRendererTests */ = {
-			isa = PBXGroup;
-			children = (
-				8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */,
-				8F517BD81BCDA2BE0017C70B /* Info.plist */,
-			);
-			path = ViroRendererTests;
-			sourceTree = "<group>";
-		};
-		8F517BE01BCDA2BE0017C70B /* ViroRendererUITests */ = {
-			isa = PBXGroup;
-			children = (
-				8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */,
-				8F517BE31BCDA2BE0017C70B /* Info.plist */,
-			);
-			path = ViroRendererUITests;
 			sourceTree = "<group>";
 		};
 		8F517BF31BCDBBA80017C70B /* VR Distortion */ = {
@@ -3917,15 +3830,6 @@
 				8FD4DED11C18ECD4003DC425 /* Info.plist */,
 			);
 			path = ViroKit;
-			sourceTree = "<group>";
-		};
-		8FD4DEDC1C18ECD4003DC425 /* ViroKitTests */ = {
-			isa = PBXGroup;
-			children = (
-				8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */,
-				8FD4DEDF1C18ECD4003DC425 /* Info.plist */,
-			);
-			path = ViroKitTests;
 			sourceTree = "<group>";
 		};
 		8FD4DF2E1C18F31E003DC425 /* ViroSample */ = {
@@ -5034,42 +4938,6 @@
 			productReference = 8F517BB61BCDA2BD0017C70B /* ViroSample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8F517BD11BCDA2BD0017C70B /* ViroRendererTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8F517BE91BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererTests" */;
-			buildPhases = (
-				8F517BCE1BCDA2BD0017C70B /* Sources */,
-				8F517BCF1BCDA2BD0017C70B /* Frameworks */,
-				8F517BD01BCDA2BD0017C70B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8F517BD41BCDA2BD0017C70B /* PBXTargetDependency */,
-			);
-			name = ViroRendererTests;
-			productName = ViroRendererTests;
-			productReference = 8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		8F517BDC1BCDA2BE0017C70B /* ViroRendererUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8F517BEC1BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererUITests" */;
-			buildPhases = (
-				8F517BD91BCDA2BE0017C70B /* Sources */,
-				8F517BDA1BCDA2BE0017C70B /* Frameworks */,
-				8F517BDB1BCDA2BE0017C70B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8F517BDF1BCDA2BE0017C70B /* PBXTargetDependency */,
-			);
-			name = ViroRendererUITests;
-			productName = ViroRendererUITests;
-			productReference = 8F517BDD1BCDA2BE0017C70B /* ViroRendererUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		8FD4DECC1C18ECD4003DC425 /* ViroKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8FD4DEE41C18ECD4003DC425 /* Build configuration list for PBXNativeTarget "ViroKit" */;
@@ -5093,25 +4961,6 @@
 			productReference = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		8FD4DED51C18ECD4003DC425 /* ViroKitTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8FD4DEE81C18ECD4003DC425 /* Build configuration list for PBXNativeTarget "ViroKitTests" */;
-			buildPhases = (
-				8FD4DED21C18ECD4003DC425 /* Sources */,
-				8FD4DED31C18ECD4003DC425 /* Frameworks */,
-				8FD4DED41C18ECD4003DC425 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8FD4DED91C18ECD4003DC425 /* PBXTargetDependency */,
-				8FD4DEDB1C18ECD4003DC425 /* PBXTargetDependency */,
-			);
-			name = ViroKitTests;
-			productName = ViroKitTests;
-			productReference = 8FD4DED61C18ECD4003DC425 /* ViroKitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -5128,21 +4977,9 @@
 						CreatedOnToolsVersion = 7.0.1;
 						DevelopmentTeam = UN8MD7234Y;
 					};
-					8F517BD11BCDA2BD0017C70B = {
-						CreatedOnToolsVersion = 7.0.1;
-						TestTargetID = 8F517BB51BCDA2BD0017C70B;
-					};
-					8F517BDC1BCDA2BE0017C70B = {
-						CreatedOnToolsVersion = 7.0.1;
-						TestTargetID = 8F517BB51BCDA2BD0017C70B;
-					};
 					8FD4DECC1C18ECD4003DC425 = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = UN8MD7234Y;
-					};
-					8FD4DED51C18ECD4003DC425 = {
-						CreatedOnToolsVersion = 7.1;
-						TestTargetID = 8F517BB51BCDA2BD0017C70B;
 					};
 				};
 			};
@@ -5161,10 +4998,7 @@
 			projectRoot = "";
 			targets = (
 				8F517BB51BCDA2BD0017C70B /* ViroSample */,
-				8F517BD11BCDA2BD0017C70B /* ViroRendererTests */,
-				8F517BDC1BCDA2BE0017C70B /* ViroRendererUITests */,
 				8FD4DECC1C18ECD4003DC425 /* ViroKit */,
-				8FD4DED51C18ECD4003DC425 /* ViroKitTests */,
 				13B67216212229B20040FB72 /* ViroKit_static_lib */,
 			);
 		};
@@ -5465,20 +5299,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8F517BD01BCDA2BD0017C70B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F517BDB1BCDA2BE0017C70B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8FD4DECB1C18ECD4003DC425 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5517,13 +5337,6 @@
 				8F0FE67A1CD3DFF800A4C297 /* image_fsh.glsl in Resources */,
 				8FB3286D203369740026375A /* constant_q_fsh_adreno.glsl in Resources */,
 				8FC6E1DB1CECB376008EFD5F /* constant_q_fsh.glsl in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8FD4DED41C18ECD4003DC425 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6040,22 +5853,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8F517BCE1BCDA2BD0017C70B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F517BD91BCDA2BE0017C70B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8FD4DEC81C18ECD4003DC425 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6334,14 +6131,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8FD4DED21C18ECD4003DC425 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FD4DEDE1C18ECD4003DC425 /* ViroKitTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -6349,26 +6138,6 @@
 			isa = PBXTargetDependency;
 			target = 8FD4DECC1C18ECD4003DC425 /* ViroKit */;
 			targetProxy = 8F129FA81ECF323300341D83 /* PBXContainerItemProxy */;
-		};
-		8F517BD41BCDA2BD0017C70B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8F517BB51BCDA2BD0017C70B /* ViroSample */;
-			targetProxy = 8F517BD31BCDA2BD0017C70B /* PBXContainerItemProxy */;
-		};
-		8F517BDF1BCDA2BE0017C70B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8F517BB51BCDA2BD0017C70B /* ViroSample */;
-			targetProxy = 8F517BDE1BCDA2BE0017C70B /* PBXContainerItemProxy */;
-		};
-		8FD4DED91C18ECD4003DC425 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8FD4DECC1C18ECD4003DC425 /* ViroKit */;
-			targetProxy = 8FD4DED81C18ECD4003DC425 /* PBXContainerItemProxy */;
-		};
-		8FD4DEDB1C18ECD4003DC425 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8F517BB51BCDA2BD0017C70B /* ViroSample */;
-			targetProxy = 8FD4DEDA1C18ECD4003DC425 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -6833,56 +6602,6 @@
 			};
 			name = Release;
 		};
-		8F517BEA1BCDA2BE0017C70B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				INFOPLIST_FILE = ViroRendererTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViroRenderer.app/ViroRenderer";
-			};
-			name = Debug;
-		};
-		8F517BEB1BCDA2BE0017C70B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = ViroRendererTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViroRenderer.app/ViroRenderer";
-			};
-			name = Release;
-		};
-		8F517BED1BCDA2BE0017C70B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				INFOPLIST_FILE = ViroRendererUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = ViroRenderer;
-				USES_XCTRUNNER = YES;
-			};
-			name = Debug;
-		};
-		8F517BEE1BCDA2BE0017C70B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = ViroRendererUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = ViroRenderer;
-				USES_XCTRUNNER = YES;
-			};
-			name = Release;
-		};
 		8FD4DEE51C18ECD4003DC425 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */;
@@ -7087,31 +6806,6 @@
 			};
 			name = Release;
 		};
-		8FD4DEE91C18ECD4003DC425 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				INFOPLIST_FILE = ViroKitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViroRenderer.app/ViroRenderer";
-			};
-			name = Debug;
-		};
-		8FD4DEEA1C18ECD4003DC425 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = ViroKitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViroRenderer.app/ViroRenderer";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -7142,38 +6836,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8F517BE91BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8F517BEA1BCDA2BE0017C70B /* Debug */,
-				8F517BEB1BCDA2BE0017C70B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8F517BEC1BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8F517BED1BCDA2BE0017C70B /* Debug */,
-				8F517BEE1BCDA2BE0017C70B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		8FD4DEE41C18ECD4003DC425 /* Build configuration list for PBXNativeTarget "ViroKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FD4DEE51C18ECD4003DC425 /* Debug */,
 				8FD4DEE61C18ECD4003DC425 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8FD4DEE81C18ECD4003DC425 /* Build configuration list for PBXNativeTarget "ViroKitTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8FD4DEE91C18ECD4003DC425 /* Debug */,
-				8FD4DEEA1C18ECD4003DC425 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
