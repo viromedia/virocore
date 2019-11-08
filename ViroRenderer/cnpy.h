@@ -168,7 +168,7 @@ namespace cnpy {
         size_t nbytes = nels*sizeof(T) + npy_header.size();
 
         //get the CRC of the data to be added
-        uint32_t crc = crc32(0L,(uint8_t*)&npy_header[0],npy_header.size());
+        uint32_t crc = (uint32_t) crc32(0L,(uint8_t*)&npy_header[0], (uInt) npy_header.size());
         crc = crc32(crc,(uint8_t*)data,nels*sizeof(T));
 
         //build the local header

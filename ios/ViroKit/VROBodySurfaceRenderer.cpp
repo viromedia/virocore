@@ -67,7 +67,6 @@ void VROBodySurfaceRenderer::onBodyMeshUpdated(const std::vector<float> &vertice
 
 - (void)drawRect {
     CGContextRef context = UIGraphicsGetCurrentContext();
-    UIFont *font = [UIFont boldSystemFontOfSize:16];
     
     CGContextSetRGBFillColor(context, 0, 1, 0, 1);
     CGContextSetRGBStrokeColor(context, 0, 1, 0, 1);
