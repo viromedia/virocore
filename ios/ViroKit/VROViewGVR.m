@@ -42,7 +42,6 @@
 #import "VROChoreographer.h"
 #import "GVROverlayView.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
-#include "VROMetricsRecorder.h"
 
 @interface VROOverlayViewDelegate : NSObject <GVROverlayViewDelegate>
 

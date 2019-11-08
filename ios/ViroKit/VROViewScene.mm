@@ -38,7 +38,6 @@
 #import "VROInputControllerAR.h"
 #import "VROWeakProxy.h"
 #import "VROViewRecorder.h"
-#import "VROMetricsRecorder.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 

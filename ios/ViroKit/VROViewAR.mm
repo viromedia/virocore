@@ -46,7 +46,6 @@
 #import "VROProjector.h"
 #import "VROWeakProxy.h"
 #import "VROViewRecorder.h"
-#import "VROMetricsRecorder.h"
 #import "VROARCameraInertial.h"
 #import "VRODeviceUtil.h"
 #import "VROCameraTexture.h"
