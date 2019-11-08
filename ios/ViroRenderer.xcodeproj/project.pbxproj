@@ -266,15 +266,6 @@
 		13B6730C212229B20040FB72 /* libLinearMath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65851EB3ECE200FE220E /* libLinearMath.a */; };
 		13B6730D212229B20040FB72 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		13B6730E212229B20040FB72 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDDE2111CD00F2600674DE2 /* CoreText.framework */; };
-		13B6730F212229B20040FB72 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };
-		13B67310212229B20040FB72 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
-		13B67311212229B20040FB72 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */; };
-		13B67312212229B20040FB72 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
-		13B67313212229B20040FB72 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */; };
-		13B67314212229B20040FB72 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF251C18EDC8003DC425 /* UIKit.framework */; };
-		13B67315212229B20040FB72 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */; };
-		13B67316212229B20040FB72 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */; };
-		13B67317212229B20040FB72 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDFA8AA1BDEC32700883EC0 /* GLKit.framework */; };
 		13B67318212229B20040FB72 /* Pods_ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */; };
 		13B6731A212229B20040FB72 /* VROPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B4AF0720535CDA0006D970 /* VROPolygon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		13B6731B212229B20040FB72 /* VROFixedParticleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B433EA204E64A500E9EE53 /* VROFixedParticleEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1212,7 +1203,6 @@
 		8FCB10271DD544FF00FE425C /* VROVideoDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10261DD544FF00FE425C /* VROVideoDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB102B1DD5489E00FE425C /* VROVideoDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10291DD5489E00FE425C /* VROVideoDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB102C1DD548C900FE425C /* VROVideoDelegateInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
 		8FCD02B51FD6F8E0001813D8 /* VRODriverOpenGLiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD02B41FD6F8E0001813D8 /* VRODriverOpenGLiOS.cpp */; };
 		8FCE921F1F44E99900C699D5 /* VROShaderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCE921D1F44E99900C699D5 /* VROShaderFactory.cpp */; };
 		8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCE921E1F44E99900C699D5 /* VROShaderFactory.h */; };
@@ -1254,9 +1244,6 @@
 		8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */; };
 		8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD1E1B61C3F32A50005BE4E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */; };
-		8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
-		8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };
 		8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4F91F8064AD00E831A6 /* emoji_smile_anim.vrx */; };
 		8FD2A4FE1F809AD800E831A6 /* object_star_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FB1F809AD700E831A6 /* object_star_specular.png */; };
@@ -1354,11 +1341,6 @@
 		8FD4DF191C18ED4C003DC425 /* VRODistortionMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */; };
 		8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */; };
 		8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F6318681BD956AF000A75DF /* VROTransaction.cpp */; };
-		8FD4DF1F1C18EDA4003DC425 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */; };
-		8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDFA8AA1BDEC32700883EC0 /* GLKit.framework */; };
-		8FD4DF241C18EDBF003DC425 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */; };
-		8FD4DF261C18EDC8003DC425 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF251C18EDC8003DC425 /* UIKit.framework */; };
-		8FD4DF281C18EDD4003DC425 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */; };
 		8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F152A7C1C11351D00A211F8 /* blank.png */; };
 		8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5C413D1BD56F98006D7A77 /* VROScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071DA1BF67F34003B3C3F /* VROCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1656,7 +1638,6 @@
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
 		782820C4A876FF888106C852 /* libPods-ViroKit_static_lib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroKit_static_lib.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A07C1821ED8D5EA00757C29 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Libraries/opencv/opencv2.framework; sourceTree = "<group>"; };
 		8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8A11C8F41EF5A8E30003E829 /* VROARDeclarativePlane.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARDeclarativePlane.h; sourceTree = "<group>"; };
 		8A11C8F61EF5B2270003E829 /* VROARConstraintMatcher.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARConstraintMatcher.cpp; sourceTree = "<group>"; };
@@ -1977,11 +1958,8 @@
 		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ViroSample/Assets.xcassets; sourceTree = "<group>"; };
 		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ViroSample/Info.plist; sourceTree = "<group>"; };
-		8F517BF41BCDBF140017C70B /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		8F517BF51BCDBF140017C70B /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		8F517BF91BCDC8C20017C70B /* VRORenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderContext.h; sourceTree = "<group>"; };
 		8F517BFC1BCDC9170017C70B /* VRODriverMetal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = VRODriverMetal.h; sourceTree = "<group>"; };
-		8F517C421BCF1CBE0017C70B /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
 		8F517C451BD0474E0017C70B /* VROMath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMath.cpp; sourceTree = "<group>"; };
 		8F517C461BD0474E0017C70B /* VROMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMath.h; sourceTree = "<group>"; };
 		8F52EA2F1E1D643000F1AF9D /* VROExecutableAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROExecutableAnimation.h; sourceTree = "<group>"; };
@@ -2345,9 +2323,6 @@
 		8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoSurface.cpp; sourceTree = "<group>"; };
 		8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoSurface.h; sourceTree = "<group>"; };
 		8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameListener.h; sourceTree = "<group>"; };
-		8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTexture.h; sourceTree = "<group>"; };
 		8FD2A4F91F8064AD00E831A6 /* emoji_smile_anim.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = emoji_smile_anim.vrx; path = ViroSample/emoji_smile_anim.vrx; sourceTree = "<group>"; };
 		8FD2A4FB1F809AD700E831A6 /* object_star_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_star_specular.png; path = ViroSample/object_star_specular.png; sourceTree = "<group>"; };
@@ -2412,9 +2387,6 @@
 		8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ViroKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD4DECF1C18ECD4003DC425 /* ViroKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViroKit.h; sourceTree = "<group>"; };
 		8FD4DED11C18ECD4003DC425 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		8FD4DF251C18EDC8003DC425 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = specular.png; path = ViroSample/specular.png; sourceTree = "<group>"; };
 		8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimationQuaternion.h; sourceTree = "<group>"; };
 		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
@@ -2446,8 +2418,6 @@
 		8FDFA8A31BDEA7F800883EC0 /* SO3Util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SO3Util.mm; sourceTree = "<group>"; };
 		8FDFA8A41BDEA7F800883EC0 /* Vector3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3d.h; sourceTree = "<group>"; };
 		8FDFA8A51BDEA7F800883EC0 /* Vector3d.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Vector3d.mm; sourceTree = "<group>"; };
-		8FDFA8AA1BDEC32700883EC0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		8FE39F7D201FB2C60088A175 /* VROPhotometricLightTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhotometricLightTest.cpp; sourceTree = "<group>"; };
 		8FE39F7E201FB2C70088A175 /* VROPhotometricLightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhotometricLightTest.h; sourceTree = "<group>"; };
 		8FE52F3521E82A8400BA63D4 /* VROObjectRecognitionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROObjectRecognitionTest.cpp; sourceTree = "<group>"; };
@@ -2507,6 +2477,17 @@
 		8FFA8A1320504E7D00C4D99B /* VROTaskQueue.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROTaskQueue.cpp; sourceTree = "<group>"; };
 		8FFA8A1420504E7D00C4D99B /* VROTaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTaskQueue.h; sourceTree = "<group>"; };
 		8FFA8A222057903700C4D99B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		8FFF27C3237518B30090FD9C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		8FFF27C4237518B30090FD9C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		8FFF27C5237518B30090FD9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		8FFF27C6237518B30090FD9C /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
+		8FFF27C7237518B40090FD9C /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		8FFF27C8237518B40090FD9C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8FFF27C9237518B40090FD9C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		8FFF27CA237518B40090FD9C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		8FFF27CB237518B40090FD9C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		8FFF27CC237518B40090FD9C /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		8FFF27CD237518B40090FD9C /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		A2662FF813AA989655ACE1B9 /* Pods-ViroKit_static_lib.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit_static_lib.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit_static_lib/Pods-ViroKit_static_lib.debug.xcconfig"; sourceTree = "<group>"; };
 		A5092866220907DC00BAACE5 /* VROBoneConstraint.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBoneConstraint.cpp; sourceTree = "<group>"; };
 		A5092867220907DC00BAACE5 /* VROBoneConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBoneConstraint.h; sourceTree = "<group>"; };
@@ -2629,15 +2610,6 @@
 				13B6730C212229B20040FB72 /* libLinearMath.a in Frameworks */,
 				13B6730D212229B20040FB72 /* Accelerate.framework in Frameworks */,
 				13B6730E212229B20040FB72 /* CoreText.framework in Frameworks */,
-				13B6730F212229B20040FB72 /* CoreMedia.framework in Frameworks */,
-				13B67310212229B20040FB72 /* CoreVideo.framework in Frameworks */,
-				13B67311212229B20040FB72 /* AVFoundation.framework in Frameworks */,
-				13B67312212229B20040FB72 /* ModelIO.framework in Frameworks */,
-				13B67313212229B20040FB72 /* QuartzCore.framework in Frameworks */,
-				13B67314212229B20040FB72 /* UIKit.framework in Frameworks */,
-				13B67315212229B20040FB72 /* CoreGraphics.framework in Frameworks */,
-				13B67316212229B20040FB72 /* CoreMotion.framework in Frameworks */,
-				13B67317212229B20040FB72 /* GLKit.framework in Frameworks */,
 				13B67318212229B20040FB72 /* Pods_ViroKit.framework in Frameworks */,
 				55EE8FA2030FEBF9DA70D28E /* libPods-ViroKit_static_lib.a in Frameworks */,
 			);
@@ -2672,15 +2644,6 @@
 				A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */,
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
-				8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */,
-				8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */,
-				8FD1E1B61C3F32A50005BE4E /* AVFoundation.framework in Frameworks */,
-				8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */,
-				8FD4DF281C18EDD4003DC425 /* QuartzCore.framework in Frameworks */,
-				8FD4DF261C18EDC8003DC425 /* UIKit.framework in Frameworks */,
-				8FD4DF241C18EDBF003DC425 /* CoreGraphics.framework in Frameworks */,
-				8FD4DF1F1C18EDA4003DC425 /* CoreMotion.framework in Frameworks */,
-				8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */,
 				EAD7E32D2DFA518AEAAB48C2 /* Pods_ViroKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3072,17 +3035,6 @@
 		8F517BAD1BCDA2BD0017C70B = {
 			isa = PBXGroup;
 			children = (
-				8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */,
-				8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */,
-				8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */,
-				8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */,
-				8FD4DF251C18EDC8003DC425 /* UIKit.framework */,
-				8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */,
-				8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */,
-				8FDFA8AA1BDEC32700883EC0 /* GLKit.framework */,
-				8F517C421BCF1CBE0017C70B /* ModelIO.framework */,
-				8F517BF41BCDBF140017C70B /* Metal.framework */,
-				8F517BF51BCDBF140017C70B /* MetalKit.framework */,
 				8F517BB81BCDA2BD0017C70B /* ViroRenderer */,
 				8FD4DECE1C18ECD4003DC425 /* ViroKit */,
 				8FD4DF2E1C18F31E003DC425 /* ViroSample */,
@@ -4015,28 +3967,38 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FFF27CC237518B40090FD9C /* CoreMedia.framework */,
+				8FFF27C9237518B40090FD9C /* CoreVideo.framework */,
+				8FFF27CA237518B40090FD9C /* AVFoundation.framework */,
+				8FFF27C8237518B40090FD9C /* QuartzCore.framework */,
+				8FFF27C5237518B30090FD9C /* UIKit.framework */,
+				8FFF27C3237518B30090FD9C /* CoreGraphics.framework */,
+				8FFF27C7237518B40090FD9C /* CoreMotion.framework */,
+				8FFF27CB237518B40090FD9C /* GLKit.framework */,
+				8FFF27C6237518B30090FD9C /* ModelIO.framework */,
+				8FFF27CD237518B40090FD9C /* Metal.framework */,
+				8FFF27C4237518B30090FD9C /* MetalKit.framework */,
 				8ACA1B6B22A8467000611602 /* MobileCoreServices.framework */,
 				8B9989022146338400EA9ED3 /* Vision.framework */,
 				8B9988FF2143564600EA9ED3 /* CoreML.framework */,
+				8AF39AB51F2295F700229AC0 /* Photos.framework */,
+				8A99E6C41EF1B7B300712D79 /* ARKit.framework */,
+				8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */,
+				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
+				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
+				574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */,
+				E7A7748CC8659A11C76D30F3 /* Pods_ViroSample.framework */,
 				1331B62820C8A03D00D1C5F5 /* libAWSDynamoDB-library.a */,
 				1331B62620C8A03500D1C5F5 /* libAWSCore-library.a */,
 				8F87553520646267002D9BF8 /* harfbuzz.a */,
 				8F951F9220583790000DC58F /* libfreetype.a */,
 				8FFA8A222057903700C4D99B /* libbz2.tbd */,
-				8AF39AB51F2295F700229AC0 /* Photos.framework */,
-				8A99E6C41EF1B7B300712D79 /* ARKit.framework */,
-				8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */,
-				8A07C1821ED8D5EA00757C29 /* opencv2.framework */,
 				8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */,
 				A5EC65821EB3ECE200FE220E /* libBulletCollision.a */,
 				A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */,
 				A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */,
 				A5EC65851EB3ECE200FE220E /* libLinearMath.a */,
-				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
-				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
 				48567375A658D093284ACEDD /* libPods-ViroARKit.a */,
-				574D44685DE21A586EEBF25D /* Pods_ViroKit.framework */,
-				E7A7748CC8659A11C76D30F3 /* Pods_ViroSample.framework */,
 				782820C4A876FF888106C852 /* libPods-ViroKit_static_lib.a */,
 			);
 			name = Frameworks;
