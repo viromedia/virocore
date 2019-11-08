@@ -72,7 +72,7 @@ void VROBodyMesherTest::build(std::shared_ptr<VRORenderer> renderer,
 
 void VROBodyMesherTest::onBodyMeshUpdated(const std::vector<float> &vertices, std::shared_ptr<VROGeometry> mesh) {
 #if VRO_PLATFORM_IOS
-    if (true) {
+    if (/* DISABLES CODE */ (true)) {
         _surfaceRenderer->onBodyMeshUpdated(vertices, mesh);
         return;
     }
