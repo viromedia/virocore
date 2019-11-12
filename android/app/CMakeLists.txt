@@ -560,7 +560,7 @@ target_link_libraries( # Specifies the target library.
                        ${lib-jnigraphics}
                        ${lib-egl}
                        ${lib-GLESv3}
-                       ${lib-z}
+
                        atomic
                        lib-gvr
                        lib-gvr-audio
@@ -591,4 +591,6 @@ target_link_libraries( # Specifies the target library.
                        lib-OpenCV-TP-TBB
                        lib-OpenCV-TP-Tegra-Hal
                        cpufeatures
+
+                       ${lib-z}
         )
