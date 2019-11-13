@@ -48,7 +48,6 @@
 #include "VROProjector.h"
 #include "VROARCameraiOS.h"
 #include "VROVisionModel.h"
-#include "VROTrackingHelper.h"
 
 #pragma mark - Lifecycle and Initialization
 
