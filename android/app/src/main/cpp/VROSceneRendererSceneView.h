@@ -69,7 +69,6 @@ public:
     void onRotateEvent(int rotateState, float rotateRadians, float viewportX, float viewportY);
 
     void setVRModeEnabled(bool enabled);
-    void setSuspended(bool suspendRenderer);
 
     /*
      Activity lifecycle.
@@ -90,11 +89,8 @@ public:
 private:
 
     void renderFrame();
-    void renderSuspended();
 
     gvr::Sizei _surfaceSize;
-    bool _rendererSuspended;
-    double _suspendedNotificationTime;
 };
 
 

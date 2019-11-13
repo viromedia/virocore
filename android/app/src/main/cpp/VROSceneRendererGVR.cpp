@@ -53,9 +53,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(VRORendererConfiguration config,
                                          std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _sceneViewport(_gvr->CreateBufferViewport()),
-    _rendererSuspended(false),
-    _vrModeEnabled(true),
-    _suspendedNotificationTime(VROTimeCurrentSeconds()) {
+    _vrModeEnabled(true) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
 
@@ -137,32 +135,10 @@ void VROSceneRendererGVR::onDrawFrame() {
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
     VROMatrix4f headView = VROGVRUtil::toMatrix4f(_headView);
 
-    if (!_rendererSuspended) {
-        if (_vrModeEnabled) {
-            renderStereo(headView);
-        }
-        else {
-            renderMono(headView);
-        }
-    }
-    else {
-        _viewportList->SetToRecommendedBufferViewports();
-        gvr::Frame frame = _swapchain->AcquireFrame();
-        std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
-        frame.BindBuffer(0);
-
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-        frame.Unbind();
-        frame.Submit(*_viewportList, _headView);
-
-        double newTime = VROTimeCurrentSeconds();
-        // notify the user about bad keys 5 times a second (every 200ms/.2s)
-        if (newTime - _suspendedNotificationTime > .2) {
-            perr("Renderer suspended! Do you have a valid key?");
-            _suspendedNotificationTime = newTime;
-        }
+    if (_vrModeEnabled) {
+        renderStereo(headView);
+    } else {
+        renderMono(headView);
     }
 
     ++_frame;
@@ -379,8 +355,4 @@ void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
     } else {
         _renderer->setInputController(_touchController);
     }
-}
-
-void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
-    _rendererSuspended = suspendRenderer;
 }

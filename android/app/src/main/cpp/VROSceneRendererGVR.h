@@ -72,7 +72,6 @@ public:
                                             float viewportY);
     void onKeyEvent(int keyCode, int action) {} // Not Required
     void setVRModeEnabled(bool enabled);
-    void setSuspended(bool suspendRenderer);
 
     /*
      Activity lifecycle.
@@ -111,8 +110,6 @@ private:
 
     bool _touchTrackingEnabled;
     bool _vrModeEnabled;
-    bool _rendererSuspended;
-    double _suspendedNotificationTime;
     std::shared_ptr<VROInputControllerARAndroid> _touchController;
     std::shared_ptr<VROInputControllerBase>  _cardboardController;
     /*

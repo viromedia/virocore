@@ -85,12 +85,6 @@ public:
     virtual void setVRModeEnabled(bool enabled) = 0;
 
     /*
-     * Suspend or resume renderer. Called after key validation, suspending the renderer if the keys
-     * used by client are invalid
-     */
-    virtual void setSuspended(bool suspendRenderer) = 0;
-
-    /*
      Activity lifecycle.
      */
     virtual void onStart() = 0;

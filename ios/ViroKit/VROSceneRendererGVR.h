@@ -59,7 +59,6 @@ public:
     void refreshViewerProfile();
     
     void setVRModeEnabled(bool enabled);
-    void setSuspended(bool suspendRenderer);
     void setSurfaceSize(int width, int height, UIInterfaceOrientation orientation);
     void pause();
     void resume();
@@ -90,7 +89,6 @@ private:
     gvr::ViewerType _viewerType;
 
     bool _vrModeEnabled;
-    bool _rendererSuspended;
     double _suspendedNotificationTime;
     VROMatrix4f _orientationMatrix;
 

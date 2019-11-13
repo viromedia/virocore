@@ -71,7 +71,6 @@ public:
     void onRotateEvent(int rotateState, float rotateRadians, float viewportX, float viewportY);
 
     void setVRModeEnabled(bool enabled);
-    void setSuspended(bool suspendRenderer);
 
     /*
      Override so that this object can hold onto the VROSceneController as
@@ -154,13 +153,11 @@ private:
                             VROViewport viewport);
     void updateARBackground(std::unique_ptr<VROARFrame> &frame, bool forceReset);
     void renderWaitingForTracking(VROViewport viewport);
-    void renderNothing(bool suspended);
+    void renderNothing();
     void initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene);
 
     std::shared_ptr<VROSurface> _cameraBackground;
     gvr::Sizei _surfaceSize;
-    bool _rendererSuspended;
-    double _suspendedNotificationTime;
     bool _arcoreInstalled;
     bool _destroyed;
 

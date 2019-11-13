@@ -54,9 +54,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 VROSceneRendererSceneView::VROSceneRendererSceneView(VRORendererConfiguration config,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                                     jobject viroViewJNI) :
-        _rendererSuspended(true),
-        _suspendedNotificationTime(VROTimeCurrentSeconds()) {
+                                                     jobject viroViewJNI) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 
@@ -76,12 +74,7 @@ void VROSceneRendererSceneView::initGL() {
 }
 
 void VROSceneRendererSceneView::onDrawFrame() {
-    if (!_rendererSuspended) {
-        renderFrame();
-    }
-    else {
-        renderSuspended();
-    }
+    renderFrame();
 
     ++_frame;
     ALLOCATION_TRACKER_PRINT();
@@ -99,18 +92,6 @@ void VROSceneRendererSceneView::renderFrame() {
     _renderer->renderEye(VROEyeType::Monocular, _renderer->getLookAtMatrix(), projection, viewport, _driver);
     _renderer->renderHUD(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
     _renderer->endFrame(_driver);
-}
-
-void VROSceneRendererSceneView::renderSuspended() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    // Notify the user about bad keys 5 times a second (every 200ms/.2s)
-    double newTime = VROTimeCurrentSeconds();
-    if (newTime - _suspendedNotificationTime > .2) {
-        perr("Renderer suspended! Do you have a valid key?");
-        _suspendedNotificationTime = newTime;
-    }
 }
 
 /*
@@ -171,10 +152,6 @@ void VROSceneRendererSceneView::onResume() {
 
 void VROSceneRendererSceneView::setVRModeEnabled(bool enabled) {
 
-}
-
-void VROSceneRendererSceneView::setSuspended(bool suspendRenderer) {
-    _rendererSuspended = suspendRenderer;
 }
 
 

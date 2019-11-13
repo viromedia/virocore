@@ -65,7 +65,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     CADisplayLink *_displayLink;
     int _frame;
-    double _suspendedNotificationTime;
     VROWorldAlignment _worldAlignment;
 }
 
@@ -93,7 +92,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _suspended = NO;
         _worldAlignment = VROWorldAlignment::Gravity;
         _viewport = VROViewport(-1, -1, -1, -1);
         VRORendererConfiguration config;
@@ -116,7 +114,6 @@ static VROVector3f const kZeroVector = VROVector3f();
                  trackingType:(VROTrackingType)trackingType {
     self = [super initWithFrame:frame context:context];
     if (self) {
-        _suspended = NO;
         _worldAlignment = worldAlignment;
         _trackingType = trackingType;
         _viewport = VROViewport(-1, -1, -1, -1);
@@ -219,7 +216,6 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context);
     _frame = 0;
-    _suspendedNotificationTime = VROTimeCurrentSeconds();
 
     _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
                                                               self.frame.size.height * self.contentScaleFactor,

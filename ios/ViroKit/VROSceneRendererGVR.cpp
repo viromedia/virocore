@@ -51,10 +51,8 @@ VROSceneRendererGVR::VROSceneRendererGVR(int width, int height, UIInterfaceOrien
     _contentScaleFactor(contentScaleFactor),
     _renderer(renderer),
     _driver(driver),
-    _rendererSuspended(false),
     _sizeChanged(false),
-    _vrModeEnabled(true),
-    _suspendedNotificationTime(VROTimeCurrentSeconds()) {
+    _vrModeEnabled(true) {
         setSurfaceSizeInternal(width, height, orientation);
 }
 
@@ -252,10 +250,6 @@ void VROSceneRendererGVR::recenterTracking() {
 
 void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
     _vrModeEnabled = enabled;
-}
-
-void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
-    _rendererSuspended = suspendRenderer;
 }
 
 void VROSceneRendererGVR::pause() {

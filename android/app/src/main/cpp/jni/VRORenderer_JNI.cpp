@@ -390,13 +390,6 @@ VRO_METHOD(void, nativeSetDebugHUDEnabled)(VRO_ARGS
     renderer->getRenderer()->setDebugHUDEnabled(enabled);
 }
 
-VRO_METHOD(void, nativeSetSuspended)(VRO_ARGS
-                                     jlong native_renderer,
-                                     jboolean suspend_renderer) {
-    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
-    renderer->setSuspended(suspend_renderer);
-}
-
 // This function is OVR only!
 VRO_METHOD(void, nativeRecenterTracking)(VRO_ARGS
                                          jlong native_renderer) {

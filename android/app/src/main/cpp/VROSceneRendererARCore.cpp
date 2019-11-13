@@ -59,8 +59,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 VROSceneRendererARCore::VROSceneRendererARCore(VRORendererConfiguration config,
                                                std::shared_ptr<gvr::AudioApi> gvrAudio) :
-    _rendererSuspended(false),
-    _suspendedNotificationTime(VROTimeCurrentSeconds()),
     _arcoreInstalled(false),
     _destroyed(false) {
 
@@ -102,11 +100,10 @@ void VROSceneRendererARCore::onDrawFrame() {
         return;
     }
 
-    if (!_rendererSuspended && _arcoreInstalled) {
+    if (_arcoreInstalled) {
         renderFrame();
-    }
-    else {
-        renderNothing(_rendererSuspended);
+    } else {
+        renderNothing();
     }
 
     ++_frame;
@@ -216,18 +213,9 @@ void VROSceneRendererARCore::renderWaitingForTracking(VROViewport viewport) {
     _renderer->endFrame(_driver);
 }
 
-void VROSceneRendererARCore::renderNothing(bool suspended) {
+void VROSceneRendererARCore::renderNothing() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    if (suspended) {
-        // Notify the user about bad keys 5 times a second (every 200ms/.2s)
-        double newTime = VROTimeCurrentSeconds();
-        if (newTime - _suspendedNotificationTime > .2) {
-            perr("Renderer suspended! Do you have a valid key?");
-            _suspendedNotificationTime = newTime;
-        }
-    }
 }
 
 void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene) {
@@ -335,10 +323,6 @@ void VROSceneRendererARCore::onDestroy() {
 
 void VROSceneRendererARCore::setVRModeEnabled(bool enabled) {
 
-}
-
-void VROSceneRendererARCore::setSuspended(bool suspendRenderer) {
-    _rendererSuspended = suspendRenderer;
 }
 
 void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneController> sceneController) {

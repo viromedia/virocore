@@ -219,9 +219,6 @@ public class Renderer {
     public String getController() {
         return nativeGetController(mNativeRef);
     }
-    public void setSuspended(boolean suspend) {
-       nativeSetSuspended(mNativeRef, suspend);
-    }
     public void setDebugHUDEnabled(boolean enabled) { nativeSetDebugHUDEnabled(mNativeRef, enabled); }
 
     public void addFrameListener(NativeFrameListener frameListener) {
@@ -323,7 +320,6 @@ public class Renderer {
     private native String nativeGetHeadset(long nativeRenderer);
     private native String nativeGetController(long nativeRenderer);
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
-    private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
     private native void nativeRecenterTracking(long nativeRenderer);
     private native void nativeSetClearColor(long sceneRef, int color);
     private native void nativeSetShadowsEnabled(long nativeRef, boolean enabled);

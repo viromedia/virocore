@@ -50,7 +50,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     CADisplayLink *_displayLink;
     int _frame;
-    double _suspendedNotificationTime;
 }
 
 @property (readwrite, nonatomic) VROViewRecorder *viewRecorder;
@@ -67,7 +66,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _suspended = NO;
         VRORendererConfiguration config;
         [self initRenderer:config];
     }
@@ -79,7 +77,6 @@ static VROVector3f const kZeroVector = VROVector3f();
                       context:(EAGLContext *)context {
     self = [super initWithFrame:frame context:context];
     if (self) {
-        _suspended = NO;
         [self initRenderer:config];
     }
     return self;
@@ -144,7 +141,6 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context);
     _frame = 0;
-    _suspendedNotificationTime = VROTimeCurrentSeconds();
     _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
                                                               self.frame.size.height * self.contentScaleFactor,
                                                               _driver);
@@ -414,12 +410,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (void)drawRect:(CGRect)rect {
     @autoreleasepool {
-//        if (self.suspended) {
-//            [self renderSuspended];
-//        }
-//        else {
-            [self renderFrame];
-//        }
+        [self renderFrame];
     }
     
     ++_frame;

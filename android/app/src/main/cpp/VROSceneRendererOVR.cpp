@@ -1655,13 +1655,6 @@ void VROSceneRendererOVR::onTouchEvent(int action, float x, float y) {
     ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
 }
 
-void VROSceneRendererOVR::setSuspended(bool suspendRenderer) {
-    ovrMessage message;
-    ovrMessage_Init( &message, MESSAGE_SUSPEND, MQ_WAIT_NONE );
-    ovrMessage_SetIntegerParm( &message, 0, suspendRenderer );
-    ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
-}
-
 void VROSceneRendererOVR::recenterTracking() {
     ovrMessage message;
     ovrMessage_Init(&message, MESSAGE_RECENTER_TRACKING, MQ_WAIT_NONE);
