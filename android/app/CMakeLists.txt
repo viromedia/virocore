@@ -318,7 +318,6 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/jni/VRORenderer_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/MediaRecorder_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/VRORendererARCore_JNI.cpp
-             ${VIRO_ANDROID_SRC}/jni/OpenCV_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/VROCameraImageListener.cpp
              ${VIRO_ANDROID_SRC}/jni/ARImageDatabaseLoaderDelegate.cpp
 
@@ -424,108 +423,6 @@ set_target_properties( lib-LinearMath
                        PROPERTIES IMPORTED_LOCATION
                        ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libLinearMath.so )
 
-# -- OpenCV Libraries --
-
-add_library( lib-OpenCV-Calib3D
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Calib3D
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_calib3d.a )
-
-add_library( lib-OpenCV-Core
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Core
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_core.a )
-
-add_library( lib-OpenCV-Features2D
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Features2D
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_features2d.a )
-
-add_library( lib-OpenCV-Flann
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-Flann
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_flann.a )
-
-add_library( lib-OpenCV-ImgCodecs
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-ImgCodecs
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_imgcodecs.a )
-
-add_library( lib-OpenCV-ImgProc
-             STATIC
-             IMPORTED )
-set_target_properties (lib-OpenCV-ImgProc
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libopencv_imgproc.a )
-
-# -- OpenCV 3rd Party Libraries --
-
-add_library( lib-OpenCV-TP-IlmImf
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-IlmImf
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libIlmImf.a )
-
-add_library( lib-OpenCV-TP-Jasper
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-Jasper
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibjasper.a )
-
-add_library( lib-OpenCV-TP-JPEG
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-JPEG
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibjpeg-turbo.a )
-
-add_library( lib-OpenCV-TP-PNG
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-PNG
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibpng.a )
-
-add_library( lib-OpenCV-TP-TIFF
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-TIFF
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibtiff.a )
-
-add_library( lib-OpenCV-TP-WebP
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-WebP
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/liblibwebp.a )
-
-add_library( lib-OpenCV-TP-TBB
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-TBB
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libtbb.a )
-
-add_library( lib-OpenCV-TP-Tegra-Hal
-               STATIC
-               IMPORTED )
-set_target_properties (lib-OpenCV-TP-Tegra-Hal
-                       PROPERTIES IMPORTED_LOCATION
-                       ${VIRO_ANDROID_LIBS}/${ANDROID_ABI}/libtegra_hal.a )
-
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -563,30 +460,11 @@ target_link_libraries( # Specifies the target library.
                        lib-ovr
                        lib-freetype
                        lib-protobuf
-                       lib-freetype
                        lib-BulletCollision
                        lib-BulletDynamics
                        lib-BulletSoftBody
                        lib-LinearMath
 
-                       # OpenCV Libs
-                       lib-OpenCV-Calib3D
-                       lib-OpenCV-Features2D
-                       lib-OpenCV-Flann
-                       lib-OpenCV-ImgCodecs
-                       lib-OpenCV-ImgProc
-                       lib-OpenCV-Core
-
-                       # OpenCV 3rd Party Libs
-                       lib-OpenCV-TP-IlmImf
-                       lib-OpenCV-TP-Jasper
-                       lib-OpenCV-TP-JPEG
-                       lib-OpenCV-TP-PNG
-                       lib-OpenCV-TP-TIFF
-                       lib-OpenCV-TP-WebP
-                       lib-OpenCV-TP-TBB
-                       lib-OpenCV-TP-Tegra-Hal
                        cpufeatures
-
                        ${lib-z}
         )
