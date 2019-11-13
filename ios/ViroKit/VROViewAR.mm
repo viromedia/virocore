@@ -248,42 +248,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
     _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
-
-#if ENABLE_OPENCV
-    // Below code is used to help us debug OpenCV tracking
-    if (NSClassFromString(@"ARSession") != nil) {
-        _trackerViewScale = .50; // scale w.r.t. the entire screen of the output image w/ the edges drawn (from the bottom right)
-        _textHeight = 75; // height of the output text view at the bottom (blue box w/ text)
-
-        // Create a new ImageView for displaying image tracking
-        float width = self.frame.size.width * _trackerViewScale;
-        float height = self.frame.size.height * _trackerViewScale;
-        _trackerOutputView = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width - width, self.frame.size.height - height, width, height)];
-        _trackerOutputView.contentMode = UIViewContentModeScaleToFill;
-        _trackerOutputView.alpha = .65;
-        
-        std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(_arSession);
-        
-        // Create a text view for printing out image tracking stuff
-        _trackerOutputText = [[UITextView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - _textHeight, self.frame.size.width, _textHeight)];
-        _trackerOutputText.backgroundColor = UIColor.blueColor;
-        _trackerOutputText.textColor = UIColor.whiteColor;
-        _trackerOutputText.alpha = .6;
-        _trackerOutputText.textAlignment = NSTextAlignmentCenter;
-        _trackerOutputText.font = [UIFont systemFontOfSize:12];
-        _trackerOutputText.editable = NO;
-        
-        UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleOutputTextTap:)];
-        [_trackerOutputText addGestureRecognizer:singleFingerTap];
-
-        // Add the views to the view.
-        [self addSubview:_trackerOutputText];
-        [self addSubview:_trackerOutputView];
-        
-        arSessioniOS->setTrackerOutputView(_trackerOutputView);
-        arSessioniOS->setTrackerOutputText(_trackerOutputText);
-    }
-#endif
     
     /*
      Set the point of view to a special node that will follow the user's
@@ -316,13 +280,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     self.viewRecorder = [[VROViewRecorder alloc] initWithView:self renderer:_renderer driver:_driver];
 }
-
-#if ENABLE_OPENCV
-- (void)handleOutputTextTap:(UITapGestureRecognizer *)recognizer {
-    std::shared_ptr<VROARSessioniOS> arSessioniOS = std::dynamic_pointer_cast<VROARSessioniOS>(_arSession);
-    arSessioniOS->outputTextTapped();
-}
-#endif /* ENABLE_OPNECV */
 
 #pragma mark Gesture handlers
 

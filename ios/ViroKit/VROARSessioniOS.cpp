@@ -66,26 +66,6 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, VROWorldAlignment
     _videoTextureCache = std::dynamic_pointer_cast<VROVideoTextureCacheOpenGL>(driver->newVideoTextureCache());
         
     updateTrackingType(trackingType);
-    
-#if ENABLE_OPENCV
-    _trackingHelper = [[VROTrackingHelper alloc] init];
-      
-    // Uncomment to run a test screenshot through the OpenCV tracking code.
-    [_trackingHelper findInScreenshot];
-        
-    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
-    // dollar sized
-    //std::shared_ptr<VROBox> box = VROBox::createBox(.155956, .066294, .001);
-    std::shared_ptr<VROBox> box = VROBox::createBox(.1905f, .001f, 0.24511f);
-    boxNode->setGeometry(box);
-
-    _imageTrackingResultNode = std::make_shared<VRONode>();
-    _imageTrackingResultNode->addChildNode(boxNode);
-    _imageTrackingResultNode->setHidden(true);
-        
-    _imageResultsContainer = std::make_shared<VRONode>();
-    _imageResultsContainer->addChildNode(_imageTrackingResultNode);
-#endif /* ENABLE_OPENCV */
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -181,11 +161,6 @@ void VROARSessioniOS::resetSession(bool resetTracking, bool removeAnchors) {
 
 void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
     VROARSession::setScene(scene);
-    
-#if ENABLE_OPENCV
-    // when we add a scene, make sure that we add this node to it.
-    scene->getRootNode()->addChildNode(_imageResultsContainer);
-#endif /* ENABLE_OPENCV */
 }
 
 void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate) {
@@ -382,58 +357,6 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     if (_visionModel) {
         _visionModel->update(frameiOS);
     }
-    
-#if ENABLE_OPENCV
-    if (isReady()) {
-
-        // Get and set intrinsic matrix
-        std::shared_ptr<VROARCameraiOS> arCameraiOS = std::dynamic_pointer_cast<VROARCameraiOS>(frameiOS->getCamera());
-        float* intrinsics = arCameraiOS->getIntrinsics();
-        [_trackingHelper setIntrinsics:intrinsics];
-
-        // fetch camera pointer
-        std::shared_ptr<VROARCamera> lastCamera = getLastFrame()->getCamera();
-        
-        [_trackingHelper processPixelBufferRef:frameiOS->getImage()
-                                      forceRun:false
-                                        camera:arCameraiOS
-                                    completion:
-         ^(VROTrackingHelperOutput *output) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (_trackerOutputView != nil && [output getImageTrackerOutput].found) {
-                    [_trackerOutputView setImage:[output getOutputImage]];
-                }
-                VROARImageTrackerOutput trackerOutput = [output getImageTrackerOutput];
-                if (trackerOutput.found) {
-                    
-                    VROMatrix4f endTransformation = trackerOutput.worldTransform;
-                    
-                    _imageTrackingResultNode->setHidden(false);
-                    _imageTrackingResultNode->setPosition(endTransformation.extractTranslation());
-                    _imageTrackingResultNode->setRotation(endTransformation.extractRotation({1,1,1}));
-                    
-                    VROVector3f pos = endTransformation.extractTranslation();
-                    VROVector3f rot = endTransformation.extractRotation({1,1,1}).toEuler();
-                    
-                    pinfo("[Viro] the world position was: %f, %f, %f", pos.x, pos.y, pos.z);
-                    pinfo("[Viro] the world rotation was: %f, %f, %f", toDegrees(rot.x), toDegrees(rot.y), toDegrees(rot.z));
-                    
-                    if (_trackerOutputText != nil) {
-                        VROVector3f camPos = arCameraiOS->getPosition();
-                        NSString *outputText = [NSString stringWithFormat:@"Camera Pos: [%.03f, %.03f, %.03f]\nImage Pos: [%.03f, %.03f, %.03f]\nWorld Pos: [%.03f, %.03f, %.03f]",
-                                                camPos.x, camPos.y, camPos.z,
-                                                trackerOutput.translation.at<double>(0,0),
-                                                - trackerOutput.translation.at<double>(1,0), // because Y and Z axis are flipped in OpenCV.
-                                                - trackerOutput.translation.at<double>(2,0),
-                                                pos.x, pos.y, pos.z];
-                        _trackerOutputText.text = outputText;
-                    }
-                }
-            });
-        }];
-    }
-#endif /* ENABLE_OPENCV */
-
     return _currentFrame;
 }
 
@@ -509,13 +432,6 @@ void VROARSessioniOS::removeARImageTarget(std::shared_ptr<VROARImageTarget> targ
     }
 #endif
 }
-
-#if ENABLE_OPENCV
-void VROARSessioniOS::outputTextTapped() {
-    BOOL tracking = [_trackingHelper toggleTracking];
-    _trackerOutputText.text = tracking ? @"Started Tracking!" : @"Not Tracking!";
-}
-#endif /* ENABLE_OPENCV */
 
 #pragma mark - Object Targets
 void VROARSessioniOS::addARObjectTarget(std::shared_ptr<VROARObjectTarget> target) {
