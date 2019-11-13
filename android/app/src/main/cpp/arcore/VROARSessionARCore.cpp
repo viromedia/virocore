@@ -58,12 +58,7 @@ VROARSessionARCore::VROARSessionARCore(std::shared_ptr<VRODriverOpenGL> driver) 
 
     _session = nullptr;
     _frame = nullptr;
-
-    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
-        _arTrackingSession = std::make_shared<VROARTrackingSession>();
-    }
     _frameCount = 0;
-    _hasTrackingSessionInitialized = false;
 }
 
 void VROARSessionARCore::setARCoreSession(arcore::Session *session,
@@ -101,9 +96,6 @@ void VROARSessionARCore::initCameraTexture(std::shared_ptr<VRODriverOpenGL> driv
 
     passert_msg(_session != nullptr, "ARCore must be installed before setting camera texture");
     _session->setCameraTextureName(_cameraTextureId);
-
-    // (re)initialize the tracking session if the camera texture is (re)created
-    initTrackingSession();
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
@@ -233,18 +225,6 @@ void VROARSessionARCore::setDisplayGeometry(VROARDisplayRotation rotation, int w
     _displayRotation = rotation;
     if (_session) {
         _session->setDisplayGeometry((int) rotation, width, height);
-    }
-
-    // Post to the renderer thread because this function is likely called on the Android Main thread.
-    VROPlatformDispatchAsyncRenderer([this](){
-        // re-initialize the tracking session if the display geometry resets
-        initTrackingSession();
-    });
-}
-
-void VROARSessionARCore::enableTracking(bool shouldTrack) {
-    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
-        _arTrackingSession->enableTracking(shouldTrack);
     }
 }
 
@@ -376,9 +356,7 @@ void VROARSessionARCore::unloadARImageDatabase() {
 void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> target) {
     // on Android we always use Viro tracking implementation
     target->initWithTrackingImpl(getImageTrackingImpl());
-    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
-        _arTrackingSession->addARImageTarget(target);
-    } else if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
+    if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
         _imageTargets.push_back(target);
         std::weak_ptr<VROARSessionARCore> w_arsession = shared_from_this();
         VROPlatformDispatchAsyncBackground([target, w_arsession] {
@@ -398,9 +376,7 @@ void VROARSessionARCore::addARImageTarget(std::shared_ptr<VROARImageTarget> targ
 }
 
 void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> target) {
-    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
-        _arTrackingSession->removeARImageTarget(target);
-    } else if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
+    if (getImageTrackingImpl() == VROImageTrackingImpl::ARCore) {
         // First, we remove the target from the list of targets
         _imageTargets.erase(std::remove_if(_imageTargets.begin(), _imageTargets.end(),
                                            [target](std::shared_ptr<VROARImageTarget> candidate) {
@@ -415,7 +391,8 @@ void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> t
             if (arsession) {
                 // Now add all the targets back into the database...
                 for (int i = 0; i < arsession->_imageTargets.size(); i++) {
-                    arsession->addTargetToDatabase(arsession->_imageTargets[i], arsession->_currentARCoreImageDatabase);
+                    arsession->addTargetToDatabase(arsession->_imageTargets[i],
+                                                   arsession->_currentARCoreImageDatabase);
                 }
 
                 // update the ARCore config on the renderer thread
@@ -429,7 +406,7 @@ void VROARSessionARCore::removeARImageTarget(std::shared_ptr<VROARImageTarget> t
             }
         });
 
-        delete(oldDatabase);
+        delete (oldDatabase);
     }
 }
 
@@ -626,16 +603,6 @@ std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
     VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
     processUpdatedAnchors(arFrame);
 
-    // TODO: VIRO-3283 we have a bug where we need to wait a few frames before initializing
-    if (getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
-        _frameCount++;
-        if (!_hasTrackingSessionInitialized && _frameCount == 10) {
-            // we need at least 1 frame to initialize the tracking session!
-            initTrackingSession();
-        }
-        _arTrackingSession->updateFrame(arFrame);
-    }
-
     return _currentFrame;
 }
 
@@ -643,29 +610,7 @@ std::unique_ptr<VROARFrame> &VROARSessionARCore::getLastFrame() {
     return _currentFrame;
 }
 
-#pragma mark - VROARTrackingListener Implementation
-
-void VROARSessionARCore::onTrackedAnchorFound(std::shared_ptr<VROARAnchor> anchor) {
-    addAnchor(anchor);
-}
-
-void VROARSessionARCore::onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
-    updateAnchor(anchor);
-}
-
-void VROARSessionARCore::onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anchor) {
-    removeAnchor(anchor);
-}
-
 #pragma mark - Internal Methods
-
-void VROARSessionARCore::initTrackingSession() {
-    if (_currentFrame && _synchronizer && _arTrackingSession && getImageTrackingImpl() == VROImageTrackingImpl::Viro) {
-        VROARFrameARCore *arFrame = (VROARFrameARCore *) _currentFrame.get();
-        _arTrackingSession->init(arFrame, _synchronizer, getCameraTextureId(), _width, _height);
-        _arTrackingSession->setListener(shared_from_this());
-    }
-}
 
 std::shared_ptr<VROARAnchor> VROARSessionARCore::getAnchorWithId(std::string anchorId) {
     auto it = _nativeAnchorMap.find(anchorId);

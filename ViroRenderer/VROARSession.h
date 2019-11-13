@@ -89,7 +89,6 @@ enum class VROVideoQuality {
 enum class VROImageTrackingImpl {
     ARCore,
     ARKit,
-    Viro
 };
 
 enum class VROCloudAnchorProvider {

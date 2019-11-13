@@ -27,14 +27,4 @@ VROARImageTargetAndroid::~VROARImageTargetAndroid() {
 
 void VROARImageTargetAndroid::initWithTrackingImpl(VROImageTrackingImpl impl) {
     _currentImpl = impl;
-
-    if (impl == VROImageTrackingImpl::Viro) {
-#if ENABLE_OPENCV
-        size_t length;
-        cv::Mat temp(_image->getHeight(), _image->getWidth(), CV_8UC4, _image->getData(&length));
-        setTargetMat(temp);
-#endif
-    } else if (impl == VROImageTrackingImpl::ARCore) {
-        // no-op
-    }
 }

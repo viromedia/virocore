@@ -36,7 +36,7 @@
 #include <vector>
 #include <VROCameraTexture.h>
 #include <VROARPlaneAnchor.h>
-#include <VROARTrackingSession.h>
+#include <VROARImageAnchor.h>
 #include <VROARImageDatabase.h>
 
 enum class VROARDisplayRotation {
@@ -49,7 +49,7 @@ enum class VROARDisplayRotation {
 class VRODriverOpenGL;
 class VROCloudAnchorProviderARCore;
 
-class VROARSessionARCore : public VROARSession, public VROARTrackingListener,
+class VROARSessionARCore : public VROARSession,
                            public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
@@ -156,17 +156,6 @@ public:
      */
     uint8_t *getRotatedCameraImageData(int size);
 
-#pragma mark - [Internal] Viro Image Tracking
-
-    /*
-     This enables/disables image tracking (for debug only!)
-     */
-    void enableTracking(bool shouldTrack);
-
-    virtual void onTrackedAnchorFound(std::shared_ptr<VROARAnchor> anchor);
-    virtual void onTrackedAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
-    virtual void onTrackedAnchorRemoved(std::shared_ptr<VROARAnchor> anchor);
-
 #pragma mark - [Internal] Anchors
 
     std::shared_ptr<VROARAnchor> getAnchorWithId(std::string anchorId);
@@ -212,13 +201,6 @@ private:
     arcore::FocusMode _focusMode;
 
     bool updateARCoreConfig();
-
-#pragma mark - [Private] Viro Image Tracking
-
-    std::shared_ptr<VROARTrackingSession> _arTrackingSession;
-    bool _hasTrackingSessionInitialized;
-
-    void initTrackingSession();
 
 #pragma mark - [Private] ARCore Image Tracking
 

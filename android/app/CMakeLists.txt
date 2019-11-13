@@ -234,7 +234,6 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/arcore/ARHitTestResult_JNI.cpp
 
              # AR (Image Tracking)
-             ../../ViroRenderer/VROARTrackingSession.cpp
              ../../ViroRenderer/VROARImageTargetAndroid.cpp
 
              # Animation
@@ -324,7 +323,6 @@ add_library( # Sets the name of the library.
              ${VIRO_ANDROID_SRC}/jni/ImageTrackerOutput_JNI.cpp
              ${VIRO_ANDROID_SRC}/jni/VROCameraImageListener.cpp
              ${VIRO_ANDROID_SRC}/jni/ARImageDatabaseLoaderDelegate.cpp
-             ${VIRO_RENDERER_SRC}/VROARImageTracker.cpp
 
              # Renderer Test
              ${VIRO_RENDERER_SRC}/VRORendererTestHarness.cpp

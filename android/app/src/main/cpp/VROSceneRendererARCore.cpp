@@ -420,7 +420,7 @@ void VROSceneRendererARCore::setAnchorDetectionTypes(std::set<VROAnchorDetection
 }
 
 void VROSceneRendererARCore::enableTracking(bool shouldTrack) {
-    _session->enableTracking(shouldTrack);
+
 }
 
 
