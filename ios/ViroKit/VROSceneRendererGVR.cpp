@@ -117,19 +117,10 @@ void VROSceneRendererGVR::onDrawFrame() {
 
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
     VROMatrix4f headView = VROGVRUtil::toMatrix4f(_headView);
-    if (!_rendererSuspended) {
-        if (_vrModeEnabled) {
-            renderStereo(headView);
-        }
-        else {
-            renderMono(headView);
-        }
-    }
-    else {
-        _viewportList->SetToRecommendedBufferViewports();
-        gvr::Frame frame = _swapchain->AcquireFrame();
-        std::dynamic_pointer_cast<VRODisplayOpenGLiOSGVR>(_driver->getDisplay())->setFrame(frame);
-        frame.BindBuffer(0);
+    if (_vrModeEnabled) {
+        renderStereo(headView);
+    } else {
+        renderMono(headView);
     }
 
     ++_frame;

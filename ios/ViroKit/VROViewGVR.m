@@ -104,7 +104,6 @@
     _testingMode = testingMode;
     if (_testingMode) {
         [self setVrMode:true];
-        _sceneRenderer->setSuspended(false);
     }
 }
 
