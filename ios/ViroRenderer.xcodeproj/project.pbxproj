@@ -620,7 +620,6 @@
 		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
 		8A35CEFB2060711300ADD393 /* george.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A35CEFA2060711200ADD393 /* george.jpg */; };
 		8A35CF1F206461D000ADD393 /* variety_magazine.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A35CF1E206461CF00ADD393 /* variety_magazine.jpg */; };
-		8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A39B1A820181A36007E41E2 /* wikipedia_qr.png */; };
 		8A4590FC1F97BF5900D3811A /* VROARNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */; };
 		8A53ABF2212B824A0005D7F9 /* VROARImageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A53ABF3212B824A0005D7F9 /* VROARImageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1656,7 +1655,6 @@
 		8A3517311EE0A50A00B6E786 /* ben.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = ben.jpg; path = ViroSample/ben.jpg; sourceTree = "<group>"; };
 		8A35CEFA2060711200ADD393 /* george.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = george.jpg; path = ViroSample/george.jpg; sourceTree = "<group>"; };
 		8A35CF1E206461CF00ADD393 /* variety_magazine.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = variety_magazine.jpg; path = ViroSample/variety_magazine.jpg; sourceTree = "<group>"; };
-		8A39B1A820181A36007E41E2 /* wikipedia_qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wikipedia_qr.png; sourceTree = "<group>"; };
 		8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARNode.cpp; sourceTree = "<group>"; };
 		8A53ABF1212B82490005D7F9 /* VROARImageDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROARImageDatabase.h; path = ../../ViroRenderer/VROARImageDatabase.h; sourceTree = "<group>"; };
 		8A53E89921E96BB6006125D0 /* app_logo_viro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = app_logo_viro.png; path = ViroSample/app_logo_viro.png; sourceTree = "<group>"; };
@@ -3921,7 +3919,6 @@
 				8F5C41541BD82C1B006D7A77 /* boba.png */,
 				8A3517301EE0A50A00B6E786 /* screenshot.png */,
 				8A3517311EE0A50A00B6E786 /* ben.jpg */,
-				8A39B1A820181A36007E41E2 /* wikipedia_qr.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -4885,7 +4882,6 @@
 				8FA9A263207E96240022C55D /* object_bpanther_anim.vrx in Resources */,
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
 				8FA9A268207E96240022C55D /* object_bpanther_Roughness.png in Resources */,
-				8A39B1A920181A36007E41E2 /* wikipedia_qr.png in Resources */,
 				8F6FCC5122EB4316004A8A40 /* roughness-original-1.bin in Resources */,
 				8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */,
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
