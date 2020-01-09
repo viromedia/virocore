@@ -23,8 +23,8 @@
 //  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef ARPlane_JNI_h
-#define ARPlane_JNI_h
+#ifndef ARDeclarativePlane_JNI_h
+#define ARDeclarativePlane_JNI_h
 
 #include <memory>
 #include <VROARDeclarativePlane.h>

@@ -23,8 +23,8 @@
 //  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef VROARSessioniOS_h
-#define VROARSessioniOS_h
+#ifndef VROARSessionARCore_h
+#define VROARSessionARCore_h
 
 #include "VROARSession.h"
 #include "VROARFrameARCore.h"
