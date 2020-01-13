@@ -254,14 +254,16 @@ void VROBox::buildBoxVAR(VROShapeVertexLayout *vertexLayout) {
     };
     
     for (int i = 0; i < kNumBoxVertices; i++) {
-        vertexLayout[i].x =  cubeVertices[i * 3 + 0];
-        vertexLayout[i].y =  cubeVertices[i * 3 + 1];
-        vertexLayout[i].z =  cubeVertices[i * 3 + 2];
-        vertexLayout[i].u =  cubeTex[i * 2 + 0];
-        vertexLayout[i].v =  cubeTex[i * 2 + 1];
-        vertexLayout[i].nx = cubeNormals[i * 3 + 0];
-        vertexLayout[i].ny = cubeNormals[i * 3 + 1];
-        vertexLayout[i].nz = cubeNormals[i * 3 + 2];
+        int i2 = i << 1;
+        int i3 = i + i2;
+        vertexLayout[i].x =  cubeVertices[i3 + 0];
+        vertexLayout[i].y =  cubeVertices[i3 + 1];
+        vertexLayout[i].z =  cubeVertices[i3 + 2];
+        vertexLayout[i].u =  cubeTex[i2 + 0];
+        vertexLayout[i].v =  cubeTex[i2 + 1];
+        vertexLayout[i].nx = cubeNormals[i3 + 0];
+        vertexLayout[i].ny = cubeNormals[i3 + 1];
+        vertexLayout[i].nz = cubeNormals[i3 + 2];
     }
 }
 

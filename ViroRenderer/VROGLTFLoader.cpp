@@ -1390,11 +1390,11 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
     int sizeOfTangent = 4;
     int vertexSize = pos->getVertexCount();
     float *dataOut = new float[vertexSize * sizeOfTangent];
-    for (int i = 0; i < vertexSize; i ++ ) {
-        dataOut[(i * sizeOfTangent)]     = generatedTangents[i].x;
-        dataOut[(i * sizeOfTangent) + 1] = generatedTangents[i].y;
-        dataOut[(i * sizeOfTangent) + 2] = generatedTangents[i].z;
-        dataOut[(i * sizeOfTangent) + 3] = generatedTangents[i].w;        
+    for (int i = 0, j = 0; i < vertexSize; i++, j += sizeOfTangent) {
+        dataOut[j]     = generatedTangents[i].x;
+        dataOut[j + 1] = generatedTangents[i].y;
+        dataOut[j + 2] = generatedTangents[i].z;
+        dataOut[j + 3] = generatedTangents[i].w;
     }
 
     int sizeOfSingleTangent = getTypeSize(GLTFType::Vec4) * getComponentTypeSize(GLTFTypeComponent::Float);

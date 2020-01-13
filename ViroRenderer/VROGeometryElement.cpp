@@ -83,8 +83,8 @@ void VROGeometryElement::processIndices(std::function<void (int, int)> function)
     
     int indexCount = _primitiveCount * 3;
     
-    for (int i = 0; i < indexCount; i++) {
-        buffer.setPosition(i * _bytesPerIndex);
+    for (int i = 0, o = 0; i < indexCount; i++, o += _bytesPerIndex) {
+        buffer.setPosition(o);
         int idx;
         if (_bytesPerIndex == 2) {
             idx = _signed ? buffer.readShort() : buffer.readUnsignedShort();

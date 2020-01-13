@@ -285,12 +285,13 @@ std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
         int numPoints = pointCloud->getNumPoints();
 
         for (int i = 0; i < numPoints; i++) {
+            int i4 = i << 2;
             // Only use points with > 0.1. This is just meant to make the display of the points
             // look good (if low confidence points are used, we may end up with points very close
             // to the camera).
-            if (pointsArray[i * 4 + 3] > .1) {
-                VROVector4f point = VROVector4f(pointsArray[i * 4 + 0], pointsArray[i * 4 + 1],
-                                                pointsArray[i * 4 + 2], pointsArray[i * 4 + 3]);
+            if (pointsArray[i4 + 3] > .1) {
+                VROVector4f point = VROVector4f(pointsArray[i4 + 0], pointsArray[i4 + 1],
+                                                pointsArray[i4 + 2], pointsArray[i4 + 3]);
                 if(pointsIdArray != NULL) {
                     int pointId = pointsIdArray[i];
                     points.push_back(point);

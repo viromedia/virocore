@@ -46,8 +46,8 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector4f)> f
     std::shared_ptr<VROData> data = getData();
     VROByteBuffer buffer(data->getData(), data->getDataLength(), false);
     
-    for (int i = 0; i < _vertexCount; i++) {
-        buffer.setPosition(i * _dataStride + _dataOffset);
+    for (int i = 0, o = _dataOffset; i < _vertexCount; i++, o += _dataStride) {
+        buffer.setPosition(o);
         
         float x = 0, y = 0, z = 0, w = 0;
         
@@ -139,9 +139,9 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector4f)> f
 void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROVector3f vertex)> function) const {
     std::shared_ptr<VROData> data = getData();
     VROByteBuffer buffer(data->getData(), data->getDataLength(), false);
-    
-    for (int i = 0; i < _vertexCount; i++) {
-        buffer.setPosition(i * _dataStride + _dataOffset);
+
+    for (int i = 0, o = _dataOffset; i < _vertexCount; i++, o += _dataStride) {
+        buffer.setPosition(o);
         
         float x = 0, y = 0, z = 0, w = 0;
         
@@ -228,7 +228,7 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
         
         VROVector3f result = function(i, { x, y, z});
         
-        buffer.setPosition(i * _dataStride + _dataOffset);
+        buffer.setPosition(o);
         if (_floatComponents) {
             if (_bytesPerComponent == 2) {
                 if (_componentsPerVertex > 0) {

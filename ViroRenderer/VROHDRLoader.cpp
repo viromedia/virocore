@@ -66,10 +66,10 @@ std::shared_ptr<VROTexture> VROHDRLoader::loadTexture(float *data, int width, in
     if (kCompressHDR) {
         int packedLength = numPixels * sizeof(uint32_t);
         uint32_t *packedF9E5 = (uint32_t *) malloc(packedLength);
-        for (int i = 0; i < numPixels; i++) {
-            float r = data[i * componentsPerPixel + 0];
-            float g = data[i * componentsPerPixel + 1];
-            float b = data[i * componentsPerPixel + 2];
+        for (int i = 0, j = 0; i < numPixels; i++, j += componentsPerPixel) {
+            float r = data[j];
+            float g = data[j + 1];
+            float b = data[j + 2];
             // alpha is disregarded
             
             const glm::vec3 v(r, g, b);
