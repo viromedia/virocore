@@ -787,10 +787,11 @@ inline void VROMorpher::addWeightedMorphToSrc4(float *srcDataOut,
                                                float weight) {
     int morphSize = (int) morphData.size();
     for (int i = 0; i < morphSize; i ++) {
-        srcDataOut[i *  4]       += (morphData[i].x * (weight));
-        srcDataOut[(i * 4) + 1] += (morphData[i].y * (weight));
-        srcDataOut[(i * 4) + 2] += (morphData[i].z * (weight));
-        srcDataOut[(i * 4) + 3] += (morphData[i].z * (weight));
+        int i0 = i << 2;
+        srcDataOut[i0]     += (morphData[i].x * (weight));
+        srcDataOut[i0 + 1] += (morphData[i].y * (weight));
+        srcDataOut[i0 + 2] += (morphData[i].z * (weight));
+        srcDataOut[i0 + 3] += (morphData[i].z * (weight));
     }
 }
 
@@ -804,9 +805,10 @@ inline void VROMorpher::resetSrc3(float *srcDataOut, int size) {
 
 inline void VROMorpher::resetSrc4(float *srcDataOut, int size) {
     for (int i = 0; i < size; i ++) {
-        srcDataOut[i *  4]      = 0;
-        srcDataOut[(i * 4) + 1] = 0;
-        srcDataOut[(i * 4) + 2] = 0;
-        srcDataOut[(i * 4) + 3] = 0;
+        int i0 = i << 2;
+        srcDataOut[i0]     = 0;
+        srcDataOut[i0 + 1] = 0;
+        srcDataOut[i0 + 2] = 0;
+        srcDataOut[i0 + 3] = 0;
     }
 }
