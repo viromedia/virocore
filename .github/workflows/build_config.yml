@@ -1,0 +1,66 @@
+name: Viro Renderer CI Pipeline
+on: [push]
+
+jobs:
+  android_virocore_build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: assmble release ViroCore
+      run: bash ./gradlew :virocore:assembleRelease
+      working-directory: ./android
+    - name: Upload result ViroCore
+      uses: actions/upload-artifact@v1
+      with: 
+        name: virocore.aar
+        path: ./android/virocore/build/outputs/aar/virocore-release-v_1_17_0.aar
+        
+  android_viroreact_build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: assmble release ViroReact
+      run: bash ./gradlew :viroreact:assembleRelease
+      working-directory: ./android
+    - name: Upload result ViroReact
+      uses: actions/upload-artifact@v1
+      with: 
+        name: viroreact.aar
+        path: ./android/viroreact/build/outputs/aar/viroreact-release.aar
+
+  ios_viroreact_build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install gpg
+        run: brew install gnupg
+      - name: Set XCode Version 11.2
+        run: sudo xcode-select -s /Applications/Xcode_11.2.app
+      - name: Install pod dependencies
+        run: |
+          cd ios
+          pod install --verbose
+        shell: bash
+      - name: Xcodebuild iOS Renderer (non-static)
+        run: |
+          cd ios && xcodebuild \
+            -workspace ViroRenderer.xcworkspace \
+            -scheme ViroKit \
+            -sdk iphoneos13.2 \
+            -configuration Release \
+            IPHONEOS_DEPLOYMENT_TARGET=9.0
+            
+      - name: Upload iOS Renderer artifact
+        uses: actions/upload-artifact@v1
+        with: 
+          name: ios_dist.tgz
+          path: ../viro/ios/dist/
+
