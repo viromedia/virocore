@@ -76,7 +76,6 @@ import com.viro.core.Node;
 import com.viro.core.Object3D;
 import com.viro.core.OmniLight;
 import com.viro.core.internal.ImageTrackerOutput;
-import com.viro.core.internal.OpenCV;
 import com.viro.core.ParticleEmitter;
 import com.viro.core.Polyline;
 import com.viro.core.Scene;
@@ -451,14 +450,6 @@ public class ViroActivity extends AppCompatActivity {
 
         ARImageTarget target = new ARImageTarget(bitmap, ARImageTarget.Orientation.Up, .1f);
         scene.addARImageTarget(target);
-    }
-
-    private void testEdgeDetect() {
-        final OpenCV cv = new OpenCV(this);
-        final Bitmap bm = cv.edgeDetectImage("boba.png");
-        final ImageView image = new ImageView(this);
-        image.setImageBitmap(bm);
-        setContentView(image);
     }
 
     /*
