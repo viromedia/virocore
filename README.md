@@ -1,10 +1,9 @@
-### Releases
-ViroCore downloads are available on our [Releases](https://virocore.viromedia.com/docs/releases) page.
-
 ViroCore
 =====================
 
 ViroCore is SceneKit for Android, a 3D framework for developers to build immersive applications using Java. ViroCore combines a high-performance rendering engine with a descriptive API for creating 3D, AR, and VR apps. While lower-level APIs like OpenGL require you to precisely implement complex rendering algorithms, ViroCore requires only high-level scene descriptions, and code for the interactivity and animations you want your application to perform.
+
+![Viro Renderer CI Pipeline](https://github.com/dthian/virocore/workflows/Viro%20Renderer%20CI%20Pipeline/badge.svg)
 
 Platforms supported:
 Android, ARCore, Google Daydream, Samsung GearVR, Google Cardboard VR
@@ -13,8 +12,12 @@ The repository contains both the rendering source code, and as well as the ViroC
 
 To report bugs/issues with the Viro platform, please file new issues on this repository.
 
-## Instructions for running sample code:
+### Releases
+ViroCore downloads are available on our [Releases](https://virocore.viromedia.com/docs/releases) page.
 
+## Quick Start
+### Running sample code instructions:
+You can get up and running with the latest stable release of ViroCore! To do so, simply:
 1. Follow the prerequisite directions on our [Quick start guide](https://virocore.viromedia.com/docs/getting-started) to setup dependencies for trying these sample projects with the Viro Media App.
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
 3. Go to the code-sample directory for a list of current samples.
@@ -24,7 +27,22 @@ To report bugs/issues with the Viro platform, please file new issues on this rep
 7. Build and deploy.
 8. You should now be in the application! Enjoy!
 
-## Instructions for building the renderer and ViroCore platform:
+### Using Prebuilt ViroCore from mainline:
+You can also try the latest mainline build containing bleeding edge features and fixes. *Please keep in mind* that mainline builds may not be as stable as release builds. To do so, simply: 
+
+1. Go to the [ViroCore Actions Workflows](https://github.com/viromedia/virocore/actions) for this project.
+2. You should see a list of "Viro Renderer CI Pipeline" workflows. 
+3. Click on the latest successfully built workflow pipeline (there should be a checkmark).
+4. You should now see the uploaded artifcats assoicated with that flow. For example:
+   - viroreact.aar (for ViroReactAndroid)
+   - virocore.aar (for ViroCore)
+   - ios_dist.tgz (for iOS)
+
+For ViroCore Android, HelloWorld samples should have the corresponding file at the location viro_core/virocore-release-*version*. As such, simply download the virocore.aar artifact from the workflow above, and then rename (make sure it matches your code sample's name) and replace the virocore-release-v_x_xx_x.aar file in your HelloWorld project
+
+## Manual Building of the Renderer
+
+If you would like to modify / make changes to the renderer directly. These are the instructions for building the renderer and ViroCore platform. 
 
 ### Building the ViroCore platform:
 1. Follow the same prerequisite directions above from our [Quick start guide](https://virocore.viromedia.com/docs/getting-started).
