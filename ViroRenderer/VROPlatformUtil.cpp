@@ -237,12 +237,23 @@ NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
     NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                                                            if (httpResponse.statusCode != 200) {
-                                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
-                                                                completionBlock(nil, error);
+                                                            // If we have a http response, attempt to read the status code.
+                                                            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                                                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                                                if (httpResponse.statusCode != 200) {
+                                                                    NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
+                                                                    completionBlock(nil, error);
+                                                                }
+                                                                else {
+                                                                    completionBlock(data, error);
+                                                                }
                                                             }
-                                                            else {
+        
+                                                            // Else, trigger completion based on error.
+                                                            if (error != nil) {
+                                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, error.code);
+                                                                completionBlock(nil, error);
+                                                            } else {
                                                                 completionBlock(data, error);
                                                             }
                                                             dispatch_semaphore_signal(semaphore);
@@ -261,12 +272,24 @@ NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completi
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
     NSURLSessionDataTask *downloadTask = [downloadSession dataTaskWithURL:url
                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
-                                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                                                            if (httpResponse.statusCode != 200) {
-                                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
-                                                                completionBlock(nil, error);
+                                                            // If we have a http response, attempt to read the status code.
+                                                            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                                                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                                                if (httpResponse.statusCode != 200) {
+                                                                    NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
+                                                                    completionBlock(nil, error);
+                                                                }
+                                                                else {
+                                                                    completionBlock(data, error);
+                                                                }
+                                                                return;
                                                             }
-                                                            else {
+        
+                                                            // Else, trigger completion based on error.
+                                                            if (error != nil) {
+                                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, error.code);
+                                                                completionBlock(nil, error);
+                                                            } else {
                                                                 completionBlock(data, error);
                                                             }
                                                         }];
