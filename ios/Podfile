@@ -13,11 +13,9 @@ end
 target 'ViroKit' do
     use_frameworks!
     common_pods
-    pod 'GVRSDK', '1.120.0'
 end
 
 target 'ViroKit_static_lib' do
     common_pods
-    pod 'GVRKit', '1.120.0'
 end
 
