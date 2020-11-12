@@ -1,1 +1,3 @@
+rootProject.name = 'ViroCORE'
+
 include ':app', ':libs:gvr', ':libs:arcore', ':renderertest', ':memoryleaktest', ':virocore', ':viroreact', ':viroar', ':releasetest', ':nativetest'
