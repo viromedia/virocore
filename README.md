@@ -1,5 +1,6 @@
-ViroCore
-=====================
+# ViroCore
+
+[Chat](https://discord.gg/WWFwSQdCyF)
 
 ViroCore is SceneKit for Android, a 3D framework for developers to build immersive applications using Java. ViroCore combines a high-performance rendering engine with a descriptive API for creating 3D, AR, and VR apps. While lower-level APIs like OpenGL require you to precisely implement complex rendering algorithms, ViroCore requires only high-level scene descriptions, and code for the interactivity and animations you want your application to perform.
 
