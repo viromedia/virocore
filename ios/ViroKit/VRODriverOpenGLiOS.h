@@ -28,16 +28,13 @@
 #define VRODriverOpenGLiOS_h
 
 #include "VRODriverOpenGL.h"
-#include "VROSoundGVR.h"
 #include "VROAudioPlayeriOS.h"
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROTypefaceiOS.h"
 #include "VROTypefaceCollection.h"
 #include "VRODisplayOpenGLiOS.h"
 #include "VROPlatformUtil.h"
-#include "VROGVRUtil.h"
 #include "VROStringUtil.h"
-#include "vr/gvr/capi/include/gvr_audio.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
     
@@ -60,36 +57,14 @@ public:
             _ft = nullptr;
         }
     }
-    
-    /*
-     We lazily initialize GVR audio until VIRO-2944 is resolved.
-     */
-    std::shared_ptr<gvr::AudioApi> activateGVRAudio() {
-        if (!_gvrAudio) {
-            _gvrAudio = std::make_shared<gvr::AudioApi>();
-            _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-        }
-        return _gvrAudio;
-    }
-    
     void willRenderFrame(const VRORenderContext &context) {
-        if (_gvrAudio) {
-            _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
-            _gvrAudio->Update();
-        }
         VRODriverOpenGL::willRenderFrame(context);
     }
     
     void pause() {
-        if (_gvrAudio) {
-            _gvrAudio->Pause();
-        }
     }
     
     void resume() {
-        if (_gvrAudio) {
-            _gvrAudio->Resume();
-        }
     }
     
     virtual VROColorRenderingMode getColorRenderingMode() {
@@ -114,18 +89,6 @@ public:
         return std::make_shared<VROVideoTextureCacheOpenGL>(_eaglContext, driver);
     }
 
-    std::shared_ptr<VROSound> newSound(std::string resource, VROResourceType resourceType, VROSoundType type) {
-        std::shared_ptr<gvr::AudioApi> gvrAudio = activateGVRAudio();
-        std::shared_ptr<VROSound> sound = VROSoundGVR::create(resource, resourceType, gvrAudio, type);
-        return sound;
-    }
-
-    std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) {
-        std::shared_ptr<gvr::AudioApi> gvrAudio = activateGVRAudio();
-        std::shared_ptr<VROSound> sound = VROSoundGVR::create(data, gvrAudio, type);
-        return sound;
-    }
-
     std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string path, bool isLocal) {
         // TODO: VIRO-756 make use of local flag (always assumes it's a web file)
         return std::make_shared<VROAudioPlayeriOS>(path, isLocal);
@@ -147,7 +110,6 @@ public:
 protected:
     
     __weak GLKView *_viewGL;
-    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     EAGLContext *_eaglContext;
     std::map<std::string, std::weak_ptr<VROTypeface>> _typefaces;
     FT_Library _ft;

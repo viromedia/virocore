@@ -2,22 +2,13 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '9.3'
 
-def common_pods
-    pod 'GVRAudioSDK', '1.120.0'
-end
-
 target 'ViroSample' do
     use_frameworks!
 end
 
 target 'ViroKit' do
     use_frameworks!
-    common_pods
-    pod 'GVRSDK', '1.120.0'
 end
 
 target 'ViroKit_static_lib' do
-    common_pods
-    pod 'GVRKit', '1.120.0'
 end
-

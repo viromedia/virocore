@@ -28,7 +28,6 @@
 #import "VRORenderer.h"
 
 enum class VROTestSceneType {
-    VR,
     AR,
     Scene,
 };
@@ -50,18 +49,7 @@ static const bool kSceneCheckeredBackground = NO;
     config.enableBloom = YES;
     config.enableMultisampling = NO;
     
-    if (kTestType == VROTestSceneType::VR) {
-        VROViewGVR *view = [[VROViewGVR alloc] initWithFrame:[UIScreen mainScreen].bounds
-                                                      config:config];
-        view.testingMode = YES;
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        view.renderDelegate = self.renderDelegate;
-        
-        self.renderDelegate.view = view;
-        self.renderDelegate.test = kRendererTest;
-        self.view = view;
-    }
-    else if (kTestType == VROTestSceneType::AR) {
+   if (kTestType == VROTestSceneType::AR) {
         VROViewAR *view = [[VROViewAR alloc] initWithFrame:[UIScreen mainScreen].bounds
                                                     config:config
                                                    context:[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3]
@@ -178,13 +166,7 @@ static const bool kSceneCheckeredBackground = NO;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    if (kTestType == VROTestSceneType::VR) {
-        // GVR only supports landscape right orientation for inserting the phone in the viewer.
-        return UIInterfaceOrientationMaskLandscapeRight;
-    }
-    else {
         return UIInterfaceOrientationMaskAll;
-    }
 }
 
 @end

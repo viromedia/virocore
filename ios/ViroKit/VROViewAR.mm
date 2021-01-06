@@ -39,7 +39,6 @@
 #import "VROConvert.h"
 #import "VROARHitTestResult.h"
 #import "VRONodeCamera.h"
-#import "vr/gvr/capi/include/gvr_audio.h"
 #import "VROARScene.h"
 #import "VROChoreographer.h"
 #import "VROInputControllerAR.h"

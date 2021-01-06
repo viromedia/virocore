@@ -33,7 +33,6 @@
 #import "VRODriverOpenGLiOS.h"
 #import "VROConvert.h"
 #import "VRONodeCamera.h"
-#import "vr/gvr/capi/include/gvr_audio.h"
 #import "VROChoreographer.h"
 #import "VROInputControllerAR.h"
 #import "VROWeakProxy.h"
