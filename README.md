@@ -1,3 +1,6 @@
+:information_source: | Active development for Viro is now occurring at the [Viro Community](https://github.com/ViroCommunity) fork. We encourage all Viro developers to follow and get the latest updates at [ViroCommunity/virocore](https://github.com/ViroCommunity/virocore)
+:---: | :---
+
 ViroCore
 =====================
 
