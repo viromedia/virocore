@@ -85,12 +85,13 @@ public class ViroKeenUtils {
     }
 
     public static String byteArrayToHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
+        final int length = bytes.length;
+        char[] hexChars = new char[length * 2];
 
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0, i2 = 0; i < length; i++, i2 += 2) {
             int b = bytes[i] & 0xFF;
-            hexChars[i * 2] = hexArray[b >>> 4];
-            hexChars[(i * 2) + 1] = hexArray[b & 0x0F];
+            hexChars[i2] = hexArray[b >>> 4];
+            hexChars[i2 + 1] = hexArray[b & 0x0F];
         }
 
         return new String(hexChars);

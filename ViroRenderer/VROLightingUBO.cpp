@@ -147,11 +147,12 @@ void VROLightingUBO::updateLightsVertex() {
             continue;
         }
         int i = vertexData.num_lights;
+        int iFPM = i * kFloatsPerMatrix;
         
         const VROMatrix4f &shadowView = light->getShadowViewMatrix();
-        memcpy(&vertexData.shadow_view_matrices[i * kFloatsPerMatrix], shadowView.getArray(), kFloatsPerMatrix * sizeof(float));
+        memcpy(&vertexData.shadow_view_matrices[iFPM], shadowView.getArray(), kFloatsPerMatrix * sizeof(float));
         const VROMatrix4f &shadowProjection = light->getShadowProjectionMatrix();
-        memcpy(&vertexData.shadow_projection_matrices[i * kFloatsPerMatrix], shadowProjection.getArray(), kFloatsPerMatrix * sizeof(float));
+        memcpy(&vertexData.shadow_projection_matrices[iFPM], shadowProjection.getArray(), kFloatsPerMatrix * sizeof(float));
         
         vertexData.num_lights++;
         if (vertexData.num_lights >= kMaxLights) {

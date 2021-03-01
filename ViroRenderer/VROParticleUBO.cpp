@@ -120,16 +120,17 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
     // Parse / serialize the data into the uniform buffer object
     VROParticlesUBOVertexData vertexData;
     VROParticlesUBOFragmentData fragmentData;
-    for (int i = start; i < end; i++) {
+    for (int i = start, i0 = 0; i < end; i++, i0++) {
+        int i1 = i0 << 2;
         const float *transformArray = _lastKnownParticles[i].currentWorldTransform.getArray();
-        memcpy(&vertexData.particles_transform[(i - start) * kMaxFloatsPerTransform],
+        memcpy(&vertexData.particles_transform[i0 * kMaxFloatsPerTransform],
                transformArray,
                kMaxFloatsPerTransform * sizeof(float));
 
-        fragmentData.frag_particles_color[(i - start) * 4 + 0] = _lastKnownParticles[i].colorCurrent.x;
-        fragmentData.frag_particles_color[(i - start) * 4 + 1] = _lastKnownParticles[i].colorCurrent.y;
-        fragmentData.frag_particles_color[(i - start) * 4 + 2] = _lastKnownParticles[i].colorCurrent.z;
-        fragmentData.frag_particles_color[(i - start) * 4 + 3] = _lastKnownParticles[i].colorCurrent.w;
+        fragmentData.frag_particles_color[i1 + 0] = _lastKnownParticles[i].colorCurrent.x;
+        fragmentData.frag_particles_color[i1 + 1] = _lastKnownParticles[i].colorCurrent.y;
+        fragmentData.frag_particles_color[i1 + 2] = _lastKnownParticles[i].colorCurrent.z;
+        fragmentData.frag_particles_color[i1 + 3] = _lastKnownParticles[i].colorCurrent.w;
     }
 
     // Finally bind the UBO to its corresponding buffers.

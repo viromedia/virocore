@@ -46,10 +46,11 @@ VROMatrix4f::VROMatrix4f(const float *matrix) {
 
 VROMatrix4f::VROMatrix4f(const glm::mat4x4 mat) {
     for (int i = 0; i < 4; i++) {
-        _mtx[i * 4 + 0] = mat[i].x;
-        _mtx[i * 4 + 1] = mat[i].y;
-        _mtx[i * 4 + 2] = mat[i].z;
-        _mtx[i * 4 + 3] = mat[i].w;
+        int i4 = i << 2;
+        _mtx[i4 + 0] = mat[i].x;
+        _mtx[i4 + 1] = mat[i].y;
+        _mtx[i4 + 2] = mat[i].z;
+        _mtx[i4 + 3] = mat[i].w;
     }
 }
 
@@ -90,7 +91,7 @@ void VROMatrix4f::rotateX(float angleRad) {
     float rcos = sincosr[1];
 
     for (int i = 0; i < 3; i++) {
-        int i1 = i * 4 + 1;
+        int i1 = (i << 2) + 1;
         int i2 = i1 + 1;
         float t = _mtx[i1];
         _mtx[i1] = t * rcos - _mtx[i2] * rsin;
@@ -106,10 +107,10 @@ void VROMatrix4f::rotateY(float angleRad) {
     float rcos = sincosr[1];
 
     for (int i = 0; i < 3; i++) {
-        int i0 = i * 4;
-        int i2 = i0 + 2;
-        float t = _mtx[i0];
-        _mtx[i0] = t * rcos + _mtx[i2] * rsin;
+        int i4 = i << 2;
+        int i2 = i4 + 2;
+        float t = _mtx[i4];
+        _mtx[i4] = t * rcos + _mtx[i2] * rsin;
         _mtx[i2] = _mtx[i2] * rcos - t * rsin;
     }
 }
@@ -122,10 +123,10 @@ void VROMatrix4f::rotateZ(float angleRad) {
     float rcos = sincosr[1];
 
     for (int i = 0; i < 3; i++) {
-        int i0 = i * 4;
-        int i1 = i0 + 1;
-        float t = _mtx[i0];
-        _mtx[i0] = t * rcos - _mtx[i1] * rsin;
+        int i4 = i << 2;
+        int i1 = i4 + 1;
+        float t = _mtx[i4];
+        _mtx[i4] = t * rcos - _mtx[i1] * rsin;
         _mtx[i1] = t * rsin + _mtx[i1] * rcos;
     }
 }
@@ -199,10 +200,10 @@ void VROMatrix4f::translate(const VROVector3f &vector) {
 
 void VROMatrix4f::scale(float x, float y, float z) {
     for (int i = 0; i < 3; i++) {
-        int i0 = i * 4;
-        _mtx[i0] *= x;
-        _mtx[i0 + 1] *= y;
-        _mtx[i0 + 2] *= z;
+        int i4 = i << 2;
+        _mtx[i4] *= x;
+        _mtx[i4 + 1] *= y;
+        _mtx[i4 + 2] *= z;
     }
 }
 

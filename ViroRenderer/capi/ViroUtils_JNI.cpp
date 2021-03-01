@@ -66,9 +66,10 @@ VRO_FLOAT_ARRAY ARUtilsCreatePointsArray(std::vector<VROVector3f> points) {
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
-        tempPointsArr[i * 3] = points[i].x;
-        tempPointsArr[i * 3 + 1] = points[i].y;
-        tempPointsArr[i * 3 + 2] = points[i].z;
+        int i3 = i * 3;
+        tempPointsArr[i3]     = points[i].x;
+        tempPointsArr[i3 + 1] = points[i].y;
+        tempPointsArr[i3 + 2] = points[i].z;
     }
 
     VRO_FLOAT_ARRAY jPointsArray = VRO_NEW_FLOAT_ARRAY(points.size() * 3);

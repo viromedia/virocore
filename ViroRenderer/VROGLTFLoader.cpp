@@ -1390,11 +1390,11 @@ void VROGLTFLoader::processTangent(std::vector<std::shared_ptr<VROGeometryElemen
     int sizeOfTangent = 4;
     int vertexSize = pos->getVertexCount();
     float *dataOut = new float[vertexSize * sizeOfTangent];
-    for (int i = 0; i < vertexSize; i ++ ) {
-        dataOut[(i * sizeOfTangent)]     = generatedTangents[i].x;
-        dataOut[(i * sizeOfTangent) + 1] = generatedTangents[i].y;
-        dataOut[(i * sizeOfTangent) + 2] = generatedTangents[i].z;
-        dataOut[(i * sizeOfTangent) + 3] = generatedTangents[i].w;        
+    for (int i = 0, j = 0; i < vertexSize; i++, j += sizeOfTangent) {
+        dataOut[j]     = generatedTangents[i].x;
+        dataOut[j + 1] = generatedTangents[i].y;
+        dataOut[j + 2] = generatedTangents[i].z;
+        dataOut[j + 3] = generatedTangents[i].w;
     }
 
     int sizeOfSingleTangent = getTypeSize(GLTFType::Vec4) * getComponentTypeSize(GLTFTypeComponent::Float);
@@ -1795,7 +1795,7 @@ std::shared_ptr<VROGeometrySource> VROGLTFLoader::buildBoneWeightSource(GLTFType
     int sizeOfSingleBoneWeight = getTypeSize(gType) * getComponentTypeSize(gTypeComponent);
     float *dataOut = new float[sizeOfSingleBoneWeight * gAttributeAccesor.count]();
     for (int elementIndex = 0; elementIndex < gAttributeAccesor.count; elementIndex++) {
-        
+        int elementIndex4 = elementIndex << 2;
         // For the current element, cycle through each of its float or type component
         // and convert them into a float through the math conversions required by gLTF.
         buffer.setPosition(elementIndex * bufferViewStride);
@@ -1806,11 +1806,11 @@ std::shared_ptr<VROGeometrySource> VROGLTFLoader::buildBoneWeightSource(GLTFType
                 weight.push_back(floatData);
             } else if (gTypeComponent == GLTFTypeComponent::UnsignedByte) {
                 unsigned uByteData = buffer.readUnsignedByte();
-                float point = uByteData / 255.0;
+                float point = uByteData / 255.0F;
                 weight.push_back(point);
             } else if (gTypeComponent == GLTFTypeComponent::UnsignedShort) {
                 unsigned short uShortData = buffer.readUnsignedShort();
-                float point = uShortData / 65535.0;
+                float point = uShortData / 65535.0F;
                 weight.push_back(point);
             } else {
                 perr("Invalid weighted bone data provided for the 3D glTF skinner.");
@@ -1821,10 +1821,10 @@ std::shared_ptr<VROGeometrySource> VROGLTFLoader::buildBoneWeightSource(GLTFType
         float totalWeight = weight[0] + weight[1] + weight[2] + weight[3];
         VROVector4f normalizedWeight;
         VROVector4f(weight[0], weight[1], weight[2], weight[3]).scale(1/totalWeight, &normalizedWeight);
-        dataOut[(elementIndex * 4)]     = normalizedWeight.x;
-        dataOut[(elementIndex * 4) + 1] = normalizedWeight.y;
-        dataOut[(elementIndex * 4) + 2] = normalizedWeight.z;
-        dataOut[(elementIndex * 4) + 3] = normalizedWeight.w;
+        dataOut[elementIndex4]     = normalizedWeight.x;
+        dataOut[elementIndex4 + 1] = normalizedWeight.y;
+        dataOut[elementIndex4 + 2] = normalizedWeight.z;
+        dataOut[elementIndex4 + 3] = normalizedWeight.w;
     }
     
     // Finally create our geometry sources with the normalized data.

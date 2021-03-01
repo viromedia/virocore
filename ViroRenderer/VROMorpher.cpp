@@ -699,12 +699,12 @@ std::shared_ptr<VROGeometrySource> VROMorpher::convertVecToGeoSource(
 
     float *sourcesData = (dataVecIn.size() > 0) ? new float[dataVecIn.size() * componentsPerVertex] : nullptr;
     int morphSize = (int) dataVecIn.size();
-    for (int i = 0; i < morphSize; i ++) {
-        sourcesData[ i * componentsPerVertex]           = dataVecIn[i].x;
-        sourcesData[(i * componentsPerVertex) + 1]      = dataVecIn[i].y;
-        sourcesData[(i * componentsPerVertex) + 2]      = dataVecIn[i].z;
-        if (componentsPerVertex > 3){
-            sourcesData[(i * componentsPerVertex) + 3]  = dataVecIn[i].w;
+    for (int i = 0, j = 0; i < morphSize; i++, j += componentsPerVertex) {
+        sourcesData[j]     = dataVecIn[i].x;
+        sourcesData[j + 1] = dataVecIn[i].y;
+        sourcesData[j + 2] = dataVecIn[i].z;
+        if (componentsPerVertex > 3) {
+            sourcesData[j + 3]  = dataVecIn[i].w;
         }
     }
     std::shared_ptr<VROData> data = std::make_shared<VROData>((void *) sourcesData, dataVecIn.size() * componentsPerVertex * sizeof(float));
@@ -776,9 +776,10 @@ inline void VROMorpher::addWeightedMorphToSrc3(float *srcDataOut,
                                                float weight) {
     int morphSize = (int) morphData.size();
     for (int i = 0; i < morphSize; i ++) {
-        srcDataOut[i *  3]      += (morphData[i].x * (weight));
-        srcDataOut[(i * 3) + 1] += (morphData[i].y * (weight));
-        srcDataOut[(i * 3) + 2] += (morphData[i].z * (weight));
+        int i3 = i * 3;
+        srcDataOut[i3]     += (morphData[i].x * (weight));
+        srcDataOut[i3 + 1] += (morphData[i].y * (weight));
+        srcDataOut[i3 + 2] += (morphData[i].z * (weight));
     }
 }
 
@@ -787,26 +788,29 @@ inline void VROMorpher::addWeightedMorphToSrc4(float *srcDataOut,
                                                float weight) {
     int morphSize = (int) morphData.size();
     for (int i = 0; i < morphSize; i ++) {
-        srcDataOut[i *  4]       += (morphData[i].x * (weight));
-        srcDataOut[(i * 4) + 1] += (morphData[i].y * (weight));
-        srcDataOut[(i * 4) + 2] += (morphData[i].z * (weight));
-        srcDataOut[(i * 4) + 3] += (morphData[i].z * (weight));
+        int i4 = i << 2;
+        srcDataOut[i4]     += (morphData[i].x * (weight));
+        srcDataOut[i4 + 1] += (morphData[i].y * (weight));
+        srcDataOut[i4 + 2] += (morphData[i].z * (weight));
+        srcDataOut[i4 + 3] += (morphData[i].z * (weight));
     }
 }
 
 inline void VROMorpher::resetSrc3(float *srcDataOut, int size) {
     for (int i = 0; i < size; i ++) {
-        srcDataOut[i *  3]      = 0;
-        srcDataOut[(i * 3) + 1] = 0;
-        srcDataOut[(i * 3) + 2] = 0;
+        int i3 = i * 3;
+        srcDataOut[i3]     = 0;
+        srcDataOut[i3 + 1] = 0;
+        srcDataOut[i3 + 2] = 0;
     }
 }
 
 inline void VROMorpher::resetSrc4(float *srcDataOut, int size) {
     for (int i = 0; i < size; i ++) {
-        srcDataOut[i *  4]      = 0;
-        srcDataOut[(i * 4) + 1] = 0;
-        srcDataOut[(i * 4) + 2] = 0;
-        srcDataOut[(i * 4) + 3] = 0;
+        int i4 = i << 2;
+        srcDataOut[i4]     = 0;
+        srcDataOut[i4 + 1] = 0;
+        srcDataOut[i4 + 2] = 0;
+        srcDataOut[i4 + 3] = 0;
     }
 }

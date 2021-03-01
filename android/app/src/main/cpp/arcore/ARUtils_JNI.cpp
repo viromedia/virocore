@@ -186,10 +186,11 @@ VRO_OBJECT ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud
 
     // populate the array with Vector objects
     for (int i = 0; i < points.size(); i++) {
-        tempConfidencesArr[i * 4] = points[i].x;
-        tempConfidencesArr[i * 4 + 1] = points[i].y;
-        tempConfidencesArr[i * 4 + 2] = points[i].z;
-        tempConfidencesArr[i * 4 + 3] = points[i].w;
+        int i4 = i << 2;
+        tempConfidencesArr[i4] = points[i].x;
+        tempConfidencesArr[i4 + 1] = points[i].y;
+        tempConfidencesArr[i4 + 2] = points[i].z;
+        tempConfidencesArr[i4 + 3] = points[i].w;
     }
 
     for(int i = 0; i< identifiers.size(); i++) {

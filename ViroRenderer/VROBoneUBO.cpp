@@ -113,8 +113,8 @@ VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
     // Adreno + OVR)
     VROBonesData data;
     VROMatrix4f identity;
-    for (int i = 0; i < kMaxBones; i++) {
-        memcpy(&data.bone_transforms[i * kFloatsPerBone], identity.getArray(), kFloatsPerBone * sizeof(float));
+    for (int i = 0, iFPB = 0; i < kMaxBones; i++, iFPB += kFloatsPerBone) {
+        memcpy(&data.bone_transforms[iFPB], identity.getArray(), kFloatsPerBone * sizeof(float));
     }
     GL( glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO) );
     GL( glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), &data, GL_DYNAMIC_DRAW) );
@@ -136,11 +136,11 @@ void VROBoneUBO::update(const std::shared_ptr<VROSkinner> &skinner) {
     
     VROBonesData data;
     int numBones = skinner->getSkeleton()->getNumBones();
-    for (int i = 0; i < numBones; i++) {
+    for (int i = 0, iFPB = 0; i < numBones; i++, iFPB += kFloatsPerBone) {
         if (i >= kMaxBones) {
             break;
         }
-        
+
         VROMatrix4f transform = skinner->getModelTransform(i);
         if (kDualQuaternionEnabled) {
             VROVector3f   translation = transform.extractTranslation();
@@ -155,22 +155,21 @@ void VROBoneUBO::update(const std::shared_ptr<VROSkinner> &skinner) {
             VROQuaternion real = dq.getReal();
             VROQuaternion dual = dq.getDual();
             
-            int floatsPerBone = kFloatsPerBone;
-            data.bone_transforms[i * floatsPerBone + 0] = real.X;
-            data.bone_transforms[i * floatsPerBone + 1] = real.Y;
-            data.bone_transforms[i * floatsPerBone + 2] = real.Z;
-            data.bone_transforms[i * floatsPerBone + 3] = real.W;
-            data.bone_transforms[i * floatsPerBone + 4] = dual.X;
-            data.bone_transforms[i * floatsPerBone + 5] = dual.Y;
-            data.bone_transforms[i * floatsPerBone + 6] = dual.Z;
-            data.bone_transforms[i * floatsPerBone + 7] = dual.W;
-            data.bone_transforms[i * floatsPerBone + 8] = scale.x;
-            data.bone_transforms[i * floatsPerBone + 9] = scale.y;
-            data.bone_transforms[i * floatsPerBone + 10] = scale.z;
-            data.bone_transforms[i * floatsPerBone + 11] = 1.0;
+            data.bone_transforms[iFPB + 0] = real.X;
+            data.bone_transforms[iFPB + 1] = real.Y;
+            data.bone_transforms[iFPB + 2] = real.Z;
+            data.bone_transforms[iFPB + 3] = real.W;
+            data.bone_transforms[iFPB + 4] = dual.X;
+            data.bone_transforms[iFPB + 5] = dual.Y;
+            data.bone_transforms[iFPB + 6] = dual.Z;
+            data.bone_transforms[iFPB + 7] = dual.W;
+            data.bone_transforms[iFPB + 8] = scale.x;
+            data.bone_transforms[iFPB + 9] = scale.y;
+            data.bone_transforms[iFPB + 10] = scale.z;
+            data.bone_transforms[iFPB + 11] = 1.0;
         }
         else {
-            memcpy(&data.bone_transforms[i * kFloatsPerBone], transform.getArray(), kFloatsPerBone * sizeof(float));
+            memcpy(&data.bone_transforms[iFPB], transform.getArray(), kFloatsPerBone * sizeof(float));
         }
     }
     
